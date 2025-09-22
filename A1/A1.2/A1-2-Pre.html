@@ -86,7 +86,7 @@
     h2.rubric { font-family: var(--font-body); font-size: clamp(1rem, 0.9rem + 0.5vw, 1.1rem); font-weight: 500; color: var(--secondary-sage); margin: 0; line-height: 1.5; }
 
     /* ——— Buttons ——— */
-    .activity-btn { padding: 12px 20px; border-radius: var(--radius-md); border: 1px solid var(--primary-sage); background-color: var(--primary-sage); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: all 160ms ease-in-out; }
+    .activity-btn { padding: 12px 20px; border-radius: var(--radius-md); border: 1px solid var(--primary-sage); background-color: var(--primary-sage); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: all 160ms ease-in-out; touch-action: manipulation; }
     .activity-btn:hover { background-color: var(--forest-shadow); transform: translateY(-1px); }
     .activity-btn:active { transform: translateY(0); }
     .activity-btn:disabled { background-color: var(--tertiary-sage); cursor: not-allowed; border-color: var(--tertiary-sage); transform: none; }
@@ -105,7 +105,7 @@
     .slide-content-wrapper { display: flex; flex-direction: column; min-height: 420px; }
     .linking-container { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
     .link-column { display: flex; flex-direction: column; gap: 12px; }
-    .linking-item { position: relative; background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; border: 2px solid var(--border-sage); min-height: 56px; padding: 10px 16px; cursor: pointer; transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, transform 80ms ease-in-out; -webkit-tap-highlight-color: transparent; }
+    .linking-item { position: relative; background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; border: 2px solid var(--border-sage); min-height: 56px; padding: 10px 16px; cursor: pointer; transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, transform 80ms ease-in-out; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .linking-item:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
     .linking-item-text { flex-grow: 1; text-align: left; pointer-events: none; user-select: none; -webkit-user-select: none; color: var(--forest-shadow); font-weight: 600; font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem); }
     .linking-item.linking-active { border-color: var(--primary-sage); box-shadow: 0 0 0 3px var(--hover-sage); }
@@ -218,3 +218,364 @@
 
     <!-- Screen 2 -->
     <section id="screen-2" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="Ask 'What's your name?' for a person's first name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="Ask 'Where are you from?' to learn a country or city." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="Ask 'What's your email address?' for an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Brazil</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">aisha88@mail.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Aisha</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3 -->
+    <section id="screen-3" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="'What's your name?' prompts a given name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="'What's your email address?' requests an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Italy</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">luca.s@outlook.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Luca</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 4 -->
+    <section id="screen-4" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="Ask for a given name with 'What's your name?'" role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for a place of origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="Ask for an email address using 'What's your email address?'" role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Japan</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">hana_mori@gmail.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Hana</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="feedback-sidebar" aria-live="polite"></div>
+  <div id="sr-announcer" aria-live="polite" class="sr-only"></div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+/* App bootstrap */
+const App = {
+  init() {
+    FeedbackPanel.init();
+    ScreenManager.init();
+  }
+};
+
+/* Feedback panel (shared) */
+const FeedbackPanel = {
+  dom: {},
+  init() {
+    const sidebarContainer = document.getElementById('feedback-sidebar');
+    if (!sidebarContainer) return;
+    sidebarContainer.innerHTML = `
+      <div id="feedback-sidebar-container">
+        <div class="feedback-header">
+          <h3>Your Results</h3>
+          <p id="feedback-score"></p>
+        </div>
+        <div id="feedback-details"></div>
+        <div class="feedback-footer">
+          <button id="feedback-close-btn" class="activity-btn secondary">Try Again</button>
+        </div>
+      </div>`;
+
+    this.dom = {
+      container: document.getElementById('feedback-sidebar-container'),
+      score: document.getElementById('feedback-score'),
+      details: document.getElementById('feedback-details'),
+    };
+
+    document.getElementById('feedback-close-btn').addEventListener('click', () => {
+      this.hide();
+      const current = ScreenManager.currentActivity();
+      if (current) current.resetActivity();
+    });
+  },
+  clear() { if (this.dom.details) this.dom.details.innerHTML = ''; },
+  addDetail(data) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = `feedback-detail-item ${data.isCorrect ? 'correct' : ''}`;
+    itemDiv.style.marginBottom = '12px';
+    itemDiv.innerHTML = `
+      <h4>${data.itemName}</h4>
+      <p><strong>Your Answer:</strong> ${data.studentAnswer}</p>
+      ${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}
+      <p><small>${data.explanation}</small></p>`;
+    if (this.dom.details) this.dom.details.appendChild(itemDiv);
+  },
+  show(score, total) {
+    if (!this.dom.container || !this.dom.score) return;
+    this.dom.score.textContent = `You scored ${score} out of ${total}.`;
+    this.dom.container.style.right = '0';
+    document.body.classList.add('feedback-open');
+  },
+  hide() {
+    if (!this.dom.container) return;
+    this.dom.container.style.right = '-400px';
+    document.body.classList.remove('feedback-open');
+  }
+};
+
+/* Utility: click animations (pulse + sparkles) */
+function animateClick(el) {
+  el.classList.remove('click-pulse');
+  void el.offsetWidth; // restart animation
+  el.classList.add('click-pulse');
+
+  // sparkles
+  const rect = el.getBoundingClientRect();
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.className = 'sparkle';
+    const angle = (Math.PI * 2 * i) / count;
+    s.style.setProperty('--sx', Math.cos(angle) * 10 + 'px');
+    s.style.setProperty('--sy', Math.sin(angle) * 10 + 'px');
+    s.style.left = (rect.width / 2 - 3) + 'px';
+    s.style.top = (rect.height / 2 - 3) + 'px';
+    el.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+  }
+}
+
+/* Matching activity factory (per screen) */
+function createMatchingActivity(rootEl, idx) {
+  const colorClasses = ['match-1', 'match-2', 'match-3', 'match-4'];
+  const badgeLetters = ['A','B','C','D'];
+  const storageKey = `matching-studentPairs-${idx}`;
+  const state = { rootEl, studentPairs: [], activeItem: null };
+
+  function saveState() { sessionStorage.setItem(storageKey, JSON.stringify(state.studentPairs)); }
+  function loadState() {
+    try {
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        state.studentPairs = JSON.parse(saved);
+        state.studentPairs.forEach(({ startId, endId, colorClass, badge }) => {
+          const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
+          const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
+          if (startEl) applyPairStyle(startEl, colorClass, badge);
+          if (endEl) applyPairStyle(endEl, colorClass, badge);
+        });
+      }
+    } catch(e) { console.error('Could not load saved state.', e); }
+  }
+
+  function applyPairStyle(el, colorClass, badge) {
+    el.classList.add(colorClass);
+    if (!el.querySelector('.pair-badge')) {
+      const b = document.createElement('span');
+      b.className = 'pair-badge';
+      b.textContent = badge;
+      b.setAttribute('aria-hidden','true');
+      el.appendChild(b);
+    }
+    el.setAttribute('data-pair-badge', badge);
+  }
+  function clearPairStyle(el, colorClass) {
+    el.classList.remove(colorClass, 'linking-active');
+    const b = el.querySelector('.pair-badge');
+    if (b) b.remove();
+    el.removeAttribute('data-pair-badge');
+  }
+
+  function removePair(pairToRemove) {
+    const { startId, endId, colorClass } = pairToRemove;
+    const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
+    const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
+    if (startEl) clearPairStyle(startEl, colorClass);
+    if (endEl) clearPairStyle(endEl, colorClass);
+    state.studentPairs = state.studentPairs.filter(p => p.colorClass !== colorClass);
+    saveState();
+  }
+
+  function createPair(item1, item2) {
+    const usedColors = state.studentPairs.map(p => p.colorClass);
+    const nextColor = colorClasses.find(c => !usedColors.includes(c));
+    if (!nextColor) return;
+    const badge = badgeLetters[state.studentPairs.length] || '?';
+
+    const leftItem = item1.closest('.link-column').classList.contains('left') ? item1 : item2;
+    const rightItem = item1 === leftItem ? item2 : item1;
+
+    const newPair = { startId: leftItem.dataset.linkId, endId: rightItem.dataset.linkId, colorClass: nextColor, badge };
+    state.studentPairs.push(newPair);
+    applyPairStyle(leftItem, nextColor, badge);
+    applyPairStyle(rightItem, nextColor, badge);
+    saveState();
+  }
+
+  function onItemClick(clickedItem) {
+    animateClick(clickedItem);
+    const clickedId = clickedItem.dataset.linkId;
+    const existingPair = state.studentPairs.find(p => p.startId === clickedId || p.endId === clickedId);
+
+    if (existingPair) {
+      removePair(existingPair);
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+      return;
+    }
+
+    if (!state.activeItem) { state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); return; }
+
+    const activeId = state.activeItem.dataset.linkId;
+    const activeColumn = state.activeItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
+    const clickedColumn = clickedItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
+
+    if (activeId === clickedId) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+    else if (activeColumn !== clickedColumn) { createPair(state.activeItem, clickedItem); state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+    else { state.activeItem.classList.remove('linking-active'); state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); }
+  }
+
+  function bindEvents() {
+    const supportsPointer = window.PointerEvent !== undefined;
+    rootEl.querySelectorAll('.linking-item').forEach(item => {
+      const activate = (e) => {
+        if (e.type === 'touchend') e.preventDefault(); // avoid ghost click
+        onItemClick(item);
+      };
+      if (supportsPointer) {
+        item.addEventListener('pointerup', activate);
+      } else {
+        item.addEventListener('touchend', activate, { passive: false });
+        item.addEventListener('click', activate);
+      }
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onItemClick(item); }
+      });
+    });
+
+    rootEl.querySelector('.check-btn').addEventListener('click', () => checkAnswers());
+    rootEl.querySelector('.reset-btn').addEventListener('click', () => api.resetActivity());
+    rootEl.querySelector('.undo-btn').addEventListener('click', () => api.undo());
+  }
+
+  function checkAnswers() {
+    const answerKey = [ {start: 'L1', end: 'R3'}, {start: 'L2', end: 'R1'}, {start: 'L3', end: 'R2'} ];
+    const studentMap = new Map(state.studentPairs.map(p => [p.startId, p.endId]));
+    const correctMap = new Map(answerKey.map(link => [link.start, link.end]));
+    let score = 0;
+    FeedbackPanel.clear();
+
+    rootEl.querySelectorAll('.link-column.left .linking-item').forEach(leftItem => {
+      const leftId = leftItem.dataset.linkId;
+      const studentLinkedId = studentMap.get(leftId);
+      const correctLinkedId = correctMap.get(leftId);
+      const isCorrect = studentLinkedId === correctLinkedId;
+      if (isCorrect) score++;
+
+      const getText = id => id ? rootEl.querySelector(`[data-link-id="${id}"] .linking-item-text`).textContent : 'Not Answered';
+      FeedbackPanel.addDetail({
+        isCorrect,
+        itemName: leftItem.querySelector('.linking-item-text').textContent,
+        studentAnswer: getText(studentLinkedId),
+        correctAnswer: getText(correctLinkedId),
+        explanation: leftItem.dataset.explanation || ''
+      });
+    });
+
+    FeedbackPanel.show(score, 3);
+    rootEl.querySelector('.check-btn').disabled = true;
+  }
+
+  const api = {
+    resetActivity() {
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+      const pairsToRemove = [...state.studentPairs];
+      pairsToRemove.forEach(pair => removePair(pair));
+      state.studentPairs = [];
+      sessionStorage.removeItem(storageKey);
+      rootEl.querySelector('.check-btn').disabled = false;
+      FeedbackPanel.hide();
+    },
+    undo() {
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; return; }
+      const lastPair = state.studentPairs[state.studentPairs.length - 1];
+      if (lastPair) removePair(lastPair);
+    }
+  };
+
+  bindEvents();
+  loadState();
+  return api;
+}
+
+/* Screen manager */
+const ScreenManager = {
+  index: 0,
+  screens: [],
+  activities: [],
+  trackEl: null,
+  fillEl: null,
+  init() {
+    this.screens = Array.from(document.querySelectorAll('.screen'));
+    this.activities = this.screens.map((s, i) => createMatchingActivity(s, i));
+    this.trackEl = document.querySelector('.progress-track');
+    this.fillEl = document.querySelector('.progress-fill');
+    document.getElementById('prev-screen').addEventListener('click', () => this.go(this.index - 1));
+    document.getElementById('next-screen').addEventListener('click', () => this.go(this.index + 1));
+    this.update();
+  },
+  go(i) {
+    const max = this.screens.length - 1;
+    this.index = Math.max(0, Math.min(max, i));
+    this.update();
+  },
+  update() {
+    this.screens.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== this.index)));
+    const total = this.screens.length;
+    const current = this.index + 1;
+    const pct = (current / total) * 100;
+    if (this.fillEl) this.fillEl.style.width = pct + '%';
+    if (this.trackEl) this.trackEl.setAttribute('aria-valuenow', String(current));
+    const currentEl = this.screens[this.index];
+    currentEl.setAttribute('tabindex','-1');
+    currentEl.focus({preventScroll:true});
+  },
+  currentActivity() { return this.activities[this.index]; }
+};
+
+window.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
