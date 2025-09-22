@@ -25,33 +25,29 @@
       --hover-sage: rgba(156, 175, 136, 0.12);
       --focus-ring: color-mix(in oklab, var(--secondary-sage) 60%, white);
 
-      /* Feedback Colors */
+      /* Feedback */
       --correct-bg: #E8F5E9;
       --correct-border: #2E7D32;
       --incorrect-bg: #FFEBEE;
       --incorrect-border: #C62828;
 
-      /* === Matching Color + Pattern tokens (CB-safe) === */
-      --match-1-bg: #FFF3E0; /* Orange tint */
-      --match-1-border: #FFB74D;
-      --match-2-bg: #E0F2F1; /* Teal tint */
-      --match-2-border: #4DB6AC;
-      --match-3-bg: #E8F5E9; /* Green tint */
-      --match-3-border: #81C784;
-      --match-4-bg: #FFEBEE; /* Red tint */
-      --match-4-border: #E57373;
+      /* Richer, complementary match colors (no patterns) */
+      --match-1-bg: #EABF86; /* richer amber */
+      --match-1-border: #B8731F;
+      --match-2-bg: #B8DAD3; /* deeper teal */
+      --match-2-border: #2E7D73;
+      --match-3-bg: #C6DFC0; /* forest green tint */
+      --match-3-border: #3C8A42;
+      --match-4-bg: #F0B5B5; /* clay rose */
+      --match-4-border: #B63A3A;
 
-      /* Typography */
+      /* Type, radii, spacing */
       --font-display: 'Questrial', sans-serif;
       --font-body: 'Nunito', sans-serif;
       --leading: 1.6;
-
-      /* Radii */
       --radius-md: 12px;
       --radius-xl: 20px;
       --radius-2xl: 28px;
-
-      /* Spacing scale */
       --space-4: 16px;
       --space-8: 32px;
       --space-12: 48px;
@@ -85,19 +81,6 @@
 
     #activity-header { text-align: center; margin-bottom: 16px; }
 
-    /* ——— Icon belt replaces image ——— */
-    #icon-belt {
-      margin: 0 auto 20px auto;
-      width: 100%; max-width: 360px;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-      align-items: center; justify-items: center;
-      background: var(--warm-cream);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-sage);
-      padding: 12px;
-    }
-    #icon-belt svg { width: 40px; height: 40px; stroke: none; fill: var(--primary-sage); }
-
     /* ——— Type scale ——— */
     h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.6rem + 1.5vw, 2.4rem); color: var(--forest-shadow); margin: 0 0 2px 0; }
     h2.rubric { font-family: var(--font-body); font-size: clamp(1rem, 0.9rem + 0.5vw, 1.1rem); font-weight: 500; color: var(--secondary-sage); margin: 0; line-height: 1.5; }
@@ -112,11 +95,11 @@
 
     .linking-controls { grid-column: 1 / -1; display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-sage); }
 
-    /* ——— Screen nav ——— */
+    /* ——— Screen nav (smooth progress bar) ——— */
     .screen-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .screen-dots { display: flex; gap: 8px; align-items: center; }
-    .screen-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tertiary-sage); opacity: 0.6; border: 2px solid var(--border-sage); }
-    .screen-dot[aria-current="true"] { opacity: 1; background: var(--primary-sage); }
+    .progress { flex: 1; }
+    .progress-track { position: relative; width: 100%; height: 10px; background: var(--warm-cream); border: 1px solid var(--border-sage); border-radius: 999px; overflow: hidden; }
+    .progress-fill { position: absolute; left: 0; top: 0; height: 100%; width: 25%; background: var(--primary-sage); transition: width 280ms ease; }
 
     /* ——— Matching Activity Styles ——— */
     .slide-content-wrapper { display: flex; flex-direction: column; min-height: 420px; }
@@ -125,19 +108,17 @@
     .linking-item { position: relative; background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; border: 2px solid var(--border-sage); min-height: 56px; padding: 10px 16px; cursor: pointer; transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, transform 80ms ease-in-out; -webkit-tap-highlight-color: transparent; }
     .linking-item:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
     .linking-item-text { flex-grow: 1; text-align: left; pointer-events: none; user-select: none; -webkit-user-select: none; color: var(--forest-shadow); font-weight: 600; font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem); }
-
-    /* Active state */
     .linking-item.linking-active { border-color: var(--primary-sage); box-shadow: 0 0 0 3px var(--hover-sage); }
 
-    /* === Colorblind-friendly pair styles (color + pattern + letter badge) === */
-    .match-1 { background-color: var(--match-1-bg); border-color: var(--match-1-border); background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
-    .match-2 { background-color: var(--match-2-bg); border-color: var(--match-2-border); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
-    .match-3 { background-color: var(--match-3-bg); border-color: var(--match-3-border); background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
-    .match-4 { background-color: var(--match-4-bg); border-color: var(--match-4-border); background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
+    /* Colorblind-friendly: darker colors + letter badges (no patterns) */
+    .match-1 { background-color: var(--match-1-bg); border-color: var(--match-1-border); }
+    .match-2 { background-color: var(--match-2-bg); border-color: var(--match-2-border); }
+    .match-3 { background-color: var(--match-3-bg); border-color: var(--match-3-border); }
+    .match-4 { background-color: var(--match-4-bg); border-color: var(--match-4-border); }
 
     .pair-badge { position: absolute; right: 8px; top: 8px; font-weight: 800; font-size: 0.85rem; line-height: 1; padding: 2px 6px; border-radius: 8px; background: rgba(0,0,0,0.08); color: #1f1f1f; }
 
-    /* ——— Feedback Sidebar Styles ——— */
+    /* ——— Feedback Sidebar ——— */
     #feedback-sidebar-container { padding: 24px; box-shadow: -4px 0 16px rgba(0,0,0,0.1); background: white; position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; transition: right 0.4s ease; z-index: 100; }
     .feedback-header { padding-bottom: 12px; border-bottom: 1px solid var(--border-sage); }
     #feedback-details { overflow-y: auto; height: calc(100% - 150px); }
@@ -145,12 +126,11 @@
     .feedback-detail-item { border-left: 4px solid var(--incorrect-border); padding: 12px; margin-bottom: 12px; background-color: #fafafa; }
     .feedback-detail-item.correct { border-left-color: var(--correct-border); }
 
-    /* ——— Desktop Layout ——— */
+    /* ——— Desktop ——— */
     @media (min-width: 600px) {
       .linking-container { grid-template-columns: 1fr 1fr; gap: 24px; }
     }
-
-    /* ——— Mobile Layout ——— */
+    /* ——— Mobile ——— */
     @media (max-width: 600px) {
       #app-wrapper { padding: var(--space-4); }
       .activity-container { padding: var(--space-8); }
@@ -191,24 +171,13 @@
       </div>
     </div>
 
-    <!-- Icon belt using GitHub Octicons (MIT) -->
-    <div id="icon-belt" aria-hidden="true">
-      <!-- person -->
-      <svg viewBox="0 0 24 24" role="img" aria-label="person icon"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"></path></svg>
-      <!-- globe -->
-      <svg viewBox="0 0 24 24" role="img" aria-label="globe icon"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm6.93 6h-3.246a14.726 14.726 0 0 0-1.23-3.382A8.037 8.037 0 0 1 18.93 8ZM12 4c.943 0 2.372 1.71 3.074 4H8.926C9.628 5.71 11.057 4 12 4ZM7.546 10a15.9 15.9 0 0 0 0 4H4.34a7.988 7.988 0 0 1 0-4Zm.38 6h8.148c-.702 2.29-2.131 4-3.074 4s-2.372-1.71-3.074-4Zm8.528-2a15.9 15.9 0 0 0 0-4h3.206a7.988 7.988 0 0 1 0 4Zm-9.528-8A14.726 14.726 0 0 0 8.926 8H5.68A8.037 8.037 0 0 1 6.926 6ZM5.07 16h3.246a14.726 14.726 0 0 0 1.23 3.382A8.037 8.037 0 0 1 5.07 16Z"></path></svg>
-      <!-- mail -->
-      <svg viewBox="0 0 24 24" role="img" aria-label="mail icon"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2v.01L12 13 4 6.01V6h16ZM4 18V8.236l7.4 6.29a1 1 0 0 0 1.2 0L20 8.236V18H4Z"></path></svg>
-    </div>
-
-    <!-- Screen navigation -->
+    <!-- Screen navigation: smooth loading bar -->
     <div class="screen-nav" aria-label="Screens">
       <button id="prev-screen" class="activity-btn secondary" aria-label="Previous screen">Prev</button>
-      <div class="screen-dots" role="tablist" aria-label="Screen selector">
-        <button class="screen-dot" role="tab" aria-controls="screen-1" aria-selected="true" aria-current="true"></button>
-        <button class="screen-dot" role="tab" aria-controls="screen-2" aria-selected="false"></button>
-        <button class="screen-dot" role="tab" aria-controls="screen-3" aria-selected="false"></button>
-        <button class="screen-dot" role="tab" aria-controls="screen-4" aria-selected="false"></button>
+      <div class="progress" aria-hidden="false">
+        <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+          <div class="progress-fill"></div>
+        </div>
       </div>
       <button id="next-screen" class="activity-btn secondary" aria-label="Next screen">Next</button>
     </div>
@@ -249,362 +218,3 @@
 
     <!-- Screen 2 -->
     <section id="screen-2" class="screen" aria-hidden="true">
-      <div class="slide-content-wrapper">
-        <div class="linking-container">
-          <div class="link-column left">
-            <div class="linking-item" data-link-id="L1" data-explanation="Ask 'What's your name?' for a person's first name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
-            <div class="linking-item" data-link-id="L2" data-explanation="Ask 'Where are you from?' to learn a country or city." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
-            <div class="linking-item" data-link-id="L3" data-explanation="Ask 'What's your email address?' for an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
-          </div>
-          <div class="link-column right">
-            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Brazil</div></div>
-            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">aisha88@mail.com</div></div>
-            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Aisha</div></div>
-          </div>
-          <div class="linking-controls">
-            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
-            <button class="reset-btn activity-btn secondary">Reset</button>
-            <button class="check-btn activity-btn">Check</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Screen 3 -->
-    <section id="screen-3" class="screen" aria-hidden="true">
-      <div class="slide-content-wrapper">
-        <div class="linking-container">
-          <div class="link-column left">
-            <div class="linking-item" data-link-id="L1" data-explanation="'What's your name?' prompts a given name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
-            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
-            <div class="linking-item" data-link-id="L3" data-explanation="'What's your email address?' requests an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
-          </div>
-          <div class="link-column right">
-            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Italy</div></div>
-            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">luca.s@outlook.com</div></div>
-            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Luca</div></div>
-          </div>
-          <div class="linking-controls">
-            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
-            <button class="reset-btn activity-btn secondary">Reset</button>
-            <button class="check-btn activity-btn">Check</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Screen 4 -->
-    <section id="screen-4" class="screen" aria-hidden="true">
-      <div class="slide-content-wrapper">
-        <div class="linking-container">
-          <div class="link-column left">
-            <div class="linking-item" data-link-id="L1" data-explanation="Ask for a given name with 'What's your name?'" role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
-            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for a place of origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
-            <div class="linking-item" data-link-id="L3" data-explanation="Ask for an email address using 'What's your email address?'" role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
-          </div>
-          <div class="link-column right">
-            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Japan</div></div>
-            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">hana_mori@gmail.com</div></div>
-            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Hana</div></div>
-          </div>
-          <div class="linking-controls">
-            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
-            <button class="reset-btn activity-btn secondary">Reset</button>
-            <button class="check-btn activity-btn">Check</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <div id="feedback-sidebar" aria-live="polite"></div>
-  <div id="sr-announcer" aria-live="polite" class="sr-only"></div>
-</div>
-
-<!-- JAVASCRIPT -->
-<script>
-/* App bootstrap */
-const App = {
-  init() {
-    FeedbackPanel.init();
-    ScreenManager.init();
-  }
-};
-
-/* Feedback panel (shared) */
-const FeedbackPanel = {
-  dom: {},
-  init() {
-    const sidebarContainer = document.getElementById('feedback-sidebar');
-    if (!sidebarContainer) return;
-    sidebarContainer.innerHTML = `
-      <div id="feedback-sidebar-container">
-        <div class="feedback-header">
-          <h3>Your Results</h3>
-          <p id="feedback-score"></p>
-        </div>
-        <div id="feedback-details"></div>
-        <div class="feedback-footer">
-          <button id="feedback-close-btn" class="activity-btn secondary">Try Again</button>
-        </div>
-      </div>`;
-
-    this.dom = {
-      container: document.getElementById('feedback-sidebar-container'),
-      score: document.getElementById('feedback-score'),
-      details: document.getElementById('feedback-details'),
-    };
-
-    document.getElementById('feedback-close-btn').addEventListener('click', () => {
-      this.hide();
-      const current = ScreenManager.currentActivity();
-      if (current) current.resetActivity();
-    });
-  },
-  clear() { if (this.dom.details) this.dom.details.innerHTML = ''; },
-  addDetail(data) {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = `feedback-detail-item ${data.isCorrect ? 'correct' : ''}`;
-    itemDiv.style.marginBottom = '12px';
-    itemDiv.innerHTML = `
-      <h4>${data.itemName}</h4>
-      <p><strong>Your Answer:</strong> ${data.studentAnswer}</p>
-      ${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}
-      <p><small>${data.explanation}</small></p>`;
-    if (this.dom.details) this.dom.details.appendChild(itemDiv);
-  },
-  show(score, total) {
-    if (!this.dom.container || !this.dom.score) return;
-    this.dom.score.textContent = `You scored ${score} out of ${total}.`;
-    this.dom.container.style.right = '0';
-    document.body.classList.add('feedback-open');
-  },
-  hide() {
-    if (!this.dom.container) return;
-    this.dom.container.style.right = '-400px';
-    document.body.classList.remove('feedback-open');
-  }
-};
-
-/* Utility: click animations (pulse + sparkles) */
-function animateClick(el) {
-  el.classList.remove('click-pulse');
-  void el.offsetWidth; // restart animation
-  el.classList.add('click-pulse');
-
-  // sparkles
-  const rect = el.getBoundingClientRect();
-  const count = 6;
-  for (let i = 0; i < count; i++) {
-    const s = document.createElement('span');
-    s.className = 'sparkle';
-    const angle = (Math.PI * 2 * i) / count;
-    s.style.setProperty('--sx', Math.cos(angle) * 10 + 'px');
-    s.style.setProperty('--sy', Math.sin(angle) * 10 + 'px');
-    s.style.left = (rect.width / 2 - 3) + 'px';
-    s.style.top = (rect.height / 2 - 3) + 'px';
-    el.appendChild(s);
-    s.addEventListener('animationend', () => s.remove());
-  }
-}
-
-/* Matching activity factory (per screen) */
-function createMatchingActivity(rootEl, idx) {
-  const colorClasses = ['match-1', 'match-2', 'match-3', 'match-4'];
-  const badgeLetters = ['A','B','C','D'];
-  const storageKey = `matching-studentPairs-${idx}`;
-  const uniquePairsOnly = true; // same behaviour as original
-
-  const state = {
-    rootEl,
-    studentPairs: [],
-    activeItem: null,
-  };
-
-  function saveState() { sessionStorage.setItem(storageKey, JSON.stringify(state.studentPairs)); }
-  function loadState() {
-    try {
-      const saved = sessionStorage.getItem(storageKey);
-      if (saved) {
-        state.studentPairs = JSON.parse(saved);
-        state.studentPairs.forEach(({ startId, endId, colorClass, badge }) => {
-          const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
-          const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
-          if (startEl) applyPairStyle(startEl, colorClass, badge);
-          if (endEl) applyPairStyle(endEl, colorClass, badge);
-        });
-      }
-    } catch(e) { console.error('Could not load saved state.', e); }
-  }
-
-  function applyPairStyle(el, colorClass, badge) {
-    el.classList.add(colorClass);
-    if (!el.querySelector('.pair-badge')) {
-      const b = document.createElement('span');
-      b.className = 'pair-badge';
-      b.textContent = badge;
-      b.setAttribute('aria-hidden','true');
-      el.appendChild(b);
-    }
-    el.setAttribute('data-pair-badge', badge);
-  }
-  function clearPairStyle(el, colorClass) {
-    el.classList.remove(colorClass, 'linking-active');
-    const b = el.querySelector('.pair-badge');
-    if (b) b.remove();
-    el.removeAttribute('data-pair-badge');
-  }
-
-  function removePair(pairToRemove) {
-    const { startId, endId, colorClass } = pairToRemove;
-    const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
-    const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
-    if (startEl) clearPairStyle(startEl, colorClass);
-    if (endEl) clearPairStyle(endEl, colorClass);
-    state.studentPairs = state.studentPairs.filter(p => p.colorClass !== colorClass);
-    saveState();
-  }
-
-  function createPair(item1, item2) {
-    const usedColors = state.studentPairs.map(p => p.colorClass);
-    const nextColor = colorClasses.find(c => !usedColors.includes(c));
-    if (!nextColor) return;
-    const badge = badgeLetters[state.studentPairs.length] || '?';
-
-    const leftItem = item1.closest('.link-column').classList.contains('left') ? item1 : item2;
-    const rightItem = item1 === leftItem ? item2 : item1;
-
-    const newPair = { startId: leftItem.dataset.linkId, endId: rightItem.dataset.linkId, colorClass: nextColor, badge };
-    state.studentPairs.push(newPair);
-    applyPairStyle(leftItem, nextColor, badge);
-    applyPairStyle(rightItem, nextColor, badge);
-    saveState();
-  }
-
-  function onItemClick(clickedItem) {
-    animateClick(clickedItem);
-    const clickedId = clickedItem.dataset.linkId;
-    const existingPair = state.studentPairs.find(p => p.startId === clickedId || p.endId === clickedId);
-
-    if (existingPair) {
-      removePair(existingPair);
-      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
-      return;
-    }
-
-    if (!state.activeItem) { state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); return; }
-
-    const activeId = state.activeItem.dataset.linkId;
-    const activeColumn = state.activeItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
-    const clickedColumn = clickedItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
-
-    if (activeId === clickedId) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
-    else if (activeColumn !== clickedColumn) { createPair(state.activeItem, clickedItem); state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
-    else { state.activeItem.classList.remove('linking-active'); state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); }
-  }
-
-  function bindEvents() {
-    rootEl.querySelectorAll('.linking-item').forEach(item => {
-      item.addEventListener('click', () => onItemClick(item));
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onItemClick(item); }
-      });
-    });
-
-    rootEl.querySelector('.check-btn').addEventListener('click', () => checkAnswers());
-    rootEl.querySelector('.reset-btn').addEventListener('click', () => api.resetActivity());
-    rootEl.querySelector('.undo-btn').addEventListener('click', () => api.undo());
-  }
-
-  function checkAnswers() {
-    const answerKey = [ {start: 'L1', end: 'R3'}, {start: 'L2', end: 'R1'}, {start: 'L3', end: 'R2'} ]; // same structure each screen
-    const studentMap = new Map(state.studentPairs.map(p => [p.startId, p.endId]));
-    const correctMap = new Map(answerKey.map(link => [link.start, link.end]));
-    let score = 0;
-    FeedbackPanel.clear();
-
-    rootEl.querySelectorAll('.link-column.left .linking-item').forEach(leftItem => {
-      const leftId = leftItem.dataset.linkId;
-      const studentLinkedId = studentMap.get(leftId);
-      const correctLinkedId = correctMap.get(leftId);
-      const isCorrect = studentLinkedId === correctLinkedId;
-      if (isCorrect) score++;
-
-      const getText = id => id ? rootEl.querySelector(`[data-link-id="${id}"] .linking-item-text`).textContent : 'Not Answered';
-      FeedbackPanel.addDetail({
-        isCorrect,
-        itemName: leftItem.querySelector('.linking-item-text').textContent,
-        studentAnswer: getText(studentLinkedId),
-        correctAnswer: getText(correctLinkedId),
-        explanation: leftItem.dataset.explanation || ''
-      });
-    });
-
-    FeedbackPanel.show(score, 3);
-    rootEl.querySelector('.check-btn').disabled = true;
-  }
-
-  const api = {
-    resetActivity() {
-      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
-      const pairsToRemove = [...state.studentPairs];
-      pairsToRemove.forEach(pair => removePair(pair));
-      state.studentPairs = [];
-      sessionStorage.removeItem(storageKey);
-      rootEl.querySelector('.check-btn').disabled = false;
-      FeedbackPanel.hide();
-    },
-    undo() {
-      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; return; }
-      const lastPair = state.studentPairs[state.studentPairs.length - 1];
-      if (lastPair) removePair(lastPair);
-    }
-  };
-
-  bindEvents();
-  loadState();
-  return api;
-}
-
-/* Screen manager */
-const ScreenManager = {
-  index: 0,
-  screens: [],
-  activities: [],
-  dots: [],
-  init() {
-    this.screens = Array.from(document.querySelectorAll('.screen'));
-    this.activities = this.screens.map((s, i) => createMatchingActivity(s, i));
-    this.dots = Array.from(document.querySelectorAll('.screen-dot'));
-    document.getElementById('prev-screen').addEventListener('click', () => this.go(this.index - 1));
-    document.getElementById('next-screen').addEventListener('click', () => this.go(this.index + 1));
-    this.dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => this.go(i));
-      dot.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.go(i); }});
-    });
-    this.update();
-  },
-  go(i) {
-    const max = this.screens.length - 1;
-    this.index = Math.max(0, Math.min(max, i));
-    this.update();
-  },
-  update() {
-    this.screens.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== this.index)));
-    this.dots.forEach((d, i) => {
-      d.setAttribute('aria-current', String(i === this.index));
-      d.setAttribute('aria-selected', String(i === this.index));
-    });
-    // Ensure the current screen is focusable for SR context
-    const current = this.screens[this.index];
-    current.setAttribute('tabindex','-1');
-    current.focus({preventScroll:true});
-  },
-  currentActivity() { return this.activities[this.index]; }
-};
-
-window.addEventListener('DOMContentLoaded', () => App.init());
-</script>
-</body>
-</html>
