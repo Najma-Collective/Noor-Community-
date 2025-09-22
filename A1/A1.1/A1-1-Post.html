@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Post-Class Review: Introductions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+  <style>
+    /* ——— Theme tokens: warm, organic, stable ——— */
+    :root {
+      /* Palette */
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+
+      --border-sage: rgba(122, 132, 113, 0.20);
+      --hover-sage: rgba(156, 175, 136, 0.12);
+      --focus-ring: color-mix(in oklab, var(--secondary-sage) 60%, white);
+
+      /* Typography */
+      --font-display: 'Questrial', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --leading: 1.6;
+
+      /* Radii */
+      --radius-xs: 6px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-2xl: 28px;
+
+      /* Spacing scale */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-7: 28px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* Motion + elevation */
+      --ease-soft: cubic-bezier(.22,.61,.36,1);
+      --ease-emph: cubic-bezier(.2,.8,.2,1);
+      --dur-fast: 160ms;
+      --dur-med: 260ms;
+
+      --elev-0: 0 0 0 rgba(0,0,0,0);
+      --elev-1: 0 8px 24px rgba(90, 107, 82, 0.08);
+      --elev-2: 0 12px 36px rgba(90, 107, 82, 0.10);
+    }
+
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      color-scheme: light;
+      font-family: var(--font-body);
+      line-height: var(--leading);
+      color: var(--forest-shadow);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(156,175,136,.12), transparent 60%),
+        radial-gradient(900px 700px at 110% 10%, rgba(122,132,113,.10), transparent 55%),
+        linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+    }
+
+    ::selection {
+      background: color-mix(in oklab, var(--secondary-sage) 24%, white);
+      color: var(--forest-shadow);
+    }
+
+    #app-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: var(--space-8);
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    #activity-container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--soft-white);
+      padding: var(--space-12);
+      border-radius: var(--radius-2xl);
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: var(--elev-1);
+      transition: box-shadow var(--dur-med) var(--ease-soft), border-color var(--dur-med) var(--ease-soft);
+      will-change: auto;
+    }
+
+    @media (hover:hover) {
+      #activity-container:hover { box-shadow: var(--elev-2); }
+    }
+
+    .screen.hidden { display: none; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 2.2rem + 0.5vw, 2.6rem);
+      color: var(--forest-shadow);
+      margin: 0 0 var(--space-2) 0;
+      text-align: center;
+      letter-spacing: .2px;
+    }
+
+    h2.rubric {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--secondary-sage);
+      margin: 0 0 var(--space-6) 0;
+      text-align: center;
+      line-height: 1.5;
+      max-width: 600px; /* Added for better readability */
+      margin-left: auto; /* Added for centering */
+      margin-right: auto; /* Added for centering */
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--forest-shadow);
+      margin: var(--space-10) 0 var(--space-4) 0;
+      border-bottom: 1px solid var(--border-sage); /* Added for separation */
+      padding-bottom: var(--space-2); /* Added for spacing */
+    }
+
+    .activity-btn {
+      --btn-bg: var(--primary-sage);
+      --btn-fg: #fff;
+      --btn-border: var(--primary-sage);
+
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--btn-border);
+      background-color: var(--btn-bg);
+      color: var(--btn-fg);
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      transition:
+        transform var(--dur-fast) var(--ease-emph),
+        box-shadow var(--dur-fast) var(--ease-emph),
+        background-color var(--dur-fast) var(--ease-emph),
+        border-color var(--dur-fast) var(--ease-emph),
+        color var(--dur-fast) var(--ease-emph);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.03);
+    }
+
+    @media (hover:hover) {
+      .activity-btn:hover {
+        background-color: var(--forest-shadow);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(90,107,82,0.18);
+      }
+    }
+
+    .activity-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.03);
+    }
+
+    .activity-btn:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .activity-btn:disabled,
+    .activity-btn[aria-disabled="true"] {
+      --btn-bg: var(--tertiary-sage);
+      --btn-border: var(--tertiary-sage);
+      cursor: not-allowed;
+      opacity: .75;
+      transform: none;
+      box-shadow: var(--elev-0);
+    }
+
+    .controls {
+      margin-top: var(--space-8);
+      text-align: center;
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .start-screen-image {
+        display: block;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto var(--space-6) auto;
+        box-shadow: var(--elev-2);
+        border: 4px solid var(--soft-white);
+    }
+    .start-screen-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: var(--border-sage);
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-sage), color-mix(in oklab, var(--primary-sage) 70%, var(--secondary-sage)));
+      transition: width var(--dur-med) var(--ease-emph);
+    }
+
+    #progress-text {
+      text-align: right;
+      font-size: .95rem;
+      color: var(--secondary-sage);
+      font-weight: 600;
+      margin: var(--space-2) 0 var(--space-6);
+    }
+
+    .mc-question {
+      padding: 20px;
+      border: 1px solid var(--border-sage);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(180deg, rgba(248,246,240,.6), rgba(254,252,247,.6));
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+      margin-top: var(--space-4);
+    }
+
+    .mc-question-header { margin-bottom: var(--space-4); }
+
+    .mc-question-text {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--forest-shadow);
+      line-height: 1.45;
+      letter-spacing: .1px;
+    }
+
+    .mc-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .mc-option-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background-color: transparent;
+      transition: background-color var(--dur-fast) var(--ease-soft), border-color var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (hover:hover) {
+      .mc-option-label:not(.selected):hover { background-color: var(--hover-sage); }
+    }
+
+    .mc-option-item input { display: none; }
+
+    .mc-option-item .option-control {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--tertiary-sage);
+      background-color: var(--soft-white);
+      transition: all var(--dur-fast) var(--ease-soft);
+      position: relative;
+      border-radius: 50%;
+      box-shadow: inset 0 1px 0 rgba(0,0,0,0.03);
+    }
+
+    .mc-option-item input[type="radio"]:checked + .option-control { border-color: var(--primary-sage); }
+    .mc-option-item input[type="radio"]:checked + .option-control::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background-color: var(--primary-sage);
+    }
+    
+    .mc-option-label.selected {
+        border-color: var(--secondary-sage);
+        box-shadow: 0 0 0 4px color-mix(in oklab, var(--secondary-sage) 18%, white);
+        background: color-mix(in oklab, var(--hover-sage) 100%, transparent);
+    }
+
+    .mc-option-text {
+      color: var(--primary-sage);
+      line-height: 1.4;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .mc-slide-student-controls {
+      margin-top: var(--space-8);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+    }
+    
+    .final-score-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-align: center;
+        margin: var(--space-4) 0;
+    }
+
+    :where(a, button, .activity-btn, input, select, textarea, [role="button"]):focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    @media (max-width: 767px) {
+      #app-wrapper { padding: var(--space-4); }
+      #activity-container { padding: var(--space-6); border-radius: var(--radius-xl); }
+      h1 { font-size: clamp(1.6rem, 1.6rem + 1.5vw, 2rem); }
+      h2.rubric { font-size: 1rem; margin-bottom: var(--space-5); }
+      .mc-question-text { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="app-wrapper">
+    <main id="activity-container">
+
+      <!-- ===== START SCREEN ===== -->
+      <div id="start-screen" class="screen">
+        <div class="start-screen-image">
+            <img src="https://images.pexels.com/photos/5537581/pexels-photo-5537581.jpeg" alt="Two women smiling and waving at each other in a friendly greeting.">
+        </div>
+        <h1>Lesson Review: Introductions</h1>
+        <h2 class="rubric">Let's check what you remember about introducing yourself. This short quiz will help you review the key phrases from the lesson.</h2>
+        <div class="controls">
+          <button id="start-btn" class="activity-btn">Start Quiz</button>
+        </div>
+      </div>
+      
+      <!-- ===== QUIZ SCREEN ===== -->
+      <div id="quiz-screen" class="screen hidden">
+        <div class="progress-bar-container">
+          <div id="progress-bar"></div>
+        </div>
+        <p id="progress-text"></p>
+        
+        <div id="quiz-content">
+          <!-- Questions will be injected here by JavaScript -->
+        </div>
+
+        <div class="mc-slide-student-controls">
+          <button id="next-btn" class="activity-btn">Next</button>
+        </div>
+      </div>
+      
+      <!-- ===== RESULTS SCREEN ===== -->
+      <div id="results-screen" class="screen hidden">
+        <h1>Quiz Complete!</h1>
+        <h2 class="rubric">You've finished the review. Well done!</h2>
+        <p class="final-score-text" id="final-score"></p>
+        <div class="controls">
+          <button id="restart-btn" class="activity-btn">Try Again</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+<script>
+const questionsData = [
+    { 
+        topic: "Greetings & Starting a Conversation",
+        text: "Which of these is the most common and friendly way to start a conversation?", 
+        options: ["Hello!", "Goodbye.", "Okay.", "My name."],
+        correct: "Hello!"
+    },
+    { 
+        topic: "Greetings & Starting a Conversation",
+        text: "You see a classmate in the morning. A short, informal greeting you can use is:", 
+        options: ["Hi!", "What?", "Yes.", "Good evening."],
+        correct: "Hi!"
+    },
+    { 
+        topic: "Greetings & Starting a Conversation",
+        text: "After you introduce yourself, what is a polite phrase to show you are happy to meet the person?", 
+        options: ["Nice to meet you.", "And you?", "My name is...", "Thank you."],
+        correct: "Nice to meet you."
+    },
+    { 
+        topic: "Asking & Giving Your Name",
+        text: "How do you ask for someone's name?", 
+        options: ["What's your name?", "Who your name?", "How is your name?", "Name you what?"],
+        correct: "What's your name?"
+    },
+    { 
+        topic: "Asking & Giving Your Name",
+        text: "Someone asks, 'What's your name?'. A correct answer is:", 
+        options: ["My name's Fatima.", "Your name is Fatima.", "Name is Fatima.", "It is Fatima name."],
+        correct: "My name's Fatima."
+    },
+    { 
+        topic: "Asking & Giving Your Name",
+        text: "What is a shorter way to say 'My name is David'?", 
+        options: ["I'm David.", "I David.", "Me David.", "Is David."],
+        correct: "I'm David."
+    },
+    { 
+        topic: "Polite Responses",
+        text: "If someone says 'Nice to meet you, Ali', what is the best response?", 
+        options: ["Nice to meet you too.", "Yes, it is.", "My name is Ali.", "Okay, goodbye."],
+        correct: "Nice to meet you too."
+    },
+    { 
+        topic: "Polite Responses",
+        text: "Fatima says, 'My name's Fatima. And you?'. How should you respond?", 
+        options: ["I'm Omar.", "You are Omar.", "And Fatima?", "Yes."],
+        correct: "I'm Omar."
+    },
+    { 
+        topic: "Polite Responses",
+        text: "Finishing a first conversation, it is polite to say the person's name. For example: 'Nice to meet you too, ____.'", 
+        options: ["Sara", "my name", "your name", "hello"],
+        correct: "Sara"
+    },
+    { 
+        topic: "Grammar & Pronouns",
+        text: "Complete the sentence: 'What's ____ name?'", 
+        options: ["your", "you", "my", "I"],
+        correct: "your"
+    },
+    { 
+        topic: "Grammar & Pronouns",
+        text: "Complete the sentence: 'Hi, ____ name is Yousef.'", 
+        options: ["My", "I", "Your", "You"],
+        correct: "My"
+    },
+    { 
+        topic: "Grammar & Pronouns",
+        text: "Which sentence is correct?", 
+        options: ["I'm Aisha.", "I am Aisha.", "Both are correct.", "Neither is correct."],
+        correct: "Both are correct."
+    }
+];
+
+const App = {
+    currentIndex: 0,
+    score: 0,
+    currentTopic: null,
+    dom: {},
+
+    init() {
+        this.cacheDom();
+        this.bindEvents();
+    },
+
+    cacheDom() {
+        this.dom.startScreen = document.getElementById('start-screen');
+        this.dom.quizScreen = document.getElementById('quiz-screen');
+        this.dom.resultsScreen = document.getElementById('results-screen');
+        
+        this.dom.startBtn = document.getElementById('start-btn');
+        this.dom.nextBtn = document.getElementById('next-btn');
+        this.dom.restartBtn = document.getElementById('restart-btn');
+        
+        this.dom.progressBar = document.getElementById('progress-bar');
+        this.dom.progressText = document.getElementById('progress-text');
+        this.dom.quizContent = document.getElementById('quiz-content');
+        this.dom.finalScore = document.getElementById('final-score');
+    },
+
+    bindEvents() {
+        this.dom.startBtn.addEventListener('click', () => this.startQuiz());
+        this.dom.nextBtn.addEventListener('click', () => this.nextQuestion());
+        this.dom.restartBtn.addEventListener('click', () => this.restartQuiz());
+    },
+
+    startQuiz() {
+        this.currentIndex = 0;
+        this.score = 0;
+        this.currentTopic = null;
+        this.shuffleQuestions();
+        
+        this.dom.startScreen.classList.add('hidden');
+        this.dom.resultsScreen.classList.add('hidden');
+        this.dom.quizScreen.classList.remove('hidden');
+        
+        this.displayQuestion();
+    },
+
+    shuffleQuestions() {
+        for (let i = questionsData.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questionsData[i], questionsData[j]] = [questionsData[j], questionsData[i]];
+        }
+    },
+
+    displayQuestion() {
+        const question = questionsData[this.currentIndex];
+        let contentHTML = '';
+
+        if (question.topic !== this.currentTopic) {
+            this.currentTopic = question.topic;
+            contentHTML += `<h3>${this.currentTopic}</h3>`;
+        }
+        
+        const optionsHTML = question.options.map((option, index) => `
+            <div class="mc-option-item">
+                <input type="radio" name="q${this.currentIndex}" id="q${this.currentIndex}o${index}" value="${option}">
+                <label for="q${this.currentIndex}o${index}" class="mc-option-label">
+                    <span class="option-control"></span>
+                    <span class="mc-option-text">${option}</span>
+                </label>
+            </div>
+        `).join('');
+
+        contentHTML += `
+            <div class="mc-question">
+                <div class="mc-question-header">
+                    <p class="mc-question-text">${question.text}</p>
+                </div>
+                <div class="mc-options-container" id="options-container-${this.currentIndex}">
+                    ${optionsHTML}
+                </div>
+            </div>
+        `;
+
+        if (this.currentIndex === 0 || question.topic !== questionsData[this.currentIndex - 1]?.topic) {
+            this.dom.quizContent.innerHTML = contentHTML;
+        } else {
+            this.dom.quizContent.insertAdjacentHTML('beforeend', contentHTML);
+        }
+
+        this.addOptionListeners();
+        this.updateProgress();
+        this.dom.nextBtn.setAttribute('disabled', 'true');
+    },
+    
+    addOptionListeners() {
+        const containerId = `#options-container-${this.currentIndex}`;
+        const optionsContainer = document.querySelector(containerId);
+        if (optionsContainer) {
+            optionsContainer.addEventListener('change', (event) => {
+                this.dom.nextBtn.removeAttribute('disabled');
+                // Remove selected class from all labels in this group
+                optionsContainer.querySelectorAll('.mc-option-label').forEach(label => {
+                    label.classList.remove('selected');
+                });
+                // Add selected class to the chosen one
+                if (event.target.type === 'radio') {
+                    event.target.nextElementSibling.classList.add('selected');
+                }
+            });
+        }
+    },
+
+    nextQuestion() {
+        this.checkAnswer();
+        this.currentIndex++;
+        if (this.currentIndex < questionsData.length) {
+            // Hide the previous question before showing the next
+            const allQuestions = this.dom.quizContent.querySelectorAll('.mc-question, h3');
+            allQuestions.forEach(el => el.style.display = 'none');
+            this.displayQuestion();
+        } else {
+            this.showResults();
+        }
+    },
+
+    checkAnswer() {
+        const selectedOption = document.querySelector(`input[name="q${this.currentIndex}"]:checked`);
+        if (selectedOption && selectedOption.value === questionsData[this.currentIndex].correct) {
+            this.score++;
+        }
+    },
+
+    updateProgress() {
+        const progressPercent = ((this.currentIndex) / questionsData.length) * 100;
+        this.dom.progressBar.style.width = `${progressPercent}%`;
+        this.dom.progressText.textContent = `Question ${this.currentIndex + 1} of ${questionsData.length}`;
+        
+        if (this.currentIndex === questionsData.length - 1) {
+            this.dom.nextBtn.textContent = 'Finish Quiz';
+        } else {
+            this.dom.nextBtn.textContent = 'Next';
+        }
+    },
+
+    showResults() {
+        this.dom.quizScreen.classList.add('hidden');
+        this.dom.resultsScreen.classList.remove('hidden');
+        this.dom.finalScore.textContent = `Your Score: ${this.score} out of ${questionsData.length}`;
+    },
+
+    restartQuiz() {
+        this.dom.resultsScreen.classList.add('hidden');
+        this.dom.startScreen.classList.remove('hidden');
+        this.dom.quizContent.innerHTML = ''; // Clear out old questions
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+
+</body>
+</html>
