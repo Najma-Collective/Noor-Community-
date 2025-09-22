@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7A8471" />
-  <title>Standalone Activity: Matching Personal Questions</title>
+  <title>Standalone Activity: Matching Personal Questions (4 Screens)</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,16 +31,15 @@
       --incorrect-bg: #FFEBEE;
       --incorrect-border: #C62828;
 
-      /* === KEY CHANGE: Matching Colors === */
-      --match-color-1-bg: #FFF3E0; /* Orange */
-      --match-color-1-border: #FFB74D;
-      --match-color-2-bg: #E0F2F1; /* Teal */
-      --match-color-2-border: #4DB6AC;
-      --match-color-3-bg: #E8F5E9; /* Green */
-      --match-color-3-border: #81C784;
-      --match-color-4-bg: #FFEBEE; /* Red */
-      --match-color-4-border: #E57373;
-
+      /* === Matching Color + Pattern tokens (CB-safe) === */
+      --match-1-bg: #FFF3E0; /* Orange tint */
+      --match-1-border: #FFB74D;
+      --match-2-bg: #E0F2F1; /* Teal tint */
+      --match-2-border: #4DB6AC;
+      --match-3-bg: #E8F5E9; /* Green tint */
+      --match-3-border: #81C784;
+      --match-4-bg: #FFEBEE; /* Red tint */
+      --match-4-border: #E57373;
 
       /* Typography */
       --font-display: 'Questrial', sans-serif;
@@ -78,34 +77,29 @@
       min-height: 100vh; box-sizing: border-box;
       padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom));
     }
-    #activity-container {
+    .activity-container {
       width: 100%; max-width: 900px; background: var(--soft-white);
       padding: var(--space-12); border-radius: var(--radius-2xl);
       border: 1px solid rgba(122, 132, 113, 0.12);
     }
-    
-    #activity-header { text-align: center; margin-bottom: 24px; }
-    #decorative-image-container { 
-      margin: 0 auto 24px auto; 
-      width: 180px; 
-      height: 120px; 
-      background-color: var(--warm-cream); 
-      border-radius: var(--radius-md); 
-      overflow: hidden; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      border: 1px solid var(--border-sage); 
+
+    #activity-header { text-align: center; margin-bottom: 16px; }
+
+    /* ——— Icon belt replaces image ——— */
+    #icon-belt {
+      margin: 0 auto 20px auto;
+      width: 100%; max-width: 360px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      align-items: center; justify-items: center;
+      background: var(--warm-cream);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-sage);
+      padding: 12px;
     }
-    /* Style for the image itself */
-    #decorative-image-container img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: contain; /* Use 'contain' to ensure the whole image is visible */
-    }
+    #icon-belt svg { width: 40px; height: 40px; stroke: none; fill: var(--primary-sage); }
 
     /* ——— Type scale ——— */
-    h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.6rem + 1.5vw, 2.4rem); color: var(--forest-shadow); margin: 0 0 4px 0; }
+    h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.6rem + 1.5vw, 2.4rem); color: var(--forest-shadow); margin: 0 0 2px 0; }
     h2.rubric { font-family: var(--font-body); font-size: clamp(1rem, 0.9rem + 0.5vw, 1.1rem); font-weight: 500; color: var(--secondary-sage); margin: 0; line-height: 1.5; }
 
     /* ——— Buttons ——— */
@@ -116,168 +110,216 @@
     .activity-btn.secondary { background-color: transparent; color: var(--primary-sage); border-color: var(--tertiary-sage); }
     .activity-btn.secondary:hover { background-color: var(--hover-sage); }
 
-    .linking-controls {
-      grid-column: 1 / -1; display: flex; gap: 12px; justify-content: center; align-items: center;
-      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-sage);
-    }
+    .linking-controls { grid-column: 1 / -1; display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-sage); }
+
+    /* ——— Screen nav ——— */
+    .screen-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .screen-dots { display: flex; gap: 8px; align-items: center; }
+    .screen-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tertiary-sage); opacity: 0.6; border: 2px solid var(--border-sage); }
+    .screen-dot[aria-current="true"] { opacity: 1; background: var(--primary-sage); }
 
     /* ——— Matching Activity Styles ——— */
     .slide-content-wrapper { display: flex; flex-direction: column; min-height: 420px; }
-    .linking-container {
-      display: grid;
-      grid-template-columns: 1fr; /* Default to single column */
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    
+    .linking-container { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
     .link-column { display: flex; flex-direction: column; gap: 12px; }
-    .linking-item {
-      background-color: var(--warm-cream);
-      border-radius: var(--radius-md);
-      display: flex; align-items: center;
-      border: 2px solid var(--border-sage);
-      min-height: 56px; padding: 10px 16px;
-      cursor: pointer;
-      transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .linking-item-text {
-      flex-grow: 1; text-align: left;
-      pointer-events: none; user-select: none; -webkit-user-select: none;
-      color: var(--forest-shadow); font-weight: 600;
-      font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
-    }
-    
-    /* Active state for the first item clicked in a pair */
-    .linking-item.linking-active {
-      border-color: var(--primary-sage);
-      box-shadow: 0 0 0 3px var(--hover-sage);
-    }
-    
-    /* === KEY CHANGE: Color classes for matching === */
-    .linking-item.match-color-1 { background-color: var(--match-color-1-bg); border-color: var(--match-color-1-border); }
-    .linking-item.match-color-2 { background-color: var(--match-color-2-bg); border-color: var(--match-color-2-border); }
-    .linking-item.match-color-3 { background-color: var(--match-color-3-bg); border-color: var(--match-color-3-border); }
-    .linking-item.match-color-4 { background-color: var(--match-color-4-bg); border-color: var(--match-color-4-border); }
+    .linking-item { position: relative; background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; border: 2px solid var(--border-sage); min-height: 56px; padding: 10px 16px; cursor: pointer; transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, transform 80ms ease-in-out; -webkit-tap-highlight-color: transparent; }
+    .linking-item:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+    .linking-item-text { flex-grow: 1; text-align: left; pointer-events: none; user-select: none; -webkit-user-select: none; color: var(--forest-shadow); font-weight: 600; font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem); }
+
+    /* Active state */
+    .linking-item.linking-active { border-color: var(--primary-sage); box-shadow: 0 0 0 3px var(--hover-sage); }
+
+    /* === Colorblind-friendly pair styles (color + pattern + letter badge) === */
+    .match-1 { background-color: var(--match-1-bg); border-color: var(--match-1-border); background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
+    .match-2 { background-color: var(--match-2-bg); border-color: var(--match-2-border); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
+    .match-3 { background-color: var(--match-3-bg); border-color: var(--match-3-border); background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
+    .match-4 { background-color: var(--match-4-bg); border-color: var(--match-4-border); background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 6px, transparent 6px, transparent 12px); }
+
+    .pair-badge { position: absolute; right: 8px; top: 8px; font-weight: 800; font-size: 0.85rem; line-height: 1; padding: 2px 6px; border-radius: 8px; background: rgba(0,0,0,0.08); color: #1f1f1f; }
 
     /* ——— Feedback Sidebar Styles ——— */
-    #feedback-sidebar-container { 
-        padding: 24px; 
-        box-shadow: -4px 0 16px rgba(0,0,0,0.1); 
-        background: white; 
-        position: fixed; 
-        top: 0; 
-        right: -400px; 
-        width: 100%;
-        max-width: 380px;
-        height: 100%; 
-        transition: right 0.4s ease;
-        z-index: 100;
-    }
-    .feedback-header {
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-sage);
-    }
-    #feedback-details {
-      overflow-y: auto;
-      height: calc(100% - 150px);
-    }
-    .feedback-footer {
-      text-align: center; 
-      padding-top: 20px;
-    }
-     .feedback-detail-item {
-      border-left: 4px solid var(--incorrect-border);
-      padding: 12px;
-      margin-bottom: 12px;
-      background-color: #fafafa;
-    }
-    .feedback-detail-item.correct {
-      border-left-color: var(--correct-border);
-    }
-
+    #feedback-sidebar-container { padding: 24px; box-shadow: -4px 0 16px rgba(0,0,0,0.1); background: white; position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; transition: right 0.4s ease; z-index: 100; }
+    .feedback-header { padding-bottom: 12px; border-bottom: 1px solid var(--border-sage); }
+    #feedback-details { overflow-y: auto; height: calc(100% - 150px); }
+    .feedback-footer { text-align: center; padding-top: 20px; }
+    .feedback-detail-item { border-left: 4px solid var(--incorrect-border); padding: 12px; margin-bottom: 12px; background-color: #fafafa; }
+    .feedback-detail-item.correct { border-left-color: var(--correct-border); }
 
     /* ——— Desktop Layout ——— */
     @media (min-width: 600px) {
-      .linking-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-      }
+      .linking-container { grid-template-columns: 1fr 1fr; gap: 24px; }
     }
 
     /* ——— Mobile Layout ——— */
     @media (max-width: 600px) {
       #app-wrapper { padding: var(--space-4); }
-      #activity-container { padding: var(--space-8); }
+      .activity-container { padding: var(--space-8); }
       .link-column.left { margin-bottom: var(--space-8); }
     }
+
+    /* ——— Animations (click pulse + sparkles) ——— */
+    @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(122,132,113,0.25); } 100% { box-shadow: 0 0 0 18px rgba(122,132,113,0); } }
+    .click-pulse { animation: pulseRing 600ms ease-out; }
+
+    .sparkle { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.85; pointer-events: none; }
+    @keyframes sparklePop { from { transform: translate(var(--sx), var(--sy)) scale(0.3); opacity: 0.9; } to { transform: translate(calc(var(--sx) * 2.2), calc(var(--sy) * 2.2)) scale(0); opacity: 0; } }
+    .sparkle { animation: sparklePop 500ms ease-out forwards; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .click-pulse { animation: none; }
+      .sparkle { display: none; }
+      .linking-item { transition: none; }
+      #feedback-sidebar-container { transition: none; }
+    }
+
+    /* Visually hidden utility */
+    .sr-only { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
+    /* Screen switching */
+    .screen { display: none; }
+    .screen[aria-hidden="false"] { display: block; }
   </style>
 </head>
 <body>
 
 <div id="app-wrapper">
-  <div id="activity-container"
-       data-unique-pairs="true"
-       data-answer-key='[
-          {"start": "L1", "end": "R3"},
-          {"start": "L2", "end": "R1"},
-          {"start": "L3", "end": "R2"}
-       ]'>
-
+  <div class="activity-container">
     <div id="activity-header">
       <div id="activity-titles">
         <h1>Getting Personal Details</h1>
         <h2 class="rubric">Match the question with the correct answer.</h2>
       </div>
     </div>
-    
-    <!-- ================================================================== -->
-    <!-- COMPLETE OVERHAUL: Image is now a direct HTML tag, no JS needed. -->
-    <!-- ================================================================== -->
-    <div id="decorative-image-container" aria-hidden="true">
-        <img src="https://najma-collective.github.io/Noor-Community-/A1/A1.2/Images/A1-2-2.svg" alt="Two people having a conversation">
+
+    <!-- Icon belt using GitHub Octicons (MIT) -->
+    <div id="icon-belt" aria-hidden="true">
+      <!-- person -->
+      <svg viewBox="0 0 24 24" role="img" aria-label="person icon"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"></path></svg>
+      <!-- globe -->
+      <svg viewBox="0 0 24 24" role="img" aria-label="globe icon"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm6.93 6h-3.246a14.726 14.726 0 0 0-1.23-3.382A8.037 8.037 0 0 1 18.93 8ZM12 4c.943 0 2.372 1.71 3.074 4H8.926C9.628 5.71 11.057 4 12 4ZM7.546 10a15.9 15.9 0 0 0 0 4H4.34a7.988 7.988 0 0 1 0-4Zm.38 6h8.148c-.702 2.29-2.131 4-3.074 4s-2.372-1.71-3.074-4Zm8.528-2a15.9 15.9 0 0 0 0-4h3.206a7.988 7.988 0 0 1 0 4Zm-9.528-8A14.726 14.726 0 0 0 8.926 8H5.68A8.037 8.037 0 0 1 6.926 6ZM5.07 16h3.246a14.726 14.726 0 0 0 1.23 3.382A8.037 8.037 0 0 1 5.07 16Z"></path></svg>
+      <!-- mail -->
+      <svg viewBox="0 0 24 24" role="img" aria-label="mail icon"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2v.01L12 13 4 6.01V6h16ZM4 18V8.236l7.4 6.29a1 1 0 0 0 1.2 0L20 8.236V18H4Z"></path></svg>
     </div>
 
-    <div class="slide-content-wrapper">
-      <div class="linking-container">
-        <!-- Left Column: Questions -->
-        <div class="link-column left">
-          <div class="linking-item" data-link-id="L1" data-explanation="We use 'What's your name?' to ask for a person's name." role="button" tabindex="0">
-            <div class="linking-item-text">What's your name?</div>
-          </div>
-          <div class="linking-item" data-link-id="L2" data-explanation="We use 'Where are you from?' to ask for a place, like a country or city." role="button" tabindex="0">
-            <div class="linking-item-text">Where are you from?</div>
-          </div>
-          <div class="linking-item" data-link-id="L3" data-explanation="We use 'What's your email address?' to ask for an email, which always has an '@' symbol." role="button" tabindex="0">
-            <div class="linking-item-text">What's your email address?</div>
-          </div>
-        </div>
+    <!-- Screen navigation -->
+    <div class="screen-nav" aria-label="Screens">
+      <button id="prev-screen" class="activity-btn secondary" aria-label="Previous screen">Prev</button>
+      <div class="screen-dots" role="tablist" aria-label="Screen selector">
+        <button class="screen-dot" role="tab" aria-controls="screen-1" aria-selected="true" aria-current="true"></button>
+        <button class="screen-dot" role="tab" aria-controls="screen-2" aria-selected="false"></button>
+        <button class="screen-dot" role="tab" aria-controls="screen-3" aria-selected="false"></button>
+        <button class="screen-dot" role="tab" aria-controls="screen-4" aria-selected="false"></button>
+      </div>
+      <button id="next-screen" class="activity-btn secondary" aria-label="Next screen">Next</button>
+    </div>
 
-        <!-- Right Column: Answers -->
-        <div class="link-column right">
-          <div class="linking-item" data-link-id="R1" role="button" tabindex="0">
-            <div class="linking-item-text">Egypt</div>
-          </div>
-          <div class="linking-item" data-link-id="R2" role="button" tabindex="0">
-            <div class="linking-item-text">yousef11@email.com</div>
-          </div>
-          <div class="linking-item" data-link-id="R3" role="button" tabindex="0">
-            <div class="linking-item-text">Yousef</div>
-          </div>
-        </div>
+    <!-- ===== Screens (4 total) ===== -->
 
-        <!-- Controls -->
-        <div class="linking-controls">
-          <button id="undo-btn" class="activity-btn secondary" aria-label="Undo last match">Undo</button>
-          <button id="reset-btn" class="activity-btn secondary">Reset</button>
-          <button id="check-answers-btn" class="activity-btn">Check</button>
+    <!-- Screen 1 -->
+    <section id="screen-1" class="screen" aria-hidden="false">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <!-- Left Column -->
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="Use 'What's your name?' to ask for a person's name." role="button" tabindex="0">
+              <div class="linking-item-text">What's your name?</div>
+            </div>
+            <div class="linking-item" data-link-id="L2" data-explanation="Use 'Where are you from?' to ask for a country or city." role="button" tabindex="0">
+              <div class="linking-item-text">Where are you from?</div>
+            </div>
+            <div class="linking-item" data-link-id="L3" data-explanation="Use 'What's your email address?' to ask for an email with an '@' symbol." role="button" tabindex="0">
+              <div class="linking-item-text">What's your email address?</div>
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Egypt</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">yousef11@email.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Yousef</div></div>
+          </div>
+          <!-- Controls -->
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Screen 2 -->
+    <section id="screen-2" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="Ask 'What's your name?' for a person's first name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="Ask 'Where are you from?' to learn a country or city." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="Ask 'What's your email address?' for an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Brazil</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">aisha88@mail.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Aisha</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3 -->
+    <section id="screen-3" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="'What's your name?' prompts a given name." role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="'What's your email address?' requests an email contact." role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Italy</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">luca.s@outlook.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Luca</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 4 -->
+    <section id="screen-4" class="screen" aria-hidden="true">
+      <div class="slide-content-wrapper">
+        <div class="linking-container">
+          <div class="link-column left">
+            <div class="linking-item" data-link-id="L1" data-explanation="Ask for a given name with 'What's your name?'" role="button" tabindex="0"><div class="linking-item-text">What's your name?</div></div>
+            <div class="linking-item" data-link-id="L2" data-explanation="'Where are you from?' asks for a place of origin." role="button" tabindex="0"><div class="linking-item-text">Where are you from?</div></div>
+            <div class="linking-item" data-link-id="L3" data-explanation="Ask for an email address using 'What's your email address?'" role="button" tabindex="0"><div class="linking-item-text">What's your email address?</div></div>
+          </div>
+          <div class="link-column right">
+            <div class="linking-item" data-link-id="R1" role="button" tabindex="0"><div class="linking-item-text">Japan</div></div>
+            <div class="linking-item" data-link-id="R2" role="button" tabindex="0"><div class="linking-item-text">hana_mori@gmail.com</div></div>
+            <div class="linking-item" data-link-id="R3" role="button" tabindex="0"><div class="linking-item-text">Hana</div></div>
+          </div>
+          <div class="linking-controls">
+            <button class="undo-btn activity-btn secondary" aria-label="Undo last match">Undo</button>
+            <button class="reset-btn activity-btn secondary">Reset</button>
+            <button class="check-btn activity-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <div id="feedback-sidebar" aria-live="polite"></div>
-  <div id="sr-announcer" aria-live="polite" class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"></div>
+  <div id="sr-announcer" aria-live="polite" class="sr-only"></div>
 </div>
 
 <!-- JAVASCRIPT -->
@@ -285,259 +327,281 @@
 /* App bootstrap */
 const App = {
   init() {
-    // ImageFetcher.init(); // REMOVED - No longer needed
     FeedbackPanel.init();
-    StandaloneMatchingActivity.init();
+    ScreenManager.init();
   }
 };
 
-/* ================================================================== */
-/* COMPLETE OVERHAUL: The entire ImageFetcher object has been deleted. */
-/* ================================================================== */
-
+/* Feedback panel (shared) */
 const FeedbackPanel = {
   dom: {},
-
   init() {
-      const sidebarContainer = document.getElementById('feedback-sidebar');
-      if (!sidebarContainer) return;
-      
-      sidebarContainer.innerHTML = `
-          <div id="feedback-sidebar-container">
-              <div class="feedback-header">
-                <h3>Your Results</h3>
-                <p id="feedback-score"></p>
-              </div>
-              <div id="feedback-details"></div>
-              <div class="feedback-footer">
-                <button id="feedback-close-btn" class="activity-btn secondary">Try Again</button>
-              </div>
-          </div>`;
-      
-      this.dom = {
-          container: document.getElementById('feedback-sidebar-container'),
-          score: document.getElementById('feedback-score'),
-          details: document.getElementById('feedback-details'),
-      };
+    const sidebarContainer = document.getElementById('feedback-sidebar');
+    if (!sidebarContainer) return;
+    sidebarContainer.innerHTML = `
+      <div id="feedback-sidebar-container">
+        <div class="feedback-header">
+          <h3>Your Results</h3>
+          <p id="feedback-score"></p>
+        </div>
+        <div id="feedback-details"></div>
+        <div class="feedback-footer">
+          <button id="feedback-close-btn" class="activity-btn secondary">Try Again</button>
+        </div>
+      </div>`;
 
-      document.getElementById('feedback-close-btn').addEventListener('click', () => {
-          this.hide();
-          StandaloneMatchingActivity.resetActivity();
-      });
+    this.dom = {
+      container: document.getElementById('feedback-sidebar-container'),
+      score: document.getElementById('feedback-score'),
+      details: document.getElementById('feedback-details'),
+    };
+
+    document.getElementById('feedback-close-btn').addEventListener('click', () => {
+      this.hide();
+      const current = ScreenManager.currentActivity();
+      if (current) current.resetActivity();
+    });
   },
-
-  clear() { 
-      if (this.dom.details) this.dom.details.innerHTML = ''; 
-  },
-
+  clear() { if (this.dom.details) this.dom.details.innerHTML = ''; },
   addDetail(data) {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = `feedback-detail-item ${data.isCorrect ? 'correct' : ''}`;
-      itemDiv.style.marginBottom = '12px';
-
-      itemDiv.innerHTML = `
-          <h4>${data.itemName}</h4>
-          <p><strong>Your Answer:</strong> ${data.studentAnswer}</p>
-          ${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}
-          <p><small>${data.explanation}</small></p>`;
-      
-      if (this.dom.details) this.dom.details.appendChild(itemDiv);
+    const itemDiv = document.createElement('div');
+    itemDiv.className = `feedback-detail-item ${data.isCorrect ? 'correct' : ''}`;
+    itemDiv.style.marginBottom = '12px';
+    itemDiv.innerHTML = `
+      <h4>${data.itemName}</h4>
+      <p><strong>Your Answer:</strong> ${data.studentAnswer}</p>
+      ${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}
+      <p><small>${data.explanation}</small></p>`;
+    if (this.dom.details) this.dom.details.appendChild(itemDiv);
   },
-
   show(score, total) {
-      if (!this.dom.container || !this.dom.score) return;
-      this.dom.score.textContent = `You scored ${score} out of ${total}.`;
-      this.dom.container.style.right = '0';
-      document.body.classList.add('feedback-open');
+    if (!this.dom.container || !this.dom.score) return;
+    this.dom.score.textContent = `You scored ${score} out of ${total}.`;
+    this.dom.container.style.right = '0';
+    document.body.classList.add('feedback-open');
   },
-
   hide() {
-      if (!this.dom.container) return;
-      this.dom.container.style.right = '-400px';
-      document.body.classList.remove('feedback-open');
+    if (!this.dom.container) return;
+    this.dom.container.style.right = '-400px';
+    document.body.classList.remove('feedback-open');
   }
 };
 
+/* Utility: click animations (pulse + sparkles) */
+function animateClick(el) {
+  el.classList.remove('click-pulse');
+  void el.offsetWidth; // restart animation
+  el.classList.add('click-pulse');
 
-/* Matching Activity Logic (unchanged) */
-const StandaloneMatchingActivity = {
-  state: {},
-  colorClasses: ['match-color-1', 'match-color-2', 'match-color-3', 'match-color-4'],
-  
-  init() {
-    const slideElement = document.getElementById('activity-container');
-    if (!slideElement) return;
-    
-    this.state = {
-      slideElement,
-      studentPairs: [],
-      activeItem: null,
-    };
-    this.bindEvents();
-    this.loadState();
-  },
+  // sparkles
+  const rect = el.getBoundingClientRect();
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.className = 'sparkle';
+    const angle = (Math.PI * 2 * i) / count;
+    s.style.setProperty('--sx', Math.cos(angle) * 10 + 'px');
+    s.style.setProperty('--sy', Math.sin(angle) * 10 + 'px');
+    s.style.left = (rect.width / 2 - 3) + 'px';
+    s.style.top = (rect.height / 2 - 3) + 'px';
+    el.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+  }
+}
 
-  bindEvents() {
-    const { slideElement } = this.state;
-    slideElement.querySelectorAll('.linking-item').forEach(item => {
-      item.addEventListener('click', () => this.onItemClick(item));
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.onItemClick(item);
-        }
-      });
-    });
+/* Matching activity factory (per screen) */
+function createMatchingActivity(rootEl, idx) {
+  const colorClasses = ['match-1', 'match-2', 'match-3', 'match-4'];
+  const badgeLetters = ['A','B','C','D'];
+  const storageKey = `matching-studentPairs-${idx}`;
+  const uniquePairsOnly = true; // same behaviour as original
 
-    slideElement.querySelector('#check-answers-btn').addEventListener('click', () => this.checkAnswers());
-    slideElement.querySelector('#reset-btn').addEventListener('click', () => this.resetActivity());
-    slideElement.querySelector('#undo-btn').addEventListener('click', () => this.undo());
-  },
-  
-  onItemClick(clickedItem) {
-    const clickedId = clickedItem.dataset.linkId;
-    const existingPair = this.state.studentPairs.find(p => p.startId === clickedId || p.endId === clickedId);
+  const state = {
+    rootEl,
+    studentPairs: [],
+    activeItem: null,
+  };
 
-    if (existingPair) {
-      this.removePair(existingPair);
-      if (this.state.activeItem) {
-        this.state.activeItem.classList.remove('linking-active');
-        this.state.activeItem = null;
+  function saveState() { sessionStorage.setItem(storageKey, JSON.stringify(state.studentPairs)); }
+  function loadState() {
+    try {
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        state.studentPairs = JSON.parse(saved);
+        state.studentPairs.forEach(({ startId, endId, colorClass, badge }) => {
+          const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
+          const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
+          if (startEl) applyPairStyle(startEl, colorClass, badge);
+          if (endEl) applyPairStyle(endEl, colorClass, badge);
+        });
       }
-      return;
+    } catch(e) { console.error('Could not load saved state.', e); }
+  }
+
+  function applyPairStyle(el, colorClass, badge) {
+    el.classList.add(colorClass);
+    if (!el.querySelector('.pair-badge')) {
+      const b = document.createElement('span');
+      b.className = 'pair-badge';
+      b.textContent = badge;
+      b.setAttribute('aria-hidden','true');
+      el.appendChild(b);
     }
+    el.setAttribute('data-pair-badge', badge);
+  }
+  function clearPairStyle(el, colorClass) {
+    el.classList.remove(colorClass, 'linking-active');
+    const b = el.querySelector('.pair-badge');
+    if (b) b.remove();
+    el.removeAttribute('data-pair-badge');
+  }
 
-    if (!this.state.activeItem) {
-      this.state.activeItem = clickedItem;
-      clickedItem.classList.add('linking-active');
-      return;
-    }
+  function removePair(pairToRemove) {
+    const { startId, endId, colorClass } = pairToRemove;
+    const startEl = rootEl.querySelector(`[data-link-id="${startId}"]`);
+    const endEl = rootEl.querySelector(`[data-link-id="${endId}"]`);
+    if (startEl) clearPairStyle(startEl, colorClass);
+    if (endEl) clearPairStyle(endEl, colorClass);
+    state.studentPairs = state.studentPairs.filter(p => p.colorClass !== colorClass);
+    saveState();
+  }
 
-    const activeId = this.state.activeItem.dataset.linkId;
-    const activeColumn = this.state.activeItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
-    const clickedColumn = clickedItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
-
-    if (activeId === clickedId) {
-      this.state.activeItem.classList.remove('linking-active');
-      this.state.activeItem = null;
-    } else if (activeColumn !== clickedColumn) {
-      this.createPair(this.state.activeItem, clickedItem);
-      this.state.activeItem.classList.remove('linking-active');
-      this.state.activeItem = null;
-    } else {
-      this.state.activeItem.classList.remove('linking-active');
-      this.state.activeItem = clickedItem;
-      clickedItem.classList.add('linking-active');
-    }
-  },
-
-  createPair(item1, item2) {
-    const usedColors = this.state.studentPairs.map(p => p.colorClass);
-    const nextColor = this.colorClasses.find(c => !usedColors.includes(c));
+  function createPair(item1, item2) {
+    const usedColors = state.studentPairs.map(p => p.colorClass);
+    const nextColor = colorClasses.find(c => !usedColors.includes(c));
     if (!nextColor) return;
+    const badge = badgeLetters[state.studentPairs.length] || '?';
 
     const leftItem = item1.closest('.link-column').classList.contains('left') ? item1 : item2;
     const rightItem = item1 === leftItem ? item2 : item1;
 
-    const newPair = {
-      startId: leftItem.dataset.linkId,
-      endId: rightItem.dataset.linkId,
-      colorClass: nextColor
-    };
+    const newPair = { startId: leftItem.dataset.linkId, endId: rightItem.dataset.linkId, colorClass: nextColor, badge };
+    state.studentPairs.push(newPair);
+    applyPairStyle(leftItem, nextColor, badge);
+    applyPairStyle(rightItem, nextColor, badge);
+    saveState();
+  }
 
-    this.state.studentPairs.push(newPair);
-    leftItem.classList.add(nextColor);
-    rightItem.classList.add(nextColor);
-    this.saveState();
-  },
+  function onItemClick(clickedItem) {
+    animateClick(clickedItem);
+    const clickedId = clickedItem.dataset.linkId;
+    const existingPair = state.studentPairs.find(p => p.startId === clickedId || p.endId === clickedId);
 
-  removePair(pairToRemove) {
-    const { startId, endId, colorClass } = pairToRemove;
-    const startEl = this.state.slideElement.querySelector(`[data-link-id="${startId}"]`);
-    const endEl = this.state.slideElement.querySelector(`[data-link-id="${endId}"]`);
-
-    if (startEl) startEl.classList.remove(colorClass, 'linking-active');
-    if (endEl) endEl.classList.remove(colorClass, 'linking-active');
-    
-    this.state.studentPairs = this.state.studentPairs.filter(p => p.colorClass !== colorClass);
-    this.saveState();
-  },
-
-  saveState() {
-    sessionStorage.setItem('matching-studentPairs', JSON.stringify(this.state.studentPairs));
-  },
-  
-  loadState() {
-    try {
-      const saved = sessionStorage.getItem('matching-studentPairs');
-      if (saved) {
-        this.state.studentPairs = JSON.parse(saved);
-        this.state.studentPairs.forEach(({ startId, endId, colorClass }) => {
-          const startEl = this.state.slideElement.querySelector(`[data-link-id="${startId}"]`);
-          const endEl = this.state.slideElement.querySelector(`[data-link-id="${endId}"]`);
-          if (startEl) startEl.classList.add(colorClass);
-          if (endEl) endEl.classList.add(colorClass);
-        });
-      }
-    } catch(e) {
-      console.error("Could not load saved state.", e);
+    if (existingPair) {
+      removePair(existingPair);
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+      return;
     }
-  },
 
-  checkAnswers() {
-    const answerKey = JSON.parse(this.state.slideElement.dataset.answerKey || '[]');
-    if (answerKey.length === 0) return;
+    if (!state.activeItem) { state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); return; }
 
-    const studentMap = new Map(this.state.studentPairs.map(p => [p.startId, p.endId]));
+    const activeId = state.activeItem.dataset.linkId;
+    const activeColumn = state.activeItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
+    const clickedColumn = clickedItem.closest('.link-column').classList.contains('left') ? 'left' : 'right';
+
+    if (activeId === clickedId) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+    else if (activeColumn !== clickedColumn) { createPair(state.activeItem, clickedItem); state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+    else { state.activeItem.classList.remove('linking-active'); state.activeItem = clickedItem; clickedItem.classList.add('linking-active'); }
+  }
+
+  function bindEvents() {
+    rootEl.querySelectorAll('.linking-item').forEach(item => {
+      item.addEventListener('click', () => onItemClick(item));
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onItemClick(item); }
+      });
+    });
+
+    rootEl.querySelector('.check-btn').addEventListener('click', () => checkAnswers());
+    rootEl.querySelector('.reset-btn').addEventListener('click', () => api.resetActivity());
+    rootEl.querySelector('.undo-btn').addEventListener('click', () => api.undo());
+  }
+
+  function checkAnswers() {
+    const answerKey = [ {start: 'L1', end: 'R3'}, {start: 'L2', end: 'R1'}, {start: 'L3', end: 'R2'} ]; // same structure each screen
+    const studentMap = new Map(state.studentPairs.map(p => [p.startId, p.endId]));
     const correctMap = new Map(answerKey.map(link => [link.start, link.end]));
     let score = 0;
     FeedbackPanel.clear();
 
-    this.state.slideElement.querySelectorAll('.link-column.left .linking-item').forEach(leftItem => {
+    rootEl.querySelectorAll('.link-column.left .linking-item').forEach(leftItem => {
       const leftId = leftItem.dataset.linkId;
       const studentLinkedId = studentMap.get(leftId);
       const correctLinkedId = correctMap.get(leftId);
       const isCorrect = studentLinkedId === correctLinkedId;
       if (isCorrect) score++;
 
+      const getText = id => id ? rootEl.querySelector(`[data-link-id="${id}"] .linking-item-text`).textContent : 'Not Answered';
       FeedbackPanel.addDetail({
         isCorrect,
         itemName: leftItem.querySelector('.linking-item-text').textContent,
-        studentAnswer: studentLinkedId ? this.state.slideElement.querySelector(`[data-link-id="${studentLinkedId}"] .linking-item-text`).textContent : 'Not Answered',
-        correctAnswer: correctLinkedId ? this.state.slideElement.querySelector(`[data-link-id="${correctLinkedId}"] .linking-item-text`).textContent : 'N/A',
+        studentAnswer: getText(studentLinkedId),
+        correctAnswer: getText(correctLinkedId),
         explanation: leftItem.dataset.explanation || ''
       });
     });
-    FeedbackPanel.show(score, answerKey.length);
-    document.getElementById('check-answers-btn').disabled = true;
-  },
 
-  resetActivity() {
-    if (this.state.activeItem) {
-      this.state.activeItem.classList.remove('linking-active');
-      this.state.activeItem = null;
-    }
-    
-    const pairsToRemove = [...this.state.studentPairs];
-    pairsToRemove.forEach(pair => this.removePair(pair));
-
-    this.state.studentPairs = [];
-    sessionStorage.removeItem('matching-studentPairs');
-    document.getElementById('check-answers-btn').disabled = false;
-    FeedbackPanel.hide();
-  },
-
-  undo() {
-    if (this.state.activeItem) {
-        this.state.activeItem.classList.remove('linking-active');
-        this.state.activeItem = null;
-        return;
-    }
-    const lastPair = this.state.studentPairs[this.state.studentPairs.length - 1];
-    if (lastPair) {
-      this.removePair(lastPair);
-    }
+    FeedbackPanel.show(score, 3);
+    rootEl.querySelector('.check-btn').disabled = true;
   }
+
+  const api = {
+    resetActivity() {
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; }
+      const pairsToRemove = [...state.studentPairs];
+      pairsToRemove.forEach(pair => removePair(pair));
+      state.studentPairs = [];
+      sessionStorage.removeItem(storageKey);
+      rootEl.querySelector('.check-btn').disabled = false;
+      FeedbackPanel.hide();
+    },
+    undo() {
+      if (state.activeItem) { state.activeItem.classList.remove('linking-active'); state.activeItem = null; return; }
+      const lastPair = state.studentPairs[state.studentPairs.length - 1];
+      if (lastPair) removePair(lastPair);
+    }
+  };
+
+  bindEvents();
+  loadState();
+  return api;
+}
+
+/* Screen manager */
+const ScreenManager = {
+  index: 0,
+  screens: [],
+  activities: [],
+  dots: [],
+  init() {
+    this.screens = Array.from(document.querySelectorAll('.screen'));
+    this.activities = this.screens.map((s, i) => createMatchingActivity(s, i));
+    this.dots = Array.from(document.querySelectorAll('.screen-dot'));
+    document.getElementById('prev-screen').addEventListener('click', () => this.go(this.index - 1));
+    document.getElementById('next-screen').addEventListener('click', () => this.go(this.index + 1));
+    this.dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => this.go(i));
+      dot.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.go(i); }});
+    });
+    this.update();
+  },
+  go(i) {
+    const max = this.screens.length - 1;
+    this.index = Math.max(0, Math.min(max, i));
+    this.update();
+  },
+  update() {
+    this.screens.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== this.index)));
+    this.dots.forEach((d, i) => {
+      d.setAttribute('aria-current', String(i === this.index));
+      d.setAttribute('aria-selected', String(i === this.index));
+    });
+    // Ensure the current screen is focusable for SR context
+    const current = this.screens[this.index];
+    current.setAttribute('tabindex','-1');
+    current.focus({preventScroll:true});
+  },
+  currentActivity() { return this.activities[this.index]; }
 };
 
 window.addEventListener('DOMContentLoaded', () => App.init());
