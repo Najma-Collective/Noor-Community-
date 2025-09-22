@@ -1,6 +1,3 @@
-Here’s the full, self-contained page with both fixes applied (working click-to-connect and a keyless Unsplash image loader). No omissions.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,7 +145,7 @@ Here’s the full, self-contained page with both fixes applied (working click-to
     .linking-item { background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; position: relative; border: 1px solid var(--border-sage); min-height: 56px; box-shadow: 0 2px 8px rgba(122, 132, 113, 0.05); }
     .linking-item-text { padding: 12px 16px; flex-grow: 1; text-align: center; pointer-events: none; user-select: none; -webkit-user-select: none; color: var(--forest-shadow); font-weight: 600; }
 
-    /* Connectors are real buttons for a11y */
+    /* Connectors: real buttons for a11y */
     .linking-item-connector {
       --size: 28px; --halo: 12px;
       width: var(--size); height: var(--size); border-radius: 50%;
@@ -375,6 +372,7 @@ const StandaloneLinkingActivity = {
       startPoint: null,
       currentLine: null,
       pointerId: null,
+      dragging: false,
       resizeObserver: new ResizeObserver(() => this.resizeCanvas()),
       dpr: Math.max(1, window.devicePixelRatio || 1)
     };
@@ -419,6 +417,7 @@ const StandaloneLinkingActivity = {
     root.querySelector('#reset-btn').addEventListener('click', () => this.resetActivity());
     root.querySelector('#undo-btn').addEventListener('click', () => this.undo());
 
+    // Keyboard a11y: Enter/Space = start/end
     root.querySelectorAll('.linking-item-connector').forEach(btn => {
       btn.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -427,6 +426,7 @@ const StandaloneLinkingActivity = {
             this.startLinkFrom(btn.closest('.linking-item'));
           } else {
             this.tryCreateLinkTo(btn.closest('.linking-item'));
+            this.finishLinkGesture();
           }
         }
       });
@@ -435,39 +435,78 @@ const StandaloneLinkingActivity = {
   onPointerDown(e) {
     const connector = e.target.closest('.linking-item-connector');
     if (!connector) return;
+    const item = connector.closest('.linking-item');
+
+    // Click→click support: if already linking, a press on the opposite column completes immediately.
+    if (this.state.isLinking) {
+      const startParent = this.state.startPoint.parentElement;
+      const endParent = item.parentElement;
+      if (startParent !== endParent) {
+        this.tryCreateLinkTo(item);
+        this.finishLinkGesture();
+        e.preventDefault();
+        return;
+      }
+      // Same column: restart from this item (lets users change their start node).
+      this.startLinkFrom(item);
+      e.preventDefault();
+      return;
+    }
+
+    // Begin a new gesture (drag or click→click)
     this.state.pointerId = e.pointerId;
-    // No pointer capture; we will hit-test on pointerup for robust end-target detection.
-    this.startLinkFrom(connector.closest('.linking-item'));
+    this.startLinkFrom(item);
     e.preventDefault();
   },
   onPointerMove(e) {
-    if (!this.state.isLinking || e.pointerId !== this.state.pointerId) return;
+    if (!this.state.isLinking || (this.state.pointerId !== null && e.pointerId !== this.state.pointerId)) return;
     const startPos = this.getPointPos(this.state.startPoint.querySelector('.linking-item-connector'));
     const canvasRect = this.state.canvas.getBoundingClientRect();
-    this.state.currentLine = { start: startPos, end: { x: e.clientX - canvasRect.left, y: e.clientY - canvasRect.top } };
+    const endX = e.clientX - canvasRect.left;
+    const endY = e.clientY - canvasRect.top;
+    this.state.currentLine = { start: startPos, end: { x: endX, y: endY } };
+    this.state.dragging = true;
     this.redrawLines();
     e.preventDefault();
   },
   onPointerUp(e) {
-    if (!this.state.isLinking || e.pointerId !== this.state.pointerId) return;
-    // Robustly detect the element under the pointer when released.
+    if (!this.state.isLinking || (this.state.pointerId !== null && e.pointerId !== this.state.pointerId)) return;
+
     const endConnector = document.elementFromPoint(e.clientX, e.clientY)?.closest('.linking-item-connector');
     if (endConnector) {
       const endPoint = endConnector.closest('.linking-item');
-      this.tryCreateLinkTo(endPoint);
+      // If different column, complete link; if same column, treat as restart onPointerDown next time.
+      const startParent = this.state.startPoint.parentElement;
+      const endParent = endPoint.parentElement;
+      if (startParent !== endParent) {
+        this.tryCreateLinkTo(endPoint);
+        this.finishLinkGesture();
+        return;
+      }
     }
-    this.finishLinkGesture();
+
+    // If user dragged and let go off-target, cancel. If it was just a tap (no drag), keep start active for click→click.
+    if (this.state.dragging) {
+      this.finishLinkGesture();
+    } else {
+      // Keep linking state, clear transient pointer tracking.
+      this.state.pointerId = null;
+      this.state.currentLine = null;
+      this.redrawLines();
+    }
   },
   startLinkFrom(itemEl) {
     this.state.isLinking = true;
     this.state.startPoint = itemEl;
     this.state.currentLine = null;
+    this.state.dragging = false;
   },
   tryCreateLinkTo(endPoint) {
     if (!endPoint || endPoint === this.state.startPoint) return;
     const startParent = this.state.startPoint.parentElement;
     const endParent = endPoint.parentElement;
     if (startParent === endParent) return;
+
     const leftItem = startParent.classList.contains('left') ? this.state.startPoint : endPoint;
     const rightItem = startParent.classList.contains('left') ? endPoint : this.state.startPoint;
 
@@ -491,6 +530,7 @@ const StandaloneLinkingActivity = {
     this.state.startPoint = null;
     this.state.currentLine = null;
     this.state.pointerId = null;
+    this.state.dragging = false;
     this.redrawLines();
   },
   showConnectionEffect(connectorElement) {
@@ -582,4 +622,3 @@ window.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>
 </html>
-```
