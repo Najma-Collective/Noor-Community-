@@ -137,7 +137,6 @@
       margin-bottom: 24px;
       overflow: auto;                    /* enables horizontal scroll on small screens */
       -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
-      touch-action: pan-y;               /* allow vertical scroll gestures */
       scrollbar-gutter: stable both-edges;
     }
 
@@ -310,7 +309,7 @@ const ImageFetcher = {
     if (!container) return;
 
     const img = document.createElement('img');
-    img.src = 'https://source.unsplash.com/BNKi4teRVMg/1200x800';
+    img.src = `https://source.unsplash.com/1200x800/?${encodeURIComponent(themeQuery)}`;
     img.alt = `Decorative image related to ${themeQuery}`;
     img.decoding = 'async';
     img.loading = 'lazy';
@@ -638,3 +637,4 @@ window.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>
 </html>
+```
