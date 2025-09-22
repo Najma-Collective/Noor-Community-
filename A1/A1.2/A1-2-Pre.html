@@ -1,3 +1,6 @@
+Here’s the full, self-contained page with both fixes applied (working click-to-connect and a keyless Unsplash image loader). No omissions.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -279,45 +282,34 @@
 
 <!-- JAVASCRIPT -->
 <script>
+/* App bootstrap */
 const App = {
   init() {
-    ImageFetcher.initSingleImage();
+    ImageFetcher.init();
     FeedbackPanel.init();
     StandaloneLinkingActivity.init();
   }
 };
 
+/* Decorative image loader — keyless Unsplash Source endpoint.
+   Uses the specific photo ID you referenced: BNKi4teRVMg */
 const ImageFetcher = {
-  API_KEY: 'xgmzSrq1PBV9ELvW4mSlyq6vAf0k6qDrrMd1zIpLrIheWepQ32zN4iJk', 
-  async initSingleImage() {
+  init() {
     const container = document.getElementById('decorative-image-container');
-    const themeQuery = document.getElementById('activity-container').dataset.queryTheme;
-    if (!container || !themeQuery) return;
-    const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(themeQuery)}&per_page=1&orientation=landscape`;
-    await this.fetchAndApply(url, container, themeQuery);
-  },
-  async fetchAndApply(url, container, queryForAlt) {
-    try {
-      const response = await fetch(url, { headers: { Authorization: this.API_KEY } });
-      if (!response.ok) throw new Error(`Pexels API error: ${response.statusText}`);
-      const data = await response.json();
-      const photo = data.photos?.; // CORRECTED THIS LINE
-      if (photo) {
-        const img = document.createElement('img');
-        img.src = photo.src.landscape;
-        img.alt = photo.alt || `Decorative image related to ${queryForAlt}`;
-        img.decoding = 'async';
-        img.loading = 'lazy';
-        img.onload = () => { container.innerHTML = ''; container.appendChild(img); };
-        img.onerror = () => { container.innerHTML = 'X'; };
-      } else { container.innerHTML = '?'; }
-    } catch (error) {
-      console.error(`Failed to fetch image for "${queryForAlt}":`, error);
-      container.innerHTML = '!';
-    }
+    const themeQuery = document.getElementById('activity-container')?.dataset.queryTheme || 'classroom';
+    if (!container) return;
+
+    const img = document.createElement('img');
+    img.src = 'https://source.unsplash.com/BNKi4teRVMg/1200x800';
+    img.alt = `Decorative image related to ${themeQuery}`;
+    img.decoding = 'async';
+    img.loading = 'lazy';
+    img.onload = () => { container.innerHTML = ''; container.appendChild(img); };
+    img.onerror = () => { container.textContent = '×'; };
   }
 };
 
+/* Feedback sidebar */
 const FeedbackPanel = {
   dom: {},
   init() {
@@ -365,6 +357,7 @@ const FeedbackPanel = {
   }
 };
 
+/* Linking activity */
 const StandaloneLinkingActivity = {
   state: {},
   init() {
@@ -420,6 +413,7 @@ const StandaloneLinkingActivity = {
     root.addEventListener('pointerdown', (e) => this.onPointerDown(e));
     window.addEventListener('pointermove', (e) => this.onPointerMove(e), { passive: false });
     window.addEventListener('pointerup', (e) => this.onPointerUp(e));
+    window.addEventListener('pointercancel', () => this.finishLinkGesture(), { passive: true });
 
     root.querySelector('#check-answers-btn').addEventListener('click', () => this.checkAnswers());
     root.querySelector('#reset-btn').addEventListener('click', () => this.resetActivity());
@@ -442,7 +436,7 @@ const StandaloneLinkingActivity = {
     const connector = e.target.closest('.linking-item-connector');
     if (!connector) return;
     this.state.pointerId = e.pointerId;
-    connector.setPointerCapture?.(e.pointerId);
+    // No pointer capture; we will hit-test on pointerup for robust end-target detection.
     this.startLinkFrom(connector.closest('.linking-item'));
     e.preventDefault();
   },
@@ -456,7 +450,8 @@ const StandaloneLinkingActivity = {
   },
   onPointerUp(e) {
     if (!this.state.isLinking || e.pointerId !== this.state.pointerId) return;
-    const endConnector = e.target.closest('.linking-item-connector');
+    // Robustly detect the element under the pointer when released.
+    const endConnector = document.elementFromPoint(e.clientX, e.clientY)?.closest('.linking-item-connector');
     if (endConnector) {
       const endPoint = endConnector.closest('.linking-item');
       this.tryCreateLinkTo(endPoint);
@@ -587,3 +582,4 @@ window.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>
 </html>
+```
