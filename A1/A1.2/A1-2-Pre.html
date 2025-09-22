@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#7A8471" />
+<title>Standalone Activity: Linking Personal Questions</title>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ——— Theme tokens: warm, organic, stable ——— */
+:root {
+/* Palette */
+--primary-sage: #7A8471;
+--secondary-sage: #9CAF88;
+--tertiary-sage: #B8C5A6;
+--warm-cream: #F8F6F0;
+--soft-white: #FEFCF7;
+--forest-shadow: #5A6B52;
+--border-sage: rgba(122, 132, 113, 0.20);
+--hover-sage: rgba(156, 175, 136, 0.12);
+--focus-ring: color-mix(in oklab, var(--secondary-sage) 60%, white);
+
+/* Feedback Colors */
+--correct-bg: #E8F5E9;
+--correct-border: #2E7D32;
+--incorrect-bg: #FFEBEE;
+--incorrect-border: #C62828;
+
+/* Linking Activity Colors */
+--student-line-color: var(--primary-sage);
+--connector-color: #FFC107; /* Bright yellow for visibility */
+--current-line-color: var(--secondary-sage);
+
+/* Typography */
+--font-display: 'Questrial', sans-serif;
+--font-body: 'Nunito', sans-serif;
+--leading: 1.6;
+
+/* Radii */
+--radius-xs: 6px;
+--radius-sm: 8px;
+--radius-md: 12px;
+--radius-lg: 16px;
+--radius-xl: 20px;
+--radius-2xl: 28px;
+
+/* Spacing scale */
+--space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+--space-5: 20px; --space-6: 24px; --space-7: 28px; --space-8: 32px;
+--space-10: 40px; --space-12: 48px;
+
+/* Motion + elevation */
+--ease-soft: cubic-bezier(.22,.61,.36,1);
+--ease-emph: cubic-bezier(.2,.8,.2,1);
+--dur-fast: 160ms; --dur-med: 260ms;
+--elev-0: 0 0 0 rgba(0,0,0,0);
+--elev-1: 0 8px 24px rgba(90, 107, 82, 0.08);
+--elev-2: 0 12px 36px rgba(90, 107, 82, 0.10);
+
+/* Layout specific */
+--feedback-width-desktop: 380px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+margin: 0; padding: 0; width: 100%; min-height: 100vh;
+color-scheme: light; font-family: var(--font-body);
+line-height: var(--leading); color: var(--forest-shadow);
+-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+background: radial-gradient(1200px 800px at 20% -10%, rgba(156,175,136,.12), transparent 60%),
+radial-gradient(900px 700px at 110% 10%, rgba(122,132,113,.10), transparent 55%),
+linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+overflow-x: hidden;
+}
+
+body.feedback-open { overflow: hidden; }
+
+::selection { background: color-mix(in oklab, var(--secondary-sage) 24%, white); color: var(--forest-shadow); }
+
+/* ——— Layout shells ——— */
+#app-wrapper {
+position: relative; display: flex; justify-content: center;
+align-items: flex-start; padding: var(--space-8); width: 100%;
+min-height: 100vh; box-sizing: border-box;
+padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom));
+}
+
+#activity-container {
+width: 100%; max-width: 900px; background: var(--soft-white);
+padding: var(--space-12); border-radius: var(--radius-2xl);
+border: 1px solid rgba(122, 132, 113, 0.12);
+box-shadow: var(--elev-1);
+transition: margin-right 0.5s var(--ease-emph), box-shadow var(--dur-med) var(--ease-soft);
+}
+
+@media (min-width: 1024px) {
+#app-wrapper.feedback-visible #activity-container { margin-right: var(--feedback-width-desktop); }
+}
+
+@media (hover:hover) { #activity-container:hover { box-shadow: var(--elev-2); } }
+
+#activity-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; margin-bottom: 24px; }
+#activity-titles { flex-grow: 1; }
+#decorative-image-container { flex-shrink: 0; width: 180px; height: 120px; background-color: var(--warm-cream); border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-sage); }
+#decorative-image-container img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.placeholder-loader { width: 24px; height: 24px; border: 3px solid var(--hover-sage); border-top-color: var(--secondary-sage); border-radius: 50%; animation: spin 1s linear infinite; }
+
+/* ——— Type scale ——— */
+h1 { font-family: var(--font-display); font-size: clamp(2rem, 2.2rem + 0.5vw, 2.6rem); color: var(--forest-shadow); margin: 0 0 var(--space-2) 0; }
+h2.rubric { font-family: var(--font-body); font-size: 1.1rem; font-weight: 500; color: var(--secondary-sage); margin: 0; border-left: 3px solid var(--tertiary-sage); padding-left: var(--space-3); line-height: 1.5; }
+
+/* ——— Buttons ——— */
+.activity-btn { padding: 12px 24px; border-radius: var(--radius-md); border: 1px solid var(--primary-sage); background-color: var(--primary-sage); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: all var(--dur-fast) var(--ease-emph); }
+@media (hover:hover) { .activity-btn:hover { background-color: var(--forest-shadow); transform: translateY(-1px); } }
+.activity-btn:active { transform: translateY(0); }
+.activity-btn:disabled { background-color: var(--tertiary-sage); cursor: not-allowed; border-color: var(--tertiary-sage); transform: none; }
+.activity-btn.secondary { background-color: transparent; color: var(--primary-sage); border-color: var(--tertiary-sage); }
+.activity-btn.secondary:hover { background-color: var(--hover-sage); }
+
+.linking-controls { grid-column: 1 / -1; display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-sage); }
+
+/* ——— Mobile action bar ——— */
+@media (max-width: 767px) {
+.linking-controls {
+position: sticky; bottom: 0; inset-inline: 0; z-index: 20; background: linear-gradient(180deg, rgba(254,252,247,0) 0%, var(--soft-white) 60%);
+padding: 12px max(12px, env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right));
+border-top: 1px solid var(--border-sage);
+backdrop-filter: saturate(1.1) blur(4px);
+}
+.linking-controls .activity-btn { flex: 1; }
+}
+
+/* ——— Linking Activity Styles ——— */
+.slide-content-wrapper { display: flex; flex-direction: column; min-height: 420px; }
+.linking-container { position: relative; flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px; align-content: start; margin-bottom: 24px; }
+.linking-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.link-column { display: flex; flex-direction: column; gap: 15px; z-index: 6; }
+.linking-item { background-color: var(--warm-cream); border-radius: var(--radius-md); display: flex; align-items: center; position: relative; border: 1px solid var(--border-sage); min-height: 56px; box-shadow: 0 2px 8px rgba(122, 132, 113, 0.05); }
+.linking-item-text { padding: 12px 16px; flex-grow: 1; text-align: center; pointer-events: none; user-select: none; -webkit-user-select: none; color: var(--forest-shadow); font-weight: 600; }
+
+/* Connectors are real buttons for a11y */
+.linking-item-connector {
+--size: 28px; --halo: 12px;
+width: var(--size); height: var(--size); border-radius: 50%;
+background-color: var(--connector-color); border: 3px solid var(--soft-white);
+position: absolute; top: 50%; transform: translateY(-50%); right: -10px; z-index: 10;
+box-shadow: 0 1px 6px rgba(90,107,82,0.3);
+transition: transform 0.2s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
+cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: none;
+display: inline-flex; align-items: center; justify-content: center; padding: 0; appearance: none; border-width: 3px;
+}
+.linking-item-connector::after { content: ""; position: absolute; inset: calc(var(--halo) * -1); border-radius: 999px; }
+.linking-item-connector:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+@media (hover:hover) { .linking-item-connector:hover { transform: translateY(-50%) scale(1.08); box-shadow: 0 3px 10px rgba(90,107,82,0.4); } }
+.link-column.right .linking-item-connector { left: -10px; right: auto; }
+
+.connection-ping { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; border-radius: 50%; background-color: var(--connector-color); animation: ping-effect 0.6s ease-out; pointer-events: none; }
+@keyframes ping-effect { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; } 100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; } }
+
+/* ——— Feedback Sidebar Styles ——— */
+#feedback-sidebar { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: var(--warm-cream); border-left: 1px solid var(--border-sage); box-shadow: -8px 0 32px rgba(90, 107, 82, 0.1); z-index: 1000; transform: translateX(100%); transition: transform 0.5s var(--ease-emph); display: flex; flex-direction: column; box-sizing: border-box; }
+@media (min-width: 1024px) { #feedback-sidebar { width: var(--feedback-width-desktop); height: 100vh; } }
+#app-wrapper.feedback-visible #feedback-sidebar { transform: translateX(0); }
+.feedback-header { padding: 24px; border-bottom: 1px solid var(--border-sage); }
+.feedback-header h3 { font-family: var(--font-display); font-size: 1.8rem; color: var(--forest-shadow); margin: 0 0 8px 0; }
+#feedback-score { font-size: 1.1rem; font-weight: 600; color: var(--primary-sage); }
+#feedback-details { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.feedback-item { background: var(--soft-white); border: 1px solid var(--border-sage); border-left-width: 4px; border-radius: 8px; padding: 16px; }
+.feedback-item.correct { border-left-color: var(--correct-border); }
+.feedback-item.incorrect { border-left-color: var(--incorrect-border); }
+.feedback-item h4 { margin: 0 0 12px 0; font-size: 1.1rem; color: var(--forest-shadow); }
+.feedback-item p { margin: 0 0 8px 0; font-size: 0.95rem; line-height: 1.6; color: var(--primary-sage); }
+.feedback-item p strong { color: var(--forest-shadow); }
+.feedback-item .explanation { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-sage); }
+.feedback-footer { padding: 24px; border-top: 1px solid var(--border-sage); text-align: center; background: var(--warm-cream); }
+
+/* ——— Accessibility & motion ——— */
+:where(a, button, .activity-btn, [role="button"]):focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ——— Responsive ——— */
+@media (max-width: 767px) {
+#app-wrapper { padding: var(--space-4); }
+#activity-container { padding: var(--space-8); border-radius: var(--radius-xl); }
+#activity-header { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+h1 { font-size: clamp(1.6rem, 1.6rem + 1.5vw, 2rem); }
+h2.rubric { font-size: 1rem; margin-bottom: var(--space-5); border-left: none; padding-left: 0; }
+#decorative-image-container { width: 100%; height: 150px; }
+.linking-container { grid-template-columns: 1fr; gap: 30px; }
+.link-column { gap: 30px; }
+.linking-item { padding: 16px 12px; }
+.linking-item-connector { --size: 36px; right: 50%; transform: translate(50%, -50%); top: auto; bottom: 0; }
+.link-column.right .linking-item-connector { left: 50%; right: auto; top: 0; bottom: auto; }
+#app-wrapper.feedback-visible #activity-container { margin-right: 0; }
+.feedback-header, .feedback-details, .feedback-footer { padding: 20px; }
+.feedback-header h3 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+<div id="app-wrapper">
+<div id="activity-container"
+data-query-theme="museum, reception desk, Palestine"
+data-unique-pairs="true"
+data-answer-key='[
+{"start": "L1", "end": "R3"},
+{"start": "L2", "end": "R1"},
+{"start": "L3", "end": "R2"}
+]'>
+code
+Code
+<div id="activity-header">
+  <div id="activity-titles">
+    <h1>Getting Personal Details</h1>
+    <h2 class="rubric">Match the question with the correct answer.</h2>
+  </div>
+  <div id="decorative-image-container" aria-hidden="true">
+    <div class="placeholder-loader"></div>
+  </div>
+</div>
+
+<div class="slide-content-wrapper">
+  <div class="linking-container">
+    <canvas class="linking-canvas" aria-hidden="true"></canvas>
+
+    <!-- Left Column: Questions -->
+    <div class="link-column left">
+      <div class="linking-item" data-link-id="L1" data-explanation="We use 'What's your name?' to ask for a person's name.">
+        <div class="linking-item-text">What's your name?</div>
+        <button class="linking-item-connector" aria-label="Connector for What's your name?" title="Connect What's your name?"></button>
+      </div>
+      <div class="linking-item" data-link-id="L2" data-explanation="We use 'Where are you from?' to ask for a place, like a country or city.">
+        <div class="linking-item-text">Where are you from?</div>
+        <button class="linking-item-connector" aria-label="Connector for Where are you from?" title="Connect Where are you from?"></button>
+      </div>
+      <div class="linking-item" data-link-id="L3" data-explanation="We use 'What's your email address?' to ask for an email, which always has an '@' symbol.">
+        <div class="linking-item-text">What's your email address?</div>
+        <button class="linking-item-connector" aria-label="Connector for What's your email address?" title="Connect What's your email address?"></button>
+      </div>
+    </div>
+
+    <!-- Right Column: Answers -->
+    <div class="link-column right">
+      <div class="linking-item" data-link-id="R1">
+        <div class="linking-item-text">Egypt</div>
+        <button class="linking-item-connector" aria-label="Connector for Egypt" title="Connect Egypt"></button>
+      </div>
+      <div class="linking-item" data-link-id="R2">
+        <div class="linking-item-text">yousef11@email.com</div>
+        <button class="linking-item-connector" aria-label="Connector for yousef11@email.com" title="Connect yousef11@email.com"></button>
+      </div>
+      <div class="linking-item" data-link-id="R3">
+        <div class="linking-item-text">Yousef</div>
+        <button class="linking-item-connector" aria-label="Connector for Yousef" title="Connect Yousef"></button>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="linking-controls">
+      <button id="undo-btn" class="activity-btn secondary" aria-label="Undo last connection">Undo</button>
+      <button id="reset-btn" class="activity-btn secondary">Reset</button>
+      <button id="check-answers-btn" class="activity-btn">Check Answers</button>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Feedback sidebar: Automatically populated by the script -->
+<div id="feedback-sidebar" aria-live="polite"></div>
+<div id="sr-announcer" aria-live="polite" class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"> </div>
+</div>
+<!-- JAVASCRIPT -->
+<script>
+const App = {
+init() {
+ImageFetcher.initSingleImage();
+FeedbackPanel.init();
+StandaloneLinkingActivity.init();
+}
+};
+
+const ImageFetcher = {
+API_KEY: 'xgmzSrq1PBV9ELvW4mSlyq6vAf0k6qDrrMd1zIpLrIheWepQ32zN4iJk',
+async initSingleImage() {
+const container = document.getElementById('decorative-image-container');
+const themeQuery = document.getElementById('activity-container').dataset.queryTheme;
+if (!container || !themeQuery) return;
+const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(themeQuery)}&per_page=1&orientation=landscape`;
+await this.fetchAndApply(url, container, themeQuery);
+},
+async fetchAndApply(url, container, queryForAlt) {
+try {
+const response = await fetch(url, { headers: { Authorization: this.API_KEY } });
+if (!response.ok) throw new Error(`Pexels API error: ${response.statusText}`);
+const data = await response.json();
+const photo = data.photos?.;
+if (photo) {
+const img = document.createElement('img');
+img.src = photo.src.landscape;
+img.alt = photo.alt || `Decorative image related to ${queryForAlt}`;
+img.decoding = 'async';
+img.loading = 'lazy';
+img.onload = () => { container.innerHTML = ''; container.appendChild(img); };
+img.onerror = () => { container.innerHTML = 'X'; };
+} else { container.innerHTML = '?'; }
+} catch (error) {
+console.error(`Failed to fetch image for "${queryForAlt}":`, error);
+container.innerHTML = '!';
+}
+}
+};
+
+const FeedbackPanel = {
+dom: {},
+init() {
+document.getElementById('feedback-sidebar').innerHTML = `
+<div class="feedback-header">
+<h3>Your Results</h3>
+<p id="feedback-score"></p>
+</div>
+<div id="feedback-details"></div>
+<div class="feedback-footer">
+<button id="feedback-close-btn" class="activity-btn secondary">Try Again</button>
+</div>`;
+this.dom.appWrapper = document.getElementById('app-wrapper');
+this.dom.feedbackSidebar = document.getElementById('feedback-sidebar');
+this.dom.feedbackScore = document.getElementById('feedback-score');
+this.dom.feedbackDetails = document.getElementById('feedback-details');
+this.dom.feedbackCloseBtn = document.getElementById('feedback-close-btn');
+this.bindEvents();
+},
+bindEvents() {
+this.dom.feedbackCloseBtn.addEventListener('click', () => {
+this.hide();
+StandaloneLinkingActivity.resetActivity();
+});
+},
+clear() { this.dom.feedbackDetails.innerHTML = ''; },
+addDetail(data) {
+const itemDiv = document.createElement('div');
+itemDiv.className = `feedback-item ${data.isCorrect ? 'correct' : 'incorrect'}`;
+itemDiv.innerHTML = `
+<h4>${data.itemName}</h4>
+<p><strong>Your Answer:</strong> ${data.studentAnswer}</p>
+${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}
+<div class="explanation"><p>${data.explanation}</p></div>`;
+this.dom.feedbackDetails.appendChild(itemDiv);
+},
+show(score, total) {
+this.dom.feedbackScore.textContent = total > 0 ? `You scored ${score} out of ${total}.` : `Make some connections to get feedback.`;
+this.dom.appWrapper.classList.add('feedback-visible');
+document.body.classList.add('feedback-open');
+},
+hide() {
+this.dom.appWrapper.classList.remove('feedback-visible');
+document.body.classList.remove('feedback-open');
+}
+};
+
+const StandaloneLinkingActivity = {
+state: {},
+init() {
+const slideElement = document.getElementById('activity-container');
+const container = slideElement.querySelector('.linking-container');
+const canvas = slideElement.querySelector('.linking-canvas');
+const ctx = canvas.getContext('2d');
+this.state = {
+slideElement,
+container,
+canvas,
+ctx,
+studentLinks: [],
+isLinking: false,
+startPoint: null,
+currentLine: null,
+pointerId: null,
+resizeObserver: new ResizeObserver(() => this.resizeCanvas()),
+dpr: Math.max(1, window.devicePixelRatio || 1)
+};
+this.bindEvents();
+this.resizeCanvas();
+this.state.resizeObserver.observe(container);
+window.addEventListener('resize', () => this.resizeCanvas(), { passive: true });
+window.addEventListener('orientationchange', () => setTimeout(() => this.resizeCanvas(), 50), { passive: true });
+
+try {
+const saved = sessionStorage.getItem('linking-studentLinks');
+if (saved) { this.state.studentLinks = JSON.parse(saved); this.redrawLines(); }
+} catch {}
+},
+announce(msg) { const sr = document.getElementById('sr-announcer'); if (sr) { sr.textContent = ''; setTimeout(() => { sr.textContent = msg; }, 10); } },
+getPointPos(connectorElement) {
+const canvasRect = this.state.canvas.getBoundingClientRect();
+const rect = connectorElement.getBoundingClientRect();
+return { x: rect.left + rect.width / 2 - canvasRect.left, y: rect.top + rect.height / 2 - canvasRect.top };
+},
+resizeCanvas() {
+const { canvas, container } = this.state;
+const dpr = Math.max(1, window.devicePixelRatio || 1);
+this.state.dpr = dpr;
+const w = container.offsetWidth;
+const h = container.offsetHeight;
+canvas.width = Math.ceil(w * dpr);
+canvas.height = Math.ceil(h * dpr);
+canvas.style.width = w + 'px';
+canvas.style.height = h + 'px';
+this.state.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+this.redrawLines();
+},
+bindEvents() {
+const root = this.state.slideElement;
+root.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+window.addEventListener('pointermove', (e) => this.onPointerMove(e), { passive: false });
+window.addEventListener('pointerup', (e) => this.onPointerUp(e));
+
+root.querySelector('#check-answers-btn').addEventListener('click', () => this.checkAnswers());
+root.querySelector('#reset-btn').addEventListener('click', () => this.resetActivity());
+root.querySelector('#undo-btn').addEventListener('click', () => this.undo());
+
+root.querySelectorAll('.linking-item-connector').forEach(btn => {
+btn.addEventListener('keydown', (e) => {
+if (e.key === 'Enter' || e.key === ' ') {
+e.preventDefault();
+if (!this.state.isLinking) {
+this.startLinkFrom(btn.closest('.linking-item'));
+} else {
+this.tryCreateLinkTo(btn.closest('.linking-item'));
+}
+}
+});
+});
+},
+onPointerDown(e) {
+const connector = e.target.closest('.linking-item-connector');
+if (!connector) return;
+this.state.pointerId = e.pointerId;
+connector.setPointerCapture?.(e.pointerId);
+this.startLinkFrom(connector.closest('.linking-item'));
+e.preventDefault();
+},
+onPointerMove(e) {
+if (!this.state.isLinking || e.pointerId !== this.state.pointerId) return;
+const startPos = this.getPointPos(this.state.startPoint.querySelector('.linking-item-connector'));
+const canvasRect = this.state.canvas.getBoundingClientRect();
+this.state.currentLine = { start: startPos, end: { x: e.clientX - canvasRect.left, y: e.clientY - canvasRect.top } };
+this.redrawLines();
+e.preventDefault();
+},
+onPointerUp(e) {
+if (!this.state.isLinking || e.pointerId !== this.state.pointerId) return;
+const endConnector = e.target.closest('.linking-item-connector');
+if (endConnector) {
+const endPoint = endConnector.closest('.linking-item');
+this.tryCreateLinkTo(endPoint);
+}
+this.finishLinkGesture();
+},
+startLinkFrom(itemEl) {
+this.state.isLinking = true;
+this.state.startPoint = itemEl;
+this.state.currentLine = null;
+},
+tryCreateLinkTo(endPoint) {
+if (!endPoint || endPoint === this.state.startPoint) return;
+const startParent = this.state.startPoint.parentElement;
+const endParent = endPoint.parentElement;
+if (startParent === endParent) return;
+const leftItem = startParent.classList.contains('left') ? this.state.startPoint : endPoint;
+const rightItem = startParent.classList.contains('left') ? endPoint : this.state.startPoint;
+
+const newLink = { startId: leftItem.dataset.linkId, endId: rightItem.dataset.linkId };
+
+const uniqueBothSides = this.state.slideElement.dataset.uniquePairs === 'true';
+if (uniqueBothSides) {
+this.state.studentLinks = this.state.studentLinks.filter(l => l.startId !== newLink.startId && l.endId !== newLink.endId);
+} else {
+this.state.studentLinks = this.state.studentLinks.filter(l => l.startId !== newLink.startId);
+}
+this.state.studentLinks.push(newLink);
+sessionStorage.setItem('linking-studentLinks', JSON.stringify(this.state.studentLinks));
+this.showConnectionEffect(rightItem.querySelector('.linking-item-connector'));
+if (navigator.vibrate) { try { navigator.vibrate(10); } catch {} }
+this.announce(`Connected ${leftItem.querySelector('.linking-item-text').textContent} to ${rightItem.querySelector('.linking-item-text').textContent}`);
+this.redrawLines();
+},
+finishLinkGesture() {
+this.state.isLinking = false;
+this.state.startPoint = null;
+this.state.currentLine = null;
+this.state.pointerId = null;
+this.redrawLines();
+},
+showConnectionEffect(connectorElement) {
+const ping = document.createElement('div');
+ping.className = 'connection-ping';
+connectorElement.appendChild(ping);
+setTimeout(() => ping.remove(), 600);
+},
+drawCurve(startPos, endPos, color, width = 3) {
+const { ctx } = this.state;
+ctx.beginPath();
+const midX = (startPos.x + endPos.x) / 2;
+const midY = (startPos.y + endPos.y) / 2;
+const dx = endPos.x - startPos.x;
+const dy = endPos.y - startPos.y;
+const curvature = 0.2;
+const ctrlX = midX - dy * curvature;
+const ctrlY = midY + dx * curvature;
+
+ctx.moveTo(startPos.x, startPos.y);
+ctx.quadraticCurveTo(ctrlX, ctrlY, endPos.x, endPos.y);
+ctx.strokeStyle = color;
+ctx.lineWidth = width;
+ctx.lineCap = 'round';
+ctx.stroke();
+},
+redrawLines() {
+const { ctx, canvas } = this.state;
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+const studentLineColor = getComputedStyle(document.documentElement).getPropertyValue('--student-line-color').trim();
+this.state.studentLinks.forEach(link => {
+const startEl = this.state.slideElement.querySelector(`[data-link-id="${link.startId}"]`);
+const endEl = this.state.slideElement.querySelector(`[data-link-id="${link.endId}"]`);
+if (startEl && endEl) {
+const startPos = this.getPointPos(startEl.querySelector('.linking-item-connector'));
+const endPos = this.getPointPos(endEl.querySelector('.linking-item-connector'));
+this.drawCurve(startPos, endPos, studentLineColor, 3);
+}
+});
+if (this.state.currentLine) {
+this.drawCurve(this.state.currentLine.start, this.state.currentLine.end, getComputedStyle(document.documentElement).getPropertyValue('--current-line-color').trim(), 3);
+}
+},
+getAnswerKey() {
+try { return JSON.parse(this.state.slideElement.dataset.answerKey || '[]'); } catch { return []; }
+},
+checkAnswers() {
+const answerKey = this.getAnswerKey();
+const checkBtn = document.getElementById('check-answers-btn');
+if (answerKey.length === 0) { alert('Error: No answer key is defined.'); return; }
+
+const studentMap = new Map(this.state.studentLinks.map(link => [link.startId, link.endId]));
+const correctMap = new Map(answerKey.map(link => [link.start, link.end]));
+let score = 0;
+FeedbackPanel.clear();
+
+this.state.slideElement.querySelectorAll('.link-column.left .linking-item').forEach(leftItem => {
+const leftId = leftItem.dataset.linkId;
+const itemName = leftItem.querySelector('.linking-item-text').textContent;
+const explanation = leftItem.dataset.explanation || 'No explanation available.';
+const studentLinkedId = studentMap.get(leftId);
+const correctLinkedId = correctMap.get(leftId);
+const studentAnswerText = studentLinkedId ? this.state.slideElement.querySelector(`[data-link-id="${studentLinkedId}"] .linking-item-text`).textContent : 'Not Answered';
+const correctAnswerText = correctLinkedId ? this.state.slideElement.querySelector(`[data-link-id="${correctLinkedId}"] .linking-item-text`).textContent : 'N/A';
+const isCorrect = studentLinkedId === correctLinkedId;
+if (isCorrect) score++;
+FeedbackPanel.addDetail({ isCorrect, itemName, studentAnswer: studentAnswerText, correctAnswer: correctAnswerText, explanation });
+});
+FeedbackPanel.show(score, answerKey.length);
+if (checkBtn) checkBtn.disabled = true;
+},
+resetActivity() {
+this.state.studentLinks = [];
+sessionStorage.removeItem('linking-studentLinks');
+this.redrawLines();
+const checkBtn = document.getElementById('check-answers-btn');
+if (checkBtn) checkBtn.disabled = false;
+FeedbackPanel.hide();
+},
+undo() {
+this.state.studentLinks.pop();
+sessionStorage.setItem('linking-studentLinks', JSON.stringify(this.state.studentLinks));
+this.redrawLines();
+this.announce('Last connection removed');
+}
+};
+
+window.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
+83.2s
+Use Arrow Up and Arrow Down to select a turn, Enter to jump to it, and Escape to return to the chat.
