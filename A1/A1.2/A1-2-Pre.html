@@ -1,26 +1,3 @@
-Here’s a breakdown of the issues and how they were resolved:
-
-1.  **Boxes Not Changing Colour (Main Issue):**
-    *   **Problem:** The core issue was the order in which your JavaScript objects were defined. The `StandaloneMatchingActivity` object was defined *before* the `FeedbackPanel` object had its methods added. This created an unreliable dependency, causing the matching activity's event listeners to fail silently.
-    *   **Solution:** I restructured the script to define the `FeedbackPanel` object and all its methods completely *before* defining `StandaloneMatchingActivity`. This ensures that when the matching activity is initialized, its dependency on the feedback panel is already fully available and stable.
-
-2.  **Image Not Loading:**
-    *   **Problem:** The URL provided for the Pexels image was incorrect and led to a "not found" error.
-    *   **Solution:** I replaced the broken URL with a valid placeholder image URL from Pexels.
-
-3.  **Minor Bug in Feedback Panel:**
-    *   **Problem:** In the `FeedbackPanel.addDetail` function, there was a syntax error (`margin-bottom: '12px';`) that did nothing.
-    *   **Solution:** I corrected this to the proper JavaScript syntax: `itemDiv.style.marginBottom = '12px';`.
-
-4.  **Unsafe Reset Logic:**
-    *   **Problem:** The `resetActivity` function was modifying the `studentPairs` array while looping over it. This can lead to unpredictable behavior and bugs.
-    *   **Solution:** I updated the logic to first create a copy of the array and then loop over that copy to safely remove all pairs.
-
-With these changes, the activity now functions correctly: the image loads, clicking the boxes changes their colour, and the overall code is more stable and robust.
-Google Search Suggestions
-Display of Search Suggestions is required when using Grounding with Google Search. Learn more
-Google logo
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,10 +85,24 @@ Google logo
     }
     
     #activity-header { text-align: center; margin-bottom: 24px; }
-    #decorative-image-container { margin: 0 auto 24px auto; width: 180px; height: 120px; background-color: var(--warm-cream); border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-sage); }
-    #decorative-image-container img { width: 100%; height: 100%; object-fit: cover; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .placeholder-loader { width: 24px; height: 24px; border: 3px solid var(--hover-sage); border-top-color: var(--secondary-sage); border-radius: 50%; animation: spin 1s linear infinite; }
+    #decorative-image-container { 
+      margin: 0 auto 24px auto; 
+      width: 180px; 
+      height: 120px; 
+      background-color: var(--warm-cream); 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      border: 1px solid var(--border-sage); 
+    }
+    /* Style for the image itself */
+    #decorative-image-container img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: contain; /* Use 'contain' to ensure the whole image is visible */
+    }
 
     /* ——— Type scale ——— */
     h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.6rem + 1.5vw, 2.4rem); color: var(--forest-shadow); margin: 0 0 4px 0; }
@@ -239,8 +230,12 @@ Google logo
         <h2 class="rubric">Match the question with the correct answer.</h2>
       </div>
     </div>
+    
+    <!-- ================================================================== -->
+    <!-- COMPLETE OVERHAUL: Image is now a direct HTML tag, no JS needed. -->
+    <!-- ================================================================== -->
     <div id="decorative-image-container" aria-hidden="true">
-        <div class="placeholder-loader"></div>
+        <img src="https://najma-collective.github.io/Noor-Community-/A1/A1.2/Images/A1-2-2.svg" alt="Two people having a conversation">
     </div>
 
     <div class="slide-content-wrapper">
@@ -290,31 +285,16 @@ Google logo
 /* App bootstrap */
 const App = {
   init() {
-    ImageFetcher.init();
+    // ImageFetcher.init(); // REMOVED - No longer needed
     FeedbackPanel.init();
     StandaloneMatchingActivity.init();
   }
 };
 
-/* Decorative image loader */
-const ImageFetcher = {
-  init() {
-    const container = document.getElementById('decorative-image-container');
-    if (!container) return;
-    const img = document.createElement('img');
-    // FIX 1: The original Pexels URL was broken. Replaced with a valid placeholder.
-    img.src = 'https://images.pexels.com/photos/33358633/pexels-photo-33358633.jpeg';
-    img.alt = 'Decorative image of a person writing at a desk';
-    img.decoding = 'async';
-    img.loading = 'lazy';
-    img.onload = () => { container.innerHTML = ''; container.appendChild(img); };
-    img.onerror = () => { container.innerHTML = '<p style="font-size: 0.8rem; padding: 4px; text-align: center; color: var(--secondary-sage);">Image could not load.</p>'; };
-  }
-};
+/* ================================================================== */
+/* COMPLETE OVERHAUL: The entire ImageFetcher object has been deleted. */
+/* ================================================================== */
 
-// FIX 2: Defined FeedbackPanel and all its methods FIRST.
-// This resolves the main issue where the matching activity was unresponsive.
-// The activity code depends on this panel, so it must be fully defined before the activity is initialized.
 const FeedbackPanel = {
   dom: {},
 
@@ -353,9 +333,6 @@ const FeedbackPanel = {
   addDetail(data) {
       const itemDiv = document.createElement('div');
       itemDiv.className = `feedback-detail-item ${data.isCorrect ? 'correct' : ''}`;
-      
-      // FIX 3: Corrected a minor syntax error here. It was 'margin-bottom:' instead of 'itemDiv.style.marginBottom'.
-      // Although not the main bug, it's good practice to fix.
       itemDiv.style.marginBottom = '12px';
 
       itemDiv.innerHTML = `
@@ -382,7 +359,7 @@ const FeedbackPanel = {
 };
 
 
-/* Matching Activity Logic */
+/* Matching Activity Logic (unchanged) */
 const StandaloneMatchingActivity = {
   state: {},
   colorClasses: ['match-color-1', 'match-color-2', 'match-color-3', 'match-color-4'],
@@ -541,12 +518,10 @@ const StandaloneMatchingActivity = {
       this.state.activeItem = null;
     }
     
-    // FIX 4: Made the reset logic safer. Instead of modifying the array while looping over it,
-    // this loops over a copy to ensure all pairs are correctly removed.
     const pairsToRemove = [...this.state.studentPairs];
     pairsToRemove.forEach(pair => this.removePair(pair));
 
-    this.state.studentPairs = []; // Ensure the array is empty
+    this.state.studentPairs = [];
     sessionStorage.removeItem('matching-studentPairs');
     document.getElementById('check-answers-btn').disabled = false;
     FeedbackPanel.hide();
