@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 1, Lesson 3: Where I Live, What I Do</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&family=Questrial&display=swap" rel="stylesheet">
+
+    <style>
+    /* =====================================================================
+       Organic Sage UI — Mobile-first, stable, and soothing
+       Palette preserved; accessibility + mobile ergonomics improved.
+       ===================================================================== */
+
+    /* -------------------------------
+       Design tokens
+    ----------------------------------*/
+    :root {
+      /* Core palette (yours, kept) */
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --border-sage: rgba(122, 132, 113, 0.20);
+      --hover-sage: rgba(156, 175, 136, 0.15);
+
+      /* Extended palette for depth */
+      --deep-forest: #3E4A3A;
+      --moss: #6E7A67;
+      --fern: #8FA081;
+      --dried-clay: #D9CDB4;
+      --amber: #C6AA77;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+      --success-green: #2E7D32;
+      --error-red: #B71C1C;
+
+      /* Typography */
+      --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+      /* Fluid typography scale */
+      --step--1: clamp(0.875rem, 0.84rem + 0.15vw, 0.95rem);
+      --step-0:  clamp(1rem,     0.96rem + 0.22vw, 1.1rem);
+      --step-1:  clamp(1.125rem, 1.07rem + 0.35vw, 1.3rem);
+      --step-2:  clamp(1.375rem, 1.28rem + 0.55vw, 1.6rem);
+      --step-3:  clamp(1.75rem,  1.58rem + 0.95vw, 2.1rem);
+      --step-4:  clamp(2.25rem,  1.98rem + 1.35vw, 2.7rem);
+
+      /* Rhythm */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --space-8: 2.5rem;
+      --space-9: 3rem;
+
+      /* Shape + elevation */
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+
+      --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+      --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+      --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.10), 0 20px 60px rgba(34, 41, 32, 0.08);
+
+      /* Focus ring (AA contrast on cream/white) */
+      --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent), 0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+
+      /* Motion */
+      --ease-ambient: cubic-bezier(.2,.8,.2,1);
+      --dur-1: 120ms;
+      --dur-2: 200ms;
+      --dur-3: 320ms;
+
+      /* Mobile-safe touch target */
+      --target-min: 44px;
+
+      /* Container max */
+      --container-max: 900px;
+
+      /* Pair highlight palette */
+      --pair-fern-bg: color-mix(in srgb, var(--secondary-sage) 22%, white 78%);
+      --pair-fern-border: color-mix(in srgb, var(--secondary-sage) 65%, var(--forest-shadow) 35%);
+      --pair-amber-bg: color-mix(in srgb, var(--amber) 30%, white 70%);
+      --pair-amber-border: color-mix(in srgb, var(--amber) 60%, var(--forest-shadow) 40%);
+      --pair-clay-bg: color-mix(in srgb, var(--dried-clay) 35%, white 65%);
+      --pair-clay-border: color-mix(in srgb, var(--dried-clay) 60%, var(--forest-shadow) 40%);
+      --pair-mint-bg: color-mix(in srgb, var(--fern) 28%, white 72%);
+      --pair-mint-border: color-mix(in srgb, var(--fern) 58%, var(--forest-shadow) 42%);
+      --pair-haze-bg: color-mix(in srgb, #C4D4D9 32%, white 68%);
+      --pair-haze-border: color-mix(in srgb, #8BA0A8 68%, var(--forest-shadow) 32%);
+      --pair-rose-bg: color-mix(in srgb, #E2C9C9 34%, white 66%);
+      --pair-rose-border: color-mix(in srgb, #B89A9A 68%, var(--forest-shadow) 32%);
+    }
+
+    /* -------------------------------
+       Global reset / mobile stability
+    ----------------------------------*/
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%; /* iOS font scaling fix */
+      text-size-adjust: 100%;
+      hanging-punctuation: first last;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100dvh; /* mobile address bar safe */
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.6;
+      color: var(--forest-shadow);
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, #FFFFFF 0%, transparent 50%),
+        radial-gradient(1200px 1000px at 110% 10%, #FFF8F0 0%, transparent 50%),
+        linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+
+    :where(p, h1, h2, h3, h4, h5, h6) {
+      text-wrap: pretty;
+      overflow-wrap: anywhere;
+    }
+
+    img, svg, video, canvas, audio, iframe {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a { color: var(--primary-sage); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--deep-forest); }
+
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+
+    /* -------------------------------
+       App shell
+    ----------------------------------*/
+    #app-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: max(var(--space-7), env(safe-area-inset-top)) var(--space-4) var(--space-7);
+      width: 100%;
+      min-height: 100dvh;
+      background:
+        radial-gradient(800px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+        radial-gradient(700px 500px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 65%);
+    }
+
+    #activity-container {
+      width: 100%;
+      max-width: var(--container-max);
+      background: color-mix(in srgb, var(--soft-white) 88%, white 12%);
+      padding: clamp(24px, 3.2vw, 48px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: var(--shadow-2);
+      position: relative;
+      isolation: isolate;
+      container-type: inline-size; 
+    }
+
+    @supports (backdrop-filter: blur(6px)) {
+      #activity-container {
+        background: color-mix(in srgb, var(--soft-white) 76%, white 24%);
+        backdrop-filter: blur(6px) saturate(1.02);
+      }
+    }
+
+    #activity-container::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background:
+        radial-gradient(1200px 200px at 50% -5%, rgba(156,175,136,0.12), transparent 60%),
+        radial-gradient(800px 1000px at 50% 110%, rgba(122,132,113,0.08), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .screen.hidden { display: none !important; }
+
+    /* -------------------------------
+       Headings / text
+    ----------------------------------*/
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--step-4);
+      letter-spacing: 0.2px;
+      color: var(--forest-shadow);
+      margin: 0 0 var(--space-2) 0;
+      text-align: center;
+    }
+
+    h2.rubric {
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: 500;
+      color: var(--secondary-sage);
+      margin: 0 0 var(--space-6) 0;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      color: var(--forest-shadow);
+      margin: var(--space-6) 0 var(--space-3) 0;
+    }
+    
+    .screen p, .screen ul {
+        text-align: center;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .screen ul {
+        list-style: none;
+        padding: 0;
+    }
+    .screen li {
+        margin-bottom: var(--space-3);
+    }
+    .screen li::before {
+        content: '✓';
+        color: var(--primary-sage);
+        margin-right: var(--space-3);
+        font-weight: bold;
+    }
+
+    /* -------------------------------
+       Buttons
+    ----------------------------------*/
+    .activity-btn {
+      min-height: var(--target-min);
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--primary-sage);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, white 8%), var(--primary-sage));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient), opacity var(--dur-1) var(--ease-ambient);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:hover {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 92%, white 8%), var(--forest-shadow));
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 10px 20px rgba(90, 107, 82, 0.22);
+    }
+
+    .activity-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 4px 10px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--ring), 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:disabled,
+    .activity-btn[disabled] {
+      background: var(--tertiary-sage);
+      border-color: var(--tertiary-sage);
+      color: color-mix(in srgb, #fff 70%, var(--soft-white) 30%);
+      cursor: not-allowed;
+      opacity: 0.8;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .controls {
+      margin-top: var(--space-7);
+      text-align: center;
+      display: grid;
+      gap: var(--space-3);
+      grid-auto-flow: row;
+    }
+    
+    /* -------------------------------
+       Custom Activity Styles
+    ----------------------------------*/
+    .icon-placeholder {
+        display: block;
+        margin: var(--space-6) auto;
+        width: 80px;
+        height: 80px;
+        background-color: var(--border-sage);
+        border-radius: 50%;
+        color: var(--primary-sage);
+        font-size: 40px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+    }
+    
+    .matching-grid, .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--space-6);
+        margin: var(--space-7) auto;
+        max-width: 700px;
+        align-items: stretch;
+    }
+
+    .match-item, .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+        text-align: center;
+    }
+
+    .match-picture {
+        width: 120px;
+        height: 120px;
+        background: var(--warm-cream);
+        border: 2px solid var(--border-sage);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary-sage);
+        font-size: 48px;
+        cursor: pointer;
+        transition: background-color var(--dur-2) ease, border-color var(--dur-2) ease, box-shadow var(--dur-2) ease;
+    }
+
+    .match-picture.over {
+        background-color: var(--hover-sage);
+        border-color: var(--primary-sage);
+    }
+
+    .match-picture.is-matched {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-sage) 40%, transparent 60%);
+    }
+
+    .match-picture.is-correct {
+        border-color: var(--success-green);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--success-green) 45%, transparent 55%);
+    }
+
+    .match-picture.is-incorrect {
+        border-color: var(--error-red);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--error-red) 45%, transparent 55%);
+    }
+
+    .match-words {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+        margin: var(--space-5) auto 0;
+        max-width: 620px;
+    }
+    
+    .word-bank, .sentence-box {
+        min-height: 60px;
+        width: 100%;
+        max-width: 600px;
+        background: var(--warm-cream);
+        border: 2px dashed var(--tertiary-sage);
+        border-radius: var(--radius);
+        padding: var(--space-4);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        justify-content: center;
+        align-items: center;
+        transition: border-color var(--dur-2) ease, background-color var(--dur-2) ease, box-shadow var(--dur-2) ease;
+    }
+
+    .sentence-box {
+        justify-content: flex-start;
+    }
+    
+    .sentence-box.over,
+    .word-bank.over {
+        background-color: var(--hover-sage);
+        border-color: var(--primary-sage);
+        box-shadow: inset 0 0 0 1px rgba(122, 132, 113, 0.25);
+    }
+    
+    .match-picture:focus-visible,
+    .word-bank:focus-visible,
+    .sentence-box:focus-visible {
+        outline: none;
+        box-shadow: var(--ring);
+    }
+
+    .match-picture:focus-visible {
+        border-color: var(--primary-sage);
+    }
+    
+    .word-tile {
+        padding: 8px 16px;
+        background: #fff;
+        border: 1px solid var(--border-sage);
+        border-radius: var(--radius-sm);
+        cursor: grab;
+        user-select: none;
+        box-shadow: var(--shadow-1);
+        transition: transform var(--dur-1) ease, box-shadow var(--dur-2) ease, border-color var(--dur-2) ease, background-color var(--dur-2) ease;
+    }
+    
+    .word-tile:active {
+        cursor: grabbing;
+        transform: scale(1.05);
+        box-shadow: var(--shadow-2);
+    }
+    
+    .word-tile.dragging {
+        opacity: 0.5;
+    }
+
+    .match-word {
+        border: 2px solid var(--border-sage);
+        border-radius: var(--radius);
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+        font-weight: 600;
+        cursor: pointer;
+        min-width: 140px;
+        text-transform: lowercase;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-2);
+        padding: 12px 18px;
+        background: #fff;
+        color: var(--forest-shadow);
+        box-shadow: var(--shadow-1);
+        transition: transform var(--dur-1) ease, box-shadow var(--dur-2) ease, border-color var(--dur-2) ease, background var(--dur-2) ease, color var(--dur-2) ease;
+    }
+
+    .match-word:focus-visible {
+        outline: none;
+        box-shadow: var(--ring);
+    }
+
+    .match-word.is-selected {
+        border-color: var(--primary-sage);
+        background: color-mix(in srgb, var(--secondary-sage) 20%, white 80%);
+        transform: translateY(-2px);
+    }
+
+    .match-word.is-matched {
+        box-shadow: 0 10px 20px rgba(90, 107, 82, 0.18);
+        transform: none;
+    }
+
+    .match-word.is-correct-match {
+        border-color: var(--success-green);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--success-green) 45%, transparent 55%), 0 12px 20px color-mix(in srgb, var(--success-green) 25%, transparent 75%);
+        color: var(--forest-shadow);
+    }
+
+    .match-word.is-incorrect-match {
+        border-color: var(--error-red);
+        color: var(--error-red);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--error-red) 45%, transparent 55%), 0 12px 20px color-mix(in srgb, var(--error-red) 20%, transparent 80%);
+    }
+
+    .word-tile:focus-visible,
+    .word-tile.is-selected {
+        outline: none;
+        border-color: var(--primary-sage);
+        box-shadow: var(--ring);
+        background-color: color-mix(in srgb, var(--secondary-sage) 12%, white);
+    }
+
+    .match-word:disabled,
+    .match-picture:disabled {
+        cursor: default;
+        opacity: 0.9;
+    }
+
+    .match-word.pair-fern,
+    .match-picture.pair-fern {
+        background: var(--pair-fern-bg);
+        border-color: var(--pair-fern-border);
+        color: var(--ink);
+    }
+
+    .match-word.pair-amber,
+    .match-picture.pair-amber {
+        background: var(--pair-amber-bg);
+        border-color: var(--pair-amber-border);
+        color: var(--ink);
+    }
+
+    .match-word.pair-clay,
+    .match-picture.pair-clay {
+        background: var(--pair-clay-bg);
+        border-color: var(--pair-clay-border);
+        color: var(--ink);
+    }
+
+    .match-word.pair-mint,
+    .match-picture.pair-mint {
+        background: var(--pair-mint-bg);
+        border-color: var(--pair-mint-border);
+        color: var(--ink);
+    }
+
+    .match-word.pair-haze,
+    .match-picture.pair-haze {
+        background: var(--pair-haze-bg);
+        border-color: var(--pair-haze-border);
+        color: var(--ink);
+    }
+
+    .match-word.pair-rose,
+    .match-picture.pair-rose {
+        background: var(--pair-rose-bg);
+        border-color: var(--pair-rose-border);
+        color: var(--ink);
+    }
+    
+    .conversation-box {
+        background: var(--warm-cream);
+        border: 1px solid var(--border-sage);
+        border-radius: var(--radius);
+        padding: var(--space-6);
+        margin: var(--space-6) auto 0 auto;
+        max-width: 500px;
+        text-align: left;
+    }
+    .conversation-box p {
+        text-align: left;
+        margin: 0 0 var(--space-3) 0;
+    }
+    
+    .grammar-box {
+        background: color-mix(in srgb, var(--secondary-sage) 8%, white);
+        border-left: 4px solid var(--secondary-sage);
+        padding: var(--space-5);
+        margin: var(--space-6) auto;
+        max-width: 500px;
+        text-align: left;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    /* Gapfill Activity Specific Styles */
+    .gapfill-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        gap: var(--space-2);
+        font-size: var(--step-1);
+        line-height: 1.8;
+        padding: var(--space-4);
+        text-align: center;
+    }
+
+    .gapfill-select {
+        display: inline-block;
+        min-width: 90px;
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--tertiary-sage);
+        background: #fff;
+        font-size: var(--step-0);
+        font-family: var(--font-body);
+        color: var(--ink);
+        margin: 0 4px;
+        vertical-align: baseline;
+        transition: border-color var(--dur-2) ease;
+    }
+
+    .feedback-container {
+        min-height: 24px;
+        margin-top: var(--space-4);
+        font-weight: bold;
+        text-align: center;
+    }
+    .feedback.correct { color: var(--success-green); }
+    .feedback.incorrect { color: var(--error-red); }
+    
+    .unscramble-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-6);
+        margin-top: var(--space-7);
+    }
+    
+    .answer-display {
+        background-color: var(--warm-cream);
+        border: 1px solid var(--border-sage);
+        border-radius: var(--radius);
+        padding: var(--space-5);
+        font-size: var(--step-1);
+        font-weight: bold;
+        text-align: center;
+        margin: var(--space-6) auto 0 auto;
+        max-width: 600px;
+    }
+
+
+    /* -------------------------------
+       Responsive
+    ----------------------------------*/
+
+    @media (max-width: 767px) {
+      #app-wrapper { padding: var(--space-4); }
+      #activity-container { padding: 24px; }
+      h1 { font-size: clamp(1.75rem, 5vw, 2rem); }
+      h2.rubric { font-size: var(--step--1); margin-bottom: 20px; }
+    }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-wrapper">
+        <div id="activity-container">
+
+            <!-- Slide 1: Title -->
+            <div id="slide-1" class="screen">
+                <h2 class="rubric">Unit 1: Personal Identity</h2>
+                <h1>Lesson 3: Where I Live, What I Do</h1>
+                <p>Welcome!</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-2">START</button>
+                </div>
+            </div>
+
+            <!-- Slide 2: Learning Goals -->
+            <div id="slide-2" class="screen hidden">
+                <div class="icon-placeholder">🎯</div>
+                <h1>Today, you will learn:</h1>
+                <ul>
+                    <li>To ask about a person's job.</li>
+                    <li>To ask where a person lives.</li>
+                    <li>To answer these questions about yourself.</li>
+                </ul>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-3">CONTINUE</button>
+                </div>
+            </div>
+
+            <!-- Slide 3: Warm-up - Jobs -->
+            <div id="slide-3" class="screen hidden">
+                <h1>Let's look at some jobs.</h1>
+                <p>Match the picture to the word on the next slide.</p>
+                <div class="matching-grid">
+                    <div class="match-item">
+                        <div class="match-picture" style="font-size: 3rem;">🧑‍🏫</div>
+                        <p>teacher</p>
+                    </div>
+                    <div class="match-item">
+                        <div class="match-picture" style="font-size: 3rem;">🧑‍⚕️</div>
+                        <p>doctor</p>
+                    </div>
+                    <div class="match-item">
+                        <div class="match-picture" style="font-size: 3rem;">👷</div>
+                        <p>engineer</p>
+                    </div>
+                    <div class="match-item">
+                        <div class="match-picture" style="font-size: 3rem;">🧑‍🎓</div>
+                        <p>student</p>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-4">START MATCHING</button>
+                </div>
+            </div>
+
+            <!-- Slide 4: Warm-up Activity - Jobs -->
+            <div id="slide-4" class="screen hidden">
+                <h1>Warm-up Activity: Jobs</h1>
+                <p>Tap a word, then tap a picture to make a pair.</p>
+                <div class="matching-grid" id="jobs-matching-grid">
+                    <div class="match-item">
+                        <button class="match-picture job-target" type="button" data-answer="teacher" aria-label="Match teacher">🧑‍🏫</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture job-target" type="button" data-answer="doctor" aria-label="Match doctor">🧑‍⚕️</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture job-target" type="button" data-answer="engineer" aria-label="Match engineer">👷</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture job-target" type="button" data-answer="student" aria-label="Match student">🧑‍🎓</button>
+                    </div>
+                </div>
+                <div class="match-words" id="jobs-word-bank" role="group" aria-label="Job words">
+                    <button class="match-word" type="button" data-word="teacher">teacher</button>
+                    <button class="match-word" type="button" data-word="doctor">doctor</button>
+                    <button class="match-word" type="button" data-word="engineer">engineer</button>
+                    <button class="match-word" type="button" data-word="student">student</button>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn" id="check-jobs-btn" data-target="slide-5">CHECK ANSWERS</button>
+                </div>
+                <p id="jobs-feedback" class="feedback-container" role="status" aria-live="polite"></p>
+            </div>
+
+            <!-- Slide 5: Warm-up Activity - Places -->
+            <div id="slide-5" class="screen hidden">
+                <h1>Warm-up Activity: Places</h1>
+                <p>Tap a place word, then tap a picture to make a pair.</p>
+                <div class="matching-grid" id="places-matching-grid">
+                    <div class="match-item">
+                        <button class="match-picture place-target" type="button" data-answer="university" aria-label="Match university">🏫</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture place-target" type="button" data-answer="hospital" aria-label="Match hospital">🏥</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture place-target" type="button" data-answer="office" aria-label="Match office">🏢</button>
+                    </div>
+                    <div class="match-item">
+                        <button class="match-picture place-target" type="button" data-answer="home" aria-label="Match home">🏠</button>
+                    </div>
+                </div>
+                <div class="match-words" id="places-word-bank" role="group" aria-label="Place words">
+                    <button class="match-word" type="button" data-word="university">university</button>
+                    <button class="match-word" type="button" data-word="hospital">hospital</button>
+                    <button class="match-word" type="button" data-word="office">office</button>
+                    <button class="match-word" type="button" data-word="home">home</button>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn" id="check-places-btn" data-target="slide-6">CHECK ANSWERS</button>
+                </div>
+                <p id="places-feedback" class="feedback-container" role="status" aria-live="polite"></p>
+            </div>
+
+            <!-- Slide 6: Model: A New Conversation -->
+            <div id="slide-6" class="screen hidden">
+                <div class="icon-placeholder">💬</div>
+                <h1>A New Conversation</h1>
+                <p>Imagine you are at a language exchange. You meet a new person. Here is a short conversation.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-7">SEE CONVERSATION</button>
+                </div>
+            </div>
+
+            <!-- Slide 7: Model: Question 1 -->
+            <div id="slide-7" class="screen hidden">
+                <h1>Question 1: Location</h1>
+                <div class="conversation-box">
+                    <p><b>Laila:</b> Hi! So, where do you live?</p>
+                    <p><b>Omar:</b> I live in the city centre.</p>
+                </div>
+                <p>We use <b>Where do you live?</b> to ask about the location.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-8">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 8: Model: Question 2 -->
+            <div id="slide-8" class="screen hidden">
+                <h1>Question 2: Job</h1>
+                <div class="conversation-box">
+                    <p><b>Laila:</b> And what do you do?</p>
+                    <p><b>Omar:</b> I'm a student.</p>
+                </div>
+                <p>We use <b>What do you do?</b> to ask about a person's job.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-9">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 9: Grammar Focus: Articles a / an -->
+            <div id="slide-9" class="screen hidden">
+                <h1>Grammar Focus: Articles</h1>
+                <div class="grammar-box">
+                    <h3>Remember <i>a</i> and <i>an</i> for jobs:</h3>
+                    <p>Use <b>a</b> before a consonant sound:</p>
+                    <ul>
+                        <li>a doctor</li>
+                        <li>a teacher</li>
+                    </ul>
+                     <p>Use <b>an</b> before a vowel sound (a, e, i, o, u):</p>
+                    <ul>
+                        <li>an engineer</li>
+                        <li>an office worker</li>
+                    </ul>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-10">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 10: Pronunciation Focus: /st/ -->
+            <div id="slide-10" class="screen hidden">
+                <div class="icon-placeholder">🔊</div>
+                <h1>Pronunciation Focus: /st/</h1>
+                <p>Listen to the sound: s... t... <b>st</b></p>
+                <p>This sound is at the beginning of the word:<br><b>student</b></p>
+                <p>Practice saying it: <b>student</b>.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-11">CONTINUE</button>
+                </div>
+            </div>
+            
+            <!-- Slide 11: Activity 1 Instructions -->
+            <div id="slide-11" class="screen hidden">
+                <h1>Activity 1: Complete the Conversations</h1>
+                <p>Read the sentences below.<br>Choose the correct word to fill the gap.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-12">START ACTIVITY 1</button>
+                </div>
+            </div>
+
+            <!-- Slide 12: Activity 1 - Question 1 -->
+            <div id="slide-12" class="screen hidden">
+                 <h1>Question 1</h1>
+                 <div class="gapfill-container">
+                    <span>A: What do you do?</span>
+                    <span>B: I am</span>
+                    <select class="gapfill-select" data-correct-answer="an">
+                        <option value="">...</option>
+                        <option value="a">a</option>
+                        <option value="an">an</option>
+                        <option value="the">the</option>
+                    </select>
+                     <span>engineer.</span>
+                 </div>
+                 <div class="feedback-container" role="status" aria-live="polite"></div>
+                 <div class="controls">
+                    <button class="activity-btn check-gapfill-btn" data-answer-slide="slide-13">CHECK</button>
+                </div>
+            </div>
+
+            <!-- Slide 13: Activity 1 - Answer 1 -->
+            <div id="slide-13" class="screen hidden">
+                <h1>Answer 1</h1>
+                <div class="conversation-box">
+                    <p>A: What do you do?</p>
+                    <p>B: I am <b>an</b> engineer.</p>
+                </div>
+                <p class="feedback correct">Correct! We use 'an' because 'engineer' starts with a vowel sound.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-14">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 14: Activity 1 - Question 2 -->
+            <div id="slide-14" class="screen hidden">
+                <h1>Question 2</h1>
+                <div class="gapfill-container">
+                   <span>A: Where</span>
+                   <select class="gapfill-select" data-correct-answer="do">
+                       <option value="">...</option>
+                       <option value="do">do</option>
+                       <option value="are">are</option>
+                       <option value="is">is</option>
+                   </select>
+                   <span>you live?</span>
+                   <span>B: I live near the university.</span>
+                </div>
+                <div class="feedback-container" role="status" aria-live="polite"></div>
+                <div class="controls">
+                   <button class="activity-btn check-gapfill-btn" data-answer-slide="slide-15">CHECK</button>
+               </div>
+           </div>
+
+            <!-- Slide 15: Activity 1 - Answer 2 -->
+            <div id="slide-15" class="screen hidden">
+                <h1>Answer 2</h1>
+                 <div class="conversation-box">
+                    <p>A: Where <b>do</b> you live?</p>
+                    <p>B: I live near the university.</p>
+                </div>
+                <p class="feedback correct">Excellent! We use 'do' to ask a question with the verb 'live'.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-16">NEXT</button>
+                </div>
+            </div>
+            
+            <!-- Slide 16: Activity 1 - Question 3 -->
+            <div id="slide-16" class="screen hidden">
+                <h1>Question 3</h1>
+                <div class="gapfill-container">
+                   <span>A: I am a doctor.</span>
+                   <span>B: Great! Where do you work?</span>
+                   <span>A: I work</span>
+                   <select class="gapfill-select" data-correct-answer="at">
+                       <option value="">...</option>
+                       <option value="on">on</option>
+                       <option value="at">at</option>
+                       <option value="from">from</option>
+                   </select>
+                   <span>a hospital.</span>
+                </div>
+                <div class="feedback-container" role="status" aria-live="polite"></div>
+                <div class="controls">
+                   <button class="activity-btn check-gapfill-btn" data-answer-slide="slide-17">CHECK</button>
+               </div>
+           </div>
+
+            <!-- Slide 17: Activity 1 - Answer 3 -->
+            <div id="slide-17" class="screen hidden">
+                <h1>Answer 3</h1>
+                 <div class="conversation-box">
+                    <p>A: I am a doctor.</p>
+                    <p>B: Great! Where do you work?</p>
+                    <p>A: I work <b>at</b> a hospital.</p>
+                </div>
+                <p class="feedback correct">Well done! We use 'at' or 'in' for a place of work.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-18">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 18: Activity 1 - Question 4 -->
+            <div id="slide-18" class="screen hidden">
+                <h1>Question 4</h1>
+                <div class="gapfill-container">
+                   <span>A: What do you do?</span>
+                   <span>B: I am a</span>
+                   <select class="gapfill-select" data-correct-answer="student">
+                       <option value="">...</option>
+                       <option value="study">study</option>
+                       <option value="teacher">teacher</option>
+                       <option value="student">student</option>
+                   </select>
+                   <span>. I study at the university.</span>
+                </div>
+                <div class="feedback-container" role="status" aria-live="polite"></div>
+                <div class="controls">
+                   <button class="activity-btn check-gapfill-btn" data-answer-slide="slide-19">CHECK</button>
+               </div>
+           </div>
+           
+            <!-- Slide 19: Activity 1 - Answer 4 -->
+            <div id="slide-19" class="screen hidden">
+                <h1>Answer 4</h1>
+                 <div class="conversation-box">
+                    <p>A: What do you do?</p>
+                    <p>B: I am a <b>student</b>. I study at the university.</p>
+                </div>
+                <p class="feedback correct">Perfect! A 'student' is a person who studies.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-20">CONTINUE TO ACTIVITY 2</button>
+                </div>
+            </div>
+
+            <!-- Slide 20: Activity 2 Instructions -->
+            <div id="slide-20" class="screen hidden">
+                <h1>Activity 2: Make Sentences</h1>
+                <p>Put the words in the correct order to make questions and answers.<br>Drag the words into the box or tap to move them.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-21">START ACTIVITY 2</button>
+                </div>
+            </div>
+
+            <!-- Slide 21: Activity 2 - Item 1 -->
+            <div id="slide-21" class="screen hidden">
+                <h1>Question 1</h1>
+                <div class="unscramble-container">
+                    <div id="word-bank-1" class="word-bank">
+                        <div class="word-tile draggable" draggable="true">do</div>
+                        <div class="word-tile draggable" draggable="true">you</div>
+                        <div class="word-tile draggable" draggable="true">what</div>
+                        <div class="word-tile draggable" draggable="true">do</div>
+                        <div class="word-tile draggable" draggable="true">?</div>
+                    </div>
+                    <div class="sentence-box drop-zone"></div>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-22">SHOW ANSWER</button>
+                </div>
+            </div>
+
+            <!-- Slide 22: Activity 2 - Answer 1 -->
+            <div id="slide-22" class="screen hidden">
+                <h1>Answer 1</h1>
+                <p>Correct Answer:</p>
+                <div class="answer-display">What do you do?</div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-23">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 23: Activity 2 - Item 2 -->
+            <div id="slide-23" class="screen hidden">
+                 <h1>Sentence 2</h1>
+                 <div class="unscramble-container">
+                     <div id="word-bank-2" class="word-bank">
+                         <div class="word-tile draggable" draggable="true">live</div>
+                         <div class="word-tile draggable" draggable="true">I</div>
+                         <div class="word-tile draggable" draggable="true">in</div>
+                         <div class="word-tile draggable" draggable="true">a town</div>
+                         <div class="word-tile draggable" draggable="true">.</div>
+                     </div>
+                     <div class="sentence-box drop-zone"></div>
+                 </div>
+                 <div class="controls">
+                     <button class="activity-btn nav-btn" data-target="slide-24">SHOW ANSWER</button>
+                 </div>
+            </div>
+
+            <!-- Slide 24: Activity 2 - Answer 2 -->
+            <div id="slide-24" class="screen hidden">
+                <h1>Answer 2</h1>
+                <p>Correct Answer:</p>
+                <div class="answer-display">I live in a town.</div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-25">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 25: Activity 2 - Item 3 -->
+            <div id="slide-25" class="screen hidden">
+                <h1>Sentence 3</h1>
+                <div class="unscramble-container">
+                    <div id="word-bank-3" class="word-bank">
+                        <div class="word-tile draggable" draggable="true">a</div>
+                        <div class="word-tile draggable" draggable="true">I</div>
+                        <div class="word-tile draggable" draggable="true">teacher</div>
+                        <div class="word-tile draggable" draggable="true">am</div>
+                        <div class="word-tile draggable" draggable="true">.</div>
+                    </div>
+                    <div class="sentence-box drop-zone"></div>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-26">SHOW ANSWER</button>
+                </div>
+            </div>
+
+            <!-- Slide 26: Activity 2 - Answer 3 -->
+            <div id="slide-26" class="screen hidden">
+                <h1>Answer 3</h1>
+                <p>Correct Answer:</p>
+                <div class="answer-display">I am a teacher.</div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-27">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 27: Activity 2 - Item 4 -->
+            <div id="slide-27" class="screen hidden">
+                <h1>Question 4</h1>
+                <div class="unscramble-container">
+                    <div id="word-bank-4" class="word-bank">
+                        <div class="word-tile draggable" draggable="true">where</div>
+                        <div class="word-tile draggable" draggable="true">live</div>
+                        <div class="word-tile draggable" draggable="true">you</div>
+                        <div class="word-tile draggable" draggable="true">do</div>
+                        <div class="word-tile draggable" draggable="true">?</div>
+                    </div>
+                    <div class="sentence-box drop-zone"></div>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-28">SHOW ANSWER</button>
+                </div>
+            </div>
+
+            <!-- Slide 28: Activity 2 - Answer 4 -->
+            <div id="slide-28" class="screen hidden">
+                <h1>Answer 4</h1>
+                <p>Correct Answer:</p>
+                <div class="answer-display">Where do you live?</div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-29">NEXT</button>
+                </div>
+            </div>
+
+            <!-- Slide 29: Activity 2 - Item 5 -->
+            <div id="slide-29" class="screen hidden">
+                <h1>Question 5</h1>
+                <div class="unscramble-container">
+                    <div id="word-bank-5" class="word-bank">
+                        <div class="word-tile draggable" draggable="true">a</div>
+                        <div class="word-tile draggable" draggable="true">student</div>
+                        <div class="word-tile draggable" draggable="true">you</div>
+                        <div class="word-tile draggable" draggable="true">are</div>
+                        <div class="word-tile draggable" draggable="true">?</div>
+                    </div>
+                    <div class="sentence-box drop-zone"></div>
+                </div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-30">SHOW ANSWER</button>
+                </div>
+            </div>
+
+            <!-- Slide 30: Activity 2 - Answer 5 -->
+            <div id="slide-30" class="screen hidden">
+                <h1>Answer 5</h1>
+                <p>Correct Answer:</p>
+                <div class="answer-display">Are you a student?</div>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-31">FINISH</button>
+                </div>
+            </div>
+
+            <!-- Slide 31: Lesson Review -->
+            <div id="slide-31" class="screen hidden">
+                <div class="icon-placeholder">📋</div>
+                <h1>Lesson Review</h1>
+                <p>Today you practiced:</p>
+                <ul>
+                    <li>Asking: <b>What do you do?</b></li>
+                    <li>Asking: <b>Where do you live?</b></li>
+                    <li>Using 'a' and 'an' for jobs.</li>
+                </ul>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-32">CONTINUE</button>
+                </div>
+            </div>
+
+            <!-- Slide 32: Your Turn! -->
+            <div id="slide-32" class="screen hidden">
+                <div class="icon-placeholder">🤔</div>
+                <h1>Your Turn!</h1>
+                <p>Now, think about your answers.</p>
+                <div class="conversation-box">
+                    <p><b>Where do you live?</b><br>(I live in...)</p>
+                    <p><b>What do you do?</b><br>(I am a... / I am an...)</p>
+                </div>
+                <p>Practice saying your answers out loud.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-33">END LESSON</button>
+                </div>
+            </div>
+
+            <!-- Slide 33: End of Lesson -->
+            <div id="slide-33" class="screen hidden">
+                <h1>Great work today!</h1>
+                <p>You have completed Unit 1, Lesson 3.</p>
+                <div class="controls">
+                    <button class="activity-btn nav-btn" data-target="slide-1">EXIT</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const slides = document.querySelectorAll('.screen');
+
+        // Ensure buttons do not submit forms
+        document.querySelectorAll('button').forEach(button => {
+            if (!button.hasAttribute('type')) {
+                button.type = 'button';
+            }
+        });
+        
+        // --- Slide Navigation ---
+        const showSlide = (targetId) => {
+            const targetIndex = Array.from(slides).findIndex(s => s.id === targetId);
+            if (targetIndex !== -1) {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('hidden', i !== targetIndex);
+                });
+            }
+        };
+
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                showSlide(button.dataset.target);
+            });
+        });
+
+        // --- Activity 1: Gapfill ---
+        document.querySelectorAll('.gapfill-select').forEach(select => {
+            const currentSlide = select.closest('.screen');
+            const feedbackContainer = currentSlide?.querySelector('.feedback-container');
+
+            select.addEventListener('change', () => {
+                select.style.borderColor = '';
+                if (feedbackContainer) {
+                    feedbackContainer.textContent = '';
+                }
+            });
+        });
+
+        document.querySelectorAll('.check-gapfill-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const currentSlide = button.closest('.screen');
+                const select = currentSlide?.querySelector('.gapfill-select');
+                const feedbackContainer = currentSlide?.querySelector('.feedback-container');
+
+                if (!select || !feedbackContainer) {
+                    return;
+                }
+                
+                const userAnswer = select.value;
+                const correctAnswer = select.dataset.correctAnswer;
+
+                feedbackContainer.innerHTML = '';
+
+                if (!userAnswer) {
+                    feedbackContainer.innerHTML = `<span class="feedback incorrect">Choose an option before checking.</span>`;
+                    select.focus();
+                    return;
+                }
+
+                if (userAnswer === correctAnswer) {
+                    select.style.borderColor = 'var(--success-green)';
+                    feedbackContainer.innerHTML = `<span class="feedback correct">Correct!</span>`;
+                    button.disabled = true;
+                    select.disabled = true;
+
+                    setTimeout(() => {
+                        showSlide(button.dataset.answerSlide);
+                    }, 1200);
+
+                } else {
+                    select.style.borderColor = 'var(--error-red)';
+                    feedbackContainer.innerHTML = `<span class="feedback incorrect">Not quite, try again!</span>`;
+                }
+            });
+        });
+
+        // --- Click-to-match activities (jobs & places) ---
+        const initClickMatchActivity = ({
+            wordSelector,
+            pictureSelector,
+            checkButtonId,
+            feedbackId,
+            pairColors = {}
+        }) => {
+            const words = Array.from(document.querySelectorAll(wordSelector));
+            const pictures = Array.from(document.querySelectorAll(pictureSelector));
+            if (!words.length || !pictures.length) {
+                return;
+            }
+
+            const checkButton = checkButtonId ? document.getElementById(checkButtonId) : null;
+            const feedback = feedbackId ? document.getElementById(feedbackId) : null;
+            const interactiveSelectors = `${wordSelector}, ${pictureSelector}`;
+            const pairColorClasses = Array.from(new Set(Object.values(pairColors))).filter(Boolean);
+            let selectedWord = null;
+
+            const getWordByKey = (key) => words.find(word => word.dataset.word === key);
+            const getPictureByAnswer = (answer) => pictures.find(picture => picture.dataset.answer === answer);
+
+            const setFeedback = (message, type = 'neutral') => {
+                if (!feedback) { return; }
+                feedback.innerHTML = message ? `<span class="feedback ${type !== 'neutral' ? type : ''}">${message}</span>` : '';
+            };
+
+            const clearSelectedWord = () => {
+                if (selectedWord) {
+                    selectedWord.classList.remove('is-selected');
+                    selectedWord.setAttribute('aria-pressed', 'false');
+                }
+                selectedWord = null;
+            };
+
+            const removePairColors = (element) => {
+                if (!element || !pairColorClasses.length) {
+                    return;
+                }
+                element.classList.remove(...pairColorClasses);
+            };
+
+            const resetWordEvaluationState = (word) => {
+                word?.classList.remove('is-correct-match', 'is-incorrect-match');
+            };
+
+            const resetPictureEvaluationState = (picture) => {
+                picture?.classList.remove('is-correct', 'is-incorrect');
+            };
+
+            const unassignWord = (word) => {
+                if (!word) { return; }
+                const pictureAnswer = word.dataset.matchedPicture;
+                if (pictureAnswer) {
+                    const picture = getPictureByAnswer(pictureAnswer);
+                    if (picture && picture.dataset.matchedWord === word.dataset.word) {
+                        delete picture.dataset.matchedWord;
+                        picture.classList.remove('is-matched');
+                        resetPictureEvaluationState(picture);
+                        removePairColors(picture);
+                        picture.setAttribute('aria-pressed', 'false');
+                    }
+                }
+                delete word.dataset.matchedPicture;
+                word.classList.remove('is-matched');
+                resetWordEvaluationState(word);
+                removePairColors(word);
+            };
+
+            const unassignPicture = (picture) => {
+                if (!picture) { return; }
+                const matchedWordKey = picture.dataset.matchedWord;
+                if (matchedWordKey) {
+                    const word = getWordByKey(matchedWordKey);
+                    if (word) {
+                        delete word.dataset.matchedPicture;
+                        word.classList.remove('is-matched');
+                        resetWordEvaluationState(word);
+                        removePairColors(word);
+                    }
+                }
+                delete picture.dataset.matchedWord;
+                picture.classList.remove('is-matched');
+                resetPictureEvaluationState(picture);
+                removePairColors(picture);
+                picture.setAttribute('aria-pressed', 'false');
+            };
+
+            const applyPairColor = (element, key) => {
+                if (!element) { return; }
+                removePairColors(element);
+                const colorClass = pairColors[key];
+                if (colorClass) {
+                    element.classList.add(colorClass);
+                }
+            };
+
+            const assignPair = (word, picture) => {
+                if (!word || !picture) {
+                    return;
+                }
+
+                if (picture.dataset.matchedWord === word.dataset.word) {
+                    clearSelectedWord();
+                    return;
+                }
+
+                if (picture.dataset.matchedWord) {
+                    const currentWord = getWordByKey(picture.dataset.matchedWord);
+                    if (currentWord) {
+                        unassignWord(currentWord);
+                    } else {
+                        unassignPicture(picture);
+                    }
+                }
+
+                if (word.dataset.matchedPicture) {
+                    const previousPicture = getPictureByAnswer(word.dataset.matchedPicture);
+                    if (previousPicture) {
+                        unassignPicture(previousPicture);
+                    }
+                }
+
+                word.dataset.matchedPicture = picture.dataset.answer;
+                picture.dataset.matchedWord = word.dataset.word;
+
+                word.classList.add('is-matched');
+                picture.classList.add('is-matched');
+                applyPairColor(word, word.dataset.word);
+                applyPairColor(picture, word.dataset.word);
+                resetWordEvaluationState(word);
+                resetPictureEvaluationState(picture);
+                picture.setAttribute('aria-pressed', 'true');
+                clearSelectedWord();
+                setFeedback('', 'neutral');
+            };
+
+            words.forEach(word => {
+                word.setAttribute('aria-pressed', 'false');
+                word.addEventListener('click', () => {
+                    if (word.disabled) { return; }
+                    if (selectedWord === word) {
+                        clearSelectedWord();
+                        return;
+                    }
+
+                    clearSelectedWord();
+                    selectedWord = word;
+                    word.classList.add('is-selected');
+                    word.setAttribute('aria-pressed', 'true');
+                    setFeedback('', 'neutral');
+                });
+
+                word.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        word.click();
+                    }
+                });
+            });
+
+            pictures.forEach(picture => {
+                picture.setAttribute('aria-pressed', 'false');
+                picture.addEventListener('click', () => {
+                    if (picture.disabled) { return; }
+                    if (selectedWord) {
+                        assignPair(selectedWord, picture);
+                        return;
+                    }
+
+                    if (picture.dataset.matchedWord) {
+                        unassignPicture(picture);
+                        setFeedback('', 'neutral');
+                    }
+                });
+
+                picture.addEventListener('keydown', (event) => {
+                    if ((event.key === 'Enter' || event.key === ' ') && selectedWord) {
+                        event.preventDefault();
+                        assignPair(selectedWord, picture);
+                    }
+                });
+            });
+
+            document.addEventListener('click', (event) => {
+                if (selectedWord && !event.target.closest(interactiveSelectors)) {
+                    clearSelectedWord();
+                }
+            });
+
+            checkButton?.addEventListener('click', (event) => {
+                event.preventDefault();
+                if (!checkButton) { return; }
+
+                clearSelectedWord();
+                pictures.forEach(picture => {
+                    resetPictureEvaluationState(picture);
+                });
+                words.forEach(word => {
+                    resetWordEvaluationState(word);
+                });
+
+                const unmatched = pictures.filter(picture => !picture.dataset.matchedWord);
+                if (unmatched.length) {
+                    setFeedback('Make a match for each picture before checking.', 'incorrect');
+                    unmatched[0].focus();
+                    return;
+                }
+
+                let correctCount = 0;
+
+                pictures.forEach(picture => {
+                    const expectedAnswer = picture.dataset.answer;
+                    const matchedWordKey = picture.dataset.matchedWord;
+                    const matchedWord = getWordByKey(matchedWordKey);
+
+                    if (matchedWordKey === expectedAnswer) {
+                        correctCount++;
+                        picture.classList.add('is-correct');
+                        matchedWord?.classList.add('is-correct-match');
+                    } else {
+                        picture.classList.add('is-incorrect');
+                        matchedWord?.classList.add('is-incorrect-match');
+                    }
+                });
+
+                if (correctCount === pictures.length) {
+                    setFeedback('Perfect! All correct.', 'correct');
+                    checkButton.disabled = true;
+                    words.forEach(word => {
+                        word.disabled = true;
+                        word.setAttribute('aria-disabled', 'true');
+                    });
+                    pictures.forEach(picture => {
+                        picture.disabled = true;
+                        picture.setAttribute('aria-disabled', 'true');
+                    });
+
+                    const target = checkButton.dataset.target;
+                    if (target) {
+                        setTimeout(() => {
+                            showSlide(target);
+                        }, 1200);
+                    }
+                } else {
+                    setFeedback(`You got ${correctCount} of ${pictures.length} correct. Adjust the matches and try again!`, 'incorrect');
+                }
+            });
+        };
+
+        initClickMatchActivity({
+            wordSelector: '#jobs-word-bank .match-word',
+            pictureSelector: '#jobs-matching-grid .job-target',
+            checkButtonId: 'check-jobs-btn',
+            feedbackId: 'jobs-feedback',
+            pairColors: {
+                teacher: 'pair-fern',
+                doctor: 'pair-rose',
+                engineer: 'pair-amber',
+                student: 'pair-mint'
+            }
+        });
+
+        initClickMatchActivity({
+            wordSelector: '#places-word-bank .match-word',
+            pictureSelector: '#places-matching-grid .place-target',
+            checkButtonId: 'check-places-btn',
+            feedbackId: 'places-feedback',
+            pairColors: {
+                university: 'pair-haze',
+                hospital: 'pair-rose',
+                office: 'pair-clay',
+                home: 'pair-fern'
+            }
+        });
+
+        // --- Activity 2 Drag, Drop, and Tap Logic ---
+        let draggedItem = null;
+        let activeTile = null;
+
+        const clearActiveTile = () => {
+            if (activeTile) {
+                activeTile.classList.remove('is-selected');
+                activeTile.setAttribute('aria-pressed', 'false');
+            }
+            activeTile = null;
+        };
+
+        const toggleTileSelection = (tile) => {
+            if (activeTile === tile) {
+                clearActiveTile();
+                return;
+            }
+
+            if (activeTile) {
+                activeTile.classList.remove('is-selected');
+                activeTile.setAttribute('aria-pressed', 'false');
+            }
+
+            activeTile = tile;
+            tile.classList.add('is-selected');
+            tile.setAttribute('aria-pressed', 'true');
+            tile.focus();
+        };
+
+        const getMaxItems = (zone) => {
+            const value = Number(zone.dataset.maxItems);
+            return Number.isFinite(value) && value > 0 ? value : Infinity;
+        };
+
+        const moveTile = (tile, destination, origin) => {
+            if (!tile || !destination) {
+                return;
+            }
+
+            const startZone = origin ?? tile.parentElement;
+            const maxItems = getMaxItems(destination);
+
+            if (maxItems === 1) {
+                const existingTile = destination.querySelector('.word-tile');
+                if (existingTile && existingTile !== tile) {
+                    if (startZone && startZone !== existingTile.parentElement) {
+                        startZone.appendChild(existingTile);
+                    } else if (existingTile.dataset.originContainer) {
+                        const fallback = document.getElementById(existingTile.dataset.originContainer);
+                        fallback?.appendChild(existingTile);
+                    }
+                }
+            }
+
+            destination.appendChild(tile);
+            destination.classList.remove('over');
+            if (startZone && startZone.classList?.contains('drop-zone')) {
+                startZone.style.border = '';
+            }
+            destination.dispatchEvent(new CustomEvent('tile-moved', { bubbles: true }));
+        };
+
+        const registerZoneInteraction = (zone) => {
+            zone.addEventListener('click', () => {
+                if (!activeTile) {
+                    return;
+                }
+                const origin = activeTile.parentElement;
+                moveTile(activeTile, zone, origin);
+                clearActiveTile();
+            });
+
+            zone.addEventListener('keydown', (event) => {
+                if ((event.key === 'Enter' || event.key === ' ') && activeTile) {
+                    event.preventDefault();
+                    const origin = activeTile.parentElement;
+                    moveTile(activeTile, zone, origin);
+                    clearActiveTile();
+                }
+            });
+        };
+
+        const registerDragAndDrop = (zone) => {
+            zone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+                zone.classList.add('over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('over');
+            });
+
+            zone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                if (!draggedItem) {
+                    return;
+                }
+                const origin = draggedItem.parentElement;
+                moveTile(draggedItem, zone, origin);
+                clearActiveTile();
+            });
+        };
+
+        const wordTiles = document.querySelectorAll('.word-tile');
+        wordTiles.forEach(tile => {
+            if (!tile.dataset.originContainer) {
+                const parentId = tile.parentElement?.id;
+                if (parentId) {
+                    tile.dataset.originContainer = parentId;
+                }
+            }
+
+            tile.setAttribute('tabindex', '0');
+            tile.setAttribute('role', 'button');
+            tile.setAttribute('aria-pressed', 'false');
+
+            tile.addEventListener('click', () => toggleTileSelection(tile));
+            tile.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleTileSelection(tile);
+                }
+            });
+
+            tile.addEventListener('dragstart', (event) => {
+                draggedItem = tile;
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', tile.textContent.trim());
+                requestAnimationFrame(() => tile.classList.add('dragging'));
+                clearActiveTile();
+            });
+
+            tile.addEventListener('dragend', () => {
+                tile.classList.remove('dragging');
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('.drop-zone, .word-bank').forEach(zone => {
+            if (!zone.hasAttribute('tabindex')) {
+                zone.setAttribute('tabindex', '0');
+            }
+            registerZoneInteraction(zone);
+            registerDragAndDrop(zone);
+        });
+
+        document.addEventListener('click', (event) => {
+            if (activeTile && !event.target.closest('.word-tile, .drop-zone, .word-bank')) {
+                clearActiveTile();
+            }
+        });
+
+        // --- Warm-up Jobs Check Logic ---
+        if (checkJobsBtn) {
+            checkJobsBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                if (!jobPictures.length || !jobWords.length) {
+                    return;
+                }
+
+                jobPictures.forEach(picture => {
+                    picture.classList.remove('is-correct', 'is-incorrect');
+                });
+
+                jobWords.forEach(word => {
+                    word.classList.remove('is-correct-match', 'is-incorrect-match');
+                });
+
+                const unmatchedPictures = jobPictures.filter(picture => !picture.dataset.matchedWord);
+                if (unmatchedPictures.length) {
+                    setJobsFeedback('Make a match for each picture before checking.', 'incorrect');
+                    unmatchedPictures[0].focus();
+                    return;
+                }
+
+                let correctCount = 0;
+
+                jobPictures.forEach(picture => {
+                    const expectedAnswer = picture.dataset.answer;
+                    const matchedWordKey = picture.dataset.matchedWord;
+                    const matchedWordButton = jobWords.find(word => word.dataset.word === matchedWordKey);
+
+                    if (matchedWordKey === expectedAnswer) {
+                        correctCount++;
+                        picture.classList.add('is-correct');
+                        picture.classList.remove('is-incorrect');
+                        matchedWordButton?.classList.add('is-correct-match');
+                    } else {
+                        picture.classList.add('is-incorrect');
+                        picture.classList.remove('is-correct');
+                        matchedWordButton?.classList.add('is-incorrect-match');
+                    }
+                });
+
+                if (correctCount === jobPictures.length) {
+                    setJobsFeedback('Perfect! All correct.', 'correct');
+                    checkJobsBtn.disabled = true;
+                    setTimeout(() => {
+                        showSlide(checkJobsBtn.dataset.target);
+                    }, 1200);
+                } else {
+                    setJobsFeedback(`You got ${correctCount} of ${jobPictures.length} correct. Adjust the matches and try again.`, 'incorrect');
+                }
+            });
+        }
+
+        // Initialize the first slide
+        showSlide('slide-1');
+    });
+    </script>
+</body>
+</html>
