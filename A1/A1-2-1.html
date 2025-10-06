@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-Class Activity: Joining the Palestinian Museum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* =====================================================================
+       Organic Sage UI — Mobile-first, stable, and soothing
+       Palette preserved; accessibility + mobile ergonomics improved.
+       ===================================================================== */
+
+    /* -------------------------------
+       Design tokens
+    ----------------------------------*/
+    :root {
+      /* Core palette (yours, kept) */
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --border-sage: rgba(122, 132, 113, 0.20);
+      --hover-sage: rgba(156, 175, 136, 0.15);
+
+      /* Extended palette for depth */
+      --deep-forest: #3E4A3A;
+      --moss: #6E7A67;
+      --fern: #8FA081;
+      --dried-clay: #D9CDB4;
+      --amber: #C6AA77;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+
+      /* Typography */
+      --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+      /* Fluid typography scale */
+      --step--1: clamp(0.875rem, 0.84rem + 0.15vw, 0.95rem);
+      --step-0:  clamp(1rem,     0.96rem + 0.22vw, 1.1rem);
+      --step-1:  clamp(1.125rem, 1.07rem + 0.35vw, 1.3rem);
+      --step-2:  clamp(1.375rem, 1.28rem + 0.55vw, 1.6rem);
+      --step-3:  clamp(1.75rem,  1.58rem + 0.95vw, 2.1rem);
+      --step-4:  clamp(2.25rem,  1.98rem + 1.35vw, 2.7rem);
+
+      /* Rhythm */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --space-8: 2.5rem;
+      --space-9: 3rem;
+
+      /* Shape + elevation */
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+
+      --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+      --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+      --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.10), 0 20px 60px rgba(34, 41, 32, 0.08);
+
+      /* Focus ring (AA contrast on cream/white) */
+      --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent), 0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+
+      /* Motion */
+      --ease-ambient: cubic-bezier(.2,.8,.2,1);
+      --dur-1: 120ms;
+      --dur-2: 200ms;
+      --dur-3: 320ms;
+
+      /* Mobile-safe touch target */
+      --target-min: 44px;
+
+      /* Container max */
+      --container-max: 900px;
+    }
+
+    /* -------------------------------
+       Global reset / mobile stability
+    ----------------------------------*/
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%; /* iOS font scaling fix */
+      text-size-adjust: 100%;
+      hanging-punctuation: first last;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100dvh; /* mobile address bar safe */
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.6;
+      color: var(--forest-shadow);
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, #FFFFFF 0%, transparent 50%),
+        radial-gradient(1200px 1000px at 110% 10%, #FFF8F0 0%, transparent 50%),
+        linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+
+    /* Better text wrapping on small screens */
+    :where(p, h1, h2, h3, h4, h5, h6) {
+      text-wrap: pretty;
+      overflow-wrap: anywhere;
+    }
+
+    /* Media defaults */
+    img, svg, video, canvas, audio, iframe {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Links */
+    a { color: var(--primary-sage); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--deep-forest); }
+
+    /* Utility: hide but readable for screen readers */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+
+    /* -------------------------------
+       App shell
+    ----------------------------------*/
+    #app-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: max(var(--space-7), env(safe-area-inset-top)) var(--space-4) var(--space-7);
+      width: 100%;
+      min-height: 100dvh;
+      background:
+        radial-gradient(800px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+        radial-gradient(700px 500px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 65%);
+    }
+
+    /* Container gets subtle translucency on capable browsers */
+    #activity-container {
+      width: 100%;
+      max-width: var(--container-max);
+      background: color-mix(in srgb, var(--soft-white) 88%, white 12%);
+      padding: clamp(24px, 3.2vw, 48px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: var(--shadow-2);
+      position: relative;
+      isolation: isolate;
+      container-type: inline-size; /* enables container queries where supported */
+    }
+
+    @supports (backdrop-filter: blur(6px)) {
+      #activity-container {
+        background: color-mix(in srgb, var(--soft-white) 76%, white 24%);
+        backdrop-filter: blur(6px) saturate(1.02);
+      }
+    }
+
+    /* Decorative organic edge glow (soft + subtle) */
+    #activity-container::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background:
+        radial-gradient(1200px 200px at 50% -5%, rgba(156,175,136,0.12), transparent 60%),
+        radial-gradient(800px 1000px at 50% 110%, rgba(122,132,113,0.08), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Hide screens when needed */
+    .screen.hidden { display: none !important; }
+
+    /* -------------------------------
+       Headings / text
+    ----------------------------------*/
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--step-4);
+      letter-spacing: 0.2px;
+      color: var(--forest-shadow);
+      margin: 0 0 var(--space-2) 0;
+      text-align: center;
+    }
+
+    h2.rubric {
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: 500;
+      color: var(--secondary-sage);
+      margin: 0 0 var(--space-6) 0;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      color: var(--forest-shadow);
+      margin: var(--space-6) 0 var(--space-3) 0;
+    }
+
+    /* -------------------------------
+       Buttons
+    ----------------------------------*/
+    .activity-btn {
+      min-height: var(--target-min);
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--primary-sage);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, white 8%), var(--primary-sage));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient), opacity var(--dur-1) var(--ease-ambient);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:hover {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 92%, white 8%), var(--forest-shadow));
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 10px 20px rgba(90, 107, 82, 0.22);
+    }
+
+    .activity-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 4px 10px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--ring), 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:disabled,
+    .activity-btn[disabled] {
+      background: var(--tertiary-sage);
+      border-color: var(--tertiary-sage);
+      color: color-mix(in srgb, #fff 70%, var(--soft-white) 30%);
+      cursor: not-allowed;
+      opacity: 0.8;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Secondary variant */
+    .activity-btn.secondary {
+      background: transparent;
+      color: var(--primary-sage);
+      border-color: color-mix(in srgb, var(--tertiary-sage) 70%, var(--primary-sage) 30%);
+      box-shadow: none;
+    }
+
+    .activity-btn.secondary:hover { background-color: var(--hover-sage); }
+
+    .activity-btn.secondary:focus-visible {
+      outline: none;
+      box-shadow: var(--ring);
+    }
+
+    /* Button group alignment on small screens */
+    .controls {
+      margin-top: var(--space-7);
+      text-align: center;
+      display: grid;
+      gap: var(--space-3);
+      grid-auto-flow: row;
+    }
+
+    /* -------------------------------
+       Forms / inputs
+    ----------------------------------*/
+    .input-group { margin: var(--space-6) 0; }
+
+    .input-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+      color: var(--primary-sage);
+      letter-spacing: 0.2px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      min-height: var(--target-min);
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--tertiary-sage);
+      background: #fff;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      color: var(--ink);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color var(--dur-2) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: color-mix(in srgb, var(--ink-muted) 60%, #fff 40%);
+      opacity: 0.9;
+    }
+
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      border-color: var(--secondary-sage);
+      box-shadow: var(--ring);
+      background: color-mix(in srgb, #fff 92%, var(--warm-cream) 8%);
+    }
+
+    input:disabled,
+    textarea:disabled,
+    select:disabled {
+      background: color-mix(in srgb, #fff 85%, var(--warm-cream) 15%);
+      color: var(--ink-muted);
+      cursor: not-allowed;
+    }
+
+    /* Date input caret/tap stability on iOS */
+    input[type="date"] {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Textareas */
+    textarea {
+      resize: vertical;
+    }
+
+    /* Accent color for native radios/checkboxes (fallback when custom not active) */
+    :root { accent-color: var(--primary-sage); }
+
+    /* -------------------------------
+       System Check Screen
+    ----------------------------------*/
+    .system-check-step { margin-bottom: var(--space-7); }
+
+    #code-display-area {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-top: var(--space-3);
+      flex-wrap: wrap; /* safer on mobile */
+    }
+
+    #generated-code {
+      width: 100%;
+      min-height: 100px;
+      height: 120px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--tertiary-sage);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    #paste-target { margin-top: var(--space-3); }
+
+    #paste-success-msg {
+      color: #2E7D32;
+      font-weight: 800;
+      margin-top: var(--space-2);
+    }
+
+    /* -------------------------------
+       Level Select Screen
+    ----------------------------------*/
+    .level-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-7);
+    }
+
+    /* Nice tactile card-y buttons inside level grid (opt-in via .activity-btn) */
+    .level-buttons .activity-btn {
+      width: 100%;
+    }
+
+    /* -------------------------------
+       Test Screen
+    ----------------------------------*/
+    .test-header {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+      font-weight: 700;
+    }
+
+    #current-level { color: var(--secondary-sage); }
+    #timer { font-size: 1.1rem; color: var(--primary-sage); }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: var(--border-sage);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-sage), color-mix(in srgb, var(--secondary-sage) 60%, var(--primary-sage) 40%));
+      transition: width var(--dur-3) var(--ease-ambient);
+    }
+
+    #progress-text {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--secondary-sage);
+      margin-top: var(--space-2);
+      margin-bottom: var(--space-6);
+    }
+
+    .mc-question {
+      padding: 20px;
+      border: 1px solid var(--border-sage);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, #ffffff 92%, var(--warm-cream) 8%));
+      box-shadow: var(--shadow-1);
+    }
+
+    .mc-question-header { margin-bottom: var(--space-4); }
+
+    .mc-question-text {
+      font-weight: 800;
+      font-size: var(--step-1);
+      color: var(--forest-shadow);
+      line-height: 1.45;
+    }
+
+    /* Options */
+    .mc-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .mc-option-item input { display: none; }
+
+    .mc-option-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: background-color var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient), transform var(--dur-1) var(--ease-ambient);
+      -webkit-tap-highlight-color: transparent;
+      background: #fff;
+    }
+
+    .mc-option-label:hover { background-color: var(--hover-sage); }
+
+    .mc-option-item .option-control {
+      flex-shrink: 0;
+      inline-size: 24px;
+      block-size: 24px;
+      border: 2px solid var(--tertiary-sage);
+      background-color: var(--soft-white);
+      transition: all var(--dur-2) var(--ease-ambient);
+      position: relative;
+      border-radius: 50%;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    .mc-option-item input[type="radio"]:checked + .option-control { border-color: var(--primary-sage); }
+
+    .mc-option-item input[type="radio"]:checked + .option-control::after {
+      content: '';
+      position: absolute;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--primary-sage);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+    }
+
+    .mc-option-text {
+      color: var(--primary-sage);
+      line-height: 1.4;
+      font-size: 1rem;
+    }
+
+    .mc-option-item input[type="radio"]:focus-visible + .option-control,
+    .mc-option-label:focus-visible {
+      outline: none;
+      box-shadow: var(--ring);
+    }
+
+    /* Slide controls */
+    .mc-slide-student-controls {
+      margin-top: var(--space-7);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    /* -------------------------------
+       Submission Screen
+    ----------------------------------*/
+    .submission-steps { margin-top: var(--space-7); }
+
+    #submission-code {
+      width: 100%;
+      height: 260px;
+      box-sizing: border-box;
+      margin: var(--space-3) 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+      font-size: 0.95rem;
+      padding: 12px 14px;
+      border: 1px solid var(--tertiary-sage);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    #copy-submission-btn { margin-bottom: var(--space-6); }
+
+    /* -------------------------------
+       Responsive / container queries
+    ----------------------------------*/
+
+    /* Small screens default (mobile-first) already applied above */
+
+    /* Narrow phones ≤ 360px: tighten paddings slightly */
+    @media (max-width: 360px) {
+      #activity-container { padding: 18px; }
+      .activity-btn { padding-inline: 14px; }
+    }
+
+    /* Tablets and up */
+    @media (min-width: 768px) {
+      #app-wrapper { padding-inline: var(--space-7); }
+      .controls { grid-auto-flow: column; justify-content: center; }
+      .test-header { grid-template-columns: 1fr auto auto; }
+    }
+
+    /* Desktops */
+    @media (min-width: 1024px) {
+      #activity-container { box-shadow: var(--shadow-3); }
+      h1 { letter-spacing: 0.3px; }
+    }
+
+    /* Container-aware tweaks (progressive enhancement) */
+    @container (min-width: 520px) {
+      .mc-question { padding: 24px; }
+      .mc-option-label { padding: 14px; }
+    }
+
+    @container (min-width: 760px) {
+      h1 { font-size: clamp(2rem, 2.2vw + 1rem, 2.75rem); }
+      .mc-question-text { font-size: clamp(1.1rem, 0.6vw + 0.9rem, 1.35rem); }
+    }
+
+    /* -------------------------------
+       Accessibility / motion / scroll
+    ----------------------------------*/
+    :focus-visible {
+      outline: none;
+      box-shadow: var(--ring);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    ::selection {
+      background: color-mix(in srgb, var(--secondary-sage) 30%, #fff 70%);
+      color: var(--deep-forest);
+    }
+
+    /* Prevent overscroll chaining on iOS */
+    html, body { overscroll-behavior-y: none; }
+
+    /* -------------------------------
+       Scrollbars (subtle, optional)
+    ----------------------------------*/
+    *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    *::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--primary-sage) 50%, var(--tertiary-sage) 50%);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* -------------------------------
+       Dark mode (gentle, earthy)
+    ----------------------------------*/
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --soft-white: #1E211C;
+        --warm-cream: #23261F;
+        --forest-shadow: #DDE6D4;
+        --ink: #E9EFE5;
+        --ink-muted: #AEB9AA;
+        --border-sage: rgba(184, 197, 166, 0.25);
+      }
+
+      html, body {
+        background:
+          radial-gradient(1100px 900px at 15% 10%, rgba(156,175,136,0.06), transparent 60%),
+          radial-gradient(900px 900px at 85% 90%, rgba(122,132,113,0.08), transparent 65%),
+          linear-gradient(135deg, #191D18 0%, #1B1E19 100%);
+      }
+
+      #activity-container {
+        background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+        border-color: rgba(184, 197, 166, 0.18);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+      }
+
+      a { color: color-mix(in srgb, var(--secondary-sage) 80%, #C7D3C0 20%); }
+
+      .mc-question {
+        background: linear-gradient(180deg, #20241E 0%, #191D18 100%);
+        border-color: rgba(184, 197, 166, 0.20);
+        box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.35);
+      }
+
+      .activity-btn {
+        background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 80%, #0F120E 20%), var(--primary-sage));
+        box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 18px rgba(0,0,0,0.35);
+      }
+
+      .activity-btn:hover {
+        background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 80%, #0F120E 20%), var(--forest-shadow));
+      }
+
+      input, textarea, select {
+        background: #141713;
+        border-color: rgba(184, 197, 166, 0.25);
+        color: var(--ink);
+      }
+
+      #progress-bar {
+        background: linear-gradient(90deg, var(--secondary-sage), color-mix(in srgb, var(--primary-sage) 70%, #000 30%));
+      }
+    }
+
+    /* -------------------------------
+       Original responsive tweaks, refined
+    ----------------------------------*/
+    @media (max-width: 767px) {
+      #app-wrapper { padding: var(--space-4); }
+      #activity-container { padding: 24px; }
+      h1 { font-size: clamp(1.75rem, 5vw, 2rem); }
+      h2.rubric { font-size: var(--step--1); margin-bottom: 20px; }
+      .mc-question-text { font-size: clamp(1.05rem, 2.6vw, 1.1rem); }
+    }
+
+    /* -------------------------------
+       Activity-specific refinements
+    ----------------------------------*/
+    header {
+      border-bottom: 1px solid rgba(122, 132, 113, 0.18);
+      padding-bottom: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+
+    .activity-section {
+      background: color-mix(in srgb, var(--soft-white) 92%, white 8%);
+      border: 1px solid var(--border-sage);
+      border-radius: var(--radius-lg);
+      padding: clamp(20px, 3vw, 32px);
+      margin-top: var(--space-7);
+      box-shadow: var(--shadow-1);
+    }
+
+    .activity-section:first-of-type {
+      margin-top: 0;
+    }
+
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .activity-title {
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      color: var(--forest-shadow);
+      margin: 0;
+    }
+
+    .activity-instruction {
+      margin: 0;
+      font-size: var(--step--1);
+      color: var(--moss);
+    }
+
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    legend {
+      font-weight: 700;
+      color: var(--deep-forest);
+    }
+
+    .question-block {
+      display: grid;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .option-group {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .option-pill {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: color-mix(in srgb, var(--warm-cream) 75%, #fff 25%);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      border: 1px solid var(--border-sage);
+      font-weight: 600;
+      color: var(--forest-shadow);
+    }
+
+    .option-pill input[type="radio"] {
+      inline-size: 20px;
+      block-size: 20px;
+      accent-color: var(--primary-sage);
+    }
+
+    .matching-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .matching-row {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    @media (min-width: 640px) {
+      .matching-row {
+        grid-template-columns: 1fr minmax(160px, 220px);
+        align-items: center;
+      }
+    }
+
+    .matching-question {
+      font-weight: 600;
+      color: var(--forest-shadow);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .word-token {
+      border: 1px solid var(--border-sage);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--soft-white) 85%, #fff 15%);
+      padding: 8px 14px;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      cursor: pointer;
+      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient);
+    }
+
+    .word-token:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .word-token:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(34, 41, 32, 0.12);
+    }
+
+    .drop-zone {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      min-height: var(--target-min);
+    }
+
+    .drop-slot {
+      min-width: 80px;
+      min-height: var(--target-min);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-sage);
+      background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: border-color var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    .drop-slot.filled {
+      border-style: solid;
+      background: color-mix(in srgb, var(--tertiary-sage) 35%, #fff 65%);
+    }
+
+    .feedback {
+      margin-top: var(--space-3);
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--tertiary-sage) 20%, #fff 80%);
+      border: 1px solid var(--border-sage);
+      color: var(--deep-forest);
+      display: none;
+    }
+
+    .feedback.error {
+      background: color-mix(in srgb, #f8eaea 85%, #fff 15%);
+      border-color: rgba(198, 88, 88, 0.25);
+      color: #8d2f2f;
+    }
+
+    table.membership-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-4);
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-1);
+    }
+
+    .membership-table th,
+    .membership-table td {
+      border: 1px solid var(--border-sage);
+      padding: 12px;
+      text-align: left;
+      color: var(--forest-shadow);
+    }
+
+    .membership-table th {
+      background: color-mix(in srgb, var(--tertiary-sage) 30%, #fff 70%);
+      font-weight: 700;
+    }
+
+    .intro-section,
+    .model-section {
+      margin-bottom: var(--space-7);
+      padding: var(--space-6);
+      background: color-mix(in srgb, var(--soft-white) 88%, #fff 12%);
+      border: 1px solid var(--border-sage);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-1);
+    }
+
+    .intro-section p {
+      margin: 0 0 var(--space-2);
+      font-size: var(--step--1);
+      color: var(--forest-shadow);
+    }
+
+    .intro-section p:last-of-type { margin-bottom: 0; }
+
+    .intro-lead {
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--deep-forest);
+    }
+
+    .model-header {
+      display: grid;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .model-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      color: var(--forest-shadow);
+    }
+
+    .model-description {
+      margin: 0;
+      font-size: var(--step--1);
+      color: var(--moss);
+    }
+
+    .model-audio {
+      width: 100%;
+      margin-bottom: var(--space-4);
+    }
+
+    .model-dialogue {
+      display: grid;
+      gap: var(--space-2);
+      margin: 0;
+      padding: 0;
+    }
+
+    .dialogue-line {
+      margin: 0;
+      padding: var(--space-3);
+      background: color-mix(in srgb, var(--warm-cream) 85%, #fff 15%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-sage);
+      line-height: 1.6;
+    }
+
+    .speaker {
+      font-weight: 700;
+      color: var(--primary-sage);
+      margin-right: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+  <div id="app-wrapper">
+    <main id="activity-container" aria-labelledby="page-title">
+      <header>
+        <h1 id="page-title">Pre-Class Activity: Joining the Palestinian Museum</h1>
+        <h2 class="rubric">Complete the five tasks below before class. Use what you learned about joining the Palestinian Museum to answer each question.</h2>
+      </header>
+
+      <section class="intro-section" aria-labelledby="intro-heading">
+        <h2 class="visually-hidden" id="intro-heading">Learner instructions</h2>
+        <p class="intro-lead"><strong>Instructions for the Learner:</strong> Welcome! This activity will prepare you for our next class.</p>
+        <p>Please complete all the activities below. It will take about 30 minutes. See you in class!</p>
+      </section>
+
+      <section class="model-section" aria-labelledby="model-heading">
+        <div class="model-header">
+          <h2 class="model-title" id="model-heading">Model Dialogue: Getting a Membership Card</h2>
+          <p class="model-description">Listen to the audio of the conversation and read the text below.</p>
+        </div>
+        <audio class="model-audio" controls aria-label="Audio recording of the model dialogue">
+          <source src="media/palestinian-museum-model-dialogue.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element. Read the transcript below.
+        </audio>
+        <div class="model-dialogue" role="list">
+          <p class="dialogue-line" role="listitem"><span class="speaker">Receptionist (Tariq):</span> Hello. Welcome to the Palestinian Museum. How can I help you?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Visitor (Fatima):</span> Hello. I'd like a membership card, please.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Tariq:</span> Of course. I just need some details. What's your name?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> My name is Fatima Khalil.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Tariq:</span> And where are you from, Fatima?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> I am from Palestine.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Tariq:</span> Great. And what's your phone number?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> My phone number is 059-123-4567.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Tariq:</span> Perfect. And your email address?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> It’s fatima.k@email.com.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Tariq:</span> Thank you. Here is your card.</p>
+        </div>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-1-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-1-heading">Activity 1. Check Your Understanding</h2>
+          <p class="activity-instruction">Read the dialogue and choose the correct answer for each question.</p>
+        </div>
+        <form id="activity-1" class="question-block" data-activity="multiple-choice">
+          <fieldset>
+            <legend>1. Where is Fatima?</legend>
+            <div class="option-group">
+              <label class="option-pill"><input type="radio" name="q1" value="a" /> a) At a school</label>
+              <label class="option-pill"><input type="radio" name="q1" value="b" /> b) At the Palestinian Museum</label>
+              <label class="option-pill"><input type="radio" name="q1" value="c" /> c) At home</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>2. What does Fatima want?</legend>
+            <div class="option-group">
+              <label class="option-pill"><input type="radio" name="q2" value="a" /> a) A ticket</label>
+              <label class="option-pill"><input type="radio" name="q2" value="b" /> b) A map</label>
+              <label class="option-pill"><input type="radio" name="q2" value="c" /> c) A membership card</label>
+            </div>
+          </fieldset>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check answers</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-2-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-2-heading">Activity 2. Vocabulary: Questions and Details</h2>
+          <p class="activity-instruction">Match the receptionist's questions to the personal details Fatima gives.</p>
+        </div>
+        <form id="activity-2" class="matching-grid" data-activity="matching">
+          <div class="matching-row">
+            <span class="matching-question">1. What's your name?</span>
+            <label class="visually-hidden" for="match-1">Answer for “What's your name?”</label>
+            <select id="match-1" data-answer="d">
+              <option value="">Choose...</option>
+              <option value="a">a) Palestine</option>
+              <option value="b">b) 059-123-4567</option>
+              <option value="c">c) fatima.k@email.com</option>
+              <option value="d">d) Fatima Khalil</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">2. Where are you from?</span>
+            <label class="visually-hidden" for="match-2">Answer for “Where are you from?”</label>
+            <select id="match-2" data-answer="a">
+              <option value="">Choose...</option>
+              <option value="a">a) Palestine</option>
+              <option value="b">b) 059-123-4567</option>
+              <option value="c">c) fatima.k@email.com</option>
+              <option value="d">d) Fatima Khalil</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">3. What's your phone number?</span>
+            <label class="visually-hidden" for="match-3">Answer for “What's your phone number?”</label>
+            <select id="match-3" data-answer="b">
+              <option value="">Choose...</option>
+              <option value="a">a) Palestine</option>
+              <option value="b">b) 059-123-4567</option>
+              <option value="c">c) fatima.k@email.com</option>
+              <option value="d">d) Fatima Khalil</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">4. What's your email address?</span>
+            <label class="visually-hidden" for="match-4">Answer for “What's your email address?”</label>
+            <select id="match-4" data-answer="c">
+              <option value="">Choose...</option>
+              <option value="a">a) Palestine</option>
+              <option value="b">b) 059-123-4567</option>
+              <option value="c">c) fatima.k@email.com</option>
+              <option value="d">d) Fatima Khalil</option>
+            </select>
+          </div>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check matches</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-3-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-3-heading">Activity 3. Grammar Focus: Build the Questions</h2>
+          <p class="activity-instruction">Click and drop the words into the correct order to make the questions from the dialogue.</p>
+        </div>
+        <div id="activity-3" class="question-block" data-activity="word-order">
+          <div class="arrange-item" data-answer='["What's","your","name","?"]'>
+            <h3>1. Question about name</h3>
+            <div class="word-bank" aria-label="Word bank for question 1">
+              <button type="button" class="word-token" data-token="What's">What's</button>
+              <button type="button" class="word-token" data-token="your">your</button>
+              <button type="button" class="word-token" data-token="name">name</button>
+              <button type="button" class="word-token" data-token="?">?</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form the question">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+            </div>
+          </div>
+          <div class="arrange-item" data-answer='["Where","are","you","from","?"]'>
+            <h3>2. Question about nationality</h3>
+            <div class="word-bank" aria-label="Word bank for question 2">
+              <button type="button" class="word-token" data-token="Where">Where</button>
+              <button type="button" class="word-token" data-token="are">are</button>
+              <button type="button" class="word-token" data-token="you">you</button>
+              <button type="button" class="word-token" data-token="from">from</button>
+              <button type="button" class="word-token" data-token="?">?</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form the question">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+            </div>
+          </div>
+          <div class="arrange-item" data-answer='["What's","your","phone number","?"]'>
+            <h3>3. Question about phone number</h3>
+            <div class="word-bank" aria-label="Word bank for question 3">
+              <button type="button" class="word-token" data-token="What's">What's</button>
+              <button type="button" class="word-token" data-token="your">your</button>
+              <button type="button" class="word-token" data-token="phone number">phone number</button>
+              <button type="button" class="word-token" data-token="?">?</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form the question">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+            </div>
+          </div>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check questions</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </div>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-4-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-4-heading">Activity 4. Practice: Complete the Conversation</h2>
+          <p class="activity-instruction">Complete the sentences in the dialogue by choosing the correct option from the dropdown menu.</p>
+        </div>
+        <form id="activity-4" class="question-block" data-activity="dropdown">
+          <label for="dialog-1">Tariq: Hello. ---- [What's / Where are] your name?</label>
+          <select id="dialog-1" data-answer="What's">
+            <option value="">Select...</option>
+            <option value="What's">What's</option>
+            <option value="Where are">Where are</option>
+          </select>
+
+          <label for="dialog-2">Fatima: My name ---- [is / am] Fatima Khalil.</label>
+          <select id="dialog-2" data-answer="is">
+            <option value="">Select...</option>
+            <option value="is">is</option>
+            <option value="am">am</option>
+          </select>
+
+          <label for="dialog-3">Tariq: And ---- [What's / Where are] you from, Fatima?</label>
+          <select id="dialog-3" data-answer="Where are">
+            <option value="">Select...</option>
+            <option value="What's">What's</option>
+            <option value="Where are">Where are</option>
+          </select>
+
+          <label for="dialog-4">Fatima: I ---- [is / am] from Palestine.</label>
+          <select id="dialog-4" data-answer="am">
+            <option value="">Select...</option>
+            <option value="is">is</option>
+            <option value="am">am</option>
+          </select>
+
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check sentences</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-5-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-5-heading">Activity 5. Review: Fatima's Details</h2>
+          <p class="activity-instruction">Read the dialogue again and complete the membership form with Fatima's information.</p>
+        </div>
+        <form id="activity-5" data-activity="table">
+          <table class="membership-table">
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Fatima's Information</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Name</th>
+                <td>
+                  <label class="visually-hidden" for="table-1">Select Fatima's name</label>
+                  <select id="table-1" data-answer="Fatima Khalil">
+                    <option value="">Select...</option>
+                    <option value="Tariq">Tariq</option>
+                    <option value="Fatima Khalil">Fatima Khalil</option>
+                    <option value="The Palestinian Museum">The Palestinian Museum</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Nationality</th>
+                <td>
+                  <label class="visually-hidden" for="table-2">Select Fatima's nationality</label>
+                  <select id="table-2" data-answer="Palestine">
+                    <option value="">Select...</option>
+                    <option value="Palestine">Palestine</option>
+                    <option value="059-123-4567">059-123-4567</option>
+                    <option value="Membership">Membership</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Phone Number</th>
+                <td>
+                  <label class="visually-hidden" for="table-3">Select Fatima's phone number</label>
+                  <select id="table-3" data-answer="059-123-4567">
+                    <option value="">Select...</option>
+                    <option value="fatima.k@email.com">fatima.k@email.com</option>
+                    <option value="Palestine">Palestine</option>
+                    <option value="059-123-4567">059-123-4567</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Email</th>
+                <td>
+                  <label class="visually-hidden" for="table-4">Select Fatima's email</label>
+                  <select id="table-4" data-answer="fatima.k@email.com">
+                    <option value="">Select...</option>
+                    <option value="Fatima Khalil">Fatima Khalil</option>
+                    <option value="fatima.k@email.com">fatima.k@email.com</option>
+                    <option value="Palestine">Palestine</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check form</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function showFeedback(container, message, isCorrect) {
+      const feedback = container.querySelector('.feedback');
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.classList.toggle('error', !isCorrect);
+      feedback.style.display = 'block';
+    }
+
+    function resetFeedback(container) {
+      const feedback = container.querySelector('.feedback');
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.style.display = 'none';
+        feedback.classList.remove('error');
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const container = button.closest('[data-activity]');
+      if (!container) return;
+
+      if (button.dataset.action === 'check') {
+        handleCheck(container);
+      } else if (button.dataset.action === 'reset') {
+        handleReset(container);
+      }
+    });
+
+    function handleCheck(container) {
+      const type = container.dataset.activity;
+      switch (type) {
+        case 'multiple-choice':
+          checkMultipleChoice(container);
+          break;
+        case 'matching':
+          checkMatching(container);
+          break;
+        case 'word-order':
+          checkWordOrder(container);
+          break;
+        case 'dropdown':
+          checkDropdown(container);
+          break;
+        case 'table':
+          checkDropdown(container);
+          break;
+        default:
+          break;
+      }
+    }
+
+    function handleReset(container) {
+      const type = container.dataset.activity;
+      switch (type) {
+        case 'multiple-choice':
+          container.querySelectorAll('input[type="radio"]').forEach((input) => {
+            input.checked = false;
+          });
+          break;
+        case 'matching':
+        case 'dropdown':
+        case 'table':
+          container.querySelectorAll('select').forEach((select) => {
+            select.selectedIndex = 0;
+          });
+          break;
+        case 'word-order':
+          resetWordOrder(container);
+          break;
+        default:
+          break;
+      }
+      resetFeedback(container);
+    }
+
+    function checkMultipleChoice(container) {
+      const answers = { q1: 'b', q2: 'c' };
+      const inputs = container.querySelectorAll('input[type="radio"]');
+      let allAnswered = true;
+      let correctCount = 0;
+
+      Object.keys(answers).forEach((key) => {
+        const selected = container.querySelector(`input[name="${key}"]:checked`);
+        if (!selected) {
+          allAnswered = false;
+          return;
+        }
+        if (selected.value === answers[key]) {
+          correctCount += 1;
+        }
+      });
+
+      if (!allAnswered) {
+        showFeedback(container, 'Please answer both questions before checking.', false);
+        return;
+      }
+
+      const isPerfect = correctCount === Object.keys(answers).length;
+      const message = isPerfect
+        ? 'Excellent! Both answers are correct.'
+        : 'Almost there. Review the scenario and try again.';
+      showFeedback(container, message, isPerfect);
+    }
+
+    function checkMatching(container) {
+      const selects = Array.from(container.querySelectorAll('select'));
+      if (selects.some((select) => select.value === '')) {
+        showFeedback(container, 'Choose an answer for each question.', false);
+        return;
+      }
+      const allCorrect = selects.every((select) => select.value === select.dataset.answer);
+      const message = allCorrect
+        ? 'Great job! Every match is correct.'
+        : 'Think back to the conversation and adjust your matches.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function checkDropdown(container) {
+      const selects = Array.from(container.querySelectorAll('select'));
+      if (selects.some((select) => select.value === '')) {
+        showFeedback(container, 'Please complete all the blanks before checking.', false);
+        return;
+      }
+      const allCorrect = selects.every((select) => select.value === select.dataset.answer);
+      const message = allCorrect
+        ? 'Well done! All of your choices are correct.'
+        : 'Some answers need review. Think back to Tariq and Fatima\'s conversation.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function resetWordOrder(container) {
+      container.querySelectorAll('.arrange-item').forEach((item) => {
+        const dropSlots = item.querySelectorAll('.drop-slot');
+        dropSlots.forEach((slot) => {
+          slot.textContent = '';
+          slot.classList.remove('filled');
+          delete slot.dataset.token;
+        });
+        item.querySelectorAll('.word-token').forEach((tokenButton) => {
+          tokenButton.disabled = false;
+        });
+      });
+    }
+
+    function checkWordOrder(container) {
+      const items = Array.from(container.querySelectorAll('.arrange-item'));
+      let allAnswered = true;
+      const results = items.map((item) => {
+        const correctOrder = JSON.parse(item.dataset.answer);
+        const dropSlots = Array.from(item.querySelectorAll('.drop-slot'));
+        const userOrder = dropSlots
+          .filter((slot) => slot.dataset.token)
+          .map((slot) => slot.dataset.token);
+
+        if (userOrder.length !== correctOrder.length) {
+          allAnswered = false;
+        }
+
+        const isCorrect = correctOrder.every((value, index) => userOrder[index] === value);
+        return isCorrect;
+      });
+
+      if (!allAnswered) {
+        showFeedback(container, 'Fill every slot before checking your questions.', false);
+        return;
+      }
+
+      const allCorrect = results.every(Boolean);
+      const message = allCorrect
+        ? 'Fantastic! Each question is in the correct order.'
+        : 'Review the word order and try again.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    document.querySelectorAll('.word-token').forEach((button) => {
+      button.addEventListener('click', () => {
+        const arrangeItem = button.closest('.arrange-item');
+        const dropSlots = Array.from(arrangeItem.querySelectorAll('.drop-slot'));
+        const availableSlot = dropSlots.find((slot) => !slot.dataset.token);
+        if (!availableSlot) {
+          return;
+        }
+        availableSlot.textContent = button.dataset.token;
+        availableSlot.dataset.token = button.dataset.token;
+        availableSlot.classList.add('filled');
+        button.disabled = true;
+        resetFeedback(arrangeItem.closest('[data-activity]'));
+      });
+    });
+
+    document.querySelectorAll('.drop-slot').forEach((slot) => {
+      slot.addEventListener('click', () => {
+        if (!slot.dataset.token) return;
+        const arrangeItem = slot.closest('.arrange-item');
+        const wordButton = Array.from(arrangeItem.querySelectorAll('.word-token')).find(
+          (button) => button.dataset.token === slot.dataset.token && button.disabled
+        );
+        if (wordButton) {
+          wordButton.disabled = false;
+        }
+        slot.textContent = '';
+        delete slot.dataset.token;
+        slot.classList.remove('filled');
+        resetFeedback(arrangeItem.closest('[data-activity]'));
+      });
+    });
+  </script>
+</body>
+</html>
