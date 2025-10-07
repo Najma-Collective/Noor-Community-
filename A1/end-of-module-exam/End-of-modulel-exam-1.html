@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A1 English</title>
+    <title>End of Module Exam 1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&family=Questrial&display=swap" rel="stylesheet">
@@ -290,9 +291,7 @@
 
             const EXAM_STATE_KEY = 'a1Unit1ExamProgress';
             
-            // !!! CRITICAL !!! 
-            // PASTE THE WEB APP URL FROM YOUR DEPLOYED GOOGLE APPS SCRIPT HERE
-            const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzL5gDOX5kWFg-aMZ39SochQOkNxpK0AjRDu2qqURHt6eGLZ79bQgmx6hIDAhL0Vy_4AQ/exec'; 
+            const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyOoXDbIcZsHgXUc2PhoHX214tEulsSRFjGGLbogBdJRhn53se-c-vAZ3rq9x-nAR26Xw/exec'; 
 
             const populateStudentIds = () => {
                 const fragment = document.createDocumentFragment();
@@ -396,7 +395,10 @@
             });
 
             nextBtns.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
-            submitBtn.addEventListener('click', submitExam);
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', submitExam);
+            }
 
             allForms.forEach(form => form.addEventListener('change', saveProgress));
             studentIdInput.addEventListener('change', saveProgress);
@@ -589,67 +591,80 @@
                 return Math.round(score);
             }
             
-            async function sendScoreToSheet({ classCode, studentId, score }) {
-                try {
-                    const response = await fetch(SUBMISSION_ENDPOINT, {
-                        method: 'POST',
-                        // Use text/plain to avoid CORS preflight requests which can complicate Apps Script web apps.
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ classCode, studentId, score })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok. Status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-
-                    if (result.status !== 'success') {
-                         throw new Error(`Google Sheet script reported an error: ${result.message}`);
-                    }
-                    
-                    return true;
-
-                } catch (error) {
-                    console.error('Error submitting score:', error);
-                    alert(`A submission error occurred:\n\n${error.message}\n\nPlease check your internet connection or contact your instructor.`);
-                    return false;
-                }
-            }
-
             async function submitExam() {
+                // 1. Find the submit button and disable it to prevent multiple clicks.
+                const submitBtn = document.getElementById('submit-btn'); // Assume the button has id='submit-btn'
+                if (!submitBtn) {
+                    alert('Error: Submit button with id="submit-btn" not found.');
+                    return;
+                }
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting...';
 
                 try {
-                    if (!SUBMISSION_ENDPOINT || SUBMISSION_ENDPOINT === 'YOUR_DEPLOYED_WEB_APP_URL_HERE') {
-                        alert('CRITICAL ERROR: The submission URL has not been set in the HTML file. Please contact the exam administrator immediately.');
-                        throw new Error('Submission endpoint not configured.');
+                    // 2. Get the required values from the form.
+                    const studentIdInput = document.getElementById('student-id');
+                    const classSelect = document.getElementById('class-code');
+                    const studentId = studentIdInput ? studentIdInput.value.trim() : '';
+                    const classCode = classSelect ? classSelect.value.trim() : '';
+                    
+                    if (!studentId || !classCode) {
+                        throw new Error('Student ID or Class Code is missing. Please select them and try again.');
+                    }
+
+                    // 3. Calculate the score using the existing function.
+                    const finalScore = typeof calculateScore === 'function' ? calculateScore() : 0;
+
+                    // 4. Get the Exam Code provided by the user.
+                    const examCode = "EOM1";
+                    
+                    // 5. Construct the data payload.
+                    const submissionData = {
+                        timestamp: new Date().toISOString(),
+                        classCode: classCode,
+                        studentId: studentId,
+                        exam: examCode,
+                        score: finalScore
+                    };
+
+                    // 6. Send the data using the Fetch API.
+                    const response = await fetch(SUBMISSION_ENDPOINT, {
+                        method: 'POST',
+                        redirect: "follow",
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify(submissionData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Network Error: The server responded with status ${response.status}.`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.status !== 'success') {
+                        throw new Error(`Script Error: ${result.message}`);
                     }
                     
-                    const studentId = studentIdInput.value.trim();
-                    const classCode = classSelect.value.trim();
-
-                    if (!studentId || !classCode) {
-                        alert('Error: Student ID or Class is missing. Please go back to the start and fill them in.');
-                        showScreen('start-screen');
-                        throw new Error('Missing student ID or class code.');
-                    }
-
-                    const finalScore = calculateScore();
-                    const submissionSuccessful = await sendScoreToSheet({ classCode, studentId, score: finalScore });
-
-                    if (submissionSuccessful) {
-                        submitBtn.textContent = 'Submitted Successfully';
+                    // 7. Handle success.
+                    console.log('Submission successful:', result.message);
+                    submitBtn.textContent = 'Submitted Successfully';
+                    // Assume there's a function to show a success screen.
+                    if (typeof showScreen === 'function') {
                         showScreen('results-screen');
-                        localStorage.removeItem(EXAM_STATE_KEY);
                     } else {
-                        // The error message is already shown by sendScoreToSheet, so we just need to re-enable the button.
-                        throw new Error('Submission to spreadsheet failed. See previous alert.');
+                        alert('Exam submitted successfully!');
                     }
+                    // Optionally, clear saved progress from localStorage.
+                    if (localStorage) {
+                        localStorage.clear();
+                    }
+
                 } catch (error) {
-                    console.error('An error occurred in the submitExam function:', error);
-                    // Reset the button so the user can try again.
+                    // 8. Handle any errors and re-enable the button.
+                    console.error('Submission failed:', error);
+                    alert('A critical error occurred during submission. Please try again.\n\nDetails: ' + error.message);
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Exam';
                 }
@@ -665,3 +680,4 @@
     </script>
 </body>
 </html>
+``````
