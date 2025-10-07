@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slides: People & Possessions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      /* =====================================================================
+         Organic Sage Slides — V3 Redraft
+         Focus on layout, balance, and visual hierarchy.
+         ===================================================================== */
+
+      /* -------------------------------
+         Design tokens (unchanged core)
+      ----------------------------------*/
+      :root {
+        --primary-sage: #7A8471;
+        --secondary-sage: #9CAF88;
+        --tertiary-sage: #B8C5A6;
+        --warm-cream: #F8F6F0;
+        --soft-white: #FEFCF7;
+        --forest-shadow: #5A6B52;
+        --border-sage: rgba(122,132,113,0.20);
+        --hover-sage: rgba(156,175,136,0.15);
+        --deep-forest: #3E4A3A;
+        --ink: #2F3A2B;
+        --ink-muted: #5A6B52;
+        --font-display: 'Questrial', system-ui, sans-serif;
+        --font-body: 'Nunito', system-ui, sans-serif;
+        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+        --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+        --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+        --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+        --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+
+      /* -------------------------------
+         Global & App Layout
+      ----------------------------------*/
+      html, body { margin: 0; padding: 0; min-height: 100dvh; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow: hidden; }
+      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; min-height: 100dvh; }
+      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
+      .toolbar-brand { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
+      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); }
+      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: hidden; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
+      .stage-viewport { position: relative; display: grid; place-items: center; }
+
+      /* -------------------------------
+         Slide Structure & Navigation
+      ----------------------------------*/
+      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2))); max-width: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transition: opacity 300ms ease-in-out; }
+      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
+      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
+      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
+      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
+      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
+      .slide-nav-prev { left: 24px; }
+      .slide-nav-next { right: 24px; }
+
+      /* -------------------------------
+         REDRAFTED: Grid & Layout System
+      ----------------------------------*/
+      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
+      .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-12 { grid-column: span 12 / span 12; }
+      .col-start-7 { grid-column-start: 7; }
+      .align-self-start { align-self: flex-start; } .align-self-center { align-self: center; }
+
+      /* -------------------------------
+         REDRAFTED: Visual Components
+      ----------------------------------*/
+      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); }
+      .card.card-full-height { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: 0.75rem; }
+      .card h3 { margin: 0 0 0.5rem 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--step-1); }
+      .card p { margin: 0; font-size: var(--step--1); }
+      .card p + p { margin-top: 0.5rem; }
+      
+      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+      .img-overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .full-width-bg .slide-inner { padding: 0; }
+      .full-width-bg .bg-content { padding: var(--stage-pad); position: relative; z-index: 2; }
+
+      blockquote { margin: 1em 0 0 0; padding: 0.8em 1em; border-left: 4px solid var(--secondary-sage); background: color-mix(in srgb, var(--warm-cream) 60%, transparent); border-radius: 0 10px 10px 0; font-style: italic; font-size: var(--step--1); }
+      .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
+      .text-highlight { color: var(--primary-sage); font-weight: 700; }
+      hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
+      ol { list-style: none; counter-reset: item; padding-left: 0; }
+      ol li { counter-increment: item; margin-bottom: 0.5em; position: relative; padding-left: 2.5em; }
+      ol li::before { content: counter(item); position: absolute; left: 0; top: 0; width: 1.8em; height: 1.8em; border-radius: 50%; background-color: var(--secondary-sage); color: var(--soft-white); font-weight: 700; display: grid; place-items: center; font-size: 0.8em; line-height: 1; }
+
+      /* -------------------------------
+         Typographic System
+      ----------------------------------*/
+      .slide-stage h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
+      .slide-stage h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0 0 0.5em 0; }
+      .slide-stage h2.subtitle { color: var(--primary-sage); }
+      .slide-stage p, .slide-stage li { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); color: var(--forest-shadow); margin: 0.4em 0; }
+      .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
+      .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
+      .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
+      .centered-text { text-align: center; }
+
+      /* Dark mode adjustments */
+      @media (prefers-color-scheme: dark) {
+        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1); }
+        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+        .slide-stage { background: #141713; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
+        .dialogue-box { background: var(--warm-cream); border-color: rgba(184,197,166,0.25); }
+        ol li::before { background-color: var(--primary-sage); }
+      }
+    </style>
+</head>
+<body>
+
+    <div class="deck-app">
+        <header class="deck-toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
+                <span>Noor Community</span>
+            </div>
+            <div id="slide-counter" class="slide-counter">1 / 17</div>
+        </header>
+
+        <main class="deck-workspace">
+            <div class="stage-viewport">
+                
+                <!-- SLIDE 1: Title -->
+                <div class="slide-stage full-width-bg">
+                    <img src="https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Person holding a family photo" class="img-bg" style="opacity: 0.2;">
+                    <div class="img-overlay" style="background: linear-gradient(80deg, var(--soft-white) 45%, transparent 90%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                             <div class="col-span-7">
+                                <p class="subtitle" style="color: var(--primary-sage);">A1 English Lesson</p>
+                                <h1>My Family, My Things</h1>
+                                <p style="font-size: var(--step-2); color: var(--ink-muted);">Talk about people and possessions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Objectives -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Today's Goals</h2>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-users icon"></i><h3>Talk About Family</h3><p>Use words like brother, sister, mother, and father.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-laptop icon"></i><h3>Talk About Possessions</h3><p>Use words like laptop, keys, notebook, and phone.</p></div>
+                            </div>
+                            <div class="col-span-12">
+                                <div class="card card-full-height"><i class="fas fa-link icon"></i><h3>Connect People & Things</h3><p>Say things like "This is my brother's laptop."</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: Warm-Up -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                               <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                               <h2 style="margin-top: 1rem;">Let's Talk!</h2>
+                               <p class="subtitle" style="color: var(--ink-muted);">Family and Work</p>
+                            </div>
+                            <div class="col-span-7">
+                                <p><strong>1.</strong> Does your mother or father work in an office? What's on <span class="text-highlight">their desk?</span></p>
+                                <hr class="divider">
+                                <p><strong>2.</strong> Do you have a picture of your family on your <span class="text-highlight">desk</span> or <span class="text-highlight">phone?</span></p>
+                                <hr class="divider">
+                                <p><strong>3.</strong> What is one important possession for your brother or sister?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 4: Activity 1 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 1</h2>
+                                <h2>Connecting Our Words</h2>
+                                <p>Let's combine our vocabulary about family and possessions.</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p><i class="fa-solid fa-user" style="color:var(--secondary-sage); margin-right: 8px;"></i> "My <span class="text-highlight">brother</span> has a new <span class="text-highlight">laptop</span>."</p>
+                                    <hr class="divider">
+                                    <p><i class="fa-solid fa-user" style="color:var(--secondary-sage); margin-right: 8px;"></i> "My <span class="text-highlight">mother's</span> <span class="text-highlight">keys</span> are on the table."</p>
+                                    <hr class="divider">
+                                    <p><i class="fa-solid fa-user" style="color:var(--secondary-sage); margin-right: 8px;"></i> "I have a picture of my <span class="text-highlight">daughter</span> in my <span class="text-highlight">wallet</span>."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 5: Activity 1 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-4 centered-text">
+                                <i class="fa-solid fa-pen-fancy" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                            </div>
+                            <div class="col-span-8">
+                                <h2 class="subtitle">Activity 1: Your Turn!</h2>
+                                <p>With your partner, create a short story about a family.</p>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>Your story must include:</h3>
+                                    <ul>
+                                        <li>Three family words (e.g., father, sister, son)</li>
+                                        <li>Three object words (e.g., phone, notebook, keys)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 6: Activity 2 Intro -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/7645300/pexels-photo-7645300.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Desk with personal items" class="img-bg" style="opacity: 0.15;">
+                    <div class="img-overlay" style="background: linear-gradient(90deg, transparent 0%, var(--soft-white) 55%);"></div>
+                     <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                            <div class="col-span-5">
+                                <!-- Empty column for visual balance -->
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2</h2>
+                                <h2>Whose is it?</h2>
+                                <p>We use possessives to show who owns something.</p>
+                                <blockquote style="margin-top: 1rem;">This is <span class="text-highlight">my</span> pen. <br>That is <span class="text-highlight">Fatima's</span> notebook. <br><span class="text-highlight">Her</span> notebook is blue. <br><span class="text-highlight">My brother's</span> laptop is new.</blockquote>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 7: Activity 2 Task -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-desktop" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Show and Tell</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2: Your Turn!</h2>
+                                <p>In your group, talk about three objects around you.</p>
+                                <div class="card">
+                                <h3>For example:</h3>
+                                <p>"This is <span class="text-highlight">my</span> notebook."</p>
+                                <p>"This is <span class="text-highlight">my sister's</span> pen. <span class="text-highlight">Her</span> pen is red."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 8: Activity 3 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 3</h2>
+                                <h2>Asking Questions</h2>
+                                <p>Let's practice asking about a fictional family with "Do you have...?" and "Does he/she have...?"</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <p><strong>A:</strong> "<span class="text-highlight">Do they have</span> a son?"</p>
+                                    <p><strong>B:</strong> "Yes, they do."</p>
+                                    <hr class="divider">
+                                    <p><strong>A:</strong> "<span class="text-highlight">Does the mother have</span> a new laptop?"</p>
+                                    <p><strong>B:</strong> "No, she doesn't."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 9: Activity 3 Role Cards -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text" style="align-self: flex-start;">
+                                <h2>Choose a Family</h2>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height" style="text-align: left;">
+                                    <h3>Family A: The Saleems</h3>
+                                    <p><i class="fa-solid fa-user-tie" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Adel (Father):</strong> Has a big office, has a blue car.</p>
+                                    <p><i class="fa-solid fa-user-graduate" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Salma (Mother):</strong> Has a new laptop, has a red notebook.</p>
+                                    <p><i class="fa-solid fa-user" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Omar (Son):</strong> Has a new phone, has two keys.</p>
+                                </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height" style="text-align: left;">
+                                    <h3>Family B: The Khalids</h3>
+                                    <p><i class="fa-solid fa-user-tie" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Yousef (Father):</strong> Has a black wallet, has a small garden.</p>
+                                    <p><i class="fa-solid fa-user-graduate" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Layla (Mother):</strong> Has a new bag, has a green pen.</p>
+                                    <p><i class="fa-solid fa-user" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Fatima (Daughter):</strong> Has a white cat, has many books.</p>
+                                </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height" style="text-align: left;">
+                                    <h3>Family C: The Najjars</h3>
+                                    <p><i class="fa-solid fa-user-tie" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Ibrahim (Father):</strong> Has a big family, has an old car.</p>
+                                    <p><i class="fa-solid fa-user-graduate" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Noura (Mother):</strong> Has a brother in Bethlehem, has a nice desk.</p>
+                                    <p><i class="fa-solid fa-user" style="margin-right: 8px; color: var(--secondary-sage);"></i><strong>Ali (Son):</strong> Has a black notebook, has a new bicycle.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 10: Activity 3 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-comments" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 3: Your Turn!</h2>
+                                <ol style="font-size: var(--step-1);">
+                                    <li><strong>Student A:</strong> Choose a family from the last slide (A, B, or C). Don't tell your partner!</li>
+                                    <li><strong>Student B:</strong> Ask questions to find out about the family.</li>
+                                </ol>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>Example Questions:</h3>
+                                    <p>"Does the father have a car?"<br>"Does Salma have a new laptop?"<br>"Do they have a son?"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- SLIDE 11: Activity 4 Intro -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Activity 4</h2>
+                                <h2>A Problem to Solve!</h2>
+                                <p>Read the problem below. What does your friend need?</p>
+                            </div>
+                            <div class="col-span-12">
+                               <div class="card centered-text">
+                                 <h3>The Problem:</h3>
+                                 <p>Your friend is starting a new course online. He needs an office at home. He has a desk, but he has nothing else! He doesn't have a lot of money.</p>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 12: Activity 4 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-lightbulb" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Brainstorm!</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 4: Your Turn!</h2>
+                                <p>In your group, make a list of things your friend needs. How can he get them?</p>
+                                <div class="card">
+                                <h3>For example:</h3>
+                                <p>"He needs a laptop. <span class="text-highlight">Does his father have</span> an old one?"</p>
+                                <p>"<span class="text-highlight">Does his sister have</span> a spare pen? He can use <span class="text-highlight">her</span> pen."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 13: Main Task Intro -->
+                <div class="slide-stage hidden centered-text">
+                    <div class="slide-inner">
+                        <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Main Task: Let's Role-Play!</h1>
+                        <h2 class="subtitle">Scenario: Your Desk at a New Job</h2>
+                        <blockquote>This is a great chance to practice a full conversation!</blockquote>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 14: Main Task Part 1 -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Colleagues talking at a desk" class="img-bg" style="opacity: 0.12;">
+                    <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
+                    <div class="slide-inner">
+                        <div class="grid-container align-self-start">
+                            <div class="col-span-12 centered-text">
+                                <h2>Part 1: The Conversation</h2>
+                                <p>In pairs, have a conversation. Follow your roles:</p>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Student A</h3>
+                                    <p>You are showing your new colleague (Student B) your desk. You have a photo of your family on the desk.</p>
+                                </div>
+                            </div>
+                             <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Student B</h3>
+                                    <p>You are the new colleague. Ask Student A questions about the objects on the desk and about the family photo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 15: Main Task Part 2 -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Main Task</h2>
+                                <h2>Part 2: Introduce Your Partner</h2>
+                            </div>
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
+                            </div>
+                            <div class="col-span-7">
+                                <div class="card card-full-height">
+                                    <i class="fa-solid fa-clipboard-user icon"></i>
+                                    <h3>Tell your new group about the person you just met.</h3>
+                                    <blockquote>"This is Ali. He <span class="text-highlight">has</span> a new laptop on his desk. He also <span class="text-highlight">has</span> a photo of his family. This is <span class="text-highlight">his</span> sister. <span class="text-highlight">Her</span> name is Noura."</blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 16: Reflection -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Let's Reflect!</h2>
+                                <p>Think about your learning today.</p>
+                            </div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What was the most useful part of the class for you today?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>Do you feel more confident talking about family or possessions?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What was one interesting thing you learned about your partner?</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 17: End -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                        <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Great work today!</h1>
+                        <h2 class="subtitle">See you next time!</h2>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const slides = Array.from(document.querySelectorAll('.slide-stage'));
+        const nextBtn = document.querySelector('.slide-nav-next');
+        const prevBtn = document.querySelector('.slide-nav-prev');
+        const counter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle('hidden', i !== index);
+          });
+          counter.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function navigate(direction) {
+          currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+          showSlide(currentSlideIndex);
+        }
+
+        nextBtn.addEventListener('click', () => navigate(1));
+        prevBtn.addEventListener('click', () => navigate(-1));
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault(); navigate(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault(); navigate(-1);
+            }
+        });
+
+        showSlide(currentSlideIndex);
+      });
+    </script>
+</body>
+</html>
+```
