@@ -1,0 +1,279 @@
+/* =====================================================================
+   Sage Slide Studio — Desktop-first slide editor
+   Reliable stage, 12x12 grid, highlight/annotate, save/load ready.
+   ===================================================================== */
+
+/* -------------------------------
+   Design tokens
+----------------------------------*/
+:root {
+  /* Palette (earthy, calm) */
+  --primary-sage: #7A8471;
+  --secondary-sage: #9CAF88;
+  --tertiary-sage: #B8C5A6;
+  --warm-cream: #F8F6F0;
+  --soft-white: #FEFCF7;
+  --forest-shadow: #5A6B52;
+  --deep-forest: #3E4A3A;
+  --ink: #2F3A2B;
+  --ink-muted: #5A6B52;
+
+  /* Layout */
+  --toolbar-h: 56px;
+  --sidebar-w: 280px;        /* left filmstrip */
+  --inspector-w: 340px;      /* right panel */
+  --stage-pad: 24px;
+  --container-max: 1920px;
+
+  /* Slide metrics */
+  --slide-ratio: 16 / 9;     /* 16:9 default; change to 4/3 if needed */
+  --slide-w: 1600px;         /* logical slide width for design */
+  --slide-bg: #FFFFFF;
+  --slide-radius: 16px;
+
+  /* Grid */
+  --grid-on: 1;              /* 1 = show, 0 = hide (toggle via JS) */
+  --grid-color: rgba(122,132,113,0.18);
+  --grid-sub-color: rgba(122,132,113,0.10);
+
+  /* Depth & rings */
+  --shadow-1: 0 1px 2px rgba(34,41,32,.06), 0 8px 24px rgba(34,41,32,.07);
+  --shadow-2: 0 10px 40px rgba(34,41,32,.10), 0 20px 60px rgba(34,41,32,.08);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--soft-white) 70%, transparent),
+          0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #000 15%);
+
+  /* Motion */
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+
+  /* Touch target & type */
+  --target: 40px;
+  --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Zoom (applied as transform scale to the slide) */
+  --zoom: 1;                 /* set via JS: 0.5 .. 2 */
+
+  /* Annotation defaults */
+  --hl-yellow: #FFF2A8;
+  --hl-green: #CDE7C4;
+  --hl-rose: #FFD6C9;
+  --hl-blue: #CDE6FF;
+  --pen-stroke: #7A8471;
+  --pen-width: 3px;
+}
+
+/* -------------------------------
+   Global foundation
+----------------------------------*/
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--forest-shadow);
+  background:
+    radial-gradient(1100px 900px at 10% -10%, rgba(156,175,136,0.06), transparent 60%),
+    radial-gradient(900px 900px at 90% 110%, rgba(122,132,113,0.08), transparent 65%),
+    linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: hidden; /* editor owns scrolling */
+}
+
+a { color: var(--primary-sage); text-decoration: none; }
+a:hover { color: var(--deep-forest); }
+
+/* -------------------------------
+   App layout (desktop-first)
+   Header toolbar, left filmstrip, center stage, right inspector.
+----------------------------------*/
+.app {
+  display: grid;
+  grid-template-rows: var(--toolbar-h) 1fr;
+  grid-template-columns: 1fr;
+  height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Top toolbar */
+.app__toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: color-mix(in srgb, var(--soft-white) 85%, white 15%);
+  border-bottom: 1px solid rgba(122,132,113,0.18);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+.app__brand {
+  display: flex; align-items: center; gap: 10px; min-width: 220px;
+  font-family: var(--font-display); font-weight: 700; letter-spacing: .2px;
+  color: var(--deep-forest);
+}
+
+.toolbar__group { display: flex; align-items: center; gap: 8px; }
+
+/* Buttons */
+.btn {
+  min-height: var(--target);
+  padding: 8px 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-sage);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, #fff 8%), var(--primary-sage));
+  color: #fff; font-weight: 700; cursor: pointer;
+  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease), background var(--dur-2) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: none; box-shadow: var(--ring); }
+
+.btn--ghost {
+  background: #fff; color: var(--primary-sage);
+  border-color: color-mix(in srgb, var(--tertiary-sage) 70%, var(--primary-sage) 30%);
+}
+.btn--danger {
+  background: linear-gradient(180deg, #A55 0%, #844 100%); border-color: #844;
+}
+
+/* Zoom control (example) */
+.zoom {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 6px; border-radius: 10px; background: #fff; border: 1px solid rgba(122,132,113,0.18);
+}
+.zoom__value { min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Workspace (below toolbar) */
+.app__workspace {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(600px, 1fr) var(--inspector-w);
+  gap: 0;
+  height: 100%;
+  min-height: 0; /* allow children to size */
+}
+
+/* Filmstrip */
+.filmstrip {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 10px;
+  padding: 14px;
+  overflow: auto;
+  background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+  border-right: 1px solid rgba(122,132,113,0.18);
+}
+.filmstrip__thumb {
+  aspect-ratio: var(--slide-ratio);
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(122,132,113,0.20);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  position: relative;
+}
+.filmstrip__thumb.is-active { outline: 3px solid color-mix(in srgb, var(--secondary-sage) 70%, #000 10%); outline-offset: 2px; }
+
+/* Inspector (properties, notes) */
+.inspector {
+  overflow: auto;
+  padding: 16px;
+  background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+  border-left: 1px solid rgba(122,132,113,0.18);
+}
+
+/* Stage shell (center) */
+.stage {
+  position: relative;
+  overflow: hidden; /* scroll only the inner scroller */
+  background:
+    radial-gradient(800px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+    radial-gradient(700px 500px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 65%);
+  display: grid;
+}
+
+/* Pan/scroll area for big canvases */
+.stage__scroller {
+  overflow: auto;
+  padding: var(--stage-pad);
+  display: grid;
+  place-items: center;
+  overscroll-behavior: contain;
+  height: 100%;
+  width: 100%;
+}
+
+/* The viewport ensures strict clipping (no overspill). 
+   The actual slide content sits inside and is scaled via --zoom. */
+.slide-viewport {
+  position: relative;
+  background: transparent;
+  transform: translateZ(0);
+  contain: layout paint style; /* isolate expensive paints */
+  will-change: transform;
+}
+
+.slide {
+  width: clamp(960px, 90vw - var(--sidebar-w) - var(--inspector-w), min(var(--container-max), var(--slide-w)));
+  aspect-ratio: var(--slide-ratio);
+  background: var(--slide-bg);
+  border-radius: var(--slide-radius);
+  box-shadow: var(--shadow-2);
+  overflow: hidden; /* HARD CLIP to prevent overspill */
+  position: relative;
+  transform-origin: top left;
+  transform: scale(var(--zoom));
+}
+
+/* Inner content layer where your slide elements live */
+.slide__content {
+  position: absolute; inset: 0;
+  padding: 48px; /* inner margin for safe text zones */
+  display: block;
+  overflow: hidden; /* secondary guardrail */
+}
+
+/* 12x12 GRID OVERLAY (toggle with [data-grid="on"]) */
+.slide[data-grid="on"]::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-sub-color) 1px, transparent 1px),  /* sub-divs (quarters) */
+    linear-gradient(to bottom, var(--grid-sub-color) 1px, transparent 1px);
+  background-size:
+    calc(100% / 12) 100%,
+    100% calc(100% / 12),
+    calc(100% / 48) 100%,
+    100% calc(100% / 48);
+  mix-blend-mode: multiply;
+  opacity: var(--grid-on);
+  border-radius: inherit;
+}
+
+/* Safe area guides (optional) */
+.slide[data-guides="on"]::after {
+  content: "";
+  position: absolute; inset: 40px;
+  border-radius: 12px;
+  border: 2px dashed rgba(122,132,113,0.3);
+  pointer-events: none;
+}
+
+/* -------------------------------
+   Text, boxes & spil
