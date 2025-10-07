@@ -1,0 +1,578 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A1 English - EOM2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&family=Questrial&display=swap" rel="stylesheet">
+    <style>
+        /* =====================================================================
+           Organic Sage UI — Mobile-first, stable, and soothing
+           ===================================================================== */
+
+        /* -------------------------------
+           Design tokens
+        ----------------------------------*/
+        :root {
+          --primary-sage: #7A8471;
+          --secondary-sage: #9CAF88;
+          --tertiary-sage: #B8C5A6;
+          --warm-cream: #F8F6F0;
+          --soft-white: #FEFCF7;
+          --forest-shadow: #5A6B52;
+          --border-sage: rgba(122, 132, 113, 0.20);
+          --hover-sage: rgba(156, 175, 136, 0.15);
+          --ink: #2F3A2B;
+          --ink-muted: #5A6B52;
+          --success-green: #3E8E41;
+          --success-bg: #E8F5E9;
+          --error-red: #C62828;
+          --error-bg: #FFEBEE;
+          --amber: #FFA000;
+          --font-display: 'Questrial', system-ui, sans-serif;
+          --font-body: 'Nunito', system-ui, sans-serif;
+          --step-0:  clamp(1rem, 0.96rem + 0.22vw, 1.1rem);
+          --step-1:  clamp(1.125rem, 1.07rem + 0.35vw, 1.3rem);
+          --step-2:  clamp(1.375rem, 1.28rem + 0.55vw, 1.6rem);
+          --step-4:  clamp(2.25rem, 1.98rem + 1.35vw, 2.7rem);
+          --space-2: 0.5rem;
+          --space-3: 0.75rem;
+          --space-4: 1rem;
+          --space-5: 1.25rem;
+          --space-6: 1.5rem;
+          --space-7: 2rem;
+          --radius: 16px;
+          --radius-lg: 20px;
+          --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+          --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+          --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent), 0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+          --ease-ambient: cubic-bezier(.2,.8,.2,1);
+          --dur-2: 200ms;
+          --target-min: 44px;
+          --container-max: 900px;
+          --pair-color-1: #A8D8B9;
+          --pair-color-2: #F3D5A5;
+          --pair-color-3: #B7C6E5;
+          --pair-color-4: #E4B4B4;
+          --pair-color-5: #C3B9A6;
+        }
+
+        /* -------------------------------
+           Global reset
+        ----------------------------------*/
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; min-height: 100dvh; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); }
+        :where(p, h1, h2, h3, h4) { text-wrap: pretty; overflow-wrap: anywhere; }
+        img, svg, video, audio { display: block; max-width: 100%; }
+        audio { width: 100%; }
+
+        /* -------------------------------
+           App shell
+        ----------------------------------*/
+        #app-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: var(--space-7) var(--space-4); width: 100%; min-height: 100dvh; }
+        #activity-container { width: 100%; max-width: var(--container-max); background: color-mix(in srgb, var(--soft-white) 88%, white 12%); padding: clamp(24px, 3.2vw, 48px); border-radius: var(--radius-lg); border: 1px solid rgba(122, 132, 113, 0.12); box-shadow: var(--shadow-2); }
+        .screen.hidden { display: none !important; }
+
+        /* -------------------------------
+           Typography & Headings
+        ----------------------------------*/
+        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); margin: 0 0 var(--space-2) 0; text-align: center; }
+        h2.rubric { font-family: var(--font-body); font-size: var(--step-0); font-weight: 500; color: var(--secondary-sage); margin: 0 0 var(--space-6) 0; text-align: center; line-height: 1.5; }
+        h3.section-title { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: var(--space-6) 0 var(--space-3) 0; border-bottom: 2px solid var(--border-sage); padding-bottom: var(--space-3); margin-bottom: var(--space-6); }
+
+        /* -------------------------------
+           Buttons & Controls
+        ----------------------------------*/
+        .activity-btn { min-height: var(--target-min); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--primary-sage); background: var(--primary-sage); color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all var(--dur-2) var(--ease-ambient); box-shadow: 0 8px 16px rgba(90, 107, 82, 0.20); }
+        .activity-btn:hover { background: var(--forest-shadow); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(90, 107, 82, 0.22); }
+        .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), 0 8px 16px rgba(90, 107, 82, 0.20); }
+        .activity-btn:disabled { background: var(--tertiary-sage); cursor: not-allowed; opacity: 0.8; transform: none; box-shadow: none; }
+        .controls { margin-top: var(--space-7); text-align: center; }
+
+        /* -------------------------------
+           Forms & Inputs
+        ----------------------------------*/
+        .input-group { margin: var(--space-6) 0; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: var(--space-2); color: var(--primary-sage); }
+        input[type="text"], input[type="email"], input[type="number"], textarea, select { width: 100%; min-height: var(--target-min); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--tertiary-sage); background: #fff; font-size: 1rem; font-family: var(--font-body); color: var(--ink); transition: all var(--dur-2) var(--ease-ambient); }
+        select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; appearance: none; }
+        textarea { min-height: 120px; resize: vertical; }
+        input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; border-color: var(--secondary-sage); box-shadow: var(--ring); }
+
+        /* -------------------------------
+           Question Styles
+        ----------------------------------*/
+        .conversation-box, .mc-question, .audio-card, .email-box { background-color: var(--warm-cream); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); margin-bottom: var(--space-6); }
+        .mc-question { background: #fff; box-shadow: var(--shadow-1); }
+        .mc-question-text { font-weight: 800; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; margin: 0 0 var(--space-4) 0; }
+        .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
+        .mc-option-item input { display: none; }
+        .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 12px; border-radius: 10px; transition: background-color var(--dur-2) var(--ease-ambient); }
+        .mc-option-label:hover { background-color: var(--hover-sage); }
+        .mc-option-item .option-control { flex-shrink: 0; width: 24px; height: 24px; border: 2px solid var(--tertiary-sage); background-color: var(--soft-white); transition: all var(--dur-2) var(--ease-ambient); position: relative; border-radius: 50%; }
+        .mc-option-item input[type="radio"]:checked + .option-control { border-color: var(--primary-sage); }
+        .mc-option-item input[type="radio"]:checked + .option-control::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background-color: var(--primary-sage); }
+        
+        /* -------------------------------
+           Matching Activity Styles
+        ----------------------------------*/
+        .matching-activity { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-6); }
+        .matching-column { display: flex; flex-direction: column; gap: var(--space-3); }
+        .matching-column h4 { margin: 0 0 var(--space-2) 0; text-align: center; color: var(--primary-sage); }
+        .match-item { padding: 14px; border: 2px solid var(--border-sage); border-radius: 10px; background-color: #fff; cursor: pointer; transition: all var(--dur-2) var(--ease-ambient); text-align: center; user-select: none; }
+        .match-item:hover { background-color: var(--hover-sage); border-color: var(--secondary-sage); }
+        .match-item.selected { border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent 65%); font-weight: 700; transform: scale(1.02); }
+        .match-item.pair-color-1 { border-color: var(--pair-color-1); background-color: var(--pair-color-1); color: var(--forest-shadow); }
+        .match-item.pair-color-2 { border-color: var(--pair-color-2); background-color: var(--pair-color-2); color: var(--forest-shadow); }
+        .match-item.pair-color-3 { border-color: var(--pair-color-3); background-color: var(--pair-color-3); color: var(--forest-shadow); }
+        .match-item.pair-color-4 { border-color: var(--pair-color-4); background-color: var(--pair-color-4); color: var(--forest-shadow); }
+        .match-item.pair-color-5 { border-color: var(--pair-color-5); background-color: var(--pair-color-5); color: var(--forest-shadow); }
+        @media (max-width: 600px) { .matching-activity { grid-template-columns: 1fr; } }
+        
+    </style>
+</head>
+<body>
+    <div id="app-wrapper">
+        <div id="activity-container">
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="screen">
+                <h1>End of Module Test 2</h1>
+                <h2 class="rubric">Total Time: 60 Minutes | Total Score: 100 Points</h2>
+                <p>Read the instructions for each part carefully. Your answers will be automatically saved as you progress. At the end, your results will be sent to your instructor.</p>
+                <div class="input-group">
+                    <label for="class-code">Choose Your Class</label>
+                    <select id="class-code" name="class-code" required>
+                        <option value="">-- Select a class --</option>
+                        <option value="G.A1">G.A1</option>
+                        <option value="G.A2">G.A2</option>
+                        <option value="G.B1">G.B1</option>
+                        <option value="G.B2">G.B2</option>
+                        <option value="G.C1">G.C1</option>
+                        <option value="WB/O.A1">WB/O.A1</option>
+                        <option value="WB/O.A2">WB/O.A2</option>
+                        <option value="WB/O.B1">WB/O.B1</option>
+                        <option value="WB/O.B2">WB/O.B2</option>
+                        <option value="WB/O.C1">WB/O.C1</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="student-id">Enter Your Student ID (001-150)</label>
+                    <select id="student-id" name="student-id" required>
+                        <option value="">-- Select your ID --</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <button id="start-btn" class="activity-btn">Start Exam</button>
+                </div>
+            </div>
+    
+            <!-- Reading Section -->
+            <div id="reading-screen" class="screen hidden">
+                <h3 class="section-title">Part 1: Reading Comprehension (25 points)</h3>
+                <p><strong>Instructions:</strong> You are at the "Lost and Found" desk. Read the conversation between Ali and the Receptionist. Then, choose the correct answer for questions 1-5.</p>
+                <div class="conversation-box">
+                    <p><strong>Receptionist:</strong> Hello. Can I help you?</p>
+                    <p><strong>Ali:</strong> Yes, please. I think I lost my keys and my wallet.</p>
+                    <p><strong>Receptionist:</strong> OK. Let’s start with the keys. What do they look like?</p>
+                    <p><strong>Ali:</strong> They are big and silver.</p>
+                    <p><strong>Receptionist:</strong> Big and silver keys. OK. And the wallet? What does it look like?</p>
+                    <p><strong>Ali:</strong> It’s a small wallet. It's a black wallet.</p>
+                    <p><strong>Receptionist:</strong> OK, a small, black wallet. Let me look. Ah, yes! I have them here.</p>
+                </div>
+                <form id="reading-form">
+                    <div class="mc-question"><p class="mc-question-text">1. What two items did Ali lose?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="a" id="q1a"><span class="option-control"></span><span>His phone and keys</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="b" id="q1b"><span class="option-control"></span><span>His keys and wallet</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="c" id="q1c"><span class="option-control"></span><span>His bag and wallet</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">2. What size are the keys?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="a" id="q2a"><span class="option-control"></span><span>They are big.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="b" id="q2b"><span class="option-control"></span><span>They are small.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="c" id="q2c"><span class="option-control"></span><span>They are black.</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">3. What colour is the wallet?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="a" id="q3a"><span class="option-control"></span><span>It is silver.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="b" id="q3b"><span class="option-control"></span><span>It is big.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="c" id="q3c"><span class="option-control"></span><span>It is black.</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">4. Which sentence is correct for the wallet?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="a" id="q4a"><span class="option-control"></span><span>It is a big, black wallet.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="b" id="q4b"><span class="option-control"></span><span>It is a small, black wallet.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="c" id="q4c"><span class="option-control"></span><span>It is a small, silver wallet.</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">5. Does the receptionist have the items?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="a" id="q5a"><span class="option-control"></span><span>Yes, she does.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="b" id="q5b"><span class="option-control"></span><span>No, she doesn't.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="c" id="q5c"><span class="option-control"></span><span>The text doesn't say.</span></label></div></div></div>
+                </form>
+                <div class="controls"><button class="activity-btn next-btn" data-next="listening-screen">Next Section: Listening</button></div>
+            </div>
+    
+            <!-- Listening Section -->
+            <div id="listening-screen" class="screen hidden">
+                <h3 class="section-title">Part 2: Listening (25 points)</h3>
+                <p><strong>Instructions:</strong> Your colleague, Sara, has a new desk. Listen to the conversation. Then, complete the information about Sara's desk by choosing the correct option from the drop-down menus.</p>
+                <div class="audio-card">
+                    <h4>Listening Audio</h4>
+                    <p>Use the player below to listen to the conversation.</p>
+                    <audio controls preload="metadata"><source src="https://github.com/Najma-Collective/Noor-Community-/raw/main/A1/2/audio.wav" type="audio/wav"> Your browser does not support the audio element.</audio>
+                </div>
+                <form id="listening-form">
+                    <h4>Information about Sara's Desk</h4>
+                    <div class="input-group"><label for="q6">Does Sara have a new keyboard?</label><select id="q6" name="q6"><option value="">-- Select an answer --</option><option value="yes">Yes, she does.</option><option value="no">No, she doesn't.</option></select></div>
+                    <div class="input-group"><label for="q7">Does Sara have a new mouse?</label><select id="q7" name="q7"><option value="">-- Select an answer --</option><option value="yes">Yes, she does.</option><option value="no">No, she doesn't.</option></select></div>
+                    <div class="input-group"><label for="q8">Does Sara have a new notebook?</label><select id="q8" name="q8"><option value="">-- Select an answer --</option><option value="yes">Yes, she does.</option><option value="no">No, she doesn't.</option></select></div>
+                    <div class="input-group"><label for="q9">What about a phone? Sara has got...</label><select id="q9" name="q9"><option value="">-- Select an answer --</option><option value="a new phone">a new phone.</option><option value="an old phone">an old phone.</option></select></div>
+                    <div class="input-group"><label for="q10">Does Sara have any spare pens?</label><select id="q10" name="q10"><option value="">-- Select an answer --</option><option value="yes">Yes, she does.</option><option value="no">No, she doesn't.</option></select></div>
+                </form>
+                <div class="controls"><button class="activity-btn next-btn" data-next="grammar-screen">Next Section: Grammar & Vocabulary</button></div>
+            </div>
+            
+            <!-- Grammar & Vocabulary Section -->
+            <div id="grammar-screen" class="screen hidden">
+                <h3 class="section-title">Part 3: Grammar and Vocabulary (25 points)</h3>
+                <p><strong>Instructions (Task 1):</strong> You are looking at a family photo. Choose the correct word to complete sentences 11-15. (15 points)</p>
+                <form id="grammar-form-mcq">
+                    <div class="mc-question"><p class="mc-question-text">11. This is my sister. ___ name is Layla.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="a" id="q11a"><span class="option-control"></span><span>His</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="b" id="q11b"><span class="option-control"></span><span>Her</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="c" id="q11c"><span class="option-control"></span><span>My</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">12. That is my father. This is ___ car.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="a" id="q12a"><span class="option-control"></span><span>his</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="b" id="q12b"><span class="option-control"></span><span>her</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="c" id="q12c"><span class="option-control"></span><span>she</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">13. This is my mother___ book.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="a" id="q13a"><span class="option-control"></span><span>s</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="b" id="q13b"><span class="option-control"></span><span>'</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="c" id="q13c"><span class="option-control"></span><span>'s</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">14. My brother and sister ___ here.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="a" id="q14a"><span class="option-control"></span><span>is</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="b" id="q14b"><span class="option-control"></span><span>am</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="c" id="q14c"><span class="option-control"></span><span>are</span></label></div></div></div>
+                    <div class="mc-question"><p class="mc-question-text">15. This ___ my son. His name is Tarek.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="a" id="q15a"><span class="option-control"></span><span>is</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="b" id="q15b"><span class="option-control"></span><span>are</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="c" id="q15c"><span class="option-control"></span><span>am</span></label></div></div></div>
+                </form>
+                <p><strong>Instructions (Task 2):</strong> Match the questions in Column A with the correct answers in Column B. Click a question and then click its matching answer to pair them. (10 points)</p>
+                <div class="matching-activity" id="matching-game">
+                    <div class="matching-column" id="matching-questions">
+                        <h4>Column A: Questions</h4>
+                        <div class="match-item" data-match-id="1">What colour is the book?</div>
+                        <div class="match-item" data-match-id="2">Do you have the keys?</div>
+                        <div class="match-item" data-match-id="3">What's his name?</div>
+                        <div class="match-item" data-match-id="4">What colour are the pens?</div>
+                        <div class="match-item" data-match-id="5">Is this her brother?</div>
+                    </div>
+                    <div class="matching-column" id="matching-answers">
+                        <h4>Column B: Answers</h4>
+                        <div class="match-item" data-match-id="4">They're green.</div>
+                        <div class="match-item" data-match-id="1">It's red.</div>
+                        <div class="match-item" data-match-id="5">Yes, it is.</div>
+                        <div class="match-item" data-match-id="2">Yes, I do.</div>
+                        <div class="match-item" data-match-id="3">His name is Tarek.</div>
+                    </div>
+                </div>
+                <div class="controls"><button class="activity-btn next-btn" data-next="writing-screen">Next Section: Writing</button></div>
+            </div>
+            
+            <!-- Writing Section -->
+            <div id="writing-screen" class="screen hidden">
+                <h3 class="section-title">Part 4: Writing (25 points)</h3>
+                <p><strong>Instructions:</strong> You are helping a friend organize their desk. Complete the email to your friend by choosing the correct word for each gap.</p>
+                <div class="email-box">
+                    <p><strong>To:</strong> My Friend</p>
+                    <p><strong>Subject:</strong> Your things</p>
+                    <hr style="border: none; border-top: 1px solid var(--border-sage); margin: 1rem 0;">
+                    <p>Hi,</p>
+                    <p>I am organizing my desk. I have your things here.</p>
+                    <p>Your notebook is big and 
+                        <select id="q16" name="q16" style="width: auto; display: inline-block;">
+                            <option value="">-- ? --</option>
+                            <option value="blue">blue</option>
+                            <option value="reds">reds</option>
+                            <option value="blackness">blackness</option>
+                        </select>.
+                    </p>
+                    <p>Your keys 
+                        <select id="q17" name="q17" style="width: auto; display: inline-block;">
+                            <option value="">-- ? --</option>
+                            <option value="is">is</option>
+                            <option value="are">are</option>
+                            <option value="am">am</option>
+                        </select>
+                         silver.
+                    </p>
+                    <p>What colour
+                        <select id="q18" name="q18" style="width: auto; display: inline-block;">
+                            <option value="">-- ? --</option>
+                            <option value="is">is</option>
+                            <option value="are">are</option>
+                            <option value="am">am</option>
+                        </select>
+                         your pens? I have two pens here.
+                    </p>
+                    <p>
+                        <select id="q19" name="q19" style="width: auto; display: inline-block;">
+                            <option value="">-- ? --</option>
+                            <option value="It's">It's</option>
+                            <option value="They're">They're</option>
+                            <option value="They is">They is</option>
+                        </select>
+                         green.
+                    </p>
+                    <p>And is this your bag?
+                        <select id="q20" name="q20" style="width: auto; display: inline-block;">
+                            <option value="">-- ? --</option>
+                            <option value="It's">It's</option>
+                            <option value="They're">They're</option>
+                            <option value="It are">It are</option>
+                        </select>
+                         a small, brown bag.
+                    </p>
+                    <p>Let me know!</p>
+                    <p>Best,</p>
+                    <p>[Your Name]</p>
+                </div>
+                <div class="controls"><button id="submit-btn" class="activity-btn">Submit Exam</button></div>
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="results-screen" class="screen hidden">
+                <h1>Exam Submitted</h1>
+                <div id="submission-status">
+                    <h2 class="rubric">Thank you for completing the exam.</h2>
+                    <p style="text-align: center;">Your submission has been recorded and sent to your instructor. You may now close this window.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const screens = document.querySelectorAll('.screen');
+            const startBtn = document.getElementById('start-btn');
+            const nextBtns = document.querySelectorAll('.next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const studentIdInput = document.getElementById('student-id');
+            const classSelect = document.getElementById('class-code');
+            const matchingGameContainer = document.getElementById('matching-game');
+            const allForms = document.querySelectorAll('form');
+    
+            const EXAM_STATE_KEY = 'a1Unit2ExamProgress';
+            
+            // =================================================================================
+            // === IMPORTANT: PASTE YOUR NEW WEB APP URL HERE ==================================
+            // =================================================================================
+            const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyOoXDbIcZsHgXUc2PhoHX214tEulsSRFjGGLbogBdJRhn53se-c-vAZ3rq9x-nAR26Xw/exec'; 
+    
+            const populateStudentIds = () => {
+                const fragment = document.createDocumentFragment();
+                for (let i = 1; i <= 150; i++) {
+                    const option = document.createElement('option');
+                    option.value = i.toString().padStart(3, '0');
+                    option.textContent = option.value;
+                    fragment.appendChild(option);
+                }
+                studentIdInput.appendChild(fragment);
+            };
+    
+            const showScreen = (screenId) => {
+                screens.forEach(screen => screen.classList.toggle('hidden', screen.id !== screenId));
+                window.scrollTo(0, 0);
+            };
+            
+            const saveProgress = () => {
+                const answers = { studentId: studentIdInput.value, classCode: classSelect.value };
+                document.querySelectorAll('input[type="radio"]:checked, select').forEach(input => {
+                    if (input.type === 'radio') {
+                        answers[input.name] = input.value;
+                    } else {
+                        answers[input.id] = input.value;
+                    }
+                });
+                answers.matchPairs = matchPairs;
+                answers.pairColorAssignments = pairColorAssignments;
+                localStorage.setItem(EXAM_STATE_KEY, JSON.stringify(answers));
+            };
+    
+            const loadProgress = () => {
+                const savedState = localStorage.getItem(EXAM_STATE_KEY);
+                if (!savedState) return;
+                const answers = JSON.parse(savedState);
+    
+                if (answers.classCode) classSelect.value = answers.classCode;
+                if (answers.studentId) studentIdInput.value = answers.studentId;
+    
+                document.querySelectorAll('select').forEach(input => {
+                    if (answers[input.id]) input.value = answers[input.id];
+                });
+                for (const name in answers) {
+                    if (name.startsWith('q')) {
+                        const radio = document.querySelector(`input[name="${name}"][value="${answers[name]}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                }
+                
+                if (answers.matchPairs) matchPairs = answers.matchPairs;
+                if (answers.pairColorAssignments) pairColorAssignments = answers.pairColorAssignments;
+                updatePairedVisuals();
+            };
+    
+            startBtn.addEventListener('click', () => {
+                if (!classSelect.value) { alert('Please choose your class.'); return; }
+                if (!studentIdInput.value) { alert('Please select your Student ID.'); return; }
+                showScreen('reading-screen');
+                saveProgress();
+            });
+    
+            nextBtns.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
+            submitBtn.addEventListener('click', submitExam);
+    
+            allForms.forEach(form => form.addEventListener('change', saveProgress));
+            studentIdInput.addEventListener('change', saveProgress);
+            classSelect.addEventListener('change', saveProgress);
+    
+            const shuffleAnswers = () => {
+                const answersColumn = document.getElementById('matching-answers');
+                const answerItems = Array.from(answersColumn.querySelectorAll('.match-item'));
+                answerItems.forEach(item => item.remove());
+                for (let i = answerItems.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [answerItems[i], answerItems[j]] = [answerItems[j], answerItems[i]];
+                }
+                answerItems.forEach(item => answersColumn.appendChild(item));
+            };
+    
+            let selectedQuestion = null;
+            let matchPairs = {};
+            let pairColorAssignments = {};
+            const pairColors = ['pair-color-1', 'pair-color-2', 'pair-color-3', 'pair-color-4', 'pair-color-5'];
+    
+            const getNextAvailableColor = () => {
+                const usedColors = new Set(Object.values(pairColorAssignments));
+                for (const colorClass of pairColors) { if (!usedColors.has(colorClass)) return colorClass; }
+                return pairColors[pairColors.length - 1];
+            };
+    
+            function cleanUnusedColorAssignments() {
+                for (const questionId in pairColorAssignments) { if (!matchPairs[questionId]) delete pairColorAssignments[questionId]; }
+            }
+    
+            function updatePairedVisuals() {
+                document.querySelectorAll('.match-item').forEach(item => {
+                    item.classList.remove('selected', ...pairColors);
+                    delete item.dataset.pairColor;
+                });
+                cleanUnusedColorAssignments();
+                for (const questionId in matchPairs) {
+                    const answerId = matchPairs[questionId];
+                    if (!pairColorAssignments[questionId]) pairColorAssignments[questionId] = getNextAvailableColor();
+                    const colorClass = pairColorAssignments[questionId];
+                    const questionEl = document.querySelector(`#matching-questions .match-item[data-match-id="${questionId}"]`);
+                    const answerEl = document.querySelector(`#matching-answers .match-item[data-match-id="${answerId}"]`);
+                    if (questionEl) questionEl.classList.add(colorClass);
+                    if (answerEl) answerEl.classList.add(colorClass);
+                }
+            }
+    
+            matchingGameContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('.match-item');
+                if (!target) return;
+                const isQuestion = target.closest('#matching-questions');
+                if (isQuestion) {
+                    if (selectedQuestion === target) {
+                        target.classList.remove('selected');
+                        selectedQuestion = null;
+                        return;
+                    }
+                    if (selectedQuestion) selectedQuestion.classList.remove('selected');
+                    selectedQuestion = target;
+                    selectedQuestion.classList.add('selected');
+                } else {
+                    if (!selectedQuestion) return;
+                    const questionId = selectedQuestion.dataset.matchId;
+                    const answerId = target.dataset.matchId;
+                    for (const qId in matchPairs) {
+                        if (matchPairs[qId] === answerId && qId !== questionId) {
+                            delete matchPairs[qId];
+                            delete pairColorAssignments[qId];
+                        }
+                    }
+                    matchPairs[questionId] = answerId;
+                    selectedQuestion.classList.remove('selected');
+                    selectedQuestion = null;
+                    updatePairedVisuals();
+                    saveProgress();
+                }
+            });
+            
+            const answerKey = {
+                q1: 'b', q2: 'a', q3: 'c', q4: 'b', q5: 'a',
+                q6: 'yes', q7: 'yes', q8: 'no', q9: 'a new phone', q10: 'no',
+                q11: 'b', q12: 'a', q13: 'c', q14: 'c', q15: 'a',
+                q16: 'blue', q17: 'are', q18: 'are', 
+                q19: "They're",
+                q20: "It's"
+            };
+    
+            function calculateScore() {
+                let score = 0;
+                for (let i = 1; i <= 5; i++) { if (document.querySelector(`input[name="q${i}"]:checked`)?.value === answerKey[`q${i}`]) score += 5; }
+                for (let i = 6; i <= 10; i++) { if (document.getElementById(`q${i}`)?.value === answerKey[`q${i}`]) score += 5; }
+                for (let i = 11; i <= 15; i++) { if (document.querySelector(`input[name="q${i}"]:checked`)?.value === answerKey[`q${i}`]) score += 3; }
+                let correctMatches = 0;
+                for (const qId in matchPairs) { if (matchPairs[qId] === qId) correctMatches++; }
+                score += correctMatches * 2;
+                for (let i = 16; i <= 20; i++) { if (document.getElementById(`q${i}`)?.value === answerKey[`q${i}`]) score += 5; }
+                return Math.round(score);
+            }
+            
+            // ===================================================================
+            // === NEW, MORE ROBUST SUBMISSION FUNCTION ==========================
+            // ===================================================================
+            async function submitExam() {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                // Check for Web App URL placeholder
+                if (SUBMISSION_ENDPOINT === 'PASTE_YOUR_NEW_WEB_APP_URL_HERE' || !SUBMISSION_ENDPOINT) {
+                    alert('CRITICAL ERROR: The SUBMISSION_ENDPOINT has not been set in the HTML file. Please update it with your Google Apps Script Web App URL.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Exam';
+                    return;
+                }
+
+                try {
+                    const studentId = studentIdInput.value.trim();
+                    const classCode = classSelect.value.trim();
+
+                    if (!studentId || !classCode) {
+                        throw new Error('Student ID or Class Code is missing. Please select them and try again.');
+                    }
+
+                    const finalScore = calculateScore();
+                    
+                    const submissionData = {
+                        timestamp: new Date().toISOString(),
+                        classCode: classCode,
+                        studentId: studentId,
+                        exam: 'EOM2',
+                        score: finalScore
+                    };
+
+                    // This fetch call sends the data and waits for a proper JSON response from the script.
+                    const response = await fetch(SUBMISSION_ENDPOINT, {
+                        method: 'POST',
+                        redirect: "follow",
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8', // Using text/plain is a robust way to bypass some CORS issues with Apps Script.
+                        },
+                        body: JSON.stringify(submissionData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok. Status: ${response.status} ${response.statusText}`);
+                    }
+
+                    // Parse the JSON response from the Apps Script
+                    const result = await response.json();
+
+                    // Check the 'status' field in our custom JSON response from the script
+                    if (result.status === 'success') {
+                        console.log('Submission successful:', result.message);
+                        submitBtn.textContent = 'Submitted Successfully';
+                        showScreen('results-screen');
+                        localStorage.removeItem(EXAM_STATE_KEY);
+                    } else {
+                        // If the script returned an error, show that specific error to the user.
+                        throw new Error(`The script reported an error: ${result.message}`);
+                    }
+
+                } catch (error) {
+                    console.error('Submission failed:', error);
+                    // Display a detailed error message to the user so they know what went wrong.
+                    alert('An error occurred during submission. Please try again.\n\nDetails: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Exam';
+                }
+            }
+    
+            // --- Initialisation ---
+            shuffleAnswers();
+            populateStudentIds();
+            loadProgress();
+            updatePairedVisuals();
+        });
+    </script>
+</body>
+</html>
