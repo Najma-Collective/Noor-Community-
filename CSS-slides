@@ -1,279 +1,719 @@
 /* =====================================================================
-   Sage Slide Studio — Desktop-first slide editor
-   Reliable stage, 12x12 grid, highlight/annotate, save/load ready.
+   Organic Sage Slides — Desktop-first editor
+   Strictly preserves original palette/typography/soft depth.
+   Adds: slide stage, 12x12 grid, safe zones, annotations, save/load.
    ===================================================================== */
 
 /* -------------------------------
-   Design tokens
+   Design tokens (unchanged core)
 ----------------------------------*/
 :root {
-  /* Palette (earthy, calm) */
+  /* Palette */
   --primary-sage: #7A8471;
   --secondary-sage: #9CAF88;
   --tertiary-sage: #B8C5A6;
   --warm-cream: #F8F6F0;
   --soft-white: #FEFCF7;
   --forest-shadow: #5A6B52;
+  --border-sage: rgba(122,132,113,0.20);
+  --hover-sage: rgba(156,175,136,0.15);
+
+  /* Depth accents (subtle, still earthy) */
   --deep-forest: #3E4A3A;
   --ink: #2F3A2B;
   --ink-muted: #5A6B52;
 
-  /* Layout */
-  --toolbar-h: 56px;
-  --sidebar-w: 280px;        /* left filmstrip */
-  --inspector-w: 340px;      /* right panel */
-  --stage-pad: 24px;
-  --container-max: 1920px;
-
-  /* Slide metrics */
-  --slide-ratio: 16 / 9;     /* 16:9 default; change to 4/3 if needed */
-  --slide-w: 1600px;         /* logical slide width for design */
-  --slide-bg: #FFFFFF;
-  --slide-radius: 16px;
-
-  /* Grid */
-  --grid-on: 1;              /* 1 = show, 0 = hide (toggle via JS) */
-  --grid-color: rgba(122,132,113,0.18);
-  --grid-sub-color: rgba(122,132,113,0.10);
-
-  /* Depth & rings */
-  --shadow-1: 0 1px 2px rgba(34,41,32,.06), 0 8px 24px rgba(34,41,32,.07);
-  --shadow-2: 0 10px 40px rgba(34,41,32,.10), 0 20px 60px rgba(34,41,32,.08);
-  --ring: 0 0 0 3px color-mix(in srgb, var(--soft-white) 70%, transparent),
-          0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #000 15%);
-
-  /* Motion */
-  --ease: cubic-bezier(.2,.8,.2,1);
-  --dur-1: 120ms;
-  --dur-2: 220ms;
-
-  /* Touch target & type */
-  --target: 40px;
+  /* Typography */
   --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-  /* Zoom (applied as transform scale to the slide) */
-  --zoom: 1;                 /* set via JS: 0.5 .. 2 */
+  /* Scale + spacing */
+  --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+  --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+  --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+  --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+  --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
 
-  /* Annotation defaults */
-  --hl-yellow: #FFF2A8;
-  --hl-green: #CDE7C4;
-  --hl-rose: #FFD6C9;
-  --hl-blue: #CDE6FF;
-  --pen-stroke: #7A8471;
-  --pen-width: 3px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3rem;
+
+  /* Radius + elevation */
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+  --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+  --shadow-3: 0 10px 40px rgba(34,41,32,0.10), 0 20px 60px rgba(34,41,32,0.08);
+
+  /* Focus ring aligned with style */
+  --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
+          0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+
+  /* Motion */
+  --ease-ambient: cubic-bezier(.2,.8,.2,1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+
+  /* Slide + workspace */
+  --toolbar-h: 72px;
+  --workspace-pad: 24px;
+  --stage-pad: 16px;
+  --stage-radius: 18px;
+  --slide-aspect-w: 16; /* change to 4 for 4:3 mode */
+  --slide-aspect-h: 9;  /* change to 3 for 4:3 mode */
+  --grid-lines: 12;     /* 12 x 12 grid */
+  --grid-line-color: rgba(122,132,113,0.20);
+  --grid-subline-color: rgba(122,132,113,0.10);
+  --safe-margin: 5%;    /* safe edge inside slide */
+  --bleed-margin: 2%;   /* outer bleed hint */
+
+  /* Annotation colors (earthy) */
+  --hl-sage: color-mix(in srgb, var(--secondary-sage) 40%, #fff 60%);
+  --hl-amber: color-mix(in srgb, #C6AA77 35%, #fff 65%);
+  --hl-clay: color-mix(in srgb, #D9CDB4 50%, #fff 50%);
 }
 
 /* -------------------------------
-   Global foundation
+   Global desktop shell
 ----------------------------------*/
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
 html, body {
-  height: 100%;
   margin: 0;
-}
-
-body {
-  font-family: var(--font-body);
+  padding: 0;
+  min-height: 100dvh;
   color: var(--forest-shadow);
   background:
-    radial-gradient(1100px 900px at 10% -10%, rgba(156,175,136,0.06), transparent 60%),
-    radial-gradient(900px 900px at 90% 110%, rgba(122,132,113,0.08), transparent 65%),
+    radial-gradient(1200px 900px at 12% 0%, rgba(156,175,136,0.06), transparent 60%),
+    radial-gradient(1200px 800px at 88% 100%, rgba(90,107,82,0.06), transparent 65%),
     linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  overflow: hidden; /* editor owns scrolling */
+  overflow: hidden; /* prevent app overspill */
 }
-
-a { color: var(--primary-sage); text-decoration: none; }
-a:hover { color: var(--deep-forest); }
 
 /* -------------------------------
    App layout (desktop-first)
-   Header toolbar, left filmstrip, center stage, right inspector.
 ----------------------------------*/
-.app {
+.deck-app {
   display: grid;
   grid-template-rows: var(--toolbar-h) 1fr;
   grid-template-columns: 1fr;
-  height: 100dvh;
-  width: 100%;
-  max-width: 100%;
+  min-height: 100dvh;
 }
 
-/* Top toolbar */
-.app__toolbar {
+/* Top toolbar — save/load, annotate, etc. */
+.deck-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--toolbar-h);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 12px;
-  padding: 0 12px;
+  gap: var(--space-4);
+  padding: 0 max(24px, 4vw);
   background: color-mix(in srgb, var(--soft-white) 85%, white 15%);
-  border-bottom: 1px solid rgba(122,132,113,0.18);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+  border-bottom: 1px solid rgba(122,132,113,0.14);
+  box-shadow: 0 8px 20px rgba(34,41,32,0.05);
+  backdrop-filter: blur(6px) saturate(1.02);
 }
 
-.app__brand {
-  display: flex; align-items: center; gap: 10px; min-width: 220px;
-  font-family: var(--font-display); font-weight: 700; letter-spacing: .2px;
-  color: var(--deep-forest);
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--forest-shadow);
 }
 
-.toolbar__group { display: flex; align-items: center; gap: 8px; }
+.toolbar-actions,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
 
-/* Buttons */
-.btn {
-  min-height: var(--target);
-  padding: 8px 14px;
-  display: inline-flex; align-items: center; gap: 8px;
-  border-radius: 10px;
+/* Buttons — consistent with original style */
+.btn,
+.activity-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
   border: 1px solid var(--primary-sage);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, #fff 8%), var(--primary-sage));
-  color: #fff; font-weight: 700; cursor: pointer;
-  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease), background var(--dur-2) var(--ease);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, white 8%), var(--primary-sage));
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 16px rgba(90,107,82,0.20);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
-.btn:hover { transform: translateY(-1px); }
+.btn:hover { transform: translateY(-1px); background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 92%, white 8%), var(--forest-shadow)); }
 .btn:active { transform: translateY(0); }
 .btn:focus-visible { outline: none; box-shadow: var(--ring); }
 
-.btn--ghost {
-  background: #fff; color: var(--primary-sage);
+.btn.secondary {
+  background: transparent;
+  color: var(--primary-sage);
   border-color: color-mix(in srgb, var(--tertiary-sage) 70%, var(--primary-sage) 30%);
+  box-shadow: none;
 }
-.btn--danger {
-  background: linear-gradient(180deg, #A55 0%, #844 100%); border-color: #844;
-}
+.btn.secondary:hover { background-color: var(--hover-sage); }
 
-/* Zoom control (example) */
-.zoom {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 6px; border-radius: 10px; background: #fff; border: 1px solid rgba(122,132,113,0.18);
-}
-.zoom__value { min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
-
-/* Workspace (below toolbar) */
-.app__workspace {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) minmax(600px, 1fr) var(--inspector-w);
-  gap: 0;
-  height: 100%;
-  min-height: 0; /* allow children to size */
-}
-
-/* Filmstrip */
-.filmstrip {
-  display: grid;
-  grid-auto-rows: max-content;
-  gap: 10px;
-  padding: 14px;
-  overflow: auto;
-  background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
-  border-right: 1px solid rgba(122,132,113,0.18);
-}
-.filmstrip__thumb {
-  aspect-ratio: var(--slide-ratio);
-  background: #fff;
-  border-radius: 10px;
+/* Specific actions */
+.btn-save::after,
+.btn-load::after,
+.btn-export::after {
+  content: attr(data-kbd);
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  background: color-mix(in srgb, var(--soft-white) 70%, #fff 30%);
+  color: var(--primary-sage);
   border: 1px solid rgba(122,132,113,0.20);
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
-  position: relative;
 }
-.filmstrip__thumb.is-active { outline: 3px solid color-mix(in srgb, var(--secondary-sage) 70%, #000 10%); outline-offset: 2px; }
 
-/* Inspector (properties, notes) */
-.inspector {
-  overflow: auto;
-  padding: 16px;
+/* Toggle pills (grid, annotate mode, highlight color) */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
   background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
-  border-left: 1px solid rgba(122,132,113,0.18);
+  border: 1px solid rgba(122,132,113,0.14);
+  box-shadow: var(--shadow-1);
 }
+.toggle input { display: none; }
+.toggle .dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--tertiary-sage);
+  border: 1px solid rgba(122,132,113,0.25);
+}
+.toggle[data-on="true"] .dot { background: var(--primary-sage); }
 
-/* Stage shell (center) */
-.stage {
-  position: relative;
-  overflow: hidden; /* scroll only the inner scroller */
-  background:
-    radial-gradient(800px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
-    radial-gradient(700px 500px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 65%);
+/* Workspace: wide + tall, no overspill */
+.deck-workspace {
+  height: calc(100dvh - var(--toolbar-h));
+  padding: var(--workspace-pad);
   display: grid;
+  grid-template-columns: 260px 1fr 320px; /* thumbs | stage | inspector */
+  gap: var(--space-6);
+  overflow: hidden; /* overspill guard */
+  background:
+    radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+    radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
 }
 
-/* Pan/scroll area for big canvases */
-.stage__scroller {
+/* Thumbnails panel (optional) */
+.deck-thumbs {
+  background: color-mix(in srgb, var(--soft-white) 88%, white 12%);
+  border: 1px solid rgba(122,132,113,0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4);
   overflow: auto;
-  padding: var(--stage-pad);
+}
+.deck-thumbs .thumb {
+  background: #fff;
+  border: 1px solid rgba(122,132,113,0.18);
+  border-radius: 12px;
+  aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 16px rgba(34,41,32,0.04);
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+.deck-thumbs .thumb.is-active { outline: 3px solid color-mix(in srgb, var(--secondary-sage) 70%, #fff 30%); }
+
+/* Inspector panel (optional) */
+.deck-inspector {
+  background: color-mix(in srgb, var(--soft-white) 88%, white 12%);
+  border: 1px solid rgba(122,132,113,0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-5);
+  overflow: auto;
+}
+
+/* Stage viewport: centers slide and scales by available height or width (no overspill) */
+.stage-viewport {
+  position: relative;
   display: grid;
   place-items: center;
-  overscroll-behavior: contain;
-  height: 100%;
-  width: 100%;
-}
-
-/* The viewport ensures strict clipping (no overspill). 
-   The actual slide content sits inside and is scaled via --zoom. */
-.slide-viewport {
-  position: relative;
-  background: transparent;
-  transform: translateZ(0);
-  contain: layout paint style; /* isolate expensive paints */
-  will-change: transform;
-}
-
-.slide {
-  width: clamp(960px, 90vw - var(--sidebar-w) - var(--inspector-w), min(var(--container-max), var(--slide-w)));
-  aspect-ratio: var(--slide-ratio);
-  background: var(--slide-bg);
-  border-radius: var(--slide-radius);
+  background: color-mix(in srgb, var(--soft-white) 60%, #fff 40%);
+  border: 1px dashed rgba(122,132,113,0.20);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-2);
-  overflow: hidden; /* HARD CLIP to prevent overspill */
+  overflow: hidden;
+  min-width: 0; /* prevents grid overflow */
+}
+
+/* The slide itself */
+.slide-stage {
   position: relative;
-  transform-origin: top left;
-  transform: scale(var(--zoom));
+  border-radius: var(--stage-radius);
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 24px 60px rgba(34,41,32,0.10);
+  /* Sizing logic: fit within viewport height and width, keep aspect, prevent overspill */
+  aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+  /* Compute width from available height (minus padding), but cap to viewport width */
+  width: min(
+    calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))),
+    calc(100vw - 260px - 320px - (var(--workspace-pad) * 2) - 48px)
+  );
+  max-width: 100%;
+  overflow: hidden; /* hard overspill guard */
+  outline: 1px solid rgba(122,132,113,0.14); /* subtle edge */
 }
 
-/* Inner content layer where your slide elements live */
-.slide__content {
-  position: absolute; inset: 0;
-  padding: 48px; /* inner margin for safe text zones */
-  display: block;
-  overflow: hidden; /* secondary guardrail */
+/* Content padding + bleed/safe areas */
+.slide-inner {
+  position: absolute;
+  inset: 0;
+  padding: var(--stage-pad);
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
 }
 
-/* 12x12 GRID OVERLAY (toggle with [data-grid="on"]) */
-.slide[data-grid="on"]::before {
+/* Safe/bleed visual guides (toggleable with .show-guides on .slide-stage) */
+.slide-stage.show-guides::before,
+.slide-stage.show-guides::after {
   content: "";
   position: absolute; inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px),
-    linear-gradient(to right, var(--grid-sub-color) 1px, transparent 1px),  /* sub-divs (quarters) */
-    linear-gradient(to bottom, var(--grid-sub-color) 1px, transparent 1px);
-  background-size:
-    calc(100% / 12) 100%,
-    100% calc(100% / 12),
-    calc(100% / 48) 100%,
-    100% calc(100% / 48);
-  mix-blend-mode: multiply;
-  opacity: var(--grid-on);
   border-radius: inherit;
 }
+.slide-stage.show-guides::before { /* bleed */
+  outline: calc(var(--bleed-margin)) solid rgba(122,132,113,0.10);
+  outline-offset: calc(-1 * var(--bleed-margin));
+}
+.slide-stage.show-guides::after { /* safe margin */
+  inset: var(--safe-margin);
+  border: 2px dashed rgba(122,132,113,0.25);
+  border-radius: calc(var(--stage-radius) - 6px);
+}
 
-/* Safe area guides (optional) */
-.slide[data-guides="on"]::after {
-  content: "";
-  position: absolute; inset: 40px;
-  border-radius: 12px;
-  border: 2px dashed rgba(122,132,113,0.3);
-  pointer-events: none;
+/* 12x12 grid overlay (toggle .show-grid on .slide-stage) */
+.slide-stage.show-grid .grid-overlay {
+  opacity: 1;
+}
+.grid-overlay {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc((100% / var(--grid-lines)) - 1px),
+      var(--grid-line-color) calc((100% / var(--grid-lines)) - 1px),
+      var(--grid-line-color) calc(100% / var(--grid-lines))
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc((100% / var(--grid-lines)) - 1px),
+      var(--grid-line-color) calc((100% / var(--grid-lines)) - 1px),
+      var(--grid-line-color) calc(100% / var(--grid-lines))
+    ),
+    /* subtle sub-grid (quarters) */
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc((100% / (var(--grid-lines)*4)) - 1px),
+      var(--grid-subline-color) calc((100% / (var(--grid-lines)*4)) - 1px),
+      var(--grid-subline-color) calc(100% / (var(--grid-lines)*4))
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc((100% / (var(--grid-lines)*4)) - 1px),
+      var(--grid-subline-color) calc((100% / (var(--grid-lines)*4)) - 1px),
+      var(--grid-subline-color) calc(100% / (var(--grid-lines)*4))
+    );
+  mix-blend-mode: multiply;
+  opacity: 0; /* off by default */
+  transition: opacity var(--dur-2) var(--ease-ambient);
 }
 
 /* -------------------------------
-   Text, boxes & spil
+   Slide content primitives
+----------------------------------*/
+.slide-stack {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  width: 100%;
+  height: 100%;
+}
+
+/* Text boxes follow original look */
+.text-box {
+  position: absolute;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(122,132,113,0.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 18px rgba(34,41,32,0.06);
+  color: var(--forest-shadow);
+  font-family: var(--font-body);
+  font-size: var(--step-1);
+  line-height: 1.4;
+  max-width: 100%;
+  overflow-wrap: anywhere; /* robustness */
+  hyphens: auto;
+}
+.text-box[data-tone="title"] {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.text-box[data-guard="clip"] {
+  overflow: hidden; /* overspill guard */
+}
+.text-box[data-guard="scroll"] {
+  overflow: auto; /* explicit scroll when needed */
+}
+
+/* Media boxes */
+.media-box {
+  position: absolute;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(122,132,113,0.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 18px rgba(34,41,32,0.06);
+  overflow: hidden;
+}
+.media-box img, .media-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* prevents overspill distortion */
+  display: block;
+}
+
+/* Selection + handles for editing (JS applies .is-selected) */
+.is-selected {
+  outline: 3px solid color-mix(in srgb, var(--secondary-sage) 60%, #fff 40%);
+  outline-offset: 0;
+}
+.handle {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--primary-sage);
+  box-shadow: 0 2px 6px rgba(34,41,32,0.15);
+}
+.handle.tl { top: -6px; left: -6px; }
+.handle.tr { top: -6px; right: -6px; }
+.handle.bl { bottom: -6px; left: -6px; }
+.handle.br { bottom: -6px; right: -6px; }
+
+/* -------------------------------
+   Highlight + annotate
+----------------------------------*/
+/* Inline text highlights */
+.hl { background: var(--hl-sage); border-radius: 6px; padding: 0 0.15em; box-decoration-break: clone; }
+.hl-amber { background: var(--hl-amber); }
+.hl-clay  { background: var(--hl-clay); }
+
+/* Sticky annotations */
+.note {
+  position: absolute;
+  max-width: 40ch;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--warm-cream) 80%, #fff 20%);
+  border: 1px solid rgba(122,132,113,0.22);
+  box-shadow: 0 10px 24px rgba(34,41,32,0.12);
+  color: var(--forest-shadow);
+  font-size: var(--step--1);
+}
+.note .note-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 6px; font-weight: 700; color: var(--primary-sage);
+}
+.note .note-body { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Freehand drawing overlay (canvas or SVG sits here) */
+.annotation-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* turned on by annotate mode */
+}
+.annotations-enabled .annotation-layer { pointer-events: auto; }
+
+/* Typical stroke style for SVG paths */
+.ink-stroke {
+  stroke: var(--primary-sage);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6)) drop-shadow(0 6px 8px rgba(34,41,32,0.10));
+}
+.ink-stroke[data-variant="amber"] { stroke: #C6AA77; }
+.ink-stroke[data-variant="clay"]  { stroke: #B8C5A6; }
+
+/* Annotation toolbar (floating) */
+.annotate-toolbar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  z-index: 5;
+  display: inline-flex;
+  gap: 8px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--soft-white) 88%, #fff 12%);
+  border: 1px solid rgba(122,132,113,0.14);
+  border-radius: 999px;
+  box-shadow: var(--shadow-2);
+  backdrop-filter: blur(4px);
+}
+.annotate-toolbar .btn { min-height: 36px; padding: 6px 12px; }
+
+/* -------------------------------
+   Save / Load area
+----------------------------------*/
+.io-bar {
+  display: inline-flex;
+  gap: var(--space-3);
+}
+.btn-save { }
+.btn-load { }
+.btn-export { }
+
+/* Feedback toast (save/load status) */
+.toast {
+  position: fixed;
+  right: max(24px, 4vw);
+  bottom: max(24px, 3vh);
+  z-index: 100;
+  display: grid;
+  gap: 6px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--soft-white) 92%, white 8%);
+  border: 1px solid rgba(122,132,113,0.18);
+  border-radius: 12px;
+  color: var(--forest-shadow);
+  box-shadow: var(--shadow-2);
+}
+
+/* -------------------------------
+   Typographic system (slides)
+----------------------------------*/
+.slide-stage h1,
+.slide-stage .display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 4rem);
+  line-height: 1.1;
+  color: var(--forest-shadow);
+  margin: 0 0 0.2em 0;
+}
+.slide-stage h2,
+.slide-stage .display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 3rem);
+  line-height: 1.15;
+  margin: 0 0 0.25em 0;
+}
+.slide-stage p,
+.slide-stage li {
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.35rem);
+  color: var(--forest-shadow);
+  margin: 0.4em 0;
+}
+
+/* Bullet lists: organic markers */
+.slide-stage ul {
+  padding-left: 1.1em;
+  margin: 0.3em 0;
+  list-style: none;
+}
+.slide-stage ul li {
+  position: relative;
+  padding-left: 0.6em;
+}
+.slide-stage ul li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.6em;
+  width: 0.35em; height: 0.35em;
+  border-radius: 50%;
+  background: var(--primary-sage);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+/* Quotes */
+.slide-stage blockquote {
+  margin: 0.6em 0;
+  padding: 0.6em 0.9em;
+  border-left: 4px solid var(--secondary-sage);
+  background: color-mix(in srgb, var(--warm-cream) 60%, #fff 40%);
+  border-radius: 10px;
+}
+
+/* -------------------------------
+   Editor auxiliary UI
+----------------------------------*/
+.kv-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--primary-sage);
+  font-weight: 700;
+}
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field select {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--tertiary-sage);
+  background: #fff;
+  color: var(--ink);
+  transition: border-color var(--dur-2) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient);
+}
+.form-field input:focus-visible,
+.form-field select:focus-visible {
+  outline: none;
+  border-color: var(--secondary-sage);
+  box-shadow: var(--ring);
+}
+
+/* Zoom control badge */
+.zoom-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--soft-white) 88%, #fff 12%);
+  border: 1px solid rgba(122,132,113,0.18);
+  color: var(--primary-sage);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-1);
+}
+
+/* -------------------------------
+   Drag surface helpers (JS applies)
+----------------------------------*/
+.draggable { cursor: grab; }
+.draggable:active { cursor: grabbing; }
+.snap-12 { /* snap to 12x12 grid (JS rounds coords, style hint) */
+  background-position: 0 0; /* visual no-op; just a hook */
+}
+
+/* -------------------------------
+   Dark mode (gentle)
+----------------------------------*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --soft-white: #1E211C;
+    --warm-cream: #23261F;
+    --forest-shadow: #DDE6D4;
+    --ink: #E9EFE5;
+    --ink-muted: #AEB9AA;
+    --border-sage: rgba(184,197,166,0.25);
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 900px at 15% 10%, rgba(156,175,136,0.06), transparent 60%),
+      radial-gradient(900px 900px at 85% 90%, rgba(122,132,113,0.08), transparent 65%),
+      linear-gradient(135deg, #191D18 0%, #1B1E19 100%);
+  }
+
+  .deck-toolbar,
+  .deck-thumbs,
+  .deck-inspector,
+  .stage-viewport {
+    background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+    border-color: rgba(184,197,166,0.18);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  }
+
+  .slide-stage {
+    background: #141713;
+    outline-color: rgba(184,197,166,0.20);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 60px rgba(0,0,0,0.35);
+  }
+
+  .grid-overlay {
+    background-image:
+      repeating-linear-gradient(to right, transparent 0, transparent calc((100%/var(--grid-lines)) - 1px), rgba(184,197,166,0.25) calc((100%/var(--grid-lines)) - 1px), rgba(184,197,166,0.25) calc(100%/var(--grid-lines))),
+      repeating-linear-gradient(to bottom, transparent 0, transparent calc((100%/var(--grid-lines)) - 1px), rgba(184,197,166,0.25) calc((100%/var(--grid-lines)) - 1px), rgba(184,197,166,0.25) calc(100%/var(--grid-lines))),
+      repeating-linear-gradient(to right, transparent 0, transparent calc((100%/(var(--grid-lines)*4)) - 1px), rgba(184,197,166,0.15) calc((100%/(var(--grid-lines)*4)) - 1px), rgba(184,197,166,0.15) calc(100%/(var(--grid-lines)*4))),
+      repeating-linear-gradient(to bottom, transparent 0, transparent calc((100%/(var(--grid-lines)*4)) - 1px), rgba(184,197,166,0.15) calc((100%/(var(--grid-lines)*4)) - 1px), rgba(184,197,166,0.15) calc(100%/(var(--grid-lines)*4)));
+  }
+
+  .btn {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 80%, #0F120E 20%), var(--primary-sage));
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 18px rgba(0,0,0,0.35);
+  }
+  .btn:hover {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 80%, #0F120E 20%), var(--forest-shadow));
+  }
+
+  .note {
+    background: color-mix(in srgb, #23261F 85%, #1B1E19 15%);
+    border-color: rgba(184,197,166,0.25);
+    color: var(--forest-shadow);
+  }
+
+  .toast {
+    background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+    border-color: rgba(184,197,166,0.22);
+    color: var(--forest-shadow);
+  }
+}
+
+/* -------------------------------
+   Reduced motion
+----------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* -------------------------------
+   Print/export (optional helpers)
+----------------------------------*/
+@media print {
+  .deck-toolbar, .deck-thumbs, .deck-inspector, .annotate-toolbar, .toast { display: none !important; }
+  .deck-workspace { padding: 0; }
+  .stage-viewport { box-shadow: none; border: 0; }
+  .slide-stage { box-shadow: none; outline: 0; }
+}
+
+/* =====================================================================
+   Minimal structure hints (classes only; no behavior)
+   - Wrap app in .deck-app
+   - Use .deck-toolbar with .toolbar-actions (left) and .toolbar-right (right)
+   - Workspace: .deck-workspace > .deck-thumbs | .stage-viewport | .deck-inspector
+   - Inside .slide-stage: .grid-overlay, .slide-inner > .slide-stack with positioned boxes
+   - Toggle .show-grid / .show-guides on .slide-stage; toggle .annotations-enabled on .slide-stage
+   ===================================================================== */
