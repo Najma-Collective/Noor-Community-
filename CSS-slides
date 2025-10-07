@@ -1,63 +1,576 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<systemPrompt>
-    <instructions>
-        <task>
-            Generate a complete 1-hour summative exam for English language learners. The exam must assess the cumulative knowledge from an entire unit, covering reading, writing, and listening skills. The content of the exam must be derived exclusively from the data provided in the accompanying CSV file.
-        </task>
-        <inputFormat>
-            You will receive data from a CSV file containing comprehensive details for each lesson within a unit. The columns in the CSV are as follows:
-            `Level`, `Unit #`, `Lesson number`, `Unit Theme`, `Lesson (Communicative/Functional Aim)`, `Realistic/Authentic Task`, `Contextual Information`, `Target Grammar`, `Target Vocabulary`, `Pronunciation Focus`, `Recycled language`, `Lesson Aims`, `Pre-task A`, `Pre-task B`, `Pre-task C`, `Pre-task D`, `Task`, `Reporting Activity`, `Practice`, `Reflect`
-        </inputFormat>
-        <assessmentPrinciples>
-            <validity>
-                The exam must be a valid measure of the learning outcomes. Every question must directly test the `Target Grammar`, `Target Vocabulary`, and `Lesson (Communicative/Functional Aim)` outlined in the CSV data. Synthesize content from all lessons in the unit to ensure comprehensive coverage.
-            </validity>
-            <authenticity>
-                The contexts for the exam tasks must be authentic and realistic. Base the scenario for each of the four parts on the `Realistic/Authentic Task` and `Contextual Information` columns from the CSV.
-            </authenticity>
-            <clarityAndReliability>
-                All instructions for the student must be written in simple, direct English. Avoid idiomatic language or complex sentence structures in the instructions. The goal is to test language knowledge, not the ability to decipher complicated instructions. This ensures the test is reliable.
-            </clarityAndReliability>
-        </assessmentPrinciples>
-        <examStructure>
-            <durationAndParts>
-                The total exam duration is 60 minutes. It must be divided into exactly four parts, with an approximate duration of 15 minutes each.
-            </durationAndParts>
-            <studentIdentifier>
-                The exam must begin with a clear instruction and a field for the student to input their Student ID.
-            </studentIdentifier>
-            <contextualization>
-                Each of the four parts must be framed around a different, distinct task that provides the context for that section's questions. These contextualizing tasks must be drawn from the `Realistic/Authentic Task` column in the CSV.
-            </contextualization>
-            <skillsCoverage>
-                The exam must assess a mix of reading, writing, and listening skills. You must include at least one dedicated listening part, for which you will provide a full transcript.
-            </skillsCoverage>
-            <modeling>
-                A core requirement is that every new task or question type within the exam must be introduced with a clear model or example. This shows the student exactly what is expected and how to answer.
-            </modeling>
-        </examStructure>
-        <constraints>
-            <activitySelection>
-                You must choose **exactly three** different activity types from the list below to construct the four parts of the exam. This means one activity type will need to be used twice. At the very beginning of your response, you must state which three activity types you have chosen.
+Of course. Here is the visually enhanced CSS, carefully updated according to your specifications. The original design language, color palette, and typography have been strictly preserved.
 
-                **Allowed Activity Types:**
-                -   Multiple Choice Questions (MCQ)
-                -   Gap-fill (Cloze test)
-                -   Matching (e.g., vocabulary to definitions)
-                -   Sentence Transformation
-                -   Short-Answer Questions (based on a text or audio)
-                -   True / False / Not Given
-                -   Ordering (e.g., a conversation, steps in a process)
-                -   Error Correction
-            </activitySelection>
-            <outputFormat>
-                The output must be a complete exam script, ready to be formatted for a test paper.
-                -   Use clear headings for the exam title, student ID section, and for each of the four parts (e.g., "Part 1: Reading Comprehension").
-                -   Number all questions clearly.
-                -   Assign point values to each question or section, ensuring the total sums to a logical number (e.g., 100 points).
-                -   For listening sections, provide the student questions first, followed by a clearly marked section titled `--- LISTENING TRANSCRIPT ---` containing the full audio script.
-                -   At the end of the exam, include an `--- ANSWER KEY ---` section.
-            </outputFormat>
-        </constraints>
-    </instructions>
-</systemPrompt>
+The changes focus on creating a cleaner, more focused presentation experience by removing editor-specific UI, adding subtle aesthetic improvements, and introducing navigation controls.
+
+```css
+/* =====================================================================
+   Organic Sage Slides — Presentation-focused Enhancement
+   Strictly preserves original palette/typography/soft depth.
+   Removes editor panels/grids for a clean viewing experience.
+   Adds: aesthetic glow, slide navigation, and subtle motion.
+   ===================================================================== */
+
+/* -------------------------------
+   Design tokens (unchanged core)
+----------------------------------*/
+:root {
+  /* Palette */
+  --primary-sage: #7A8471;
+  --secondary-sage: #9CAF88;
+  --tertiary-sage: #B8C5A6;
+  --warm-cream: #F8F6F0;
+  --soft-white: #FEFCF7;
+  --forest-shadow: #5A6B52;
+  --border-sage: rgba(122,132,113,0.20);
+  --hover-sage: rgba(156,175,136,0.15);
+
+  /* Depth accents (subtle, still earthy) */
+  --deep-forest: #3E4A3A;
+  --ink: #2F3A2B;
+  --ink-muted: #5A6B52;
+
+  /* Typography */
+  --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Scale + spacing */
+  --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+  --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+  --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+  --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+  --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3rem;
+
+  /* Radius + elevation */
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+  --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+  --shadow-3: 0 10px 40px rgba(34,41,32,0.10), 0 20px 60px rgba(34,41,32,0.08);
+  
+  /* ✨ AESTHETIC GLOW UP: Added a soft glow effect using existing colors */
+  --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+
+  /* Focus ring aligned with style */
+  --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
+          0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+
+  /* Motion */
+  --ease-ambient: cubic-bezier(.2,.8,.2,1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+
+  /* Slide + workspace */
+  --toolbar-h: 72px;
+  --workspace-pad: 24px;
+  --stage-pad: 16px;
+  --stage-radius: 18px;
+  --slide-aspect-w: 16;
+  --slide-aspect-h: 9;
+}
+
+/* -------------------------------
+   Global desktop shell
+----------------------------------*/
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  color: var(--forest-shadow);
+  background:
+    radial-gradient(1200px 900px at 12% 0%, rgba(156,175,136,0.06), transparent 60%),
+    radial-gradient(1200px 800px at 88% 100%, rgba(90,107,82,0.06), transparent 65%),
+    linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* -------------------------------
+   App layout (desktop-first)
+----------------------------------*/
+.deck-app {
+  display: grid;
+  grid-template-rows: var(--toolbar-h) 1fr;
+  grid-template-columns: 1fr;
+  min-height: 100dvh;
+}
+
+/* Top toolbar — save/load, annotate, etc. */
+.deck-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--toolbar-h);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 max(24px, 4vw);
+  background: color-mix(in srgb, var(--soft-white) 85%, white 15%);
+  border-bottom: 1px solid rgba(122,132,113,0.14);
+  box-shadow: 0 8px 20px rgba(34,41,32,0.05);
+  backdrop-filter: blur(6px) saturate(1.02);
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--forest-shadow);
+}
+
+.toolbar-actions,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Buttons — consistent with original style */
+.btn,
+.activity-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--primary-sage);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, white 8%), var(--primary-sage));
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 16px rgba(90,107,82,0.20);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn:hover { transform: translateY(-1px); background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 92%, white 8%), var(--forest-shadow)); }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: none; box-shadow: var(--ring); }
+
+.btn.secondary {
+  background: transparent;
+  color: var(--primary-sage);
+  border-color: color-mix(in srgb, var(--tertiary-sage) 70%, var(--primary-sage) 30%);
+  box-shadow: none;
+}
+.btn.secondary:hover { background-color: var(--hover-sage); }
+
+/* Specific actions */
+.btn-save::after,
+.btn-load::after,
+.btn-export::after {
+  content: attr(data-kbd);
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  background: color-mix(in srgb, var(--soft-white) 70%, #fff 30%);
+  color: var(--primary-sage);
+  border: 1px solid rgba(122,132,113,0.20);
+}
+
+/* Toggle pills (grid, annotate mode, highlight color) */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+  border: 1px solid rgba(122,132,113,0.14);
+  box-shadow: var(--shadow-1);
+}
+.toggle input { display: none; }
+.toggle .dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--tertiary-sage);
+  border: 1px solid rgba(122,132,113,0.25);
+}
+.toggle[data-on="true"] .dot { background: var(--primary-sage); }
+
+/* Workspace: wide + tall, no overspill */
+.deck-workspace {
+  height: calc(100dvh - var(--toolbar-h));
+  padding: var(--workspace-pad);
+  display: grid;
+  /* MODIFIED: Removed side panel columns for a single, focused stage */
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  overflow: hidden;
+  background:
+    radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+    radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
+}
+
+/* REMOVED: Side panels for thumbnails and inspector are no longer needed.
+.deck-thumbs { ... }
+.deck-inspector { ... }
+*/
+
+/* Stage viewport: centers slide and scales by available height or width (no overspill) */
+.stage-viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--soft-white) 60%, #fff 40%);
+  border: 1px dashed rgba(122,132,113,0.20);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* The slide itself */
+.slide-stage {
+  position: relative;
+  border-radius: var(--stage-radius);
+  background: #fff;
+  /* ✨ AESTHETIC GLOW UP: Added a soft, layered glow effect */
+  box-shadow: var(--shadow-glow), 0 1px 0 rgba(255,255,255,0.6) inset, 0 24px 60px rgba(34,41,32,0.10);
+  aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+  /* MODIFIED: Sizing logic updated for full-width workspace */
+  width: min(
+    calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))),
+    calc(100vw - (var(--workspace-pad) * 2))
+  );
+  max-width: 100%;
+  overflow: hidden;
+  outline: 1px solid rgba(122,132,113,0.14);
+  transition: transform var(--dur-3) var(--ease-ambient), box-shadow var(--dur-3) var(--ease-ambient);
+}
+
+/* Content padding */
+.slide-inner {
+  position: absolute;
+  inset: 0;
+  padding: var(--stage-pad);
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
+/* REMOVED: Visual guides and grid overlays are no longer needed.
+.slide-stage.show-guides::before, .slide-stage.show-guides::after { ... }
+.slide-stage.show-grid .grid-overlay { ... }
+.grid-overlay { ... }
+*/
+
+/* ✨ NEW: Navigation Controls */
+.slide-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--soft-white) 80%, transparent);
+  border: 1px solid var(--border-sage);
+  color: var(--primary-sage);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  box-shadow: var(--shadow-1);
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity var(--dur-2) var(--ease-ambient), scale var(--dur-2) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient);
+}
+.stage-viewport:hover .slide-nav {
+  opacity: 1;
+  scale: 1;
+}
+.slide-nav:hover {
+  box-shadow: var(--shadow-2);
+  background: var(--soft-white);
+  color: var(--deep-forest);
+}
+.slide-nav:focus-visible {
+  opacity: 1;
+  scale: 1;
+  outline: none;
+  box-shadow: var(--ring);
+}
+.slide-nav-prev { left: 24px; }
+.slide-nav-next { right: 24px; }
+/* SVG icon for the arrows */
+.slide-nav svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* -------------------------------
+   Slide content primitives
+----------------------------------*/
+.slide-stack {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  width: 100%;
+  height: 100%;
+}
+
+/* Text boxes follow original look */
+.text-box {
+  position: absolute;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(122,132,113,0.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 18px rgba(34,41,32,0.06);
+  color: var(--forest-shadow);
+  font-family: var(--font-body);
+  font-size: var(--step-1);
+  line-height: 1.4;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.text-box[data-tone="title"] {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.text-box[data-guard="clip"] { overflow: hidden; }
+.text-box[data-guard="scroll"] { overflow: auto; }
+
+/* Media boxes */
+.media-box {
+  position: absolute;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(122,132,113,0.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 18px rgba(34,41,32,0.06);
+  overflow: hidden;
+}
+.media-box img, .media-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* REMOVED: Editor-specific selection handles
+.is-selected { ... }
+.handle { ... }
+*/
+
+/* -------------------------------
+   Highlight + annotate
+----------------------------------*/
+.hl { background: var(--hl-sage); border-radius: 6px; padding: 0 0.15em; box-decoration-break: clone; }
+.hl-amber { background: var(--hl-amber); }
+.hl-clay  { background: var(--hl-clay); }
+
+.note {
+  position: absolute;
+  max-width: 40ch;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--warm-cream) 80%, #fff 20%);
+  border: 1px solid rgba(122,132,113,0.22);
+  box-shadow: 0 10px 24px rgba(34,41,32,0.12);
+  color: var(--forest-shadow);
+  font-size: var(--step--1);
+}
+.note .note-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 6px; font-weight: 700; color: var(--primary-sage);
+}
+.note .note-body { white-space: pre-wrap; overflow-wrap: anywhere; }
+.annotation-layer { position: absolute; inset: 0; pointer-events: none; }
+.annotations-enabled .annotation-layer { pointer-events: auto; }
+.ink-stroke {
+  stroke: var(--primary-sage);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6)) drop-shadow(0 6px 8px rgba(34,41,32,0.10));
+}
+.ink-stroke[data-variant="amber"] { stroke: #C6AA77; }
+.ink-stroke[data-variant="clay"]  { stroke: #B8C5A6; }
+
+.annotate-toolbar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  z-index: 5;
+  display: inline-flex;
+  gap: 8px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--soft-white) 88%, #fff 12%);
+  border: 1px solid rgba(122,132,113,0.14);
+  border-radius: 999px;
+  box-shadow: var(--shadow-2);
+  backdrop-filter: blur(4px);
+}
+.annotate-toolbar .btn { min-height: 36px; padding: 6px 12px; }
+
+/* -------------------------------
+   Save / Load area
+----------------------------------*/
+.io-bar { display: inline-flex; gap: var(--space-3); }
+
+.toast {
+  position: fixed;
+  right: max(24px, 4vw);
+  bottom: max(24px, 3vh);
+  z-index: 100;
+  display: grid;
+  gap: 6px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--soft-white) 92%, white 8%);
+  border: 1px solid rgba(122,132,113,0.18);
+  border-radius: 12px;
+  color: var(--forest-shadow);
+  box-shadow: var(--shadow-2);
+}
+
+/* -------------------------------
+   Typographic system (slides)
+----------------------------------*/
+.slide-stage h1, .slide-stage .display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 4rem);
+  line-height: 1.1;
+  color: var(--forest-shadow);
+  margin: 0 0 0.2em 0;
+}
+.slide-stage h2, .slide-stage .display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 3rem);
+  line-height: 1.15;
+  margin: 0 0 0.25em 0;
+}
+.slide-stage p, .slide-stage li {
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.35rem);
+  color: var(--forest-shadow);
+  margin: 0.4em 0;
+}
+.slide-stage ul { padding-left: 1.1em; margin: 0.3em 0; list-style: none; }
+.slide-stage ul li { position: relative; padding-left: 0.6em; }
+.slide-stage ul li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.6em;
+  width: 0.35em; height: 0.35em;
+  border-radius: 50%;
+  background: var(--primary-sage);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+.slide-stage blockquote {
+  margin: 0.6em 0;
+  padding: 0.6em 0.9em;
+  border-left: 4px solid var(--secondary-sage);
+  background: color-mix(in srgb, var(--warm-cream) 60%, #fff 40%);
+  border-radius: 10px;
+}
+
+/* REMOVED: Editor-specific auxiliary UI
+.kv-row { ... }
+.form-field { ... }
+.zoom-badge { ... }
+.draggable { ... }
+*/
+
+/* -------------------------------
+   Dark mode (gentle)
+----------------------------------*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --soft-white: #1E211C;
+    --warm-cream: #23261F;
+    --forest-shadow: #DDE6D4;
+    --ink: #E9EFE5;
+    --ink-muted: #AEB9AA;
+    --border-sage: rgba(184,197,166,0.25);
+    /* ✨ AESTHETIC GLOW UP: Dark mode glow */
+    --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1);
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 900px at 15% 10%, rgba(156,175,136,0.06), transparent 60%),
+      radial-gradient(900px 900px at 85% 90%, rgba(122,132,113,0.08), transparent 65%),
+      linear-gradient(135deg, #191D18 0%, #1B1E19 100%);
+  }
+
+  .deck-toolbar,
+  .stage-viewport {
+    background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+    border-color: rgba(184,197,166,0.18);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  }
+
+  .slide-stage {
+    background: #141713;
+    outline-color: rgba(184,197,166,0.20);
+    box-shadow: var(--shadow-glow), 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 60px rgba(0,0,0,0.35);
+  }
+
+  .btn {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 80%, #0F120E 20%), var(--primary-sage));
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 18px rgba(0,0,0,0.35);
+  }
+  .btn:hover {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 80%, #0F120E 20%), var(--forest-shadow));
+  }
+
+  .note {
+    background: color-mix(in srgb, #23261F 85%, #1B1E19 15%);
+    border-color: rgba(184,197,166,0.25);
+    color: var(--forest-shadow);
+  }
+
+  .toast {
+    background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+    border-color: rgba(184,197,166,0.22);
+    color: var(--forest-shadow);
+  }
+}
+
+/* -------------------------------
+   Reduced motion
+----------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* -------------------------------
+   Print/export (optional helpers)
+----------------------------------*/
+@media print {
+  .deck-toolbar, .annotate-toolbar, .toast, .slide-nav { display: none !important; }
+  .deck-workspace { padding: 0; }
+  .stage-viewport { box-shadow: none; border: 0; }
+  .slide-stage { box-shadow: none; outline: 0; }
+}
+```
