@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slides: Building Professional Networks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      /* =====================================================================
+         Organic Sage Slides — V3 Redraft
+         Focus on layout, balance, and visual hierarchy.
+         ===================================================================== */
+
+      /* -------------------------------
+         Design tokens (unchanged core)
+      ----------------------------------*/
+      :root {
+        --primary-sage: #7A8471;
+        --secondary-sage: #9CAF88;
+        --tertiary-sage: #B8C5A6;
+        --warm-cream: #F8F6F0;
+        --soft-white: #FEFCF7;
+        --forest-shadow: #5A6B52;
+        --border-sage: rgba(122,132,113,0.20);
+        --hover-sage: rgba(156,175,136,0.15);
+        --deep-forest: #3E4A3A;
+        --ink: #2F3A2B;
+        --ink-muted: #5A6B52;
+        --font-display: 'Questrial', system-ui, sans-serif;
+        --font-body: 'Nunito', system-ui, sans-serif;
+        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+        --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+        --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+        --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+        --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+
+      /* -------------------------------
+         Global & App Layout
+      ----------------------------------*/
+      html, body { margin: 0; padding: 0; min-height: 100dvh; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow: hidden; }
+      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; min-height: 100dvh; }
+      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
+      .toolbar-brand { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
+      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); }
+      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: hidden; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
+      .stage-viewport { position: relative; display: grid; place-items: center; }
+
+      /* -------------------------------
+         Slide Structure & Navigation
+      ----------------------------------*/
+      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2))); max-width: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transition: opacity 300ms ease-in-out; }
+      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
+      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
+      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
+      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
+      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
+      .slide-nav-prev { left: 24px; }
+      .slide-nav-next { right: 24px; }
+
+      /* -------------------------------
+         REDRAFTED: Grid & Layout System
+      ----------------------------------*/
+      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
+      .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-12 { grid-column: span 12 / span 12; }
+      .col-start-7 { grid-column-start: 7; }
+      .align-self-start { align-self: flex-start; } .align-self-center { align-self: center; }
+
+      /* -------------------------------
+         REDRAFTED: Visual Components
+      ----------------------------------*/
+      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); }
+      .card.card-full-height { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: 0.75rem; }
+      .card h3 { margin: 0 0 0.5rem 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--step-1); }
+      .card p { margin: 0; font-size: var(--step--1); }
+      
+      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+      .img-overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .full-width-bg .slide-inner { padding: 0; }
+      .full-width-bg .bg-content { padding: var(--stage-pad); position: relative; z-index: 2; }
+
+      blockquote { margin: 1em 0 0 0; padding: 0.8em 1em; border-left: 4px solid var(--secondary-sage); background: color-mix(in srgb, var(--warm-cream) 60%, transparent); border-radius: 0 10px 10px 0; font-style: italic; font-size: var(--step--1); }
+      .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
+      .text-highlight { color: var(--primary-sage); font-weight: 700; }
+      hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
+
+      /* -------------------------------
+         Typographic System
+      ----------------------------------*/
+      .slide-stage h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
+      .slide-stage h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0 0 0.5em 0; }
+      .slide-stage h2.subtitle { color: var(--primary-sage); }
+      .slide-stage p, .slide-stage li { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); color: var(--forest-shadow); margin: 0.4em 0; }
+      .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
+      .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
+      .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
+      .centered-text { text-align: center; }
+
+      /* Dark mode adjustments */
+      @media (prefers-color-scheme: dark) {
+        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1); }
+        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+        .slide-stage { background: #141713; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
+        .dialogue-box { background: var(--warm-cream); border-color: rgba(184,197,166,0.25); }
+      }
+    </style>
+</head>
+<body>
+
+    <div class="deck-app">
+        <header class="deck-toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
+                <span>Noor Community</span>
+            </div>
+            <div id="slide-counter" class="slide-counter">1 / 16</div>
+        </header>
+
+        <main class="deck-workspace">
+            <div class="stage-viewport">
+                
+                <!-- SLIDE 1: Title -->
+                <div class="slide-stage full-width-bg">
+                    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Colleagues discussing work" class="img-bg" style="opacity: 0.2;">
+                    <div class="img-overlay" style="background: linear-gradient(80deg, var(--soft-white) 45%, transparent 90%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                             <div class="col-span-7">
+                                <p class="subtitle" style="color: var(--primary-sage);">Conversation Class</p>
+                                <h1>Making the Connection</h1>
+                                <p style="font-size: var(--step-2); color: var(--ink-muted);">From the first chat to the follow-up call.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Objectives -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Today's Goals</h2>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card"><i class="fas fa-comments icon"></i><h3>Combine Vocabulary</h3><p>Use small talk & formal phrases together.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card"><i class="fas fa-history icon"></i><h3>Talk About the Past</h3><p>Use Past Simple and Present Perfect to share experiences.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card"><i class="fas fa-calendar-alt icon"></i><h3>Plan for the Future</h3><p>Use future forms to make suggestions.</p></div>
+                            </div>
+                             <div class="col-span-6">
+                                <div class="card"><i class="fas fa-phone icon"></i><h3>Practice a Call</h3><p>Role-play a full follow-up phone conversation.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: Warm-Up -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                               <i class="fa-solid fa-lightbulb" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                               <h2 style="margin-top: 1rem;">Let's Talk!</h2>
+                               <p class="subtitle" style="color: var(--ink-muted);">Your Networking Experiences</p>
+                            </div>
+                            <div class="col-span-7">
+                                <p><strong>1.</strong> Think about the last new person you met professionally. Did you contact them again? Why or why not?</p>
+                                <hr class="divider">
+                                <p><strong>2.</strong> Why is it important to "follow up" after meeting someone? What can you achieve?</p>
+                                <hr class="divider">
+                                <p><strong>3.</strong> How is a follow-up call different from the first conversation?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 4: Activity 1 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 1</h2>
+                                <h2>Mixing Our Language</h2>
+                                <p>Let's practice combining phrases for small talk and follow-up in a phone call.</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p><i class="fa-solid fa-play" style="color:var(--secondary-sage); margin-right: 8px;"></i> To start, you can say, "Hello, <span class="text-highlight">it was a pleasure to meet you</span>."</p>
+                                    <hr class="divider">
+                                    <p><i class="fa-solid fa-comment-dots" style="color:var(--tertiary-sage); margin-right: 8px;"></i> To remind them, you can say, "I thought our conversation was <span class="text-highlight">really interesting!</span>"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 5: Activity 1 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-4 centered-text">
+                                <i class="fa-solid fa-phone-volume" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                            </div>
+                            <div class="col-span-8">
+                                <h2 class="subtitle">Activity 1: Your Turn!</h2>
+                                <p>In pairs, create and practice a short dialogue for the start of a follow-up phone call.</p>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>Your dialogue must include:</h3>
+                                    <ul>
+                                        <li>At least one <span class="text-highlight">formal phrase</span> for referring to a past meeting.</li>
+                                        <li>At least one <span class="text-highlight">small talk phrase</span> to show interest.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 6: Activity 2 Intro -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Person working on a laptop" class="img-bg" style="opacity: 0.15;">
+                    <div class="img-overlay" style="background: linear-gradient(90deg, transparent 0%, var(--soft-white) 55%);"></div>
+                     <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                            <div class="col-span-5">
+                                <!-- Empty column for visual balance -->
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2</h2>
+                                <h2>Sharing Your Experience</h2>
+                                <p>In a follow-up call, you can share more about your background to build a connection.</p>
+                                <div class="card" style="margin-top: var(--space-6);">
+                                    <h3>You can use the Present Perfect:</h3>
+                                    <p>"That's interesting, <span class="text-highlight">I've worked on</span> three projects like that before."</p>
+                                    <p>"<span class="text-highlight">Have you ever considered</span> using this software?"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 7: Activity 2 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-briefcase" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Your Dream Job</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2: Your Turn!</h2>
+                                <p>Imagine you're calling a contact who works in your dream job. In your groups, discuss:</p>
+                                <div class="card">
+                                <ul>
+                                    <li>What relevant experiences <span class="text-highlight">have you had</span>?</li>
+                                    <li>What useful skills <span class="text-highlight">have you learned</span>?</li>
+                                    <li><span class="text-highlight">Have you ever failed</span> at something and learned from it?</li>
+                                </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 8: Activity 3 Intro -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Activity 3</h2>
+                                <h2>Planning in the First Chat</h2>
+                                <p>You can use the first conversation to plan for the next one.</p>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Talk about the event (Past Simple)</h3>
+                                    <p>"I really <span class="text-highlight">enjoyed</span> the presentation this morning."</p>
+                                    <p>"I <span class="text-highlight">thought</span> your comments were very interesting."</p>
+                                </div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Make a future plan</h3>
+                                    <p>"<span class="text-highlight">Perhaps we could</span> continue this conversation later?"</p>
+                                    <p>"<span class="text-highlight">I'll send you</span> an email with my details."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 9: Activity 3 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-handshake" style="font-size: 8rem; color: var(--tertiary-sage);"></i>
+                                <h2 style="margin-top: 1rem;">First Impressions</h2>
+                                <p class="subtitle" style="color: var(--ink-muted);">Activity 3</p>
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 3: Your Turn!</h2>
+                                <p>In pairs, role-play meeting for the first time at a conference.</p>
+                                <div class="card">
+                                    <h3>Your Task:</h3>
+                                    <ol style="font-size: var(--step-0); padding-left: 1.5rem; text-align: left;">
+                                        <li style="margin-bottom: 0.5rem;">Introduce yourselves.</li>
+                                        <li style="margin-bottom: 0.5rem;">Use the <span class="text-highlight">Past Simple</span> to talk about a session you attended.</li>
+                                        <li style="margin-bottom: 0.5rem;">Use a <span class="text-highlight">future form</span> to make a plan to connect again later.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 10: Activity 4 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                         <i class="fa-solid fa-users-viewfinder" style="font-size: 4rem; color: var(--tertiary-sage);"></i>
+                        <h1>Activity 4: Giving Advice</h1>
+                        <p>Let's use all our language to solve a problem.</p>
+                        <p><strong>Scenario:</strong> Your friend met an important person last week but is nervous about calling them. What should they do?</p>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 11: Activity 4 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-6">
+                                <img src="https://images.pexels.com/photos/5439427/pexels-photo-5439427.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Two friends talking" style="width:100%; height:100%; object-fit: cover; border-radius: var(--radius);">
+                            </div>
+                            <div class="col-span-6">
+                                <h2 class="subtitle">Activity 4: Your Turn!</h2>
+                                <h2>Create a Plan</h2>
+                                <p>In your groups, brainstorm a step-by-step plan for your nervous friend.</p>
+                                <ul>
+                                    <li>What should they say first? (e.g., "They should say when they <span class="text-highlight">met</span>...")</li>
+                                    <li>What questions can they ask? (e.g., "...then ask, '<span class="text-highlight">Have you ever</span>...?''')</li>
+                                    <li>How should they end the call? (e.g., "Maybe they <span class="text-highlight">could suggest</span> a meeting.")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 12: Main Task Intro -->
+                <div class="slide-stage hidden centered-text">
+                    <div class="slide-inner">
+                        <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>The Main Task</h1>
+                        <h2 class="subtitle">Role-Play: The Follow-Up Phone Call</h2>
+                        <blockquote>Time to put it all together. Let's practice a full, realistic conversation!</blockquote>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 13: Main Task Roles -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern office meeting" class="img-bg" style="opacity: 0.12;">
+                    <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
+                    <div class="slide-inner">
+                        <div class="grid-container align-self-start">
+                            <div class="col-span-12 centered-text">
+                                <h2>Scenario: The Follow-Up Call</h2>
+                                <p>In pairs, role-play the phone call based on your meeting last week.</p>
+                            </div>
+                            <div class="col-span-6"><div class="card card-full-height"><h3>Student A: The Caller</h3><p>Your goal is to re-establish the connection and propose a next step. Use the <span class="text-highlight">Past Simple</span> ('We met last week...') and <span class="text-highlight">future forms</span> ('Perhaps we could...').</p></div></div>
+                            <div class="col-span-6"><div class="card card-full-height"><h3>Student B: The Receiver</h3><p>Your goal is to be friendly and professional. Use <span class="text-highlight">small talk phrases</span> ('That's interesting!') and the <span class="text-highlight">Present Perfect</span> to share experiences ('I've worked on...').</p></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 14: Follow-Up Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Follow-Up Task</h2>
+                                <h2>Report Back</h2>
+                            </div>
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
+                            </div>
+                            <div class="col-span-7">
+                                <div class="card card-full-height">
+                                    <i class="fa-solid fa-clipboard-user icon"></i>
+                                    <h3>Tell your new group about your call.</h3>
+                                    <blockquote>"I called [Name]. I reminded her that we met at the conference. She told me she has worked with several NGOs. I suggested we could have a Zoom call next week."</blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 15: Reflection -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Let's Reflect!</h2>
+                                <p>Type your answers in the chat.</p>
+                            </div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What was the most useful phrase or grammar for you today?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What was the most challenging part of the role-play?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>On a scale of 1-5, how confident do you feel making a professional call now?</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 16: End -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                        <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Great work today!</h1>
+                        <h2 class="subtitle">See you next time!</h2>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const slides = Array.from(document.querySelectorAll('.slide-stage'));
+        const nextBtn = document.querySelector('.slide-nav-next');
+        const prevBtn = document.querySelector('.slide-nav-prev');
+        const counter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle('hidden', i !== index);
+          });
+          counter.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function navigate(direction) {
+          currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+          showSlide(currentSlideIndex);
+        }
+
+        nextBtn.addEventListener('click', () => navigate(1));
+        prevBtn.addEventListener('click', () => navigate(-1));
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault(); navigate(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault(); navigate(-1);
+            }
+        });
+
+        showSlide(currentSlideIndex);
+      });
+    </script>
+</body>
+</html>
+```
