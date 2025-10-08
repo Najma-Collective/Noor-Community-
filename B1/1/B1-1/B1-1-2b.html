@@ -103,6 +103,9 @@
       .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
       .text-highlight { color: var(--primary-sage); font-weight: 700; }
       hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
+      ol { list-style: none; padding-left: 0; counter-reset: item; }
+      ol li { counter-increment: item; position: relative; padding-left: 2.5em; margin-bottom: 0.8em; }
+      ol li::before { content: counter(item); position: absolute; left: 0; top: -2px; width: 1.8em; height: 1.8em; background: var(--secondary-sage); color: var(--soft-white); border-radius: 50%; text-align: center; line-height: 1.8em; font-weight: 700; font-family: var(--font-display); }
 
       /* -------------------------------
          Typographic System
@@ -114,9 +117,6 @@
       .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
       .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
       .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
-       .slide-stage ol { list-style: none; counter-reset: custom-counter; padding-left: 0; }
-      .slide-stage ol li { counter-increment: custom-counter; position: relative; padding-left: 2em; margin-bottom: 0.75em; }
-      .slide-stage ol li::before { content: counter(custom-counter); position: absolute; left: 0; top: 0; width: 1.5em; height: 1.5em; border-radius: 50%; background-color: var(--secondary-sage); color: var(--soft-white); font-weight: bold; text-align: center; line-height: 1.5em; font-size: 0.8em; }
       .centered-text { text-align: center; }
 
       /* Dark mode adjustments */
@@ -145,14 +145,14 @@
                 
                 <!-- SLIDE 1: Title -->
                 <div class="slide-stage full-width-bg">
-                    <img src="https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Professionals collaborating in a modern office" class="img-bg" style="opacity: 0.2;">
+                    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="People working together at a large table" class="img-bg" style="opacity: 0.2;">
                     <div class="img-overlay" style="background: linear-gradient(80deg, var(--soft-white) 45%, transparent 90%);"></div>
                     <div class="slide-inner">
                         <div class="bg-content grid-container">
                              <div class="col-span-7">
-                                <p class="subtitle" style="color: var(--primary-sage);">B1 English Lesson</p>
+                                <p class="subtitle" style="color: var(--primary-sage);">Conversation Class</p>
                                 <h1>Building Professional Networks</h1>
-                                <p style="font-size: var(--step-2); color: var(--ink-muted);">Connecting Your Skills and Experiences</p>
+                                <p style="font-size: var(--step-2); color: var(--ink-muted);">Making meaningful connections.</p>
                             </div>
                         </div>
                     </div>
@@ -166,16 +166,16 @@
                                 <h2 class="subtitle">Today's Goals</h2>
                             </div>
                             <div class="col-span-6">
-                                <div class="card"><i class="fas fa-comments icon"></i><h3>Engage in Conversation</h3><p>Use professional vocabulary to have interesting conversations.</p></div>
+                                <div class="card"><i class="fas fa-comments icon"></i><h3>Combine Language</h3><p>Use small talk and professional vocabulary in one conversation.</p></div>
                             </div>
                             <div class="col-span-6">
-                                <div class="card"><i class="fas fa-question-circle icon"></i><h3>Ask Great Questions</h3><p>Ask about past details (Past Simple) and life experiences (Present Perfect).</p></div>
+                                <div class="card"><i class="fas fa-history icon"></i><h3>Ask About Experience</h3><p>Use Present Perfect to ask about past experiences.</p></div>
                             </div>
                             <div class="col-span-6">
-                                <div class="card"><i class="fas fa-search icon"></i><h3>Find Common Ground</h3><p>Discover shared professional interests with your classmates.</p></div>
+                                <div class="card"><i class="fas fa-question-circle icon"></i><h3>Ask for Details</h3><p>Use Wh- questions to learn about current work.</p></div>
                             </div>
                              <div class="col-span-6">
-                                <div class="card"><i class="fas fa-users icon"></i><h3>Practice Networking</h3><p>Have a full networking conversation from start to finish.</p></div>
+                                <div class="card"><i class="fas fa-handshake icon"></i><h3>Plan to Collaborate</h3><p>Find a shared interest and agree on a next step.</p></div>
                             </div>
                         </div>
                     </div>
@@ -186,16 +186,16 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                             <div class="col-span-5 centered-text">
-                               <i class="fa-solid fa-lightbulb" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                               <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
                                <h2 style="margin-top: 1rem;">Let's Talk!</h2>
-                               <p class="subtitle" style="color: var(--ink-muted);">Your Professional World</p>
+                               <p class="subtitle" style="color: var(--ink-muted);">Your Best Conversations</p>
                             </div>
                             <div class="col-span-7">
-                                <p><strong>1.</strong> Think of a professional you admire. What would you ask them about their <span class="text-highlight">background</span> and the <span class="text-highlight">experiences they have had</span>?</p>
+                                <p><strong>1.</strong> Think about the best professional conversation you've ever had. What made it so good?</p>
                                 <hr class="divider">
-                                <p><strong>2.</strong> <span class="text-highlight">Have you ever</span> made a useful professional connection? What <span class="text-highlight">did</span> you talk about?</p>
+                                <p><strong>2.</strong> Have you ever met someone new and immediately known you wanted to work with them? What happened?</p>
                                 <hr class="divider">
-                                <p><strong>3.</strong> Why is it important to show you are interested in someone's experiences?</p>
+                                <p><strong>3.</strong> Is it more important to learn about past experience or current work first? Why?</p>
                             </div>
                         </div>
                     </div>
@@ -207,15 +207,15 @@
                          <div class="grid-container">
                             <div class="col-span-5">
                                 <h2 class="subtitle">Activity 1</h2>
-                                <h2>Show Your Interest</h2>
-                                <p>Let's combine professional words with phrases that keep the conversation going.</p>
+                                <h2>The Perfect Response</h2>
+                                <p>Let's practice combining professional statements with interested replies.</p>
                             </div>
                              <div class="col-span-7">
                                 <div class="dialogue-box">
                                     <h3>For example:</h3>
-                                    <p><strong>Someone says:</strong> "My <span class="text-highlight">background</span> is in the education <span class="text-highlight">sector</span>."</p>
+                                    <p>Someone says: "My professional <span class="text-highlight">background</span> is in the education <span class="text-highlight">sector</span>."</p>
                                     <hr class="divider">
-                                    <p><strong>You can say:</strong> "<span class="text-highlight">That's interesting! Tell me more about that.</span>"</p>
+                                    <p>You reply: "<span class="text-highlight">Oh, that's interesting!</span> Tell me more about your <span class="text-highlight">experience</span> in that field."</p>
                                 </div>
                             </div>
                         </div>
@@ -227,16 +227,17 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                             <div class="col-span-4 centered-text">
-                                <i class="fa-solid fa-comments" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                <i class="fa-solid fa-users-gear" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
                             </div>
                             <div class="col-span-8">
                                 <h2 class="subtitle">Activity 1: Your Turn!</h2>
-                                <p>In pairs, have a conversation. Follow these steps:</p>
+                                <p>In pairs, practice making short, natural conversations.</p>
                                 <div class="card" style="margin-top: 1rem;">
-                                    <ol>
-                                        <li><strong>Student A:</strong> Find out three interesting facts about Student B's professional or academic <span class="text-highlight">background</span>.</li>
-                                        <li><strong>Student A:</strong> Use phrases like "<span class="text-highlight">That's interesting!</span>" to get more detail.</li>
-                                        <li>After 6 minutes, switch roles!</li>
+                                    <h3>Instructions:</h3>
+                                    <ol style="font-size: var(--step-0); padding-left: 1.5rem; text-align: left;">
+                                        <li style="margin-bottom: 0.5rem;"><span class="text-highlight">Student A:</span> Make a statement about your professional background or expertise.</li>
+                                        <li style="margin-bottom: 0.5rem;"><span class="text-highlight">Student B:</span> Respond with a phrase to show interest, then ask a follow-up question.</li>
+                                        <li style="margin-bottom: 0.5rem;">Continue for a few turns, then switch roles!</li>
                                     </ol>
                                 </div>
                             </div>
@@ -246,21 +247,22 @@
 
                 <!-- SLIDE 6: Activity 2 Intro -->
                 <div class="slide-stage hidden full-width-bg">
-                    <img src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Two people connecting puzzle pieces" class="img-bg" style="opacity: 0.15;">
-                    <div class="img-overlay" style="background: linear-gradient(90deg, transparent 0%, var(--soft-white) 55%);"></div>
+                    <img src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Person pointing at a timeline on a board" class="img-bg" style="opacity: 0.15;">
+                    <div class="img-overlay" style="background: linear-gradient(270deg, var(--soft-white) 55%, transparent 100%);"></div>
                      <div class="slide-inner">
                         <div class="bg-content grid-container">
-                            <div class="col-span-5">
-                                <!-- Empty column for visual balance -->
-                            </div>
-                            <div class="col-span-7">
+                             <div class="col-span-6">
                                 <h2 class="subtitle">Activity 2</h2>
-                                <h2>Finding Connections</h2>
-                                <p>You can use Wh- questions to discover what you have in common with someone.</p>
+                                <h2>Asking About Experience</h2>
+                                <p>We use the <span class="text-highlight">Present Perfect</span> to ask about general life experiences, not specific times in the past.</p>
                                 <div class="card" style="margin-top: var(--space-6);">
-                                    <h3>For example, ask:</h3>
-                                    <p>"<span class="text-highlight">What sector</span> do you work in? Oh, me too!"</p>
+                                    <h3>Example questions for a new partner:</h3>
+                                    <p>"<span class="text-highlight">Have you ever managed</span> a development team?"</p>
+                                    <p>"<span class="text-highlight">Have you worked</span> with international clients before?"</p>
                                 </div>
+                            </div>
+                             <div class="col-span-6">
+                                <!-- Empty column for visual balance -->
                             </div>
                         </div>
                     </div>
@@ -271,19 +273,16 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                              <div class="col-span-5 centered-text">
-                                 <i class="fa-solid fa-magnifying-glass" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                 <h2 style="margin-top: 1rem;">Common Ground</h2>
+                                 <i class="fa-solid fa-lightbulb" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Find a Co-Founder</h2>
                             </div>
                              <div class="col-span-7">
                                 <h2 class="subtitle">Activity 2: Your Turn!</h2>
-                                <p>In a small group, find one professional interest you all share.</p>
+                                <p>Imagine you want to start a new social enterprise.</p>
                                 <div class="card">
                                 <h3>Your task:</h3>
-                                <p>You must only ask Wh- questions about each other's work or studies. For example:</p>
-                                <ul>
-                                    <li>"<span class="text-highlight">What courses did you take?</span>"</li>
-                                    <li>"<span class="text-highlight">What projects do you work on?</span>"</li>
-                                </ul>
+                                <p>In your group, brainstorm a list of questions using the <span class="text-highlight">Present Perfect</span> that you would ask a potential co-founder to understand their experience.</p>
+                                <blockquote>After you brainstorm, practice asking and answering your questions!</blockquote>
                                 </div>
                             </div>
                         </div>
@@ -296,19 +295,19 @@
                         <div class="grid-container">
                              <div class="col-span-12 centered-text">
                                 <h2 class="subtitle">Activity 3</h2>
-                                <h2>Talking About Experience</h2>
-                                <p>Use the Present Perfect to give a bigger picture of your professional life.</p>
+                                <h2>Asking Deeper Questions</h2>
+                                <p>Wh- questions can do more than just get information. They build relationships.</p>
                             </div>
                             <div class="col-span-6">
                                 <div class="card card-full-height">
-                                    <h3>Instead of just...</h3>
-                                    <p>"I worked in Jenin in 2020." (Specific time)</p>
+                                    <h3>A Simple Question</h3>
+                                    <p>"What does your company do?"</p>
                                 </div>
                             </div>
                             <div class="col-span-6">
                                 <div class="card card-full-height">
-                                    <h3>Try this...</h3>
-                                    <p>"I<span class="text-highlight">'ve worked</span> all over the West Bank." (General experience)</p>
+                                    <h3>A Deeper Question</h3>
+                                    <p>"<span class="text-highlight">What inspired you</span> to start your company?"</p>
                                 </div>
                             </div>
                         </div>
@@ -320,19 +319,20 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                             <div class="col-span-5 centered-text">
-                                <i class="fa-solid fa-id-card" style="font-size: 8rem; color: var(--tertiary-sage);"></i>
-                                <h2 style="margin-top: 1rem;">Experience Profile</h2>
+                                <i class="fa-solid fa-infinity" style="font-size: 8rem; color: var(--tertiary-sage);"></i>
+                                <h2 style="margin-top: 1rem;">The Question Chain</h2>
                                 <p class="subtitle" style="color: var(--ink-muted);">Activity 3</p>
                             </div>
                             <div class="col-span-7">
                                 <h2 class="subtitle">Activity 3: Your Turn!</h2>
-                                <p>In pairs, interview your partner.</p>
+                                <p>In pairs, play the "Question Chain" game.</p>
                                 <div class="card">
-                                    <h3>Your Task:</h3>
-                                    <p>Ask at least five "<span class="text-highlight">Have you ever...?</span>" questions about their work or studies to learn about their experiences.</p>
-                                    <blockquote>Examples: "Have you ever managed a project?" "Have you ever written a report in English?"</blockquote>
-                                    <hr class="divider">
-                                    <p>Then, swap roles and practice again!</p>
+                                    <h3>How to Play:</h3>
+                                    <ol style="font-size: var(--step-0); padding-left: 1.5rem; text-align: left;">
+                                        <li style="margin-bottom: 0.5rem;">Student A starts by asking a Wh- question.</li>
+                                        <li style="margin-bottom: 0.5rem;">Student B answers, then asks a different Wh- question.</li>
+                                        <li style="margin-bottom: 0.5rem;">The goal: Keep the conversation flowing for 5 minutes without stopping!</li>
+                                    </ol>
                                 </div>
                             </div>
                         </div>
@@ -342,11 +342,10 @@
                 <!-- SLIDE 10: Activity 4 Intro -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner centered-text">
-                         <i class="fa-solid fa-user-graduate" style="font-size: 4rem; color: var(--tertiary-sage);"></i>
-                        <h1>Activity 4: Problem Solving</h1>
-                        <p>Your friend just graduated from university and is worried.</p>
-                        <p>They say, "<span class="text-highlight">I have never had</span> a real job, so I have no <span class="text-highlight">experience</span>."</p>
-                        <h2 class="subtitle" style="margin-top: 2rem;">What advice can you give them?</h2>
+                         <i class="fa-solid fa-magnifying-glass-chart" style="font-size: 4rem; color: var(--tertiary-sage);"></i>
+                        <h1>Activity 4: The 5-Minute Pitch</h1>
+                        <p>You meet a successful entrepreneur. You have 5 minutes to decide if you should ask for a follow-up meeting.</p>
+                        <h2>What is your strategy?</h2>
                     </div>
                 </div>
                 
@@ -355,16 +354,17 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                             <div class="col-span-6">
-                                <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A team brainstorming with sticky notes" style="width:100%; height:100%; object-fit: cover; border-radius: var(--radius);">
+                                <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A group of people in a meeting, one is speaking" style="width:100%; height:100%; object-fit: cover; border-radius: var(--radius);">
                             </div>
                             <div class="col-span-6">
                                 <h2 class="subtitle">Activity 4: Your Turn!</h2>
-                                <h2>Brainstorm Advice</h2>
-                                <p>In your groups, discuss advice for the new graduate.</p>
+                                <h2>The Entrepreneur Role-Play</h2>
+                                <p>In your groups, one person is the "Successful Entrepreneur."</p>
                                 <ul>
-                                    <li>How can they present their university projects as professional experience?</li>
-                                    <li>What questions can they ask themselves about their skills?</li>
-                                    <li>How can they talk about what they <span class="text-highlight">have learned</span>?</li>
+                                    <li>The others are "Networkers."</li>
+                                    <li>Use your 5 minutes to ask great questions.</li>
+                                    <li>Start with small talk, ask about experience, then ask for details.</li>
+                                    <li>After, discuss if you would ask for a second meeting, and why.</li>
                                 </ul>
                             </div>
                         </div>
@@ -376,23 +376,25 @@
                     <div class="slide-inner">
                         <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
                         <h1>The Main Task</h1>
-                        <h2 class="subtitle">The Two-Goal Networking Challenge</h2>
-                        <blockquote>Time to put everything together using your own real-life experiences!</blockquote>
+                        <h2 class="subtitle">Role-Play: The Final Session</h2>
+                        <blockquote>Time to put everything together in a realistic scenario.</blockquote>
                     </div>
                 </div>
                 
                 <!-- SLIDE 13: Main Task Roles -->
                 <div class="slide-stage hidden full-width-bg">
-                    <img src="https://images.pexels.com/photos/7176319/pexels-photo-7176319.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="People talking in an online meeting" class="img-bg" style="opacity: 0.12;">
+                    <img src="https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern office meeting" class="img-bg" style="opacity: 0.12;">
                     <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
                     <div class="slide-inner">
                         <div class="grid-container align-self-start">
                             <div class="col-span-12 centered-text">
-                                <h2>Scenario: Online Networking Event</h2>
-                                <p>In pairs, have a conversation with two goals:</p>
+                                <h2>Scenario: A Conference for Palestinian Professionals</h2>
+                                <p>Your goal is to find one person and agree on a <span class="text-highlight">concrete 'next step'</span> for a potential collaboration.</p>
                             </div>
-                            <div class="col-span-6"><div class="card card-full-height"><h3>Goal 1: Find a Shared Interest</h3><p>Use small talk and "<span class="text-highlight">Have you ever...?</span>" questions to find one real professional interest you have in common.</p></div></div>
-                            <div class="col-span-6"><div class="card card-full-height"><h3>Goal 2: Learn More</h3><p>Once you find the shared interest, ask detailed <span class="text-highlight">Wh- questions</span> to learn about your partner's specific <span class="text-highlight">background</span> in that area.</p></div></div>
+                            <div class="col-span-3"><div class="card card-full-height"><h3>1. Small Talk</h3><p>Start the conversation naturally.</p></div></div>
+                            <div class="col-span-3"><div class="card card-full-height"><h3>2. Experiences</h3><p>Ask about their general background (Present Perfect).</p></div></div>
+                            <div class="col-span-3"><div class="card card-full-height"><h3>3. Details</h3><p>Ask about their current work (Wh- questions).</p></div></div>
+                            <div class="col-span-3"><div class="card card-full-height"><h3>4. Next Step</h3><p>Find a shared interest and agree on a plan.</p></div></div>
                         </div>
                     </div>
                 </div>
@@ -403,7 +405,7 @@
                          <div class="grid-container">
                             <div class="col-span-12 centered-text">
                                 <h2 class="subtitle">Follow-Up Task</h2>
-                                <h2>Report & Collaborate</h2>
+                                <h2>Report & Advise</h2>
                             </div>
                             <div class="col-span-5 centered-text">
                                 <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
@@ -412,11 +414,10 @@
                             <div class="col-span-7">
                                 <div class="card card-full-height">
                                     <i class="fa-solid fa-clipboard-user icon"></i>
-                                    <h3>1. Report on your conversation.</h3>
-                                    <p>Tell the group what shared interest you found and one interesting thing you learned about your partner.</p>
+                                    <h3>In your new group:</h3>
+                                    <p><span class="text-highlight">Report:</span> Explain your plan. Who did you meet? What is your next step?</p>
                                     <hr class="divider">
-                                    <h3>2. Discuss collaboration.</h3>
-                                    <p>Based on what you learned, what is one potential way you and your original partner could work together in the future?</p>
+                                    <p><span class="text-highlight">Advise:</span> Listen to the other pair's plan. Ask one clarification question and offer one piece of helpful advice.</p>
                                 </div>
                             </div>
                         </div>
@@ -431,9 +432,9 @@
                                 <h2 class="subtitle">Let's Reflect!</h2>
                                 <p>Think about your own learning today.</p>
                             </div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>What part of today's class was most useful for you? Why?</p></div></div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>Which grammar point do you feel more confident with now: Wh- questions or Present Perfect?</p></div></div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>What was the most challenging part of the final networking task?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>Which question that you asked today gave you the most interesting answer?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What is the difference between asking "What did you do?" and "What have you done?"</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What is one thing you feel more confident about now when meeting new professionals?</p></div></div>
                         </div>
                     </div>
                 </div>
@@ -443,7 +444,7 @@
                     <div class="slide-inner centered-text">
                         <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
                         <h1>Great work today!</h1>
-                        <h2 class="subtitle">See you next time!</h2>
+                        <h2 class="subtitle">Keep making connections.</h2>
                     </div>
                 </div>
 
