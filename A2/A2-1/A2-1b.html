@@ -1,0 +1,472 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slides: A Weekend to Remember</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      /* =====================================================================
+         Organic Sage UI — V3 Redraft
+         ===================================================================== */
+      :root {
+        --primary-sage: #7A8471;
+        --secondary-sage: #9CAF88;
+        --tertiary-sage: #B8C5A6;
+        --warm-cream: #F8F6F0;
+        --soft-white: #FEFCF7;
+        --forest-shadow: #5A6B52;
+        --border-sage: rgba(122,132,113,0.20);
+        --hover-sage: rgba(156,175,136,0.15);
+        --deep-forest: #3E4A3A;
+        --ink: #2F3A2B;
+        --ink-muted: #5A6B52;
+        --font-display: 'Questrial', system-ui, sans-serif;
+        --font-body: 'Nunito', system-ui, sans-serif;
+        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+        --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+        --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+        --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+        --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+      html, body { margin: 0; padding: 0; min-height: 100dvh; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow: hidden; }
+      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; min-height: 100dvh; }
+      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
+      .toolbar-brand { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
+      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); }
+      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: hidden; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
+      .stage-viewport { position: relative; display: grid; place-items: center; }
+      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2))); max-width: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transition: opacity 300ms ease-in-out; }
+      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
+      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
+      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
+      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
+      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
+      .slide-nav-prev { left: 24px; }
+      .slide-nav-next { right: 24px; }
+      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
+      .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-12 { grid-column: span 12 / span 12; }
+      .col-start-7 { grid-column-start: 7; }
+      .align-self-start { align-self: flex-start; } .align-self-center { align-self: center; }
+      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); }
+      .card.card-full-height { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: 0.75rem; }
+      .card h3 { margin: 0 0 0.5rem 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--step-1); }
+      .card p { margin: 0; font-size: var(--step--1); }
+      .card p + p { margin-top: 0.5rem; }
+      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+      .img-overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .full-width-bg .slide-inner { padding: 0; }
+      .full-width-bg .bg-content { padding: var(--stage-pad); position: relative; z-index: 2; }
+      blockquote { margin: 1em 0 0 0; padding: 0.8em 1em; border-left: 4px solid var(--secondary-sage); background: color-mix(in srgb, var(--warm-cream) 60%, transparent); border-radius: 0 10px 10px 0; font-style: italic; font-size: var(--step--1); }
+      .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
+      .text-highlight { color: var(--primary-sage); font-weight: 700; }
+      hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
+      ol { list-style: none; counter-reset: item; padding-left: 0; }
+      ol li { counter-increment: item; margin-bottom: 0.5em; position: relative; padding-left: 2.5em; }
+      ol li::before { content: counter(item); position: absolute; left: 0; top: 0; width: 1.8em; height: 1.8em; border-radius: 50%; background-color: var(--secondary-sage); color: var(--soft-white); font-weight: 700; display: grid; place-items: center; font-size: 0.8em; line-height: 1; }
+      .slide-stage h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
+      .slide-stage h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0 0 0.5em 0; }
+      .slide-stage h2.subtitle { color: var(--primary-sage); }
+      .slide-stage p, .slide-stage li { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); color: var(--forest-shadow); margin: 0.4em 0; }
+      .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
+      .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
+      .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
+      .centered-text { text-align: center; }
+      @media (prefers-color-scheme: dark) {
+        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1); }
+        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+        .slide-stage { background: #141713; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
+        .dialogue-box { background: var(--warm-cream); border-color: rgba(184,197,166,0.25); }
+        ol li::before { background-color: var(--primary-sage); }
+      }
+    </style>
+</head>
+<body>
+
+    <div class="deck-app">
+        <header class="deck-toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
+                <span>Noor Community</span>
+            </div>
+            <div id="slide-counter" class="slide-counter">1 / 16</div>
+        </header>
+
+        <main class="deck-workspace">
+            <div class="stage-viewport">
+                
+                <!-- SLIDE 1: Title -->
+                <div class="slide-stage full-width-bg">
+                    <img src="https://images.pexels.com/photos/1036808/pexels-photo-1036808.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A calendar page showing a weekend" class="img-bg" style="opacity: 0.2;">
+                    <div class="img-overlay" style="background: linear-gradient(80deg, var(--soft-white) 45%, transparent 90%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                             <div class="col-span-7">
+                                <p class="subtitle" style="color: var(--primary-sage);">A2 English Lesson</p>
+                                <h1>A Weekend to Remember</h1>
+                                <p style="font-size: var(--step-2); color: var(--ink-muted);">Let's talk about our past experiences and celebrations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Objectives -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Today's Goals</h2>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height"><i class="fas fa-calendar-check icon"></i><h3>Talk About Weekends</h3><p>Use Past Simple verbs like <strong>went, saw, visited</strong>.</p></div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height"><i class="fas fa-champagne-glasses icon"></i><h3>Describe Celebrations</h3><p>Use <strong>'there was'</strong> and <strong>'there were'</strong> to describe a scene.</p></div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="card card-full-height"><i class="fas fa-comments icon"></i><h3>Ask Past Questions</h3><p>Practice asking questions with <strong>'Did you...?'</strong></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: Warm-Up / Lead-in -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                               <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                               <h2 style="margin-top: 1rem;">Let's Talk!</h2>
+                            </div>
+                            <div class="col-span-7">
+                                <p><strong>1.</strong> Think about your last weekend. Was it a <span class="text-highlight">normal, quiet weekend</span>, or a <span class="text-highlight">special weekend</span>?</p>
+                                <hr class="divider">
+                                <p><strong>2.</strong> What's the difference between a normal weekend and a weekend with a <span class="text-highlight">special celebration</span>?</p>
+                                <hr class="divider">
+                                <p><strong>3.</strong> Have you ever gone to a <span class="text-highlight">festival</span> or a <span class="text-highlight">big party</span> on a weekend?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 4: Activity 1 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 1</h2>
+                                <h2>Weekends & Events</h2>
+                                <p>Let's combine our vocabulary. We can use weekend verbs with event nouns.</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p><i class="fa-solid fa-calendar-day" style="color:var(--secondary-sage); margin-right: 8px;"></i> "Last year, I <span class="text-highlight">went</span> to a big <span class="text-highlight">festival</span> in Jericho."</p>
+                                    <hr class="divider">
+                                    <p><i class="fa-solid fa-cake-candles" style="color:var(--secondary-sage); margin-right: 8px;"></i> "On Saturday, my friend <span class="text-highlight">visited</span> me for a small birthday <span class="text-highlight">party</span>."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 5: Activity 1 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-users-viewfinder" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 1: Your Turn!</h2>
+                                <p>With your partner, create a short story about a weekend.</p>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>Your story must include:</h3>
+                                    <ul>
+                                        <li>At least <strong>two verbs</strong> from last lesson (went, saw, stayed...)</li>
+                                        <li>At least <strong>two nouns/adjectives</strong> from this lesson (celebration, concert, fun...)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 6: Activity 2 Intro -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A concert with lights" class="img-bg" style="opacity: 0.15;">
+                    <div class="img-overlay" style="background: linear-gradient(90deg, transparent 0%, var(--soft-white) 55%);"></div>
+                     <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                            <div class="col-span-5">
+                                <!-- Empty column for visual balance -->
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2</h2>
+                                <h2>Asking About Events</h2>
+                                <p>To ask about the past, we use <span class="text-highlight">did</span>. Remember, the verb after 'did' is the base form (eat, not ate).</p>
+                                <blockquote style="margin-top: 1rem;"><strong>A:</strong> "I went to a wedding last month."<br><strong>B:</strong> "<span class="text-highlight">Did you</span> have a good time?"<br><strong>A:</strong> "Yes, I did!"<br><strong>B:</strong> "<span class="text-highlight">What did you</span> eat?"<br><strong>A:</strong> "I ate mansaf."</blockquote>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 7: Activity 2 Task -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-comments" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Interview Time</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 2: Your Turn!</h2>
+                                 <ol style="font-size: var(--step-1);">
+                                    <li><strong>Student A:</strong> Think of a celebration you went to (real or imaginary).</li>
+                                    <li><strong>Students B & C:</strong> Ask Student A questions to find out more.</li>
+                                </ol>
+                                <div class="dialogue-box">
+                                    <h3>Ask at least:</h3>
+                                    <p>Two '<strong>Did you...?</strong>' questions.</p>
+                                    <p>Two '<strong>What/Who/Where did you...?</strong>' questions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 8: Activity 3 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 3</h2>
+                                <h2>Describing a Scene</h2>
+                                <p>We use <span class="text-highlight">there was</span> (for one thing) and <span class="text-highlight">there were</span> (for many things) to describe what we saw.</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p>"Last Saturday, I went to a cafe in Ramallah. It was very busy."</p>
+                                    <hr class="divider">
+                                    <p><i class="fa-solid fa-user" style="color:var(--secondary-sage); margin-right: 8px;"></i> "<strong>There was</strong> a long queue."</p>
+                                    <p><i class="fa-solid fa-users" style="color:var(--secondary-sage); margin-right: 8px;"></i> "<strong>There were</strong> many people drinking coffee."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 9: Activity 3 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-image" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                <h2 style="margin-top: 1rem;">Paint a Picture</h2>
+                            </div>
+                            <div class="col-span-7">
+                                <h2 class="subtitle">Activity 3: Your Turn!</h2>
+                                <p>Describe a place you visited last weekend (a park, a shop, a family house). Use 'there was' and 'there were' to describe what you saw.</p>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>Example:</h3>
+                                    <blockquote>"I visited my grandparents in Nablus. In their garden, <span class="text-highlight">there was</span> a big lemon tree, and <span class="text-highlight">there were</span> many beautiful flowers."</blockquote>
+                                     <p style="margin-top: 1rem;">Your partner will listen and can ask one follow-up question.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- SLIDE 10: Activity 4 Intro -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Activity 4</h2>
+                                <h2>A Problem to Solve!</h2>
+                                <p>Read the problem below. In your group, you will help your friend.</p>
+                            </div>
+                            <div class="col-span-12">
+                               <div class="card centered-text">
+                                 <h3>The Problem:</h3>
+                                 <p>Your friend from another country visited you last month. They are writing an email to their family and ask you for help.</p>
+                                 <blockquote style="text-align: left; margin-top: 1rem;">"Can you help me remember our weekend? What <span class="text-highlight">did we do</span>? What was the festival like? I remember <span class="text-highlight">there was</span> music, but what else was there?"</blockquote>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 11: Activity 4 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-lightbulb" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Brainstorm!</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 4: Your Turn!</h2>
+                                <p>In your group, discuss and plan a reply to your friend. You don't need to write the full email.</p>
+                                <div class="card">
+                                <h3>Agree on the key points:</h3>
+                                <p><strong>1.</strong> What <span class="text-highlight">did you do</span>? (e.g., "On Saturday, we visited the old city...")</p>
+                                <p><strong>2.</strong> What was the festival like? (e.g., "<span class="text-highlight">There was</span> live music and <span class="text-highlight">there were</span> lots of people...")</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 12: Main Task Intro -->
+                <div class="slide-stage hidden centered-text">
+                    <div class="slide-inner">
+                        <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Main Task: The Weekend Catch-up</h1>
+                        <h2 class="subtitle">Let's have a longer conversation to practice everything!</h2>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 13: Main Task Part 1 -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Two friends catching up over coffee" class="img-bg" style="opacity: 0.12;">
+                    <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
+                    <div class="slide-inner">
+                        <div class="grid-container align-self-start">
+                            <div class="col-span-12 centered-text">
+                                <h2>Part 1: The Conversation</h2>
+                                <p>In pairs, have a conversation. You are friends who haven't seen each other for a few weeks.</p>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Student A</h3>
+                                    <p>Start the conversation. Ask your partner about their last weekend using questions with 'did'. Your partner went to a special celebration. Ask them more questions to find out about it.</p>
+                                </div>
+                            </div>
+                             <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <h3>Student B</h3>
+                                    <p>Tell your partner you went to a special celebration (a wedding, concert, etc.). Describe the event using Past Simple verbs and 'there was'/'there were'. After, ask your partner about their weekend.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 14: Main Task Part 2 -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Main Task</h2>
+                                <h2>Part 2: Report Back</h2>
+                            </div>
+                            <div class="col-span-5 centered-text">
+                                <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
+                            </div>
+                            <div class="col-span-7">
+                                <div class="card card-full-height">
+                                    <i class="fa-solid fa-clipboard-user icon"></i>
+                                    <h3>Tell your new group about your first partner's celebration.</h3>
+                                    <blockquote>"I spoke with Ahmed. He <span class="text-highlight">went</span> to a music festival last weekend. He said it was crowded, and <span class="text-highlight">there was</span> a famous singer from Lebanon."</blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 15: Reflection -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Let's Reflect!</h2>
+                                <p>Think about your learning today.</p>
+                            </div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What was the most useful part of the class for you today?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>Which was more difficult: asking with 'did' or describing with 'there was/were'?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>Do you feel more confident talking about the past now?</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 16: End -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                        <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Great work today!</h1>
+                        <h2 class="subtitle">See you next time!</h2>
+                    </div>
+                </div>
+
+                <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const slides = Array.from(document.querySelectorAll('.slide-stage'));
+        const nextBtn = document.querySelector('.slide-nav-next');
+        const prevBtn = document.querySelector('.slide-nav-prev');
+        const counter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle('hidden', i !== index);
+          });
+          counter.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function navigate(direction) {
+          currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+          showSlide(currentSlideIndex);
+        }
+
+        nextBtn.addEventListener('click', () => navigate(1));
+        prevBtn.addEventListener('click', () => navigate(-1));
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault(); navigate(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault(); navigate(-1);
+            }
+        });
+
+        showSlide(currentSlideIndex);
+      });
+    </script>
+</body>
+</html>
+```
