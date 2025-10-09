@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Planning in the NGO Sector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      /* =====================================================================
+         Organic Sage Slides — V3 Redraft
+         Focus on layout, balance, and visual hierarchy.
+         ===================================================================== */
+
+      /* -------------------------------
+         Design tokens (unchanged core)
+      ----------------------------------*/
+      :root {
+        --primary-sage: #7A8471;
+        --secondary-sage: #9CAF88;
+        --tertiary-sage: #B8C5A6;
+        --warm-cream: #F8F6F0;
+        --soft-white: #FEFCF7;
+        --forest-shadow: #5A6B52;
+        --border-sage: rgba(122,132,113,0.20);
+        --hover-sage: rgba(156,175,136,0.15);
+        --deep-forest: #3E4A3A;
+        --ink: #2F3A2B;
+        --ink-muted: #5A6B52;
+        --font-display: 'Questrial', system-ui, sans-serif;
+        --font-body: 'Nunito', system-ui, sans-serif;
+        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+        --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
+        --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+        --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+        --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+
+      /* -------------------------------
+         Global & App Layout
+      ----------------------------------*/
+      html, body { margin: 0; padding: 0; min-height: 100dvh; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow: hidden; }
+      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; min-height: 100dvh; }
+      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
+      .toolbar-brand { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
+      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); }
+      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: hidden; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
+      .stage-viewport { position: relative; display: grid; place-items: center; }
+
+      /* -------------------------------
+         Slide Structure & Navigation
+      ----------------------------------*/
+      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2))); max-width: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transition: opacity 300ms ease-in-out; }
+      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
+      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
+      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
+      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
+      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
+      .slide-nav-prev { left: 24px; }
+      .slide-nav-next { right: 24px; }
+
+      /* -------------------------------
+         Grid & Layout System
+      ----------------------------------*/
+      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
+      .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-12 { grid-column: span 12 / span 12; }
+      .col-start-6 { grid-column-start: 6; } .col-start-7 { grid-column-start: 7; }
+      .align-self-start { align-self: flex-start; } .align-self-center { align-self: center; }
+
+      /* -------------------------------
+         Visual Components
+      ----------------------------------*/
+      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); }
+      .card.card-full-height { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: 0.75rem; }
+      .card h3 { margin: 0 0 0.5rem 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--step-1); }
+      .card p { margin: 0; font-size: var(--step--1); }
+      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+      .img-overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+      .full-width-bg .slide-inner { padding: 0; }
+      .full-width-bg .bg-content { padding: var(--stage-pad); position: relative; z-index: 1; height: 100%; box-sizing: border-box; }
+      blockquote { margin: 1em 0 0 0; padding: 0.8em 1em; border-left: 4px solid var(--secondary-sage); background: color-mix(in srgb, var(--warm-cream) 60%, transparent); border-radius: 0 10px 10px 0; font-style: italic; font-size: var(--step--1); }
+      .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
+      .text-highlight { color: var(--primary-sage); font-weight: 700; }
+      hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
+      ol { list-style: none; counter-reset: item; padding-left: 0; }
+      ol li { counter-increment: item; margin-bottom: 0.5em; position: relative; padding-left: 2.5em; }
+      ol li::before { content: counter(item); position: absolute; left: 0; top: 0; width: 1.8em; height: 1.8em; border-radius: 50%; background-color: var(--secondary-sage); color: var(--soft-white); font-weight: 700; display: grid; place-items: center; font-size: 0.8em; line-height: 1; }
+
+      /* -------------------------------
+         Typographic System
+      ----------------------------------*/
+      .slide-stage h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
+      .slide-stage h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0 0 0.5em 0; }
+      .slide-stage h2.subtitle { color: var(--primary-sage); }
+      .slide-stage p, .slide-stage li { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); color: var(--forest-shadow); margin: 0.4em 0; }
+      .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
+      .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
+      .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
+      .centered-text { text-align: center; }
+
+      /* Dark mode adjustments */
+      @media (prefers-color-scheme: dark) {
+        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1); }
+        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+        .slide-stage { background: #141713; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
+        .dialogue-box { background: var(--warm-cream); border-color: rgba(184,197,166,0.25); }
+        ol li::before { background-color: var(--primary-sage); }
+      }
+    </style>
+</head>
+<body>
+
+    <div class="deck-app">
+        <header class="deck-toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
+                <span>Organic Sage Slides</span>
+            </div>
+            <div id="slide-counter" class="slide-counter">1 / 14</div>
+        </header>
+
+        <main class="deck-workspace">
+            <div class="stage-viewport">
+                
+                <!-- SLIDE 1: Title -->
+                <div class="slide-stage full-width-bg">
+                    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A team planning at a table with sticky notes" class="img-bg" style="opacity: 0.2;">
+                    <div class="img-overlay" style="background: linear-gradient(80deg, var(--soft-white) 45%, transparent 90%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content grid-container">
+                             <div class="col-span-8">
+                                <p class="subtitle" style="color: var(--primary-sage);">B2 English Review Lesson</p>
+                                <h1>Strategic Planning</h1>
+                                <p style="font-size: var(--step-2); color: var(--ink-muted);">From Partnerships to Project Proposals</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Objectives -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Today's Goals</h2>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-history icon"></i><h3>Talk About Experience</h3><p>Use past tenses to describe an organization's background.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-lightbulb icon"></i><h3>Discuss Potential</h3><p>Use modals (might, could) to talk about possible partnerships.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-code-branch icon"></i><h3>Compare Scenarios</h3><p>Use the second conditional to compare hypothetical options.</p></div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height"><i class="fas fa-bullseye icon"></i><h3>Pitch a Project</h3><p>Combine all your skills to pitch a project to a potential donor.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: Warm-Up -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-5 centered-text">
+                               <i class="fa-solid fa-seedling" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                               <h2 style="margin-top: 1rem;">Let's Talk!</h2>
+                               <p class="subtitle" style="color: var(--ink-muted);">A Successful Project</p>
+                            </div>
+                            <div class="col-span-7">
+                                <p>Think of a successful community project in Palestine.</p>
+                                <ol style="font-size: var(--step--1); margin-top: 1rem;">
+                                    <li>What past challenges <span class="text-highlight">have they faced</span>?</li>
+                                    <li>Who <span class="text-highlight">could</span> they partner with to grow?</li>
+                                    <li>If a donor <span class="text-highlight">offered</span> them $50,000, what <span class="text-highlight">would</span> they start?</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 4: Activity 1 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-5">
+                                <h2 class="subtitle">Activity 1</h2>
+                                <h2>Connecting Ideas</h2>
+                                <p>Let's combine vocabulary from different topics to make a strong point.</p>
+                            </div>
+                             <div class="col-span-7">
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p>"Our last <span class="text-highlight">impact assessment</span> showed a need for a new <span class="text-highlight">funding stream</span>."</p>
+                                    <hr class="divider">
+                                    <p>"A strong <span class="text-highlight">partnership</span> could create <span class="text-highlight">synergy</span> and lead to a better <span class="text-highlight">grant proposal</span>."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 5: Activity 1 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-4 centered-text">
+                                <i class="fa-solid fa-microphone-lines" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                            </div>
+                            <div class="col-span-8">
+                                <h2 class="subtitle">Activity 1: Your Turn!</h2>
+                                <h2>The Elevator Pitch</h2>
+                                <div class="card" style="margin-top: 1rem;">
+                                    <h3>With a partner, create a short pitch for an imaginary NGO project. Your pitch must include:</h3>
+                                    <ul>
+                                        <li>Two words like: <span class="text-highlight">sustainability, mutual benefit</span></li>
+                                        <li>Two words like: <span class="text-highlight">deliverable, budget allocation</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 6: Activity 2 Task (FIXED) -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/814830/pexels-photo-814830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A winding path in a forest" class="img-bg" style="opacity: 0.15;">
+                    <div class="img-overlay" style="background: linear-gradient(90deg, transparent 0%, var(--soft-white) 55%);"></div>
+                     <div class="slide-inner">
+                        <div class="bg-content" style="display: flex; align-items: center; justify-content: flex-end;">
+                            <div style="width: 60%;">
+                                <h2 class="subtitle">Activity 2</h2>
+                                <h2>Past & Future</h2>
+                                <p>In your groups, discuss your NGO's story.</p>
+                                <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: stretch;">
+                                    <div class="card" style="flex: 1;">
+                                        <h3>Part 1: The Past</h3>
+                                        <p>Tell your group about a project your NGO <span class="text-highlight">has completed</span>. What <span class="text-highlight">did you learn</span> from it?</p>
+                                    </div>
+                                     <div class="card" style="flex: 1;">
+                                        <h3>Part 2: The Future</h3>
+                                        <p>Brainstorm a new project. What partnerships <span class="text-highlight">could</span> you form, and what outcomes <span class="text-highlight">might</span> you see?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 7: Activity 3 Intro -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-5 centered-text">
+                                 <i class="fa-solid fa-arrows-split-up-and-left" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                 <h2 style="margin-top: 1rem;">Different Paths</h2>
+                            </div>
+                             <div class="col-span-7">
+                                <h2 class="subtitle">Activity 3</h2>
+                                <p>We use the <span class="text-highlight">second conditional</span> to talk about imaginary situations and their results.</p>
+                                <div class="dialogue-box">
+                                    <h3>For example:</h3>
+                                    <p>"If we <span class="text-highlight">formed</span> a partnership with a local community group, our stakeholder engagement <span class="text-highlight">would improve</span>."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 8: Activity 3 Task -->
+                 <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Activity 3: Role-Play</h2>
+                                <h2>Expert & Novice</h2>
+                            </div>
+                            <div class="col-span-6">
+                               <div class="card card-full-height">
+                                 <h3>Partner A: New Coordinator</h3>
+                                 <p>You have a simple project idea (e.g., a community clean-up day). Present it to your manager.</p>
+                               </div>
+                            </div>
+                            <div class="col-span-6">
+                               <div class="card card-full-height">
+                                 <h3>Partner B: Experienced Manager</h3>
+                                 <p>Give advice by comparing two hypothetical partnership options using the second conditional.</p>
+                                 <blockquote>e.g., "If you partnered with the municipality, you would get official support. But if you partnered with schools..."</blockquote>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 9: Activity 4 Task -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                        <i class="fa-solid fa-puzzle-piece" style="font-size: 4rem; color: var(--tertiary-sage);"></i>
+                        <h2>Activity 4: The Big Decision</h2>
+                        <p>In your groups, discuss this scenario and choose the best strategy.</p>
+                        <div class="dialogue-box" style="max-width: 90%; margin-top: 1rem;">
+                           <p>Your NGO <span class="text-highlight">has just finished</span> a successful project. A donor will give you a large grant, but only if you form a major new partnership. Your options are:</p>
+                           <p><strong>A)</strong> A government agency. <br><strong>B)</strong> A large international NGO.</p>
+                           <p>Which do you choose, and why?</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- SLIDE 10: Main Task Intro -->
+                <div class="slide-stage hidden centered-text">
+                    <div class="slide-inner">
+                        <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Main Task</h1>
+                        <h2 class="subtitle">Role-Play: The Donor Pitch</h2>
+                        <blockquote>This is your chance to use all the language from our lessons in a realistic scenario.</blockquote>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 11: Main Task Part 1 (FIXED) -->
+                <div class="slide-stage hidden full-width-bg">
+                    <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A professional meeting" class="img-bg" style="opacity: 0.12;">
+                    <div class="img-overlay" style="background: linear-gradient(270deg, var(--soft-white) 45%, transparent 100%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content" style="display: flex; align-items: center; justify-content: flex-end;">
+                             <div style="width: 60%;">
+                                <h2>The Pitch: Roles</h2>
+                                <p>In pairs, decide who is the NGO Representative and who is the Donor.</p>
+                                <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: stretch;">
+                                    <div class="card" style="flex: 1;">
+                                        <h3>NGO Representative:</h3>
+                                        <p>Your goal is to convince the donor. You must:</p>
+                                        <ol style="font-size: var(--step--1); margin-top: 1rem;">
+                                            <li>Explain what your NGO <span class="text-highlight">has already achieved</span>.</li>
+                                            <li>Describe a partnership that <span class="text-highlight">might be</span> successful.</li>
+                                            <li>Explain two options for the funding using "<span class="text-highlight">If we..., we would...</span>"</li>
+                                        </ol>
+                                    </div>
+                                     <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                                        <h3>Donor:</h3>
+                                        <p>Listen carefully, ask questions, and decide if you are convinced!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 12: Main Task Part 2 -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                         <div class="grid-container">
+                            <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Main Task: Follow-Up</h2>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <i class="fa-solid fa-clipboard-user icon"></i>
+                                    <h3>1. Report Back</h3>
+                                    <p>Join another pair. The NGO representatives will report on their meetings. How did it go? What was the donor's biggest question?</p>
+                                </div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card card-full-height">
+                                    <i class="fa-solid fa-lightbulb icon"></i>
+                                    <h3>2. Discuss</h3>
+                                    <p>As a group of four, agree on one answer: "What is the single most important thing to do when pitching a project to a donor?"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 13: Reflection -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
+                        <div class="grid-container">
+                             <div class="col-span-12 centered-text">
+                                <h2 class="subtitle">Let's Reflect!</h2>
+                                <p>Think about your learning today.</p>
+                            </div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>Which grammar point was most difficult to use in the final task? (Past tenses, modals, or second conditional?)</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>What is one new vocabulary word from today that you will try to use in your real life?</p></div></div>
+                            <div class="col-span-4"><div class="card card-full-height"><p>How confident do you feel now about pitching a project in English? (1=Not confident, 5=Very confident)</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 14: End -->
+                <div class="slide-stage hidden">
+                    <div class="slide-inner centered-text">
+                        <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                        <h1>Great work today!</h1>
+                        <h2 class="subtitle">See you next time!</h2>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const slides = Array.from(document.querySelectorAll('.slide-stage'));
+        const nextBtn = document.querySelector('.slide-nav-next');
+        const prevBtn = document.querySelector('.slide-nav-prev');
+        const counter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle('hidden', i !== index);
+          });
+          counter.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function navigate(direction) {
+          currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+          showSlide(currentSlideIndex);
+        }
+
+        nextBtn.addEventListener('click', () => navigate(1));
+        prevBtn.addEventListener('click', () => navigate(-1));
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault(); navigate(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault(); navigate(-1);
+            }
+        });
+
+        showSlide(currentSlideIndex);
+      });
+    </script>
+</body>
+</html>
+```
