@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Pre-Class Activity: Intercultural Architecture Debate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --clay-brown: #A0826D;
+      --muted-coral: #D4A574;
+      --forest-shadow: #364634;
+      --border-sage: rgba(122, 132, 113, 0.2);
+      --hover-sage: rgba(156, 175, 136, 0.15);
+      --font-display: 'Questrial', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --feedback-width-desktop: 380px;
+      --shadow-soft: 0 12px 40px rgba(90, 107, 82, 0.14);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: var(--font-body);
+      background: linear-gradient(140deg, #F8F6F0 0%, #F2EFE7 100%);
+      color: var(--forest-shadow);
+    }
+
+    body.feedback-open {
+      overflow: hidden;
+    }
+
+    #app-wrapper {
+      width: 100%;
+      padding: 1.5rem 1rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    #activity-container {
+      width: 100%;
+      background: var(--soft-white);
+      border-radius: 20px;
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: var(--shadow-soft);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      outline: none;
+    }
+
+    .activity-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      margin: 0 0 0.5rem 0;
+      color: var(--forest-shadow);
+      line-height: 1.2;
+      letter-spacing: 0.5px;
+    }
+
+    .activity-subtitle {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--primary-sage);
+    }
+
+    .activity-intro {
+      background: rgba(248, 246, 240, 0.8);
+      border: 1px solid var(--border-sage);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .activity-intro h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-sage);
+    }
+
+    .intro-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .intro-metadata {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .intro-metadata li {
+      background: var(--soft-white);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid rgba(122, 132, 113, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .intro-metadata span.label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary-sage);
+    }
+
+    .intro-metadata span.value {
+      font-weight: 700;
+      color: var(--forest-shadow);
+    }
+
+    .intro-guidance {
+      background: rgba(148, 164, 134, 0.12);
+      border-left: 4px solid var(--secondary-sage);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .intro-guidance ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .intro-guidance li {
+      margin-bottom: 6px;
+    }
+
+    .progress-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-wrapper p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--forest-shadow);
+    }
+
+    .progress-track {
+      position: relative;
+      width: 100%;
+      height: 10px;
+      background: rgba(122, 132, 113, 0.18);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-track span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--secondary-sage), var(--primary-sage));
+      transition: width 0.35s ease;
+    }
+
+    .mc-questions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .mc-section {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-top: 8px;
+      border-top: 2px solid rgba(122, 132, 113, 0.1);
+    }
+
+    .mc-section:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .mc-section-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--primary-sage);
+    }
+
+    .mc-section-header p {
+      margin: 4px 0 0;
+      font-size: 0.95rem;
+      color: rgba(54, 70, 52, 0.75);
+      line-height: 1.5;
+    }
+
+    .mc-question {
+      padding: 20px;
+      border: 1px solid var(--border-sage);
+      border-radius: 16px;
+      background: rgba(254, 252, 247, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mc-question-text {
+      font-weight: 700;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .mc-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mc-option-item {
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .mc-option-label {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 12px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mc-option-item input {
+      display: none;
+    }
+
+    .option-control {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--tertiary-sage);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s ease;
+      background: var(--soft-white);
+    }
+
+    .mc-option-item input[type="checkbox"] + .option-control {
+      border-radius: 6px;
+    }
+
+    .option-control::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: transparent;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      transform: scale(0);
+    }
+
+    .mc-option-item input[type="radio"]:checked + .option-control {
+      border-color: var(--primary-sage);
+    }
+
+    .mc-option-item input[type="radio"]:checked + .option-control::after {
+      background: var(--primary-sage);
+      transform: scale(1);
+    }
+
+    .mc-option-item input[type="checkbox"]:checked + .option-control {
+      border-color: var(--primary-sage);
+      background: var(--primary-sage);
+    }
+
+    .mc-option-item input[type="checkbox"]:checked + .option-control::after {
+      width: 6px;
+      height: 12px;
+      border-radius: 0;
+      border: solid var(--soft-white);
+      border-width: 0 2px 2px 0;
+      transform: translateY(-1px) rotate(45deg) scale(1);
+      background: transparent;
+    }
+
+    .mc-option-text {
+      color: var(--primary-sage);
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .mc-explanation {
+      display: none;
+    }
+
+    .mc-slide-student-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .activity-btn {
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--primary-sage);
+      background-color: var(--primary-sage);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .activity-btn:hover,
+    .activity-btn:focus-visible {
+      background-color: var(--forest-shadow);
+      box-shadow: 0 6px 20px rgba(122, 132, 113, 0.24);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .activity-btn:disabled {
+      background: rgba(122, 132, 113, 0.4);
+      border-color: rgba(122, 132, 113, 0.3);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .activity-btn.secondary {
+      background-color: transparent;
+      color: var(--primary-sage);
+      border-color: var(--tertiary-sage);
+      font-weight: 600;
+    }
+
+    .activity-btn.secondary:hover,
+    .activity-btn.secondary:focus-visible {
+      background: var(--hover-sage);
+      color: var(--forest-shadow);
+    }
+
+    #feedback-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--warm-cream);
+      border-left: 1px solid var(--border-sage);
+      box-shadow: -8px 0 32px rgba(90, 107, 82, 0.18);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .feedback-visible #feedback-sidebar {
+      transform: translateX(0);
+    }
+
+    .feedback-header {
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid var(--border-sage);
+      background: rgba(248, 246, 240, 0.92);
+    }
+
+    .feedback-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      margin: 0 0 6px 0;
+      color: var(--forest-shadow);
+    }
+
+    #feedback-score {
+      font-weight: 700;
+      color: var(--primary-sage);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    #feedback-details {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .feedback-item {
+      background: var(--soft-white);
+      border-radius: 12px;
+      border: 1px solid var(--border-sage);
+      border-left-width: 5px;
+      padding: 16px;
+      line-height: 1.6;
+    }
+
+    .feedback-item.correct {
+      border-left-color: #2E7D32;
+    }
+
+    .feedback-item.incorrect {
+      border-left-color: #C62828;
+    }
+
+    .feedback-item h4 {
+      margin: 0 0 10px 0;
+      font-size: 1.05rem;
+      color: var(--forest-shadow);
+    }
+
+    .feedback-item p {
+      margin: 0 0 6px 0;
+      color: var(--primary-sage);
+      font-size: 0.95rem;
+    }
+
+    .feedback-item p strong {
+      color: var(--forest-shadow);
+    }
+
+    .feedback-item .explanation {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-sage);
+    }
+
+    .feedback-footer {
+      padding: 20px 24px 24px;
+      border-top: 1px solid var(--border-sage);
+      background: rgba(248, 246, 240, 0.92);
+      display: flex;
+      justify-content: center;
+    }
+
+    @media (min-width: 600px) {
+      #activity-container {
+        padding: 32px;
+      }
+
+      .activity-header h1 {
+        font-size: 2.2rem;
+      }
+
+      .intro-layout {
+        flex-direction: row;
+        align-items: stretch;
+      }
+
+      .intro-metadata {
+        flex: 1;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .intro-guidance {
+        flex: 1.3;
+      }
+    }
+
+    @media (min-width: 900px) {
+      #app-wrapper {
+        padding: 3rem 2.5rem 4rem;
+      }
+
+      #activity-container {
+        max-width: 920px;
+        padding: 40px 48px;
+        gap: 32px;
+      }
+
+      .mc-section-header h3 {
+        font-size: 1.3rem;
+      }
+
+      .mc-question {
+        padding: 24px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .feedback-visible #activity-container {
+        margin-right: var(--feedback-width-desktop);
+        transition: margin-right 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      #feedback-sidebar {
+        width: var(--feedback-width-desktop);
+        height: 100vh;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-wrapper">
+    <section id="activity-container" class="multiple-choice-activity" tabindex="-1" aria-labelledby="activity-title">
+      <header class="activity-header">
+        <h1 id="activity-title">Pre-Class Check: Intercultural Architecture Debate</h1>
+        <p class="activity-subtitle">Use this 20-minute warm-up to recycle language, content knowledge, and intercultural negotiation moves before the live Ramallah start-up debate.</p>
+
+        <div class="activity-intro" aria-labelledby="activity-intro-title">
+          <h2 id="activity-intro-title">How to work through this practice</h2>
+          <div class="intro-layout">
+            <ul class="intro-metadata">
+              <li>
+                <span class="label">Time</span>
+                <span class="value">20 minutes</span>
+              </li>
+              <li>
+                <span class="label">Question count</span>
+                <span class="value">13 checks</span>
+              </li>
+              <li>
+                <span class="label">Focus</span>
+                <span class="value">Language + strategic choices</span>
+              </li>
+              <li>
+                <span class="label">Format</span>
+                <span class="value">Mobile-first</span>
+              </li>
+            </ul>
+            <div class="intro-guidance">
+              <ul>
+                <li>Skim the section goal before answering to anchor your purpose.</li>
+                <li>Say the second-conditional sentences aloud to check accuracy and sentence stress.</li>
+                <li>Note ideas you want to reuse in the breakout debate (benefits, risks, and questions).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-wrapper" aria-live="polite">
+          <p id="progress-text">0 of 13 questions answered</p>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="13" aria-valuenow="0">
+            <span id="progress-fill"></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="mc-questions-container">
+        <section class="mc-section" aria-labelledby="section-foundation-title">
+          <div class="mc-section-header">
+            <h3 id="section-foundation-title">Section 1 — Align with the communicative goal</h3>
+            <p>Confirm why you are presenting in class so you can evaluate arguments strategically.</p>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">What is the primary communicative goal of the upcoming class debate?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q1">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">To memorise a list of architecture definitions.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q1">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">To argue for a software architecture choice while anticipating hypothetical consequences.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q1">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">To practise writing unit tests for legacy systems.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">The live session requires learners to present and defend an architecture choice, so recognising the persuasive, hypothetical focus is critical preparation.</div>
+          </div>
+        </section>
+
+        <section class="mc-section" aria-labelledby="section-language-title">
+          <div class="mc-section-header">
+            <h3 id="section-language-title">Section 2 — Refresh the second conditional toolkit</h3>
+            <p>Rehearse positive outcomes, risk language, and accuracy before you negotiate.</p>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which sentence best illustrates the second conditional for a positive outcome?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q2">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we choose microservices, we are scaling fast.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q2">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we adopted microservices, we could scale more easily across regions.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q2">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we will adopt microservices, we can scale easier.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">The second conditional uses past simple in the if-clause and would/could + base verb in the result clause to describe unreal but plausible scenarios.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Select the sentences that correctly use the second conditional to describe a risk.</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q3">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we relied on a third-party API, our product would fail when their service went offline.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q3">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we use their API, the product fails when they go offline.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q3">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we stayed monolithic, a single bug would bring down every feature.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q3">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we are monolithic, a bug is bringing everything down.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Both correct sentences use past simple in the if-clause and would + base verb to imagine a potential risk, aligning with the form learners must use.</div>
+          </div>
+        </section>
+
+        <section class="mc-section" aria-labelledby="section-lexis-title">
+          <div class="mc-section-header">
+            <h3 id="section-lexis-title">Section 3 — Recycle key lexis for architecture decisions</h3>
+            <p>Connect terminology to the Ramallah start-up so your evidence feels relevant and persuasive.</p>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">In the Ramallah start-up scenario, what does <em>scalability</em> emphasise?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q4">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">The system&rsquo;s ability to handle increased users and data without failing.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q4">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">The ease of writing code comments in Arabic and English.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q4">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">The colour scheme of the user interface.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Scalability refers to growing capacity smoothly—a key consideration when persuading stakeholders about architecture choices.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which definition best matches the term <em>dependencies</em> in this discussion?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q5">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">A team&rsquo;s cultural rituals when starting meetings.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q5">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">External services or modules the product would rely on to function.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q5">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">Historical code comments inside a legacy repository.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Dependencies are the external components or teams your solution would depend on—a persuasive point in negotiation.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which advantages of a monolithic approach are accurate for the Ramallah start-up? (Select all that apply.)</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q6">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If the team kept a monolith, deployment would stay straightforward for the initial launch.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q6">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they built a monolith, every feature would automatically scale independently.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q6">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they chose a monolith, testing cycles would be easier to manage with one integrated codebase.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q6">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they used a monolith, they would eliminate all legacy system risks immediately.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Monoliths help small teams deploy and test faster, but they do not deliver independent scaling or erase legacy risk.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which benefits are persuasive for choosing microservices in this context? (Select all that apply.)</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q7">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they implemented microservices, teams could deploy updates independently.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q7">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If a single microservice failed, the whole platform would still keep functioning.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q7">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they used microservices, there would be no need for DevOps tooling.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="checkbox" name="q7">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If they chose microservices, vendor communication would stop being necessary.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Independent deployment and resilience are core selling points; however, microservices often demand stronger DevOps and vendor coordination.</div>
+          </div>
+        </section>
+
+        <section class="mc-section" aria-labelledby="section-application-title">
+          <div class="mc-section-header">
+            <h3 id="section-application-title">Section 4 — Apply the language in interaction</h3>
+            <p>Practise challenging ideas respectfully and referencing the local Ramallah context.</p>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which option best rephrases this idea using the second conditional? “Staying monolithic might slow hiring specialised teams.”</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q8">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we stay monolithic, we slow down hiring specialised teams.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q8">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we stayed monolithic, we would slow down hiring specialised teams.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q8">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we would stay monolithic, we slowed hiring specialised teams.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">The correct option keeps the second conditional structure and retains the hypothetical tone needed for the debate.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">You want to challenge a colleague’s claim politely. Which question uses the required structure?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q9">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">What will happen if microservices increase our costs?</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q9">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">What would happen if microservices increased our infrastructure costs next year?</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q9">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">What is happening if microservices increased our infrastructure costs next year?</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Challenge questions framed with the second conditional invite reflection while maintaining a collaborative tone.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which modal verb of speculation best completes the sentence? “If we kept a monolith, we ___ face deployment delays during Eid sales.”</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q10">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">might</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q10">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">must</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q10">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">can’t</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Using might keeps the tone tentative, aligning with the speculative language recycled from earlier modules.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which option shows the best sentence stress for persuading stakeholders?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q11">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text"><strong>If</strong> we chose a monolith, our <strong>deployment</strong> would be faster.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q11">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we chose a <strong>MONO</strong>lith, our deployment would be <strong>FAS</strong>ter.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q11">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we chose a monolith, our deployment would be faster.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Highlighting the contrasting technical terms (MONOlith / FASTer) mirrors the pronunciation practice planned for class.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">Which sentence most effectively references the local Ramallah context in the argument?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q12">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we chose microservices, we would impress Silicon Valley investors.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q12">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we rolled out microservices, we could onboard new West Bank distributors without overloading the system.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q12">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">If we used microservices, we would follow global best practice.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Grounding the argument in the local market shows intercultural awareness and makes the case more persuasive for the Ramallah team.</div>
+          </div>
+
+          <div class="mc-question">
+            <div class="mc-question-header">
+              <div class="mc-question-text">A teammate says, “If we chose microservices, deployment would be simpler.” Which clarification keeps the discussion collaborative?</div>
+            </div>
+            <div class="mc-options-container">
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q13">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">That’s wrong. Deployment is never simpler.</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="true">
+                <label class="mc-option-label">
+                  <input type="radio" name="q13">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">When you say simpler, do you mean we would automate every pipeline from day one?</span>
+                </label>
+              </div>
+              <div class="mc-option-item" data-correct="false">
+                <label class="mc-option-label">
+                  <input type="radio" name="q13">
+                  <span class="option-control"></span>
+                  <span class="mc-option-text">Explain yourself better.</span>
+                </label>
+              </div>
+            </div>
+            <div class="mc-explanation">Clarification questions should invite detail respectfully, supporting the lesson aim of analysing communicative choices.</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="mc-slide-student-controls">
+        <button type="button" class="activity-btn mc-check-answers-btn" disabled>Check Answers</button>
+      </div>
+    </section>
+
+    <aside id="feedback-sidebar" role="dialog" aria-modal="true" aria-labelledby="feedback-title" aria-hidden="true">
+      <div class="feedback-header">
+        <h3 id="feedback-title">Your Results</h3>
+        <p id="feedback-score" aria-live="polite"></p>
+      </div>
+      <div id="feedback-details"></div>
+      <div class="feedback-footer">
+        <button id="feedback-close-btn" class="activity-btn secondary" type="button">Try Again</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const App = {
+      init() {
+        Activity.init();
+      }
+    };
+
+    const MultipleChoiceManager = {
+      init(activityElement) {
+        if (!activityElement) return;
+        this.activityElement = activityElement;
+        activityElement.addEventListener('click', event => {
+          const button = event.target.closest('.mc-check-answers-btn');
+          if (!button || button.disabled) return;
+          this.checkAnswers(button);
+        });
+      },
+      checkAnswers(btn) {
+        const activity = this.activityElement || btn.closest('#activity-container');
+        if (!activity) return;
+
+        const questions = activity.querySelectorAll('.mc-question');
+        if (questions.length === 0) return;
+
+        let totalCorrect = 0;
+        Activity.clearFeedback();
+
+        questions.forEach(question => {
+          const correctOptions = new Set();
+          const selectedOptions = new Set();
+
+          question.querySelectorAll('.mc-option-item').forEach(option => {
+            const optionId = option.dataset.optionId;
+            if (!optionId) return;
+
+            if (option.dataset.correct === 'true') {
+              correctOptions.add(optionId);
+            }
+
+            const input = option.querySelector('input');
+            if (input && input.checked) {
+              selectedOptions.add(optionId);
+            }
+          });
+
+          const isQuestionCorrect = correctOptions.size > 0 &&
+            correctOptions.size === selectedOptions.size &&
+            [...correctOptions].every(optionId => selectedOptions.has(optionId));
+
+          if (isQuestionCorrect) {
+            totalCorrect += 1;
+          }
+
+          const studentAnswerText = [...selectedOptions]
+            .map(optionId => Activity.getOptionText(question, optionId))
+            .filter(Boolean)
+            .join(', ');
+
+          const correctAnswerText = [...correctOptions]
+            .map(optionId => Activity.getOptionText(question, optionId))
+            .filter(Boolean)
+            .join(', ');
+
+          Activity.addFeedbackDetail({
+            isCorrect: isQuestionCorrect,
+            questionText: Activity.getQuestionText(question),
+            studentAnswer: studentAnswerText || 'No answer',
+            correctAnswer: correctAnswerText,
+            explanation: Activity.getExplanation(question)
+          });
+
+          question.querySelectorAll('.mc-option-item').forEach(option => {
+            const label = option.querySelector('.mc-option-label');
+            if (!label) return;
+            label.style.backgroundColor = '';
+
+            const optionId = option.dataset.optionId;
+            const isCorrect = option.dataset.correct === 'true';
+            const isSelected = selectedOptions.has(optionId);
+
+            if (isCorrect) {
+              label.style.backgroundColor = '#E8F5E9';
+            }
+
+            if (isSelected && !isCorrect) {
+              label.style.backgroundColor = '#FFEBEE';
+            }
+          });
+        });
+
+        Activity.showFeedback(totalCorrect, questions.length);
+      },
+      resetActivity(activityElement) {
+        const activity = activityElement || this.activityElement;
+        if (!activity) return;
+
+        activity.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+          input.checked = false;
+        });
+
+        activity.querySelectorAll('.mc-option-label').forEach(label => {
+          label.style.backgroundColor = '';
+        });
+      }
+    };
+
+    const Activity = {
+      dom: {},
+      totalQuestions: 0,
+      lastFocusedElement: null,
+      init() {
+        this.dom.appWrapper = document.getElementById('app-wrapper');
+        this.dom.activityContainer = document.getElementById('activity-container');
+        this.dom.feedbackSidebar = document.getElementById('feedback-sidebar');
+        this.dom.feedbackScore = document.getElementById('feedback-score');
+        this.dom.feedbackDetails = document.getElementById('feedback-details');
+        this.dom.feedbackCloseBtn = document.getElementById('feedback-close-btn');
+        this.dom.progressText = document.getElementById('progress-text');
+        this.dom.progressTrack = this.dom.activityContainer.querySelector('.progress-track');
+        this.dom.progressFill = document.getElementById('progress-fill');
+        this.dom.checkAnswersBtn = this.dom.activityContainer.querySelector('.mc-check-answers-btn');
+
+        this.prepareQuestionMetadata();
+        this.totalQuestions = this.dom.activityContainer.querySelectorAll('.mc-question').length;
+        this.updateProgress();
+
+        MultipleChoiceManager.init(this.dom.activityContainer);
+        this.bindEvents();
+      },
+      bindEvents() {
+        if (this.dom.activityContainer) {
+          this.dom.activityContainer.addEventListener('change', () => {
+            this.updateProgress();
+          });
+        }
+
+        if (this.dom.feedbackCloseBtn) {
+          this.dom.feedbackCloseBtn.addEventListener('click', () => {
+            this.hideFeedback();
+            MultipleChoiceManager.resetActivity(this.dom.activityContainer);
+            this.updateProgress();
+            this.focusActivity();
+          });
+        }
+
+        window.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && this.dom.appWrapper.classList.contains('feedback-visible')) {
+            this.hideFeedback();
+            MultipleChoiceManager.resetActivity(this.dom.activityContainer);
+            this.updateProgress();
+            this.focusActivity();
+          }
+        });
+      },
+      prepareQuestionMetadata() {
+        const questions = this.dom.activityContainer.querySelectorAll('.mc-question');
+        questions.forEach((question, questionIndex) => {
+          const questionId = `question-${questionIndex + 1}`;
+          question.dataset.questionId = questionId;
+          question.setAttribute('role', 'group');
+
+          const questionTextElement = question.querySelector('.mc-question-text');
+          if (questionTextElement) {
+            const questionTextId = `${questionId}-prompt`;
+            questionTextElement.id = questionTextId;
+            question.setAttribute('aria-labelledby', questionTextId);
+          }
+
+          const inputs = question.querySelectorAll('input');
+          const isMultiple = [...inputs].some(input => input.type === 'checkbox');
+          question.dataset.questionType = isMultiple ? 'multiple' : 'single';
+
+          question.querySelectorAll('.mc-option-item').forEach((option, optionIndex) => {
+            const optionId = `${questionId}-option-${optionIndex + 1}`;
+            option.dataset.optionId = optionId;
+
+            const input = option.querySelector('input');
+            if (input) {
+              input.setAttribute('aria-describedby', questionTextElement ? questionTextElement.id : '');
+            }
+          });
+        });
+      },
+      updateProgress() {
+        const questions = this.dom.activityContainer.querySelectorAll('.mc-question');
+        let answered = 0;
+
+        questions.forEach(question => {
+          const inputs = question.querySelectorAll('input');
+          const hasSelection = [...inputs].some(input => input.checked);
+          if (hasSelection) answered += 1;
+        });
+
+        if (this.dom.progressText) {
+          this.dom.progressText.textContent = `${answered} of ${this.totalQuestions} questions answered`;
+        }
+
+        if (this.dom.progressTrack) {
+          this.dom.progressTrack.setAttribute('aria-valuenow', answered.toString());
+          this.dom.progressTrack.setAttribute('aria-valuetext', `${answered} of ${this.totalQuestions} answered`);
+        }
+
+        if (this.dom.progressFill) {
+          const percentage = this.totalQuestions === 0 ? 0 : (answered / this.totalQuestions) * 100;
+          this.dom.progressFill.style.width = `${percentage}%`;
+        }
+
+        if (this.dom.checkAnswersBtn) {
+          const isDisabled = answered < this.totalQuestions;
+          this.dom.checkAnswersBtn.disabled = isDisabled;
+          this.dom.checkAnswersBtn.setAttribute('aria-disabled', isDisabled ? 'true' : 'false');
+        }
+      },
+      clearFeedback() {
+        if (this.dom.feedbackDetails) {
+          this.dom.feedbackDetails.innerHTML = '';
+        }
+      },
+      addFeedbackDetail({ isCorrect, questionText, studentAnswer, correctAnswer, explanation }) {
+        if (!this.dom.feedbackDetails) return;
+        const itemDiv = document.createElement('div');
+        itemDiv.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+        itemDiv.innerHTML = `
+          <h4>${questionText}</h4>
+          <p><strong>Your Answer:</strong> ${studentAnswer}</p>
+          ${!isCorrect ? `<p><strong>Correct Answer:</strong> ${correctAnswer}</p>` : ''}
+          <div class="explanation">
+            <p>${explanation}</p>
+          </div>
+        `;
+        this.dom.feedbackDetails.appendChild(itemDiv);
+      },
+      getOptionText(question, optionId) {
+        const option = question.querySelector(`.mc-option-item[data-option-id="${optionId}"] .mc-option-text`);
+        return option ? option.textContent.trim() : '';
+      },
+      getQuestionText(question) {
+        const questionTextElement = question.querySelector('.mc-question-text');
+        return questionTextElement ? questionTextElement.textContent.trim() : '';
+      },
+      getExplanation(question) {
+        const explanation = question.querySelector('.mc-explanation');
+        return explanation ? explanation.innerHTML.trim() : 'No explanation available.';
+      },
+      showFeedback(score, total) {
+        if (!this.dom.feedbackSidebar) return;
+
+        this.lastFocusedElement = document.activeElement;
+        if (this.dom.feedbackScore) {
+          this.dom.feedbackScore.textContent = `You scored ${score} out of ${total}.`;
+        }
+
+        this.dom.appWrapper.classList.add('feedback-visible');
+        document.body.classList.add('feedback-open');
+        this.dom.feedbackSidebar.setAttribute('aria-hidden', 'false');
+
+        if (this.dom.feedbackCloseBtn) {
+          this.dom.feedbackCloseBtn.focus();
+        }
+      },
+      hideFeedback() {
+        if (!this.dom.feedbackSidebar) return;
+
+        this.dom.appWrapper.classList.remove('feedback-visible');
+        document.body.classList.remove('feedback-open');
+        this.dom.feedbackSidebar.setAttribute('aria-hidden', 'true');
+
+        if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+          this.lastFocusedElement.focus();
+        } else if (this.dom.checkAnswersBtn) {
+          this.dom.checkAnswersBtn.focus();
+        }
+      },
+      focusActivity() {
+        if (this.dom.activityContainer) {
+          this.dom.activityContainer.focus({ preventScroll: false });
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+</html>
