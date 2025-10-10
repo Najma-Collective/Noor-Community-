@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Standalone Activity: Multiple-choice Grid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --clay-brown: #A0826D;
+      --forest-shadow: #5A6B52;
+      --border-sage: rgba(122, 132, 113, 0.2);
+      --hover-sage: rgba(156, 175, 136, 0.15);
+      --correct-bg: #E8F5E9;
+      --correct-border: #2E7D32;
+      --incorrect-bg: #FFEBEE;
+      --incorrect-border: #C62828;
+      --font-display: 'Questrial', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --feedback-width-desktop: 380px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      font-family: var(--font-body);
+      background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      overflow-x: hidden;
+    }
+
+    body.feedback-open {
+      overflow: hidden;
+    }
+
+    #app-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    #activity-container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--soft-white);
+      padding: 48px;
+      border-radius: 20px;
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: 0 8px 32px rgba(122, 132, 113, 0.08);
+      box-sizing: border-box;
+      transition: margin-right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @media (min-width: 1024px) {
+      #app-wrapper.feedback-visible #activity-container {
+        margin-right: var(--feedback-width-desktop);
+      }
+    }
+
+    #activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    #activity-titles {
+      flex-grow: 1;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      color: var(--forest-shadow);
+      margin: 0 0 8px 0;
+    }
+
+    h2.rubric {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      color: var(--secondary-sage);
+      margin: 0;
+      border-left: 3px solid var(--tertiary-sage);
+      padding-left: 12px;
+    }
+
+    #decorative-image-container {
+      flex-shrink: 0;
+      width: 180px;
+      height: 120px;
+      background-color: var(--warm-cream);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-sage);
+    }
+
+    #decorative-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* --- NEW Multiple-choice Grid Styles --- */
+    .mc-grid-container {
+      margin-top: 32px;
+      overflow-x: auto; /* For responsiveness on smaller screens */
+    }
+
+    .mc-grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      min-width: 600px; /* Prevents cramping on mobile */
+    }
+
+    .mc-grid-table th,
+    .mc-grid-table td {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-sage);
+      vertical-align: middle;
+    }
+    
+    .mc-grid-table thead th {
+      color: var(--primary-sage);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom-width: 2px;
+    }
+
+    .mc-grid-table tbody th {
+      text-align: left;
+      color: var(--forest-shadow);
+      font-weight: 600;
+    }
+
+    .mc-grid-table tr:last-child th,
+    .mc-grid-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mc-grid-table tbody tr {
+      transition: background-color 0.3s;
+    }
+
+    .mc-grid-table tbody tr:not(.correct):not(.incorrect):hover {
+      background-color: var(--hover-sage);
+    }
+    
+    /* Custom Radio Button Styling */
+    .mc-grid-table td label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mc-grid-table input[type="radio"] {
+      display: none;
+    }
+
+    .radio-custom {
+      display: block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--tertiary-sage);
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .mc-grid-table label:hover .radio-custom {
+      border-color: var(--primary-sage);
+    }
+
+    .mc-grid-table input[type="radio"]:checked + .radio-custom {
+      border-color: var(--primary-sage);
+    }
+
+    .radio-custom::after {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary-sage);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mc-grid-table input[type="radio"]:checked + .radio-custom::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Grid Feedback Styles */
+    .mc-grid-table tr.correct {
+      background-color: var(--correct-bg);
+    }
+    .mc-grid-table tr.incorrect {
+      background-color: var(--incorrect-bg);
+    }
+    .mc-grid-table tr.incorrect input:checked + .radio-custom {
+        border-color: var(--incorrect-border);
+    }
+    .mc-grid-table tr.incorrect input:checked + .radio-custom::after {
+        background-color: var(--incorrect-border);
+    }
+
+
+    .activity-controls {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .activity-btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--primary-sage);
+      background-color: var(--primary-sage);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .activity-btn:hover {
+      background-color: var(--forest-shadow);
+      transform: translateY(-1px);
+    }
+
+    .activity-btn:disabled {
+      background-color: var(--tertiary-sage);
+      cursor: not-allowed;
+      border-color: var(--tertiary-sage);
+      transform: none;
+    }
+
+    .activity-btn.secondary {
+      background-color: transparent;
+      color: var(--primary-sage);
+      border-color: var(--tertiary-sage);
+    }
+
+    .activity-btn.secondary:hover {
+      background-color: var(--hover-sage);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .placeholder-loader {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--hover-sage);
+      border-top-color: var(--secondary-sage);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    #feedback-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--warm-cream);
+      border-left: 1px solid var(--border-sage);
+      box-shadow: -8px 0 32px rgba(90, 107, 82, 0.1);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 1024px) {
+      #feedback-sidebar {
+        width: var(--feedback-width-desktop);
+        height: 100vh;
+      }
+    }
+
+    #app-wrapper.feedback-visible #feedback-sidebar {
+      transform: translateX(0);
+    }
+
+    .feedback-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-sage);
+    }
+
+    .feedback-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--forest-shadow);
+      margin: 0 0 8px 0;
+    }
+
+    #feedback-score {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary-sage);
+    }
+
+    #feedback-details {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .feedback-item {
+      background: var(--soft-white);
+      border: 1px solid var(--border-sage);
+      border-left-width: 4px;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .feedback-item.correct {
+      border-left-color: var(--correct-border);
+    }
+
+    .feedback-item.incorrect {
+      border-left-color: var(--incorrect-border);
+    }
+
+    .feedback-item h4 {
+      margin: 0 0 12px 0;
+      font-size: 1.1rem;
+      color: var(--forest-shadow);
+    }
+
+    .feedback-item p {
+      margin: 0 0 8px 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--primary-sage);
+    }
+
+    .feedback-item p strong {
+      color: var(--forest-shadow);
+    }
+
+    .feedback-item .explanation {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-sage);
+    }
+
+    .feedback-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-sage);
+      text-align: center;
+      background: var(--warm-cream);
+    }
+
+    @media (max-width: 767px) {
+      #app-wrapper {
+        padding: 1rem;
+      }
+      #activity-container {
+        padding: 24px;
+      }
+      #activity-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      h2.rubric {
+        border-left: none;
+        padding-left: 0;
+      }
+      #decorative-image-container {
+        width: 100%;
+        height: 150px;
+      }
+      .feedback-header, .feedback-details, .feedback-footer {
+        padding: 20px;
+      }
+      .feedback-header h3 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-wrapper">
+    <div id="activity-container" data-query-theme="science laboratory abstract">
+
+      <div id="activity-header">
+        <div id="activity-titles">
+          <h1>States of Matter</h1>
+          <h2 class="rubric">Match each state of matter to its physical description.</h2>
+        </div>
+        <div id="decorative-image-container">
+          <div class="placeholder-loader"></div>
+        </div>
+      </div>
+
+      <div class="mc-grid-container">
+        <table class="mc-grid-table">
+          <thead>
+            <tr>
+              <th><!-- Empty corner --></th>
+              <th>Definite Shape & Volume</th>
+              <th>Definite Volume</th>
+              <th>Indefinite Shape & Volume</th>
+              <th>Ionized Gas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-correct-column="col-1" data-explanation="A solid's particles are tightly packed in a fixed structure, giving it a definite shape and volume.">
+              <th scope="row">Solid</th>
+              <td><label><input type="radio" name="row-1" value="col-1"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-1" value="col-2"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-1" value="col-3"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-1" value="col-4"><span class="radio-custom"></span></label></td>
+            </tr>
+            <tr data-correct-column="col-2" data-explanation="A liquid's particles can slide past one another, allowing it to take the shape of its container, but its volume remains constant.">
+              <th scope="row">Liquid</th>
+              <td><label><input type="radio" name="row-2" value="col-1"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-2" value="col-2"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-2" value="col-3"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-2" value="col-4"><span class="radio-custom"></span></label></td>
+            </tr>
+            <tr data-correct-column="col-3" data-explanation="A gas's particles are far apart and move randomly, allowing it to expand to fill any container, giving it an indefinite shape and volume.">
+              <th scope="row">Gas</th>
+              <td><label><input type="radio" name="row-3" value="col-1"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-3" value="col-2"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-3" value="col-3"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-3" value="col-4"><span class="radio-custom"></span></label></td>
+            </tr>
+            <tr data-correct-column="col-4" data-explanation="Plasma is a superheated state of matter where atoms are stripped of their electrons, creating an ionized gas.">
+              <th scope="row">Plasma</th>
+              <td><label><input type="radio" name="row-4" value="col-1"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-4" value="col-2"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-4" value="col-3"><span class="radio-custom"></span></label></td>
+              <td><label><input type="radio" name="row-4" value="col-4"><span class="radio-custom"></span></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="activity-controls">
+        <button id="check-answers-btn" class="activity-btn">Check Answers</button>
+      </div>
+    </div>
+
+    <div id="feedback-sidebar"></div>
+  </div>
+
+<script>
+const App = {
+    init() {
+        ImageFetcher.initSingleImage();
+        FeedbackPanel.init();
+        GridManager.init();
+    }
+};
+
+const ImageFetcher = {
+    API_KEY: 'xgmzSrq1PBV9ELvW4mSlyq6vAf0k6qDrrMd1zIpLrIheWepQ32zN4iJk',
+    
+    async initSingleImage() {
+        const container = document.getElementById('decorative-image-container');
+        const themeQuery = document.getElementById('activity-container').dataset.queryTheme;
+        if (!container || !themeQuery) return;
+        
+        const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(themeQuery)}&per_page=1&orientation=landscape`;
+        await this.fetchAndApply(url, container, themeQuery);
+    },
+
+    async fetchAndApply(url, container, queryForAlt) {
+         try {
+            const response = await fetch(url, { headers: { Authorization: this.API_KEY } });
+            if (!response.ok) throw new Error(`Pexels API error: ${response.statusText}`);
+            const data = await response.json();
+            const photo = data.photos[0];
+
+            if (photo) {
+                const img = document.createElement('img');
+                img.src = photo.src.landscape; 
+                img.alt = photo.alt || `Decorative image related to ${queryForAlt}`;
+                img.onload = () => {
+                    container.innerHTML = ''; 
+                    container.appendChild(img);
+                };
+                img.onerror = () => { container.innerHTML = 'X'; };
+            } else {
+                 container.innerHTML = '?';
+            }
+        } catch (error) {
+            console.error(`Failed to fetch image for "${queryForAlt}":`, error);
+            container.innerHTML = '!';
+        }
+    }
+};
+
+const FeedbackPanel = {
+  dom: {},
+  init() {
+    document.getElementById('feedback-sidebar').innerHTML = `<div class="feedback-header"><h3>Your Results</h3><p id="feedback-score"></p></div><div id="feedback-details"></div><div class="feedback-footer"><button id="feedback-close-btn" class="activity-btn secondary">Try Again</button></div>`;
+    this.dom.appWrapper = document.getElementById('app-wrapper'); 
+    this.dom.feedbackSidebar = document.getElementById('feedback-sidebar'); 
+    this.dom.feedbackScore = document.getElementById('feedback-score'); 
+    this.dom.feedbackDetails = document.getElementById('feedback-details'); 
+    this.dom.feedbackCloseBtn = document.getElementById('feedback-close-btn'); 
+    this.bindEvents();
+  },
+  bindEvents() { 
+      this.dom.feedbackCloseBtn.addEventListener('click', () => { 
+          this.hide(); 
+          GridManager.resetActivity(); // MODIFIED: Calls GridManager instead of DragAndDropManager
+      }); 
+  },
+  clear() { this.dom.feedbackDetails.innerHTML = ''; },
+  addDetail(data) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = `feedback-item ${data.isCorrect ? 'correct' : 'incorrect'}`;
+    itemDiv.innerHTML = `<h4>${data.itemName}</h4><p><strong>Your Answer:</strong> ${data.studentAnswer}</p>${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}<div class="explanation"><p>${data.explanation}</p></div>`;
+    this.dom.feedbackDetails.appendChild(itemDiv);
+  },
+  show(score, total) {
+    this.dom.feedbackScore.textContent = total > 0 ? `You scored ${score} out of ${total}.` : `Please make a selection for at least one row.`;
+    this.dom.appWrapper.classList.add('feedback-visible'); 
+    document.body.classList.add('feedback-open');
+  },
+  hide() { 
+      this.dom.appWrapper.classList.remove('feedback-visible'); 
+      document.body.classList.remove('feedback-open'); 
+  }
+};
+
+const GridManager = {
+    init() {
+        this.cacheDOM();
+        this.bindEvents();
+    },
+    cacheDOM() {
+        this.table = document.querySelector('.mc-grid-table');
+        this.rows = this.table.querySelectorAll('tbody tr');
+        this.checkBtn = document.getElementById('check-answers-btn');
+        this.columnHeaders = Array.from(this.table.querySelectorAll('thead th')).slice(1).map(th => th.textContent);
+    },
+    bindEvents() {
+        this.checkBtn.addEventListener('click', () => this.checkAnswers());
+    },
+    checkAnswers() {
+        let totalCorrect = 0;
+        let totalAttempted = 0;
+        this.clearInlineFeedback();
+        FeedbackPanel.clear();
+
+        this.rows.forEach(row => {
+            const rowHeader = row.querySelector('th').textContent;
+            const correctColumnValue = row.dataset.correctColumn;
+            const explanation = row.dataset.explanation;
+            
+            const selectedRadio = row.querySelector('input[type="radio"]:checked');
+            
+            if (selectedRadio) {
+                totalAttempted++;
+                const selectedColumnValue = selectedRadio.value;
+                const isCorrect = selectedColumnValue === correctColumnValue;
+
+                if (isCorrect) {
+                    totalCorrect++;
+                    row.classList.add('correct');
+                } else {
+                    row.classList.add('incorrect');
+                }
+                
+                const selectedColumnIndex = parseInt(selectedColumnValue.replace('col-', ''), 10) - 1;
+                const correctColumnIndex = parseInt(correctColumnValue.replace('col-', ''), 10) - 1;
+
+                FeedbackPanel.addDetail({
+                    isCorrect: isCorrect,
+                    itemName: rowHeader,
+                    studentAnswer: this.columnHeaders[selectedColumnIndex],
+                    correctAnswer: this.columnHeaders[correctColumnIndex],
+                    explanation: explanation
+                });
+            }
+        });
+
+        FeedbackPanel.show(totalCorrect, totalAttempted);
+        this.checkBtn.disabled = true;
+    },
+    clearInlineFeedback() {
+        this.rows.forEach(row => {
+            row.classList.remove('correct', 'incorrect');
+        });
+    },
+    resetActivity() {
+        this.clearInlineFeedback();
+        const allRadios = this.table.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => {
+            radio.checked = false;
+        });
+        this.checkBtn.disabled = false;
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+
+</body>
+</html>
