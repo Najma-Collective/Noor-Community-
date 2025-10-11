@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <rect width="900" height="600" fill="#F5F3ED"/>
+  <rect x="140" y="200" width="620" height="260" rx="30" fill="#9CAF88"/>
+  <g fill="#FEFCF7" font-family="'Nunito'" font-size="54" text-anchor="middle">
+    <text x="220" y="320">Museum</text>
+    <text x="450" y="320">River</text>
+    <text x="680" y="320">Cafe</text>
+  </g>
+  <g fill="#7A8471" font-family="'Nunito'" font-size="32" text-anchor="middle">
+    <text x="220" y="380">Turn left</text>
+    <text x="450" y="380">Go straight</text>
+    <text x="680" y="380">Second right</text>
+  </g>
+</svg>

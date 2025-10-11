@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <circle cx="300" cy="300" r="260" fill="#FEFCF7" stroke="#5A6B52" stroke-width="24"/>
+  <polygon points="300,120 360,300 300,480 240,300" fill="#9CAF88"/>
+  <circle cx="300" cy="300" r="40" fill="#5A6B52"/>
+  <g fill="#5A6B52" font-family="'Nunito'" font-size="48" text-anchor="middle">
+    <text x="300" y="90">N</text>
+    <text x="300" y="540">S</text>
+    <text x="520" y="312">E</text>
+    <text x="80" y="312">W</text>
+  </g>
+</svg>

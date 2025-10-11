@@ -1,0 +1,51 @@
+@media print {
+  * {
+    box-shadow: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .deck-toolbar,
+  .slide-nav,
+  #annotation-panel,
+  .annotation-connector-layer,
+  .annotation-popover,
+  .annotation-modal-backdrop,
+  .presentation-selector,
+  .toolbar-actions {
+    display: none !important;
+  }
+
+  .deck-app,
+  .deck-workspace,
+  .workspace-grid,
+  .stage-wrapper,
+  .stage-viewport {
+    all: unset;
+    display: block;
+  }
+
+  .deck-workspace {
+    padding: 0;
+  }
+
+  .slide-stage {
+    position: relative !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    border-radius: 0;
+    page-break-after: always;
+  }
+
+  .slide-stage .slide-inner {
+    position: static;
+    padding: 48px;
+  }
+}
