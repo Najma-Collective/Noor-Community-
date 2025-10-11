@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9CAF88"/>
+      <stop offset="100%" stop-color="#5A6B52"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#grad)"/>
+  <g fill="#FEFCF7" font-family="'Nunito', sans-serif" text-anchor="middle">
+    <text x="800" y="420" font-size="120">Building a CV</text>
+    <text x="800" y="520" font-size="56">Structure • Story • Impact</text>
+  </g>
+</svg>

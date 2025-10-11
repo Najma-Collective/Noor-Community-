@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Noor Community Mosaic Slides</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7qH7P4h3rYl8n5P+MTw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="print.css" media="print" />
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.8/dist/handlebars.min.js"></script>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <span class="brand-mark"><i class="fa-solid fa-seedling"></i></span>
+          <span class="brand-text">Noor Community Mosaic</span>
+        </div>
+        <div class="slide-counter" aria-live="polite">0 / 0</div>
+        <div class="presentation-selector">
+          <label for="presentation-selector" class="visually-hidden">Choose presentation</label>
+          <select id="presentation-selector"></select>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn-export" type="button">
+            <i class="fa-solid fa-file-export"></i>
+            <span>Export</span>
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="workspace-grid">
+          <div class="stage-wrapper">
+            <div class="stage-viewport">
+              <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous slide">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="slide-nav slide-nav-next" type="button" aria-label="Next slide">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          <aside id="annotation-panel">
+            <h3>Annotations</h3>
+            <div class="annotation-empty-state" id="annotation-empty">Highlight text on any slide to collect notes here.</div>
+            <div id="annotation-list"></div>
+          </aside>
+        </div>
+        <svg class="annotation-connector-layer" xmlns="http://www.w3.org/2000/svg"></svg>
+      </main>
+    </div>
+
+    <div class="annotation-popover hidden" id="annotation-popover">
+      <i class="fa-solid fa-highlighter"></i>
+      <span>Annotate</span>
+    </div>
+
+    <div class="annotation-modal-backdrop" id="annotation-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="annotation-modal-title">
+      <div class="annotation-modal">
+        <header>
+          <h2 id="annotation-modal-title">Add annotation</h2>
+          <button class="close-modal" type="button" aria-label="Close annotation modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <div>
+          <p class="subtitle">Choose a highlight color</p>
+          <div class="color-palette" id="annotation-color-palette"></div>
+        </div>
+        <div>
+          <p class="subtitle">Your note</p>
+          <textarea id="annotation-text" placeholder="Add a brief note or reminder"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-primary" id="annotation-save" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Handlebars Templates -->
+    <script id="hero-title-template" type="text/x-handlebars-template">
+      <div class="slide-inner full-width-bg hero-title-layout">
+        <img class="img-bg" src="{{backgroundImage}}" alt="Background image for {{title}}" />
+        <div class="img-overlay"></div>
+        <div class="bg-content centered-text">
+          <div class="badge"><i class="fa-solid fa-feather"></i><span>{{deckTitle}}</span></div>
+          <h1>{{title}}</h1>
+        </div>
+      </div>
+    </script>
+
+    <script id="simple-centered-text-template" type="text/x-handlebars-template">
+      <div class="slide-inner centered-text">
+        <h1>{{title}}</h1>
+        {{#if subtitle}}
+          <p class="subtitle">{{subtitle}}</p>
+        {{/if}}
+      </div>
+    </script>
+
+    <script id="framed-list-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p>{{introText}}</p>
+          <ul>
+            {{#each listItems}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </script>
+
+    <script id="full-text-block-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          {{{htmlContent}}}
+        </div>
+      </div>
+    </script>
+
+    <script id="blank-slide-template" type="text/x-handlebars-template">
+      <div class="slide-inner"></div>
+    </script>
+
+    <script id="discussion-table-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{subtitle}}</p>
+          <table class="table-layout">
+            <thead>
+              <tr>
+                <th scope="col">Question</th>
+                <th scope="col">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each questions}}
+                <tr>
+                  <td>{{this}}</td>
+                  <td>
+                    <textarea data-field-key="slide-{{_slideIndex}}-discussion-{{@index}}" name="discussion-{{_slideIndex}}-{{@index}}" placeholder="Summarise your ideas"></textarea>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </script>
+
+    <script id="analysis-table-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <table class="table-layout">
+            <thead>
+              <tr>
+                <th scope="col">Prompt</th>
+                <th scope="col">Analysis</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each questions}}
+                <tr>
+                  <td>{{this}}</td>
+                  <td>
+                    <textarea data-field-key="slide-{{_slideIndex}}-analysis-{{@index}}" name="analysis-{{_slideIndex}}-{{@index}}" placeholder="Write your response"></textarea>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </script>
+
+    <script id="matching-task-vertical-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="grid-container">
+          <div class="col-span-6 align-self-start">
+            <div class="card card-full-height">
+              <h2>{{title}}</h2>
+              <p class="subtitle">{{instruction}}</p>
+              <div class="callout-box">{{{stimulusHTML}}}</div>
+            </div>
+          </div>
+          <div class="col-span-6 align-self-start">
+            <div class="card card-full-height">
+              <h3 class="subtitle">Match the options</h3>
+              <div class="matching-options">
+                {{#each options}}
+                  <button type="button" data-option-index="{{@index}}">
+                    <i class="fa-solid fa-link"></i>
+                    <span>{{this}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="image-matching-horizontal-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="image-row">
+          {{#each images}}
+            <figure>
+              <img src="{{this}}" alt="Matching prompt image {{@index}}" />
+            </figure>
+          {{/each}}
+        </div>
+        <ol>
+          {{#each sentences}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ol>
+      </div>
+    </script>
+
+    <script id="storyboard-creator-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="storyboard-grid">
+          {{#each images}}
+            <div class="storyboard-card">
+              <img src="{{this}}" alt="Storyboard image {{@index}}" />
+              <textarea data-field-key="slide-{{_slideIndex}}-storyboard-{{@index}}" name="storyboard-{{_slideIndex}}-{{@index}}" placeholder="Describe this scene"></textarea>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="image-prompt-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="grid-container">
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <h2>{{title}}</h2>
+              <p>{{instruction}}</p>
+            </div>
+          </div>
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <img src="{{image}}" alt="Prompt image" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="image-response-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="grid-container">
+          <div class="col-span-5">
+            <div class="card card-full-height">
+              <img src="{{image}}" alt="Prompt for response" />
+            </div>
+          </div>
+          <div class="col-span-7">
+            <div class="card card-full-height">
+              <h2>{{title}}</h2>
+              <p class="subtitle">{{instruction}}</p>
+              <textarea class="response-box" data-field-key="slide-{{_slideIndex}}-response-0" name="response-{{_slideIndex}}" placeholder="Write your response"></textarea>
+              <textarea class="response-box" data-field-key="slide-{{_slideIndex}}-response-1" name="response-{{_slideIndex}}-1" placeholder="Add another idea"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="storyboard-display-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="storyboard-grid">
+          {{#each images}}
+            <figure>
+              <img src="{{this}}" alt="Storyboard panel {{alphabet @index}}" />
+              <figcaption class="caption">{{alphabet @index}}.</figcaption>
+            </figure>
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="reporting-prompt-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="grid-container">
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <h2>{{title}}</h2>
+              <p>{{instruction}}</p>
+            </div>
+          </div>
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <img src="{{image}}" alt="Reporting prompt" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="worksheet-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="grid-container">
+          {{#each sections}}
+            <div class="col-span-6">
+              <div class="card card-full-height">
+                <h3>{{title}}</h3>
+                <div>{{{contentHTML}}}</div>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="gap-fill-exercise-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="card">
+          <h3 class="subtitle">Word box</h3>
+          <div class="badge"><i class="fa-solid fa-book"></i><span>{{join wordBox ', '}}</span></div>
+        </div>
+        <div class="card">
+          <p>{{sentence}}</p>
+          <textarea data-field-key="slide-{{_slideIndex}}-gap-fill" name="gap-fill-{{_slideIndex}}" placeholder="Write the completed sentence"></textarea>
+        </div>
+      </div>
+    </script>
+
+    <script id="multiple-choice-question-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <p>{{question}}</p>
+          <div class="matching-options">
+            {{#each options}}
+              <label class="card">
+                <input type="radio" name="mcq-{{_slideIndex}}" value="{{@index}}" data-field-key="slide-{{_slideIndex}}-mcq" />
+                <span>{{this}}</span>
+              </label>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="sentence-scramble-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <ol>
+          {{#each scrambledSentences}}
+            <li>
+              <div class="card">
+                <p class="text-highlight">{{this}}</p>
+                <textarea data-field-key="slide-{{_slideIndex}}-scramble-{{@index}}" name="scramble-{{_slideIndex}}-{{@index}}" placeholder="Write the correct sentence"></textarea>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      </div>
+    </script>
+
+    <script id="stacked-labels-template" type="text/x-handlebars-template">
+      <div class="slide-inner full-width-bg stacked-labels-layout">
+        <img class="img-bg" src="{{backgroundImage}}" alt="Background visual" />
+        <div class="img-overlay"></div>
+        <div class="bg-content">
+          <div class="labels-stack">
+            {{#each labels}}
+              <div class="label-card">
+                <span class="badge">{{value}}</span>
+                <span>{{text}}</span>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="audio-comprehension-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <div class="audio-block">
+            <div class="audio-icon"><i class="fa-solid fa-headphones"></i></div>
+            <div>
+              <img src="{{image}}" alt="Listening prompt" />
+              <p>{{text}}</p>
+              <div class="icon-label"><i class="fa-solid fa-play"></i><span>{{audioFile}}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="intonation-practice-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <ul>
+            {{#each sentences}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </script>
+
+    <script id="two-column-details-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        {{#if subtitle}}
+          <p class="subtitle">{{subtitle}}</p>
+        {{/if}}
+        <div class="grid-container">
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              {{{leftContentHTML}}}
+            </div>
+          </div>
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              {{{rightContentHTML}}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="checklist-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <ul class="checklist-items">
+            {{#each checklistItems}}
+              <li>{{{this}}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </script>
+
+    <script id="feedback-columns-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="grid-container">
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <h3>{{column1Title}}</h3>
+              <textarea data-field-key="slide-{{_slideIndex}}-feedback-0" name="feedback-{{_slideIndex}}-0" placeholder="Write feedback"></textarea>
+              <textarea data-field-key="slide-{{_slideIndex}}-feedback-1" name="feedback-{{_slideIndex}}-1" placeholder="Add another point"></textarea>
+            </div>
+          </div>
+          <div class="col-span-6">
+            <div class="card card-full-height">
+              <h3>{{column2Title}}</h3>
+              <textarea data-field-key="slide-{{_slideIndex}}-feedback-2" name="feedback-{{_slideIndex}}-2" placeholder="Write feedback"></textarea>
+              <textarea data-field-key="slide-{{_slideIndex}}-feedback-3" name="feedback-{{_slideIndex}}-3" placeholder="Add another point"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="definition-list-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <dl class="definition-list">
+            {{#each items}}
+              <div>
+                <dt>{{term}}</dt>
+                <dd>{{definition}}</dd>
+              </div>
+            {{/each}}
+          </dl>
+        </div>
+      </div>
+    </script>
+
+    <script id="three-column-reflection-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="reflection-columns">
+          {{#each questions}}
+            <div class="card">
+              <p class="text-highlight">{{this}}</p>
+              <textarea data-field-key="slide-{{_slideIndex}}-reflection-{{@index}}" name="reflection-{{_slideIndex}}-{{@index}}" placeholder="Capture your thoughts"></textarea>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="star-wish-reflection-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <h2>{{title}}</h2>
+        <p class="subtitle">{{instruction}}</p>
+        <div class="star-wish-grid">
+          <div class="card">
+            <h3>Star 1</h3>
+            <p>{{star1}}</p>
+            <textarea data-field-key="slide-{{_slideIndex}}-star-1" name="star-{{_slideIndex}}-1" placeholder="Write your idea"></textarea>
+          </div>
+          <div class="card">
+            <h3>Star 2</h3>
+            <p>{{star2}}</p>
+            <textarea data-field-key="slide-{{_slideIndex}}-star-2" name="star-{{_slideIndex}}-2" placeholder="Add another success"></textarea>
+          </div>
+          <div class="card">
+            <h3>Wish</h3>
+            <p>{{wish}}</p>
+            <textarea data-field-key="slide-{{_slideIndex}}-wish" name="wish-{{_slideIndex}}" placeholder="Set a goal"></textarea>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="task-preparation-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="card card-full-height">
+          <h2>{{title}}</h2>
+          <p class="subtitle">{{instruction}}</p>
+          <ol class="steps-list">
+            {{#each steps}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ol>
+        </div>
+      </div>
+    </script>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
