@@ -313,15 +313,13 @@ body.modal-open {
 .align-self-end { align-self: flex-end; }
 
 /* Background Image Layouts */
-.slide-inner.full-width-bg {
+.full-width-bg .slide-inner {
   padding: 0;
-  position: relative;
-  overflow: hidden;
 }
 
-.slide-inner.full-width-bg .bg-content {
+.full-width-bg .bg-content {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   padding: var(--stage-pad);
 }
 
@@ -331,13 +329,13 @@ body.modal-open {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 0;
+  z-index: -2;
 }
 
 .img-overlay {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: -1;
   background: linear-gradient(135deg, rgba(31,41,31,0.35), rgba(31,41,31,0.55));
   mix-blend-mode: multiply;
 }
@@ -458,28 +456,6 @@ hr.divider {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-}
-
-img.is-placeholder {
-  object-fit: contain;
-  background: color-mix(in srgb, var(--warm-cream) 70%, transparent);
-  border: 1px dashed var(--border-sage);
-  border-radius: var(--radius);
-  padding: var(--space-4);
-}
-
-.error-slide {
-  align-items: center;
-  text-align: center;
-  gap: var(--space-3);
-}
-
-.error-slide .subtitle {
-  margin: 0;
-}
-
-.print-annotation-summary {
-  display: none;
 }
 
 .storyboard-card img {
