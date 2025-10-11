@@ -1,20 +1,4 @@
 (() => {
-  const MEDIA_HOST_WHITELIST = new Set([
-    window.location.host,
-    'localhost',
-    '127.0.0.1',
-    'images.pexels.com'
-  ]);
-
-  const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
-  const PEXELS_ENDPOINT = 'https://api.pexels.com/v1/search';
-  const FALLBACK_PLACEHOLDER_IMAGE =
-    'data:image/svg+xml;charset=UTF-8,' +
-    encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="Image unavailable"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EFF3ED"/><stop offset="100%" stop-color="#D6E2D0"/></linearGradient></defs><rect width="400" height="260" fill="url(#grad)"/><g fill="#5F6F65" font-family="Nunito, sans-serif" text-anchor="middle"><text x="200" y="128" font-size="24" font-weight="600">Image unavailable</text><text x="200" y="162" font-size="16">We will keep your slide readable.</text></g></svg>'
-    );
-  const pexelsQueryCache = new Map();
-
   const presentations = {
     buildingCv: {
       id: 'buildingCv',
@@ -263,169 +247,6 @@
   };
 
   const STORAGE_KEY = 'mosaic-state-v1';
-
-  function isApprovedMediaUrl(url) {
-    try {
-      const parsed = new URL(url, document.baseURI);
-      if (parsed.origin === window.location.origin) {
-        return true;
-      }
-      return MEDIA_HOST_WHITELIST.has(parsed.host);
-    } catch (error) {
-      console.warn('Invalid media URL', url, error);
-      return false;
-    }
-  }
-
-  function resolveMediaUrl(path) {
-    if (!path) {
-      return '';
-    }
-    const trimmed = String(path).trim();
-    if (!trimmed) {
-      return '';
-    }
-    if (/^data:/i.test(trimmed)) {
-      return trimmed;
-    }
-    try {
-      const absoluteUrl = new URL(trimmed, document.baseURI).href;
-      return isApprovedMediaUrl(absoluteUrl) ? absoluteUrl : '';
-    } catch (error) {
-      console.warn('Unable to resolve media path', path, error);
-      return '';
-    }
-  }
-
-  function normalizeMediaContext(context) {
-    if (!context || typeof context !== 'object') {
-      return context;
-    }
-    const normalized = { ...context };
-    if (context.backgroundImage) {
-      normalized.backgroundImage = resolveMediaUrl(context.backgroundImage);
-    }
-    if (context.image) {
-      normalized.image = resolveMediaUrl(context.image);
-    }
-    if (Array.isArray(context.images)) {
-      normalized.images = context.images.map(resolveMediaUrl);
-    }
-    if (context.audioFile) {
-      normalized.audioFile = resolveMediaUrl(context.audioFile);
-    }
-    return normalized;
-  }
-
-  function buildFallbackQuery(presentation, context) {
-    const tokens = [];
-    if (context?.imageQuery) {
-      tokens.push(context.imageQuery);
-    }
-    if (presentation?.deckTitle) {
-      tokens.push(presentation.deckTitle);
-    }
-    if (context?.title) {
-      tokens.push(context.title);
-    }
-    if (context?.subtitle) {
-      tokens.push(context.subtitle);
-    }
-    if (context?.instruction) {
-      tokens.push(context.instruction);
-    }
-    return tokens.join(' ').trim();
-  }
-
-  async function requestPexelsImage(query) {
-    const safeQuery = query.trim();
-    if (!safeQuery) {
-      return '';
-    }
-    if (!PEXELS_API_KEY) {
-      console.warn('Missing Pexels API key; cannot fetch fallback image.');
-      return '';
-    }
-    const cacheKey = safeQuery.toLowerCase();
-    if (pexelsQueryCache.has(cacheKey)) {
-      return pexelsQueryCache.get(cacheKey);
-    }
-    try {
-      const url = new URL(PEXELS_ENDPOINT);
-      url.searchParams.set('query', safeQuery);
-      url.searchParams.set('per_page', '1');
-      url.searchParams.set('orientation', 'landscape');
-      const response = await fetch(url.toString(), {
-        headers: {
-          Authorization: PEXELS_API_KEY
-        }
-      });
-      if (!response.ok) {
-        throw new Error(`Pexels responded with ${response.status}`);
-      }
-      const data = await response.json();
-      const fallbackUrl = data?.photos?.[0]?.src?.large || data?.photos?.[0]?.src?.original || '';
-      pexelsQueryCache.set(cacheKey, fallbackUrl);
-      return fallbackUrl;
-    } catch (error) {
-      console.warn('Unable to fetch fallback image from Pexels', error);
-      pexelsQueryCache.set(cacheKey, '');
-      return '';
-    }
-  }
-
-  function applyImagePlaceholder(img) {
-    if (!img) {
-      return;
-    }
-    img.removeEventListener('error', handleImageError);
-    img.src = FALLBACK_PLACEHOLDER_IMAGE;
-    img.alt = 'Image unavailable';
-    img.classList.add('is-placeholder');
-  }
-
-  async function handleImageError(event) {
-    const img = event.currentTarget;
-    if (!img || img.dataset.fallbackAttempted === 'true') {
-      applyImagePlaceholder(img);
-      return;
-    }
-    img.dataset.fallbackAttempted = 'true';
-    const query = img.dataset.fallbackQuery || '';
-    const fallbackUrl = await requestPexelsImage(query);
-    if (fallbackUrl && fallbackUrl !== img.src) {
-      img.src = fallbackUrl;
-      img.dataset.isFallback = 'true';
-      return;
-    }
-    applyImagePlaceholder(img);
-  }
-
-  function initializeSlideMedia(section, context, presentation) {
-    if (!section) {
-      return;
-    }
-    const fallbackQuery = buildFallbackQuery(presentation, context);
-    section.querySelectorAll('img').forEach(img => {
-      if (!img) {
-        return;
-      }
-      if (!img.getAttribute('src')) {
-        img.src = FALLBACK_PLACEHOLDER_IMAGE;
-        img.classList.add('is-placeholder');
-      }
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      const derivedQuery = [fallbackQuery, img.getAttribute('alt')]
-        .filter(Boolean)
-        .join(' ')
-        .trim();
-      if (derivedQuery) {
-        img.dataset.fallbackQuery = derivedQuery;
-      }
-      img.addEventListener('error', handleImageError);
-    });
-  }
   const COLOR_CHOICES = [
     { name: 'Sage', value: 'var(--secondary-sage)', textColor: 'var(--deep-forest)' },
     { name: 'Forest', value: 'rgba(90, 107, 82, 0.75)', textColor: 'var(--soft-white)' },
@@ -461,7 +282,6 @@
   let selectedColor = COLOR_CHOICES[0].value;
   let selectedTextColor = COLOR_CHOICES[0].textColor;
   let annotationDraft = null;
-  let cleanupPrintArtifacts = null;
 
   const templateCache = {};
 
@@ -533,57 +353,22 @@
   }
 
   function renderPresentation(presentation, { preserveSlideIndex = false } = {}) {
-    teardownPrintArtifacts();
     clearSlides();
     slides = [];
     const navAnchor = stageViewport.querySelector('.slide-nav-prev');
     presentation.slides.forEach((slide, index) => {
-      try {
-        const context = {
-          ...slide.content,
-          deckTitle: presentation.deckTitle,
-          _slideIndex: index
-        };
-        const normalizedContext = normalizeMediaContext(context);
-        const section = createSlideSection(slide.layout, normalizedContext);
-        initializeSlideMedia(section, normalizedContext, presentation);
-        if (navAnchor) {
-          stageViewport.insertBefore(section, navAnchor);
-        } else {
-          stageViewport.appendChild(section);
-        }
-        slides.push(section);
-      } catch (error) {
-        console.error('Unable to render slide', slide, error);
-        const errorSection = document.createElement('section');
-        errorSection.className = 'slide-stage';
-        errorSection.dataset.layout = 'error';
-
-        const slideInner = document.createElement('div');
-        slideInner.className = 'slide-inner';
-
-        const card = document.createElement('div');
-        card.className = 'card card-full-height error-slide';
-
-        const heading = document.createElement('h2');
-        heading.textContent = 'Slide could not be displayed';
-
-        const subtitle = document.createElement('p');
-        subtitle.className = 'subtitle';
-        subtitle.textContent = error.message || 'An unexpected error occurred.';
-
-        card.appendChild(heading);
-        card.appendChild(subtitle);
-        slideInner.appendChild(card);
-        errorSection.appendChild(slideInner);
-
-        if (navAnchor) {
-          stageViewport.insertBefore(errorSection, navAnchor);
-        } else {
-          stageViewport.appendChild(errorSection);
-        }
-        slides.push(errorSection);
+      const context = {
+        ...slide.content,
+        deckTitle: presentation.deckTitle,
+        _slideIndex: index
+      };
+      const section = createSlideSection(slide.layout, context);
+      if (navAnchor) {
+        stageViewport.insertBefore(section, navAnchor);
+      } else {
+        stageViewport.appendChild(section);
       }
+      slides.push(section);
     });
 
     attachFieldListeners();
@@ -970,60 +755,6 @@
     });
   }
 
-  function buildPrintAnnotationSummaries() {
-    const created = [];
-    if (!slides.length) {
-      return () => {};
-    }
-    slides.forEach((slide, index) => {
-      const annotationsForSlide = annotations.filter(item => item.slideIndex === index);
-      if (!annotationsForSlide.length) {
-        return;
-      }
-      const summary = document.createElement('aside');
-      summary.className = 'print-annotation-summary';
-
-      const heading = document.createElement('h3');
-      heading.textContent = 'Annotations';
-      summary.appendChild(heading);
-
-      const list = document.createElement('ol');
-      list.className = 'print-annotation-list';
-      annotationsForSlide.forEach(item => {
-        const li = document.createElement('li');
-        const quote = document.createElement('blockquote');
-        quote.textContent = item.quote;
-        li.appendChild(quote);
-        if (item.note) {
-          const note = document.createElement('p');
-          note.textContent = item.note;
-          li.appendChild(note);
-        }
-        list.appendChild(li);
-      });
-      summary.appendChild(list);
-      slide.appendChild(summary);
-      created.push(summary);
-    });
-    return () => {
-      created.forEach(node => node.remove());
-    };
-  }
-
-  function preparePrintArtifacts() {
-    if (typeof cleanupPrintArtifacts === 'function') {
-      cleanupPrintArtifacts();
-    }
-    cleanupPrintArtifacts = buildPrintAnnotationSummaries();
-  }
-
-  function teardownPrintArtifacts() {
-    if (typeof cleanupPrintArtifacts === 'function') {
-      cleanupPrintArtifacts();
-    }
-    cleanupPrintArtifacts = null;
-  }
-
   function populatePresentationSelector() {
     presentationSelector.innerHTML = '';
     Object.values(presentations).forEach(presentation => {
@@ -1079,12 +810,7 @@
   }
 
   function initializeExport() {
-    exportButton.addEventListener('click', () => {
-      preparePrintArtifacts();
-      window.print();
-    });
-    window.addEventListener('beforeprint', preparePrintArtifacts);
-    window.addEventListener('afterprint', teardownPrintArtifacts);
+    exportButton.addEventListener('click', () => window.print());
   }
 
   function initializePresentationSelector() {
