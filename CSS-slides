@@ -25,14 +25,15 @@ css
   /* Typography */
   --font-display: 'Questrial', system-ui, -apple-system, sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-size-adjustment: 4pt;
 
   /* Typographic Scale */
-  --font-size-sm: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
-  --font-size-base: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
-  --font-size-md: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
-  --font-size-lg: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
-  --font-size-xl: clamp(1.8rem, 1.1rem + 2vw, 3rem);
-  --font-size-xxl: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem);
+  --font-size-sm: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
+  --font-size-base: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
+  --font-size-md: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
+  --font-size-lg: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment));
+  --font-size-xl: calc(clamp(1.8rem, 1.1rem + 2vw, 3rem) + var(--font-size-adjustment));
+  --font-size-xxl: calc(clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem) + var(--font-size-adjustment));
 
   /* Spacing */
   --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
@@ -97,7 +98,7 @@ html, body {
   align-items: center;
   gap: var(--space-3);
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: calc(1.05rem + var(--font-size-adjustment));
   color: var(--forest-shadow);
 }
 
