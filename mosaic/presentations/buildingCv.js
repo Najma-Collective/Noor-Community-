@@ -7,7 +7,9 @@
         layout: 'hero-title',
         content: {
           backgroundImageQuery: 'professional resume workspace flatlay',
-          backgroundImageAlt: 'Overhead view of a tidy desk with CV planning materials',
+          backgroundImage: 'https://images.pexels.com/photos/590044/pexels-photo-590044.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          backgroundImageAlt: 'Top view of a desk with resume, coffee cup, and laptop on a wooden surface, ideal for business concepts.',
+          backgroundImageCredit: 'Lukas',
           title: 'Building a CV'
         }
       },
@@ -71,7 +73,9 @@
           title: 'Personal Branding',
           instruction: 'Note two ways to express your personality professionally.',
           imageQuery: 'confident professional portrait smiling in office',
-          imageAlt: 'Professional confidently smiling in a bright office setting'
+          image: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          imageAlt: 'Young woman with curly hair working on her laptop in a cozy home setting, exuding confidence and focus.',
+          imageCredit: 'Hanna Pad'
         }
       },
       {

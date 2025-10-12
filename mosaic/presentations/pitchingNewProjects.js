@@ -8,8 +8,10 @@
         content: {
           title: 'Pitching a New Project Idea',
           backgroundImageQuery: 'team collaborating in modern office',
+          backgroundImage: 'https://images.pexels.com/photos/23496705/pexels-photo-23496705.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
           backgroundImageAlt:
-            'A diverse team of business professionals collaborating around a table with laptops and documents.'
+            'Young creative professionals discussing an architectural blueprint in a modern office setting.',
+          backgroundImageCredit: 'Vitaly Gariev'
         }
       },
       {
@@ -114,8 +116,10 @@
           instruction:
             'Each team will now have 3 minutes to present their pitch. As you listen to other teams, think about the feedback you will give them.',
           imageQuery: 'business person giving presentation to colleagues',
+          image: 'https://images.pexels.com/photos/3861811/pexels-photo-3861811.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
           imageAlt:
-            'A confident business person presenting to a small group of attentive colleagues in a meeting room.'
+            'A diverse team engaged in a vibrant office meeting led by a woman presenting ideas.',
+          imageCredit: 'Andrea Piacquadio'
         }
       },
       {

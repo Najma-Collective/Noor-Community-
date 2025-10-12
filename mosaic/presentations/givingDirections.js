@@ -7,7 +7,9 @@
         layout: 'hero-title',
         content: {
           backgroundImageQuery: 'city map navigation with people asking directions',
-          backgroundImageAlt: 'Illustrated city navigation scene with people asking for directions',
+          backgroundImage: 'https://images.pexels.com/photos/7362886/pexels-photo-7362886.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          backgroundImageAlt: 'Close-up of hands holding a smartphone with GPS navigation displayed, in a car setting.',
+          backgroundImageCredit: 'RDNE Stock project',
           title: 'How to Give Directions'
         }
       },
@@ -43,7 +45,9 @@
           title: 'Try It Out',
           instruction: 'Write two sentences to guide a visitor from the star to the cafe.',
           imageQuery: 'illustrated city map with location pins',
-          imageAlt: 'Colorful illustrated city map showing landmarks and route markers'
+          image: 'https://images.pexels.com/photos/8828455/pexels-photo-8828455.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          imageAlt: 'Colorful pushpins marking locations on a detailed map of Central Asia.',
+          imageCredit: 'Lara Jameson'
         }
       }
     ]
