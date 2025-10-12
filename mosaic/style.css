@@ -215,7 +215,7 @@ body.modal-open {
   display: grid;
   place-items: center;
   overflow: visible;
-  grid-column: 1 / span 9;
+  grid-column: 1 / span 10;
   min-width: 0;
 }
 
@@ -267,16 +267,16 @@ body.modal-open {
    3. Slide Structure & Navigation
 ----------------------------------*/
 .slide-stage {
+  --stage-max-height: calc(100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2));
+  --stage-horizontal-target: clamp(360px, calc(100vw - (var(--workspace-pad) * 2)), 1320px);
   position: relative;
   border-radius: var(--stage-radius);
   background-color: var(--soft-white);
   box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
   aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-  width: min(
-    calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))),
-    100%
-  );
-  max-width: 100%;
+  width: min(100%, var(--stage-horizontal-target));
+  max-width: min(100%, calc(var(--stage-max-height) * (var(--slide-aspect-w) / var(--slide-aspect-h))));
+  max-height: var(--stage-max-height);
   overflow: hidden;
   outline: 1px solid var(--border-sage);
   transition: opacity 300ms ease-in-out;
@@ -364,6 +364,16 @@ body.modal-open {
 
 /* Grid Column Starts */
 .col-start-7 { grid-column-start: 7; }
+
+@media (max-width: 1500px) {
+  .stage-wrapper {
+    grid-column: 1 / span 9;
+  }
+
+  #annotation-panel {
+    grid-column: 10 / span 3;
+  }
+}
 
 @media (max-width: 1200px) {
   .deck-workspace {
@@ -864,8 +874,8 @@ input[type="text"]:focus {
   flex-direction: column;
   gap: var(--space-4);
   overflow-y: auto;
-  min-width: 0;
-  grid-column: 10 / span 3;
+  grid-column: 11 / span 2;
+  min-width: clamp(280px, 24vw, 360px);
   max-height: 100%;
 }
 
