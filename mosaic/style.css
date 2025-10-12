@@ -193,7 +193,7 @@ body.modal-open {
   min-height: max(80vh, calc(100dvh - var(--toolbar-h)));
   padding: var(--workspace-pad);
   margin: 0 auto;
-  width: min(90vw, 1600px);
+  width: clamp(320px, 96vw, 3800px);
   box-sizing: border-box;
   overflow: visible;
   background:
@@ -268,7 +268,7 @@ body.modal-open {
 ----------------------------------*/
 .slide-stage {
   --stage-max-height: calc(100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2));
-  --stage-horizontal-target: clamp(360px, calc(100vw - (var(--workspace-pad) * 2)), 1320px);
+  --stage-horizontal-target: clamp(520px, 90vw, 4200px);
   position: relative;
   border-radius: var(--stage-radius);
   background-color: var(--soft-white);
@@ -377,7 +377,7 @@ body.modal-open {
 
 @media (max-width: 1200px) {
   .deck-workspace {
-    width: min(94vw, 1200px);
+    width: min(98vw, 1200px);
   }
 
   .workspace-grid {
