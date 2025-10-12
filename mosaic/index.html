@@ -337,13 +337,48 @@
 
     <script id="worksheet-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <div class="grid-container">
+        <div class="grid-container worksheet-grid">
           {{#each sections}}
             <div class="col-span-6">
-              <div class="card card-full-height">
-                <h3>{{title}}</h3>
-                <div>{{{contentHTML}}}</div>
-              </div>
+              <article class="card card-full-height worksheet-section">
+                <header class="worksheet-section__header">
+                  <h3>{{title}}</h3>
+                  {{#if subtitle}}
+                    <p class="subtitle">{{subtitle}}</p>
+                  {{/if}}
+                </header>
+                {{#if description}}
+                  <p class="worksheet-section__description">{{description}}</p>
+                {{/if}}
+                {{#if contentHTML}}
+                  <div class="worksheet-richtext">{{{contentHTML}}}</div>
+                {{/if}}
+                {{#if responsePrompts}}
+                  <div class="response-stack">
+                    {{#each responsePrompts}}
+                      <section class="response-item">
+                        {{#if prompt}}
+                          <p class="response-prompt">{{prompt}}</p>
+                        {{/if}}
+                        {{#if helperText}}
+                          <p class="response-helper">{{helperText}}</p>
+                        {{/if}}
+                        <div
+                          class="writing-pad"
+                          contenteditable="true"
+                          role="textbox"
+                          aria-multiline="true"
+                          aria-label="{{#if prompt}}{{prompt}}{{else}}{{../title}}{{/if}}"
+                          data-placeholder="{{#if placeholder}}{{placeholder}}{{else}}Capture your notes here{{/if}}"
+                          data-field-key="slide-{{../../_slideIndex}}-worksheet-{{@../index}}-{{@index}}"
+                          spellcheck="true"
+                          tabindex="0"
+                        ></div>
+                      </section>
+                    {{/each}}
+                  </div>
+                {{/if}}
+              </article>
             </div>
           {{/each}}
         </div>
@@ -594,6 +629,7 @@
     <script src="presentations/buildingCv.js" defer></script>
     <script src="presentations/tourismStorytelling.js" defer></script>
     <script src="presentations/givingDirections.js" defer></script>
+    <script src="presentations/strategicPlanningNgo.js" defer></script>
     <script src="presentations/pitchingNewProjects.js" defer></script>
     <script src="app.js" defer></script>
   </body>

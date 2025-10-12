@@ -46,6 +46,18 @@
 
   const templateCache = {};
 
+  function updateContentEditableState(element) {
+    if (!element || !element.isContentEditable) {
+      return;
+    }
+    const textValue = element.textContent ? element.textContent.replace(/\u200B/g, '').trim() : '';
+    if (textValue) {
+      element.dataset.state = 'filled';
+    } else {
+      delete element.dataset.state;
+    }
+  }
+
   function getPexelsService() {
     if (window.PexelsService && typeof window.PexelsService.fetchImage === 'function') {
       return window.PexelsService;
@@ -123,7 +135,7 @@
       return;
     }
     const candidates = slideElement.querySelectorAll(
-      'h1, h2, h3, h4, p, li, .card, .table-layout, textarea, input, .annotation-card, .callout-box'
+      'h1, h2, h3, h4, p, li, .card, .table-layout, textarea, input, .annotation-card, .callout-box, .writing-pad'
     );
     window.OverflowMonitor.observe(candidates);
   }
@@ -260,9 +272,22 @@
     if (target.type === 'radio' || target.type === 'checkbox') {
       return;
     }
-    fieldValues[target.dataset.fieldKey] = target.value;
+    const key = target.dataset.fieldKey;
+    let value;
+    if (target.isContentEditable) {
+      value = target.innerHTML;
+    } else if (typeof target.value !== 'undefined') {
+      value = target.value;
+    }
+    if (value === undefined) {
+      return;
+    }
+    fieldValues[key] = value;
     state.fields[currentPresentationId] = { ...fieldValues };
     persistState();
+    if (target.isContentEditable) {
+      updateContentEditableState(target);
+    }
     if (window.OverflowMonitor) {
       window.OverflowMonitor.check(target);
     }
@@ -273,14 +298,25 @@
     if (!target.dataset.fieldKey) {
       return;
     }
+    const key = target.dataset.fieldKey;
+    if (target.isContentEditable) {
+      fieldValues[key] = target.innerHTML;
+      state.fields[currentPresentationId] = { ...fieldValues };
+      persistState();
+      updateContentEditableState(target);
+      if (window.OverflowMonitor) {
+        window.OverflowMonitor.check(target);
+      }
+      return;
+    }
     if (target.type === 'radio') {
       if (target.checked) {
-        fieldValues[target.dataset.fieldKey] = target.value;
+        fieldValues[key] = target.value;
       }
     } else if (target.type === 'checkbox') {
-      fieldValues[target.dataset.fieldKey] = target.checked;
+      fieldValues[key] = target.checked;
     } else {
-      fieldValues[target.dataset.fieldKey] = target.value;
+      fieldValues[key] = target.value;
     }
     state.fields[currentPresentationId] = { ...fieldValues };
     persistState();
@@ -300,6 +336,9 @@
         element.checked = String(storedValue) === element.value;
       } else if (element.type === 'checkbox') {
         element.checked = Boolean(storedValue);
+      } else if (element.isContentEditable) {
+        element.innerHTML = storedValue || '';
+        updateContentEditableState(element);
       } else {
         element.value = storedValue;
       }
@@ -701,7 +740,7 @@
     navNext.addEventListener('click', nextSlide);
     navPrev.addEventListener('click', prevSlide);
     document.addEventListener('keydown', event => {
-      if (event.target.matches('input, textarea')) {
+      if (event.target.matches('input, textarea') || event.target.isContentEditable) {
         return;
       }
       if (event.key === 'ArrowRight') {

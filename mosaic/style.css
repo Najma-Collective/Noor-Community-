@@ -546,11 +546,12 @@ body.modal-open {
 }
 
 .card {
-  background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%);
-  border: 1px solid var(--border-sage);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--warm-cream) 82%, transparent) 0%, color-mix(in srgb, var(--soft-white) 92%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 20%, transparent);
   border-radius: var(--radius);
   padding: clamp(1.5rem, 4vw, 3rem);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-1), 0 18px 45px rgba(62, 74, 58, 0.08);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -561,6 +562,18 @@ body.modal-open {
   overflow: hidden;
 }
 
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(156, 175, 136, 0.18) 0%, transparent 55%),
+    radial-gradient(140% 120% at 100% 0%, rgba(248, 246, 240, 0.55) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .card.card-full-height {
   height: 100%;
   display: flex;
@@ -568,6 +581,107 @@ body.modal-open {
   justify-content: flex-start;
   align-items: stretch;
   gap: var(--space-4);
+}
+
+.worksheet-grid {
+  align-items: stretch;
+}
+
+.worksheet-section {
+  gap: var(--space-5);
+}
+
+.worksheet-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.worksheet-section__description {
+  color: var(--ink-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.worksheet-richtext {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.worksheet-richtext ul,
+.worksheet-richtext ol {
+  padding-left: 1.25rem;
+}
+
+.response-stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.response-item {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.response-prompt {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  color: var(--deep-forest);
+  margin: 0;
+}
+
+.response-helper {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+.writing-pad {
+  position: relative;
+  min-height: 150px;
+  padding: 1.15rem 1.25rem;
+  border-radius: calc(var(--radius) - 4px);
+  border: 1px solid color-mix(in srgb, var(--border-sage) 60%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.35) 35%, rgba(255, 255, 255, 0.05) 100%),
+    repeating-linear-gradient(180deg, transparent, transparent 28px, color-mix(in srgb, var(--secondary-sage) 18%, transparent) 28px, color-mix(in srgb, var(--secondary-sage) 18%, transparent) 29px);
+  color: var(--deep-forest);
+  line-height: 1.6;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  border-left: 3px solid color-mix(in srgb, var(--primary-sage) 35%, transparent);
+  box-shadow: inset 0 1px 2px rgba(34, 41, 32, 0.06);
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: text;
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.writing-pad:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--primary-sage) 55%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--secondary-sage) 35%, transparent);
+}
+
+.writing-pad::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  inset: 1rem 1.25rem auto;
+  color: color-mix(in srgb, var(--ink-muted) 85%, transparent);
+  font-style: italic;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+  opacity: 0.75;
+}
+
+.writing-pad[data-state='filled']::before {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.writing-pad:focus::before {
+  opacity: 0.4;
 }
 
 .card.media-card {
@@ -585,6 +699,8 @@ body.modal-open {
 
 .card > * {
   max-width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .card textarea {
@@ -869,29 +985,38 @@ input[type="text"]:focus {
 .steps-list {
   counter-reset: step;
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  padding: 0;
+  margin: 0;
 }
 
 .steps-list li {
   counter-increment: step;
   list-style: none;
-  padding-left: 2.4rem;
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 1rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--border-sage) 70%, transparent);
+  border-radius: calc(var(--radius) - 4px);
+  background: color-mix(in srgb, var(--soft-white) 92%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .steps-list li::before {
   content: counter(step);
-  position: absolute;
-  left: 0;
-  top: 0.1rem;
-  width: 1.8rem;
-  height: 1.8rem;
+  flex: 0 0 2.2rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--secondary-sage) 35%, transparent);
-  color: var(--deep-forest);
+  background: linear-gradient(135deg, var(--primary-sage) 0%, color-mix(in srgb, var(--secondary-sage) 55%, transparent) 100%);
+  color: var(--soft-white);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
+  font-weight: 600;
+  box-shadow: var(--shadow-1);
+  margin-top: 0.15rem;
 }
 
 .callout-box {
