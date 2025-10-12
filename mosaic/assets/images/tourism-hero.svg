@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
-  <rect width="1600" height="900" fill="#5A6B52"/>
-  <path d="M0 650 C400 520 1200 760 1600 600 L1600 900 L0 900 Z" fill="#9CAF88" opacity="0.8"/>
-  <g fill="#FEFCF7" text-anchor="middle" font-family="'Nunito', sans-serif">
-    <text x="800" y="410" font-size="110">Tourism &amp; Storytelling</text>
-    <text x="800" y="520" font-size="52">Paint a journey with words</text>
-  </g>
-</svg>

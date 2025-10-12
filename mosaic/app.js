@@ -7,8 +7,8 @@
         {
           layout: 'hero-title',
           content: {
-            backgroundImage: 'assets/images/building-cv-hero.svg',
             backgroundImageQuery: 'professional resume workspace flatlay',
+            backgroundImageAlt: 'Overhead view of a tidy desk with CV planning materials',
             title: 'Building a CV'
           }
         },
@@ -71,8 +71,8 @@
           content: {
             title: 'Personal Branding',
             instruction: 'Note two ways to express your personality professionally.',
-            image: 'assets/images/cv-profile.svg',
-            imageQuery: 'confident professional portrait smiling in office'
+            imageQuery: 'confident professional portrait smiling in office',
+            imageAlt: 'Professional confidently smiling in a bright office setting'
           }
         },
         {
@@ -109,8 +109,8 @@
         {
           layout: 'hero-title',
           content: {
-            backgroundImage: 'assets/images/tourism-hero.svg',
             backgroundImageQuery: 'sunrise over bustling market in morocco',
+            backgroundImageAlt: 'Sunrise casting warm light over a lively Moroccan market',
             title: 'Tourism & Storytelling'
           }
         },
@@ -126,8 +126,8 @@
           content: {
             title: 'Warm-up',
             instruction: 'What details make this marketplace unforgettable?',
-            image: 'assets/images/tourism-market.svg',
-            imageQuery: 'colorful market street with people and spices'
+            imageQuery: 'colorful market street with people and spices',
+            imageAlt: 'Vibrant street market filled with spices, fabrics, and visitors'
           }
         },
         {
@@ -135,15 +135,15 @@
           content: {
             title: 'Match the Mood',
             instruction: 'Pair each photo with the sentence that fits the vibe.',
-            images: [
-              'assets/images/tourism-story-1.svg',
-              'assets/images/tourism-story-2.svg',
-              'assets/images/tourism-story-3.svg'
-            ],
             imageQueries: [
               'tour guide pointing at sunrise in mountains',
               'travelers tasting spices at market stall',
               'friends taking photo while laughing in city'
+            ],
+            imageAltTexts: [
+              'Guide gesturing toward a glowing sunrise in the mountains',
+              'Travellers sampling spices at a bustling market stall',
+              'Friends laughing together while snapping a city photo'
             ],
             sentences: [
               'The guide points to the horizon as the sun rises.',
@@ -157,17 +157,17 @@
           content: {
             title: 'Craft Your Storyboard',
             instruction: 'Write a sentence under each frame to tell a mini-tour.',
-            images: [
-              'assets/images/tourism-story-1.svg',
-              'assets/images/tourism-story-2.svg',
-              'assets/images/tourism-story-3.svg',
-              'assets/images/tourism-story-4.svg'
-            ],
             imageQueries: [
               'travel group exploring old city street',
               'local vendor serving tea to tourists',
               'family admiring scenic overlook at sunset',
               'night market with string lights and performers'
+            ],
+            imageAltTexts: [
+              'Travellers walking through a narrow historic city street',
+              'Vendor pouring tea for visiting tourists at a market stall',
+              'Family enjoying a panoramic sunset view from an overlook',
+              'Night market glowing with string lights and live performers'
             ]
           }
         },
@@ -185,8 +185,8 @@
           content: {
             title: 'Listen & Note',
             instruction: 'Imagine you hear a guide welcoming visitors. Capture two key points.',
-            image: 'assets/images/tourism-guide.svg',
             imageQuery: 'tour guide smiling with microphone welcoming guests',
+            imageAlt: 'Tour guide smiling with a microphone while greeting guests',
             text: '“Welcome back! Today we explore the hidden alleys, sample sweet saffron tea, and learn a phrase locals love.”',
             audioFile: 'assets/audio/tour-guide.mp3'
           }
@@ -208,8 +208,8 @@
           content: {
             title: 'Ready to Report Back',
             instruction: 'Use the image to guide your storytelling summary.',
-            image: 'assets/images/tourism-guide.svg',
-            imageQuery: 'traveler sharing story with group in plaza'
+            imageQuery: 'traveler sharing story with group in plaza',
+            imageAlt: 'Traveller animatedly sharing a story with a group in a plaza'
           }
         }
       ]
@@ -221,8 +221,8 @@
         {
           layout: 'hero-title',
           content: {
-            backgroundImage: 'assets/images/directions-hero.svg',
             backgroundImageQuery: 'city map navigation with people asking directions',
+            backgroundImageAlt: 'Illustrated city navigation scene with people asking for directions',
             title: 'How to Give Directions'
           }
         },
@@ -257,8 +257,8 @@
           content: {
             title: 'Try It Out',
             instruction: 'Write two sentences to guide a visitor from the star to the cafe.',
-            image: 'assets/images/city-map.svg',
-            imageQuery: 'illustrated city map with location pins'
+            imageQuery: 'illustrated city map with location pins',
+            imageAlt: 'Colorful illustrated city map showing landmarks and route markers'
           }
         }
       ]
