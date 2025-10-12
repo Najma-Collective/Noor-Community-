@@ -698,7 +698,7 @@
     presentationList.forEach(presentation => {
       const option = document.createElement('option');
       option.value = presentation.id;
-      option.textContent = presentation.selectorLabel || presentation.deckTitle;
+      option.textContent = presentation.deckTitle;
       presentationSelector.appendChild(option);
     });
   }
