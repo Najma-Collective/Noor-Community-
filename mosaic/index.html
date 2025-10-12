@@ -4,37 +4,81 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Noor Community Mosaic Slides</title>
-    <meta name="pexels-api-key" content="" data-env="PEXELS_API_KEY" />
+    <meta name="pexels-api-key" content="ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd" data-env="PEXELS_API_KEY" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7qH7P4h3rYl8n5P+MTw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="print.css" media="print" />
     <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.8/dist/handlebars.min.js"></script>
   </head>
   <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      style="display: none"
+      aria-hidden="true"
+    >
+      <symbol id="icon-seedling" viewBox="0 0 24 24">
+        <path
+          d="M11 20.95V15c-2.87.28-5.57 1.6-7.51 3.68a1 1 0 0 1-1.46-1.36c2.08-2.24 4.91-3.58 7.97-3.71-1.87-1.05-3.62-2.81-4.23-5.43a1 1 0 0 1 1.12-1.22c2.65.23 4.7 1.55 6.11 3.25 1.41-1.7 3.46-3.02 6.11-3.25a1 1 0 0 1 1.12 1.22c-.61 2.62-2.36 4.38-4.23 5.43 3.06.13 5.89 1.47 7.97 3.71a1 1 0 1 1-1.46 1.36C18.57 16.6 15.87 15.28 13 15v5.95a1 1 0 1 1-2 0Z"
+        />
+      </symbol>
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+        <path d="M6.3 9.3a1 1 0 0 1 1.4 0L12 13.6l4.3-4.3a1 1 0 0 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 0-1.4Z" />
+      </symbol>
+      <symbol id="icon-file-export" viewBox="0 0 24 24">
+        <path d="M12 3a1 1 0 0 1 1 1v7.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42L11 11.59V4a1 1 0 0 1 1-1Z" />
+        <path d="M7 13h10a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z" />
+      </symbol>
+      <symbol id="icon-chevron-left" viewBox="0 0 24 24">
+        <path d="M14.7 6.3a1 1 0 0 1 0 1.4L11.41 11l3.3 3.3a1 1 0 0 1-1.42 1.4l-4-4a1 1 0 0 1 0-1.4l4-4a1 1 0 0 1 1.42 0Z" />
+      </symbol>
+      <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+        <path d="M9.3 6.3a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-4 4a1 1 0 1 1-1.4-1.4L12.59 12 9.3 8.7a1 1 0 0 1 0-1.4Z" />
+      </symbol>
+      <symbol id="icon-highlighter" viewBox="0 0 24 24">
+        <path d="M15.54 3.46a2 2 0 0 1 2.83 0l2.17 2.17a2 2 0 0 1 0 2.83l-7.9 7.9-4.24-.43-.43-4.24 7.9-7.9Z" />
+        <path d="M8.38 13.38 6 15.76V18h2.24l2.38-2.38Z" />
+        <path d="M4 20h6a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2Z" />
+      </symbol>
+      <symbol id="icon-xmark" viewBox="0 0 24 24">
+        <path d="M6.3 6.3a1 1 0 0 1 1.4 0L12 10.59l4.3-4.3a1 1 0 1 1 1.4 1.42L13.41 12l4.29 4.29a1 1 0 0 1-1.4 1.42L12 13.41l-4.29 4.3a1 1 0 1 1-1.42-1.42L10.59 12 6.3 7.7a1 1 0 0 1 0-1.4Z" />
+      </symbol>
+      <symbol id="icon-feather" viewBox="0 0 24 24">
+        <path d="M18.36 5.64c-2.93-2.93-7.34-3.13-10.34-.61L7.4 5.6a6 6 0 0 0 7 7l.57-.62c2.52-3 2.32-7.41-.61-10.34Z" />
+        <path d="M6.32 13.68 4 21a1 1 0 0 0 1.24 1.24l7.32-2.33Z" />
+      </symbol>
+      <symbol id="icon-link" viewBox="0 0 24 24">
+        <path d="M8.5 7a3.5 3.5 0 0 1 5 0l1 1a1 1 0 1 1-1.4 1.4l-1-1a1.5 1.5 0 0 0-2.12 2.12l2 2a1.5 1.5 0 0 0 2.12 0 1 1 0 1 1 1.4 1.4 3.5 3.5 0 0 1-4.95 0l-2-2A3.5 3.5 0 0 1 8.5 7Z" />
+        <path d="M15.5 17a3.5 3.5 0 0 1-5 0l-1-1a1 1 0 1 1 1.4-1.4l1 1a1.5 1.5 0 0 0 2.12-2.12l-2-2a1.5 1.5 0 0 0-2.12 0 1 1 0 0 1-1.4-1.4 3.5 3.5 0 0 1 4.95 0l2 2A3.5 3.5 0 0 1 15.5 17Z" />
+      </symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M6 3h6a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H6a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2Z" />
+        <path d="M18 3h-6a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z" />
+      </symbol>
+      <symbol id="icon-headphones" viewBox="0 0 24 24">
+        <path d="M12 3a9 9 0 0 0-9 9v5a3 3 0 0 0 3 3h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H5a7 7 0 0 1 14 0h-1a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1a3 3 0 0 0 3-3v-5a9 9 0 0 0-9-9Z" />
+      </symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24">
+        <path d="M9 5.17a1 1 0 0 1 1.48-.87l8 4.83a1 1 0 0 1 0 1.74l-8 4.83A1 1 0 0 1 9 15.83Z" />
+      </symbol>
+    </svg>
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <span class="brand-mark"><i class="fa-solid fa-seedling"></i></span>
+          <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#icon-seedling" xlink:href="#icon-seedling"></use></svg></span>
           <span class="brand-text">Noor Community Mosaic</span>
         </div>
         <div class="slide-counter" aria-live="polite">0 / 0</div>
         <div class="presentation-selector">
           <label for="presentation-selector" class="visually-hidden">Choose presentation</label>
           <select id="presentation-selector"></select>
-          <i class="fa-solid fa-chevron-down"></i>
+          <svg class="icon" aria-hidden="true"><use href="#icon-chevron-down" xlink:href="#icon-chevron-down"></use></svg>
         </div>
         <div class="toolbar-actions">
           <button class="btn-export" type="button">
-            <i class="fa-solid fa-file-export"></i>
+            <svg class="icon" aria-hidden="true"><use href="#icon-file-export" xlink:href="#icon-file-export"></use></svg>
             <span>Export</span>
           </button>
         </div>
@@ -44,10 +88,10 @@
           <div class="stage-wrapper">
             <div class="stage-viewport">
               <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous slide">
-                <i class="fa-solid fa-chevron-left"></i>
+                <svg class="icon" aria-hidden="true"><use href="#icon-chevron-left" xlink:href="#icon-chevron-left"></use></svg>
               </button>
               <button class="slide-nav slide-nav-next" type="button" aria-label="Next slide">
-                <i class="fa-solid fa-chevron-right"></i>
+                <svg class="icon" aria-hidden="true"><use href="#icon-chevron-right" xlink:href="#icon-chevron-right"></use></svg>
               </button>
             </div>
           </div>
@@ -62,7 +106,7 @@
     </div>
 
     <div class="annotation-popover hidden" id="annotation-popover">
-      <i class="fa-solid fa-highlighter"></i>
+      <svg class="icon" aria-hidden="true"><use href="#icon-highlighter" xlink:href="#icon-highlighter"></use></svg>
       <span>Annotate</span>
     </div>
 
@@ -71,7 +115,7 @@
         <header>
           <h2 id="annotation-modal-title">Add annotation</h2>
           <button class="close-modal" type="button" aria-label="Close annotation modal">
-            <i class="fa-solid fa-xmark"></i>
+            <svg class="icon" aria-hidden="true"><use href="#icon-xmark" xlink:href="#icon-xmark"></use></svg>
           </button>
         </header>
         <div>
@@ -98,7 +142,7 @@
         />
         <div class="img-overlay"></div>
         <div class="bg-content centered-text">
-          <div class="badge"><i class="fa-solid fa-feather"></i><span>{{deckTitle}}</span></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="#icon-feather" xlink:href="#icon-feather"></use></svg><span>{{deckTitle}}</span></div>
           <h1>{{title}}</h1>
         </div>
       </div>
@@ -209,7 +253,7 @@
               <div class="matching-options">
                 {{#each options}}
                   <button type="button" data-option-index="{{@index}}">
-                    <i class="fa-solid fa-link"></i>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-link" xlink:href="#icon-link"></use></svg>
                     <span>{{this}}</span>
                   </button>
                 {{/each}}
@@ -355,7 +399,7 @@
         <p class="subtitle">{{instruction}}</p>
         <div class="card">
           <h3 class="subtitle">Word box</h3>
-          <div class="badge"><i class="fa-solid fa-book"></i><span>{{join wordBox ', '}}</span></div>
+          <div class="badge"><svg class="icon" aria-hidden="true"><use href="#icon-book" xlink:href="#icon-book"></use></svg><span>{{join wordBox ', '}}</span></div>
         </div>
         <div class="card">
           <p>{{sentence}}</p>
@@ -426,11 +470,11 @@
           <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <div class="audio-block">
-            <div class="audio-icon"><i class="fa-solid fa-headphones"></i></div>
+            <div class="audio-icon"><svg class="icon" aria-hidden="true"><use href="#icon-headphones" xlink:href="#icon-headphones"></use></svg></div>
             <div>
               <img src="{{image}}" alt="{{#if imageAlt}}{{imageAlt}}{{else}}Listening prompt{{/if}}" />
               <p>{{text}}</p>
-              <div class="icon-label"><i class="fa-solid fa-play"></i><span>{{audioFile}}</span></div>
+              <div class="icon-label"><svg class="icon" aria-hidden="true"><use href="#icon-play" xlink:href="#icon-play"></use></svg><span>{{audioFile}}</span></div>
             </div>
           </div>
         </div>

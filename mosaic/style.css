@@ -83,6 +83,75 @@ body {
   overflow-y: auto;
 }
 
+svg.icon,
+.icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: middle;
+}
+
+.icon use {
+  fill: currentColor;
+}
+
+.toolbar-brand .brand-mark .icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.btn-export .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.slide-nav .icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.annotation-popover .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.annotation-modal .close-modal {
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  transition: background-color 150ms ease;
+}
+
+.annotation-modal .close-modal:hover {
+  background: color-mix(in srgb, var(--secondary-sage) 20%, transparent);
+  color: var(--deep-forest);
+}
+
+.annotation-modal .close-modal .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.badge .icon,
+.icon-label .icon,
+.matching-options .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.audio-block .audio-icon .icon {
+  width: 3rem;
+  height: 3rem;
+}
+
 body.modal-open {
   overflow: hidden;
 }
@@ -151,13 +220,15 @@ body.modal-open {
   box-shadow: var(--shadow-1);
 }
 
-.presentation-selector i {
+.presentation-selector .icon {
   position: absolute;
   right: 0.9rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--primary-sage);
   pointer-events: none;
+  width: 0.85rem;
+  height: 0.85rem;
 }
 
 .toolbar-actions {
@@ -603,6 +674,9 @@ hr.divider {
   text-align: left;
   cursor: pointer;
   transition: transform 150ms ease, box-shadow 150ms ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .matching-options button:hover {
@@ -708,8 +782,20 @@ input[type="text"]:focus {
   gap: var(--space-3);
 }
 
+.checklist-items li {
+  list-style: none;
+  position: relative;
+  padding-left: 1.75rem;
+}
+
 .checklist-items li::before {
-  content: "\f061";
+  content: "▸";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--primary-sage);
+  font-weight: 700;
 }
 
 .definition-list {
@@ -1010,14 +1096,6 @@ input[type="text"]:focus {
 .annotation-modal h2 {
   margin: 0;
   font-size: var(--font-size-lg);
-}
-
-.annotation-modal .close-modal {
-  border: none;
-  background: transparent;
-  font-size: 1.4rem;
-  color: var(--ink-muted);
-  cursor: pointer;
 }
 
 .color-palette {
