@@ -214,6 +214,15 @@
     ]
   };
 
+  const lessonSelectorId = 'b2-1-1-strategic-planning';
+
   window.MOSAIC_PRESENTATIONS = window.MOSAIC_PRESENTATIONS || {};
   window.MOSAIC_PRESENTATIONS[presentation.id] = presentation;
+
+  if (!window.MOSAIC_PRESENTATIONS[lessonSelectorId]) {
+    const aliasPresentation = JSON.parse(JSON.stringify(presentation));
+    aliasPresentation.id = lessonSelectorId;
+    aliasPresentation.selectorLabel = lessonSelectorId;
+    window.MOSAIC_PRESENTATIONS[lessonSelectorId] = aliasPresentation;
+  }
 })();
