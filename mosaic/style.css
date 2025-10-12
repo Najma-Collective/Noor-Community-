@@ -193,7 +193,7 @@ body.modal-open {
   min-height: max(80vh, calc(100dvh - var(--toolbar-h)));
   padding: var(--workspace-pad);
   margin: 0 auto;
-  width: min(90vw, 1600px);
+  width: clamp(320px, 96vw, 2400px);
   box-sizing: border-box;
   overflow: visible;
   background:
@@ -268,14 +268,18 @@ body.modal-open {
 ----------------------------------*/
 .slide-stage {
   --stage-max-height: calc(100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2));
-  --stage-horizontal-target: clamp(360px, calc(100vw - (var(--workspace-pad) * 2)), 1320px);
+  --stage-horizontal-target: clamp(
+    360px,
+    min(calc(100vw - (var(--workspace-pad) * 2)), calc(100vw * 0.82)),
+    calc(var(--stage-max-height) * (var(--slide-aspect-w) / var(--slide-aspect-h)))
+  );
   position: relative;
   border-radius: var(--stage-radius);
   background-color: var(--soft-white);
   box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
   aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
   width: min(100%, var(--stage-horizontal-target));
-  max-width: min(100%, calc(var(--stage-max-height) * (var(--slide-aspect-w) / var(--slide-aspect-h))));
+  max-width: var(--stage-horizontal-target);
   max-height: var(--stage-max-height);
   overflow: hidden;
   outline: 1px solid var(--border-sage);
@@ -352,6 +356,20 @@ body.modal-open {
   width: 100%;
   min-height: 0;
   align-items: start;
+}
+
+.image-response-layout .grid-container {
+  grid-template-columns: minmax(320px, 5fr) minmax(420px, 7fr);
+  gap: clamp(20px, 3vw, 56px);
+  align-items: stretch;
+}
+
+.image-response-layout .card.card-full-height {
+  padding: clamp(var(--space-5), 2.4vw, var(--space-7));
+}
+
+.image-response-layout .response-box {
+  min-height: clamp(150px, 28vh, 280px);
 }
 
 /* Grid Column Spans */
