@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Noor Community Mosaic Slides</title>
+    <meta name="pexels-api-key" content="" data-env="PEXELS_API_KEY" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet" />
@@ -39,7 +40,7 @@
         </div>
       </header>
       <main class="deck-workspace">
-        <div class="workspace-grid">
+        <div class="workspace-grid grid-container">
           <div class="stage-wrapper">
             <div class="stage-viewport">
               <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous slide">
@@ -90,7 +91,11 @@
     <!-- Handlebars Templates -->
     <script id="hero-title-template" type="text/x-handlebars-template">
       <div class="slide-inner full-width-bg hero-title-layout">
-        <img class="img-bg" src="{{backgroundImage}}" alt="Background image for {{title}}" />
+        <img
+          class="img-bg"
+          src="{{backgroundImage}}"
+          alt="{{#if backgroundImageAlt}}{{backgroundImageAlt}}{{else}}Background image for {{title}}{{/if}}"
+        />
         <div class="img-overlay"></div>
         <div class="bg-content centered-text">
           <div class="badge"><i class="fa-solid fa-feather"></i><span>{{deckTitle}}</span></div>
@@ -222,7 +227,10 @@
         <div class="image-row">
           {{#each images}}
             <figure>
-              <img src="{{this}}" alt="Matching prompt image {{@index}}" />
+              <img
+                src="{{this}}"
+                alt="{{#if ../imageAltTexts}}{{lookup ../imageAltTexts @index}}{{else}}Matching prompt image {{@index}}{{/if}}"
+              />
             </figure>
           {{/each}}
         </div>
@@ -241,7 +249,10 @@
         <div class="storyboard-grid">
           {{#each images}}
             <div class="storyboard-card">
-              <img src="{{this}}" alt="Storyboard image {{@index}}" />
+              <img
+                src="{{this}}"
+                alt="{{#if ../imageAltTexts}}{{lookup ../imageAltTexts @index}}{{else}}Storyboard image {{@index}}{{/if}}"
+              />
               <textarea data-field-key="slide-{{_slideIndex}}-storyboard-{{@index}}" name="storyboard-{{_slideIndex}}-{{@index}}" placeholder="Describe this scene"></textarea>
             </div>
           {{/each}}
@@ -260,7 +271,7 @@
           </div>
           <div class="col-span-6">
             <div class="card card-full-height">
-              <img src="{{image}}" alt="Prompt image" />
+              <img src="{{image}}" alt="{{#if imageAlt}}{{imageAlt}}{{else}}Prompt image{{/if}}" />
             </div>
           </div>
         </div>
@@ -272,7 +283,7 @@
         <div class="grid-container">
           <div class="col-span-5">
             <div class="card card-full-height">
-              <img src="{{image}}" alt="Prompt for response" />
+              <img src="{{image}}" alt="{{#if imageAlt}}{{imageAlt}}{{else}}Prompt for response{{/if}}" />
             </div>
           </div>
           <div class="col-span-7">
@@ -294,7 +305,10 @@
         <div class="storyboard-grid">
           {{#each images}}
             <figure>
-              <img src="{{this}}" alt="Storyboard panel {{alphabet @index}}" />
+              <img
+                src="{{this}}"
+                alt="{{#if ../imageAltTexts}}{{lookup ../imageAltTexts @index}}{{else}}Storyboard panel {{alphabet @index}}{{/if}}"
+              />
               <figcaption class="caption">{{alphabet @index}}.</figcaption>
             </figure>
           {{/each}}
@@ -313,7 +327,7 @@
           </div>
           <div class="col-span-6">
             <div class="card card-full-height">
-              <img src="{{image}}" alt="Reporting prompt" />
+              <img src="{{image}}" alt="{{#if imageAlt}}{{imageAlt}}{{else}}Reporting prompt{{/if}}" />
             </div>
           </div>
         </div>
@@ -387,7 +401,11 @@
 
     <script id="stacked-labels-template" type="text/x-handlebars-template">
       <div class="slide-inner full-width-bg stacked-labels-layout">
-        <img class="img-bg" src="{{backgroundImage}}" alt="Background visual" />
+        <img
+          class="img-bg"
+          src="{{backgroundImage}}"
+          alt="{{#if backgroundImageAlt}}{{backgroundImageAlt}}{{else}}Background visual{{/if}}"
+        />
         <div class="img-overlay"></div>
         <div class="bg-content">
           <div class="labels-stack">
@@ -410,7 +428,7 @@
           <div class="audio-block">
             <div class="audio-icon"><i class="fa-solid fa-headphones"></i></div>
             <div>
-              <img src="{{image}}" alt="Listening prompt" />
+              <img src="{{image}}" alt="{{#if imageAlt}}{{imageAlt}}{{else}}Listening prompt{{/if}}" />
               <p>{{text}}</p>
               <div class="icon-label"><i class="fa-solid fa-play"></i><span>{{audioFile}}</span></div>
             </div>
@@ -561,6 +579,17 @@
       </div>
     </script>
 
+    <script>
+      window.__PEXELS_API_KEY__ =
+        window.__PEXELS_API_KEY__ ||
+        (typeof process !== 'undefined' && process.env && process.env.PEXELS_API_KEY
+          ? process.env.PEXELS_API_KEY
+          : typeof PEXELS_API_KEY !== 'undefined'
+            ? PEXELS_API_KEY
+            : undefined);
+    </script>
+    <script src="overflow-monitor.js" defer></script>
+    <script src="pexelsService.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>

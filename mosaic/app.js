@@ -8,6 +8,7 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/building-cv-hero.svg',
+            backgroundImageQuery: 'professional resume workspace flatlay',
             title: 'Building a CV'
           }
         },
@@ -70,7 +71,8 @@
           content: {
             title: 'Personal Branding',
             instruction: 'Note two ways to express your personality professionally.',
-            image: 'assets/images/cv-profile.svg'
+            image: 'assets/images/cv-profile.svg',
+            imageQuery: 'confident professional portrait smiling in office'
           }
         },
         {
@@ -108,6 +110,7 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/tourism-hero.svg',
+            backgroundImageQuery: 'sunrise over bustling market in morocco',
             title: 'Tourism & Storytelling'
           }
         },
@@ -123,7 +126,8 @@
           content: {
             title: 'Warm-up',
             instruction: 'What details make this marketplace unforgettable?',
-            image: 'assets/images/tourism-market.svg'
+            image: 'assets/images/tourism-market.svg',
+            imageQuery: 'colorful market street with people and spices'
           }
         },
         {
@@ -135,6 +139,11 @@
               'assets/images/tourism-story-1.svg',
               'assets/images/tourism-story-2.svg',
               'assets/images/tourism-story-3.svg'
+            ],
+            imageQueries: [
+              'tour guide pointing at sunrise in mountains',
+              'travelers tasting spices at market stall',
+              'friends taking photo while laughing in city'
             ],
             sentences: [
               'The guide points to the horizon as the sun rises.',
@@ -153,6 +162,12 @@
               'assets/images/tourism-story-2.svg',
               'assets/images/tourism-story-3.svg',
               'assets/images/tourism-story-4.svg'
+            ],
+            imageQueries: [
+              'travel group exploring old city street',
+              'local vendor serving tea to tourists',
+              'family admiring scenic overlook at sunset',
+              'night market with string lights and performers'
             ]
           }
         },
@@ -171,6 +186,7 @@
             title: 'Listen & Note',
             instruction: 'Imagine you hear a guide welcoming visitors. Capture two key points.',
             image: 'assets/images/tourism-guide.svg',
+            imageQuery: 'tour guide smiling with microphone welcoming guests',
             text: '“Welcome back! Today we explore the hidden alleys, sample sweet saffron tea, and learn a phrase locals love.”',
             audioFile: 'assets/audio/tour-guide.mp3'
           }
@@ -192,7 +208,8 @@
           content: {
             title: 'Ready to Report Back',
             instruction: 'Use the image to guide your storytelling summary.',
-            image: 'assets/images/tourism-guide.svg'
+            image: 'assets/images/tourism-guide.svg',
+            imageQuery: 'traveler sharing story with group in plaza'
           }
         }
       ]
@@ -205,6 +222,7 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/directions-hero.svg',
+            backgroundImageQuery: 'city map navigation with people asking directions',
             title: 'How to Give Directions'
           }
         },
@@ -239,7 +257,8 @@
           content: {
             title: 'Try It Out',
             instruction: 'Write two sentences to guide a visitor from the star to the cafe.',
-            image: 'assets/images/city-map.svg'
+            image: 'assets/images/city-map.svg',
+            imageQuery: 'illustrated city map with location pins'
           }
         }
       ]
@@ -284,6 +303,88 @@
   let annotationDraft = null;
 
   const templateCache = {};
+
+  function getPexelsService() {
+    if (window.PexelsService && typeof window.PexelsService.fetchImage === 'function') {
+      return window.PexelsService;
+    }
+    return null;
+  }
+
+  async function resolveSlideMedia(slide, presentation) {
+    const resolvedContent = { ...slide.content };
+    const service = getPexelsService();
+    if (!service) {
+      return { ...slide, content: resolvedContent };
+    }
+
+    const baseTitle = resolvedContent.title || presentation.deckTitle;
+
+    try {
+      if (resolvedContent.backgroundImageQuery) {
+        const media = await service.fetchImage(resolvedContent.backgroundImageQuery, {
+          orientation: 'landscape',
+          size: 'large'
+        });
+        if (media && media.url) {
+          resolvedContent.backgroundImage = media.url;
+          resolvedContent.backgroundImageAlt = media.alt || `Background visual for ${baseTitle}`;
+          resolvedContent.backgroundImageCredit = media.photographer || '';
+        }
+      }
+
+      if (resolvedContent.imageQuery) {
+        const media = await service.fetchImage(resolvedContent.imageQuery, {
+          orientation: 'landscape',
+          size: 'large'
+        });
+        if (media && media.url) {
+          resolvedContent.image = media.url;
+          resolvedContent.imageAlt = media.alt || `Supporting visual for ${baseTitle}`;
+          resolvedContent.imageCredit = media.photographer || '';
+        }
+      }
+
+      if (Array.isArray(resolvedContent.imageQueries) && resolvedContent.imageQueries.length) {
+        const results = await service.fetchImages(resolvedContent.imageQueries, {
+          orientation: 'landscape',
+          size: 'large'
+        });
+        if (Array.isArray(results) && results.length === resolvedContent.imageQueries.length) {
+          const urls = [];
+          const alts = [];
+          const credits = [];
+          results.forEach((media, index) => {
+            if (!media || !media.url) {
+              return;
+            }
+            urls.push(media.url);
+            alts.push(media.alt || `Visual ${index + 1} for ${baseTitle}`);
+            credits.push(media.photographer || '');
+          });
+          if (urls.length) {
+            resolvedContent.images = urls;
+            resolvedContent.imageAltTexts = alts;
+            resolvedContent.imageCredits = credits;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Unable to enrich slide media from Pexels', error);
+    }
+
+    return { ...slide, content: resolvedContent };
+  }
+
+  function monitorSlideOverflow(slideElement) {
+    if (!slideElement || !window.OverflowMonitor) {
+      return;
+    }
+    const candidates = slideElement.querySelectorAll(
+      'h1, h2, h3, h4, p, li, .card, .table-layout, textarea, input, .annotation-card, .callout-box'
+    );
+    window.OverflowMonitor.observe(candidates);
+  }
 
   const defaultState = {
     activePresentation: 'buildingCv',
@@ -352,33 +453,54 @@
     return section;
   }
 
-  function renderPresentation(presentation, { preserveSlideIndex = false } = {}) {
-    clearSlides();
-    slides = [];
-    const navAnchor = stageViewport.querySelector('.slide-nav-prev');
-    presentation.slides.forEach((slide, index) => {
-      const context = {
-        ...slide.content,
-        deckTitle: presentation.deckTitle,
-        _slideIndex: index
-      };
-      const section = createSlideSection(slide.layout, context);
-      if (navAnchor) {
-        stageViewport.insertBefore(section, navAnchor);
-      } else {
-        stageViewport.appendChild(section);
+  async function renderPresentation(presentation, { preserveSlideIndex = false } = {}) {
+    stageViewport.classList.add('is-loading');
+    stageViewport.setAttribute('aria-busy', 'true');
+    navPrev.disabled = true;
+    navNext.disabled = true;
+
+    try {
+      const enhancedSlides = await Promise.all(
+        presentation.slides.map(slide => resolveSlideMedia(slide, presentation))
+      );
+
+      clearSlides();
+      slides = [];
+      const navAnchor = stageViewport.querySelector('.slide-nav-prev');
+
+      enhancedSlides.forEach((slide, index) => {
+        const context = {
+          ...slide.content,
+          deckTitle: presentation.deckTitle,
+          _slideIndex: index
+        };
+        const section = createSlideSection(slide.layout, context);
+        if (navAnchor) {
+          stageViewport.insertBefore(section, navAnchor);
+        } else {
+          stageViewport.appendChild(section);
+        }
+        slides.push(section);
+      });
+
+      attachFieldListeners();
+      restoreFieldValues();
+      restoreAnnotationsOnSlides();
+
+      const savedIndex = preserveSlideIndex
+        ? Math.min(state.slides[currentPresentationId] || 0, slides.length - 1)
+        : 0;
+      const initialIndex = savedIndex < 0 ? 0 : savedIndex;
+      showSlide(initialIndex);
+
+      if (window.OverflowMonitor) {
+        window.OverflowMonitor.observe(stageViewport.querySelectorAll('.slide-stage'));
+        window.OverflowMonitor.refresh();
       }
-      slides.push(section);
-    });
-
-    attachFieldListeners();
-    restoreFieldValues();
-    restoreAnnotationsOnSlides();
-
-    const savedIndex = preserveSlideIndex
-      ? Math.min(state.slides[currentPresentationId] || 0, slides.length - 1)
-      : 0;
-    showSlide(savedIndex < 0 ? 0 : savedIndex);
+    } finally {
+      stageViewport.classList.remove('is-loading');
+      stageViewport.removeAttribute('aria-busy');
+    }
   }
 
   function attachFieldListeners() {
@@ -399,6 +521,9 @@
     fieldValues[target.dataset.fieldKey] = target.value;
     state.fields[currentPresentationId] = { ...fieldValues };
     persistState();
+    if (window.OverflowMonitor) {
+      window.OverflowMonitor.check(target);
+    }
   }
 
   function handleFieldChange(event) {
@@ -417,6 +542,9 @@
     }
     state.fields[currentPresentationId] = { ...fieldValues };
     persistState();
+    if (window.OverflowMonitor) {
+      window.OverflowMonitor.check(target);
+    }
   }
 
   function restoreFieldValues() {
@@ -457,6 +585,10 @@
     persistState();
     renderAnnotationsPanel();
     drawConnectors();
+    monitorSlideOverflow(slides[clampedIndex]);
+    if (window.OverflowMonitor) {
+      window.OverflowMonitor.refresh();
+    }
   }
 
   function nextSlide() {
@@ -642,6 +774,9 @@
       annotationEmpty.style.display = 'block';
       annotationList.innerHTML = '';
       drawConnectors();
+      if (window.OverflowMonitor) {
+        window.OverflowMonitor.refresh();
+      }
       return;
     }
     const visibleAnnotations = annotations.filter(item => item.slideIndex === currentSlideIndex);
@@ -649,6 +784,9 @@
       annotationEmpty.style.display = 'block';
       annotationList.innerHTML = '';
       drawConnectors();
+      if (window.OverflowMonitor) {
+        window.OverflowMonitor.refresh();
+      }
       return;
     }
     annotationEmpty.style.display = 'none';
@@ -667,7 +805,14 @@
       card.addEventListener('mouseenter', () => highlightAnnotation(annotation.id, true));
       card.addEventListener('mouseleave', () => highlightAnnotation(annotation.id, false));
       annotationList.appendChild(card);
+      if (window.OverflowMonitor) {
+        window.OverflowMonitor.observe(card);
+      }
     });
+
+    if (window.OverflowMonitor) {
+      window.OverflowMonitor.refresh();
+    }
   }
 
   function highlightAnnotation(annotationId, isActive) {
@@ -765,7 +910,7 @@
     });
   }
 
-  function switchPresentation(presentationId) {
+  async function switchPresentation(presentationId) {
     currentPresentationId = presentationId;
     presentationSelector.value = presentationId;
     state.activePresentation = presentationId;
@@ -773,7 +918,7 @@
     annotations = [...(state.annotations[presentationId] || [])];
     persistState();
     const presentation = presentations[presentationId];
-    renderPresentation(presentation, { preserveSlideIndex: true });
+    await renderPresentation(presentation, { preserveSlideIndex: true });
   }
 
   function initializeAnnotationInteractions() {
@@ -816,11 +961,13 @@
   function initializePresentationSelector() {
     populatePresentationSelector();
     presentationSelector.addEventListener('change', event => {
-      switchPresentation(event.target.value);
+      switchPresentation(event.target.value).catch(error => {
+        console.error('Failed to switch presentation', error);
+      });
     });
   }
 
-  function initialize() {
+  async function initialize() {
     initializeAnnotationInteractions();
     initializeNavigation();
     initializeExport();
@@ -830,8 +977,12 @@
     const startPresentation = state.activePresentation && presentations[state.activePresentation]
       ? state.activePresentation
       : 'buildingCv';
-    switchPresentation(startPresentation);
+    await switchPresentation(startPresentation);
   }
 
-  document.addEventListener('DOMContentLoaded', initialize);
+  document.addEventListener('DOMContentLoaded', () => {
+    initialize().catch(error => {
+      console.error('Failed to initialise Mosaic', error);
+    });
+  });
 })();
