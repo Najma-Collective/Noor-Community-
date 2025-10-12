@@ -57,7 +57,7 @@
         font-size: var(--step-0);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
-        overflow: hidden;
+        overflow: auto;
       }
 
       .deck-app {
@@ -131,8 +131,10 @@
         position: absolute;
         inset: 0;
         padding: var(--stage-pad);
-        display: grid;
-        place-content: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
         gap: 1.25rem;
         overflow-y: auto;
         scrollbar-gutter: stable both-edges;
