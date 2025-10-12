@@ -26,16 +26,13 @@ css
   --font-display: 'Questrial', system-ui, -apple-system, sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
 
-  /* Typography Adjustment */
-  --font-reduction: 0.4167rem; /* ≈5pt */
-
   /* Typographic Scale */
-  --font-size-sm: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) - var(--font-reduction));
-  --font-size-base: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) - var(--font-reduction));
-  --font-size-md: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) - var(--font-reduction));
-  --font-size-lg: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) - var(--font-reduction));
-  --font-size-xl: calc(clamp(1.8rem, 1.1rem + 2vw, 3rem) - var(--font-reduction));
-  --font-size-xxl: calc(clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem) - var(--font-reduction));
+  --font-size-sm: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
+  --font-size-base: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
+  --font-size-md: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+  --font-size-lg: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+  --font-size-xl: clamp(1.8rem, 1.1rem + 2vw, 3rem);
+  --font-size-xxl: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem);
 
   /* Spacing */
   --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
@@ -100,7 +97,7 @@ html, body {
   align-items: center;
   gap: var(--space-3);
   font-family: var(--font-display);
-  font-size: calc(1.05rem - var(--font-reduction));
+  font-size: 1.05rem;
   color: var(--forest-shadow);
 }
 
@@ -141,7 +138,7 @@ html, body {
     calc(100vw - (var(--workspace-pad) * 2))
   );
   max-width: 100%;
-  overflow: hidden auto;
+  overflow: hidden;
   outline: 1px solid var(--border-sage);
   transition: opacity 300ms ease-in-out;
 }
@@ -158,11 +155,7 @@ html, body {
   padding: var(--stage-pad);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: var(--space-6);
-  overflow-y: auto;
-  scrollbar-gutter: stable both-edges;
+  justify-content: center;
 }
 
 .slide-nav {
@@ -242,7 +235,7 @@ html, body {
 }
 
 .card .icon {
-  font-size: calc(1.8rem - var(--font-reduction));
+  font-size: 1.8rem;
   color: var(--primary-sage);
   margin-bottom: var(--space-3);
 }
@@ -330,7 +323,6 @@ hr.divider {
 .subtitle { color: var(--primary-sage); }
 .text-highlight { color: var(--primary-sage); font-weight: 700; }
 .centered-text { text-align: center; }
-.slide-inner.centered-text { align-items: center; }
 
 
 /* -------------------------------
