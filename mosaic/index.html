@@ -25,7 +25,7 @@
           <span class="brand-mark"><i class="fa-solid fa-seedling"></i></span>
           <span class="brand-text">Noor Community Mosaic</span>
         </div>
-        <div class="section-counter" aria-live="polite">Section 0 / 0</div>
+        <div class="slide-counter" aria-live="polite">0 / 0</div>
         <div class="presentation-selector">
           <label for="presentation-selector" class="visually-hidden">Choose presentation</label>
           <select id="presentation-selector"></select>
@@ -40,26 +40,21 @@
       </header>
       <main class="deck-workspace">
         <div class="workspace-grid">
-          <div class="stage-wrapper stage-column">
+          <div class="stage-wrapper">
             <div class="stage-viewport">
-              <div class="section-stack" id="section-stack" aria-live="polite"></div>
+              <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous slide">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="slide-nav slide-nav-next" type="button" aria-label="Next slide">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
             </div>
           </div>
-          <aside id="annotation-panel" class="annotation-column" aria-label="Annotations">
-            <div class="annotation-panel-header">
-              <h3 class="heading-with-icon">
-                <i class="fa-solid fa-note-sticky" aria-hidden="true"></i>
-                <span>Annotations</span>
-              </h3>
-              <p class="annotation-panel-subtitle">Highlight text on a slide to curate quick notes.</p>
-            </div>
+          <aside id="annotation-panel">
+            <h3>Annotations</h3>
             <div class="annotation-empty-state" id="annotation-empty">Highlight text on any slide to collect notes here.</div>
             <div id="annotation-list"></div>
           </aside>
-        </div>
-        <div class="workspace-loading" aria-hidden="true">
-          <i class="fa-solid fa-circle-notch fa-spin"></i>
-          <span>Refreshing media</span>
         </div>
         <svg class="annotation-connector-layer" xmlns="http://www.w3.org/2000/svg"></svg>
       </main>
@@ -98,10 +93,8 @@
         <img class="img-bg" src="{{backgroundImage}}" alt="Background image for {{title}}" />
         <div class="img-overlay"></div>
         <div class="bg-content centered-text">
-          <div class="image-text-panel image-text-panel--center">
-            <div class="badge"><i class="fa-solid fa-feather"></i><span>{{deckTitle}}</span></div>
-            <h1>{{title}}</h1>
-          </div>
+          <div class="badge"><i class="fa-solid fa-feather"></i><span>{{deckTitle}}</span></div>
+          <h1>{{title}}</h1>
         </div>
       </div>
     </script>
@@ -118,10 +111,7 @@
     <script id="framed-list-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-list-check" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p>{{introText}}</p>
           <ul>
             {{#each listItems}}
@@ -147,10 +137,7 @@
     <script id="discussion-table-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-comments" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{subtitle}}</p>
           <table class="table-layout">
             <thead>
@@ -177,10 +164,7 @@
     <script id="analysis-table-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <table class="table-layout">
             <thead>
@@ -209,20 +193,14 @@
         <div class="grid-container">
           <div class="col-span-6 align-self-start">
             <div class="card card-full-height">
-              <h2 class="heading-with-icon">
-                <i class="fa-solid fa-route" aria-hidden="true"></i>
-                <span>{{title}}</span>
-              </h2>
+              <h2>{{title}}</h2>
               <p class="subtitle">{{instruction}}</p>
               <div class="callout-box">{{{stimulusHTML}}}</div>
             </div>
           </div>
           <div class="col-span-6 align-self-start">
             <div class="card card-full-height">
-              <h3 class="subtitle heading-with-icon">
-                <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
-                <span>Match the options</span>
-              </h3>
+              <h3 class="subtitle">Match the options</h3>
               <div class="matching-options">
                 {{#each options}}
                   <button type="button" data-option-index="{{@index}}">
@@ -239,10 +217,7 @@
 
     <script id="image-matching-horizontal-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-object-group" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="image-row">
           {{#each images}}
@@ -261,10 +236,7 @@
 
     <script id="storyboard-creator-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-clapperboard" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="storyboard-grid">
           {{#each images}}
@@ -282,10 +254,7 @@
         <div class="grid-container">
           <div class="col-span-6">
             <div class="card card-full-height">
-              <h2 class="heading-with-icon">
-                <i class="fa-solid fa-camera-retro" aria-hidden="true"></i>
-                <span>{{title}}</span>
-              </h2>
+              <h2>{{title}}</h2>
               <p>{{instruction}}</p>
             </div>
           </div>
@@ -308,10 +277,7 @@
           </div>
           <div class="col-span-7">
             <div class="card card-full-height">
-              <h2 class="heading-with-icon">
-                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-                <span>{{title}}</span>
-              </h2>
+              <h2>{{title}}</h2>
               <p class="subtitle">{{instruction}}</p>
               <textarea class="response-box" data-field-key="slide-{{_slideIndex}}-response-0" name="response-{{_slideIndex}}" placeholder="Write your response"></textarea>
               <textarea class="response-box" data-field-key="slide-{{_slideIndex}}-response-1" name="response-{{_slideIndex}}-1" placeholder="Add another idea"></textarea>
@@ -323,10 +289,7 @@
 
     <script id="storyboard-display-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="storyboard-grid">
           {{#each images}}
@@ -344,10 +307,7 @@
         <div class="grid-container">
           <div class="col-span-6">
             <div class="card card-full-height">
-              <h2 class="heading-with-icon">
-                <i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>
-                <span>{{title}}</span>
-              </h2>
+              <h2>{{title}}</h2>
               <p>{{instruction}}</p>
             </div>
           </div>
@@ -377,10 +337,7 @@
 
     <script id="gap-fill-exercise-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-spell-check" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="card">
           <h3 class="subtitle">Word box</h3>
@@ -396,10 +353,7 @@
     <script id="multiple-choice-question-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <p>{{question}}</p>
           <div class="matching-options">
@@ -416,10 +370,7 @@
 
     <script id="sentence-scramble-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-braille" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <ol>
           {{#each scrambledSentences}}
@@ -439,15 +390,13 @@
         <img class="img-bg" src="{{backgroundImage}}" alt="Background visual" />
         <div class="img-overlay"></div>
         <div class="bg-content">
-          <div class="image-text-panel image-text-panel--stacked">
-            <div class="labels-stack">
-              {{#each labels}}
-                <div class="label-card">
-                  <span class="badge">{{value}}</span>
-                  <span>{{text}}</span>
-                </div>
-              {{/each}}
-            </div>
+          <div class="labels-stack">
+            {{#each labels}}
+              <div class="label-card">
+                <span class="badge">{{value}}</span>
+                <span>{{text}}</span>
+              </div>
+            {{/each}}
           </div>
         </div>
       </div>
@@ -456,10 +405,7 @@
     <script id="audio-comprehension-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-headphones" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <div class="audio-block">
             <div class="audio-icon"><i class="fa-solid fa-headphones"></i></div>
@@ -476,10 +422,7 @@
     <script id="intonation-practice-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-wave-square" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <ul>
             {{#each sentences}}
@@ -492,10 +435,7 @@
 
     <script id="two-column-details-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         {{#if subtitle}}
           <p class="subtitle">{{subtitle}}</p>
         {{/if}}
@@ -517,10 +457,7 @@
     <script id="checklist-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <ul class="checklist-items">
             {{#each checklistItems}}
@@ -533,10 +470,7 @@
 
     <script id="feedback-columns-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-comments" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="grid-container">
           <div class="col-span-6">
@@ -560,10 +494,7 @@
     <script id="definition-list-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-book-open" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <dl class="definition-list">
             {{#each items}}
@@ -579,10 +510,7 @@
 
     <script id="three-column-reflection-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-people-group" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="reflection-columns">
           {{#each questions}}
@@ -597,10 +525,7 @@
 
     <script id="star-wish-reflection-template" type="text/x-handlebars-template">
       <div class="slide-inner">
-        <h2 class="heading-with-icon">
-          <i class="fa-solid fa-star" aria-hidden="true"></i>
-          <span>{{title}}</span>
-        </h2>
+        <h2>{{title}}</h2>
         <p class="subtitle">{{instruction}}</p>
         <div class="star-wish-grid">
           <div class="card">
@@ -625,10 +550,7 @@
     <script id="task-preparation-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="card card-full-height">
-          <h2 class="heading-with-icon">
-            <i class="fa-solid fa-compass-drafting" aria-hidden="true"></i>
-            <span>{{title}}</span>
-          </h2>
+          <h2>{{title}}</h2>
           <p class="subtitle">{{instruction}}</p>
           <ol class="steps-list">
             {{#each steps}}

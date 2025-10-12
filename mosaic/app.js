@@ -1,7 +1,4 @@
 (() => {
-  const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
-  const PEXELS_ENDPOINT = 'https://api.pexels.com/v1/search';
-
   const presentations = {
     buildingCv: {
       id: 'buildingCv',
@@ -11,8 +8,6 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/building-cv-hero.svg',
-            backgroundQuery: 'minimalist resume workspace with laptop and plants',
-            backgroundOrientation: 'landscape',
             title: 'Building a CV'
           }
         },
@@ -75,9 +70,7 @@
           content: {
             title: 'Personal Branding',
             instruction: 'Note two ways to express your personality professionally.',
-            image: 'assets/images/cv-profile.svg',
-            imageQuery: 'confident young professional portrait smiling',
-            imageOrientation: 'portrait'
+            image: 'assets/images/cv-profile.svg'
           }
         },
         {
@@ -115,8 +108,6 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/tourism-hero.svg',
-            backgroundQuery: 'vibrant travel storytelling city skyline at sunset',
-            backgroundOrientation: 'landscape',
             title: 'Tourism & Storytelling'
           }
         },
@@ -132,9 +123,7 @@
           content: {
             title: 'Warm-up',
             instruction: 'What details make this marketplace unforgettable?',
-            image: 'assets/images/tourism-market.svg',
-            imageQuery: 'colorful street market in middle east with spices',
-            imageOrientation: 'landscape'
+            image: 'assets/images/tourism-market.svg'
           }
         },
         {
@@ -147,12 +136,6 @@
               'assets/images/tourism-story-2.svg',
               'assets/images/tourism-story-3.svg'
             ],
-            imageQueries: [
-              'tour guide pointing at sunrise with tourists',
-              'travelers sampling spices at colorful bazaar',
-              'friends laughing taking travel photo city square'
-            ],
-            imageOrientation: 'landscape',
             sentences: [
               'The guide points to the horizon as the sun rises.',
               'Travellers pause to taste a new spice at the stall.',
@@ -170,14 +153,7 @@
               'assets/images/tourism-story-2.svg',
               'assets/images/tourism-story-3.svg',
               'assets/images/tourism-story-4.svg'
-            ],
-            imageQueries: [
-              'sunrise city skyline with guide and travelers',
-              'market vendor sharing spices with visitors',
-              'friends taking selfies on travel adventure',
-              'evening boat ride on river through city lights'
-            ],
-            imageOrientation: 'square'
+            ]
           }
         },
         {
@@ -195,8 +171,6 @@
             title: 'Listen & Note',
             instruction: 'Imagine you hear a guide welcoming visitors. Capture two key points.',
             image: 'assets/images/tourism-guide.svg',
-            imageQuery: 'tour guide speaking enthusiastically to group',
-            imageOrientation: 'portrait',
             text: '“Welcome back! Today we explore the hidden alleys, sample sweet saffron tea, and learn a phrase locals love.”',
             audioFile: 'assets/audio/tour-guide.mp3'
           }
@@ -218,9 +192,7 @@
           content: {
             title: 'Ready to Report Back',
             instruction: 'Use the image to guide your storytelling summary.',
-            image: 'assets/images/tourism-guide.svg',
-            imageQuery: 'storyteller guiding tourists through historic city',
-            imageOrientation: 'portrait'
+            image: 'assets/images/tourism-guide.svg'
           }
         }
       ]
@@ -233,8 +205,6 @@
           layout: 'hero-title',
           content: {
             backgroundImage: 'assets/images/directions-hero.svg',
-            backgroundQuery: 'city map navigation with people asking directions',
-            backgroundOrientation: 'landscape',
             title: 'How to Give Directions'
           }
         },
@@ -269,9 +239,7 @@
           content: {
             title: 'Try It Out',
             instruction: 'Write two sentences to guide a visitor from the star to the cafe.',
-            image: 'assets/images/city-map.svg',
-            imageQuery: 'illustrated city map with cafe destination',
-            imageOrientation: 'square'
+            image: 'assets/images/city-map.svg'
           }
         }
       ]
@@ -288,9 +256,10 @@
   ];
 
   const stageViewport = document.querySelector('.stage-viewport');
-  const sectionStack = document.getElementById('section-stack');
+  const navPrev = stageViewport.querySelector('.slide-nav-prev');
+  const navNext = stageViewport.querySelector('.slide-nav-next');
   const connectorLayer = document.querySelector('.annotation-connector-layer');
-  const slideCounterEl = document.querySelector('.section-counter');
+  const slideCounterEl = document.querySelector('.slide-counter');
   const annotationPanel = document.getElementById('annotation-panel');
   const annotationList = document.getElementById('annotation-list');
   const annotationEmpty = document.getElementById('annotation-empty');
@@ -303,7 +272,6 @@
   const presentationSelector = document.getElementById('presentation-selector');
   const exportButton = document.querySelector('.btn-export');
   const workspaceGrid = document.querySelector('.workspace-grid');
-  const workspaceLoading = document.querySelector('.workspace-loading');
 
   let slides = [];
   let currentSlideIndex = 0;
@@ -314,12 +282,8 @@
   let selectedColor = COLOR_CHOICES[0].value;
   let selectedTextColor = COLOR_CHOICES[0].textColor;
   let annotationDraft = null;
-  let hydrationSequence = 0;
-  let sectionObserver = null;
-  let activeUpdateFrame = null;
 
   const templateCache = {};
-  const mediaCache = new Map();
 
   const defaultState = {
     activePresentation: 'buildingCv',
@@ -361,84 +325,6 @@
     }
   }
 
-  function toggleWorkspaceLoading(isLoading) {
-    if (!workspaceLoading) {
-      return;
-    }
-    workspaceLoading.classList.toggle('is-visible', Boolean(isLoading));
-  }
-
-  async function fetchPexelsImage(query, orientation = 'landscape') {
-    const trimmedQuery = typeof query === 'string' ? query.trim() : '';
-    if (!trimmedQuery || !PEXELS_API_KEY) {
-      return null;
-    }
-    const cacheKey = `${trimmedQuery}|${orientation}`;
-    if (mediaCache.has(cacheKey)) {
-      return mediaCache.get(cacheKey);
-    }
-    try {
-      const response = await fetch(
-        `${PEXELS_ENDPOINT}?query=${encodeURIComponent(trimmedQuery)}&per_page=1&orientation=${orientation}`,
-        {
-          headers: {
-            Authorization: PEXELS_API_KEY
-          }
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`Pexels request failed with status ${response.status}`);
-      }
-      const data = await response.json();
-      const photo = data.photos && data.photos[0];
-      const src = photo && photo.src;
-      const url = src?.landscape || src?.large2x || src?.original || src?.medium || null;
-      mediaCache.set(cacheKey, url);
-      return url;
-    } catch (error) {
-      console.warn(`Unable to fetch Pexels image for "${trimmedQuery}"`, error);
-      mediaCache.set(cacheKey, null);
-      return null;
-    }
-  }
-
-  async function hydratePresentationMedia(presentation) {
-    if (!presentation || !Array.isArray(presentation.slides)) {
-      return;
-    }
-    await Promise.all(presentation.slides.map(slide => hydrateSlideMedia(slide)));
-  }
-
-  async function hydrateSlideMedia(slide) {
-    if (!slide || !slide.content) {
-      return;
-    }
-    const { content } = slide;
-    if (content.backgroundQuery) {
-      const bgUrl = await fetchPexelsImage(content.backgroundQuery, content.backgroundOrientation || 'landscape');
-      if (bgUrl) {
-        content.backgroundImage = bgUrl;
-      }
-    }
-    if (content.imageQuery) {
-      const imageUrl = await fetchPexelsImage(content.imageQuery, content.imageOrientation || 'landscape');
-      if (imageUrl) {
-        content.image = imageUrl;
-      }
-    }
-    if (Array.isArray(content.imageQueries) && content.imageQueries.length) {
-      const orientation = content.imageOrientation || 'square';
-      const results = await Promise.all(
-        content.imageQueries.map(query => fetchPexelsImage(query, orientation))
-      );
-      if (Array.isArray(content.images)) {
-        content.images = content.images.map((fallback, index) => results[index] || fallback);
-      } else {
-        content.images = results.map((result, index) => result || content.imageQueries[index]);
-      }
-    }
-  }
-
   function compileTemplate(layoutName) {
     if (templateCache[layoutName]) {
       return templateCache[layoutName];
@@ -453,17 +339,13 @@
   }
 
   function clearSlides() {
-    const container = sectionStack || stageViewport;
-    if (!container) {
-      return;
-    }
-    container.querySelectorAll('section.slide-stage').forEach(section => section.remove());
+    stageViewport.querySelectorAll('section.slide-stage').forEach(section => section.remove());
   }
 
   function createSlideSection(layout, context) {
     const template = compileTemplate(layout);
     const section = document.createElement('section');
-    section.className = 'slide-stage';
+    section.className = 'slide-stage hidden';
     section.dataset.layout = layout;
     section.dataset.slideIndex = context._slideIndex;
     section.innerHTML = template(context);
@@ -473,10 +355,7 @@
   function renderPresentation(presentation, { preserveSlideIndex = false } = {}) {
     clearSlides();
     slides = [];
-    const container = sectionStack || stageViewport;
-    if (!container) {
-      return;
-    }
+    const navAnchor = stageViewport.querySelector('.slide-nav-prev');
     presentation.slides.forEach((slide, index) => {
       const context = {
         ...slide.content,
@@ -484,23 +363,22 @@
         _slideIndex: index
       };
       const section = createSlideSection(slide.layout, context);
-      container.appendChild(section);
+      if (navAnchor) {
+        stageViewport.insertBefore(section, navAnchor);
+      } else {
+        stageViewport.appendChild(section);
+      }
       slides.push(section);
     });
 
     attachFieldListeners();
     restoreFieldValues();
     restoreAnnotationsOnSlides();
-    setupSectionObserver();
-    renderAnnotationsPanel();
 
     const savedIndex = preserveSlideIndex
       ? Math.min(state.slides[currentPresentationId] || 0, slides.length - 1)
       : 0;
-    if (savedIndex >= 0 && slides[savedIndex]) {
-      scrollToSection(savedIndex, 'auto');
-    }
-    scheduleActiveSectionUpdate(true);
+    showSlide(savedIndex < 0 ? 0 : savedIndex);
   }
 
   function attachFieldListeners() {
@@ -558,97 +436,35 @@
     });
   }
 
-  function scrollToSection(index, behavior = 'smooth') {
-    const target = slides[index];
-    if (!target) {
-      return;
-    }
-    target.scrollIntoView({ behavior, block: 'start', inline: 'nearest' });
-  }
-
-  function scheduleActiveSectionUpdate(force = false) {
-    if (force) {
-      if (activeUpdateFrame) {
-        cancelAnimationFrame(activeUpdateFrame);
-        activeUpdateFrame = null;
-      }
-      updateActiveSection();
-      return;
-    }
-    if (activeUpdateFrame) {
-      return;
-    }
-    activeUpdateFrame = requestAnimationFrame(() => {
-      activeUpdateFrame = null;
-      updateActiveSection();
-    });
-  }
-
-  function setupSectionObserver() {
-    if (sectionObserver) {
-      sectionObserver.disconnect();
-    }
+  function showSlide(index) {
     if (!slides.length) {
-      sectionObserver = null;
-      scheduleActiveSectionUpdate(true);
+      slideCounterEl.textContent = '0 / 0';
       return;
     }
-    sectionObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-        } else if (entry.boundingClientRect.bottom < 0 || entry.boundingClientRect.top > window.innerHeight) {
-          entry.target.classList.remove('is-visible');
-        }
-      });
-      scheduleActiveSectionUpdate();
-    }, { threshold: [0.2, 0.4, 0.6] });
-
-    slides.forEach(section => sectionObserver.observe(section));
-    scheduleActiveSectionUpdate(true);
-  }
-
-  function updateActiveSection() {
-    if (!slides.length) {
-      if (slideCounterEl) {
-        slideCounterEl.textContent = 'Section 0 / 0';
-      }
-      currentSlideIndex = 0;
-      renderAnnotationsPanel();
-      drawConnectors();
-      return;
-    }
-
-    const viewportMiddle = window.innerHeight / 2;
-    let bestIndex = 0;
-    let bestDistance = Number.POSITIVE_INFINITY;
-
-    slides.forEach((section, index) => {
-      const rect = section.getBoundingClientRect();
-      if (rect.width === 0 && rect.height === 0) {
-        return;
-      }
-      const sectionMiddle = rect.top + rect.height / 2;
-      const distance = Math.abs(sectionMiddle - viewportMiddle);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestIndex = index;
+    const clampedIndex = Math.max(0, Math.min(index, slides.length - 1));
+    slides.forEach((slide, idx) => {
+      if (idx === clampedIndex) {
+        slide.classList.remove('hidden');
+      } else {
+        slide.classList.add('hidden');
       }
     });
-
-    const hasChanged = bestIndex !== currentSlideIndex;
-    currentSlideIndex = bestIndex;
-
-    if (slideCounterEl) {
-      slideCounterEl.textContent = `Section ${bestIndex + 1} / ${slides.length}`;
-    }
-
-    if (hasChanged) {
-      state.slides[currentPresentationId] = bestIndex;
-      persistState();
-      renderAnnotationsPanel();
-    }
+    currentSlideIndex = clampedIndex;
+    navPrev.disabled = clampedIndex === 0;
+    navNext.disabled = clampedIndex === slides.length - 1;
+    slideCounterEl.textContent = `${clampedIndex + 1} / ${slides.length}`;
+    state.slides[currentPresentationId] = clampedIndex;
+    persistState();
+    renderAnnotationsPanel();
     drawConnectors();
+  }
+
+  function nextSlide() {
+    showSlide(currentSlideIndex + 1);
+  }
+
+  function prevSlide() {
+    showSlide(currentSlideIndex - 1);
   }
 
   function getAnnotationColor(colorValue) {
@@ -684,7 +500,7 @@
       return;
     }
     const slideSection = container.closest ? container.closest('.slide-stage') : null;
-    if (!slideSection) {
+    if (!slideSection || slideSection.classList.contains('hidden')) {
       resetAnnotationPopover(true);
       return;
     }
@@ -846,7 +662,7 @@
       card.innerHTML = `
         <div class="annotation-quote">“${annotation.quote}”</div>
         ${annotation.note ? `<p>${annotation.note}</p>` : ''}
-        <div class="annotation-meta">Section ${annotation.slideIndex + 1}</div>
+        <div class="annotation-meta">Slide ${annotation.slideIndex + 1}</div>
       `;
       card.addEventListener('mouseenter', () => highlightAnnotation(annotation.id, true));
       card.addEventListener('mouseleave', () => highlightAnnotation(annotation.id, false));
@@ -902,7 +718,7 @@
   }
 
   function drawConnectors() {
-    if (!connectorLayer || !workspaceGrid) {
+    if (!connectorLayer) {
       return;
     }
     connectorLayer.innerHTML = '';
@@ -912,7 +728,7 @@
     }
     const workspaceRect = workspaceGrid.getBoundingClientRect();
     const width = workspaceRect.width;
-    const height = Math.max(workspaceRect.height, workspaceGrid.scrollHeight || workspaceRect.height);
+    const height = workspaceRect.height;
     connectorLayer.setAttribute('viewBox', `0 0 ${width} ${height}`);
     connectorLayer.setAttribute('width', width);
     connectorLayer.setAttribute('height', height);
@@ -949,7 +765,7 @@
     });
   }
 
-  async function switchPresentation(presentationId) {
+  function switchPresentation(presentationId) {
     currentPresentationId = presentationId;
     presentationSelector.value = presentationId;
     state.activePresentation = presentationId;
@@ -957,18 +773,7 @@
     annotations = [...(state.annotations[presentationId] || [])];
     persistState();
     const presentation = presentations[presentationId];
-    const sequence = ++hydrationSequence;
-    toggleWorkspaceLoading(true);
-    try {
-      await hydratePresentationMedia(presentation);
-    } catch (error) {
-      console.warn('Unable to hydrate presentation media', error);
-    } finally {
-      if (sequence === hydrationSequence) {
-        renderPresentation(presentation, { preserveSlideIndex: true });
-        toggleWorkspaceLoading(false);
-      }
-    }
+    renderPresentation(presentation, { preserveSlideIndex: true });
   }
 
   function initializeAnnotationInteractions() {
@@ -988,23 +793,18 @@
     });
   }
 
-  function initializeSectionTracking() {
-    window.addEventListener('scroll', () => scheduleActiveSectionUpdate());
-    window.addEventListener('resize', () => {
-      scheduleActiveSectionUpdate(true);
-      drawConnectors();
-    });
+  function initializeNavigation() {
+    navNext.addEventListener('click', nextSlide);
+    navPrev.addEventListener('click', prevSlide);
     document.addEventListener('keydown', event => {
       if (event.target.matches('input, textarea')) {
         return;
       }
-      if (event.key === 'ArrowDown' || event.key === 'PageDown') {
-        event.preventDefault();
-        scrollToSection(Math.min(currentSlideIndex + 1, slides.length - 1));
+      if (event.key === 'ArrowRight') {
+        nextSlide();
       }
-      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
-        event.preventDefault();
-        scrollToSection(Math.max(currentSlideIndex - 1, 0));
+      if (event.key === 'ArrowLeft') {
+        prevSlide();
       }
     });
   }
@@ -1022,9 +822,10 @@
 
   function initialize() {
     initializeAnnotationInteractions();
-    initializeSectionTracking();
+    initializeNavigation();
     initializeExport();
     initializePresentationSelector();
+    window.addEventListener('resize', drawConnectors);
 
     const startPresentation = state.activePresentation && presentations[state.activePresentation]
       ? state.activePresentation
