@@ -7,7 +7,9 @@
         layout: 'hero-title',
         content: {
           backgroundImageQuery: 'sunrise over bustling market in morocco',
-          backgroundImageAlt: 'Sunrise casting warm light over a lively Moroccan market',
+          backgroundImage: 'https://images.pexels.com/photos/2610821/pexels-photo-2610821.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          backgroundImageAlt: 'A vibrant outdoor market scene displaying hanging brass pots and people shopping.',
+          backgroundImageCredit: 'Zak Chapman',
           title: 'Tourism & Storytelling'
         }
       },
@@ -24,7 +26,9 @@
           title: 'Warm-up',
           instruction: 'What details make this marketplace unforgettable?',
           imageQuery: 'colorful market street with people and spices',
-          imageAlt: 'Vibrant street market filled with spices, fabrics, and visitors'
+          image: 'https://images.pexels.com/photos/2977435/pexels-photo-2977435.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          imageAlt: 'Bustling outdoor street market in Hanoi featuring colorful produce and local vendors.',
+          imageCredit: 'Hugo Heimendinger'
         }
       },
       {
@@ -37,11 +41,17 @@
             'travelers tasting spices at market stall',
             'friends taking photo while laughing in city'
           ],
-          imageAltTexts: [
-            'Guide gesturing toward a glowing sunrise in the mountains',
-            'Travellers sampling spices at a bustling market stall',
-            'Friends laughing together while snapping a city photo'
+          images: [
+            'https://images.pexels.com/photos/3389955/pexels-photo-3389955.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+            'https://images.pexels.com/photos/25205130/pexels-photo-25205130.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+            'https://images.pexels.com/photos/3789215/pexels-photo-3789215.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200'
           ],
+          imageAltTexts: [
+            'Vibrant hot air balloons soar over Cappadocia at sunrise.',
+            'Crowds exploring the vibrant Grand Bazaar in Istanbul.',
+            'Elderly man in a suit smiling while taking a selfie outside.'
+          ],
+          imageCredits: ['熊大 旅遊趣', 'Kadir Avşar', 'Andrea Piacquadio'],
           sentences: [
             'The guide points to the horizon as the sun rises.',
             'Travellers pause to taste a new spice at the stall.',
@@ -60,12 +70,19 @@
             'family admiring scenic overlook at sunset',
             'night market with string lights and performers'
           ],
+          images: [
+            'https://images.pexels.com/photos/29212334/pexels-photo-29212334.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+            'https://images.pexels.com/photos/33816933/pexels-photo-33816933.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+            'https://images.pexels.com/photos/5472523/pexels-photo-5472523.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+            'https://images.pexels.com/photos/2771807/pexels-photo-2771807.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200'
+          ],
           imageAltTexts: [
-            'Travellers walking through a narrow historic city street',
-            'Vendor pouring tea for visiting tourists at a market stall',
-            'Family enjoying a panoramic sunset view from an overlook',
-            'Night market glowing with string lights and live performers'
-          ]
+            'City crosswalk with people in an urban setting, featuring an old building.',
+            'Visitors at St. Lawrence Market, Toronto, enjoying a variety of food delights.',
+            'Family enjoying a walk in the scenic Moroccan countryside during a peaceful evening.',
+            'Colorful lantern festival in Taiwan with lively crowds and decorations.'
+          ],
+          imageCredits: ['Anthony Lian', '@coldbeer', 'Ryutaro Tsukata', 'Kai-Chieh Chan']
         }
       },
       {
@@ -83,7 +100,9 @@
           title: 'Listen & Note',
           instruction: 'Imagine you hear a guide welcoming visitors. Capture two key points.',
           imageQuery: 'tour guide smiling with microphone welcoming guests',
-          imageAlt: 'Tour guide smiling with a microphone while greeting guests',
+          image: 'https://images.pexels.com/photos/3811863/pexels-photo-3811863.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          imageAlt: 'Three tourists exploring a city using a map under bright daylight.',
+          imageCredit: 'Andrea Piacquadio',
           text: '“Welcome back! Today we explore the hidden alleys, sample sweet saffron tea, and learn a phrase locals love.”',
           audioFile: 'assets/audio/tour-guide.mp3'
         }
@@ -106,7 +125,9 @@
           title: 'Ready to Report Back',
           instruction: 'Use the image to guide your storytelling summary.',
           imageQuery: 'traveler sharing story with group in plaza',
-          imageAlt: 'Traveller animatedly sharing a story with a group in a plaza'
+          image: 'https://images.pexels.com/photos/11324112/pexels-photo-11324112.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200',
+          imageAlt: 'Monochrome scene of pilgrims resting near Santiago de Compostela Cathedral in Spain.',
+          imageCredit: 'Zally'
         }
       }
     ]
