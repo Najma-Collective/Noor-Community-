@@ -8,6 +8,12 @@
 /* -------------------------------
    1. Design Tokens & Core Setup
 ----------------------------------*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* Palette */
   --primary-sage: #7A8471;
@@ -605,6 +611,7 @@ input[type="text"] {
   background: color-mix(in srgb, var(--soft-white) 92%, transparent);
   resize: vertical;
   min-height: 90px;
+  box-sizing: border-box;
 }
 
 textarea:focus,
