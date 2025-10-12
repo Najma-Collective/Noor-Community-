@@ -1,269 +1,11 @@
 (() => {
-  const presentations = {
-    buildingCv: {
-      id: 'buildingCv',
-      deckTitle: 'Building a CV',
-      slides: [
-        {
-          layout: 'hero-title',
-          content: {
-            backgroundImageQuery: 'professional resume workspace flatlay',
-            backgroundImageAlt: 'Overhead view of a tidy desk with CV planning materials',
-            title: 'Building a CV'
-          }
-        },
-        {
-          layout: 'framed-list',
-          content: {
-            title: 'Learning Outcomes',
-            introText: 'By the end of this lesson, you will be able to:',
-            listItems: [
-              'Choose a clear CV structure that fits your profile.',
-              'Write action-based bullet points that show impact.',
-              'Tailor your CV to a specific role in minutes.'
-            ]
-          }
-        },
-        {
-          layout: 'two-column-details',
-          content: {
-            title: 'Anatomy of a Strong CV',
-            subtitle: 'Balance clarity with personal voice',
-            leftContentHTML:
-              '<h3>Essential sections</h3><ul><li>Professional summary: one dynamic sentence.</li><li>Key skills: 5 bullet points organised by theme.</li><li>Experience: reverse chronological with results.</li><li>Education: highlight relevant certifications.</li></ul>',
-            rightContentHTML:
-              '<h3>Design choices</h3><ul><li>Keep margins generous and fonts consistent.</li><li>Use bold, not colour, to signal hierarchy.</li><li>Leave breathing space for easy scanning.</li><li>Save as PDF to protect formatting.</li></ul>'
-          }
-        },
-        {
-          layout: 'full-text-block',
-          content: {
-            htmlContent:
-              '<h2>Sample Snapshot</h2><p><strong>Jade Hassan</strong> | Project Coordinator</p><p><em>Summary:</em> Agile project lead with 5+ years managing cross-cultural teams to deliver community programmes.</p><h3>Experience</h3><ul><li><strong>Community Spark</strong> — Coordinated 12-week employability bootcamp; achieved 92% completion.</li><li><strong>Bright Futures NGO</strong> — Redesigned volunteer onboarding, cutting attrition by 30%.</li></ul><h3>Skills</h3><ul><li>Stakeholder communication</li><li>Event budgeting</li><li>Report writing</li></ul>'
-          }
-        },
-        {
-          layout: 'discussion-table',
-          content: {
-            title: 'Warm Discussion',
-            subtitle: 'Discuss the questions in pairs.',
-            questions: [
-              'What do recruiters scan first on a CV?',
-              'How can a hobby strengthen your profile?',
-              'When did you last update your CV and why?'
-            ]
-          }
-        },
-        {
-          layout: 'analysis-table',
-          content: {
-            title: 'Experience Analyzer',
-            instruction: 'Rewrite each bullet with action verbs and numbers.',
-            questions: [
-              'Organised events for students.',
-              'Helped the sales team reach targets.',
-              'Worked in customer service at a cafe.'
-            ]
-          }
-        },
-        {
-          layout: 'image-response',
-          content: {
-            title: 'Personal Branding',
-            instruction: 'Note two ways to express your personality professionally.',
-            imageQuery: 'confident professional portrait smiling in office',
-            imageAlt: 'Professional confidently smiling in a bright office setting'
-          }
-        },
-        {
-          layout: 'checklist',
-          content: {
-            title: 'Peer Review Checklist',
-            instruction: 'Swap CV drafts and tick each item.',
-            checklistItems: [
-              '<b>Summary hooks attention</b> with role-specific keywords.',
-              '<b>Experience bullets</b> include numbers or outcomes.',
-              '<b>Design stays consistent</b> with spacing and fonts.',
-              '<b>Contact details</b> look professional and current.'
-            ]
-          }
-        },
-        {
-          layout: 'task-preparation',
-          content: {
-            title: 'Next Steps',
-            instruction: 'Prepare to finalise your CV tonight.',
-            steps: [
-              'Select a job ad and highlight three repeated phrases.',
-              'Tailor your summary + top skills to match the language.',
-              'Email your updated CV to a peer for feedback.'
-            ]
-          }
-        }
-      ]
-    },
-    tourismStorytelling: {
-      id: 'tourismStorytelling',
-      deckTitle: 'Tourism & Storytelling',
-      slides: [
-        {
-          layout: 'hero-title',
-          content: {
-            backgroundImageQuery: 'sunrise over bustling market in morocco',
-            backgroundImageAlt: 'Sunrise casting warm light over a lively Moroccan market',
-            title: 'Tourism & Storytelling'
-          }
-        },
-        {
-          layout: 'simple-centered-text',
-          content: {
-            title: 'Our Journey Today',
-            subtitle: 'Observe • Imagine • Share'
-          }
-        },
-        {
-          layout: 'image-prompt',
-          content: {
-            title: 'Warm-up',
-            instruction: 'What details make this marketplace unforgettable?',
-            imageQuery: 'colorful market street with people and spices',
-            imageAlt: 'Vibrant street market filled with spices, fabrics, and visitors'
-          }
-        },
-        {
-          layout: 'image-matching-horizontal',
-          content: {
-            title: 'Match the Mood',
-            instruction: 'Pair each photo with the sentence that fits the vibe.',
-            imageQueries: [
-              'tour guide pointing at sunrise in mountains',
-              'travelers tasting spices at market stall',
-              'friends taking photo while laughing in city'
-            ],
-            imageAltTexts: [
-              'Guide gesturing toward a glowing sunrise in the mountains',
-              'Travellers sampling spices at a bustling market stall',
-              'Friends laughing together while snapping a city photo'
-            ],
-            sentences: [
-              'The guide points to the horizon as the sun rises.',
-              'Travellers pause to taste a new spice at the stall.',
-              'Friends laugh while trying to capture the perfect photo.'
-            ]
-          }
-        },
-        {
-          layout: 'storyboard-creator',
-          content: {
-            title: 'Craft Your Storyboard',
-            instruction: 'Write a sentence under each frame to tell a mini-tour.',
-            imageQueries: [
-              'travel group exploring old city street',
-              'local vendor serving tea to tourists',
-              'family admiring scenic overlook at sunset',
-              'night market with string lights and performers'
-            ],
-            imageAltTexts: [
-              'Travellers walking through a narrow historic city street',
-              'Vendor pouring tea for visiting tourists at a market stall',
-              'Family enjoying a panoramic sunset view from an overlook',
-              'Night market glowing with string lights and live performers'
-            ]
-          }
-        },
-        {
-          layout: 'gap-fill-exercise',
-          content: {
-            title: 'Narration Boost',
-            instruction: 'Use the words to complete the storytelling sentence.',
-            wordBox: ['vibrant', 'stalls', 'weaving'],
-            sentence: 'The ___ guide led us through ___ of colour, weaving a ___ memory.'
-          }
-        },
-        {
-          layout: 'audio-comprehension',
-          content: {
-            title: 'Listen & Note',
-            instruction: 'Imagine you hear a guide welcoming visitors. Capture two key points.',
-            imageQuery: 'tour guide smiling with microphone welcoming guests',
-            imageAlt: 'Tour guide smiling with a microphone while greeting guests',
-            text: '“Welcome back! Today we explore the hidden alleys, sample sweet saffron tea, and learn a phrase locals love.”',
-            audioFile: 'assets/audio/tour-guide.mp3'
-          }
-        },
-        {
-          layout: 'three-column-reflection',
-          content: {
-            title: 'Reflect & Share',
-            instruction: 'Capture quick thoughts before your presentation.',
-            questions: [
-              'Which moment in your story feels most vivid?',
-              'What sensory detail can you add?',
-              'How will you invite listeners into the journey?'
-            ]
-          }
-        },
-        {
-          layout: 'reporting-prompt',
-          content: {
-            title: 'Ready to Report Back',
-            instruction: 'Use the image to guide your storytelling summary.',
-            imageQuery: 'traveler sharing story with group in plaza',
-            imageAlt: 'Traveller animatedly sharing a story with a group in a plaza'
-          }
-        }
-      ]
-    },
-    givingDirections: {
-      id: 'givingDirections',
-      deckTitle: 'How to Give Directions',
-      slides: [
-        {
-          layout: 'hero-title',
-          content: {
-            backgroundImageQuery: 'city map navigation with people asking directions',
-            backgroundImageAlt: 'Illustrated city navigation scene with people asking for directions',
-            title: 'How to Give Directions'
-          }
-        },
-        {
-          layout: 'framed-list',
-          content: {
-            title: 'Lesson Goals',
-            introText: 'By the end you can confidently:',
-            listItems: [
-              'Use sequencing phrases to guide a listener.',
-              'Highlight landmarks to check understanding.',
-              'Confirm that the listener feels confident to go.'
-            ]
-          }
-        },
-        {
-          layout: 'matching-task-vertical',
-          content: {
-            title: 'Map the Route',
-            instruction: 'Match the listener questions with the helpful responses.',
-            stimulusHTML:
-              '<p><strong>Starting point:</strong> City library entrance.</p><p><strong>Destination:</strong> Riverside cafe.</p><p>Consider turns, landmarks, and distance.</p>',
-            options: [
-              '“Walk past the fountain and take the first left.”',
-              '“It is opposite the museum with the glass roof.”',
-              '“It is a ten-minute walk; shall I mark it on your map?”'
-            ]
-          }
-        },
-        {
-          layout: 'image-response',
-          content: {
-            title: 'Try It Out',
-            instruction: 'Write two sentences to guide a visitor from the star to the cafe.',
-            imageQuery: 'illustrated city map with location pins',
-            imageAlt: 'Colorful illustrated city map showing landmarks and route markers'
-          }
-        }
-      ]
-    }
-  };
+  const globalPresentations = window.MOSAIC_PRESENTATIONS || {};
+  const presentationIds = Object.keys(globalPresentations);
+  const presentations = presentationIds.reduce((acc, id) => {
+    acc[id] = globalPresentations[id];
+    return acc;
+  }, {});
+  const defaultPresentationId = presentationIds[0] || null;
 
   const STORAGE_KEY = 'mosaic-state-v1';
   const COLOR_CHOICES = [
@@ -387,7 +129,7 @@
   }
 
   const defaultState = {
-    activePresentation: 'buildingCv',
+    activePresentation: defaultPresentationId,
     slides: {},
     fields: {},
     annotations: {}
@@ -902,7 +644,19 @@
 
   function populatePresentationSelector() {
     presentationSelector.innerHTML = '';
-    Object.values(presentations).forEach(presentation => {
+    const presentationList = Object.values(presentations);
+    if (!presentationList.length) {
+      const option = document.createElement('option');
+      option.textContent = 'No presentations available';
+      option.disabled = true;
+      option.selected = true;
+      presentationSelector.appendChild(option);
+      presentationSelector.disabled = true;
+      return;
+    }
+
+    presentationSelector.disabled = false;
+    presentationList.forEach(presentation => {
       const option = document.createElement('option');
       option.value = presentation.id;
       option.textContent = presentation.deckTitle;
@@ -911,13 +665,18 @@
   }
 
   async function switchPresentation(presentationId) {
+    const presentation = presentations[presentationId];
+    if (!presentation) {
+      console.warn('Presentation not found:', presentationId);
+      return;
+    }
+
     currentPresentationId = presentationId;
     presentationSelector.value = presentationId;
     state.activePresentation = presentationId;
     fieldValues = { ...(state.fields[presentationId] || {}) };
     annotations = [...(state.annotations[presentationId] || [])];
     persistState();
-    const presentation = presentations[presentationId];
     await renderPresentation(presentation, { preserveSlideIndex: true });
   }
 
@@ -976,7 +735,13 @@
 
     const startPresentation = state.activePresentation && presentations[state.activePresentation]
       ? state.activePresentation
-      : 'buildingCv';
+      : defaultPresentationId;
+
+    if (!startPresentation) {
+      console.warn('No Mosaic presentations were registered.');
+      return;
+    }
+
     await switchPresentation(startPresentation);
   }
 
