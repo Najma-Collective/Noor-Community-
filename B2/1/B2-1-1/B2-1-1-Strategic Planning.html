@@ -23,7 +23,7 @@
         --deep-forest: #3E4A3A;
         --font-display: 'Questrial', system-ui, sans-serif;
         --font-body: 'Nunito', system-ui, sans-serif;
-        --font-size-adjustment: 4pt;
+        --font-size-adjustment: 0pt;
         --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
         --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
         --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
@@ -131,9 +131,8 @@
         position: absolute;
         inset: 0;
         padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        display: grid;
+        place-content: center;
         gap: 1.25rem;
         overflow-y: auto;
         scrollbar-gutter: stable both-edges;
