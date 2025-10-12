@@ -88,23 +88,47 @@
           sections: [
             {
               title: '1. Project Name & Core Concept',
-              contentHTML:
-                "<p>What is your idea in one sentence?</p><textarea style=\"height: 100px; width: 100%;\" placeholder=\"e.g., 'Mindful Moments' is a subscription service offering guided meditation sessions for employees.\"></textarea>"
+              subtitle: 'Define the heart of your idea.',
+              responsePrompts: [
+                {
+                  prompt: 'Summarise your idea in a single, memorable sentence.',
+                  helperText: 'Keep it punchy—highlight the benefit for employee wellness.',
+                  placeholder: 'e.g., “Mindful Moments” offers guided micro-meditations during the workday.'
+                }
+              ]
             },
             {
               title: '2. The Problem We Are Solving',
-              contentHTML:
-                "<p>Why is this project needed?</p><textarea style=\"height: 100px; width: 100%;\" placeholder=\"e.g., High levels of employee stress are leading to burnout and decreased productivity.\"></textarea>"
+              subtitle: 'Diagnose the pain point.',
+              responsePrompts: [
+                {
+                  prompt: 'Why is this project necessary right now?',
+                  helperText: 'Use evidence or observations from your workplace.',
+                  placeholder: 'e.g., Elevated stress is driving burnout and lowering productivity.'
+                }
+              ]
             },
             {
               title: '3. Key Benefits & Target Audience',
-              contentHTML:
-                "<p>Who will benefit and how?</p><textarea style=\"height: 100px; width: 100%;\" placeholder=\"e.g., All employees will benefit from reduced stress. The company will benefit from higher morale and fewer sick days.\"></textarea>"
+              subtitle: 'Connect impact to people.',
+              responsePrompts: [
+                {
+                  prompt: 'Who gains the most and what changes for them?',
+                  helperText: 'Think about both employees and the organisation.',
+                  placeholder: 'e.g., Staff gain calmer workdays; leadership sees stronger morale and fewer sick days.'
+                }
+              ]
             },
             {
               title: '4. Call to Action',
-              contentHTML:
-                "<p>What do you want from management?</p><textarea style=\"height: 100px; width: 100%;\" placeholder=\"e.g., We are requesting a budget of $2,000 for a 3-month pilot program.\"></textarea>"
+              subtitle: 'Make a confident ask.',
+              responsePrompts: [
+                {
+                  prompt: 'What specific decision or resource are you requesting?',
+                  helperText: 'Be precise about timelines, budget, or support needs.',
+                  placeholder: 'e.g., Approve a $2,000 budget for a three-month pilot launch.'
+                }
+              ]
             }
           ]
         }
