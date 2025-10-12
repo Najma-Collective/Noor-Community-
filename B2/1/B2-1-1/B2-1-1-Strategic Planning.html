@@ -23,11 +23,12 @@
         --deep-forest: #3E4A3A;
         --font-display: 'Questrial', system-ui, sans-serif;
         --font-body: 'Nunito', system-ui, sans-serif;
-        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
-        --step-0: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
-        --step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
-        --step-2: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
-        --step-3: clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
+        --font-reduction: 0.4167rem; /* ≈5pt */
+        --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) - var(--font-reduction));
+        --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) - var(--font-reduction));
+        --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) - var(--font-reduction));
+        --step-2: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) - var(--font-reduction));
+        --step-3: calc(clamp(1.8rem, 1.5rem + 1vw, 2.3rem) - var(--font-reduction));
         --space-4: 1rem;
         --space-5: 1.25rem;
         --space-6: 1.5rem;
@@ -86,7 +87,7 @@
         align-items: center;
         gap: 0.75rem;
         font-family: var(--font-display);
-        font-size: 1.05rem;
+        font-size: calc(1.05rem - var(--font-reduction));
         color: var(--forest-shadow);
       }
 
@@ -132,7 +133,8 @@
         padding: var(--stage-pad);
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: flex-start;
         gap: 1.25rem;
         overflow-y: auto;
         scrollbar-gutter: stable both-edges;
@@ -190,10 +192,11 @@
 
       .subtitle { color: var(--primary-sage); font-family: var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--step--1); }
       .centered-text { text-align: center; }
+      .slide-inner.centered-text { align-items: center; }
 
-      h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.2rem); line-height: 1.1; color: var(--deep-forest); margin: 0; }
-      h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.2rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0; }
-      p, li { font-size: clamp(1rem, 0.95rem + 0.35vw, 1.2rem); color: var(--forest-shadow); margin: 0; }
+      h1 { font-family: var(--font-display); font-size: calc(clamp(2.5rem, 1.4rem + 3.2vw, 4.2rem) - var(--font-reduction)); line-height: 1.1; color: var(--deep-forest); margin: 0; }
+      h2 { font-family: var(--font-display); font-size: calc(clamp(1.8rem, 1.2rem + 2vw, 3rem) - var(--font-reduction)); line-height: 1.2; color: var(--deep-forest); margin: 0; }
+      p, li { font-size: calc(clamp(1rem, 0.95rem + 0.35vw, 1.2rem) - var(--font-reduction)); color: var(--forest-shadow); margin: 0; }
 
       .full-width-bg .slide-inner { padding: 0; }
       .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
@@ -224,7 +227,7 @@
         border: 1px solid rgba(122,132,113,0.18);
         padding: 1.2rem;
         box-shadow: var(--shadow-1);
-        font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+        font-size: calc(clamp(1rem, 0.9rem + 0.4vw, 1.2rem) - var(--font-reduction));
         min-height: 150px;
         display: flex;
         align-items: center;
@@ -248,8 +251,8 @@
         gap: 0.6rem;
       }
 
-      .definition-card h4 { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.4rem); color: var(--deep-forest); margin: 0; }
-      .definition-card p { font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem); margin: 0; }
+      .definition-card h4 { font-size: calc(clamp(1.1rem, 1rem + 0.4vw, 1.4rem) - var(--font-reduction)); color: var(--deep-forest); margin: 0; }
+      .definition-card p { font-size: calc(clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem) - var(--font-reduction)); margin: 0; }
 
       .matching-wrapper {
         display: grid;
@@ -276,7 +279,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        font-size: clamp(1rem, 0.95rem + 0.35vw, 1.2rem);
+        font-size: calc(clamp(1rem, 0.95rem + 0.35vw, 1.2rem) - var(--font-reduction));
       }
 
       .matching-option {
@@ -292,7 +295,7 @@
 
       .matching-option select {
         font-family: var(--font-body);
-        font-size: 1rem;
+        font-size: calc(1rem - var(--font-reduction));
         font-weight: 600;
         color: var(--primary-sage);
         background: var(--soft-white);
@@ -328,7 +331,7 @@
       .activity-btn:hover { box-shadow: var(--shadow-2); transform: translateY(-1px); }
 
       .feedback-msg {
-        font-size: 0.95rem;
+        font-size: calc(0.95rem - var(--font-reduction));
         font-weight: 600;
         margin-top: 0.4rem;
       }
@@ -369,7 +372,7 @@
         left: 20px;
         right: 20px;
         color: white;
-        font-size: 0.95rem;
+        font-size: calc(0.95rem - var(--font-reduction));
         z-index: 2;
         font-weight: 600;
       }
@@ -399,7 +402,7 @@
         overflow-y: auto;
       }
 
-      .dialogue-box p { margin: 0; font-size: 1.05rem; }
+      .dialogue-box p { margin: 0; font-size: calc(1.05rem - var(--font-reduction)); }
       .dialogue-box strong { color: var(--deep-forest); }
 
       .mc-grid {
@@ -419,10 +422,10 @@
         gap: 0.9rem;
       }
 
-      .mc-card label { font-size: 1.05rem; font-weight: 600; color: var(--deep-forest); }
+      .mc-card label { font-size: calc(1.05rem - var(--font-reduction)); font-weight: 600; color: var(--deep-forest); }
       .mc-card select {
         font-family: var(--font-body);
-        font-size: 1rem;
+        font-size: calc(1rem - var(--font-reduction));
         border-radius: 12px;
         border: 2px solid rgba(122,132,113,0.25);
         padding: 0.45rem 0.75rem;
@@ -470,7 +473,7 @@
 
       .checklist .card { flex-direction: row; align-items: center; gap: 1rem; }
 
-      .checklist .card i { font-size: 1.5rem; color: #2E7D32; }
+      .checklist .card i { font-size: calc(1.5rem - var(--font-reduction)); color: #2E7D32; }
 
       .slide-nav {
         position: absolute;
@@ -623,7 +626,7 @@
                         <p style="max-width: 75%;">Use the dropdown menus to connect each NGO planning term to the correct definition. This first round covers terms 1–5.</p>
                         <div class="matching-wrapper" data-activity="matching-vocab">
                             <div class="matching-list">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Terms 1–5</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Terms 1–5</h3>
                                 <ol>
                                     <li>SWOT Analysis</li>
                                     <li>Logframe</li>
@@ -633,7 +636,7 @@
                                 </ol>
                             </div>
                             <div class="matching-options">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Definitions</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Definitions</h3>
                                 <div class="matching-option" data-correct="1"><span>A study of a project's internal Strengths/Weaknesses and external Opportunities/Threats.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
                                 <div class="matching-option" data-correct="2"><span>A planning tool that uses a matrix to connect a project's goals, activities, and outcomes.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
                                 <div class="matching-option" data-correct="3"><span>Information gathered at the start of a project to measure future change.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
@@ -654,7 +657,7 @@
                         <p style="max-width: 75%;">Continue matching with the remaining NGO planning terms. This round focuses on terms 6–10.</p>
                         <div class="matching-wrapper" data-activity="matching-vocab">
                             <div class="matching-list">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Terms 6–10</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Terms 6–10</h3>
                                 <ol start="6">
                                     <li>Conservation</li>
                                     <li>Carbon Footprint</li>
@@ -664,7 +667,7 @@
                                 </ol>
                             </div>
                             <div class="matching-options">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Definitions</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Definitions</h3>
                                 <div class="matching-option" data-correct="6"><span>The protection of animals, plants, and natural resources.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
                                 <div class="matching-option" data-correct="7"><span>The total amount of greenhouse gases generated by our actions.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
                                 <div class="matching-option" data-correct="8"><span>An area of land that separates waters flowing to different rivers or seas.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
@@ -792,7 +795,7 @@
                         <p style="max-width: 75%;">Match sentences 1–5 with the correct implied meaning. Notice how stress changes the focus.</p>
                         <div class="matching-wrapper" data-activity="matching-stress">
                             <div class="matching-list">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Sentences 1–5</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Sentences 1–5</h3>
                                 <ol>
                                     <li><strong>We</strong> need to fund the school project.</li>
                                     <li>We need to <strong>fund</strong> the school project.</li>
@@ -802,7 +805,7 @@
                                 </ol>
                             </div>
                             <div class="matching-options">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Implied Meaning</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Implied Meaning</h3>
                                 <div class="matching-option" data-correct="1"><span>Not another group, but us.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
                                 <div class="matching-option" data-correct="2"><span>We must provide money, not just verbal support.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
                                 <div class="matching-option" data-correct="3"><span>Not the health clinic project, this specific one.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
@@ -823,7 +826,7 @@
                         <p style="max-width: 75%;">Now match sentences 6–10 with the implied meanings. Which word carries the key message?</p>
                         <div class="matching-wrapper" data-activity="matching-stress">
                             <div class="matching-list">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Sentences 6–10</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Sentences 6–10</h3>
                                 <ol start="6">
                                     <li><strong>Our</strong> data shows a different result.</li>
                                     <li>Our data shows a <strong>different</strong> result.</li>
@@ -833,7 +836,7 @@
                                 </ol>
                             </div>
                             <div class="matching-options">
-                                <h3 style="margin: 0; font-size: 1.2rem;">Implied Meaning</h3>
+                                <h3 style="margin: 0; font-size: calc(1.2rem - var(--font-reduction));">Implied Meaning</h3>
                                 <div class="matching-option" data-correct="6"><span>In contrast to their data.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
                                 <div class="matching-option" data-correct="7"><span>The result is not the same as we expected.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
                                 <div class="matching-option" data-correct="8"><span>Not in June, as was planned.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
@@ -883,7 +886,7 @@
                             </div>
                             <div class="card">
                                 <h3><i class="fa-solid fa-list-check" style="margin-right: 8px;"></i>Task (20 mins)</h3>
-                                <ol style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 1rem;">
+                                <ol style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: calc(1rem - var(--font-reduction));">
                                     <li>Discuss the key challenges identified in the report using past tenses.</li>
                                     <li>Analyze the two proposed strategies and choose the most effective, sustainable option.</li>
                                     <li>Justify your choice using vocabulary and sentence stress from the lesson.</li>
