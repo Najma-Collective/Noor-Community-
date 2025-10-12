@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
-  <rect width="900" height="600" fill="#FEFCF7"/>
-  <path d="M80 120 H820 V480 H80 Z" fill="#DDE6D4"/>
-  <path d="M160 180 H740 V420 H160 Z" fill="#9CAF88" opacity="0.65"/>
-  <path d="M160 300 H740" stroke="#5A6B52" stroke-width="12"/>
-  <path d="M450 180 V420" stroke="#5A6B52" stroke-width="12"/>
-  <circle cx="450" cy="300" r="46" fill="#7A8471"/>
-  <text x="450" y="310" text-anchor="middle" font-family="'Nunito'" font-size="44" fill="#FEFCF7">You</text>
-</svg>

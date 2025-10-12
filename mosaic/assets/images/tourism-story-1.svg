@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
-  <rect width="600" height="600" rx="40" fill="#F5F3ED"/>
-  <path d="M100 500 L300 100 L500 500 Z" fill="#9CAF88" opacity="0.6"/>
-  <text x="300" y="320" font-size="180" fill="#5A6B52" font-family="'Nunito', sans-serif" text-anchor="middle">1</text>
-</svg>

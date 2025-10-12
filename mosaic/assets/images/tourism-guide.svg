@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
-  <rect width="900" height="600" fill="#FEFCF7"/>
-  <circle cx="220" cy="300" r="120" fill="#9CAF88" opacity="0.75"/>
-  <circle cx="460" cy="240" r="90" fill="#7A8471" opacity="0.85"/>
-  <circle cx="660" cy="360" r="130" fill="#B8C5A6" opacity="0.75"/>
-  <text x="220" y="310" text-anchor="middle" font-size="52" fill="#FEFCF7" font-family="'Nunito'">Guide</text>
-  <text x="460" y="250" text-anchor="middle" font-size="40" fill="#FEFCF7" font-family="'Nunito'">Travelers</text>
-  <text x="660" y="370" text-anchor="middle" font-size="48" fill="#5A6B52" font-family="'Nunito'">Audience</text>
-</svg>
