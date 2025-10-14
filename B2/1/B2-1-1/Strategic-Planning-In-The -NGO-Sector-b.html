@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-Class Activity: Preparing for the Networking Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* =====================================================================
+       Organic Sage UI — Mobile-first, stable, and soothing
+       Palette preserved; accessibility + mobile ergonomics improved.
+       ===================================================================== */
+
+    /* -------------------------------
+       Design tokens
+    ----------------------------------*/
+    :root {
+      /* Core palette (yours, kept) */
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --border-sage: rgba(122, 132, 113, 0.20);
+      --hover-sage: rgba(156, 175, 136, 0.15);
+
+      /* Extended palette for depth */
+      --deep-forest: #3E4A3A;
+      --moss: #6E7A67;
+      --fern: #8FA081;
+      --dried-clay: #D9CDB4;
+      --amber: #C6AA77;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+
+      /* Typography */
+      --font-display: 'Questrial', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --font-body: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+      /* Fluid typography scale */
+      --step--1: clamp(0.875rem, 0.84rem + 0.15vw, 0.95rem);
+      --step-0:  clamp(1rem,     0.96rem + 0.22vw, 1.1rem);
+      --step-1:  clamp(1.125rem, 1.07rem + 0.35vw, 1.3rem);
+      --step-2:  clamp(1.375rem, 1.28rem + 0.55vw, 1.6rem);
+      --step-3:  clamp(1.75rem,  1.58rem + 0.95vw, 2.1rem);
+      --step-4:  clamp(2.25rem,  1.98rem + 1.35vw, 2.7rem);
+
+      /* Rhythm */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --space-8: 2.5rem;
+      --space-9: 3rem;
+
+      /* Shape + elevation */
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+
+      --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+      --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+      --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.10), 0 20px 60px rgba(34, 41, 32, 0.08);
+
+      /* Focus ring (AA contrast on cream/white) */
+      --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent), 0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
+
+      /* Motion */
+      --ease-ambient: cubic-bezier(.2,.8,.2,1);
+      --dur-1: 120ms;
+      --dur-2: 200ms;
+      --dur-3: 320ms;
+
+      /* Mobile-safe touch target */
+      --target-min: 44px;
+
+      /* Container max */
+      --container-max: 900px;
+    }
+
+    /* -------------------------------
+       Global reset / mobile stability
+    ----------------------------------*/
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%; /* iOS font scaling fix */
+      text-size-adjust: 100%;
+      hanging-punctuation: first last;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100dvh; /* mobile address bar safe */
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.6;
+      color: var(--forest-shadow);
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, #FFFFFF 0%, transparent 50%),
+        radial-gradient(1200px 1000px at 110% 10%, #FFF8F0 0%, transparent 50%),
+        linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+
+    :where(p, h1, h2, h3, h4, h5, h6) {
+      text-wrap: pretty;
+      overflow-wrap: anywhere;
+    }
+
+    img, svg, video, canvas, audio, iframe {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a { color: var(--primary-sage); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--deep-forest); }
+
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+
+    #app-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: max(var(--space-7), env(safe-area-inset-top)) var(--space-4) var(--space-7);
+      width: 100%;
+      min-height: 100dvh;
+      background:
+        radial-gradient(800px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+        radial-gradient(700px 500px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 65%);
+    }
+
+    #activity-container {
+      width: 100%;
+      max-width: var(--container-max);
+      background: color-mix(in srgb, var(--soft-white) 88%, white 12%);
+      padding: clamp(24px, 3.2vw, 48px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(122, 132, 113, 0.12);
+      box-shadow: var(--shadow-2);
+      position: relative;
+      isolation: isolate;
+      container-type: inline-size;
+    }
+
+    @supports (backdrop-filter: blur(6px)) {
+      #activity-container {
+        background: color-mix(in srgb, var(--soft-white) 76%, white 24%);
+        backdrop-filter: blur(6px) saturate(1.02);
+      }
+    }
+
+    #activity-container::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background:
+        radial-gradient(1200px 200px at 50% -5%, rgba(156,175,136,0.12), transparent 60%),
+        radial-gradient(800px 1000px at 50% 110%, rgba(122,132,113,0.08), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .screen.hidden { display: none !important; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--step-4);
+      letter-spacing: 0.2px;
+      color: var(--forest-shadow);
+      margin: 0 0 var(--space-2) 0;
+      text-align: center;
+    }
+
+    h2.rubric {
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: 500;
+      color: var(--secondary-sage);
+      margin: 0 0 var(--space-6) 0;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      color: var(--forest-shadow);
+      margin: var(--space-6) 0 var(--space-3) 0;
+    }
+
+    .activity-btn {
+      min-height: var(--target-min);
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--primary-sage);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 92%, white 8%), var(--primary-sage));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient), opacity var(--dur-1) var(--ease-ambient);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:hover {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 92%, white 8%), var(--forest-shadow));
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 10px 20px rgba(90, 107, 82, 0.22);
+    }
+
+    .activity-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 4px 10px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--ring), 0 8px 16px rgba(90, 107, 82, 0.20);
+    }
+
+    .activity-btn:disabled,
+    .activity-btn[disabled] {
+      background: var(--tertiary-sage);
+      border-color: var(--tertiary-sage);
+      color: color-mix(in srgb, #fff 70%, var(--soft-white) 30%);
+      cursor: not-allowed;
+      opacity: 0.8;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .activity-btn.secondary {
+      background: transparent;
+      color: var(--primary-sage);
+      border-color: color-mix(in srgb, var(--tertiary-sage) 70%, var(--primary-sage) 30%);
+      box-shadow: none;
+    }
+
+    .activity-btn.secondary:hover { background-color: var(--hover-sage); }
+
+    .activity-btn.secondary:focus-visible {
+      outline: none;
+      box-shadow: var(--ring);
+    }
+
+    .controls {
+      margin-top: var(--space-4);
+      text-align: center;
+      display: grid;
+      gap: var(--space-3);
+      grid-auto-flow: row;
+    }
+
+    .intro-section,
+    .model-section {
+      margin-bottom: var(--space-7);
+      padding: var(--space-6);
+      background: color-mix(in srgb, var(--soft-white) 88%, #fff 12%);
+      border: 1px solid var(--border-sage);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-1);
+    }
+
+    .intro-lead {
+      font-size: var(--step-0);
+      color: var(--forest-shadow);
+      margin: 0 0 var(--space-3) 0;
+    }
+    .model-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .model-title {
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      margin: 0;
+      color: var(--deep-forest);
+    }
+
+    .model-description {
+      margin: 0;
+      color: var(--ink-muted);
+    }
+
+    .model-dialogue {
+      display: grid;
+      gap: var(--space-2);
+      padding: var(--space-5);
+      background: color-mix(in srgb, var(--warm-cream) 85%, #fff 15%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-sage);
+      line-height: 1.6;
+    }
+
+    .speaker {
+      font-weight: 700;
+      color: var(--primary-sage);
+      margin-right: var(--space-2);
+    }
+
+    .activity-section {
+      margin-bottom: var(--space-7);
+      padding: var(--space-6);
+      background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-sage);
+      box-shadow: var(--shadow-1);
+    }
+
+    .activity-title {
+      margin: 0 0 var(--space-2) 0;
+      color: var(--deep-forest);
+      font-family: var(--font-display);
+    }
+
+    .activity-instruction {
+      margin: 0 0 var(--space-4) 0;
+      color: var(--ink-muted);
+    }
+
+    .question-block fieldset {
+      border: none;
+      padding: 0;
+      margin: 0 0 var(--space-4) 0;
+    }
+
+    .question-block legend {
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: var(--forest-shadow);
+    }
+
+    .option-group {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .option-pill {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: color-mix(in srgb, var(--warm-cream) 75%, #fff 25%);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      border: 1px solid var(--border-sage);
+      font-weight: 600;
+      color: var(--forest-shadow);
+    }
+
+    .option-pill input[type="radio"] {
+      inline-size: 20px;
+      block-size: 20px;
+      accent-color: var(--primary-sage);
+    }
+
+    .matching-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .matching-row {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    @media (min-width: 640px) {
+      .matching-row {
+        grid-template-columns: 1fr minmax(160px, 220px);
+        align-items: center;
+      }
+    }
+
+    .matching-question {
+      font-weight: 600;
+      color: var(--forest-shadow);
+    }
+
+    select {
+      width: 100%;
+      min-height: var(--target-min);
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--tertiary-sage);
+      background: #fff;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      color: var(--ink);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color var(--dur-2) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    select:focus-visible {
+      outline: none;
+      border-color: var(--secondary-sage);
+      box-shadow: var(--ring);
+      background: color-mix(in srgb, #fff 92%, var(--warm-cream) 8%);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .arrange-item {
+      margin-bottom: var(--space-5);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid rgba(122, 132, 113, 0.15);
+    }
+
+    .arrange-item:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .word-token {
+      border: 1px solid var(--border-sage);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--soft-white) 85%, #fff 15%);
+      padding: 8px 14px;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      cursor: pointer;
+      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    .word-token:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(34, 41, 32, 0.12);
+    }
+
+    .word-token:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .word-token.selected {
+      background: color-mix(in srgb, var(--secondary-sage) 25%, #fff 75%);
+      border-color: var(--secondary-sage);
+    }
+
+    .drop-zone {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      min-height: var(--target-min);
+    }
+
+    .drop-slot {
+      min-width: 80px;
+      min-height: var(--target-min);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-sage);
+      background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: border-color var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    .drop-slot.filled {
+      border-style: solid;
+      background: color-mix(in srgb, var(--tertiary-sage) 35%, #fff 65%);
+    }
+
+    .classify-columns {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    @media (min-width: 640px) {
+      .classify-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .classify-column {
+      background: color-mix(in srgb, var(--warm-cream) 70%, #fff 30%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-sage);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-1);
+    }
+
+    .category-header {
+      font-weight: 700;
+      color: var(--deep-forest);
+      margin-bottom: var(--space-3);
+    }
+
+    .classify-drop-zone {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .classify-slot {
+      width: 100%;
+      min-height: var(--target-min);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-sage);
+      background: color-mix(in srgb, var(--soft-white) 90%, #fff 10%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: border-color var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+    }
+
+    .classify-slot.filled {
+      border-style: solid;
+      background: color-mix(in srgb, var(--tertiary-sage) 35%, #fff 65%);
+    }
+
+    .feedback {
+      margin-top: var(--space-3);
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--tertiary-sage) 20%, #fff 80%);
+      border: 1px solid var(--border-sage);
+      color: var(--deep-forest);
+      display: none;
+    }
+
+    .feedback.error {
+      background: color-mix(in srgb, #f8eaea 85%, #fff 15%);
+      border-color: rgba(198, 88, 88, 0.25);
+      color: #8d2f2f;
+    }
+
+    @media (max-width: 767px) {
+      #app-wrapper { padding: var(--space-4); }
+      #activity-container { padding: 24px; }
+      h1 { font-size: clamp(1.75rem, 5vw, 2rem); }
+      h2.rubric { font-size: var(--step--1); margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-wrapper">
+    <main id="activity-container" aria-labelledby="page-title">
+      <header>
+        <h1 id="page-title">Pre-Class Activity: Preparing for the Networking Event</h1>
+        <h2 class="rubric">Welcome! This activity will prepare you for our next lesson on professional networking. It will take about 30 minutes. Please complete all activities before class.</h2>
+      </header>
+
+      <section class="intro-section" aria-labelledby="intro-heading">
+        <h2 class="visually-hidden" id="intro-heading">Learner instructions</h2>
+        <p class="intro-lead"><strong>Instructions for the Learner:</strong> Read the model dialogue, review the vocabulary, and complete each activity below. Use the tasks to help you describe your work clearly and ask good networking questions.</p>
+      </section>
+
+      <section class="model-section" aria-labelledby="model-heading">
+        <div class="model-header">
+          <h2 class="model-title" id="model-heading">Model Dialogue: An Online Tech Meet-up</h2>
+          <p class="model-description">Two Palestinian professionals are meeting virtually. Read their short conversation.</p>
+        </div>
+        <div class="model-dialogue" role="list">
+          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> Hi, I'm Layla. It's great to connect. I see you're based in Ramallah?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Hi Layla! Yes, I am. And you're in Dublin, right? Great to meet you. So, what do you do?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> I'm a marketing specialist for a software company. I handle all our social media campaigns. How about you?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Nice. I'm a project manager. I'm in charge of a team of developers. We build mobile apps.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> That's really interesting.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Thanks! My main job is to make sure we finish our projects on time. I'm responsible for planning everything.</p>
+        </div>
+      </section>
+      <section class="activity-section" aria-labelledby="activity-1-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-1-heading">Activity 1. Check Your Understanding</h2>
+          <p class="activity-instruction">Read the dialogue again and choose the correct answer for each question.</p>
+        </div>
+        <form id="activity-1" class="question-block" data-activity="multiple-choice">
+          <fieldset>
+            <legend>1. Where are Layla and Yousef meeting?</legend>
+            <div class="option-group">
+              <label class="option-pill"><input type="radio" name="q1" value="a" /> a) In an office in Ramallah</label>
+              <label class="option-pill"><input type="radio" name="q1" value="b" /> b) At an online event</label>
+              <label class="option-pill"><input type="radio" name="q1" value="c" /> c) In a cafe in Dublin</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>2. What is Layla's job?</legend>
+            <div class="option-group">
+              <label class="option-pill"><input type="radio" name="q2" value="a" /> a) A project manager</label>
+              <label class="option-pill"><input type="radio" name="q2" value="b" /> b) A developer</label>
+              <label class="option-pill"><input type="radio" name="q2" value="c" /> c) A marketing specialist</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>3. What does Yousef's team do?</legend>
+            <div class="option-group">
+              <label class="option-pill"><input type="radio" name="q3" value="a" /> a) They handle social media.</label>
+              <label class="option-pill"><input type="radio" name="q3" value="b" /> b) They build mobile apps.</label>
+              <label class="option-pill"><input type="radio" name="q3" value="c" /> c) They plan marketing campaigns.</label>
+            </div>
+          </fieldset>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check answers</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-2-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-2-heading">Activity 2. Vocabulary: Roles &amp; Responsibilities</h2>
+          <p class="activity-instruction">Match the words and phrases from the dialogue (Column A) with their meanings (Column B).</p>
+        </div>
+        <form id="activity-2" class="matching-grid" data-activity="matching">
+          <div class="matching-row">
+            <span class="matching-question">1. marketing specialist</span>
+            <label class="visually-hidden" for="match-1">Meaning for marketing specialist</label>
+            <select id="match-1" data-answer="e">
+              <option value="">Choose...</option>
+              <option value="a">a) to manage or deal with something</option>
+              <option value="b">b) having control and authority over a team or area</option>
+              <option value="c">c) a person who plans and organizes a project</option>
+              <option value="d">d) having a duty to do something</option>
+              <option value="e">e) a person who works in advertising and promotion</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">2. handle</span>
+            <label class="visually-hidden" for="match-2">Meaning for handle</label>
+            <select id="match-2" data-answer="a">
+              <option value="">Choose...</option>
+              <option value="a">a) to manage or deal with something</option>
+              <option value="b">b) having control and authority over a team or area</option>
+              <option value="c">c) a person who plans and organizes a project</option>
+              <option value="d">d) having a duty to do something</option>
+              <option value="e">e) a person who works in advertising and promotion</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">3. project manager</span>
+            <label class="visually-hidden" for="match-3">Meaning for project manager</label>
+            <select id="match-3" data-answer="c">
+              <option value="">Choose...</option>
+              <option value="a">a) to manage or deal with something</option>
+              <option value="b">b) having control and authority over a team or area</option>
+              <option value="c">c) a person who plans and organizes a project</option>
+              <option value="d">d) having a duty to do something</option>
+              <option value="e">e) a person who works in advertising and promotion</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">4. in charge of</span>
+            <label class="visually-hidden" for="match-4">Meaning for in charge of</label>
+            <select id="match-4" data-answer="b">
+              <option value="">Choose...</option>
+              <option value="a">a) to manage or deal with something</option>
+              <option value="b">b) having control and authority over a team or area</option>
+              <option value="c">c) a person who plans and organizes a project</option>
+              <option value="d">d) having a duty to do something</option>
+              <option value="e">e) a person who works in advertising and promotion</option>
+            </select>
+          </div>
+          <div class="matching-row">
+            <span class="matching-question">5. responsible for</span>
+            <label class="visually-hidden" for="match-5">Meaning for responsible for</label>
+            <select id="match-5" data-answer="d">
+              <option value="">Choose...</option>
+              <option value="a">a) to manage or deal with something</option>
+              <option value="b">b) having control and authority over a team or area</option>
+              <option value="c">c) a person who plans and organizes a project</option>
+              <option value="d">d) having a duty to do something</option>
+              <option value="e">e) a person who works in advertising and promotion</option>
+            </select>
+          </div>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check matches</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-3-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-3-heading">Activity 3. Language Focus: Describing Your Job</h2>
+          <p class="activity-instruction">Complete the sentences about Layla and Yousef using the phrases from the dialogue. Choose the correct option from the dropdown menu.</p>
+        </div>
+        <form id="activity-3" class="question-block" data-activity="dropdown">
+          <label for="job-1">1. Layla says, "I --- handle / am responsible / am in charge of --- all our social media campaigns."</label>
+          <select id="job-1" data-answer="handle">
+            <option value="">Select...</option>
+            <option value="handle">handle</option>
+            <option value="am responsible">am responsible</option>
+            <option value="am in charge of">am in charge of</option>
+          </select>
+
+          <label for="job-2">2. Yousef is --- handle / responsible for / specialist --- planning everything for his team's projects.</label>
+          <select id="job-2" data-answer="responsible for">
+            <option value="">Select...</option>
+            <option value="handle">handle</option>
+            <option value="responsible for">responsible for</option>
+            <option value="specialist">specialist</option>
+          </select>
+
+          <label for="job-3">3. Yousef is --- in charge of / handle / responsible --- a team of developers.</label>
+          <select id="job-3" data-answer="in charge of">
+            <option value="">Select...</option>
+            <option value="in charge of">in charge of</option>
+            <option value="handle">handle</option>
+            <option value="responsible">responsible</option>
+          </select>
+
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check sentences</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-4-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-4-heading">Activity 4. Build the Sentences</h2>
+          <p class="activity-instruction">Click the words to place them in order and build sentences from the dialogue. Click a word in the sentence to remove it.</p>
+        </div>
+        <div id="activity-4" data-activity="word-order">
+          <div class="arrange-item" data-answer='["I'm","a","marketing","specialist","."]'>
+            <h3>1. Sentence about Layla</h3>
+            <div class="word-bank" aria-label="Word bank for sentence 1">
+              <button type="button" class="word-token" data-token="I'm">I'm</button>
+              <button type="button" class="word-token" data-token="a">a</button>
+              <button type="button" class="word-token" data-token="marketing">marketing</button>
+              <button type="button" class="word-token" data-token="specialist">specialist</button>
+              <button type="button" class="word-token" data-token=".">.</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 1">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+            </div>
+          </div>
+
+          <div class="arrange-item" data-answer='["I","handle","all","our","social","media","campaigns","."]'>
+            <h3>2. Sentence about Layla's responsibilities</h3>
+            <div class="word-bank" aria-label="Word bank for sentence 2">
+              <button type="button" class="word-token" data-token="I">I</button>
+              <button type="button" class="word-token" data-token="handle">handle</button>
+              <button type="button" class="word-token" data-token="all">all</button>
+              <button type="button" class="word-token" data-token="our">our</button>
+              <button type="button" class="word-token" data-token="social">social</button>
+              <button type="button" class="word-token" data-token="media">media</button>
+              <button type="button" class="word-token" data-token="campaigns">campaigns</button>
+              <button type="button" class="word-token" data-token=".">.</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 2">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+              <button type="button" class="drop-slot" data-index="5" aria-label="Slot 6"></button>
+              <button type="button" class="drop-slot" data-index="6" aria-label="Slot 7"></button>
+              <button type="button" class="drop-slot" data-index="7" aria-label="Slot 8"></button>
+            </div>
+          </div>
+
+          <div class="arrange-item" data-answer='["I'm","in","charge","of","a","team","of","developers","."]'>
+            <h3>3. Sentence about Yousef's leadership</h3>
+            <div class="word-bank" aria-label="Word bank for sentence 3">
+              <button type="button" class="word-token" data-token="I'm">I'm</button>
+              <button type="button" class="word-token" data-token="in">in</button>
+              <button type="button" class="word-token" data-token="charge">charge</button>
+              <button type="button" class="word-token" data-token="of">of</button>
+              <button type="button" class="word-token" data-token="a">a</button>
+              <button type="button" class="word-token" data-token="team">team</button>
+              <button type="button" class="word-token" data-token="of">of</button>
+              <button type="button" class="word-token" data-token="developers">developers</button>
+              <button type="button" class="word-token" data-token=".">.</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 3">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+              <button type="button" class="drop-slot" data-index="5" aria-label="Slot 6"></button>
+              <button type="button" class="drop-slot" data-index="6" aria-label="Slot 7"></button>
+              <button type="button" class="drop-slot" data-index="7" aria-label="Slot 8"></button>
+              <button type="button" class="drop-slot" data-index="8" aria-label="Slot 9"></button>
+            </div>
+          </div>
+
+          <div class="arrange-item" data-answer='["What","do","you","do","?"]'>
+            <h3>4. Question to start a conversation</h3>
+            <div class="word-bank" aria-label="Word bank for sentence 4">
+              <button type="button" class="word-token" data-token="What">What</button>
+              <button type="button" class="word-token" data-token="do">do</button>
+              <button type="button" class="word-token" data-token="you">you</button>
+              <button type="button" class="word-token" data-token="do">do</button>
+              <button type="button" class="word-token" data-token="?">?</button>
+            </div>
+            <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 4">
+              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
+              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
+              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
+              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
+              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check sentences</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </div>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-5-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-5-heading">Activity 5. Get Ready to Speak: Word Stress</h2>
+          <p class="activity-instruction">Imagine you are listening to the pronunciation of each job title. Notice which part is stressed. Click a word, then click a category to place it. Click a word in a category to remove it.</p>
+        </div>
+        <div id="activity-5" data-activity="classify">
+          <div class="word-bank" aria-label="Word bank for stress practice">
+            <button type="button" class="word-token" data-token="developer">developer</button>
+            <button type="button" class="word-token" data-token="manager">manager</button>
+            <button type="button" class="word-token" data-token="specialist">specialist</button>
+            <button type="button" class="word-token" data-token="analyst">analyst</button>
+          </div>
+          <div class="classify-columns">
+            <div class="classify-column" data-correct='["manager","specialist","analyst"]'>
+              <p class="category-header">Stress on the FIRST syllable (O o o)</p>
+              <div class="classify-drop-zone" role="list" aria-label="Words with stress on the first syllable">
+                <button type="button" class="classify-slot" data-index="0" aria-label="First syllable slot 1"></button>
+                <button type="button" class="classify-slot" data-index="1" aria-label="First syllable slot 2"></button>
+                <button type="button" class="classify-slot" data-index="2" aria-label="First syllable slot 3"></button>
+              </div>
+            </div>
+            <div class="classify-column" data-correct='["developer"]'>
+              <p class="category-header">Stress on the SECOND syllable (o O o)</p>
+              <div class="classify-drop-zone" role="list" aria-label="Words with stress on the second syllable">
+                <button type="button" class="classify-slot" data-index="0" aria-label="Second syllable slot 1"></button>
+                <button type="button" class="classify-slot" data-index="1" aria-label="Second syllable slot 2"></button>
+                <button type="button" class="classify-slot" data-index="2" aria-label="Second syllable slot 3"></button>
+              </div>
+            </div>
+          </div>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check stress patterns</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function showFeedback(container, message, isSuccess) {
+      const feedback = container.querySelector('.feedback');
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.classList.toggle('error', !isSuccess);
+      feedback.style.display = 'block';
+    }
+
+    function resetFeedback(container) {
+      const feedback = container.querySelector('.feedback');
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.style.display = 'none';
+        feedback.classList.remove('error');
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const container = button.closest('[data-activity]');
+      if (!container) return;
+
+      if (button.dataset.action === 'check') {
+        handleCheck(container);
+      } else if (button.dataset.action === 'reset') {
+        handleReset(container);
+      }
+    });
+
+    function handleCheck(container) {
+      const type = container.dataset.activity;
+      switch (type) {
+        case 'multiple-choice':
+          checkMultipleChoice(container);
+          break;
+        case 'matching':
+          checkMatching(container);
+          break;
+        case 'dropdown':
+          checkDropdown(container);
+          break;
+        case 'word-order':
+          checkWordOrder(container);
+          break;
+        case 'classify':
+          checkClassify(container);
+          break;
+        default:
+          break;
+      }
+    }
+
+    function handleReset(container) {
+      const type = container.dataset.activity;
+      switch (type) {
+        case 'multiple-choice':
+          container.querySelectorAll('input[type="radio"]').forEach((input) => {
+            input.checked = false;
+          });
+          break;
+        case 'matching':
+        case 'dropdown':
+          container.querySelectorAll('select').forEach((select) => {
+            select.selectedIndex = 0;
+          });
+          break;
+        case 'word-order':
+          resetWordOrder(container);
+          break;
+        case 'classify':
+          resetClassify(container);
+          break;
+        default:
+          break;
+      }
+      resetFeedback(container);
+    }
+
+    function checkMultipleChoice(container) {
+      const answers = { q1: 'b', q2: 'c', q3: 'b' };
+      const keys = Object.keys(answers);
+      let allAnswered = true;
+      let correctCount = 0;
+
+      keys.forEach((key) => {
+        const selected = container.querySelector(`input[name="${key}"]:checked`);
+        if (!selected) {
+          allAnswered = false;
+          return;
+        }
+        if (selected.value === answers[key]) {
+          correctCount += 1;
+        }
+      });
+
+      if (!allAnswered) {
+        showFeedback(container, 'Please answer every question before checking.', false);
+        return;
+      }
+
+      const isPerfect = correctCount === keys.length;
+      const message = isPerfect
+        ? 'Great job! You understood the conversation.'
+        : 'Almost there. Review the dialogue and try again.';
+      showFeedback(container, message, isPerfect);
+    }
+
+    function checkMatching(container) {
+      const selects = Array.from(container.querySelectorAll('select'));
+      if (selects.some((select) => select.value === '')) {
+        showFeedback(container, 'Choose an answer for each item before checking.', false);
+        return;
+      }
+      const allCorrect = selects.every((select) => select.value === select.dataset.answer);
+      const message = allCorrect
+        ? 'Excellent! Every match is correct.'
+        : 'Some matches need review. Think about what each person does.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function checkDropdown(container) {
+      const selects = Array.from(container.querySelectorAll('select'));
+      if (selects.some((select) => select.value === '')) {
+        showFeedback(container, 'Complete all the blanks before checking.', false);
+        return;
+      }
+      const allCorrect = selects.every((select) => select.value === select.dataset.answer);
+      const message = allCorrect
+        ? 'Well done! Your sentences sound natural.'
+        : 'Review the dialogue and adjust your choices.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function resetWordOrder(container) {
+      container.querySelectorAll('.arrange-item').forEach((item) => {
+        item.querySelectorAll('.drop-slot').forEach((slot) => {
+          slot.textContent = '';
+          slot.classList.remove('filled');
+          delete slot.dataset.token;
+        });
+        item.querySelectorAll('.word-token').forEach((tokenButton) => {
+          tokenButton.disabled = false;
+        });
+      });
+    }
+
+    function checkWordOrder(container) {
+      const items = Array.from(container.querySelectorAll('.arrange-item'));
+      let allAnswered = true;
+      const results = items.map((item) => {
+        const correctOrder = JSON.parse(item.dataset.answer);
+        const dropSlots = Array.from(item.querySelectorAll('.drop-slot'));
+        const userOrder = dropSlots
+          .filter((slot) => slot.dataset.token)
+          .map((slot) => slot.dataset.token);
+
+        if (userOrder.length !== correctOrder.length) {
+          allAnswered = false;
+        }
+
+        return correctOrder.every((value, index) => userOrder[index] === value);
+      });
+
+      if (!allAnswered) {
+        showFeedback(container, 'Fill every slot before checking your sentences.', false);
+        return;
+      }
+
+      const allCorrect = results.every(Boolean);
+      const message = allCorrect
+        ? 'Fantastic! Each sentence matches the dialogue.'
+        : 'Check the order of the words and try again.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function checkClassify(container) {
+      const tokens = Array.from(container.querySelectorAll('.word-token'));
+      const unplaced = tokens.some((token) => !token.disabled);
+      if (unplaced) {
+        showFeedback(container, 'Place every job title into a stress category.', false);
+        return;
+      }
+
+      const columns = Array.from(container.querySelectorAll('.classify-column'));
+      let allCorrect = true;
+
+      columns.forEach((column) => {
+        const required = JSON.parse(column.dataset.correct);
+        const slots = Array.from(column.querySelectorAll('.classify-slot'));
+        const placed = slots
+          .filter((slot) => slot.dataset.token)
+          .map((slot) => slot.dataset.token)
+          .sort();
+        const expected = [...required].sort();
+        if (placed.length !== expected.length) {
+          allCorrect = false;
+        } else {
+          placed.forEach((value, index) => {
+            if (value !== expected[index]) {
+              allCorrect = false;
+            }
+          });
+        }
+      });
+
+      const message = allCorrect
+        ? 'Great ear! You sorted the stress patterns correctly.'
+        : 'Listen again and move any words that are in the wrong column.';
+      showFeedback(container, message, allCorrect);
+    }
+
+    function resetClassify(container) {
+      container.querySelectorAll('.classify-slot').forEach((slot) => {
+        if (slot.dataset.token) {
+          const tokenButton = container.querySelector(`.word-token[data-token="${slot.dataset.token}"]`);
+          if (tokenButton) {
+            tokenButton.disabled = false;
+            tokenButton.classList.remove('selected');
+          }
+        }
+        slot.textContent = '';
+        slot.classList.remove('filled');
+        delete slot.dataset.token;
+      });
+      container.querySelectorAll('.word-token').forEach((token) => {
+        token.disabled = false;
+        token.classList.remove('selected');
+      });
+    }
+
+    document.querySelectorAll('[data-activity="word-order"] .word-token').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (button.disabled) return;
+        const arrangeItem = button.closest('.arrange-item');
+        const dropSlots = Array.from(arrangeItem.querySelectorAll('.drop-slot'));
+        const availableSlot = dropSlots.find((slot) => !slot.dataset.token);
+        if (!availableSlot) {
+          return;
+        }
+        availableSlot.textContent = button.dataset.token;
+        availableSlot.dataset.token = button.dataset.token;
+        availableSlot.classList.add('filled');
+        button.disabled = true;
+        resetFeedback(arrangeItem.closest('[data-activity]'));
+      });
+    });
+
+    document.querySelectorAll('[data-activity="word-order"] .drop-slot').forEach((slot) => {
+      slot.addEventListener('click', () => {
+        if (!slot.dataset.token) return;
+        const arrangeItem = slot.closest('.arrange-item');
+        const wordButton = Array.from(arrangeItem.querySelectorAll('.word-token')).find(
+          (button) => button.dataset.token === slot.dataset.token && button.disabled
+        );
+        if (wordButton) {
+          wordButton.disabled = false;
+        }
+        slot.textContent = '';
+        delete slot.dataset.token;
+        slot.classList.remove('filled');
+        resetFeedback(arrangeItem.closest('[data-activity]'));
+      });
+    });
+
+    document.querySelectorAll('[data-activity="classify"] .word-token').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (button.disabled) return;
+        const container = button.closest('[data-activity="classify"]');
+        const currentSelected = container.querySelector('.word-token.selected');
+        if (currentSelected && currentSelected !== button) {
+          currentSelected.classList.remove('selected');
+        }
+        if (button.classList.contains('selected')) {
+          button.classList.remove('selected');
+        } else {
+          button.classList.add('selected');
+        }
+        resetFeedback(container);
+      });
+    });
+
+    document.querySelectorAll('[data-activity="classify"] .classify-slot').forEach((slot) => {
+      slot.addEventListener('click', () => {
+        const container = slot.closest('[data-activity="classify"]');
+        const selectedToken = container.querySelector('.word-token.selected');
+        if (selectedToken && !slot.dataset.token) {
+          slot.textContent = selectedToken.dataset.token;
+          slot.dataset.token = selectedToken.dataset.token;
+          slot.classList.add('filled');
+          selectedToken.disabled = true;
+          selectedToken.classList.remove('selected');
+        } else if (slot.dataset.token) {
+          const tokenButton = container.querySelector(`.word-token[data-token="${slot.dataset.token}"]`);
+          if (tokenButton) {
+            tokenButton.disabled = false;
+            tokenButton.classList.remove('selected');
+          }
+          slot.textContent = '';
+          slot.classList.remove('filled');
+          delete slot.dataset.token;
+        }
+        resetFeedback(container);
+      });
+    });
+  </script>
+</body>
+</html>
