@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Noor Community · Securing Funding for Your Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+      --border-sage: rgba(122,132,113,0.20);
+      --hover-sage: rgba(156,175,136,0.15);
+      --deep-forest: #3E4A3A;
+      --font-display: 'Questrial', system-ui, sans-serif;
+      --font-body: 'Nunito', system-ui, sans-serif;
+      --font-size-adjustment: 0pt;
+      --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
+      --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
+      --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
+      --step-2: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment));
+      --step-3: calc(clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment));
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --radius: 16px;
+      --radius-lg: 20px;
+      --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+      --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+      --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+      --toolbar-h: 72px;
+      --workspace-pad: 24px;
+      --stage-pad: clamp(32px, 5vw, 64px);
+      --stage-radius: 18px;
+      --slide-aspect-w: 16;
+      --slide-aspect-h: 9;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      color: var(--forest-shadow);
+      background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow: auto;
+    }
+
+    .deck-app {
+      display: grid;
+      grid-template-rows: var(--toolbar-h) 1fr;
+      min-height: 100dvh;
+    }
+
+    .deck-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--toolbar-h);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: var(--space-4);
+      padding: 0 max(24px, 4vw);
+      background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+      border-bottom: 1px solid var(--border-sage);
+      box-shadow: 0 8px 20px rgba(34,41,32,0.05);
+      backdrop-filter: blur(8px) saturate(1.1);
+    }
+
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-size: calc(1.05rem + var(--font-size-adjustment));
+      color: var(--forest-shadow);
+    }
+
+    .toolbar-brand span {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .slide-counter {
+      font-family: var(--font-display);
+      color: var(--ink-muted);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .deck-workspace {
+      height: calc(100dvh - var(--toolbar-h));
+      padding: var(--workspace-pad);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+        radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
+    }
+
+    .stage-viewport {
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .slide-stage {
+      position: relative;
+      border-radius: var(--stage-radius);
+      background-color: var(--soft-white);
+      box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
+      aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+      width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2)));
+      max-width: 100%;
+      overflow: hidden auto;
+      outline: 1px solid var(--border-sage);
+      transition: opacity 300ms ease-in-out;
+    }
+
+    .slide-stage.hidden {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide-stage.full-width-bg {
+      background: transparent;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .bg-media {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.92);
+    }
+
+    .img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(14,30,20,0.72) 0%, rgba(14,30,20,0.4) 45%, rgba(14,30,20,0.2) 70%, transparent 100%);
+      z-index: 1;
+    }
+
+    .slide-inner {
+      position: absolute;
+      inset: 0;
+      padding: var(--stage-pad);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      gap: 1.25rem;
+      overflow-y: auto;
+      scrollbar-gutter: stable both-edges;
+    }
+
+    .bg-content {
+      position: relative;
+      z-index: 2;
+      padding: var(--stage-pad);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .bg-content.centered {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .overlay-card {
+      background: color-mix(in srgb, rgba(16,28,21,0.72) 65%, rgba(248,246,240,0.35) 35%);
+      border: 1px solid rgba(253,251,245,0.35);
+      border-radius: calc(var(--radius-lg) + 8px);
+      padding: clamp(28px, 5vw, 48px);
+      box-shadow: 0 24px 60px rgba(8,16,12,0.4);
+      backdrop-filter: blur(14px) saturate(125%);
+      color: #FDFBF5;
+      max-width: min(560px, 70%);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .overlay-card.centered {
+      margin: 0 auto;
+      text-align: center;
+      align-items: center;
+    }
+
+    .overlay-card h1,
+    .overlay-card h2,
+    .overlay-card p,
+    .overlay-card .pill,
+    .overlay-card .deck-subtitle {
+      color: #FDFBF5;
+    }
+
+    .overlay-card .deck-subtitle {
+      font-size: var(--step-1);
+      margin: 0;
+      color: rgba(253,251,245,0.85);
+    }
+
+    .overlay-pill {
+      background: rgba(253,251,245,0.22) !important;
+      color: #FDFBF5 !important;
+      box-shadow: inset 0 0 0 1px rgba(253,251,245,0.28);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(122,132,113,0.16);
+      font-size: calc(0.85rem + var(--font-size-adjustment));
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--deep-forest);
+      width: fit-content;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      margin: 0;
+      color: var(--ink);
+    }
+
+    h1 { font-size: var(--step-3); }
+    h2 { font-size: var(--step-2); }
+    h3 { font-size: var(--step-1); }
+
+    p { margin: 0; }
+
+    ul, ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .card {
+      background: var(--soft-white);
+      padding: clamp(1.35rem, 3vw, 2rem);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .card.dense {
+      gap: 0.65rem;
+      padding: clamp(1.1rem, 2.5vw, 1.65rem);
+    }
+
+    .two-column-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+    }
+
+    .column-card {
+      background: rgba(248,246,240,0.85);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      border: 1px solid rgba(122,132,113,0.18);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .prompt-box {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(122,132,113,0.4);
+      padding: 1.5rem;
+      background: linear-gradient(140deg, rgba(248,246,240,0.95), rgba(236,231,220,0.7));
+      font-weight: 600;
+      font-size: var(--step-0);
+      line-height: 1.7;
+    }
+
+    .audio-player {
+      background: var(--soft-white);
+      padding: 1.1rem 1.4rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    audio { width: 100%; }
+
+    .activity-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .activity-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--primary-sage);
+      color: #fff;
+      box-shadow: var(--shadow-1);
+    }
+
+    .activity-btn.secondary {
+      background: rgba(122,132,113,0.16);
+      color: var(--deep-forest);
+    }
+
+    .activity-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .feedback-msg {
+      min-height: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .feedback-msg.success { color: #2E7D32; }
+    .feedback-msg.error { color: #C62828; }
+    .matching-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.18);
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-1);
+    }
+
+    .matching-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .matching-option {
+      display: grid;
+      grid-template-columns: 1fr minmax(140px, 220px);
+      gap: 0.9rem;
+      align-items: center;
+      padding: 0.75rem 0.85rem;
+      border-radius: 14px;
+      border: 1px solid rgba(122,132,113,0.16);
+      background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+      transition: border 0.2s ease, background 0.2s ease;
+    }
+
+    .matching-option select {
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--step--1);
+      background: var(--soft-white);
+      color: var(--forest-shadow);
+    }
+
+    .token-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(248,246,240,0.92), rgba(236,231,220,0.75));
+      border: 1px dashed rgba(122,132,113,0.28);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+    }
+
+    .click-token {
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      background: var(--soft-white);
+      border: 1px solid rgba(122,132,113,0.35);
+      box-shadow: var(--shadow-1);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--step--1);
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .click-token.used {
+      opacity: 0.55;
+      box-shadow: none;
+    }
+
+    .drop-zone {
+      min-height: 52px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0.55rem 0.85rem;
+      border-radius: 14px;
+      border: 2px dashed rgba(122,132,113,0.35);
+      background: rgba(254,252,247,0.75);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--step--1);
+      color: var(--forest-shadow);
+      text-align: left;
+      cursor: pointer;
+      transition: border 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      position: relative;
+      gap: 0.55rem;
+    }
+
+    .drop-zone.placeholder {
+      color: rgba(47,58,43,0.55);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .drop-zone::after {
+      content: '\\f063';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      margin-left: auto;
+      color: rgba(90,107,82,0.45);
+      font-size: 0.85em;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .drop-zone.placeholder::after { content: '\\f078'; }
+
+    .drop-zone:hover {
+      border-color: var(--secondary-sage);
+      background: rgba(156,175,136,0.18);
+      transform: translateY(-1px);
+    }
+
+    .drop-zone.active,
+    .drop-zone.selected {
+      border-style: solid;
+      border-color: var(--primary-sage);
+      background: rgba(156,175,136,0.22);
+    }
+
+    .drop-zone.filled::after {
+      color: var(--primary-sage);
+      transform: rotate(-180deg);
+    }
+
+    .drop-zone.correct {
+      border-color: #2E7D32;
+      background: rgba(46,125,50,0.16);
+    }
+
+    .drop-zone.incorrect {
+      border-color: #C62828;
+      background: rgba(198,40,40,0.16);
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .quiz-card {
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      padding: 1rem 1.1rem;
+      background: rgba(254,252,247,0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .quiz-card select {
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-weight: 600;
+      font-size: var(--step--1);
+      font-family: var(--font-body);
+      background: var(--soft-white);
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 12px;
+      background: rgba(250,250,248,0.9);
+      border: 1px solid transparent;
+    }
+
+    .quiz-option.correct { border-color: #2E7D32; background: rgba(46,125,50,0.12); }
+    .quiz-option.incorrect { border-color: #C62828; background: rgba(198,40,40,0.12); }
+
+    .highlight-text {
+      position: relative;
+      line-height: 1.7;
+      font-size: var(--step-0);
+      cursor: text;
+      user-select: text;
+    }
+
+    .highlight-mark {
+      background: rgba(156,175,136,0.28);
+      color: var(--deep-forest);
+      border-radius: 6px;
+      padding: 0.05rem 0.3rem;
+      margin: 0 -0.05rem;
+      box-shadow: inset 0 0 0 1px rgba(90,107,82,0.2);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .highlight-mark.correct {
+      background: rgba(46,125,50,0.2);
+      box-shadow: inset 0 0 0 1px rgba(46,125,50,0.35);
+      color: #1c3d1f;
+    }
+
+    .highlight-mark.incorrect {
+      background: rgba(198,40,40,0.2);
+      box-shadow: inset 0 0 0 1px rgba(198,40,40,0.35);
+      color: #6d1b1b;
+    }
+
+    .gap-fill-list,
+    .unscramble-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .gap-input,
+    .unscramble-input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      font-weight: 600;
+      background: var(--soft-white);
+      transition: border 0.2s ease, background 0.2s ease;
+    }
+
+    .gap-input.correct,
+    .unscramble-input.correct {
+      border-color: #2E7D32;
+      background: rgba(46,125,50,0.12);
+    }
+
+    .gap-input.incorrect,
+    .unscramble-input.incorrect {
+      border-color: #C62828;
+      background: rgba(198,40,40,0.12);
+    }
+
+    .prompt-input {
+      display: inline-flex;
+      min-width: 160px;
+      width: min(240px, 100%);
+      border: none;
+      border-bottom: 2px solid rgba(122,132,113,0.45);
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--forest-shadow);
+      padding: 0.15rem 0.25rem;
+      margin: 0 0.15rem;
+    }
+
+    .prompt-input:focus {
+      outline: none;
+      border-bottom-color: var(--secondary-sage);
+      background: rgba(156,175,136,0.15);
+    }
+
+    .evaluation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-4);
+      font-size: var(--step--1);
+      background: rgba(250,250,248,0.85);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(122,132,113,0.2);
+    }
+
+    .evaluation-table thead {
+      background: rgba(122,132,113,0.12);
+      font-weight: 700;
+      color: var(--deep-forest);
+    }
+
+    .evaluation-table th,
+    .evaluation-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(122,132,113,0.18);
+    }
+
+    .evaluation-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .evaluation-table .score-cell {
+      text-align: center;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      min-width: 120px;
+    }
+
+    .reflection-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .reflection-list li {
+      background: rgba(248,246,240,0.9);
+      border-radius: var(--radius);
+      padding: 0.85rem 1.1rem;
+      border: 1px solid rgba(122,132,113,0.2);
+      font-weight: 600;
+    }
+
+    .slide-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: rgba(254,252,247,0.85);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-2);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .slide-nav:hover {
+      transform: translateY(-50%) scale(1.05);
+      box-shadow: 0 12px 32px rgba(34,41,32,0.15);
+    }
+
+    .slide-nav-prev { left: -24px; }
+    .slide-nav-next { right: -24px; }
+
+    @media (max-width: 1200px) {
+      .deck-workspace { padding: 12px; }
+      .slide-stage { width: 100%; }
+      .slide-nav-prev { left: 12px; }
+      .slide-nav-next { right: 12px; }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --toolbar-h: 64px;
+        --stage-pad: clamp(20px, 6vw, 38px);
+      }
+      .deck-toolbar {
+        grid-template-columns: 1fr auto;
+        padding: 0 18px;
+      }
+      .toolbar-brand span { font-size: 0.85rem; letter-spacing: 0.08em; }
+      .slide-nav { display: none; }
+      .slide-stage { border-radius: 0; box-shadow: none; }
+      .bg-content { padding: clamp(24px, 5vw, 36px); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --soft-white: #1E211C;
+        --warm-cream: #23261F;
+        --forest-shadow: #DDE6D4;
+        --ink: #E9EFE5;
+        --ink-muted: #AEB9AA;
+        --border-sage: rgba(184,197,166,0.25);
+        --deep-forest: #E9EFE5;
+        --primary-sage: #9CAF88;
+        --shadow-glow: 0 0 50px 10px rgba(184,197,166,0.1);
+      }
+      body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+      .slide-stage { background: #161915; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+      .card, .audio-player, .matching-card, .quiz-card, .column-card {
+        background: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%);
+        border-color: rgba(184,197,166,0.25);
+      }
+      .prompt-box { background: color-mix(in srgb, var(--warm-cream) 55%, var(--soft-white) 45%); }
+      .highlight-mark { color: var(--forest-shadow); box-shadow: inset 0 0 0 1px rgba(184,197,166,0.25); }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-app">
+    <header class="deck-toolbar">
+      <div class="toolbar-brand">
+        <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
+        <span>Organic Sage System · B2 Lesson</span>
+      </div>
+      <div id="slide-counter" class="slide-counter">1 / 19</div>
+    </header>
+
+    <main class="deck-workspace">
+      <div class="stage-viewport">
+
+        <!-- Slide 1 -->
+        <div class="slide-stage full-width-bg">
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/2422290/pexels-photo-2422290.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay"></div>
+          <div class="slide-inner">
+            <div class="bg-content">
+              <div class="overlay-card">
+                <span class="pill overlay-pill"><i class="fa-solid fa-landmark"></i> Noor Community</span>
+                <h1>Strategic Planning in the NGO Sector</h1>
+                <p class="deck-subtitle">Securing Funding for Your Project</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-stage hidden full-width-bg">
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/1428277/pexels-photo-1428277.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay" style="background: linear-gradient(145deg, rgba(9,28,18,0.55) 0%, rgba(9,28,18,0.3) 50%, rgba(9,28,18,0.1) 100%);"></div>
+          <div class="slide-inner" style="justify-content: center;">
+            <div class="bg-content centered">
+              <div class="overlay-card centered">
+                <span class="pill overlay-pill"><i class="fa-solid fa-leaf"></i> Grounding Activity</span>
+                <h2>Arrive in the Moment</h2>
+                <p class="deck-subtitle">Take a slow breath in · Hold for three · Exhale fully · Focus on being present together</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-bullseye"></i> Lesson Aims</span>
+            <h2>By the end of this lesson, you will be able to...</h2>
+            <div class="card">
+              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
+                <li><i class="fa-solid fa-comments" style="margin-right: 10px; color: var(--primary-sage);"></i>Discuss opportunities and challenges for youth-led initiatives in your community.</li>
+                <li><i class="fa-solid fa-diagram-project" style="margin-right: 10px; color: var(--primary-sage);"></i>Compare funding options using a structured decision guide.</li>
+                <li><i class="fa-solid fa-shuffle" style="margin-right: 10px; color: var(--primary-sage);"></i>Use the second conditional to explain hypothetical advantages and disadvantages.</li>
+                <li><i class="fa-solid fa-scale-balanced" style="margin-right: 10px; color: var(--primary-sage);"></i>Justify a funding decision with clear reasons and relevant examples.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-square-poll-vertical"></i> Pre-task A · 5 minutes</span>
+            <h2>Digital Skills Confidence Check</h2>
+            <div class="card">
+              <p><strong>In breakout rooms:</strong> Ask your partner(s) to rate their confidence from 1 (low) to 5 (high) in each digital skill. Encourage follow-up questions to uncover stories behind their scores.</p>
+              <ol>
+                <li><strong>Office Suite:</strong> Using Microsoft Word, Excel, or Google Sheets professionally.</li>
+                <li><strong>Social Media Marketing:</strong> Creating and managing a professional campaign.</li>
+                <li><strong>Coding &amp; Development:</strong> Applying basic programming concepts (HTML, Python, etc.).</li>
+                <li><strong>AI Tools:</strong> Using AI tools ethically and effectively for work.</li>
+              </ol>
+              <p class="hint" style="font-style: italic; color: var(--ink-muted);">Be ready to share one surprising insight about your partner with the class.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-ear-listen"></i> Pre-task B · Restrictive Practice · 7 minutes</span>
+            <h2>Listening to a Model Dialogue</h2>
+            <div class="audio-player">
+              <p>You will listen to Fatima and Yousef discussing two potential funding options for their NGO. Play the audio and note the details that answer the questions below.</p>
+              <audio controls src="/audio/ngo_dialogue.mp3">
+                Your browser does not support the audio element.
+              </audio>
+              <ol>
+                <li>Which two funding options are they discussing?</li>
+                <li>What is the main advantage of the EU grant?</li>
+                <li>What is the main disadvantage of the local fund?</li>
+                <li>What is their final decision?</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-sitemap"></i> Pre-task B · Semi-controlled Practice · 7 minutes</span>
+            <h2>Analyzing Hypothetical Language</h2>
+            <div class="card">
+              <p style="font-style: italic;">“If we <strong>got</strong> that grant, we <strong>would have</strong> a bigger budget.”</p>
+              <p style="font-style: italic;">“If we <strong>applied</strong> for it, we <strong>would need</strong> to hire a consultant.”</p>
+              <hr style="border: 0; border-top: 1px solid rgba(122,132,113,0.25);">
+              <p><strong>Complete the second conditional sentence starters with your own ideas:</strong></p>
+              <ol>
+                <li>If our NGO had a million dollars, we would...</li>
+                <li>If I could start any community project, I would...</li>
+                <li>If we had better internet access in our city, young people would...</li>
+                <li>If I were the head of a major donor agency, I would...</li>
+                <li>If our team had more time, we would...</li>
+                <li>If we could only choose one digital skill to teach, it would be...</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 7 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-code-branch"></i> Pre-task B · Freer Practice · 6 minutes</span>
+            <h2>Exploring the Consequences</h2>
+            <div class="card">
+              <p><strong>Scenario:</strong> The “Global Future Fund” offers your digital skills NGO a $100,000 grant. The catch: you must pivot to environmental technology (solar power, water purification, etc.). Your current project is loved in the community.</p>
+              <p><strong>In breakout rooms, discuss:</strong></p>
+              <ul>
+                <li>If we accepted the grant and changed our project, how would the community react?</li>
+                <li>If we refused the grant, how would it affect our NGO's future?</li>
+                <li>What would be the biggest challenge if we accepted the money?</li>
+                <li>What decision would you make, and why?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 8 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-magnifying-glass-dollar"></i> Pre-task C · Restrictive Practice · 7 minutes</span>
+            <h2>Fundraising Vocabulary Match</h2>
+            <div class="card" data-activity="matching-vocab">
+              <div class="matching-card">
+                <h3><i class="fa-solid fa-language" style="margin-right: 8px;"></i>Match each term with its definition.</h3>
+                <p class="hint" style="font-style: italic; color: var(--ink-muted);">Use the dropdown menus to pair each definition with the correct fundraising term.</p>
+                <div class="matching-stack">
+                  <div class="matching-option" data-correct="Grant proposal"><span>A formal document written to request funding.</span><select><option value="">Select term</option><option value="Grant proposal">Grant proposal</option><option value="Funding stream">Funding stream</option><option value="Budget allocation">Budget allocation</option><option value="Deliverable">Deliverable</option><option value="Measurable outcome">Measurable outcome</option></select></div>
+                  <div class="matching-option" data-correct="Funding stream"><span>The source or channel of money for a project.</span><select><option value="">Select term</option><option value="Grant proposal">Grant proposal</option><option value="Funding stream">Funding stream</option><option value="Budget allocation">Budget allocation</option><option value="Deliverable">Deliverable</option><option value="Measurable outcome">Measurable outcome</option></select></div>
+                  <div class="matching-option" data-correct="Budget allocation"><span>The process of assigning money to specific parts of a project.</span><select><option value="">Select term</option><option value="Grant proposal">Grant proposal</option><option value="Funding stream">Funding stream</option><option value="Budget allocation">Budget allocation</option><option value="Deliverable">Deliverable</option><option value="Measurable outcome">Measurable outcome</option></select></div>
+                  <div class="matching-option" data-correct="Deliverable"><span>A specific product or service you promise to provide.</span><select><option value="">Select term</option><option value="Grant proposal">Grant proposal</option><option value="Funding stream">Funding stream</option><option value="Budget allocation">Budget allocation</option><option value="Deliverable">Deliverable</option><option value="Measurable outcome">Measurable outcome</option></select></div>
+                  <div class="matching-option" data-correct="Measurable outcome"><span>A specific result that shows the project was successful.</span><select><option value="">Select term</option><option value="Grant proposal">Grant proposal</option><option value="Funding stream">Funding stream</option><option value="Budget allocation">Budget allocation</option><option value="Deliverable">Deliverable</option><option value="Measurable outcome">Measurable outcome</option></select></div>
+                </div>
+              </div>
+              <div class="activity-actions">
+                <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                <button class="activity-btn" type="button" data-action="check">Check</button>
+              </div>
+              <div class="feedback-msg" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 9 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-pen-to-square"></i> Pre-task C · Semi-controlled Practice · 7 minutes</span>
+            <h2>Building Sentences with New Vocabulary</h2>
+            <div class="card">
+              <p><strong>Instructions:</strong> Complete each sentence starter with ideas for a community project. Use the highlighted vocabulary in meaningful ways.</p>
+              <p><strong>Vocabulary:</strong> grant proposal · funding stream · budget allocation · deliverable · measurable outcome</p>
+              <ul>
+                <li>Our main funding stream would be...</li>
+                <li>The most important deliverable for our project is...</li>
+                <li>In our grant proposal, we would emphasize...</li>
+                <li>A key measurable outcome we hope to achieve is...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 10 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-scale-balanced"></i> Pre-task C · Freer Practice · 6 minutes</span>
+            <h2>Which Project Has More Merit?</h2>
+            <div class="card">
+              <p><strong>In breakout rooms:</strong> Read both proposals carefully. Use the rubric to decide which project deserves funding. Bring the new vocabulary into your discussion.</p>
+              <div class="two-column-grid">
+                <div class="column-card">
+                  <p><strong>Proposal A · “Code for All”</strong></p>
+                  <p>Deliverable: A free coding bootcamp for 20 unemployed youths. Budget allocation focuses on instructor salaries. A measurable outcome is 60% of graduates finding jobs.</p>
+                </div>
+                <div class="column-card">
+                  <p><strong>Proposal B · “Digital Artisans”</strong></p>
+                  <p>Funding stream: A mix of international and local grants. Deliverable: Training 50 artisans to sell products online. Measurable outcome: Increase each participant’s online sales.</p>
+                </div>
+              </div>
+              <hr style="border: 0; border-top: 1px solid rgba(122,132,113,0.2);">
+              <p><strong>Rubric:</strong> Which proposal has a clearer (1) deliverable, (2) budget allocation idea, and (3) measurable outcome?</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 11 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-link"></i> Pre-task D · Restrictive Practice · 7 minutes</span>
+            <h2>Pronunciation: Connected Speech</h2>
+            <div class="card" data-activity="highlight">
+              <p><strong>Instructions:</strong> Click and drag to highlight each place where a final consonant sound links to the following vowel sound. Double-click a highlight to remove it.</p>
+              <p class="highlight-text" data-correct-phrases="based on|an outcome|In addition|an important">Our decision is based on the donor's email. We need to think about an outcome that benefits everyone. In addition, we should consider all the risks. It's an important choice for us.</p>
+              <div class="activity-actions">
+                <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                <button class="activity-btn" type="button" data-action="check">Check</button>
+              </div>
+              <div class="feedback-msg" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 12 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-microphone-lines"></i> Pre-task D · Semi-controlled Practice · 7 minutes</span>
+            <h2>Practice the Linked Sounds</h2>
+            <div class="card">
+              <p>Complete each sentence with your own ideas. Practice reading them aloud, emphasizing the linked sounds.</p>
+              <ol>
+                <li>My opinion is <strong>based on</strong>...</li>
+                <li><strong>In addition</strong> to studying English, I also...</li>
+                <li>A positive <strong>outcome of</strong> this class is...</li>
+                <li>For me, <strong>an important</strong> part of teamwork is...</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 13 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-comment-dots"></i> Pre-task D · Freer Practice · 6 minutes</span>
+            <h2>Present the Proposal</h2>
+            <div class="card">
+              <p>In breakout rooms, adapt the prompt below to pitch a funding idea. Listeners, note any linked sounds you hear.</p>
+              <div class="prompt-box">
+                <p>“Our project is called <input type="text" class="prompt-input" aria-label="Project name">. Our decision to focus on this is <strong>based‿on</strong> <input type="text" class="prompt-input" aria-label="Reason for focus">. <strong>In‿addition</strong>, we believe that <strong>an‿important outcome</strong> will be <input type="text" class="prompt-input" aria-label="Key outcome">. For example, we will <input type="text" class="prompt-input" aria-label="Illustrative action">.”</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 14 -->
+        <div class="slide-stage hidden full-width-bg">
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay" style="background: linear-gradient(135deg, rgba(12,32,20,0.7) 0%, rgba(12,32,20,0.35) 60%, transparent 100%);"></div>
+          <div class="slide-inner" style="justify-content: center;">
+            <div class="bg-content centered">
+              <div class="overlay-card centered">
+                <span class="pill overlay-pill"><i class="fa-solid fa-people-group"></i> Transition</span>
+                <h2>Task</h2>
+                <p class="deck-subtitle">You are the funding committee. Make one bold decision.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 15 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-file-signature"></i> Task Preparation</span>
+            <h2>The Funding Committee Brief</h2>
+            <div class="card">
+              <p><strong>Scenario:</strong> You have funds for only <em>one</em> project. On the next slide, you will see two outlines competing for the same grant.</p>
+              <p><strong>Task (10 minutes in breakout rooms):</strong></p>
+              <ol>
+                <li>Read the two project outlines carefully.</li>
+                <li>Score each project using the rubric below.</li>
+                <li>Use your scores to decide which project you will fund.</li>
+                <li>Prepare to justify your decision using the second conditional (e.g., “If we funded Project A, it would...”).</li>
+              </ol>
+              <p><strong>Instructions:</strong> In your group, score each project from 1 (Weak) to 5 (Excellent) for each category. Use your scores to help you decide which project to fund.</p>
+              <table class="evaluation-table">
+                <thead>
+                  <tr>
+                    <th>Evaluation Category</th>
+                    <th>Guiding Questions</th>
+                    <th>Project A Score (1-5)</th>
+                    <th>Project B Score (1-5)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1. Clarity of Vision</td>
+                    <td>How clear is the project's main goal? Is it easy to understand the problem they are solving?</td>
+                    <td class="score-cell"></td>
+                    <td class="score-cell"></td>
+                  </tr>
+                  <tr>
+                    <td>2. Community Impact</td>
+                    <td>How significant is the potential benefit to the community? Will it create meaningful, positive change?</td>
+                    <td class="score-cell"></td>
+                    <td class="score-cell"></td>
+                  </tr>
+                  <tr>
+                    <td>3. Realistic Plan</td>
+                    <td>Does the plan seem practical and achievable? Are the steps logical and well-thought-out?</td>
+                    <td class="score-cell"></td>
+                    <td class="score-cell"></td>
+                  </tr>
+                  <tr>
+                    <td>4. Long-Term Value</td>
+                    <td>Will the benefits last after the project ends? Does it create sustainable skills or opportunities?</td>
+                    <td class="score-cell"></td>
+                    <td class="score-cell"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 16 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-people-arrows"></i> Task · Breakout Discussion</span>
+            <h2>Choose the Project</h2>
+            <div class="card">
+              <p><strong>Discuss these outlines using the rubric. Which one deserves funding?</strong></p>
+              <div class="two-column-grid">
+                <div class="column-card">
+                  <p><strong>Project A · “Nablus Freelance Connect”</strong></p>
+                  <p><strong>Goal:</strong> To train 25 unemployed university graduates in Nablus in advanced graphic design and UI/UX, connecting them with international freelance platforms to generate sustainable income.</p>
+                  <p><strong>Plan:</strong> This intensive 8-week, in-person bootcamp will be held at a local co-working space, fostering a professional and collaborative environment. The curriculum focuses on practical skills using industry-standard software like Adobe Creative Cloud and Figma. The budget prioritizes expert instructor fees and individual software licenses for all participants. A key deliverable is a professional online portfolio for each student. We will bring in successful local freelancers as guest speakers and build direct partnerships with online platforms like Upwork to help graduates secure their first clients, aiming for 60% to be earning a stable income within six months.</p>
+                </div>
+                <div class="column-card">
+                  <p><strong>Project B · “Jericho Green Tech”</strong></p>
+                  <p><strong>Goal:</strong> To teach 100 high school students in the Jericho area the basics of sustainable agriculture technology through a series of engaging online workshops and practical kits.</p>
+                  <p><strong>Plan:</strong> This 6-month online program directly addresses local water scarcity challenges by focusing on skills like hydroponics and solar-powered drip irrigation. The budget is primarily allocated to creating high-quality video modules and distributing practical tech kits that allow for hands-on learning at home. A key measurable outcome is the number of students who successfully build and demonstrate a small-scale sustainable project. We will partner with local farms to provide virtual mentorship opportunities and will host a final online showcase where students present their innovations to community members, promoting early engagement in solving real-world environmental problems.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 17 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-gavel"></i> Reporting</span>
+            <h2>The Final Decision</h2>
+            <div class="card">
+              <ol>
+                <li>Each group shares a one-minute justification for the project they selected.</li>
+                <li>As you listen, note which arguments use the second conditional effectively.</li>
+                <li>After all groups present, vote as a class on which project should receive the funding.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 18 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-dumbbell"></i> Final Practice</span>
+            <h2>Consolidate Today's Language</h2>
+            <div class="card">
+              <div class="card dense" data-activity="gap-fill">
+                <h3>Activity 1 · Vocabulary Gap-fill</h3>
+                <p style="font-style: italic;">Use: grant proposal · funding stream · budget allocation · deliverable · measurable outcome</p>
+                <ul class="gap-fill-list">
+                  <li>1. A key <input type="text" class="gap-input" data-answer="measurable outcome" aria-label="Gap 1"> will be a 10% increase in local employment.</li>
+                  <li>2. We need a diverse <input type="text" class="gap-input" data-answer="funding stream" aria-label="Gap 2"> so we don't rely on one donor.</li>
+                  <li>3. The <input type="text" class="gap-input" data-answer="budget allocation" aria-label="Gap 3"> for marketing is smaller than the allocation for salaries.</li>
+                  <li>4. The main <input type="text" class="gap-input" data-answer="deliverable" aria-label="Gap 4"> of the training course is a certificate of completion.</li>
+                  <li>5. If we don't write a good <input type="text" class="gap-input" data-answer="grant proposal" aria-label="Gap 5">, we won't get any money.</li>
+                </ul>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+
+              <div class="card dense" data-activity="unscramble">
+                <h3>Activity 2 · Unscramble the Sentences</h3>
+                <ul class="unscramble-list">
+                  <li>1. would / project / if / had / we / start / the / we / funding / the<br><input type="text" class="unscramble-input" data-answer="We would start the project if we had the funding." aria-label="Unscramble 1"></li>
+                  <li>2. if / more / would / hire / successful / we / were / we / staff<br><input type="text" class="unscramble-input" data-answer="If we were more successful, we would hire staff." aria-label="Unscramble 2"></li>
+                  <li>3. they / would / if / they / the / accept / offer / had / choice / the<br><input type="text" class="unscramble-input" data-answer="They would accept the offer if they had the choice." aria-label="Unscramble 3"></li>
+                  <li>4. change / if / our / we / focus / lose / we / would / support<br><input type="text" class="unscramble-input" data-answer="If we change our focus, we would lose support." aria-label="Unscramble 4"></li>
+                  <li>5. be / the / if / community / what / would / the / impact / failed / project<br><input type="text" class="unscramble-input" data-answer="What would the impact be on the community if the project failed?" aria-label="Unscramble 5"></li>
+                </ul>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+
+              <div class="card dense" data-activity="mc-grammar">
+                <h3>Activity 3 · Choose the Correct Sentence</h3>
+                <div class="quiz-grid">
+                  <div class="quiz-card" data-correct="If I had more time, I would help.">
+                    <p>1.</p>
+                    <select aria-label="MC 1">
+                      <option value="">Select</option>
+                      <option value="If I have more time, I would help.">If I have more time, I would help.</option>
+                      <option value="If I had more time, I would help.">If I had more time, I would help.</option>
+                    </select>
+                  </div>
+                  <div class="quiz-card" data-correct="We would need a bigger team if we got the grant.">
+                    <p>2.</p>
+                    <select aria-label="MC 2">
+                      <option value="">Select</option>
+                      <option value="We would need a bigger team if we got the grant.">We would need a bigger team if we got the grant.</option>
+                      <option value="We would needed a bigger team if we got the grant.">We would needed a bigger team if we got the grant.</option>
+                    </select>
+                  </div>
+                  <div class="quiz-card" data-correct="If she were the director, she would change things.">
+                    <p>3.</p>
+                    <select aria-label="MC 3">
+                      <option value="">Select</option>
+                      <option value="If she was the director, she would changes things.">If she was the director, she would changes things.</option>
+                      <option value="If she were the director, she would change things.">If she were the director, she would change things.</option>
+                    </select>
+                  </div>
+                  <div class="quiz-card" data-correct="They would apply if they thought they could win.">
+                    <p>4.</p>
+                    <select aria-label="MC 4">
+                      <option value="">Select</option>
+                      <option value="They would apply if they think they could win.">They would apply if they think they could win.</option>
+                      <option value="They would apply if they thought they could win.">They would apply if they thought they could win.</option>
+                    </select>
+                  </div>
+                  <div class="quiz-card" data-correct="What would you do if you were in my position?">
+                    <p>5.</p>
+                    <select aria-label="MC 5">
+                      <option value="">Select</option>
+                      <option value="What would you do if you were in my position?">What would you do if you were in my position?</option>
+                      <option value="What would you did if you were in my position?">What would you did if you were in my position?</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 19 -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-lightbulb"></i> Reflection</span>
+            <h2>What · So What · Now What</h2>
+            <div class="card">
+              <p>Share your thoughts in the chat or aloud.</p>
+              <ul class="reflection-list">
+                <li><strong>What?</strong> What was the most important thing you learned today?</li>
+                <li><strong>So What?</strong> Why is this important for you or your community?</li>
+                <li><strong>Now What?</strong> How will you apply this learning in the future?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = Array.from(document.querySelectorAll('.slide-stage'));
+      const nextBtn = document.querySelector('.slide-nav-next');
+      const prevBtn = document.querySelector('.slide-nav-prev');
+      const counter = document.getElementById('slide-counter');
+      let currentSlideIndex = 0;
+      const totalSlides = slides.length;
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
+        counter.textContent = `${index + 1} / ${totalSlides}`;
+      }
+
+      function navigate(direction) {
+        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+        showSlide(currentSlideIndex);
+      }
+
+      nextBtn.addEventListener('click', () => navigate(1));
+      prevBtn.addEventListener('click', () => navigate(-1));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          navigate(1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigate(-1);
+        }
+      });
+
+      showSlide(currentSlideIndex);
+
+      function setupMatching(activityEl) {
+        const options = Array.from(activityEl.querySelectorAll('.matching-option'));
+        const feedback = activityEl.querySelector('.feedback-msg');
+        const buttons = activityEl.querySelectorAll('.activity-actions button');
+        if (!feedback) return;
+
+        buttons.forEach(btn => {
+          if (btn.dataset.action === 'check') {
+            btn.addEventListener('click', () => {
+              let correctCount = 0;
+              options.forEach(option => {
+                const select = option.querySelector('select');
+                const isCorrect = select.value === option.dataset.correct;
+                option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+                option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
+                if (isCorrect) correctCount += 1;
+              });
+              if (correctCount === options.length) {
+                feedback.textContent = 'Excellent! Every match is correct.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
+                feedback.className = 'feedback-msg error';
+              }
+            });
+          } else if (btn.dataset.action === 'reset') {
+            btn.addEventListener('click', () => {
+              options.forEach(option => {
+                const select = option.querySelector('select');
+                select.value = '';
+                option.style.borderColor = 'rgba(122,132,113,0.16)';
+                option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
+              });
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            });
+          }
+        });
+      }
+
+      function setupMcGrammar(activityEl) {
+        const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
+        const feedback = activityEl.querySelector('.feedback-msg');
+        const buttons = activityEl.querySelectorAll('.activity-actions button');
+        if (!feedback) return;
+
+        buttons.forEach(btn => {
+          if (btn.dataset.action === 'check') {
+            btn.addEventListener('click', () => {
+              let correctCount = 0;
+              cards.forEach(card => {
+                const select = card.querySelector('select');
+                const isCorrect = select.value === card.dataset.correct;
+                card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+                card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
+                if (isCorrect) correctCount += 1;
+              });
+              if (correctCount === cards.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
+                feedback.className = 'feedback-msg error';
+              }
+            });
+          } else if (btn.dataset.action === 'reset') {
+            btn.addEventListener('click', () => {
+              cards.forEach(card => {
+                const select = card.querySelector('select');
+                select.value = '';
+                card.style.borderColor = 'rgba(122,132,113,0.2)';
+                card.style.background = 'var(--soft-white)';
+              });
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            });
+          }
+        });
+      }
+
+      function setupHighlight(activityEl) {
+        const textEl = activityEl.querySelector('.highlight-text');
+        const feedback = activityEl.querySelector('.feedback-msg');
+        const buttons = activityEl.querySelectorAll('.activity-actions button');
+        if (!textEl || !feedback) return;
+
+        const originalHTML = textEl.innerHTML;
+        const correctPhrases = (textEl.dataset.correctPhrases || '')
+          .split('|')
+          .map(str => str.trim())
+          .filter(Boolean);
+
+        const normalize = (value) => value
+          .toLowerCase()
+          .replace(/[^a-z\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const clearSelection = () => {
+          const selection = window.getSelection();
+          if (selection) {
+            selection.removeAllRanges();
+          }
+        };
+
+        const removeMark = (mark) => {
+          if (!mark || !mark.parentNode) return;
+          const parent = mark.parentNode;
+          while (mark.firstChild) {
+            parent.insertBefore(mark.firstChild, mark);
+          }
+          parent.removeChild(mark);
+          parent.normalize();
+        };
+
+        const attachMarkHandlers = (mark) => {
+          mark.addEventListener('dblclick', () => {
+            removeMark(mark);
+          });
+        };
+
+        const getContainingMark = (node) => {
+          if (!node) return null;
+          let current = node;
+          if (current.nodeType === 3) {
+            current = current.parentNode;
+          }
+          while (current && current.nodeType === 1) {
+            if (current.classList && current.classList.contains('highlight-mark')) {
+              return current;
+            }
+            current = current.parentNode;
+          }
+          return null;
+        };
+
+        textEl.addEventListener('pointerup', () => {
+          const selection = window.getSelection();
+          if (!selection || selection.rangeCount === 0) return;
+          const range = selection.getRangeAt(0);
+          if (!textEl.contains(range.commonAncestorContainer)) {
+            clearSelection();
+            return;
+          }
+
+          const selectedText = selection.toString();
+          const normalized = normalize(selectedText);
+          if (!normalized) {
+            clearSelection();
+            return;
+          }
+
+          const startMark = getContainingMark(range.startContainer);
+          const endMark = getContainingMark(range.endContainer);
+          if (startMark || endMark) {
+            clearSelection();
+            return;
+          }
+
+          const mark = document.createElement('span');
+          mark.className = 'highlight-mark';
+          mark.dataset.highlightValue = normalized;
+
+          try {
+            range.surroundContents(mark);
+          } catch (error) {
+            const contents = range.extractContents();
+            mark.appendChild(contents);
+            range.insertNode(mark);
+          }
+
+          mark.normalize();
+          attachMarkHandlers(mark);
+          clearSelection();
+          textEl.normalize();
+        });
+
+        buttons.forEach(btn => {
+          if (btn.dataset.action === 'check') {
+            btn.addEventListener('click', () => {
+              const marks = Array.from(textEl.querySelectorAll('.highlight-mark'));
+              const expected = new Set(correctPhrases.map(normalize));
+              let allCorrect = true;
+
+              marks.forEach(mark => {
+                const value = normalize(mark.textContent || '');
+                mark.classList.remove('correct', 'incorrect');
+                if (!value) {
+                  mark.classList.add('incorrect');
+                  allCorrect = false;
+                  return;
+                }
+                if (expected.has(value)) {
+                  mark.classList.add('correct');
+                  expected.delete(value);
+                } else {
+                  mark.classList.add('incorrect');
+                  allCorrect = false;
+                }
+              });
+
+              if (allCorrect && expected.size === 0 && marks.length === correctPhrases.length) {
+                feedback.textContent = 'Beautiful listening! All linked phrases identified.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = 'Review your highlights and try again.';
+                feedback.className = 'feedback-msg error';
+              }
+            });
+          } else if (btn.dataset.action === 'reset') {
+            btn.addEventListener('click', () => {
+              textEl.innerHTML = originalHTML;
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            });
+          }
+        });
+      }
+
+      function setupGapFill(activityEl) {
+        const inputs = Array.from(activityEl.querySelectorAll('.gap-input'));
+        const feedback = activityEl.querySelector('.feedback-msg');
+        const buttons = activityEl.querySelectorAll('.activity-actions button');
+        if (!feedback) return;
+
+        buttons.forEach(btn => {
+          if (btn.dataset.action === 'check') {
+            btn.addEventListener('click', () => {
+              let correctCount = 0;
+              inputs.forEach(input => {
+                const answer = (input.dataset.answer || '').trim().toLowerCase();
+                const value = input.value.trim().toLowerCase();
+                const isCorrect = answer === value;
+                input.classList.remove('correct', 'incorrect');
+                if (value.length === 0) {
+                  input.classList.remove('correct', 'incorrect');
+                } else if (isCorrect) {
+                  input.classList.add('correct');
+                  correctCount += 1;
+                } else {
+                  input.classList.add('incorrect');
+                }
+              });
+
+              if (correctCount === inputs.length) {
+                feedback.textContent = 'Spot on! Every gap is filled accurately.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = `You have ${correctCount} / ${inputs.length} correct. Adjust and try again.`;
+                feedback.className = 'feedback-msg error';
+              }
+            });
+          } else if (btn.dataset.action === 'reset') {
+            btn.addEventListener('click', () => {
+              inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'incorrect');
+              });
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            });
+          }
+        });
+      }
+
+      function setupUnscramble(activityEl) {
+        const inputs = Array.from(activityEl.querySelectorAll('.unscramble-input'));
+        const feedback = activityEl.querySelector('.feedback-msg');
+        const buttons = activityEl.querySelectorAll('.activity-actions button');
+        if (!feedback) return;
+
+        buttons.forEach(btn => {
+          if (btn.dataset.action === 'check') {
+            btn.addEventListener('click', () => {
+              let correctCount = 0;
+              inputs.forEach(input => {
+                const answer = (input.dataset.answer || '').trim().toLowerCase();
+                const value = input.value.trim().toLowerCase();
+                const isCorrect = answer === value;
+                input.classList.remove('correct', 'incorrect');
+                if (value.length === 0) {
+                  input.classList.remove('correct', 'incorrect');
+                } else if (isCorrect) {
+                  input.classList.add('correct');
+                  correctCount += 1;
+                } else {
+                  input.classList.add('incorrect');
+                }
+              });
+
+              if (correctCount === inputs.length) {
+                feedback.textContent = 'Excellent! All sentences are in the correct order.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = `You have ${correctCount} / ${inputs.length} accurate sentences. Keep refining!`;
+                feedback.className = 'feedback-msg error';
+              }
+            });
+          } else if (btn.dataset.action === 'reset') {
+            btn.addEventListener('click', () => {
+              inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'incorrect');
+              });
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            });
+          }
+        });
+      }
+
+      document.querySelectorAll('[data-activity="matching-vocab"]').forEach(setupMatching);
+      document.querySelectorAll('[data-activity="mc-grammar"]').forEach(setupMcGrammar);
+      document.querySelectorAll('[data-activity="highlight"]').forEach(setupHighlight);
+      document.querySelectorAll('[data-activity="gap-fill"]').forEach(setupGapFill);
+      document.querySelectorAll('[data-activity="unscramble"]').forEach(setupUnscramble);
+    });
+  </script>
+</body>
+</html>
