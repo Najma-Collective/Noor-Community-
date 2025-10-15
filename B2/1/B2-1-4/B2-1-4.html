@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noor Community · Strategic Planning in the NGO Sector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+      --border-sage: rgba(122,132,113,0.20);
+      --hover-sage: rgba(156,175,136,0.15);
+      --deep-forest: #3E4A3A;
+      --font-display: 'Questrial', system-ui, sans-serif;
+      --font-body: 'Nunito', system-ui, sans-serif;
+      --font-size-adjustment: 0pt;
+      --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
+      --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
+      --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
+      --step-2: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment));
+      --step-3: calc(clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment));
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --radius: 16px;
+      --radius-lg: 20px;
+      --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
+      --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
+      --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+      --toolbar-h: 72px;
+      --workspace-pad: 24px;
+      --stage-pad: clamp(32px, 5vw, 64px);
+      --stage-radius: 18px;
+      --slide-aspect-w: 16;
+      --slide-aspect-h: 9;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      color: var(--forest-shadow);
+      background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow: auto;
+    }
+
+    .deck-app {
+      display: grid;
+      grid-template-rows: var(--toolbar-h) 1fr;
+      min-height: 100dvh;
+    }
+
+    .deck-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--toolbar-h);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: var(--space-4);
+      padding: 0 max(24px, 4vw);
+      background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+      border-bottom: 1px solid var(--border-sage);
+      box-shadow: 0 8px 20px rgba(34,41,32,0.05);
+      backdrop-filter: blur(8px) saturate(1.1);
+    }
+
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-size: calc(1.05rem + var(--font-size-adjustment));
+      color: var(--forest-shadow);
+    }
+
+    .toolbar-brand span {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .slide-counter {
+      font-family: var(--font-display);
+      color: var(--ink-muted);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .deck-workspace {
+      height: calc(100dvh - var(--toolbar-h));
+      padding: var(--workspace-pad);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
+        radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
+    }
+
+    .stage-viewport {
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .slide-stage {
+      position: relative;
+      border-radius: var(--stage-radius);
+      background-color: var(--soft-white);
+      box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
+      aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+      width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2)));
+      max-width: 100%;
+      overflow: hidden auto;
+      outline: 1px solid var(--border-sage);
+      transition: opacity 300ms ease-in-out;
+    }
+
+    .slide-stage.hidden {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide-stage.full-width-bg {
+      background: transparent;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .bg-media {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.92);
+    }
+
+    .img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(14,30,20,0.72) 0%, rgba(14,30,20,0.4) 45%, rgba(14,30,20,0.2) 70%, transparent 100%);
+      z-index: 1;
+    }
+
+    .slide-inner {
+      position: absolute;
+      inset: 0;
+      padding: var(--stage-pad);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      gap: 1.25rem;
+      overflow-y: auto;
+      scrollbar-gutter: stable both-edges;
+    }
+
+    .bg-content {
+      position: relative;
+      z-index: 2;
+      padding: var(--stage-pad);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .bg-content.centered {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .overlay-card {
+      background: color-mix(in srgb, rgba(16,28,21,0.72) 65%, rgba(248,246,240,0.35) 35%);
+      border: 1px solid rgba(253,251,245,0.35);
+      border-radius: calc(var(--radius-lg) + 8px);
+      padding: clamp(28px, 5vw, 48px);
+      box-shadow: 0 24px 60px rgba(8,16,12,0.4);
+      backdrop-filter: blur(14px) saturate(125%);
+      color: #FDFBF5;
+      max-width: min(560px, 70%);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .overlay-card.centered {
+      margin: 0 auto;
+      text-align: center;
+      align-items: center;
+    }
+
+    .overlay-card h1,
+    .overlay-card h2,
+    .overlay-card p,
+    .overlay-card .pill,
+    .overlay-card .deck-subtitle {
+      color: #FDFBF5;
+    }
+
+    .overlay-card .deck-subtitle {
+      font-size: var(--step-1);
+      margin: 0;
+      color: rgba(253,251,245,0.85);
+    }
+
+    .overlay-pill {
+      background: rgba(253,251,245,0.22) !important;
+      color: #FDFBF5 !important;
+      box-shadow: inset 0 0 0 1px rgba(253,251,245,0.28);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(122,132,113,0.16);
+      font-size: calc(0.85rem + var(--font-size-adjustment));
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--deep-forest);
+      width: fit-content;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      margin: 0;
+      color: var(--ink);
+    }
+
+    h1 { font-size: var(--step-3); }
+    h2 { font-size: var(--step-2); }
+    h3 { font-size: var(--step-1); }
+
+    p { margin: 0; }
+
+    ul, ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .card {
+      background: var(--soft-white);
+      padding: clamp(1.35rem, 3vw, 2rem);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .card.dense {
+      gap: 0.65rem;
+      padding: clamp(1.1rem, 2.5vw, 1.65rem);
+    }
+
+    .two-column-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+    }
+
+    .column-card {
+      background: rgba(248,246,240,0.85);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      border: 1px solid rgba(122,132,113,0.18);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .prompt-box {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(122,132,113,0.4);
+      padding: 1.5rem;
+      background: linear-gradient(140deg, rgba(248,246,240,0.95), rgba(236,231,220,0.7));
+      font-weight: 600;
+      font-size: var(--step-0);
+      line-height: 1.7;
+    }
+
+    .audio-player {
+      background: var(--soft-white);
+      padding: 1.1rem 1.4rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    audio { width: 100%; }
+
+    .activity-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: var(--space-4);
+    }
+
+    .activity-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--primary-sage);
+      color: #fff;
+      box-shadow: var(--shadow-1);
+    }
+
+    .activity-btn.secondary {
+      background: rgba(122,132,113,0.16);
+      color: var(--deep-forest);
+    }
+
+    .activity-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .feedback-msg {
+      min-height: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .feedback-msg.success { color: #2E7D32; }
+    .feedback-msg.error { color: #C62828; }
+    .matching-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.18);
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-1);
+    }
+
+    .matching-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .matching-option {
+      display: grid;
+      grid-template-columns: 1fr minmax(140px, 220px);
+      gap: 0.9rem;
+      align-items: center;
+      padding: 0.75rem 0.85rem;
+      border-radius: 14px;
+      border: 1px solid rgba(122,132,113,0.16);
+      background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+      transition: border 0.2s ease, background 0.2s ease;
+    }
+
+    .matching-option select, .rhetoric-select {
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--step--1);
+      background: var(--soft-white);
+      color: var(--forest-shadow);
+      margin-bottom: var(--space-3);
+      transition: border-color 0.2s ease;
+    }
+
+    .token-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(248,246,240,0.92), rgba(236,231,220,0.75));
+      border: 1px dashed rgba(122,132,113,0.28);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+      margin-top: var(--space-4);
+    }
+
+    .click-token {
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      background: var(--soft-white);
+      border: 1px solid rgba(122,132,113,0.35);
+      box-shadow: var(--shadow-1);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--step--1);
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .click-token.used {
+      opacity: 0.45;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: scale(0.95);
+    }
+    
+    .click-token.active {
+        outline: 2px solid var(--primary-sage);
+        transform: scale(1.05);
+        box-shadow: var(--shadow-2);
+    }
+
+    .drop-zone {
+      min-height: 42px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.55rem 0.85rem;
+      border-radius: 14px;
+      border: 2px dashed rgba(122,132,113,0.35);
+      background: rgba(254,252,247,0.75);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--step--1);
+      color: var(--forest-shadow);
+      text-align: center;
+      cursor: pointer;
+      transition: border 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .drop-zone.placeholder {
+      color: rgba(47,58,43,0.55);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .drop-zone:hover {
+      border-color: var(--secondary-sage);
+      background: rgba(156,175,136,0.18);
+    }
+
+    .drop-zone.correct {
+      border-color: #2E7D32;
+      background: rgba(46,125,50,0.16);
+      border-style: solid;
+    }
+
+    .drop-zone.incorrect {
+      border-color: #C62828;
+      background: rgba(198,40,40,0.16);
+      border-style: solid;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .quiz-card {
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.2);
+      padding: 1rem 1.1rem;
+      background: rgba(254,252,247,0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .quiz-card select {
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-weight: 600;
+      font-size: var(--step--1);
+      font-family: var(--font-body);
+      background: var(--soft-white);
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 12px;
+      background: rgba(250,250,248,0.9);
+      border: 1px solid transparent;
+    }
+
+    .quiz-option.correct { border-color: #2E7D32; background: rgba(46,125,50,0.12); }
+    .quiz-option.incorrect { border-color: #C62828; background: rgba(198,40,40,0.12); }
+
+    .highlight-text {
+      position: relative;
+      line-height: 1.7;
+      font-size: var(--step-0);
+      cursor: text;
+      user-select: text;
+    }
+
+    .highlight-mark {
+      background: rgba(156,175,136,0.28);
+      color: var(--deep-forest);
+      border-radius: 6px;
+      padding: 0.05rem 0.3rem;
+      margin: 0 -0.05rem;
+      box-shadow: inset 0 0 0 1px rgba(90,107,82,0.2);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .highlight-mark.correct {
+      background: rgba(46,125,50,0.2);
+      box-shadow: inset 0 0 0 1px rgba(46,125,50,0.35);
+      color: #1c3d1f;
+    }
+
+    .highlight-mark.incorrect {
+      background: rgba(198,40,40,0.2);
+      box-shadow: inset 0 0 0 1px rgba(198,40,40,0.35);
+      color: #6d1b1b;
+    }
+
+    .gap-fill-list,
+    .unscramble-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .gap-input,
+    .unscramble-input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      font-weight: 600;
+      background: var(--soft-white);
+      transition: border 0.2s ease, background 0.2s ease;
+    }
+
+    .gap-input.correct,
+    .unscramble-input.correct {
+      border-color: #2E7D32;
+      background: rgba(46,125,50,0.12);
+    }
+
+    .gap-input.incorrect,
+    .unscramble-input.incorrect {
+      border-color: #C62828;
+      background: rgba(198,40,40,0.12);
+    }
+
+    .prompt-input {
+      display: inline-block;
+      min-width: 180px;
+      width: auto;
+      border: none;
+      border-bottom: 2px solid rgba(122,132,113,0.45);
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--forest-shadow);
+      padding: 0.15rem 0.25rem;
+      margin: 0 0.15rem;
+    }
+
+    .prompt-input:focus {
+      outline: none;
+      border-bottom-color: var(--secondary-sage);
+      background: rgba(156,175,136,0.15);
+    }
+
+    .prompt-field {
+        display: inline-block;
+        width: auto;
+        min-width: 180px;
+        border: none;
+        border-bottom: 2px solid rgba(122,132,113,0.45);
+        background: transparent;
+        font-family: var(--font-body);
+        font-size: var(--step-0);
+        font-weight: 600;
+        color: var(--forest-shadow);
+        padding: 0.15rem 0.25rem;
+        margin: 0 0.15rem;
+        resize: none;
+        overflow: hidden;
+        vertical-align: bottom;
+        line-height: 1.6;
+    }
+
+    .prompt-field:focus {
+        outline: none;
+        border-bottom-color: var(--secondary-sage);
+        background: rgba(156,175,136,0.15);
+    }
+
+    .evaluation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-4);
+      font-size: var(--step--1);
+      background: rgba(250,250,248,0.85);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(122,132,113,0.2);
+    }
+
+    .evaluation-table thead {
+      background: rgba(122,132,113,0.12);
+      font-weight: 700;
+      color: var(--deep-forest);
+    }
+
+    .evaluation-table th,
+    .evaluation-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(122,132,113,0.18);
+    }
+
+    .evaluation-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .evaluation-table .score-cell {
+      text-align: center;
+      font-weight: 700;
+      color: var(--forest-shadow);
+      min-width: 120px;
+    }
+    
+    .evaluation-table select {
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-weight: 600;
+      font-size: var(--step--1);
+      font-family: var(--font-body);
+      background: var(--soft-white);
+    }
+
+    .reflection-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .reflection-list li {
+      background: rgba(248,246,240,0.9);
+      border-radius: var(--radius);
+      padding: 0.85rem 1.1rem;
+      border: 1px solid rgba(122,132,113,0.2);
+      font-weight: 600;
+    }
+
+    .slide-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: rgba(254,252,247,0.85);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-2);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .slide-nav:hover {
+      transform: translateY(-50%) scale(1.05);
+      box-shadow: 0 12px 32px rgba(34,41,32,0.15);
+    }
+
+    .slide-nav-prev { left: -24px; }
+    .slide-nav-next { right: -24px; }
+
+    @media (max-width: 1200px) {
+      .deck-workspace { padding: 12px; }
+      .slide-stage { width: 100%; }
+      .slide-nav-prev { left: 12px; }
+      .slide-nav-next { right: 12px; }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --toolbar-h: 64px;
+        --stage-pad: clamp(20px, 6vw, 38px);
+      }
+      .deck-toolbar {
+        grid-template-columns: 1fr auto;
+        padding: 0 18px;
+      }
+      .toolbar-brand span { font-size: 0.85rem; letter-spacing: 0.08em; }
+      .slide-nav { display: none; }
+      .slide-stage { border-radius: 0; box-shadow: none; }
+      .bg-content { padding: clamp(24px, 5vw, 36px); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --soft-white: #1E211C;
+        --warm-cream: #23261F;
+        --forest-shadow: #DDE6D4;
+        --ink: #E9EFE5;
+        --ink-muted: #AEB9AA;
+        --border-sage: rgba(184,197,166,0.25);
+        --deep-forest: #E9EFE5;
+        --primary-sage: #9CAF88;
+        --shadow-glow: 0 0 50px 10px rgba(184,197,166,0.1);
+      }
+      body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
+      .slide-stage { background: #161915; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
+      .card, .audio-player, .matching-card, .quiz-card, .column-card {
+        background: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%);
+        border-color: rgba(184,197,166,0.25);
+      }
+      .prompt-box { background: color-mix(in srgb, var(--warm-cream) 55%, var(--soft-white) 45%); }
+      .highlight-mark { color: var(--forest-shadow); box-shadow: inset 0 0 0 1px rgba(184,197,166,0.25); }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-app">
+    <header class="deck-toolbar">
+      <div class="toolbar-brand">
+        <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
+        <span>Noor Community· B2 Lesson</span>
+      </div>
+      <div id="slide-counter" class="slide-counter">1 / 13</div>
+    </header>
+
+    <main class="deck-workspace">
+      <div class="stage-viewport">
+
+        <!-- Slide 1: Title -->
+        <div class="slide-stage full-width-bg">
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay"></div>
+          <div class="slide-inner">
+            <div class="bg-content">
+              <div class="overlay-card">
+                <span class="pill overlay-pill"><i class="fa-solid fa-landmark"></i> Lesson Deck</span>
+                <h1>Strategic Planning in the NGO Sector</h1>
+                <p class="deck-subtitle">Writing a Project Proposal Summary</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Grounding -->
+        <div class="slide-stage hidden full-width-bg">
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/1029807/pexels-photo-1029807.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay" style="background: linear-gradient(145deg, rgba(9,28,18,0.55) 0%, rgba(9,28,18,0.3) 50%, rgba(9,28,18,0.1) 100%);"></div>
+          <div class="slide-inner" style="justify-content: center;">
+            <div class="bg-content centered">
+              <div class="overlay-card centered">
+                <span class="pill overlay-pill"><i class="fa-solid fa-leaf"></i> Grounding Activity</span>
+                <p class="deck-subtitle" style="font-size: var(--step-1);">Take a deep breath in, hold for a moment, and breathe out slowly. Let's begin our session with focus and clarity.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Lesson Aims -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-bullseye"></i> Today's Aims</span>
+            <h2>By the end of this lesson, you will be able to...</h2>
+            <div class="card">
+              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
+                <li><i class="fa-solid fa-check" style="margin-right: 10px; color: var(--primary-sage);"></i>Analyze the social purpose, audience, and structure of a project proposal summary.</li>
+                <li><i class="fa-solid fa-check" style="margin-right: 10px; color: var(--primary-sage);"></i>Deconstruct the formal language of a model text for persuasive impact.</li>
+                <li><i class="fa-solid fa-check" style="margin-right: 10px; color: var(--primary-sage);"></i>Collaboratively draft key sections of a project proposal summary.</li>
+                <li><i class="fa-solid fa-check" style="margin-right: 10px; color: var(--primary-sage);"></i>Provide and respond to constructive peer feedback using a structured checklist.</li>
+                <li><i class="fa-solid fa-check" style="margin-right: 10px; color: var(--primary-sage);"></i>Independently write a complete project proposal summary for homework.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Slide 4: Building the Context -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-comments"></i> Building the Context · 5 minutes</span>
+            <h2>Group Discussion</h2>
+            <div class="card">
+              <p><strong>Discuss in your groups:</strong></p>
+              <ul>
+                <li>Think about a public space that you have seen (a park, a square, an empty plot of land). What is it currently like?</li>
+                <li>What kind of small, community-led project could improve this space? (e.g., adding benches, planting trees, creating a play area).</li>
+                <li>If you wanted to get permission or funding for this project from the municipal council, what information would you need to give them? Why is it important to present this information clearly and professionally?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5: Modeling and Deconstruction - Text Analysis -->
+        <div class="slide-stage hidden">
+            <div class="slide-inner">
+                <span class="pill"><i class="fa-solid fa-magnifying-glass-chart"></i> Modeling and Deconstruction · Task 1</span>
+                <h2>Analyzing the Proposal: Rhetorical Moves</h2>
+                <div class="card" data-activity="rhetorical-moves">
+                    <p><strong>Instructions:</strong> Read the proposal summary. For each paragraph, select the dropdown menu to identify its main purpose (its 'rhetorical move').</p>
+                    <div class="column-card" style="background: var(--warm-cream);">
+                        <h3 style="font-size: var(--step-0);">Project Proposal Summary: Ras al-Ein Community Garden</h3>
+                        
+                        <select class="rhetoric-select" data-correct="C"><option value="">Select Purpose...</option><option value="C">Introduction & Objective</option><option value="A">Rationale & Impact</option><option value="B">Methodology & Timeline</option><option value="D">Stakeholders & Request</option></select>
+                        <p><strong>[P1]</strong> This proposal outlines a plan to establish a community garden. The primary objective is to transform this neglected area into a productive community hub.</p>
+                        
+                        <select class="rhetoric-select" data-correct="A"><option value="">Select Purpose...</option><option value="C">Introduction & Objective</option><option value="A">Rationale & Impact</option><option value="B">Methodology & Timeline</option><option value="D">Stakeholders & Request</option></select>
+                        <p><strong>[P2]</strong> The project's rationale is based on the current lack of accessible green spaces. Due to recent urban development, residents have limited areas for recreation. This garden is proposed in order to foster community engagement. The expected impact includes improved social cohesion.</p>
+                        
+                        <select class="rhetoric-select" data-correct="B"><option value="">Select Purpose...</option><option value="C">Introduction & Objective</option><option value="A">Rationale & Impact</option><option value="B">Methodology & Timeline</option><option value="D">Stakeholders & Request</option></select>
+                        <p><strong>[P3]</strong> The project methodology will involve three phases. The proposed timeline for completion is three months.</p>
+                        
+                        <select class="rhetoric-select" data-correct="D"><option value="">Select Purpose...</option><option value="C">Introduction & Objective</option><option value="A">Rationale & Impact</option><option value="B">Methodology & Timeline</option><option value="D">Stakeholders & Request</option></select>
+                        <p><strong>[P4]</strong> Key stakeholders include neighborhood residents, local schools, and the municipal council. So that this valuable project can proceed, we formally request the council's approval.</p>
+                    </div>
+                    <div class="activity-actions">
+                        <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                        <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                    </div>
+                    <div class="feedback-msg"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Modeling and Deconstruction - Verb Choices -->
+        <div class="slide-stage hidden">
+            <div class="slide-inner">
+                <span class="pill"><i class="fa-solid fa-magnifying-glass-chart"></i> Modeling and Deconstruction · Task 2</span>
+                <h2>Analyzing the Proposal: Verb Choices</h2>
+                <div class="card" data-activity="verb-choice-drop">
+                    <p><strong>Instructions:</strong> Click a verb from the token bank, then click the correct empty slot in the table to place it.</p>
+                    <table class="evaluation-table" style="margin-top: 0;">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Verb from Text</th>
+                                <th style="width: 25%;">Process Type</th>
+                                <th>Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><div class="drop-zone" data-answer="outlines"></div></td><td>Relational</td><td>Presents the document's function as a fact.</td></tr>
+                            <tr><td><div class="drop-zone" data-answer="is"></div></td><td>Relational</td><td>Defines the objective as a clear, stable fact.</td></tr>
+                            <tr><td><div class="drop-zone" data-answer="transform"></div></td><td>Material</td><td>Shows positive action and change.</td></tr>
+                            <tr><td><div class="drop-zone" data-answer="is based on"></div></td><td>Relational</td><td>Links the rationale to a solid foundation.</td></tr>
+                            <tr><td><div class="drop-zone" data-answer="involve"></div></td><td>Relational</td><td>Objectively lists the components of the plan.</td></tr>
+                            <tr><td><div class="drop-zone" data-answer="request"></div></td><td>Material</td><td>A formal action of asking.</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="token-bank">
+                        <span class="click-token" data-value="outlines">outlines</span>
+                        <span class="click-token" data-value="is">is</span>
+                        <span class="click-token" data-value="transform">transform</span>
+                        <span class="click-token" data-value="is based on">is based on</span>
+                        <span class="click-token" data-value="involve">involve</span>
+                        <span class="click-token" data-value="request">request</span>
+                    </div>
+                    <div class="activity-actions">
+                        <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                        <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                    </div>
+                    <div class="feedback-msg"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Modeling and Deconstruction - Evaluation -->
+        <div class="slide-stage hidden">
+            <div class="slide-inner">
+                <span class="pill"><i class="fa-solid fa-magnifying-glass-chart"></i> Modeling and Deconstruction · Task 3</span>
+                <h2>Analyzing the Proposal: Evaluation</h2>
+                <div class="card">
+                     <p><strong>Instructions:</strong> In your group, discuss how successful this proposal is. Use the simple rubric below to give it a score for each category.</p>
+                     <table class="evaluation-table">
+                        <thead>
+                            <tr>
+                                <th>Criterion</th>
+                                <th>Description</th>
+                                <th>Rating (1=Needs Improvement, 3=Excellent)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Clarity</td>
+                                <td>Is the main purpose and plan easy to understand?</td>
+                                <td class="score-cell">1 - 2 - 3</td>
+                            </tr>
+                            <tr>
+                                <td>Professional Tone</td>
+                                <td>Does the language (vocabulary, verbs) sound formal and serious?</td>
+                                <td class="score-cell">1 - 2 - 3</td>
+                            </tr>
+                            <tr>
+                                <td>Detail/Development</td>
+                                <td>Is there enough information to be convincing?</td>
+                                <td class="score-cell">1 - 2 - 3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Guided Practice -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-people-group"></i> Guided Practice · 15 minutes</span>
+            <h2>Completing the Proposal Together</h2>
+            <div class="card">
+              <div class="column-card" style="background: var(--warm-cream);">
+                <h3>Scenario & Task</h3>
+                <p>Let's complete a proposal for a small medicinal herb garden on university grounds. I will be your scribe. Let's fill the gaps together with formal and persuasive language.</p>
+              </div>
+              <div class="card dense">
+                <p style="line-height: 2.5;">This proposal outlines a plan to establish a small medicinal herb garden. The primary objective is <textarea class="prompt-field" rows="1" placeholder="...suggest a clear goal for the garden..."></textarea>. The rationale for this project is based on <textarea class="prompt-field" rows="1" placeholder="...state a need among students..."></textarea>. Due to <textarea class="prompt-field" rows="1" placeholder="...explain the reason for this need..."></textarea>, a dedicated space for well-being is required. This garden is proposed in order to <textarea class="prompt-field" rows="1" placeholder="...state the main purpose..."></textarea>. The methodology will involve consulting with the botany department to select appropriate herbs, followed by <textarea class="prompt-field" rows="1" placeholder="...suggest a second step..."></textarea>. The expected impact includes <textarea class="prompt-field" rows="1" placeholder="...mention one academic benefit..."></textarea> and enhanced student wellness. So that this valuable project can proceed, we formally request <textarea class="prompt-field" rows="1" placeholder="...what is being requested?..."></textarea>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 9: Collaborative Construction - BEFORE -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner" style="justify-content: center; align-items: center;">
+            <span class="pill" style="position: absolute; top: var(--stage-pad); left: var(--stage-pad);"><i class="fa-solid fa-pen-to-square"></i> Collaborative Construction · 15 minutes</span>
+            <div class="card" style="max-width: 70%;">
+                <h3>BEFORE: Simple Draft</h3>
+                <p>We want to make a small medicinal herb garden in Yasmina. We think it's a good idea for the community. People are stressed and don't have nice places. We will plant herbs like mint and sage. It will take two months. The garden will make the area look better. We want you to say yes.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 10: Collaborative Construction - Template -->
+        <div class="slide-stage hidden">
+            <div class="slide-inner">
+                <span class="pill"><i class="fa-solid fa-pen-to-square"></i> Collaborative Construction · 15 minutes</span>
+                <h2>AFTER: Your Rewriting Template</h2>
+                <div class="card">
+                    <p>Use the prompts in the cards below to rewrite the simple draft into a formal proposal summary.</p>
+                    <div class="two-column-grid">
+                        <div class="column-card">
+                            <h3><i class="fa-solid fa-flag" style="margin-right: 8px; color: var(--primary-sage);"></i>Introduction & Objective</h3>
+                            <p>Start by formally stating the plan. 'This proposal outlines a plan to...' What is the main 'objective'?</p>
+                        </div>
+                        <div class="column-card">
+                            <h3><i class="fa-solid fa-lightbulb" style="margin-right: 8px; color: var(--primary-sage);"></i>Rationale & Impact</h3>
+                            <p>What is the 'rationale'? Use 'Due to...' to explain the reason. What is the purpose? Use 'in order to...'. What is the 'expected impact'?</p>
+                        </div>
+                        <div class="column-card">
+                            <h3><i class="fa-solid fa-list-check" style="margin-right: 8px; color: var(--primary-sage);"></i>Methodology & Timeline</h3>
+                            <p>What is the 'methodology'? List the steps. What is the 'timeline'?</p>
+                        </div>
+                        <div class="column-card">
+                            <h3><i class="fa-solid fa-handshake" style="margin-right: 8px; color: var(--primary-sage);"></i>Stakeholders & Request</h3>
+                            <p>Who are the 'stakeholders'? End with a formal request using 'So that...'</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Peer Assessment -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-comments-dollar"></i> Peer Assessment & Feedback · 10 minutes</span>
+            <h2>Reviewing Your Peers' Work</h2>
+            <div class="card">
+              <p>Swap your rewritten proposal with another group. Use the rubric below to assess their work and provide a score for each criterion.</p>
+              <table class="evaluation-table">
+                <thead>
+                  <tr>
+                    <th>Criterion</th>
+                    <th>Description</th>
+                    <th>Rating (1=Developing, 5=Excellent)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Structure</td>
+                    <td>The proposal includes all four key sections (Intro/Objective, Rationale/Impact, Method/Timeline, Stakeholders/Request).</td>
+                    <td class="score-cell">1 - 2 - 3 - 4 - 5</td>
+                  </tr>
+                  <tr>
+                    <td>Formal Vocabulary</td>
+                    <td>The text uses formal vocabulary effectively (e.g., objective, rationale, methodology, impact).</td>
+                    <td class="score-cell">1 - 2 - 3 - 4 - 5</td>
+                  </tr>
+                  <tr>
+                    <td>Purpose/Reason Clauses</td>
+                    <td>The text correctly uses clauses with 'to', 'in order to', 'so that', 'due to' to explain logic.</td>
+                    <td class="score-cell">1 - 2 - 3 - 4 - 5</td>
+                  </tr>
+                  <tr>
+                    <td>Clarity of Objective</td>
+                    <td>The main goal of the project is clear, specific, and easy to understand.</td>
+                    <td class="score-cell">1 - 2 - 3 - 4 - 5</td>
+                  </tr>
+                  <tr>
+                    <td>Persuasiveness</td>
+                    <td>The rationale is logical and convincing, making a strong case for the project.</td>
+                    <td class="score-cell">1 - 2 - 3 - 4 - 5</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 12: Homework -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-house"></i> Individual Construction: Homework Task</span>
+            <h2>Write Your Own Proposal Summary</h2>
+            <div class="two-column-grid">
+              <div class="column-card">
+                <h3>Prompt</h3>
+                <p>Write a complete project proposal summary (approx. 200 words) for the municipal council. Your summary must include all the key sections we discussed.</p>
+              </div>
+              <div class="column-card">
+                <h3>Project Idea</h3>
+                <p>You are proposing to create a 'Medicinal Herb Garden' for a local community center in your neighborhood. You should decide on the specific objectives, rationale, and methodology for this new context.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 13: Reflection -->
+        <div class="slide-stage hidden">
+          <div class="slide-inner">
+            <span class="pill"><i class="fa-solid fa-lightbulb"></i> Reflection</span>
+            <h2>3, 2, 1 Checkout</h2>
+            <div class="card">
+              <p>Please type your answers in the chat before you go.</p>
+              <ul class="reflection-list">
+                <li><strong>3:</strong> What are 3 things you learned today that will help you in your future writing?</li>
+                <li><strong>2:</strong> What are 2 target vocabulary words or phrases you feel confident using now?</li>
+                <li><strong>1:</strong> What is 1 question you still have about writing proposals?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = Array.from(document.querySelectorAll('.slide-stage'));
+      const nextBtn = document.querySelector('.slide-nav-next');
+      const prevBtn = document.querySelector('.slide-nav-prev');
+      const counter = document.getElementById('slide-counter');
+      let currentSlideIndex = 0;
+      const totalSlides = slides.length;
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
+        counter.textContent = `${index + 1} / ${totalSlides}`;
+      }
+
+      function navigate(direction) {
+        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+        showSlide(currentSlideIndex);
+      }
+
+      nextBtn.addEventListener('click', () => navigate(1));
+      prevBtn.addEventListener('click', () => navigate(-1));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          navigate(1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigate(-1);
+        }
+      });
+
+      showSlide(currentSlideIndex);
+
+      // Activity: Rhetorical Moves (Dropdowns)
+      function setupRhetoricalMoves(activityEl) {
+          const selects = activityEl.querySelectorAll('.rhetoric-select');
+          const checkBtn = activityEl.querySelector('button[data-action="check"]');
+          const resetBtn = activityEl.querySelector('button[data-action="reset"]');
+          const feedback = activityEl.querySelector('.feedback-msg');
+          if (!checkBtn || !feedback) return;
+
+          checkBtn.addEventListener('click', () => {
+              let correctCount = 0;
+              selects.forEach(select => {
+                  const isCorrect = select.value === select.dataset.correct;
+                  select.style.borderColor = '';
+                  if (select.value === '') return;
+
+                  if (isCorrect) {
+                      select.style.borderColor = '#2E7D32';
+                      correctCount++;
+                  } else {
+                      select.style.borderColor = '#C62828';
+                  }
+              });
+
+              if (correctCount === selects.length) {
+                  feedback.textContent = 'Excellent! All moves identified correctly.';
+                  feedback.className = 'feedback-msg success';
+              } else {
+                  feedback.textContent = `You have ${correctCount} / ${selects.length} correct. Try again.`;
+                  feedback.className = 'feedback-msg error';
+              }
+          });
+          
+          resetBtn.addEventListener('click', () => {
+              selects.forEach(select => {
+                  select.value = '';
+                  select.style.borderColor = '';
+              });
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+          });
+      }
+
+      // Activity: Click and Drop for Verb Choices
+      function setupClickAndDrop(activityEl) {
+        const tokens = activityEl.querySelectorAll('.click-token');
+        const dropZones = activityEl.querySelectorAll('.drop-zone');
+        const checkBtn = activityEl.querySelector('button[data-action="check"]');
+        const resetBtn = activityEl.querySelector('button[data-action="reset"]');
+        const feedback = activityEl.querySelector('.feedback-msg');
+        let activeToken = null;
+
+        tokens.forEach(token => {
+          token.addEventListener('click', () => {
+            if (token.classList.contains('used')) return;
+            
+            if (activeToken) {
+              activeToken.classList.remove('active');
+            }
+            if (activeToken !== token) {
+              activeToken = token;
+              activeToken.classList.add('active');
+            } else {
+              activeToken = null;
+            }
+          });
+        });
+
+        dropZones.forEach(zone => {
+          zone.addEventListener('click', () => {
+            if (!activeToken) return;
+
+            if (zone.dataset.value) {
+                const previousTokenValue = zone.dataset.value;
+                const previousToken = activityEl.querySelector(`.click-token[data-value="${previousTokenValue}"]`);
+                if (previousToken) {
+                    previousToken.classList.remove('used');
+                }
+            }
+
+            zone.textContent = activeToken.dataset.value;
+            zone.dataset.value = activeToken.dataset.value;
+            zone.classList.remove('placeholder');
+
+            activeToken.classList.add('used');
+            activeToken.classList.remove('active');
+            activeToken = null;
+          });
+        });
+
+        checkBtn.addEventListener('click', () => {
+          let correctCount = 0;
+          dropZones.forEach(zone => {
+            const isCorrect = zone.dataset.value === zone.dataset.answer;
+            zone.classList.remove('correct', 'incorrect');
+            if (!zone.dataset.value) return;
+            
+            if (isCorrect) {
+              zone.classList.add('correct');
+              correctCount++;
+            } else {
+              zone.classList.add('incorrect');
+            }
+          });
+          if (correctCount === dropZones.length) {
+            feedback.textContent = 'Perfect! All verbs are correctly placed.';
+            feedback.className = 'feedback-msg success';
+          } else {
+            feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Keep trying!`;
+            feedback.className = 'feedback-msg error';
+          }
+        });
+
+        resetBtn.addEventListener('click', () => {
+          dropZones.forEach(zone => {
+            zone.textContent = '';
+            zone.dataset.value = '';
+            zone.classList.remove('correct', 'incorrect', 'placeholder');
+          });
+          tokens.forEach(token => {
+            token.classList.remove('used', 'active');
+          });
+          activeToken = null;
+          feedback.textContent = '';
+          feedback.className = 'feedback-msg';
+        });
+      }
+
+      // Auto-resize for textareas
+      function autoResizeTextarea(el) {
+          el.style.height = 'auto';
+          el.style.height = (el.scrollHeight) + 'px';
+      }
+
+      document.querySelectorAll('.prompt-field').forEach(textarea => {
+          textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+          // Call it once to set initial size
+          setTimeout(() => autoResizeTextarea(textarea), 0);
+      });
+
+      // Initialize all activities
+      document.querySelectorAll('[data-activity="rhetorical-moves"]').forEach(setupRhetoricalMoves);
+      document.querySelectorAll('[data-activity="verb-choice-drop"]').forEach(setupClickAndDrop);
+    });
+  </script>
+</body>
+</html>
