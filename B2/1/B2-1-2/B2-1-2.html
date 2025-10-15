@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategic Planning in the NGO Sector · Noor Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-sage: #7A8471;
+      --secondary-sage: #9CAF88;
+      --tertiary-sage: #B8C5A6;
+      --warm-cream: #F8F6F0;
+      --soft-white: #FEFCF7;
+      --forest-shadow: #5A6B52;
+      --ink: #2F3A2B;
+      --ink-muted: #5A6B52;
+      --border-sage: rgba(122,132,113,0.2);
+      --hover-sage: rgba(156,175,136,0.15);
+      --deep-forest: #3E4A3A;
+      --sand: #EAE3D1;
+      --rust: #C8A36F;
+      --font-display: 'Questrial', system-ui, sans-serif;
+      --font-body: 'Nunito', system-ui, sans-serif;
+      --step--1: clamp(0.9rem, 0.84rem + 0.15vw, 0.95rem);
+      --step-0: clamp(1rem, 0.95rem + 0.2vw, 1.12rem);
+      --step-1: clamp(1.18rem, 1.08rem + 0.35vw, 1.4rem);
+      --step-2: clamp(1.45rem, 1.25rem + 0.6vw, 1.9rem);
+      --step-3: clamp(1.85rem, 1.55rem + 1vw, 2.5rem);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-7: 2rem;
+      --space-8: 2.5rem;
+      --radius: 16px;
+      --radius-lg: 22px;
+      --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.08);
+      --shadow-2: 0 8px 26px rgba(34,41,32,0.12);
+      --shadow-3: 0 24px 60px rgba(34,41,32,0.14);
+      --toolbar-h: 72px;
+      --workspace-pad: 24px;
+      --stage-pad: clamp(32px, 5vw, 64px);
+      --stage-radius: 20px;
+      --slide-aspect-w: 16;
+      --slide-aspect-h: 9;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      color: var(--forest-shadow);
+      background: linear-gradient(140deg, #F8F6F0 0%, #F2EFE7 100%);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    a { color: inherit; }
+
+    .deck-app {
+      display: grid;
+      grid-template-rows: var(--toolbar-h) 1fr;
+      min-height: 100dvh;
+    }
+
+    .deck-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--toolbar-h);
+      padding: 0 max(24px, 4vw);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: var(--space-4);
+      backdrop-filter: blur(9px) saturate(1.1);
+      background: color-mix(in srgb, var(--soft-white) 90%, transparent);
+      border-bottom: 1px solid var(--border-sage);
+      box-shadow: 0 8px 22px rgba(34,41,32,0.08);
+    }
+
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toolbar-brand span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .toolbar-brand i {
+      color: var(--secondary-sage);
+    }
+
+    .slide-counter {
+      justify-self: center;
+      font-family: var(--font-display);
+      color: var(--ink-muted);
+      letter-spacing: 0.12em;
+    }
+
+    .deck-workspace {
+      height: calc(100dvh - var(--toolbar-h));
+      padding: var(--workspace-pad);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(900px 600px at 15% -10%, rgba(156,175,136,0.12) 0%, transparent 70%),
+        radial-gradient(700px 600px at 85% 120%, rgba(90,107,82,0.10) 0%, transparent 70%);
+    }
+
+    .stage-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    .slide-stage {
+      position: relative;
+      width: min(
+        calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))),
+        calc(100vw - (var(--workspace-pad) * 2))
+      );
+      aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+      border-radius: var(--stage-radius);
+      background: var(--soft-white);
+      box-shadow: var(--shadow-3);
+      outline: 1px solid var(--border-sage);
+      overflow: hidden;
+    }
+
+    .slide-stage.hidden {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide-inner {
+      position: absolute;
+      inset: 0;
+      padding: var(--stage-pad);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      overflow-y: auto;
+      scrollbar-gutter: stable both-edges;
+    }
+
+    .slide-inner.no-padding { padding: 0; }
+
+    .slide-inner.centered {
+      justify-content: center;
+    }
+
+    .slide-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--border-sage);
+      background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+      color: var(--primary-sage);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-1);
+      opacity: 0;
+      scale: 0.9;
+      transition: all 200ms ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .stage-viewport:hover .slide-nav {
+      opacity: 1;
+      scale: 1;
+    }
+
+    .slide-nav:hover {
+      background: var(--soft-white);
+      color: var(--deep-forest);
+      box-shadow: var(--shadow-2);
+    }
+
+    .slide-nav-prev { left: 24px; }
+    .slide-nav-next { right: 24px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(122,132,113,0.12);
+      color: var(--forest-shadow);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pill i { color: var(--secondary-sage); }
+
+    .timer-pill {
+      background: rgba(200,163,111,0.18);
+      color: var(--deep-forest);
+    }
+
+    .card {
+      background: rgba(254,252,247,0.95);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.18);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .card h2, .card h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      letter-spacing: 0.02em;
+      color: var(--deep-forest);
+    }
+
+    .card h2 { font-size: var(--step-2); }
+    .card h3 { font-size: var(--step-1); }
+
+    .card p { margin: 0; }
+    .card ul, .card ol { margin: 0; padding-left: 1.2rem; }
+
+    .layout-two-columns {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--space-6);
+    }
+
+    .col-span-7 { grid-column: span 7; }
+    .col-span-6 { grid-column: span 6; }
+    .col-span-5 { grid-column: span 5; }
+    .col-span-4 { grid-column: span 4; }
+    .col-span-12 { grid-column: span 12; }
+
+    .full-bleed-hero {
+      position: relative;
+      flex: 1;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--warm-cream);
+      min-height: 240px;
+    }
+
+    .full-bleed-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(62,74,58,0.6) 0%, rgba(62,74,58,0.15) 60%, rgba(62,74,58,0) 100%), var(--hero-image, none);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05);
+    }
+
+    .full-bleed-stage {
+      position: relative;
+      inset: 0;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(32px, 6vw, 72px);
+      background: var(--warm-cream);
+      color: var(--soft-white);
+      isolation: isolate;
+    }
+
+    .full-bleed-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(34,41,32,0.72) 0%, rgba(34,41,32,0.35) 55%, rgba(34,41,32,0.15) 100%), var(--stage-image, none);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05);
+      z-index: -2;
+    }
+
+    .full-bleed-stage.align-bottom-left {
+      align-items: flex-end;
+      justify-content: flex-start;
+    }
+
+    .overlay-card {
+      position: relative;
+      z-index: 1;
+      max-width: min(520px, 70%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: clamp(24px, 5vw, 40px);
+      border-radius: var(--radius-lg);
+      background: color-mix(in srgb, rgba(254,252,247,0.92) 84%, transparent);
+      color: var(--deep-forest);
+      box-shadow: var(--shadow-2);
+      backdrop-filter: blur(6px);
+    }
+
+    .overlay-card h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .overlay-card h3 {
+      margin: 0;
+      font-size: var(--step-1);
+      font-weight: 700;
+      color: var(--forest-shadow);
+    }
+
+    .overlay-card p {
+      margin: 0;
+      font-size: var(--step-0);
+      color: var(--forest-shadow);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: var(--space-4);
+      padding: clamp(24px, 6vw, 48px);
+      color: var(--soft-white);
+    }
+
+    .hero-content h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3vw, 3.1rem);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-content p {
+      margin: 0;
+      font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+      max-width: 420px;
+    }
+
+    .image-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      min-height: 240px;
+      background: var(--warm-cream);
+    }
+
+    .image-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--card-image, none);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05);
+    }
+
+    .image-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(62,74,58,0.0) 0%, rgba(62,74,58,0.55) 100%);
+    }
+
+    .image-card .caption {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 24px;
+      color: var(--soft-white);
+      z-index: 1;
+      font-size: var(--step-0);
+    }
+
+    .card-list {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .interaction-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .matching-card, .gapfill-card, .multiple-choice-card, .grouping-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      background: rgba(248,246,240,0.92);
+      border: 1px solid rgba(122,132,113,0.22);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+    }
+
+    .matching-list {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .matching-option {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-radius: var(--radius);
+      background: var(--soft-white);
+      border: 1px solid rgba(122,132,113,0.16);
+      box-shadow: var(--shadow-1);
+    }
+
+    .matching-option.correct { border-color: rgba(98,140,102,0.7); box-shadow: 0 0 0 2px rgba(98,140,102,0.35); }
+    .matching-option.incorrect { border-color: rgba(196,91,75,0.55); box-shadow: 0 0 0 2px rgba(196,91,75,0.35); }
+
+    .matching-option header {
+      font-weight: 700;
+      color: var(--deep-forest);
+    }
+
+    .matching-option select {
+      padding: 0.65rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.3);
+      font-family: var(--font-body);
+      font-weight: 600;
+      background: rgba(250,249,244,0.9);
+      color: var(--forest-shadow);
+    }
+
+    .interaction-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .interaction-footer button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.65rem 1.4rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--primary-sage);
+      color: var(--soft-white);
+      box-shadow: var(--shadow-1);
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .interaction-footer button.secondary {
+      background: rgba(122,132,113,0.12);
+      color: var(--forest-shadow);
+    }
+
+    .interaction-footer button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .feedback-text {
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    .gapfill-text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .gapfill-text p {
+      margin: 0;
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      border: 1px solid rgba(122,132,113,0.16);
+      box-shadow: var(--shadow-1);
+    }
+
+    .gapfill-blank {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-bottom: 2px solid rgba(122,132,113,0.3);
+      padding: 0 0.25rem;
+    }
+
+    .gapfill-blank input {
+      border: none;
+      border-radius: 0;
+      border-bottom: 2px solid rgba(122,132,113,0.0);
+      padding: 0.25rem 0.4rem;
+      min-width: 120px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      background: rgba(248,246,240,0.6);
+    }
+
+    .gapfill-blank input:focus {
+      outline: none;
+      border-bottom-color: var(--secondary-sage);
+    }
+
+    .gapfill-blank.correct input { background: rgba(156,175,136,0.18); }
+    .gapfill-blank.incorrect input { background: rgba(196,91,75,0.18); }
+
+    .dropdown-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      background: rgba(248,246,240,0.92);
+      border: 1px solid rgba(122,132,113,0.22);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+    }
+
+    .dropdown-card h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      letter-spacing: 0.03em;
+      color: var(--deep-forest);
+    }
+
+    .dropdown-list {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .dropdown-item {
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.16);
+      box-shadow: var(--shadow-1);
+      padding: var(--space-4);
+      line-height: 1.6;
+    }
+
+    .dropdown-blank {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1rem 0.4rem;
+      border-radius: 8px;
+      background: rgba(122,132,113,0.12);
+      transition: background 160ms ease, box-shadow 160ms ease;
+    }
+
+    .dropdown-blank select {
+      border: none;
+      background: transparent;
+      font-size: inherit;
+      font-family: inherit;
+      color: inherit;
+      padding: 0.1rem 0.3rem;
+      min-width: 120px;
+    }
+
+    .dropdown-blank select:focus { outline: none; }
+
+    .dropdown-blank.correct {
+      background: rgba(156,175,136,0.26);
+      box-shadow: 0 0 0 2px rgba(156,175,136,0.35);
+    }
+
+    .dropdown-blank.incorrect {
+      background: rgba(200,163,111,0.26);
+      box-shadow: 0 0 0 2px rgba(200,163,111,0.35);
+    }
+
+    .table-card,
+    .mc-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      background: rgba(248,246,240,0.92);
+      border: 1px solid rgba(122,132,113,0.22);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-1);
+    }
+
+    .table-card h3,
+    .mc-card h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      letter-spacing: 0.03em;
+      color: var(--deep-forest);
+    }
+
+    .table-list {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .table-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.16);
+      padding: var(--space-4);
+      line-height: 1.6;
+      transition: box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .table-select select {
+      border: 1px solid rgba(122,132,113,0.26);
+      border-radius: 999px;
+      padding: 0.4rem 1.1rem 0.4rem 0.9rem;
+      background: rgba(122,132,113,0.1);
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .table-item.correct {
+      border-color: rgba(156,175,136,0.55);
+      box-shadow: 0 0 0 2px rgba(156,175,136,0.3);
+    }
+
+    .table-item.incorrect {
+      border-color: rgba(200,163,111,0.55);
+      box-shadow: 0 0 0 2px rgba(200,163,111,0.3);
+    }
+
+    .mc-list {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .mc-question {
+      background: var(--soft-white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.16);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      box-shadow: var(--shadow-1);
+    }
+
+    .mc-options {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .mc-option {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 0.65rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.24);
+      background: rgba(122,132,113,0.08);
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      font-weight: 600;
+    }
+
+    .mc-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mc-option.selected {
+      border-color: rgba(122,132,113,0.55);
+      background: rgba(122,132,113,0.18);
+      box-shadow: 0 0 0 2px rgba(122,132,113,0.18);
+    }
+
+    .mc-option.correct {
+      border-color: rgba(156,175,136,0.65);
+      background: rgba(156,175,136,0.26);
+      box-shadow: 0 0 0 2px rgba(156,175,136,0.3);
+    }
+
+    .mc-option.incorrect {
+      border-color: rgba(200,163,111,0.65);
+      background: rgba(200,163,111,0.26);
+      box-shadow: 0 0 0 2px rgba(200,163,111,0.3);
+    }
+
+    @media (max-width: 900px) {
+      .table-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .mc-options {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+    }
+
+    .dialogue-card {
+      background: rgba(254,252,247,0.95);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.18);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .dialogue-card h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      letter-spacing: 0.03em;
+    }
+
+    .dialogue-lines {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .dialogue-line {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+
+    .dialogue-speaker {
+      min-width: 120px;
+      font-weight: 700;
+      color: var(--deep-forest);
+    }
+
+    .dialogue-text {
+      flex: 1;
+      color: var(--forest-shadow);
+    }
+
+    .multiple-choice-group {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .mc-option {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.18);
+      background: var(--soft-white);
+      box-shadow: var(--shadow-1);
+      cursor: pointer;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .mc-option input {
+      margin-top: 0.25rem;
+      transform: scale(1.1);
+    }
+
+    .mc-option.correct { border-color: rgba(98,140,102,0.7); }
+    .mc-option.incorrect { border-color: rgba(196,91,75,0.55); }
+
+    .grouping-area {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .token-pool, .grouping-column {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-radius: var(--radius);
+      border: 1px dashed rgba(122,132,113,0.4);
+      background: rgba(254,252,247,0.9);
+      min-height: 80px;
+    }
+
+    .intonation-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+
+    .intonation-column {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.22);
+      padding: var(--space-4);
+      background: rgba(248,246,240,0.92);
+      min-height: 180px;
+    }
+
+    .intonation-column h4 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary-sage);
+    }
+
+    .intonation-column .dropzone {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-content: flex-start;
+    }
+
+    .intonation-token {
+      border: none;
+      border-radius: 999px;
+      padding: 0.5rem 1rem;
+      background: rgba(122,132,113,0.12);
+      color: var(--forest-shadow);
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    .intonation-token.selected {
+      outline: 3px solid rgba(122,132,113,0.35);
+      background: rgba(156,175,136,0.2);
+    }
+
+    .intonation-token.correct { background: rgba(156,175,136,0.28); }
+    .intonation-token.incorrect { background: rgba(196,91,75,0.28); }
+
+    .stacked-list {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .divider {
+      height: 1px;
+      width: 100%;
+      background: rgba(122,132,113,0.18);
+    }
+
+    .case-study {
+      background: rgba(248,246,240,0.95);
+      border: 1px solid rgba(122,132,113,0.2);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .case-study hr {
+      border: none;
+      height: 1px;
+      background: rgba(122,132,113,0.18);
+    }
+
+    .reflection-list { display: grid; gap: var(--space-3); }
+
+    @media (max-width: 900px) {
+      .layout-two-columns { grid-template-columns: repeat(12, 1fr); }
+      .col-span-7, .col-span-6, .col-span-5, .col-span-4 { grid-column: span 12; }
+      .slide-nav { opacity: 1; }
+      .slide-stage { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck-app">
+    <header class="deck-toolbar">
+      <div class="toolbar-brand">
+        <span><i class="fa-solid fa-leaf"></i> Noor Community</span>
+      </div>
+        <div id="slide-counter" class="slide-counter">1 / 20</div>
+      <div class="pill"><i class="fa-solid fa-layer-group"></i> B2 · Strategic Planning</div>
+    </header>
+    <main class="deck-workspace">
+      <div class="stage-viewport">
+        <div class="slide-stage" data-slide="1">
+          <div class="slide-inner centered">
+            <div class="full-bleed-hero" style="--hero-image: url('https://images.pexels.com/photos/3965521/pexels-photo-3965521.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');">
+              <div class="hero-content">
+                <div class="pill"><i class="fa-solid fa-seedling"></i> Step 1 · Title Slide</div>
+                <h1>Strategic Planning in the NGO Sector</h1>
+                <p>Proposing and negotiating partnerships that empower Palestinian artisans.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="2">
+          <div class="slide-inner no-padding">
+            <div class="full-bleed-stage" style="--stage-image: url('https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');">
+              <div class="overlay-card">
+                <div class="pill"><i class="fa-solid fa-spa"></i> Grounding</div>
+                <h2>Grounding</h2>
+                <h3>Arrive in the learning space</h3>
+                <p>Take a deep breath in, hold for a moment, and slowly breathe out. Let go of the day and arrive fully in this space, ready to connect and learn.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="3">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="pill"><i class="fa-solid fa-bullseye"></i> Step 3 · Today's Aims</div>
+              <h2>Today's Aims</h2>
+              <ul class="card-list">
+                <li>Analyze a professional dialogue to identify effective partnership negotiation strategies.</li>
+                <li>Use specialized vocabulary for collaboration to discuss and justify a strategic choice.</li>
+                <li>Use modals (<em>might, could, may</em>) to speculate about partnership outcomes.</li>
+                <li>Propose and negotiate a professional partnership in a simulated context.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="4">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-comments"></i> Pre-task A</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 5 minutes</span>
+              </div>
+              <h2>Pre-task A</h2>
+              <h3>Warm-up: Partnerships &amp; Power</h3>
+              <p>Work in pairs in your breakout room. Discuss and be ready to share a key insight in the main room chat.</p>
+              <ol class="card-list">
+                <li>Why do NGOs or community organizations need to collaborate with other groups? What are the main benefits and challenges?</li>
+                <li>Supporting local artisans in Palestine: what expertise could a partner organization offer to grow their businesses?</li>
+                <li>When international organizations partner with local Palestinian NGOs, what power dynamics might exist? How can local groups ensure their voice is central?</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="5">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-puzzle-piece"></i> Pre-task B</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task B</h2>
+              <h3>Analyzing a Model Dialogue</h3>
+              <p>Read the model dialogue excerpt. Match each phrase used by Fatima to its communicative function.</p>
+              <div class="dialogue-card">
+                <h3>Model Dialogue</h3>
+                <div class="dialogue-lines">
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Fatima (Al-Amal NGO)</div>
+                    <div class="dialogue-text">Hi Omar, thanks for meeting with me. We're very impressed with your work on sustainable business practices.</div>
+                  </div>
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Omar (Consultancy)</div>
+                    <div class="dialogue-text">Thank you, Fatima. We've been following your support for local businesses. Great work.</div>
+                  </div>
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Fatima</div>
+                    <div class="dialogue-text">Thanks. I'm calling about Nablus Threads, the textile producer. We see a chance for real synergy here. With our marketing support and your green expertise, we could help them build a stronger brand.</div>
+                  </div>
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Fatima</div>
+                    <div class="dialogue-text">We were thinking our NGO could handle the international outreach, while you could advise them on eco-friendly packaging.</div>
+                  </div>
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Omar</div>
+                    <div class="dialogue-text">That's an interesting proposal. What kind of timeline are you considering?</div>
+                  </div>
+                  <div class="dialogue-line">
+                    <div class="dialogue-speaker">Fatima</div>
+                    <div class="dialogue-text">We'd like to start planning next month. Perhaps we could draft an initial MoU to outline the idea?</div>
+                  </div>
+                </div>
+              </div>
+              <div class="matching-card" data-activity="matching" data-name="dialogue-functions">
+                <div class="matching-list">
+                  <div class="matching-option" data-answer="Compliment">
+                    <header>"We're very impressed with your work on..."</header>
+                    <select>
+                      <option value="">Select function</option>
+                      <option value="Compliment">Giving a professional compliment</option>
+                      <option value="Mutual Benefit">Emphasizing mutual benefit</option>
+                      <option value="Speculating">Speculating on a positive outcome</option>
+                      <option value="Roles">Proposing initial roles</option>
+                      <option value="Next Step">Suggesting the next step</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="Mutual Benefit">
+                    <header>"...a chance for real synergy here."</header>
+                    <select>
+                      <option value="">Select function</option>
+                      <option value="Compliment">Giving a professional compliment</option>
+                      <option value="Mutual Benefit">Emphasizing mutual benefit</option>
+                      <option value="Speculating">Speculating on a positive outcome</option>
+                      <option value="Roles">Proposing initial roles</option>
+                      <option value="Next Step">Suggesting the next step</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="Speculating">
+                    <header>"...we could help them build a stronger brand."</header>
+                    <select>
+                      <option value="">Select function</option>
+                      <option value="Compliment">Giving a professional compliment</option>
+                      <option value="Mutual Benefit">Emphasizing mutual benefit</option>
+                      <option value="Speculating">Speculating on a positive outcome</option>
+                      <option value="Roles">Proposing initial roles</option>
+                      <option value="Next Step">Suggesting the next step</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="Roles">
+                    <header>"We were thinking our NGO could handle..."</header>
+                    <select>
+                      <option value="">Select function</option>
+                      <option value="Compliment">Giving a professional compliment</option>
+                      <option value="Mutual Benefit">Emphasizing mutual benefit</option>
+                      <option value="Speculating">Speculating on a positive outcome</option>
+                      <option value="Roles">Proposing initial roles</option>
+                      <option value="Next Step">Suggesting the next step</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="Next Step">
+                    <header>"Perhaps we could draft an initial MoU..."</header>
+                    <select>
+                      <option value="">Select function</option>
+                      <option value="Compliment">Giving a professional compliment</option>
+                      <option value="Mutual Benefit">Emphasizing mutual benefit</option>
+                      <option value="Speculating">Speculating on a positive outcome</option>
+                      <option value="Roles">Proposing initial roles</option>
+                      <option value="Next Step">Suggesting the next step</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="interaction-footer">
+                  <button type="button" class="check-btn">Check answers</button>
+                  <button type="button" class="secondary reset-btn">Reset</button>
+                  <span class="feedback-text" data-feedback></span>
+                </div>
+              </div>
+              <div class="case-study">
+                <p><strong>Context:</strong> Fatima (Al-Amal NGO) is speaking with Omar (an environmental consultancy) about supporting Nablus Threads. Review the full dialogue above before completing the matching task.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="6">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-pen-to-square"></i> Pre-task B</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task B</h2>
+              <h3>Adapting the Model</h3>
+              <p>Complete the gap-fill sentences with ideas for supporting a ceramics maker who wants to reduce their workshop's energy consumption.</p>
+              <div class="gapfill-card" data-activity="gapfill" data-name="adapting-model">
+                <div class="gapfill-text">
+                  <p>We're very impressed with your work on <span class="gapfill-blank" data-answer="energy audits"><input type="text" placeholder="type your idea"></span>.</p>
+                  <p>We see a chance for real synergy here. With our business contacts and your technical knowledge, we could help them <span class="gapfill-blank" data-answer="optimize production"><input type="text" placeholder="type your idea"></span>.</p>
+                  <p>We could help them <span class="gapfill-blank" data-answer="tell a sustainability story"><input type="text" placeholder="type your idea"></span> to reach eco-conscious buyers.</p>
+                  <p>We were thinking our NGO could handle <span class="gapfill-blank" data-answer="market expansion"><input type="text" placeholder="type your idea"></span>, while you could advise on <span class="gapfill-blank" data-answer="renewable energy systems"><input type="text" placeholder="type your idea"></span>.</p>
+                </div>
+                <div class="interaction-footer">
+                  <button type="button" class="check-btn">Check ideas</button>
+                  <button type="button" class="secondary reset-btn">Reset</button>
+                  <span class="feedback-text" data-feedback>Creative answers welcome—use the model for guidance.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="7">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-person-circle-question"></i> Pre-task B</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 6 minutes</span>
+              </div>
+              <h2>Pre-task B</h2>
+              <h3>Anticipating Questions</h3>
+              <p>Imagine you are Fatima. After your proposal, what is one key question you expect Omar to ask? Discuss in breakout rooms and prepare a professional response.</p>
+              <ul class="card-list">
+                <li>Consider questions about budget, success metrics, or potential risks.</li>
+                <li>Share your question and answer in the main room chat afterwards.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="8">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-puzzle-piece"></i> Pre-task C</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task C</h2>
+              <h3>Vocabulary of Collaboration</h3>
+              <p>Match each vocabulary word to its definition.</p>
+              <div class="matching-card" data-activity="matching" data-name="collaboration-vocab">
+                <div class="matching-list">
+                  <div class="matching-option" data-answer="synergy">
+                    <header>synergy</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="partnership">
+                    <header>partnership</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="mutual benefit">
+                    <header>mutual benefit</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="shared resources">
+                    <header>shared resources</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="joint venture">
+                    <header>joint venture</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-answer="memorandum of understanding (MoU)">
+                    <header>memorandum of understanding (MoU)</header>
+                    <select>
+                      <option value="">Select definition</option>
+                      <option value="synergy">when two groups work together to create a result greater than their individual efforts</option>
+                      <option value="partnership">a formal arrangement where parties agree to cooperate</option>
+                      <option value="mutual benefit">an advantage that is good for both sides</option>
+                      <option value="shared resources">assets that both partners use</option>
+                      <option value="joint venture">a project two or more organizations work on together</option>
+                      <option value="memorandum of understanding (MoU)">a formal agreement showing intent to work together</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="interaction-footer">
+                  <button type="button" class="check-btn">Check answers</button>
+                  <button type="button" class="secondary reset-btn">Reset</button>
+                  <span class="feedback-text" data-feedback></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="9">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-comments"></i> Pre-task C</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task C</h2>
+              <h3>Applying the Vocabulary</h3>
+              <p>With a partner, complete these sentences with your own ideas using the target vocabulary.</p>
+              <ol class="card-list">
+                <li>The project offered <strong>mutual benefit</strong> because our NGO gained..., while our partner gained...</li>
+                <li>It was a true <strong>partnership</strong> because both organizations had to...</li>
+                <li>We could achieve <strong>synergy</strong> by combining our expertise in... with their expertise in...</li>
+                <li>Before signing a full contract, we should draft an <strong>MoU</strong> that outlines...</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="10">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-magnifying-glass"></i> Pre-task C</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 6 minutes</span>
+              </div>
+              <h2>Pre-task C</h2>
+              <h3>Case Study Analysis</h3>
+              <div class="case-study">
+                <p><strong>Scenario:</strong> A large tech company offers to build a new website for a small community arts center for free. The company wants to use the project in marketing materials to show it supports local culture. The arts center desperately needs a new website but is worried about being used for PR.</p>
+                <hr>
+                <p><strong>Discussion questions:</strong></p>
+                <ul class="card-list">
+                  <li>Does this project offer <strong>mutual benefit</strong>? Why or why not?</li>
+                  <li>Is this a true <strong>partnership</strong> or just a donation? What's the difference?</li>
+                  <li>What <strong>shared resources</strong> (besides money/tech) would be needed?</li>
+                  <li>What key point should the arts center insist on including in an <strong>MoU</strong>?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="11">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-microphone-lines"></i> Pre-task D</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task D</h2>
+              <h3>Sounding Polite</h3>
+              <p>Use rising intonation (↗) for polite inquiries and falling intonation (↘) for direct demands. Move each question to the correct column.</p>
+              <div class="grouping-card" data-activity="intonation-grouping">
+                <div class="token-pool" data-pool>
+                  <button type="button" class="intonation-token" data-answer="rising">Could you tell us about your budget?</button>
+                  <button type="button" class="intonation-token" data-answer="falling">What is your budget?</button>
+                  <button type="button" class="intonation-token" data-answer="falling">What are your main priorities?</button>
+                  <button type="button" class="intonation-token" data-answer="rising">Would that be possible for your team?</button>
+                  <button type="button" class="intonation-token" data-answer="rising">Should we perhaps schedule a meeting?</button>
+                  <button type="button" class="intonation-token" data-answer="falling">When can you start?</button>
+                </div>
+                <div class="intonation-layout">
+                  <div class="intonation-column" data-column="rising">
+                    <h4>Rising Intonation (Polite Inquiry ↗)</h4>
+                    <div class="dropzone"></div>
+                  </div>
+                  <div class="intonation-column" data-column="falling">
+                    <h4>Falling Intonation (Direct Demand ↘)</h4>
+                    <div class="dropzone"></div>
+                  </div>
+                </div>
+                <div class="interaction-footer">
+                  <button type="button" class="check-btn">Check grouping</button>
+                  <button type="button" class="secondary reset-btn">Reset</button>
+                  <span class="feedback-text" data-feedback>Tap a sentence to select it, then tap a column.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="12">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-microphone"></i> Pre-task D</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Pre-task D</h2>
+              <h3>Intonation Practice</h3>
+              <p>In your breakout room, read the mini-dialogue. Use rising intonation (↗) for polite questions.</p>
+              <div class="stacked-list">
+                <p><strong>Partner A:</strong> So, what are your main priorities for this year? ↘</p>
+                <p><strong>Partner B:</strong> Our main focus is on community training. Could you tell us what your timeline is? ↗</p>
+                <p><strong>Partner A:</strong> We'd like to start in the next three months. Would that be possible for your team? ↗</p>
+                <p><strong>Partner B:</strong> I think that could work. Should we perhaps schedule a meeting for next week? ↗</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="13">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-right-left"></i> Pre-task D</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 6 minutes</span>
+              </div>
+              <h2>Pre-task D</h2>
+              <h3>Making Questions More Polite</h3>
+              <p>Work with your partner. Convert the direct questions into polite inquiries, then practice asking and answering them with rising intonation.</p>
+              <ul class="card-list">
+                <li>What is your timeline?</li>
+                <li>How much will it cost?</li>
+                <li>Who is the project manager?</li>
+              </ul>
+              <p class="feedback-text">Example: “What is your timeline?” → “Could you tell me what your timeline is? ↗”</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="14">
+          <div class="slide-inner no-padding">
+            <div class="full-bleed-stage align-bottom-left" style="--stage-image: url('https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');">
+              <div class="overlay-card">
+                <div class="pill"><i class="fa-solid fa-flag"></i> Task</div>
+                <h2>Task</h2>
+                <h3>Propose the Partnership</h3>
+                <p>Preview the live negotiation. You will present a partnership vision for Nablus Threads and agree on next steps with the consultancy.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="15">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-file-lines"></i> Task Preparation</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 5 minutes</span>
+              </div>
+              <h2>Task Preparation</h2>
+              <h3>Planning the Partnership</h3>
+              <p>Read the shared context. In breakout rooms, brainstorm how the partnership can solve Nablus Threads' challenges.</p>
+              <div class="stacked-list">
+                <p><strong>Your NGO's role:</strong> You work for Al-Amal, supporting small Palestinian businesses with training and market access.</p>
+                <p><strong>Shared context:</strong> Nablus Threads is a textile producer known for traditional embroidery.</p>
+                <ul>
+                  <li><strong>Problems:</strong> High energy costs; limited international reach; packaging not eco-friendly.</li>
+                  <li><strong>Goals:</strong> Become more sustainable; increase international sales by 30%; tell a stronger brand story.</li>
+                </ul>
+                <div class="divider"></div>
+                <ol>
+                  <li>How could your NGO and the consultancy partner to help Nablus Threads?</li>
+                  <li>What solutions could you propose for each problem?</li>
+                  <li>How could the partnership help them achieve each goal?</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="16">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-handshake-angle"></i> Task</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 7 minutes</span>
+              </div>
+              <h2>Task</h2>
+              <h3>The Negotiation Role-Play</h3>
+              <p>Start the video call. Propose a partnership to support Nablus Threads and agree on next steps.</p>
+              <div class="layout-two-columns">
+                <div class="col-span-6 card">
+                  <h3>Person A · Al-Amal NGO</h3>
+                  <ul class="card-list">
+                    <li>Propose a joint venture to support Nablus Threads.</li>
+                    <li>Explain how your combined expertise solves their problems.</li>
+                    <li>Suggest initial roles for each organization.</li>
+                  </ul>
+                </div>
+                <div class="col-span-6 card">
+                  <h3>Person B · Environmental Consultancy</h3>
+                  <ul class="card-list">
+                    <li>Listen to the proposal and ask polite questions about budget, timeline, and roles.</li>
+                    <li>Evaluate risks and suggest adjustments that make the partnership realistic.</li>
+                    <li>Collaboratively agree on next steps.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="17">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-person-chalkboard"></i> Reporting</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 10 minutes</span>
+              </div>
+              <h2>Reporting</h2>
+              <h3>Board Meeting</h3>
+              <p>One pair presents their partnership plan to the group acting as the NGO's Board of Directors.</p>
+              <div class="layout-two-columns">
+                <div class="col-span-6 card">
+                  <h3>Presenting Group · 3 minutes</h3>
+                  <ul class="card-list">
+                    <li>Introduce Nablus Threads and their challenges.</li>
+                    <li>Outline your joint venture with the consultancy.</li>
+                    <li>Explain expected outcomes and mutual benefits.</li>
+                    <li>State the next steps you agreed upon.</li>
+                  </ul>
+                </div>
+                <div class="col-span-6 card">
+                  <h3>Board of Directors</h3>
+                  <p>Listen carefully. After the presentation, ask clarifying questions using polite forms.</p>
+                  <ul class="card-list">
+                    <li>“Could you tell us more about the proposed budget?”</li>
+                    <li>“I was wondering what the timeline might look like.”</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="18">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-person-running"></i> Practice</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 10 minutes</span>
+              </div>
+              <h2>Practice</h2>
+              <h3>Language Workout Briefing</h3>
+              <p>Complete the interactive grammar drills on the next slide. Work with a partner to compare your answers after each check.</p>
+              <ul class="card-list">
+                <li>Choose the most suitable modal verb to express possibility or uncertainty.</li>
+                <li>Select the correct prepositions for partnership collocations.</li>
+                <li>Use the feedback to note any phrases you want to reuse in the task report.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="19">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="interaction-header">
+                <div class="pill"><i class="fa-solid fa-person-running"></i> Practice</div>
+                <span class="pill timer-pill"><i class="fa-solid fa-clock"></i> 10 minutes</span>
+              </div>
+              <h2>Practice</h2>
+              <h3>In-Class Language Practice</h3>
+              <p>Work through the four activities, then compare answers with a partner. Use the feedback to capture any language you want to reuse.</p>
+              <div class="stacked-list">
+                <div class="table-card" data-activity="table" data-name="modal-functions">
+                  <h3>Practice 1 · Modal Functions</h3>
+                  <p>Categorize each statement based on the function of the modal verb.</p>
+                  <div class="table-list">
+                    <div class="table-item" data-answer="obligation">
+                      <span class="table-statement">We <strong>must</strong> complete the report by Friday.</span>
+                      <span class="table-select"><select>
+                          <option value="">Select function</option>
+                          <option value="obligation">Obligation</option>
+                          <option value="uncertainty">Uncertainty</option>
+                          <option value="certainty">Certainty</option>
+                        </select></span>
+                    </div>
+                    <div class="table-item" data-answer="uncertainty">
+                      <span class="table-statement">This new strategy <strong>might</strong> increase our outreach.</span>
+                      <span class="table-select"><select>
+                          <option value="">Select function</option>
+                          <option value="obligation">Obligation</option>
+                          <option value="uncertainty">Uncertainty</option>
+                          <option value="certainty">Certainty</option>
+                        </select></span>
+                    </div>
+                    <div class="table-item" data-answer="certainty">
+                      <span class="table-statement">They <strong>will definitely</strong> attend the meeting tomorrow.</span>
+                      <span class="table-select"><select>
+                          <option value="">Select function</option>
+                          <option value="obligation">Obligation</option>
+                          <option value="uncertainty">Uncertainty</option>
+                          <option value="certainty">Certainty</option>
+                        </select></span>
+                    </div>
+                    <div class="table-item" data-answer="obligation">
+                      <span class="table-statement">You <strong>have to</strong> get approval before starting the project.</span>
+                      <span class="table-select"><select>
+                          <option value="">Select function</option>
+                          <option value="obligation">Obligation</option>
+                          <option value="uncertainty">Uncertainty</option>
+                          <option value="certainty">Certainty</option>
+                        </select></span>
+                    </div>
+                    <div class="table-item" data-answer="uncertainty">
+                      <span class="table-statement">We <strong>could</strong> see positive results within six months.</span>
+                      <span class="table-select"><select>
+                          <option value="">Select function</option>
+                          <option value="obligation">Obligation</option>
+                          <option value="uncertainty">Uncertainty</option>
+                          <option value="certainty">Certainty</option>
+                        </select></span>
+                    </div>
+                  </div>
+                  <div class="interaction-footer">
+                    <button type="button" class="check-btn">Check answers</button>
+                    <button type="button" class="secondary reset-btn">Reset</button>
+                    <span class="feedback-text" data-feedback></span>
+                  </div>
+                </div>
+
+                <div class="mc-card" data-activity="mc" data-name="collaboration-vocabulary">
+                  <h3>Practice 2 · Vocabulary for Collaboration</h3>
+                  <p>Choose the best word to complete each sentence.</p>
+                  <div class="mc-list">
+                    <div class="mc-question" data-answer="MoU">
+                      <p class="question-text">The agreement isn't legally binding; it's just a(n) ______ to show our intent to work together.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 2 question 1">
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-1" value="MoU"><span>MoU</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-1" value="synergy"><span>synergy</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-1" value="joint venture"><span>joint venture</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="partnership">
+                      <p class="question-text">The project was a true ______; both organizations contributed equally and shared the success.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 2 question 2">
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-2" value="resource"><span>resource</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-2" value="partnership"><span>partnership</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-2" value="benefit"><span>benefit</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="synergy">
+                      <p class="question-text">The ______ between their technical skills and our community access is what will make this succeed.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 2 question 3">
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-3" value="synergy"><span>synergy</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-3" value="MoU"><span>MoU</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-3" value="venture"><span>venture</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="mutual benefit">
+                      <p class="question-text">A key ______ for the consultancy is that this project will improve their public image.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 2 question 4">
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-4" value="resource"><span>resource</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-4" value="partnership"><span>partnership</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-4" value="mutual benefit"><span>mutual benefit</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="shared resources">
+                      <p class="question-text">We can't do this alone; we need to pool our ______ with another group to be effective.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 2 question 5">
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-5" value="benefits"><span>benefits</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-5" value="shared resources"><span>shared resources</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-collaboration-5" value="synergies"><span>synergies</span></label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="interaction-footer">
+                    <button type="button" class="check-btn">Check answers</button>
+                    <button type="button" class="secondary reset-btn">Reset</button>
+                    <span class="feedback-text" data-feedback></span>
+                  </div>
+                </div>
+
+                <div class="mc-card" data-activity="mc" data-name="prepositions-partnership">
+                  <h3>Practice 3 · Prepositions of Partnership</h3>
+                  <p>Choose the correct preposition to complete each sentence.</p>
+                  <div class="mc-list">
+                    <div class="mc-question" data-answer="with">
+                      <p class="question-text">We are working in partnership ______ a local consultancy.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 3 question 1">
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-1" value="with"><span>with</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-1" value="for"><span>for</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-1" value="by"><span>by</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="on">
+                      <p class="question-text">We need to reach an agreement ______ the project timeline.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 3 question 2">
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-2" value="at"><span>at</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-2" value="on"><span>on</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-2" value="to"><span>to</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="for">
+                      <p class="question-text">This collaboration will be beneficial ______ both our organizations.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 3 question 3">
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-3" value="for"><span>for</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-3" value="with"><span>with</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-3" value="by"><span>by</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="between">
+                      <p class="question-text">The MoU is an agreement ______ the two NGOs.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 3 question 4">
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-4" value="among"><span>among</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-4" value="between"><span>between</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-4" value="from"><span>from</span></label>
+                      </div>
+                    </div>
+                    <div class="mc-question" data-answer="in">
+                      <p class="question-text">They specialize ______ sustainable energy solutions for small businesses.</p>
+                      <div class="mc-options" role="group" aria-label="Practice 3 question 5">
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-5" value="of"><span>of</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-5" value="at"><span>at</span></label>
+                        <label class="mc-option"><input type="radio" name="mc-prepositions-5" value="in"><span>in</span></label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="interaction-footer">
+                    <button type="button" class="check-btn">Check answers</button>
+                    <button type="button" class="secondary reset-btn">Reset</button>
+                    <span class="feedback-text" data-feedback></span>
+                  </div>
+                </div>
+
+                <div class="dropdown-card" data-activity="dropdown" data-name="polite-questions">
+                  <h3>Practice 4 · Polite Question Forms</h3>
+                  <p>Complete each polite question by selecting the correct word from the dropdown menu.</p>
+                  <div class="dropdown-list">
+                    <div class="dropdown-item">
+                      <span>Could you</span>
+                      <span class="dropdown-blank" data-answer="tell"><select>
+                          <option value="">Select word</option>
+                          <option value="tell">tell</option>
+                          <option value="say">say</option>
+                          <option value="ask">ask</option>
+                        </select></span>
+                      <span>me what the budget is?</span>
+                    </div>
+                    <div class="dropdown-item">
+                      <span>I was</span>
+                      <span class="dropdown-blank" data-answer="wondering"><select>
+                          <option value="">Select word</option>
+                          <option value="thinking">thinking</option>
+                          <option value="wondering">wondering</option>
+                          <option value="asking">asking</option>
+                        </select></span>
+                      <span>if you had a timeline in mind.</span>
+                    </div>
+                    <div class="dropdown-item">
+                      <span>Would you</span>
+                      <span class="dropdown-blank" data-answer="mind"><select>
+                          <option value="">Select word</option>
+                          <option value="like">like</option>
+                          <option value="want">want</option>
+                          <option value="mind">mind</option>
+                        </select></span>
+                      <span>telling me who the main contact is?</span>
+                    </div>
+                    <div class="dropdown-item">
+                      <span>Do you have any</span>
+                      <span class="dropdown-blank" data-answer="idea"><select>
+                          <option value="">Select word</option>
+                          <option value="idea">idea</option>
+                          <option value="thought">thought</option>
+                          <option value="plan">plan</option>
+                        </select></span>
+                      <span>when the project might start?</span>
+                    </div>
+                    <div class="dropdown-item">
+                      <span>I'd be interested to</span>
+                      <span class="dropdown-blank" data-answer="know"><select>
+                          <option value="">Select word</option>
+                          <option value="see">see</option>
+                          <option value="know">know</option>
+                          <option value="hear">hear</option>
+                        </select></span>
+                      <span>if you have worked on similar projects before.</span>
+                    </div>
+                  </div>
+                  <div class="interaction-footer">
+                    <button type="button" class="check-btn">Check answers</button>
+                    <button type="button" class="secondary reset-btn">Reset</button>
+                    <span class="feedback-text" data-feedback></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-stage hidden" data-slide="20">
+          <div class="slide-inner">
+            <div class="card">
+              <div class="pill"><i class="fa-solid fa-lightbulb"></i> Reflection</div>
+              <h2>Reflection</h2>
+              <h3>Looking Back</h3>
+              <p>In the chat, answer one question:</p>
+              <div class="reflection-list">
+                <p>What was the most challenging part of negotiating the partnership in the role-play?</p>
+                <p>Which new vocabulary word or phrase from today's lesson will be most useful for you? Why?</p>
+                <p>What is one thing you learned today that will help you communicate more professionally?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = Array.from(document.querySelectorAll('.slide-stage'));
+      const nextBtn = document.querySelector('.slide-nav-next');
+      const prevBtn = document.querySelector('.slide-nav-prev');
+      const counter = document.getElementById('slide-counter');
+      let currentSlideIndex = 0;
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('hidden', i !== index);
+        });
+        counter.textContent = `${index + 1} / ${slides.length}`;
+      }
+
+      function navigate(direction) {
+        currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
+        showSlide(currentSlideIndex);
+      }
+
+      nextBtn.addEventListener('click', () => navigate(1));
+      prevBtn.addEventListener('click', () => navigate(-1));
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === ' ') {
+          event.preventDefault();
+          navigate(1);
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          navigate(-1);
+        }
+      });
+
+      showSlide(currentSlideIndex);
+
+      function resetMatching(container) {
+        container.querySelectorAll('.matching-option').forEach((option) => {
+          option.classList.remove('correct', 'incorrect');
+          option.querySelector('select').value = '';
+        });
+        const feedback = container.querySelector('[data-feedback]');
+        if (feedback) feedback.textContent = '';
+      }
+
+      document.querySelectorAll('[data-activity="matching"]').forEach((container) => {
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          const options = container.querySelectorAll('.matching-option');
+          options.forEach((option) => {
+            const select = option.querySelector('select');
+            const isCorrect = select.value === option.dataset.answer;
+            option.classList.toggle('correct', isCorrect);
+            option.classList.toggle('incorrect', !isCorrect);
+            if (isCorrect) correctCount += 1;
+          });
+          if (feedback) {
+            if (correctCount === options.length) {
+              feedback.textContent = 'Excellent! Every match looks strong.';
+            } else {
+              feedback.textContent = `You matched ${correctCount} / ${options.length}. Review the highlighted cards.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetMatching(container));
+      });
+
+      function resetGapfill(container) {
+        container.querySelectorAll('.gapfill-blank').forEach((blank) => {
+          blank.classList.remove('correct', 'incorrect');
+          blank.querySelector('input').value = '';
+        });
+        const feedback = container.querySelector('[data-feedback]');
+        if (feedback && container.dataset.name !== 'adapting-model') feedback.textContent = '';
+        if (feedback && container.dataset.name === 'adapting-model') feedback.textContent = 'Creative answers welcome—use the model for guidance.';
+      }
+
+      document.querySelectorAll('[data-activity="gapfill"]').forEach((container) => {
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          const blanks = container.querySelectorAll('.gapfill-blank');
+          blanks.forEach((blank) => {
+            const input = blank.querySelector('input');
+            const expected = (blank.dataset.answer || '').trim().toLowerCase();
+            const value = input.value.trim().toLowerCase();
+            const isCreative = container.dataset.name === 'adapting-model';
+            if (isCreative && value.length > 0) {
+              blank.classList.add('correct');
+              blank.classList.remove('incorrect');
+              correctCount += 1;
+            } else {
+              const isCorrect = value === expected;
+              blank.classList.toggle('correct', isCorrect);
+              blank.classList.toggle('incorrect', !isCorrect);
+              if (isCorrect) correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (container.dataset.name === 'adapting-model') {
+              feedback.textContent = 'Great! Compare your ideas with your partner.';
+            } else if (correctCount === blanks.length) {
+              feedback.textContent = 'Perfect accuracy—excellent command of the vocabulary!';
+            } else {
+              feedback.textContent = `You solved ${correctCount} / ${blanks.length}. Adjust the highlighted blanks.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetGapfill(container));
+      });
+
+      function resetDropdown(container) {
+        container.querySelectorAll('.dropdown-blank').forEach((blank) => {
+          const select = blank.querySelector('select');
+          if (select) select.value = '';
+          blank.classList.remove('correct', 'incorrect');
+        });
+        const feedback = container.querySelector('[data-feedback]');
+        if (feedback) feedback.textContent = '';
+      }
+
+      document.querySelectorAll('[data-activity="dropdown"]').forEach((container) => {
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+        const blanks = Array.from(container.querySelectorAll('.dropdown-blank'));
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          blanks.forEach((blank) => {
+            const select = blank.querySelector('select');
+            const value = select?.value || '';
+            const isAnswered = value !== '';
+            const isCorrect = isAnswered && value === blank.dataset.answer;
+            blank.classList.toggle('correct', isCorrect);
+            blank.classList.toggle('incorrect', isAnswered && !isCorrect);
+            if (isCorrect) correctCount += 1;
+          });
+          if (feedback) {
+            if (correctCount === blanks.length) {
+              feedback.textContent = 'All answers correct! Excellent accuracy.';
+            } else {
+              feedback.textContent = `You solved ${correctCount} / ${blanks.length}. Adjust the highlighted choices.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetDropdown(container));
+      });
+
+      function resetTable(container) {
+        container.querySelectorAll('.table-item').forEach((item) => {
+          item.classList.remove('correct', 'incorrect');
+          const select = item.querySelector('select');
+          if (select) select.value = '';
+        });
+        const feedback = container.querySelector('[data-feedback]');
+        if (feedback) feedback.textContent = '';
+      }
+
+      document.querySelectorAll('[data-activity="table"]').forEach((container) => {
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+        const items = Array.from(container.querySelectorAll('.table-item'));
+
+        items.forEach((item) => {
+          const select = item.querySelector('select');
+          select?.addEventListener('change', () => {
+            item.classList.remove('correct', 'incorrect');
+            if (feedback) feedback.textContent = '';
+          });
+        });
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          items.forEach((item) => {
+            const expected = (item.dataset.answer || '').toLowerCase();
+            const select = item.querySelector('select');
+            const value = (select?.value || '').toLowerCase();
+            const isAnswered = value.length > 0;
+            const isCorrect = isAnswered && value === expected;
+            item.classList.toggle('correct', isCorrect);
+            item.classList.toggle('incorrect', isAnswered && !isCorrect);
+            if (isCorrect) correctCount += 1;
+          });
+          if (feedback) {
+            if (correctCount === items.length) {
+              feedback.textContent = 'Great categorizing! Every modal function is spot on.';
+            } else {
+              feedback.textContent = `You sorted ${correctCount} / ${items.length}. Review the highlighted statements.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetTable(container));
+      });
+
+      function resetMC(container) {
+        container.querySelectorAll('input[type="radio"]').forEach((input) => {
+          input.checked = false;
+        });
+        container.querySelectorAll('.mc-option').forEach((option) => {
+          option.classList.remove('selected', 'correct', 'incorrect');
+        });
+        const feedback = container.querySelector('[data-feedback]');
+        if (feedback) feedback.textContent = '';
+      }
+
+      document.querySelectorAll('[data-activity="mc"]').forEach((container) => {
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+        const questions = Array.from(container.querySelectorAll('.mc-question'));
+
+        container.querySelectorAll('input[type="radio"]').forEach((input) => {
+          input.addEventListener('change', () => {
+            const question = input.closest('.mc-question');
+            question?.querySelectorAll('.mc-option').forEach((option) => {
+              option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            input.closest('.mc-option')?.classList.add('selected');
+            if (feedback) feedback.textContent = '';
+          });
+        });
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          questions.forEach((question) => {
+            const answer = (question.dataset.answer || '').toLowerCase();
+            const selectedInput = question.querySelector('input[type="radio"]:checked');
+            question.querySelectorAll('.mc-option').forEach((option) => {
+              option.classList.remove('correct', 'incorrect');
+            });
+            if (selectedInput) {
+              const value = (selectedInput.value || '').toLowerCase();
+              const option = selectedInput.closest('.mc-option');
+              const isCorrect = value === answer;
+              option?.classList.add(isCorrect ? 'correct' : 'incorrect');
+              if (isCorrect) correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === questions.length) {
+              feedback.textContent = 'Excellent! All of your choices are correct.';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${questions.length} correct. Review the highlighted options.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetMC(container));
+      });
+
+      function setupTokenBoard(container) {
+        const pool = container.querySelector('[data-pool]');
+        const tokens = Array.from(container.querySelectorAll('.intonation-token'));
+        const columns = Array.from(container.querySelectorAll('.intonation-column'));
+        let selectedToken = null;
+
+        function resetBoard() {
+          tokens.forEach((token) => {
+            pool.appendChild(token);
+            token.classList.remove('selected', 'correct', 'incorrect');
+            token.dataset.placed = '';
+          });
+          const feedback = container.querySelector('[data-feedback]');
+          if (feedback) feedback.textContent = container.dataset.activity === 'intonation-grouping' ? 'Tap a sentence to select it, then tap a column.' : 'Select a phrase, then tap a question.';
+        }
+
+        pool?.addEventListener('click', (event) => {
+          const target = event.target.closest('.intonation-token');
+          if (!target) return;
+          if (selectedToken && selectedToken !== target) {
+            selectedToken.classList.remove('selected');
+          }
+          if (target.classList.contains('selected')) {
+            target.classList.remove('selected');
+            selectedToken = null;
+          } else {
+            target.classList.add('selected');
+            selectedToken = target;
+          }
+        });
+
+        columns.forEach((column) => {
+          column.addEventListener('click', () => {
+            const dropzone = column.querySelector('.dropzone');
+            if (!dropzone || !selectedToken) return;
+            dropzone.appendChild(selectedToken);
+            selectedToken.classList.remove('selected');
+            selectedToken.dataset.placed = column.dataset.column;
+            selectedToken = null;
+          });
+        });
+
+        tokens.forEach((token) => {
+          token.addEventListener('dblclick', () => {
+            pool.appendChild(token);
+            token.classList.remove('selected');
+            token.dataset.placed = '';
+          });
+        });
+
+        const checkBtn = container.querySelector('.check-btn');
+        const resetBtn = container.querySelector('.reset-btn');
+        const feedback = container.querySelector('[data-feedback]');
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          tokens.forEach((token) => {
+            const expected = token.dataset.answer;
+            const placed = token.dataset.placed;
+            const isCorrect = expected === placed;
+            token.classList.toggle('correct', isCorrect);
+            token.classList.toggle('incorrect', placed && !isCorrect);
+            if (isCorrect) correctCount += 1;
+          });
+          if (feedback) {
+            if (correctCount === tokens.length) {
+              feedback.textContent = 'Beautiful placement! Listen for that intonation when you speak.';
+            } else {
+              feedback.textContent = `You placed ${correctCount} / ${tokens.length}. Adjust tokens with the amber highlight.`;
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => resetBoard());
+
+        resetBoard();
+      }
+
+      document.querySelectorAll('[data-activity="intonation-grouping"], [data-activity="grouping"]').forEach(setupTokenBoard);
+    });
+  </script>
+</body>
+</html>
