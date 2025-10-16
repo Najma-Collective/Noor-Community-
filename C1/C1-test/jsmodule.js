@@ -13,128 +13,6 @@ const HTML2CANVAS_URL =
 const JSPDF_URL =
   "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
 
-const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
-const remoteImageHydrations = new WeakMap();
-
-function getRemoteImageContainer(img) {
-  if (!(img instanceof HTMLElement)) {
-    return null;
-  }
-  return img.closest(".bg-media") ?? img.closest(".context-image") ?? img.parentElement;
-}
-
-function applyRemoteImageFallback(img, error) {
-  if (error) {
-    console.warn(
-      `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? "unknown"}`,
-      error,
-    );
-  }
-  const container = getRemoteImageContainer(img);
-  if (container) {
-    container.classList.add("remote-image-fallback");
-  }
-  img.dataset.remoteHydrated = "failed";
-}
-
-async function hydrateRemoteImage(img) {
-  if (!(img instanceof HTMLImageElement)) {
-    return;
-  }
-
-  const remoteSrc = img.dataset.remoteSrc;
-  if (!remoteSrc) {
-    return;
-  }
-
-  if (typeof fetch !== "function") {
-    applyRemoteImageFallback(img, new Error("Fetch API is unavailable"));
-    return;
-  }
-
-  const hydrationState = img.dataset.remoteHydrated;
-  if (hydrationState === "success" || hydrationState === "failed") {
-    return;
-  }
-
-  if (remoteImageHydrations.has(img)) {
-    return remoteImageHydrations.get(img);
-  }
-
-  const hydrationPromise = (async () => {
-    try {
-      const response = await fetch(remoteSrc, { mode: "cors" });
-      if (!response.ok) {
-        throw new Error(`Remote image request failed with status ${response.status}`);
-      }
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-
-      try {
-        await new Promise((resolve, reject) => {
-          function cleanup() {
-            img.removeEventListener("load", handleLoad);
-            img.removeEventListener("error", handleError);
-          }
-
-          function handleLoad() {
-            cleanup();
-            resolve();
-          }
-
-          function handleError() {
-            cleanup();
-            reject(new Error("Image failed to load"));
-          }
-
-          img.addEventListener("load", handleLoad, { once: true });
-          img.addEventListener("error", handleError, { once: true });
-          img.removeAttribute("loading");
-          img.src = objectUrl;
-        });
-
-        img.dataset.remoteHydrated = "success";
-      } finally {
-        URL.revokeObjectURL(objectUrl);
-      }
-    } catch (error) {
-      applyRemoteImageFallback(img, error);
-    } finally {
-      remoteImageHydrations.delete(img);
-    }
-  })();
-
-  remoteImageHydrations.set(img, hydrationPromise);
-  return hydrationPromise;
-}
-
-async function hydrateRemoteImages(root = document) {
-  if (!root) {
-    return;
-  }
-
-  const scope = root instanceof Element || root instanceof Document ? root : document;
-  const queryFn = typeof scope.querySelectorAll === "function" ? scope.querySelectorAll.bind(scope) : null;
-  const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
-
-  if (!remoteImages.length) {
-    return;
-  }
-
-  await Promise.all(
-    remoteImages.map((img) => {
-      const hydration = hydrateRemoteImage(img);
-      if (hydration && typeof hydration.then === "function") {
-        return hydration.catch((error) => {
-          console.warn("Remote image hydration failed", error);
-        });
-      }
-      return undefined;
-    }),
-  );
-}
-
 function loadExternalScript(url, { module = false } = {}) {
   if (exportScriptPromises.has(url)) {
     return exportScriptPromises.get(url);
@@ -876,11 +754,7 @@ function initialiseActivities() {
     .forEach((el) => setupStressMark(el));
 }
 
-async function initialiseDeck() {
-  await hydrateRemoteImages().catch((error) => {
-    console.warn("Remote imagery could not be hydrated during initialisation", error);
-  });
-
+function initialiseDeck() {
   refreshSlides();
   if (slides.length) {
     showSlide(0);
@@ -897,15 +771,9 @@ async function initialiseDeck() {
   });
 }
 
-initialiseDeck().catch((error) => {
-  console.error("Deck initialisation failed", error);
-});
+initialiseDeck();
 
 async function exportDeckToPdf() {
-  await hydrateRemoteImages(stageViewport).catch((error) => {
-    console.warn("Continuing export without hydrated imagery", error);
-  });
-
   refreshSlides();
   if (!slides.length || !stageViewport) return;
 
@@ -966,8 +834,6 @@ async function exportDeckToPdf() {
         computedBackground === "rgba(0, 0, 0, 0)";
       const backgroundFallback = window.getComputedStyle(document.body).backgroundColor || "#ffffff";
 
-      await waitForImages(slide);
-
       const canvas = await html2canvas(slide, {
         scale: Math.max(2, window.devicePixelRatio || 1),
         useCORS: true,
@@ -1008,50 +874,4 @@ async function exportDeckToPdf() {
       button.innerHTML = originalLabel;
     }
   }
-}
-
-async function waitForImages(root) {
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const images = Array.from(root.querySelectorAll("img"));
-  if (!images.length) {
-    return;
-  }
-
-  await Promise.all(
-    images.map(async (img) => {
-      if (img.dataset.remoteSrc) {
-        await hydrateRemoteImage(img);
-        if (img.dataset.remoteHydrated === "failed") {
-          return;
-        }
-      }
-
-      if (img.complete && img.naturalWidth !== 0) {
-        return;
-      }
-
-      await new Promise((resolve) => {
-        function cleanup() {
-          img.removeEventListener("load", handleLoad);
-          img.removeEventListener("error", handleError);
-        }
-
-        function handleLoad() {
-          cleanup();
-          resolve();
-        }
-
-        function handleError() {
-          cleanup();
-          resolve();
-        }
-
-        img.addEventListener("load", handleLoad, { once: true });
-        img.addEventListener("error", handleError, { once: true });
-      });
-    }),
-  );
 }
