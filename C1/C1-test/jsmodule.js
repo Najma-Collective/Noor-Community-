@@ -6,6 +6,66 @@ const addSlideBtn = document.getElementById("add-slide-btn");
 const exportPdfBtn = document.getElementById("export-pdf-btn");
 
 let exportToolsPromise;
+const exportScriptPromises = new Map();
+
+const HTML2CANVAS_URL =
+  "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+const JSPDF_URL =
+  "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
+
+function loadExternalScript(url, { module = false } = {}) {
+  if (exportScriptPromises.has(url)) {
+    return exportScriptPromises.get(url);
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = url;
+    script.crossOrigin = "anonymous";
+    if (module) {
+      script.type = "module";
+    }
+
+    script.addEventListener(
+      "load",
+      () => {
+        resolve();
+      },
+      { once: true },
+    );
+
+    script.addEventListener(
+      "error",
+      () => {
+        exportScriptPromises.delete(url);
+        script.remove();
+        reject(new Error(`Failed to load script: ${url}`));
+      },
+      { once: true },
+    );
+
+    document.head.appendChild(script);
+  });
+
+  exportScriptPromises.set(url, promise);
+  return promise;
+}
+
+async function loadExternalTool({ url, resolveValue }) {
+  const existing = resolveValue();
+  if (existing) {
+    return existing;
+  }
+
+  await loadExternalScript(url);
+
+  const loaded = resolveValue();
+  if (!loaded) {
+    throw new Error(`Tool did not register after loading: ${url}`);
+  }
+  return loaded;
+}
 
 async function ensureExportTools() {
   if (exportToolsPromise) {
@@ -13,39 +73,30 @@ async function ensureExportTools() {
   }
 
   exportToolsPromise = (async () => {
-    const existingHtml2canvas = window.html2canvas;
-    const existingJsPDF = window.jspdf?.jsPDF;
+    const html2canvasFn = await loadExternalTool({
+      url: HTML2CANVAS_URL,
+      resolveValue: () =>
+        typeof window.html2canvas === "function" ? window.html2canvas : undefined,
+    });
 
-    const [html2canvasModule, jsPDFModule] = await Promise.all([
-      existingHtml2canvas
-        ? Promise.resolve({ default: existingHtml2canvas })
-        : import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm"),
-      existingJsPDF
-        ? Promise.resolve({ jsPDF: existingJsPDF })
-        : import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm"),
-    ]);
-
-    const html2canvasFn =
-      existingHtml2canvas ??
-      html2canvasModule.default ??
-      html2canvasModule.html2canvas ??
-      html2canvasModule;
-    const jsPDFConstructor =
-      existingJsPDF ??
-      jsPDFModule.jsPDF ??
-      jsPDFModule.default?.jsPDF ??
-      jsPDFModule.default ??
-      jsPDFModule;
-
-    if (typeof html2canvasFn !== "function" || typeof jsPDFConstructor !== "function") {
-      throw new Error("Export tool constructors missing");
-    }
+    const jsPDFConstructor = await loadExternalTool({
+      url: JSPDF_URL,
+      resolveValue: () => {
+        if (typeof window.jspdf?.jsPDF === "function") {
+          return window.jspdf.jsPDF;
+        }
+        if (typeof window.jsPDF === "function") {
+          return window.jsPDF;
+        }
+        return undefined;
+      },
+    });
 
     if (!window.html2canvas) {
       window.html2canvas = html2canvasFn;
     }
 
-    if (!window.jspdf?.jsPDF) {
+    if (!window.jspdf?.jsPDF && typeof jsPDFConstructor === "function") {
       window.jspdf = window.jspdf || {};
       window.jspdf.jsPDF = jsPDFConstructor;
     }
