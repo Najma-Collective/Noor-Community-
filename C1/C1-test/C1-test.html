@@ -866,6 +866,10 @@
         </div>
         <div id="slide-counter" class="slide-counter">1 / 19</div>
         <div class="toolbar-actions">
+          <button id="export-pdf-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-file-export"></i>
+            Export PDF
+          </button>
           <button id="add-slide-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
@@ -2215,6 +2219,18 @@
       </main>
     </div>
 
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      integrity="sha512-BNaLbOgbEES9nHcJy6K+JfTi5yB6k98PcHt7suyXhmKwD91O1IM5VQX3oP23Jq6mifxR1K0iRr7hP0QwKeZX0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+      integrity="sha512-Yk5wzjrWvP0JQ0DeJ2XapSqN1I9rYh4KHTLFw52dEiu7K9MVufpJgNabsm/3QNF012phuBGRVXYL+Q7vQAOqXg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script type="module" src="./jsmodule.js"></script>
   </body>
 </html>
