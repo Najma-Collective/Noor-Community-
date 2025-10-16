@@ -205,9 +205,26 @@
       .bg-media {
         position: absolute;
         inset: 0;
-        background-size: cover;
-        background-position: center;
+        overflow: hidden;
+      }
+      .bg-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
         filter: brightness(0.92);
+        display: block;
+      }
+      .bg-media.remote-image-fallback {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 28, 21, 0.85) 0%,
+          rgba(16, 28, 21, 0.6) 65%,
+          rgba(16, 28, 21, 0.45) 100%
+        );
+      }
+      .bg-media.remote-image-fallback img {
+        display: none;
       }
       .img-overlay {
         position: absolute;
@@ -246,6 +263,43 @@
         align-items: center;
         text-align: center;
         justify-content: center;
+      }
+      .context-image {
+        position: relative;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius);
+        overflow: hidden;
+        min-height: 220px;
+        box-shadow: var(--shadow-1);
+        background: rgba(248, 246, 240, 0.65);
+      }
+      .context-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .context-image.remote-image-fallback {
+        background: linear-gradient(
+            135deg,
+            rgba(156, 175, 136, 0.45) 0%,
+            rgba(90, 107, 82, 0.75) 100%
+          ),
+          rgba(28, 45, 33, 0.85);
+        color: rgba(255, 255, 255, 0.82);
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .context-image.remote-image-fallback::after {
+        content: "Image preview unavailable";
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .context-image.remote-image-fallback img {
+        display: none;
       }
       .overlay-card {
         background: color-mix(
@@ -880,12 +934,15 @@
         <div class="stage-viewport">
           <!-- Slide 1: Title Slide (Full Bleed) -->
           <div class="slide-stage full-width-bg">
-            <div
-              class="bg-media"
-              style="
-                background-image: url(&quot;https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
-              "
-            ></div>
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt=""
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </div>
             <div class="img-overlay"></div>
             <div class="slide-inner">
               <div class="bg-content">
@@ -904,12 +961,14 @@
 
           <!-- Slide 2: Grounding Activity -->
           <div class="slide-stage hidden full-width-bg">
-            <div
-              class="bg-media"
-              style="
-                background-image: url(&quot;https://images.pexels.com/photos/36717/amazing-animal-beautiful-beautifull.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
-              "
-            ></div>
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/34290764/pexels-photo-34290764.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
             <div
               class="img-overlay"
               style="background: rgba(0, 0, 0, 0.3)"
@@ -1000,14 +1059,14 @@
                     </li>
                   </ol>
                 </div>
-                <div
-                  style="
-                    background-image: url(&quot;https://images.pexels.com/photos/3184420/pexels-photo-3184420.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
-                    background-size: cover;
-                    background-position: center;
-                    border-radius: var(--radius);
-                  "
-                ></div>
+                  <div class="context-image">
+                    <img
+                      data-remote-src="https://images.pexels.com/photos/34290767/pexels-photo-34290767.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
               </div>
             </div>
           </div>
@@ -1860,12 +1919,14 @@
 
           <!-- Slide 14: Task Introduction -->
           <div class="slide-stage hidden full-width-bg">
-            <div
-              class="bg-media"
-              style="
-                background-image: url(&quot;https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
-              "
-            ></div>
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
             <div class="img-overlay"></div>
             <div
               class="slide-inner"
