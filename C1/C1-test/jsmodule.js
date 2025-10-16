@@ -5,6 +5,62 @@ const counter = document.getElementById("slide-counter");
 const addSlideBtn = document.getElementById("add-slide-btn");
 const exportPdfBtn = document.getElementById("export-pdf-btn");
 
+let exportToolsPromise;
+
+async function ensureExportTools() {
+  if (exportToolsPromise) {
+    return exportToolsPromise;
+  }
+
+  exportToolsPromise = (async () => {
+    const existingHtml2canvas = window.html2canvas;
+    const existingJsPDF = window.jspdf?.jsPDF;
+
+    const [html2canvasModule, jsPDFModule] = await Promise.all([
+      existingHtml2canvas
+        ? Promise.resolve({ default: existingHtml2canvas })
+        : import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm"),
+      existingJsPDF
+        ? Promise.resolve({ jsPDF: existingJsPDF })
+        : import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm"),
+    ]);
+
+    const html2canvasFn =
+      existingHtml2canvas ??
+      html2canvasModule.default ??
+      html2canvasModule.html2canvas ??
+      html2canvasModule;
+    const jsPDFConstructor =
+      existingJsPDF ??
+      jsPDFModule.jsPDF ??
+      jsPDFModule.default?.jsPDF ??
+      jsPDFModule.default ??
+      jsPDFModule;
+
+    if (typeof html2canvasFn !== "function" || typeof jsPDFConstructor !== "function") {
+      throw new Error("Export tool constructors missing");
+    }
+
+    if (!window.html2canvas) {
+      window.html2canvas = html2canvasFn;
+    }
+
+    if (!window.jspdf?.jsPDF) {
+      window.jspdf = window.jspdf || {};
+      window.jspdf.jsPDF = jsPDFConstructor;
+    }
+
+    return { html2canvas: html2canvasFn, jsPDFConstructor };
+  })();
+
+  try {
+    return await exportToolsPromise;
+  } catch (error) {
+    exportToolsPromise = undefined;
+    throw error;
+  }
+}
+
 let slides = [];
 let currentSlideIndex = 0;
 let mindMapId = 0;
@@ -670,10 +726,13 @@ async function exportDeckToPdf() {
   refreshSlides();
   if (!slides.length || !stageViewport) return;
 
-  const html2canvas = window.html2canvas;
-  const jsPDFConstructor = window.jspdf?.jsPDF;
+  let html2canvas;
+  let jsPDFConstructor;
 
-  if (typeof html2canvas !== "function" || typeof jsPDFConstructor !== "function") {
+  try {
+    ({ html2canvas, jsPDFConstructor } = await ensureExportTools());
+  } catch (error) {
+    console.error("Failed to load export tools", error);
     window.alert("Export tools failed to load. Please check your connection and try again.");
     return;
   }
