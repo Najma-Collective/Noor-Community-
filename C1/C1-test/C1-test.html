@@ -1,0 +1,2220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Applying Critical Thinking to Global Development Challenges</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-sage: #7a8471;
+        --secondary-sage: #9caf88;
+        --tertiary-sage: #b8c5a6;
+        --warm-cream: #f8f6f0;
+        --soft-white: #fefcf7;
+        --forest-shadow: #5a6b52;
+        --ink: #2f3a2b;
+        --ink-muted: #5a6b52;
+        --border-sage: rgba(122, 132, 113, 0.2);
+        --hover-sage: rgba(156, 175, 136, 0.15);
+        --deep-forest: #3e4a3a;
+        --font-display: "Questrial", system-ui, sans-serif;
+        --font-body: "Nunito", system-ui, sans-serif;
+        --font-size-adjustment: 0pt;
+        --step--1: calc(
+          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
+        );
+        --step-0: calc(
+          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
+        );
+        --step-1: calc(
+          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
+            var(--font-size-adjustment)
+        );
+        --step-2: calc(
+          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
+        );
+        --step-3: calc(
+          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
+        );
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-7: 2rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1:
+          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+        --shadow-2:
+          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
+        --shadow-glow: 0 0 45px 10px
+          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100dvh;
+        color: var(--forest-shadow);
+        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+        font-family: var(--font-body);
+        font-size: var(--step-0);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow: auto;
+      }
+      .deck-app {
+        display: grid;
+        grid-template-rows: var(--toolbar-h) 1fr;
+        min-height: 100dvh;
+      }
+      .deck-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: var(--toolbar-h);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: var(--space-4);
+        padding: 0 max(24px, 4vw);
+        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+        border-bottom: 1px solid var(--border-sage);
+        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
+        backdrop-filter: blur(8px) saturate(1.1);
+      }
+      .toolbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-display);
+        font-size: calc(1.05rem + var(--font-size-adjustment));
+        color: var(--forest-shadow);
+      }
+      .toolbar-brand span {
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .slide-counter {
+        font-family: var(--font-display);
+        color: var(--ink-muted);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        justify-self: center;
+      }
+      .toolbar-actions {
+        display: flex;
+        gap: 0.75rem;
+      }
+      .toolbar-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .toolbar-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .deck-workspace {
+        height: calc(100dvh - var(--toolbar-h));
+        padding: var(--workspace-pad);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            900px 600px at 20% 0%,
+            rgba(156, 175, 136, 0.08) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            800px 700px at 80% 100%,
+            rgba(90, 107, 82, 0.06) 0%,
+            transparent 70%
+          );
+      }
+      .stage-viewport {
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+      .slide-stage {
+        position: relative;
+        border-radius: var(--stage-radius);
+        background-color: var(--soft-white);
+        box-shadow:
+          var(--shadow-glow),
+          0 24px 60px rgba(34, 41, 32, 0.1);
+        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+        width: min(
+          calc(
+            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+              (var(--slide-aspect-w) / var(--slide-aspect-h))
+          ),
+          calc(100vw - (var(--workspace-pad) * 2))
+        );
+        max-width: 100%;
+        overflow: hidden auto;
+        outline: 1px solid var(--border-sage);
+        transition: opacity 300ms ease-in-out;
+      }
+      .slide-stage.hidden {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .slide-stage.full-width-bg {
+        background: transparent;
+        outline: none;
+        box-shadow: none;
+      }
+      .bg-media {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.92);
+      }
+      .img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          rgba(14, 30, 20, 0.72) 0%,
+          rgba(14, 30, 20, 0.4) 45%,
+          rgba(14, 30, 20, 0.2) 70%,
+          transparent 100%
+        );
+        z-index: 1;
+      }
+      .slide-inner {
+        position: absolute;
+        inset: 0;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 1.25rem;
+        overflow-y: auto;
+        scrollbar-gutter: stable both-edges;
+      }
+      .bg-content {
+        position: relative;
+        z-index: 2;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        align-items: flex-start;
+      }
+      .bg-content.centered {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+      }
+      .overlay-card {
+        background: color-mix(
+          in srgb,
+          rgba(16, 28, 21, 0.72) 65%,
+          rgba(248, 246, 240, 0.35) 35%
+        );
+        border: 1px solid rgba(253, 251, 245, 0.35);
+        border-radius: calc(var(--radius-lg) + 8px);
+        padding: clamp(28px, 5vw, 48px);
+        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
+        backdrop-filter: blur(14px) saturate(125%);
+        color: #fdfbf5;
+        max-width: min(600px, 80%);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .overlay-card.centered {
+        margin: 0 auto;
+        text-align: center;
+        align-items: center;
+      }
+      .overlay-card h1,
+      .overlay-card h2,
+      .overlay-card p,
+      .overlay-card .pill,
+      .overlay-card .deck-subtitle {
+        color: #fdfbf5;
+      }
+      .overlay-card .deck-subtitle {
+        font-size: var(--step-1);
+        margin: 0;
+        color: rgba(253, 251, 245, 0.85);
+      }
+      .overlay-pill {
+        background: rgba(253, 251, 245, 0.22) !important;
+        color: #fdfbf5 !important;
+        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(122, 132, 113, 0.16);
+        font-size: calc(0.85rem + var(--font-size-adjustment));
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--deep-forest);
+        width: fit-content;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        margin: 0;
+        color: var(--ink);
+      }
+      h1 {
+        font-size: var(--step-3);
+      }
+      h2 {
+        font-size: var(--step-2);
+      }
+      h3 {
+        font-size: var(--step-1);
+      }
+      p {
+        margin: 0;
+      }
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+      .card {
+        background: var(--soft-white);
+        padding: clamp(1.35rem, 3vw, 2rem);
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .card.dense {
+        gap: 0.65rem;
+        padding: clamp(1.1rem, 2.5vw, 1.65rem);
+      }
+      .two-column-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+        width: 100%;
+      }
+      .column-card {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.3rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .instruction-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .instruction-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .instruction-list i {
+        color: var(--primary-sage);
+        margin-top: 0.2em;
+      }
+      .activity-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+      .activity-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+      }
+      .activity-btn.secondary {
+        background: rgba(122, 132, 113, 0.16);
+        color: var(--deep-forest);
+      }
+      .activity-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .feedback-msg {
+        min-height: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .feedback-msg.success {
+        color: #2e7d32;
+      }
+      .feedback-msg.error {
+        color: #c62828;
+      }
+      .unscramble-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-left: 0;
+        list-style: none;
+      }
+      .unscramble-list li {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      .unscramble-input {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        font-weight: 600;
+        background: var(--soft-white);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .unscramble-input.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .unscramble-input.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .matching-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .matching-option {
+        display: grid;
+        grid-template-columns: 1fr minmax(180px, 250px);
+        gap: 0.9rem;
+        align-items: center;
+        padding: 0.75rem 0.85rem;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 132, 113, 0.16);
+        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .matching-option select {
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: var(--step--1);
+        background: var(--soft-white);
+        color: var(--forest-shadow);
+      }
+      .quiz-card {
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        padding: 1rem 1.1rem;
+        background: rgba(254, 252, 247, 0.95);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .quiz-options {
+        display: grid;
+        gap: 0.45rem;
+      }
+      .quiz-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        border-radius: 12px;
+        background: rgba(250, 250, 248, 0.9);
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .quiz-option input[type="radio"] {
+        margin-top: 0.25em;
+      }
+      .quiz-option.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .quiz-option.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .drop-categorization {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .token-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        padding: 1rem 1.1rem;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        border: 1px dashed rgba(122, 132, 113, 0.28);
+        margin-bottom: 1rem;
+      }
+      .click-token {
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        background: var(--soft-white);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: var(--step--1);
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+      .click-token.used {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .click-token.selected {
+        background: var(--secondary-sage);
+        color: white;
+        transform: scale(1.05);
+      }
+      .category-column {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+      }
+      .drop-zone {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 12px;
+        border: 2px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.75);
+        transition: all 0.2s ease;
+      }
+      .drop-zone.active {
+        border-color: var(--primary-sage);
+        background: rgba(156, 175, 136, 0.22);
+      }
+      .drop-zone .click-token {
+        cursor: grab;
+      }
+      .category-column.correct {
+        border-color: #2e7d32;
+      }
+      .category-column.incorrect {
+        border-color: #c62828;
+      }
+      .stress-sentence {
+        font-size: var(--step-1);
+        font-weight: 500;
+        line-height: 1.8;
+        margin-bottom: 0.5rem;
+      }
+      .stress-word {
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
+        margin: 0 0.1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: 1px solid transparent;
+        display: inline-block;
+      }
+      .stress-word:hover {
+        background: var(--hover-sage);
+      }
+      .stress-word.marked {
+        background: var(--tertiary-sage);
+        color: var(--ink);
+        border-color: var(--primary-sage);
+      }
+      .stress-word.correct {
+        background: rgba(46, 125, 50, 0.2);
+        border-color: #2e7d32;
+      }
+      .stress-word.incorrect {
+        background: rgba(198, 40, 40, 0.2);
+        border-color: #c62828;
+      }
+      .slide-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: rgba(254, 252, 247, 0.85);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        box-shadow: var(--shadow-2);
+        cursor: pointer;
+        z-index: 10;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .slide-nav:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
+      }
+      .slide-nav-prev {
+        left: -24px;
+      }
+      .slide-nav-next {
+        right: -24px;
+      }
+      .blank-slide {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+      }
+      .blank-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .blank-canvas {
+        flex: 1;
+        border-radius: var(--radius-lg);
+        border: 1px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.8);
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-height: 320px;
+      }
+      .blank-hint {
+        font-size: var(--step--1);
+        color: var(--ink-muted);
+      }
+      .textbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        background: var(--soft-white);
+        width: clamp(240px, 35%, 420px);
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        cursor: move;
+        touch-action: none;
+      }
+      .textbox-handle {
+        padding: 0.5rem 0.75rem;
+        background: rgba(122, 132, 113, 0.16);
+        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        cursor: grab;
+        border-top-left-radius: var(--radius);
+        border-top-right-radius: var(--radius);
+      }
+      .textbox-body {
+        flex: 1;
+        padding: 0.75rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        outline: none;
+        cursor: text;
+        overflow: auto;
+      }
+      .textbox-body:focus {
+        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
+      }
+      .textbox-remove {
+        position: absolute;
+        top: 0.35rem;
+        right: 0.35rem;
+        border: none;
+        background: rgba(254, 252, 247, 0.8);
+        color: var(--forest-shadow);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-1);
+      }
+      .textbox-remove:hover {
+        color: #c62828;
+      }
+      .mindmap {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        box-shadow: var(--shadow-1);
+        padding: clamp(1.2rem, 3vw, 1.8rem);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .mindmap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+      .mindmap-title {
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+        margin: 0;
+        color: var(--deep-forest);
+      }
+      .mindmap-remove {
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .mindmap-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-center {
+        align-self: center;
+        min-width: 180px;
+        padding: 0.9rem 1.1rem;
+        border-radius: 999px;
+        background: var(--primary-sage);
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        font-family: var(--font-display);
+        letter-spacing: 0.03em;
+        outline: none;
+      }
+      .mindmap-center:focus {
+        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
+      }
+      .mindmap-branches {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      .mindmap-branch {
+        position: relative;
+        padding: 0.75rem 0.85rem;
+        border-radius: var(--radius);
+        background: rgba(254, 252, 247, 0.95);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .mindmap-branch textarea {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 64px;
+      }
+      .branch-remove {
+        align-self: flex-end;
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .branch-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .mindmap-form input {
+        flex: 1 1 220px;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+      }
+      .mindmap-form button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        background: var(--secondary-sage);
+        color: var(--deep-forest);
+        box-shadow: var(--shadow-1);
+      }
+      .mindmap-form button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Organic Sage System · B2 Lesson</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 19</div>
+        <div class="toolbar-actions">
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <!-- Slide 1: Title Slide (Full Bleed) -->
+          <div class="slide-stage full-width-bg">
+            <div
+              class="bg-media"
+              style="
+                background-image: url(&quot;https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
+              "
+            ></div>
+            <div class="img-overlay"></div>
+            <div class="slide-inner">
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <h1>
+                    Applying Critical Thinking to Global Development Challenges
+                  </h1>
+                  <p class="deck-subtitle">
+                    Critically evaluating project proposals and expressing
+                    nuanced opinions
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Grounding Activity -->
+          <div class="slide-stage hidden full-width-bg">
+            <div
+              class="bg-media"
+              style="
+                background-image: url(&quot;https://images.pexels.com/photos/36717/amazing-animal-beautiful-beautifull.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
+              "
+            ></div>
+            <div
+              class="img-overlay"
+              style="background: rgba(0, 0, 0, 0.3)"
+            ></div>
+            <div class="slide-inner" style="justify-content: center">
+              <div class="bg-content centered">
+                <div class="overlay-card centered">
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-leaf"></i> Grounding Activity</span
+                  >
+                  <p class="deck-subtitle" style="font-size: var(--step-1)">
+                    Take a deep breath in, hold for a moment, and slowly
+                    release. Let's bring our full attention to the present
+                    moment and prepare for our learning today.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Lesson Aims -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-bullseye"></i> Today's Aims</span
+              >
+              <h2>By the end of this lesson, you will be able to...</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-bullseye"></i>To identify and use
+                    distancing language for expressing tentative opinions.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-bullseye"></i>To use specific
+                    vocabulary for evaluating project strengths and weaknesses.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-bullseye"></i>To apply sentence stress
+                    and intonation to show conviction or reservation.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-bullseye"></i>To critically evaluate
+                    an NGO project and present your analysis.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Pre-task A -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-comments"></i> Pre-task A · 5
+                minutes</span
+              >
+              <h2>What Makes a Project 'Good'?</h2>
+              <div class="two-column-grid">
+                <div class="card">
+                  <ul class="instruction-list">
+                    <li>
+                      <i class="fa-solid fa-users"></i>
+                      <div>
+                        <strong
+                          >Work in your breakout rooms for 4 minutes.</strong
+                        >
+                      </div>
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-comments"></i>
+                      <div>
+                        <strong>Discuss the following questions:</strong>
+                      </div>
+                    </li>
+                  </ul>
+                  <ol style="margin-top: 0.5rem">
+                    <li>
+                      Think about a community project you know of (in Palestine
+                      or elsewhere). What was its goal?
+                    </li>
+                    <li>
+                      What makes a community project successful or unsuccessful?
+                    </li>
+                    <li>
+                      Brainstorm a list of 5-6 words you would use to describe a
+                      successful project.
+                    </li>
+                  </ol>
+                </div>
+                <div
+                  style="
+                    background-image: url(&quot;https://images.pexels.com/photos/3184420/pexels-photo-3184420.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: var(--radius);
+                  "
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Pre-task B: Restrictive Practice (Unscramble) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-shuffle"></i> Pre-task B · Restrictive
+                Practice · 7 minutes</span
+              >
+              <h2>Distancing Language: Unscramble the Sentences</h2>
+              <div class="card" data-activity="unscramble">
+                <p>
+                  Here are sentences from a critique of a project proposal. Put
+                  the words in the correct order.
+                </p>
+                <ul class="unscramble-list">
+                  <li>
+                    <p>
+                      1. that / appears / the project's timeline / It / be /
+                      seems / to / overly optimistic / .
+                    </p>
+                    <input
+                      type="text"
+                      class="unscramble-input"
+                      data-answer="It appears that the project's timeline seems to be overly optimistic."
+                      aria-label="Unscramble sentence 1"
+                    />
+                  </li>
+                  <li>
+                    <p>
+                      2. some concern / There / be / to / about / seems /
+                      long-term financial viability / the / .
+                    </p>
+                    <input
+                      type="text"
+                      class="unscramble-input"
+                      data-answer="There seems to be some concern about the long-term financial viability."
+                      aria-label="Unscramble sentence 2"
+                    />
+                  </li>
+                  <li>
+                    <p>
+                      3. argue / might / that / the proposal / One /
+                      sufficiently / doesn't / address / stakeholder engagement
+                      / .
+                    </p>
+                    <input
+                      type="text"
+                      class="unscramble-input"
+                      data-answer="One might argue that the proposal doesn't sufficiently address stakeholder engagement."
+                      aria-label="Unscramble sentence 3"
+                    />
+                  </li>
+                  <li>
+                    <p>
+                      4. a potential shortcoming / be / This / could / in / the
+                      / implementation phase / .
+                    </p>
+                    <input
+                      type="text"
+                      class="unscramble-input"
+                      data-answer="This could be a potential shortcoming in the implementation phase."
+                      aria-label="Unscramble sentence 4"
+                    />
+                  </li>
+                  <li>
+                    <p>
+                      5. have / The team / may / underestimated / logistical /
+                      the / constraints / involved / .
+                    </p>
+                    <input
+                      type="text"
+                      class="unscramble-input"
+                      data-answer="The team may have underestimated the logistical constraints involved."
+                      aria-label="Unscramble sentence 5"
+                    />
+                  </li>
+                </ul>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Pre-task B: Semi-controlled Practice (Matching) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-link"></i> Pre-task B · Semi-controlled
+                Practice · 7 minutes</span
+              >
+              <h2>Distancing Language: Match the Phrase to its Function</h2>
+              <div class="card" data-activity="matching">
+                <p>
+                  What is the speaker *doing* when they use these phrases? Match
+                  the phrases with their functions.
+                </p>
+                <div class="matching-stack">
+                  <div
+                    class="matching-option"
+                    data-correct="Presenting an observation based on available evidence."
+                  >
+                    <span>It appears that...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="matching-option"
+                    data-correct="Reporting an observation as a general feeling of worry."
+                  >
+                    <span>There seems to be some concern about...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="matching-option"
+                    data-correct="Presenting a counter-argument impersonally."
+                  >
+                    <span>One might argue that...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="matching-option"
+                    data-correct="Softening a direct criticism by framing it as a possibility."
+                  >
+                    <span>This could be a potential shortcoming...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="matching-option"
+                    data-correct="Speculating about a possible past miscalculation."
+                  >
+                    <span>The team may have underestimated...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="matching-option"
+                    data-correct="Signaling personal opinion while keeping it open to change."
+                  >
+                    <span>My initial impression is that...</span>
+                    <select>
+                      <option value="">Select function...</option>
+                      <option>
+                        Presenting an observation based on available evidence.
+                      </option>
+                      <option>
+                        Reporting an observation as a general feeling of worry.
+                      </option>
+                      <option>
+                        Presenting a counter-argument impersonally.
+                      </option>
+                      <option>
+                        Softening a direct criticism by framing it as a
+                        possibility.
+                      </option>
+                      <option>
+                        Speculating about a possible past miscalculation.
+                      </option>
+                      <option>
+                        Signaling personal opinion while keeping it open to
+                        change.
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Pre-task B: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-comments"></i> Pre-task B · Freer
+                Practice · 6 minutes</span
+              >
+              <h2>Distancing Language: Mini-Critiques</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-user-group"></i>
+                    <div>
+                      <strong
+                        >Work in pairs in breakout rooms for 3 minutes.</strong
+                      >
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-right-left"></i>
+                    <div>
+                      <strong
+                        >Read the direct statements below. Take turns rephrasing
+                        them into more diplomatic critiques using the language
+                        we have studied. Try to use a different phrase for each
+                        one.</strong
+                      >
+                    </div>
+                  </li>
+                </ul>
+                <div class="column-card" style="margin-top: 0.5rem">
+                  <p><strong>Student A:</strong> Start with statement 1.</p>
+                  <p>
+                    <strong>Student B:</strong> Respond with a critique, then
+                    read statement 2.
+                  </p>
+                </div>
+                <ol>
+                  <li>"The budget is unrealistic."</li>
+                  <li>"They didn't research the local community's needs."</li>
+                  <li>"This project will fail because it's not scalable."</li>
+                  <li>"The marketing plan is bad."</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Pre-task C: Restrictive Practice (MC Grammar) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-pen-ruler"></i> Pre-task C · Restrictive
+                Practice · 7 minutes</span
+              >
+              <h2>Evaluation Lexis: Choose the Best Word</h2>
+              <div class="card" data-activity="mc-grammar">
+                <p>
+                  Read the sentences below. Choose the best word to complete
+                  each sentence.
+                </p>
+                <div class="quiz-card" data-answer="viable">
+                  <p>
+                    1. Before we approve the funding, we must ensure the project
+                    is financially
+                    <select>
+                      <option>...</option>
+                      <option>viable</option>
+                      <option>scalable</option>
+                      <option>impactful</option></select
+                    >.
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="beneficiaries">
+                  <p>
+                    2. The main
+                    <select>
+                      <option>...</option>
+                      <option>stakeholders</option>
+                      <option>beneficiaries</option>
+                      <option>constraints</option>
+                    </select>
+                    of this initiative will be unemployed youth in the Nablus
+                    area.
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="scalable">
+                  <p>
+                    3. A major concern is whether the project is
+                    <select>
+                      <option>...</option>
+                      <option>sustainable</option>
+                      <option>scalable</option>
+                      <option>feasible</option></select
+                    >; can we replicate it in other cities like Hebron and
+                    Jenin?
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="stakeholders">
+                  <p>
+                    4. We need to consult with all community
+                    <select>
+                      <option>...</option>
+                      <option>stakeholders</option>
+                      <option>beneficiaries</option>
+                      <option>shortcomings</option></select
+                    >, not just the local council.
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="shortcomings">
+                  <p>
+                    5. While the idea is excellent, one of its
+                    <select>
+                      <option>...</option>
+                      <option>leverage</option>
+                      <option>constraints</option>
+                      <option>shortcomings</option>
+                    </select>
+                    is a lack of a detailed timeline.
+                  </p>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 9: Pre-task C: Semi-controlled Practice (Categorization) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-layer-group"></i> Pre-task C ·
+                Semi-controlled Practice · 7 minutes</span
+              >
+              <h2>Evaluation Lexis: Categorize the Concepts</h2>
+              <div class="card" data-activity="categorization">
+                <p>
+                  Drag and drop the words into the correct category. Is it a
+                  positive aspect, a negative aspect, or a neutral/descriptive
+                  term?
+                </p>
+                <div class="token-bank">
+                  <span class="click-token" data-category="Positive Aspects"
+                    >viable</span
+                  >
+                  <span class="click-token" data-category="Positive Aspects"
+                    >sustainable</span
+                  >
+                  <span class="click-token" data-category="Positive Aspects"
+                    >leverage</span
+                  >
+                  <span class="click-token" data-category="Positive Aspects"
+                    >feasible</span
+                  >
+                  <span class="click-token" data-category="Positive Aspects"
+                    >scalable</span
+                  >
+                  <span class="click-token" data-category="Negative Aspects"
+                    >shortcomings</span
+                  >
+                  <span class="click-token" data-category="Negative Aspects"
+                    >constraints</span
+                  >
+                  <span
+                    class="click-token"
+                    data-category="Neutral / Descriptive Terms"
+                    >impact</span
+                  >
+                  <span
+                    class="click-token"
+                    data-category="Neutral / Descriptive Terms"
+                    >stakeholders</span
+                  >
+                  <span
+                    class="click-token"
+                    data-category="Neutral / Descriptive Terms"
+                    >beneficiaries</span
+                  >
+                </div>
+                <div class="drop-categorization">
+                  <div class="category-column" data-category="Positive Aspects">
+                    <h3>Positive Aspects</h3>
+                    <div class="drop-zone"></div>
+                  </div>
+                  <div class="category-column" data-category="Negative Aspects">
+                    <h3>Negative Aspects</h3>
+                    <div class="drop-zone"></div>
+                  </div>
+                  <div
+                    class="category-column"
+                    data-category="Neutral / Descriptive Terms"
+                  >
+                    <h3>Neutral / Descriptive</h3>
+                    <div class="drop-zone"></div>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 10: Pre-task C: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-pen-to-square"></i> Pre-task C · Freer
+                Practice · 6 minutes</span
+              >
+              <h2>Evaluation Lexis: Ask a Critical Question</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-users"></i>
+                    <div>
+                      <strong
+                        >Work in your breakout rooms for 4 minutes.</strong
+                      >
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <div>
+                      <strong
+                        >For each project idea, write one critical question
+                        using at least one vocabulary word and one distancing
+                        phrase.</strong
+                      >
+                    </div>
+                  </li>
+                </ul>
+                <div
+                  class="column-card"
+                  style="
+                    margin-top: 0.5rem;
+                    background-color: var(--warm-cream);
+                  "
+                >
+                  <p>
+                    <strong>Example:</strong> For "A plan to build a new park,"
+                    your question could be: "<em
+                      >One might argue that the financial viability hasn't been
+                      fully explored. Could you provide more details on the
+                      budget?</em
+                    >"
+                  </p>
+                </div>
+                <p><strong>Prompts:</strong></p>
+                <ul>
+                  <li>
+                    A proposal to create a mobile app for tourists visiting
+                    Jerusalem's Old City.
+                  </li>
+                  <li>
+                    An initiative to provide online coding bootcamps for
+                    university graduates in Gaza.
+                  </li>
+                  <li>
+                    A project to digitize and archive historical photographs
+                    from across Palestine.
+                  </li>
+                </ul>
+                <p
+                  style="
+                    font-size: var(--step--1);
+                    font-style: italic;
+                    color: var(--ink-muted);
+                  "
+                >
+                  Your teacher will provide a link to a shared document for you
+                  to write your questions.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 11: Pre-task D: Restrictive Practice (Pronunciation) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-ear-listen"></i> Pre-task D · Restrictive
+                Practice · 7 minutes</span
+              >
+              <h2>Pronunciation: What's the Attitude?</h2>
+              <div class="card" data-activity="mc-grammar-radio">
+                <p>
+                  You will hear 6 sentences. For each sentence, decide if the
+                  speaker sounds <strong>convinced</strong> or
+                  <strong>reserved/doubtful</strong>.
+                </p>
+                <div class="two-column-grid">
+                  <div class="quiz-card" data-answer="Convinced">
+                    <p>
+                      <strong>Sentence 1:</strong> "This is a highly viable
+                      project."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio1.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q1" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q1" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="Reserved/Doubtful">
+                    <p>
+                      <strong>Sentence 2:</strong> "The timeline seems...
+                      optimistic."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio2.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q2" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q2" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="Convinced">
+                    <p>
+                      <strong>Sentence 3:</strong> "The community impact will be
+                      significant."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio3.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q3" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q3" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="Reserved/Doubtful">
+                    <p>
+                      <strong>Sentence 4:</strong> "One *might* argue that the
+                      budget is sufficient."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio4.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q4" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q4" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="Reserved/Doubtful">
+                    <p>
+                      <strong>Sentence 5:</strong> "I have *some* reservations
+                      about the stakeholders."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio5.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q5" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q5" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="Convinced">
+                    <p>
+                      <strong>Sentence 6:</strong> "It's a sustainable and
+                      scalable solution."
+                    </p>
+                    <audio
+                      controls
+                      src="/audio/audio6.mp3"
+                      style="width: 100%"
+                    ></audio>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="q6" /> Convinced</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="q6" />
+                        Reserved/Doubtful</label
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 12: Pre-task D: Semi-controlled Practice (Stress Marking) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-arrow-pointer"></i> Pre-task D ·
+                Semi-controlled Practice · 7 minutes</span
+              >
+              <h2>Pronunciation: Mark the Stress</h2>
+              <div class="card" data-activity="stress-mark">
+                <p>
+                  Read the sentences below. Click the word you would emphasize
+                  to show reservation or doubt.
+                </p>
+                <div class="stress-sentence" data-correct="could">
+                  <span class="stress-word">That</span>
+                  <span class="stress-word">could</span>
+                  <span class="stress-word">be</span>
+                  <span class="stress-word">one</span>
+                  <span class="stress-word">way</span>
+                  <span class="stress-word">to</span>
+                  <span class="stress-word">approach</span>
+                  <span class="stress-word">it.</span>
+                </div>
+                <div class="stress-sentence" data-correct="seems">
+                  <span class="stress-word">It</span>
+                  <span class="stress-word">seems</span>
+                  <span class="stress-word">to</span>
+                  <span class="stress-word">be</span>
+                  <span class="stress-word">a</span>
+                  <span class="stress-word">well-researched</span>
+                  <span class="stress-word">proposal.</span>
+                </div>
+                <div class="stress-sentence" data-correct="theory">
+                  <span class="stress-word">The</span>
+                  <span class="stress-word">project</span>
+                  <span class="stress-word">is</span>
+                  <span class="stress-word">viable</span>
+                  <span class="stress-word">in</span>
+                  <span class="stress-word">theory.</span>
+                </div>
+                <div class="stress-sentence" data-correct="some">
+                  <span class="stress-word">I</span>
+                  <span class="stress-word">have</span>
+                  <span class="stress-word">some</span>
+                  <span class="stress-word">reservations</span>
+                  <span class="stress-word">about</span>
+                  <span class="stress-word">the</span>
+                  <span class="stress-word">timeline.</span>
+                </div>
+                <div class="stress-sentence" data-correct="might">
+                  <span class="stress-word">One</span>
+                  <span class="stress-word">might</span>
+                  <span class="stress-word">argue</span>
+                  <span class="stress-word">that</span>
+                  <span class="stress-word">the</span>
+                  <span class="stress-word">budget</span>
+                  <span class="stress-word">is</span>
+                  <span class="stress-word">sufficient.</span>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 13: Pre-task D: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-microphone"></i> Pre-task D · Freer
+                Practice · 6 minutes</span
+              >
+              <h2>Pronunciation: Convince Me / Show Me Your Doubts</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-user-group"></i>
+                    <div>
+                      <strong
+                        >Work in pairs in breakout rooms for 3 minutes.</strong
+                      >
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-microphone"></i>
+                    <div>
+                      <strong
+                        >Take turns reading the statements below. Say each one
+                        twice: first with a
+                        <strong>convinced</strong> intonation, then with a
+                        <strong>reserved/doubtful</strong> intonation.</strong
+                      >
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <div>
+                      <strong
+                        >After practicing, create two of your own sentences
+                        about a project and practice them with your
+                        partner.</strong
+                      >
+                    </div>
+                  </li>
+                </ul>
+                <ol style="margin-top: 1rem">
+                  <li>"The project is perfectly feasible."</li>
+                  <li>"This is a sustainable solution."</li>
+                  <li>"The budget allocation seems appropriate."</li>
+                  <li>"We have considered all the potential constraints."</li>
+                  <li>"The beneficiaries have been correctly identified."</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 14: Task Introduction -->
+          <div class="slide-stage hidden full-width-bg">
+            <div
+              class="bg-media"
+              style="
+                background-image: url(&quot;https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2&quot;);
+              "
+            ></div>
+            <div class="img-overlay"></div>
+            <div
+              class="slide-inner"
+              style="justify-content: center; align-items: flex-start"
+            >
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-list-check"></i> Main Task</span
+                  >
+                  <h2>Task</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 15: Task Preparation -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-file-lines"></i> Task Preparation</span
+              >
+              <h2>NGO Project Review Session</h2>
+              <div class="card">
+                <div
+                  class="column-card"
+                  style="background-color: var(--warm-cream)"
+                >
+                  <ul class="instruction-list">
+                    <li>
+                      <i class="fa-solid fa-building"></i>
+                      <div>
+                        <strong>Context:</strong> You are a team of project
+                        officers at an NGO's main office in Ramallah. You must
+                        review a new project proposal and prepare a brief
+                        evaluation to present to another team.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <ul class="instruction-list" style="margin-top: 1rem">
+                  <li>
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                      <strong>Time:</strong> 12 minutes preparation in breakout
+                      groups.
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-list-check"></i>
+                    <div>
+                      <strong>Step 1 (Choice):</strong> In your group, choose
+                      ONE of the two project summaries to analyze. (Links will
+                      be in the chat).
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    <div>
+                      <strong>Step 2 (Analysis & Prep):</strong> Analyze your
+                      project and prepare a brief **oral presentation**. Use the
+                      shared Google Doc from your teacher to outline your key
+                      points for: Strengths, Weaknesses/Concerns, and a Final
+                      Recommendation.
+                    </div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-desktop"></i>
+                    <div>
+                      <strong>Technology:</strong> Your teacher will provide a
+                      link to a shared **Google Doc** for your group to prepare
+                      your presentation notes.
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 16: Task -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-file-alt"></i> Task · Project
+                Summaries</span
+              >
+              <h2>Choose Your Project to Evaluate</h2>
+              <div class="two-column-grid">
+                <div class="column-card">
+                  <h3>
+                    Project Summary 1: Jericho Digital Heritage Initiative
+                  </h3>
+                  <ul style="font-size: var(--step--1)">
+                    <li>
+                      <strong>Goal:</strong> To create a permanent, open-access
+                      digital archive of Jericho's archaeological and cultural
+                      heritage, including 3D models of sites and oral histories
+                      from elders.
+                    </li>
+                    <li>
+                      <strong>Beneficiaries:</strong> Academics, tourists,
+                      Palestinian diaspora, local youth.
+                    </li>
+                    <li>
+                      <strong>Budget:</strong> $75,000 for equipment, staff, and
+                      web hosting for 2 years.
+                    </li>
+                    <li><strong>Timeline:</strong> 18 months.</li>
+                    <li>
+                      <strong>Key Activities:</strong> Purchase 3D scanning
+                      equipment; train local university students as technicians;
+                      interview 50 local elders; build a website and mobile app.
+                    </li>
+                  </ul>
+                </div>
+                <div class="column-card">
+                  <h3>
+                    Project Summary 2: Bethlehem Youth Social Enterprise Hub
+                  </h3>
+                  <ul style="font-size: var(--step--1)">
+                    <li>
+                      <strong>Goal:</strong> To establish a co-working space and
+                      mentorship program for young people in Bethlehem wanting
+                      to start their own socially-focused businesses.
+                    </li>
+                    <li>
+                      <strong>Beneficiaries:</strong> Young entrepreneurs (18-30
+                      years old), the wider Bethlehem community.
+                    </li>
+                    <li>
+                      <strong>Budget:</strong> $90,000 for rent, renovations,
+                      staff, and a small seed fund for 5 start-ups.
+                    </li>
+                    <li><strong>Timeline:</strong> 24 months.</li>
+                    <li>
+                      <strong>Key Activities:</strong> Secure and renovate a
+                      central location; recruit 20 mentors from the business
+                      community; run workshops on business planning and
+                      marketing; host a final pitch competition.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 17: Reporting -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-person-chalkboard"></i> Reporting</span
+              >
+              <h2>Inter-Team Briefing</h2>
+              <div class="two-column-grid">
+                <div class="card">
+                  <ul class="instruction-list">
+                    <li>
+                      <i class="fa-solid fa-clock"></i>
+                      <div>
+                        <strong>Time:</strong> 10 minutes total (5 minutes per
+                        presentation).
+                      </div>
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-people-arrows"></i>
+                      <div>
+                        <strong>Procedure:</strong> Groups who chose the
+                        <strong>Jericho</strong> project will present to a group
+                        who chose the <strong>Bethlehem</strong> project, and
+                        vice-versa.
+                      </div>
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                      <div>
+                        <strong
+                          >One person from your group should share their screen.
+                          All members should speak.</strong
+                        >
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="column-card">
+                  <h3><i class="fa-solid fa-ear-listen"></i> Listening Task</h3>
+                  <p>As you listen, consider:</p>
+                  <ul>
+                    <li>What was their strongest argument?</li>
+                    <li>Do you agree with their final recommendation?</li>
+                    <li>
+                      Prepare one follow-up question to ask the presenters.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 18: Practice Activities (Homework) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-house-laptop"></i> Asynchronous
+                Homework</span
+              >
+              <h2>Practice Activities</h2>
+              <div class="card">
+                <div class="card dense" data-activity="mc-grammar-radio">
+                  <h3>Activity 1: Hedging Language Review</h3>
+                  <p>Complete the sentences with the best phrase.</p>
+                  <div class="quiz-card" data-answer="one might argue">
+                    <p>
+                      1. The data is strong, but ___ that the sample size is too
+                      small.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="h1" /> it is a fact</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h1" /> one might argue</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h1" /> we know</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="There appears">
+                    <p>
+                      2. ___ to be some confusion regarding the project's
+                      primary beneficiaries.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="h2" /> There is</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h2" /> There appears</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h2" /> There will be</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="may have">
+                    <p>
+                      3. The proposal is ambitious, and we ___ underestimated
+                      the political constraints.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="h3" /> have definitely</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h3" /> will have</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="h3" /> may have</label
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="card dense" data-activity="mc-grammar-radio">
+                  <h3>Activity 2: Vocabulary for Evaluation</h3>
+                  <p>
+                    Choose the correct word to complete the evaluation
+                    statement.
+                  </p>
+                  <div class="quiz-card" data-answer="scalable">
+                    <p>
+                      1. The project is not ___ because it cannot be easily
+                      replicated in other regions.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="v1" /> scalable</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v1" /> viable</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v1" /> impactful</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="constraints">
+                    <p>
+                      2. We need to consider the time and budget ___ before we
+                      begin.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="v2" /> constraints</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v2" /> stakeholders</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v2" /> beneficiaries</label
+                      >
+                    </div>
+                  </div>
+                  <div class="quiz-card" data-answer="impact">
+                    <p>
+                      3. A key strength is the potential for a high positive ___
+                      on the local community.
+                    </p>
+                    <div class="quiz-options">
+                      <label class="quiz-option"
+                        ><input type="radio" name="v3" /> impact</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v3" /> shortcoming</label
+                      ><label class="quiz-option"
+                        ><input type="radio" name="v3" /> leverage</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 19: Reflection -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-lightbulb"></i> Reflection</span
+              >
+              <h2>3-2-1 Reflection</h2>
+              <div class="card">
+                <p>
+                  Individually, take 2 minutes to think about today's lesson.
+                  Type your answers in the chat, but don't press send until I
+                  say so.
+                </p>
+                <div class="column-card" style="background: var(--warm-cream)">
+                  <p>
+                    <strong>3</strong> phrases for expressing tentative opinions
+                    that you can remember.
+                  </p>
+                  <p>
+                    <strong>2</strong> vocabulary words for evaluation that were
+                    new or useful for you.
+                  </p>
+                  <p>
+                    <strong>1</strong> question you still have, OR thing you
+                    feel more confident about now.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="./jsmodule.js"></script>
+  </body>
+</html>
