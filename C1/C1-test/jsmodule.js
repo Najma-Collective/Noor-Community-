@@ -3,6 +3,7 @@ const nextBtn = stageViewport?.querySelector(".slide-nav-next");
 const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
 const counter = document.getElementById("slide-counter");
 const addSlideBtn = document.getElementById("add-slide-btn");
+const exportPdfBtn = document.getElementById("export-pdf-btn");
 
 let slides = [];
 let currentSlideIndex = 0;
@@ -658,6 +659,109 @@ function initialiseDeck() {
     .querySelectorAll('.slide-stage[data-type="blank"]')
     .forEach((slide) => attachBlankSlideEvents(slide));
   addSlideBtn?.addEventListener("click", addBlankSlide);
+  exportPdfBtn?.addEventListener("click", () => {
+    exportDeckToPdf();
+  });
 }
 
 initialiseDeck();
+
+async function exportDeckToPdf() {
+  refreshSlides();
+  if (!slides.length || !stageViewport) return;
+
+  const html2canvas = window.html2canvas;
+  const jsPDFConstructor = window.jspdf?.jsPDF;
+
+  if (typeof html2canvas !== "function" || typeof jsPDFConstructor !== "function") {
+    window.alert("Export tools failed to load. Please check your connection and try again.");
+    return;
+  }
+
+  const button = exportPdfBtn;
+  const originalLabel = button?.innerHTML ?? "";
+  if (button) {
+    button.disabled = true;
+    button.innerHTML =
+      '<i class="fa-solid fa-spinner fa-spin"></i> Exporting...';
+  }
+
+  const originalIndex = currentSlideIndex;
+  let pdf = null;
+
+  const fonts = document.fonts;
+  if (fonts?.ready instanceof Promise) {
+    try {
+      await fonts.ready;
+    } catch (error) {
+      console.warn("Font loading check failed", error);
+    }
+  }
+
+  try {
+    for (let index = 0; index < slides.length; index++) {
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("hidden", slideIndex !== index);
+      });
+
+      await new Promise((resolve) => window.requestAnimationFrame(resolve));
+
+      const slide = slides[index];
+      if (!(slide instanceof HTMLElement)) {
+        // Skip non-HTML elements just in case
+        continue;
+      }
+
+      const previousScrollTop = slide.scrollTop;
+      const previousScrollLeft = slide.scrollLeft;
+      slide.scrollTop = 0;
+      slide.scrollLeft = 0;
+
+      const computedBackground = window.getComputedStyle(slide).backgroundColor;
+      const isTransparent =
+        !computedBackground ||
+        computedBackground === "transparent" ||
+        computedBackground === "rgba(0, 0, 0, 0)";
+      const backgroundFallback = window.getComputedStyle(document.body).backgroundColor || "#ffffff";
+
+      const canvas = await html2canvas(slide, {
+        scale: Math.max(2, window.devicePixelRatio || 1),
+        useCORS: true,
+        backgroundColor: isTransparent ? backgroundFallback : computedBackground,
+      });
+
+      slide.scrollTop = previousScrollTop;
+      slide.scrollLeft = previousScrollLeft;
+
+      const imageData = canvas.toDataURL("image/png");
+      const orientation = canvas.width >= canvas.height ? "landscape" : "portrait";
+
+      if (!pdf) {
+        pdf = new jsPDFConstructor({
+          orientation,
+          unit: "px",
+          format: [canvas.width, canvas.height],
+        });
+      } else {
+        pdf.addPage([canvas.width, canvas.height], orientation);
+      }
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imageData, "PNG", 0, 0, pageWidth, pageHeight);
+    }
+
+    if (pdf) {
+      pdf.save("C1-lesson-slides.pdf");
+    }
+  } catch (error) {
+    console.error("Export failed:", error);
+    window.alert("Sorry, something went wrong while creating the PDF. Please try again.");
+  } finally {
+    showSlide(originalIndex);
+    if (button) {
+      button.disabled = false;
+      button.innerHTML = originalLabel;
+    }
+  }
+}
