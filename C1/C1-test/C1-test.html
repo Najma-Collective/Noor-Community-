@@ -127,6 +127,9 @@
       .toolbar-actions {
         display: flex;
         gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
       }
       .toolbar-btn {
         border: none;
@@ -148,6 +151,52 @@
       .toolbar-btn:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-2);
+      }
+      .toolbar-btn.secondary {
+        background: var(--primary-forest);
+      }
+      .toolbar-btn.ghost {
+        background: var(--soft-white);
+        color: var(--primary-forest);
+        border: 1px solid var(--border-sage);
+        box-shadow: none;
+      }
+      .toolbar-btn.ghost:hover {
+        box-shadow: var(--shadow-1);
+      }
+      .toolbar-select {
+        border-radius: 999px;
+        border: 1px solid var(--border-sage);
+        background: #fff;
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--primary-forest);
+        cursor: pointer;
+      }
+      .toolbar-select:focus {
+        outline: 2px solid var(--primary-sage);
+        outline-offset: 2px;
+      }
+      .highlight-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: var(--shadow-1);
+      }
+      .highlight-controls i {
+        color: var(--primary-forest);
+      }
+      .text-highlight {
+        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
+        padding: 0.05em 0.15em;
+        border-radius: 0.35em;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+        transition: background-color 200ms ease;
       }
       .deck-workspace {
         height: calc(100dvh - var(--toolbar-h));
@@ -920,10 +969,39 @@
         </div>
         <div id="slide-counter" class="slide-counter">1 / 19</div>
         <div class="toolbar-actions">
-          <button id="export-pdf-btn" class="toolbar-btn" type="button">
-            <i class="fa-solid fa-file-export"></i>
-            Export PDF
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
           </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
           <button id="add-slide-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
@@ -2280,33 +2358,18 @@
       </main>
     </div>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-      integrity="sha512-BNaLbOgbEES9nHcJy6K+JfTi5yB6k98PcHt7suyXhmKwD91O1IM5VQX3oP23Jq6mifxR1K0iRr7hP0QwKeZX0g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-      integrity="sha512-Yk5wzjrWvP0JQ0DeJ2XapSqN1I9rYh4KHTLFw52dEiu7K9MVufpJgNabsm/3QNF012phuBGRVXYL+Q7vQAOqXg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
     <script type="module">
       const stageViewport = document.querySelector(".stage-viewport");
       const nextBtn = stageViewport?.querySelector(".slide-nav-next");
       const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
       const counter = document.getElementById("slide-counter");
       const addSlideBtn = document.getElementById("add-slide-btn");
-      const exportPdfBtn = document.getElementById("export-pdf-btn");
-
-      let exportToolsPromise;
-      const exportScriptPromises = new Map();
-
-      const HTML2CANVAS_URL =
-        "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
-      const JSPDF_URL =
-        "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
+      const saveStateBtn = document.getElementById("save-state-btn");
+      const loadStateBtn = document.getElementById("load-state-btn");
+      const loadStateInput = document.getElementById("load-state-input");
+      const highlightBtn = document.getElementById("highlight-btn");
+      const highlightColorSelect = document.getElementById("highlight-color");
+      const removeHighlightBtn = document.getElementById("remove-highlight-btn");
 
       const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
       const remoteImageHydrations = new WeakMap();
@@ -2440,107 +2503,6 @@
         );
       }
 
-      function loadExternalScript(url, { module = false } = {}) {
-        if (exportScriptPromises.has(url)) {
-          return exportScriptPromises.get(url);
-        }
-
-        const promise = new Promise((resolve, reject) => {
-          const script = document.createElement("script");
-          script.async = true;
-          script.src = url;
-          script.crossOrigin = "anonymous";
-          if (module) {
-            script.type = "module";
-          }
-
-          script.addEventListener(
-            "load",
-            () => {
-              resolve();
-            },
-            { once: true },
-          );
-
-          script.addEventListener(
-            "error",
-            () => {
-              exportScriptPromises.delete(url);
-              script.remove();
-              reject(new Error(`Failed to load script: ${url}`));
-            },
-            { once: true },
-          );
-
-          document.head.appendChild(script);
-        });
-
-        exportScriptPromises.set(url, promise);
-        return promise;
-      }
-
-      async function loadExternalTool({ url, resolveValue }) {
-        const existing = resolveValue();
-        if (existing) {
-          return existing;
-        }
-
-        await loadExternalScript(url);
-
-        const loaded = resolveValue();
-        if (!loaded) {
-          throw new Error(`Tool did not register after loading: ${url}`);
-        }
-        return loaded;
-      }
-
-      async function ensureExportTools() {
-        if (exportToolsPromise) {
-          return exportToolsPromise;
-        }
-
-        exportToolsPromise = (async () => {
-          const html2canvasFn = await loadExternalTool({
-            url: HTML2CANVAS_URL,
-            resolveValue: () =>
-              typeof window.html2canvas === "function"
-                ? window.html2canvas
-                : undefined,
-          });
-
-          const jsPDFConstructor = await loadExternalTool({
-            url: JSPDF_URL,
-            resolveValue: () => {
-              if (typeof window.jspdf?.jsPDF === "function") {
-                return window.jspdf.jsPDF;
-              }
-              if (typeof window.jsPDF === "function") {
-                return window.jsPDF;
-              }
-              return undefined;
-            },
-          });
-
-          if (!window.html2canvas) {
-            window.html2canvas = html2canvasFn;
-          }
-
-          if (!window.jspdf?.jsPDF && typeof jsPDFConstructor === "function") {
-            window.jspdf = window.jspdf || {};
-            window.jspdf.jsPDF = jsPDFConstructor;
-          }
-
-          return { html2canvas: html2canvasFn, jsPDFConstructor };
-        })();
-
-        try {
-          return await exportToolsPromise;
-        } catch (error) {
-          exportToolsPromise = undefined;
-          throw error;
-        }
-      }
-
       let slides = [];
       let currentSlideIndex = 0;
       let mindMapId = 0;
@@ -2640,12 +2602,29 @@
           return;
         }
 
+        const DEFAULT_HINT =
+          "Add textboxes for free typing or build a mind map to capture relationships.";
+        const TEXTBOX_HINT =
+          "Drag your textboxes into place and double-click to edit the content.";
+        const MINDMAP_HINT =
+          "Mind map ready. Add branches to capture ideas and connections.";
+
+        function updateHintForCanvas() {
+          if (!(hint instanceof HTMLElement)) return;
+          if (canvas.querySelector(".mindmap")) {
+            hint.textContent = MINDMAP_HINT;
+          } else if (canvas.querySelector(".textbox")) {
+            hint.textContent = TEXTBOX_HINT;
+          } else {
+            hint.textContent = DEFAULT_HINT;
+          }
+        }
+
         addTextboxBtn?.addEventListener("click", () => {
-          const textbox = createTextbox();
+          const textbox = createTextbox({ onRemove: updateHintForCanvas });
           canvas.appendChild(textbox);
           positionTextbox(textbox, canvas);
-          hint.textContent =
-            "Drag your textboxes into place and double-click to edit the content.";
+          updateHintForCanvas();
         });
 
         addMindmapBtn?.addEventListener("click", () => {
@@ -2655,18 +2634,26 @@
             return;
           }
           const mindmap = createMindMap(() => {
-            if (
-              !canvas.querySelector(".textbox") &&
-              !canvas.querySelector(".mindmap")
-            ) {
-              hint.textContent =
-                "Add textboxes for free typing or build a mind map to capture relationships.";
-            }
+            updateHintForCanvas();
           });
+          initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
           canvas.appendChild(mindmap);
-          hint.textContent =
-            "Mind map ready. Add branches to capture ideas and connections.";
+          updateHintForCanvas();
         });
+
+        canvas
+          .querySelectorAll(".textbox")
+          .forEach((textbox) =>
+            initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
+          );
+
+        canvas
+          .querySelectorAll(".mindmap")
+          .forEach((mindmap) =>
+            initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
+          );
+
+        updateHintForCanvas();
       }
 
       function positionTextbox(textbox, canvas) {
@@ -2676,7 +2663,7 @@
         textbox.style.top = `${offset}px`;
       }
 
-      function createTextbox() {
+      function createTextbox({ onRemove } = {}) {
         const textbox = document.createElement("div");
         textbox.className = "textbox";
         textbox.innerHTML = `
@@ -2686,22 +2673,26 @@
     <div class="textbox-handle">Textbox</div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
+        initialiseTextbox(textbox, { onRemove });
+        return textbox;
+      }
+
+      function initialiseTextbox(textbox, { onRemove } = {}) {
+        if (!(textbox instanceof HTMLElement)) {
+          return textbox;
+        }
+
+        textbox.__deckTextboxOnRemove = onRemove;
+        if (textbox.__deckTextboxInitialised) {
+          return textbox;
+        }
+        textbox.__deckTextboxInitialised = true;
 
         const removeBtn = textbox.querySelector(".textbox-remove");
         removeBtn?.addEventListener("click", () => {
-          const canvas = textbox.parentElement;
           textbox.remove();
-          if (canvas) {
-            const slide = canvas.closest(".slide-stage");
-            const hint = slide?.querySelector('[data-role="hint"]');
-            if (
-              hint instanceof HTMLElement &&
-              !canvas.querySelector(".textbox") &&
-              !canvas.querySelector(".mindmap")
-            ) {
-              hint.textContent =
-                "Add textboxes for free typing or build a mind map to capture relationships.";
-            }
+          if (typeof textbox.__deckTextboxOnRemove === "function") {
+            textbox.__deckTextboxOnRemove();
           }
         });
 
@@ -2717,6 +2708,12 @@
       }
 
       function makeDraggable(element) {
+        if (!(element instanceof HTMLElement)) return;
+        if (element.__deckDraggableInitialised) {
+          return;
+        }
+        element.__deckDraggableInitialised = true;
+
         const handle = element.querySelector(".textbox-handle") ?? element;
         let pointerId = null;
         let offsetX = 0;
@@ -2794,30 +2791,55 @@
       </button>
     </form>
   `;
+        const branches = container.querySelector(".mindmap-branches");
+        if (branches && !branches.querySelector(".mindmap-branch")) {
+          const defaultBranch = createMindMapBranch("Add supporting detail...");
+          branches.appendChild(defaultBranch);
+        }
 
-        const removeBtn = container.querySelector(".mindmap-remove");
-        removeBtn?.addEventListener("click", () => {
-          container.remove();
-          onRemove?.();
-        });
+        initialiseMindMap(container, { onRemove });
+        return container;
+      }
+
+      function initialiseMindMap(container, { onRemove } = {}) {
+        if (!(container instanceof HTMLElement)) {
+          return container;
+        }
+
+        container.__deckMindmapOnRemove = onRemove;
+        if (!container.__deckMindmapInitialised) {
+          container.__deckMindmapInitialised = true;
+          const removeBtn = container.querySelector(".mindmap-remove");
+          removeBtn?.addEventListener("click", () => {
+            container.remove();
+            if (typeof container.__deckMindmapOnRemove === "function") {
+              container.__deckMindmapOnRemove();
+            }
+          });
+        }
 
         const form = container.querySelector(".mindmap-form");
-        const input = container.querySelector("input");
+        const input = container.querySelector(".mindmap-form input");
         const branches = container.querySelector(".mindmap-branches");
 
-        form?.addEventListener("submit", (event) => {
-          event.preventDefault();
-          if (!branches || !input) return;
-          const value = input.value.trim();
-          if (!value) return;
-          branches.appendChild(createMindMapBranch(value));
-          input.value = "";
-          input.focus();
-        });
-
-        if (branches) {
-          branches.appendChild(createMindMapBranch("Add supporting detail..."));
+        if (form && !form.__deckSubmitInitialised) {
+          form.__deckSubmitInitialised = true;
+          form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!branches || !input) return;
+            const value = input.value.trim();
+            if (!value) return;
+            const newBranch = createMindMapBranch(value);
+            branches.appendChild(newBranch);
+            initialiseMindMapBranch(newBranch);
+            input.value = "";
+            input.focus();
+          });
         }
+
+        container
+          .querySelectorAll(".mindmap-branch")
+          .forEach((branch) => initialiseMindMapBranch(branch));
 
         return container;
       }
@@ -2832,11 +2854,256 @@
         removeBtn.type = "button";
         removeBtn.className = "branch-remove";
         removeBtn.textContent = "Remove";
-        removeBtn.addEventListener("click", () => {
+        branch.append(textarea, removeBtn);
+        initialiseMindMapBranch(branch);
+        return branch;
+      }
+
+      function initialiseMindMapBranch(branch) {
+        if (!(branch instanceof HTMLElement)) {
+          return branch;
+        }
+
+        if (branch.__deckMindmapBranchInitialised) {
+          return branch;
+        }
+        branch.__deckMindmapBranchInitialised = true;
+        const removeBtn = branch.querySelector(".branch-remove");
+        removeBtn?.addEventListener("click", () => {
           branch.remove();
         });
-        branch.append(textarea, removeBtn);
         return branch;
+      }
+
+      function recalibrateMindMapCounter() {
+        if (!stageViewport) return;
+        const inputs = stageViewport.querySelectorAll(
+          '.mindmap-form input[id^="mindmap-branch-"]',
+        );
+        inputs.forEach((input) => {
+          if (!(input instanceof HTMLInputElement)) return;
+          const match = input.id.match(/mindmap-branch-(\d+)/);
+          if (match) {
+            const value = Number.parseInt(match[1], 10);
+            if (!Number.isNaN(value)) {
+              mindMapId = Math.max(mindMapId, value);
+            }
+          }
+        });
+      }
+
+      function getDeckState() {
+        refreshSlides();
+        return {
+          version: 1,
+          currentSlideIndex,
+          slides: slides.map((slide) => slide.outerHTML),
+        };
+      }
+
+      function downloadDeckState() {
+        try {
+          const state = getDeckState();
+          const blob = new Blob([JSON.stringify(state, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = "deck-state.json";
+          anchor.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("Failed to save deck state", error);
+          window.alert(
+            "Sorry, we couldn't save the deck right now. Please try again.",
+          );
+        }
+      }
+
+      function parseDeckState(raw) {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.slides)) {
+          throw new Error("Invalid deck state structure");
+        }
+        return parsed;
+      }
+
+      function applyDeckState(state) {
+        if (!stageViewport || !state || !Array.isArray(state.slides)) {
+          throw new Error("Deck state does not include slides");
+        }
+
+        const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
+        const fragment = document.createDocumentFragment();
+
+        state.slides.forEach((slideHTML) => {
+          if (typeof slideHTML !== "string") {
+            return;
+          }
+          const template = document.createElement("template");
+          template.innerHTML = slideHTML.trim();
+          const slide = template.content.firstElementChild;
+          if (slide instanceof HTMLElement && slide.classList.contains("slide-stage")) {
+            fragment.appendChild(slide);
+          }
+        });
+
+        stageViewport.innerHTML = "";
+        stageViewport.appendChild(fragment);
+        navButtons.forEach((button) => stageViewport.appendChild(button));
+
+        refreshSlides();
+        slides
+          .filter((slide) => slide.dataset.type === "blank")
+          .forEach((slide) => attachBlankSlideEvents(slide));
+
+        initialiseActivities();
+        recalibrateMindMapCounter();
+
+        if (slides.length) {
+          const requestedIndex =
+            typeof state.currentSlideIndex === "number"
+              ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
+              : 0;
+          showSlide(requestedIndex);
+        } else {
+          updateCounter();
+        }
+
+        hydrateRemoteImages(stageViewport).catch((error) => {
+          console.warn("Remote image hydration failed after loading state", error);
+        });
+      }
+
+      function handleStateFileSelection(event) {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || !input.files?.length) {
+          return;
+        }
+
+        const [file] = input.files;
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          try {
+            const text = typeof reader.result === "string" ? reader.result : "";
+            const state = parseDeckState(text);
+            applyDeckState(state);
+          } catch (error) {
+            console.error("Failed to load deck state", error);
+            window.alert(
+              "The selected file couldn't be loaded. Please choose a valid deck state JSON file.",
+            );
+          } finally {
+            input.value = "";
+          }
+        });
+
+        reader.addEventListener("error", () => {
+          console.error("Failed to read deck state file", reader.error);
+          window.alert(
+            "We couldn't read that file. Please try again with a different JSON file.",
+          );
+          input.value = "";
+        });
+
+        reader.readAsText(file);
+      }
+
+      function findSlideForNode(node) {
+        if (!node) return null;
+        if (node instanceof HTMLElement) {
+          return node.closest(".slide-stage");
+        }
+        if (node instanceof Text) {
+          return node.parentElement?.closest(".slide-stage") ?? null;
+        }
+        return null;
+      }
+
+      function applyHighlight(color) {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+          window.alert("Select some text in a slide before applying a highlight.");
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+        const startSlide = findSlideForNode(range.startContainer);
+        const endSlide = findSlideForNode(range.endContainer);
+
+        if (!startSlide || !endSlide || startSlide !== endSlide) {
+          window.alert("Highlights must stay within a single slide.");
+          return;
+        }
+
+        if (!stageViewport?.contains(startSlide)) {
+          window.alert("Please highlight text within the slide area.");
+          return;
+        }
+
+        try {
+          const contents = range.extractContents();
+          const textSample = contents.textContent?.trim();
+          if (!textSample) {
+            window.alert("Select some text to highlight first.");
+            range.insertNode(contents);
+            return;
+          }
+
+          const highlight = document.createElement("mark");
+          highlight.className = "text-highlight";
+          highlight.dataset.color = color;
+          highlight.style.setProperty("--highlight-color", color);
+          highlight.appendChild(contents);
+          range.insertNode(highlight);
+
+          selection.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.selectNodeContents(highlight);
+          selection.addRange(newRange);
+        } catch (error) {
+          console.error("Failed to apply highlight", error);
+          window.alert(
+            "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
+          );
+        }
+      }
+
+      function removeHighlight() {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        let container = selection.anchorNode;
+        if (container instanceof Text) {
+          container = container.parentElement;
+        }
+
+        const highlight =
+          container instanceof HTMLElement ? container.closest(".text-highlight") : null;
+
+        if (!highlight || !stageViewport?.contains(highlight)) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        const parent = highlight.parentNode;
+        if (!parent) {
+          return;
+        }
+
+        while (highlight.firstChild) {
+          parent.insertBefore(highlight.firstChild, highlight);
+        }
+        highlight.remove();
+        if (parent instanceof HTMLElement) {
+          parent.normalize();
+        }
+        selection.removeAllRanges();
       }
 
       function setupUnscramble(activityEl) {
@@ -3204,175 +3471,25 @@
           .querySelectorAll('.slide-stage[data-type="blank"]')
           .forEach((slide) => attachBlankSlideEvents(slide));
         addSlideBtn?.addEventListener("click", addBlankSlide);
-        exportPdfBtn?.addEventListener("click", () => {
-          exportDeckToPdf();
+        saveStateBtn?.addEventListener("click", downloadDeckState);
+        loadStateBtn?.addEventListener("click", () => {
+          loadStateInput?.click();
         });
+        loadStateInput?.addEventListener("change", handleStateFileSelection);
+        highlightBtn?.addEventListener("click", () => {
+          const selectedColor = highlightColorSelect?.value || "#F9E27D";
+          applyHighlight(selectedColor);
+        });
+        removeHighlightBtn?.addEventListener("click", () => {
+          removeHighlight();
+        });
+        recalibrateMindMapCounter();
       }
 
       initialiseDeck().catch((error) => {
         console.error("Deck initialisation failed", error);
       });
 
-      async function exportDeckToPdf() {
-        await hydrateRemoteImages(stageViewport).catch((error) => {
-          console.warn("Continuing export without hydrated imagery", error);
-        });
-
-        refreshSlides();
-        if (!slides.length || !stageViewport) return;
-
-        let html2canvas;
-        let jsPDFConstructor;
-
-        try {
-          ({ html2canvas, jsPDFConstructor } = await ensureExportTools());
-        } catch (error) {
-          console.error("Failed to load export tools", error);
-          window.alert(
-            "Export tools failed to load. Please check your connection and try again.",
-          );
-          return;
-        }
-
-        const button = exportPdfBtn;
-        const originalLabel = button?.innerHTML ?? "";
-        if (button) {
-          button.disabled = true;
-          button.innerHTML =
-            '<i class="fa-solid fa-spinner fa-spin"></i> Exporting...';
-        }
-
-        const originalIndex = currentSlideIndex;
-        let pdf = null;
-
-        const fonts = document.fonts;
-        if (fonts?.ready instanceof Promise) {
-          try {
-            await fonts.ready;
-          } catch (error) {
-            console.warn("Font loading check failed", error);
-          }
-        }
-
-        try {
-          for (let index = 0; index < slides.length; index++) {
-            slides.forEach((slide, slideIndex) => {
-              slide.classList.toggle("hidden", slideIndex !== index);
-            });
-
-            await new Promise((resolve) => window.requestAnimationFrame(resolve));
-
-            const slide = slides[index];
-            if (!(slide instanceof HTMLElement)) {
-              // Skip non-HTML elements just in case
-              continue;
-            }
-
-            const previousScrollTop = slide.scrollTop;
-            const previousScrollLeft = slide.scrollLeft;
-            slide.scrollTop = 0;
-            slide.scrollLeft = 0;
-
-            const computedBackground = window.getComputedStyle(slide).backgroundColor;
-            const isTransparent =
-              !computedBackground ||
-              computedBackground === "transparent" ||
-              computedBackground === "rgba(0, 0, 0, 0)";
-            const backgroundFallback =
-              window.getComputedStyle(document.body).backgroundColor || "#ffffff";
-
-            await waitForImages(slide);
-
-            const canvas = await html2canvas(slide, {
-              scale: Math.max(2, window.devicePixelRatio || 1),
-              useCORS: true,
-              backgroundColor: isTransparent ? backgroundFallback : computedBackground,
-            });
-
-            slide.scrollTop = previousScrollTop;
-            slide.scrollLeft = previousScrollLeft;
-
-            const imageData = canvas.toDataURL("image/png");
-            const orientation =
-              canvas.width >= canvas.height ? "landscape" : "portrait";
-
-            if (!pdf) {
-              pdf = new jsPDFConstructor({
-                orientation,
-                unit: "px",
-                format: [canvas.width, canvas.height],
-              });
-            } else {
-              pdf.addPage([canvas.width, canvas.height], orientation);
-            }
-
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            pdf.addImage(imageData, "PNG", 0, 0, pageWidth, pageHeight);
-          }
-
-          if (pdf) {
-            pdf.save("C1-lesson-slides.pdf");
-          }
-        } catch (error) {
-          console.error("Export failed:", error);
-          window.alert(
-            "Sorry, something went wrong while creating the PDF. Please try again.",
-          );
-        } finally {
-          showSlide(originalIndex);
-          if (button) {
-            button.disabled = false;
-            button.innerHTML = originalLabel;
-          }
-        }
-      }
-
-      async function waitForImages(root) {
-        if (!(root instanceof HTMLElement)) {
-          return;
-        }
-
-        const images = Array.from(root.querySelectorAll("img"));
-        if (!images.length) {
-          return;
-        }
-
-        await Promise.all(
-          images.map(async (img) => {
-            if (img.dataset.remoteSrc) {
-              await hydrateRemoteImage(img);
-              if (img.dataset.remoteHydrated === "failed") {
-                return;
-              }
-            }
-
-            if (img.complete && img.naturalWidth !== 0) {
-              return;
-            }
-
-            await new Promise((resolve) => {
-              function cleanup() {
-                img.removeEventListener("load", handleLoad);
-                img.removeEventListener("error", handleError);
-              }
-
-              function handleLoad() {
-                cleanup();
-                resolve();
-              }
-
-              function handleError() {
-                cleanup();
-                resolve();
-              }
-
-              img.addEventListener("load", handleLoad, { once: true });
-              img.addEventListener("error", handleError, { once: true });
-            });
-          }),
-        );
-      }
     </script>
   </body>
 </html>
