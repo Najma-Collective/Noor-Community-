@@ -1,15 +1,1902 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slides: A Day in the City</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <style>
-      /* =====================================================================
+:root {
+        --primary-sage: #7a8471;
+        --secondary-sage: #9caf88;
+        --tertiary-sage: #b8c5a6;
+        --warm-cream: #f8f6f0;
+        --soft-white: #fefcf7;
+        --forest-shadow: #5a6b52;
+        --primary-forest: #3f4d39;
+        --ink: #2f3a2b;
+        --ink-muted: #5a6b52;
+        --border-sage: rgba(122, 132, 113, 0.2);
+        --hover-sage: rgba(156, 175, 136, 0.15);
+        --deep-forest: #3e4a3a;
+        --font-display: "Questrial", system-ui, sans-serif;
+        --font-body: "Nunito", system-ui, sans-serif;
+        --font-size-adjustment: 0pt;
+        --step--1: calc(
+          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
+        );
+        --step-0: calc(
+          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
+        );
+        --step-1: calc(
+          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
+            var(--font-size-adjustment)
+        );
+        --step-2: calc(
+          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
+        );
+        --step-3: calc(
+          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
+        );
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-7: 2rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1:
+          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+        --shadow-2:
+          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
+        --shadow-glow: 0 0 45px 10px
+          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100dvh;
+        color: var(--forest-shadow);
+        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+        font-family: var(--font-body);
+        font-size: var(--step-0);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow: auto;
+      }
+      .deck-app {
+        display: grid;
+        grid-template-rows: var(--toolbar-h) 1fr;
+        min-height: 100dvh;
+      }
+      .deck-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: var(--toolbar-h);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: var(--space-4);
+        padding: 0 max(24px, 4vw);
+        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+        border-bottom: 1px solid var(--border-sage);
+        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
+        backdrop-filter: blur(8px) saturate(1.1);
+      }
+      .toolbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-display);
+        font-size: calc(1.05rem + var(--font-size-adjustment));
+        color: var(--forest-shadow);
+      }
+      .toolbar-brand span {
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .slide-counter {
+        font-family: var(--font-display);
+        color: var(--ink-muted);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        justify-self: center;
+      }
+      .toolbar-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .toolbar-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .toolbar-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .toolbar-btn.secondary {
+        background: var(--primary-forest);
+      }
+      .toolbar-btn.ghost {
+        background: var(--soft-white);
+        color: var(--primary-forest);
+        border: 1px solid var(--border-sage);
+        box-shadow: none;
+      }
+      .toolbar-btn.ghost:hover {
+        box-shadow: var(--shadow-1);
+      }
+      .toolbar-select {
+        border-radius: 999px;
+        border: 1px solid var(--border-sage);
+        background: #fff;
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--primary-forest);
+        cursor: pointer;
+      }
+      .toolbar-select:focus {
+        outline: 2px solid var(--primary-sage);
+        outline-offset: 2px;
+      }
+      .highlight-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: var(--shadow-1);
+      }
+      .highlight-controls i {
+        color: var(--primary-forest);
+      }
+      .text-highlight {
+        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
+        padding: 0.05em 0.15em;
+        border-radius: 0.35em;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+        transition: background-color 200ms ease;
+      }
+      .deck-workspace {
+        height: calc(100dvh - var(--toolbar-h));
+        padding: var(--workspace-pad);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            900px 600px at 20% 0%,
+            rgba(156, 175, 136, 0.08) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            800px 700px at 80% 100%,
+            rgba(90, 107, 82, 0.06) 0%,
+            transparent 70%
+          );
+      }
+      .stage-viewport {
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+      .slide-stage {
+        position: relative;
+        border-radius: var(--stage-radius);
+        background-color: var(--soft-white);
+        box-shadow:
+          var(--shadow-glow),
+          0 24px 60px rgba(34, 41, 32, 0.1);
+        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+        width: min(
+          calc(
+            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+              (var(--slide-aspect-w) / var(--slide-aspect-h))
+          ),
+          calc(100vw - (var(--workspace-pad) * 2))
+        );
+        max-width: 100%;
+        overflow: hidden auto;
+        outline: 1px solid var(--border-sage);
+        transition: opacity 300ms ease-in-out;
+      }
+      .slide-stage.hidden {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .slide-stage.full-width-bg {
+        background: transparent;
+        outline: none;
+        box-shadow: none;
+      }
+      .bg-media {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .bg-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: brightness(0.92);
+        display: block;
+      }
+      .bg-media.remote-image-fallback {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 28, 21, 0.85) 0%,
+          rgba(16, 28, 21, 0.6) 65%,
+          rgba(16, 28, 21, 0.45) 100%
+        );
+      }
+      .bg-media.remote-image-fallback img {
+        display: none;
+      }
+      .img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          rgba(14, 30, 20, 0.72) 0%,
+          rgba(14, 30, 20, 0.4) 45%,
+          rgba(14, 30, 20, 0.2) 70%,
+          transparent 100%
+        );
+        z-index: 1;
+      }
+      .slide-inner {
+        position: absolute;
+        inset: 0;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 1.25rem;
+        overflow-y: auto;
+        scrollbar-gutter: stable both-edges;
+      }
+      .bg-content {
+        position: relative;
+        z-index: 2;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        align-items: flex-start;
+      }
+      .bg-content.centered {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+      }
+      .context-image {
+        position: relative;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius);
+        overflow: hidden;
+        min-height: 220px;
+        box-shadow: var(--shadow-1);
+        background: rgba(248, 246, 240, 0.65);
+      }
+      .context-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .context-image.remote-image-fallback {
+        background: linear-gradient(
+            135deg,
+            rgba(156, 175, 136, 0.45) 0%,
+            rgba(90, 107, 82, 0.75) 100%
+          ),
+          rgba(28, 45, 33, 0.85);
+        color: rgba(255, 255, 255, 0.82);
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .context-image.remote-image-fallback::after {
+        content: "Image preview unavailable";
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .context-image.remote-image-fallback img {
+        display: none;
+      }
+      .overlay-card {
+        background: color-mix(
+          in srgb,
+          rgba(16, 28, 21, 0.72) 65%,
+          rgba(248, 246, 240, 0.35) 35%
+        );
+        border: 1px solid rgba(253, 251, 245, 0.35);
+        border-radius: calc(var(--radius-lg) + 8px);
+        padding: clamp(28px, 5vw, 48px);
+        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
+        backdrop-filter: blur(14px) saturate(125%);
+        color: #fdfbf5;
+        max-width: min(600px, 80%);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .overlay-card.centered {
+        margin: 0 auto;
+        text-align: center;
+        align-items: center;
+      }
+      .overlay-card h1,
+      .overlay-card h2,
+      .overlay-card p,
+      .overlay-card .pill,
+      .overlay-card .deck-subtitle {
+        color: #fdfbf5;
+      }
+      .overlay-card .deck-subtitle {
+        font-size: var(--step-1);
+        margin: 0;
+        color: rgba(253, 251, 245, 0.85);
+      }
+      .overlay-pill {
+        background: rgba(253, 251, 245, 0.22) !important;
+        color: #fdfbf5 !important;
+        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(122, 132, 113, 0.16);
+        font-size: calc(0.85rem + var(--font-size-adjustment));
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--deep-forest);
+        width: fit-content;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        margin: 0;
+        color: var(--ink);
+      }
+      h1 {
+        font-size: var(--step-3);
+      }
+      h2 {
+        font-size: var(--step-2);
+      }
+      h3 {
+        font-size: var(--step-1);
+      }
+      p {
+        margin: 0;
+      }
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+      .card {
+        background: var(--soft-white);
+        padding: clamp(1.35rem, 3vw, 2rem);
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .card.dense {
+        gap: 0.65rem;
+        padding: clamp(1.1rem, 2.5vw, 1.65rem);
+      }
+      .two-column-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+        width: 100%;
+      }
+      .column-card {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.3rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .instruction-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .instruction-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .instruction-list i {
+        color: var(--primary-sage);
+        margin-top: 0.2em;
+      }
+      .activity-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+      .activity-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+      }
+      .activity-btn.secondary {
+        background: rgba(122, 132, 113, 0.16);
+        color: var(--deep-forest);
+      }
+      .activity-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .feedback-msg {
+        min-height: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .feedback-msg.success {
+        color: #2e7d32;
+      }
+      .feedback-msg.error {
+        color: #c62828;
+      }
+      .unscramble-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-left: 0;
+        list-style: none;
+      }
+      .unscramble-list li {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      .unscramble-input {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        font-weight: 600;
+        background: var(--soft-white);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .unscramble-input.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .unscramble-input.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .matching-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .matching-option {
+        display: grid;
+        grid-template-columns: 1fr minmax(180px, 250px);
+        gap: 0.9rem;
+        align-items: center;
+        padding: 0.75rem 0.85rem;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 132, 113, 0.16);
+        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .matching-option select {
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: var(--step--1);
+        background: var(--soft-white);
+        color: var(--forest-shadow);
+      }
+      .quiz-card {
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        padding: 1rem 1.1rem;
+        background: rgba(254, 252, 247, 0.95);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .quiz-options {
+        display: grid;
+        gap: 0.45rem;
+      }
+      .quiz-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        border-radius: 12px;
+        background: rgba(250, 250, 248, 0.9);
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .quiz-option input[type="radio"] {
+        margin-top: 0.25em;
+      }
+      .quiz-option.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .quiz-option.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .drop-categorization {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .token-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        padding: 1rem 1.1rem;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        border: 1px dashed rgba(122, 132, 113, 0.28);
+        margin-bottom: 1rem;
+      }
+      .click-token {
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        background: var(--soft-white);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: var(--step--1);
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+      .click-token.used {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .click-token.selected {
+        background: var(--secondary-sage);
+        color: white;
+        transform: scale(1.05);
+      }
+      .category-column {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+      }
+      .drop-zone {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 12px;
+        border: 2px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.75);
+        transition: all 0.2s ease;
+      }
+      .drop-zone.active {
+        border-color: var(--primary-sage);
+        background: rgba(156, 175, 136, 0.22);
+      }
+      .drop-zone .click-token {
+        cursor: grab;
+      }
+      .category-column.correct {
+        border-color: #2e7d32;
+      }
+      .category-column.incorrect {
+        border-color: #c62828;
+      }
+      .stress-sentence {
+        font-size: var(--step-1);
+        font-weight: 500;
+        line-height: 1.8;
+        margin-bottom: 0.5rem;
+      }
+      .stress-word {
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
+        margin: 0 0.1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: 1px solid transparent;
+        display: inline-block;
+      }
+      .stress-word:hover {
+        background: var(--hover-sage);
+      }
+      .stress-word.marked {
+        background: var(--tertiary-sage);
+        color: var(--ink);
+        border-color: var(--primary-sage);
+      }
+      .stress-word.correct {
+        background: rgba(46, 125, 50, 0.2);
+        border-color: #2e7d32;
+      }
+      .stress-word.incorrect {
+        background: rgba(198, 40, 40, 0.2);
+        border-color: #c62828;
+      }
+      .slide-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: rgba(254, 252, 247, 0.85);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        box-shadow: var(--shadow-2);
+        cursor: pointer;
+        z-index: 10;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .slide-nav:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
+      }
+      .slide-nav-prev {
+        left: -24px;
+      }
+      .slide-nav-next {
+        right: -24px;
+      }
+      .blank-slide {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+      }
+      .blank-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .blank-canvas {
+        flex: 1;
+        border-radius: var(--radius-lg);
+        border: 1px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.8);
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-height: 320px;
+      }
+      .blank-hint {
+        font-size: var(--step--1);
+        color: var(--ink-muted);
+      }
+      .textbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        background: var(--soft-white);
+        width: clamp(240px, 35%, 420px);
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        cursor: move;
+        touch-action: none;
+      }
+      .textbox-handle {
+        padding: 0.5rem 0.75rem;
+        background: rgba(122, 132, 113, 0.16);
+        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        cursor: grab;
+        border-top-left-radius: var(--radius);
+        border-top-right-radius: var(--radius);
+      }
+      .textbox-body {
+        flex: 1;
+        padding: 0.75rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        outline: none;
+        cursor: text;
+        overflow: auto;
+      }
+      .textbox-body:focus {
+        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
+      }
+      .textbox-remove {
+        position: absolute;
+        top: 0.35rem;
+        right: 0.35rem;
+        border: none;
+        background: rgba(254, 252, 247, 0.8);
+        color: var(--forest-shadow);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-1);
+      }
+      .textbox-remove:hover {
+        color: #c62828;
+      }
+      .mindmap {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        box-shadow: var(--shadow-1);
+        padding: clamp(1.2rem, 3vw, 1.8rem);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .mindmap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+      .mindmap-title {
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+        margin: 0;
+        color: var(--deep-forest);
+      }
+      .mindmap-remove {
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .mindmap-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-center {
+        align-self: center;
+        min-width: 180px;
+        padding: 0.9rem 1.1rem;
+        border-radius: 999px;
+        background: var(--primary-sage);
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        font-family: var(--font-display);
+        letter-spacing: 0.03em;
+        outline: none;
+      }
+      .mindmap-center:focus {
+        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
+      }
+      .mindmap-branches {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      .mindmap-branch {
+        position: relative;
+        padding: 0.75rem 0.85rem;
+        border-radius: var(--radius);
+        background: rgba(254, 252, 247, 0.95);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .mindmap-branch textarea {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 64px;
+      }
+      .branch-remove {
+        align-self: flex-end;
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .branch-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .mindmap-form input {
+        flex: 1 1 220px;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+      }
+      .mindmap-form button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        background: var(--secondary-sage);
+        color: var(--deep-forest);
+        box-shadow: var(--shadow-1);
+      }
+      .mindmap-form button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+:root {
+        --primary-sage: #7a8471;
+        --secondary-sage: #9caf88;
+        --tertiary-sage: #b8c5a6;
+        --warm-cream: #f8f6f0;
+        --soft-white: #fefcf7;
+        --forest-shadow: #5a6b52;
+        --ink: #2f3a2b;
+        --ink-muted: #5a6b52;
+        --border-sage: rgba(122, 132, 113, 0.2);
+        --hover-sage: rgba(156, 175, 136, 0.15);
+        --deep-forest: #3e4a3a;
+        --font-display: "Questrial", system-ui, sans-serif;
+        --font-body: "Nunito", system-ui, sans-serif;
+        --font-size-adjustment: 0pt;
+        --step--1: calc(
+          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
+        );
+        --step-0: calc(
+          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
+        );
+        --step-1: calc(
+          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
+            var(--font-size-adjustment)
+        );
+        --step-2: calc(
+          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
+        );
+        --step-3: calc(
+          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
+        );
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-7: 2rem;
+        --radius: 16px;
+        --radius-lg: 20px;
+        --shadow-1:
+          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+        --shadow-2:
+          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
+        --shadow-glow: 0 0 45px 10px
+          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+        --toolbar-h: 72px;
+        --workspace-pad: 24px;
+        --stage-pad: clamp(32px, 5vw, 64px);
+        --stage-radius: 18px;
+        --slide-aspect-w: 16;
+        --slide-aspect-h: 9;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100dvh;
+        color: var(--forest-shadow);
+        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+        font-family: var(--font-body);
+        font-size: var(--step-0);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow: auto;
+      }
+      .deck-app {
+        display: grid;
+        grid-template-rows: var(--toolbar-h) 1fr;
+        min-height: 100dvh;
+      }
+      .deck-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: var(--toolbar-h);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: var(--space-4);
+        padding: 0 max(24px, 4vw);
+        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+        border-bottom: 1px solid var(--border-sage);
+        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
+        backdrop-filter: blur(8px) saturate(1.1);
+      }
+      .toolbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-display);
+        font-size: calc(1.05rem + var(--font-size-adjustment));
+        color: var(--forest-shadow);
+      }
+      .toolbar-brand span {
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .slide-counter {
+        font-family: var(--font-display);
+        color: var(--ink-muted);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        justify-self: center;
+      }
+      .toolbar-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .toolbar-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .toolbar-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .toolbar-btn.secondary {
+        background: var(--primary-forest);
+      }
+      .toolbar-btn.ghost {
+        background: var(--soft-white);
+        color: var(--primary-forest);
+        border: 1px solid var(--border-sage);
+        box-shadow: none;
+      }
+      .toolbar-btn.ghost:hover {
+        box-shadow: var(--shadow-1);
+      }
+      .toolbar-select {
+        border-radius: 999px;
+        border: 1px solid var(--border-sage);
+        background: #fff;
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--primary-forest);
+        cursor: pointer;
+      }
+      .toolbar-select:focus {
+        outline: 2px solid var(--primary-sage);
+        outline-offset: 2px;
+      }
+      .highlight-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: var(--shadow-1);
+      }
+      .highlight-controls i {
+        color: var(--primary-forest);
+      }
+      .text-highlight {
+        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
+        padding: 0.05em 0.15em;
+        border-radius: 0.35em;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+        transition: background-color 200ms ease;
+      }
+      .deck-workspace {
+        height: calc(100dvh - var(--toolbar-h));
+        padding: var(--workspace-pad);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            900px 600px at 20% 0%,
+            rgba(156, 175, 136, 0.08) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            800px 700px at 80% 100%,
+            rgba(90, 107, 82, 0.06) 0%,
+            transparent 70%
+          );
+      }
+      .stage-viewport {
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+      .slide-stage {
+        position: relative;
+        border-radius: var(--stage-radius);
+        background-color: var(--soft-white);
+        box-shadow:
+          var(--shadow-glow),
+          0 24px 60px rgba(34, 41, 32, 0.1);
+        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+        width: min(
+          calc(
+            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+              (var(--slide-aspect-w) / var(--slide-aspect-h))
+          ),
+          calc(100vw - (var(--workspace-pad) * 2))
+        );
+        max-width: 100%;
+        overflow: hidden auto;
+        outline: 1px solid var(--border-sage);
+        transition: opacity 300ms ease-in-out;
+      }
+      .slide-stage.hidden {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .slide-stage.full-width-bg {
+        background: transparent;
+        outline: none;
+        box-shadow: none;
+      }
+      .bg-media {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .bg-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: brightness(0.92);
+        display: block;
+      }
+      .bg-media.remote-image-fallback {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 28, 21, 0.85) 0%,
+          rgba(16, 28, 21, 0.6) 65%,
+          rgba(16, 28, 21, 0.45) 100%
+        );
+      }
+      .bg-media.remote-image-fallback img {
+        display: none;
+      }
+      .img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          rgba(14, 30, 20, 0.72) 0%,
+          rgba(14, 30, 20, 0.4) 45%,
+          rgba(14, 30, 20, 0.2) 70%,
+          transparent 100%
+        );
+        z-index: 1;
+      }
+      .slide-inner {
+        position: absolute;
+        inset: 0;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 1.25rem;
+        overflow-y: auto;
+        scrollbar-gutter: stable both-edges;
+      }
+      .bg-content {
+        position: relative;
+        z-index: 2;
+        padding: var(--stage-pad);
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        align-items: flex-start;
+      }
+      .bg-content.centered {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+      }
+      .context-image {
+        position: relative;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius);
+        overflow: hidden;
+        min-height: 220px;
+        box-shadow: var(--shadow-1);
+        background: rgba(248, 246, 240, 0.65);
+      }
+      .context-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .context-image.remote-image-fallback {
+        background: linear-gradient(
+            135deg,
+            rgba(156, 175, 136, 0.45) 0%,
+            rgba(90, 107, 82, 0.75) 100%
+          ),
+          rgba(28, 45, 33, 0.85);
+        color: rgba(255, 255, 255, 0.82);
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .context-image.remote-image-fallback::after {
+        content: "Image preview unavailable";
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .context-image.remote-image-fallback img {
+        display: none;
+      }
+      .overlay-card {
+        background: color-mix(
+          in srgb,
+          rgba(16, 28, 21, 0.72) 65%,
+          rgba(248, 246, 240, 0.35) 35%
+        );
+        border: 1px solid rgba(253, 251, 245, 0.35);
+        border-radius: calc(var(--radius-lg) + 8px);
+        padding: clamp(28px, 5vw, 48px);
+        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
+        backdrop-filter: blur(14px) saturate(125%);
+        color: #fdfbf5;
+        max-width: min(600px, 80%);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .overlay-card.centered {
+        margin: 0 auto;
+        text-align: center;
+        align-items: center;
+      }
+      .overlay-card h1,
+      .overlay-card h2,
+      .overlay-card p,
+      .overlay-card .pill,
+      .overlay-card .deck-subtitle {
+        color: #fdfbf5;
+      }
+      .overlay-card .deck-subtitle {
+        font-size: var(--step-1);
+        margin: 0;
+        color: rgba(253, 251, 245, 0.85);
+      }
+      .overlay-pill {
+        background: rgba(253, 251, 245, 0.22) !important;
+        color: #fdfbf5 !important;
+        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(122, 132, 113, 0.16);
+        font-size: calc(0.85rem + var(--font-size-adjustment));
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--deep-forest);
+        width: fit-content;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        margin: 0;
+        color: var(--ink);
+      }
+      h1 {
+        font-size: var(--step-3);
+      }
+      h2 {
+        font-size: var(--step-2);
+      }
+      h3 {
+        font-size: var(--step-1);
+      }
+      p {
+        margin: 0;
+      }
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+      .card {
+        background: var(--soft-white);
+        padding: clamp(1.35rem, 3vw, 2rem);
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .card.dense {
+        gap: 0.65rem;
+        padding: clamp(1.1rem, 2.5vw, 1.65rem);
+      }
+      .two-column-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+        width: 100%;
+      }
+      .column-card {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.3rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .instruction-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .instruction-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .instruction-list i {
+        color: var(--primary-sage);
+        margin-top: 0.2em;
+      }
+      .activity-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+      .activity-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        background: var(--primary-sage);
+        color: #fff;
+        box-shadow: var(--shadow-1);
+      }
+      .activity-btn.secondary {
+        background: rgba(122, 132, 113, 0.16);
+        color: var(--deep-forest);
+      }
+      .activity-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .feedback-msg {
+        min-height: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .feedback-msg.success {
+        color: #2e7d32;
+      }
+      .feedback-msg.error {
+        color: #c62828;
+      }
+      .unscramble-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-left: 0;
+        list-style: none;
+      }
+      .unscramble-list li {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      .unscramble-input {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        font-weight: 600;
+        background: var(--soft-white);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .unscramble-input.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .unscramble-input.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .matching-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .matching-option {
+        display: grid;
+        grid-template-columns: 1fr minmax(180px, 250px);
+        gap: 0.9rem;
+        align-items: center;
+        padding: 0.75rem 0.85rem;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 132, 113, 0.16);
+        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+        transition:
+          border 0.2s ease,
+          background 0.2s ease;
+      }
+      .matching-option select {
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: var(--step--1);
+        background: var(--soft-white);
+        color: var(--forest-shadow);
+      }
+      .quiz-card {
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        padding: 1rem 1.1rem;
+        background: rgba(254, 252, 247, 0.95);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .quiz-options {
+        display: grid;
+        gap: 0.45rem;
+      }
+      .quiz-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        border-radius: 12px;
+        background: rgba(250, 250, 248, 0.9);
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .quiz-option input[type="radio"] {
+        margin-top: 0.25em;
+      }
+      .quiz-option.correct {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.12);
+      }
+      .quiz-option.incorrect {
+        border-color: #c62828;
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .drop-categorization {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .token-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        padding: 1rem 1.1rem;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        border: 1px dashed rgba(122, 132, 113, 0.28);
+        margin-bottom: 1rem;
+      }
+      .click-token {
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        background: var(--soft-white);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: var(--step--1);
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+      .click-token.used {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .click-token.selected {
+        background: var(--secondary-sage);
+        color: white;
+        transform: scale(1.05);
+      }
+      .category-column {
+        background: rgba(248, 246, 240, 0.85);
+        border-radius: var(--radius);
+        padding: 1rem;
+        border: 1px solid rgba(122, 132, 113, 0.18);
+      }
+      .drop-zone {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 12px;
+        border: 2px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.75);
+        transition: all 0.2s ease;
+      }
+      .drop-zone.active {
+        border-color: var(--primary-sage);
+        background: rgba(156, 175, 136, 0.22);
+      }
+      .drop-zone .click-token {
+        cursor: grab;
+      }
+      .category-column.correct {
+        border-color: #2e7d32;
+      }
+      .category-column.incorrect {
+        border-color: #c62828;
+      }
+      .stress-sentence {
+        font-size: var(--step-1);
+        font-weight: 500;
+        line-height: 1.8;
+        margin-bottom: 0.5rem;
+      }
+      .stress-word {
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
+        margin: 0 0.1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: 1px solid transparent;
+        display: inline-block;
+      }
+      .stress-word:hover {
+        background: var(--hover-sage);
+      }
+      .stress-word.marked {
+        background: var(--tertiary-sage);
+        color: var(--ink);
+        border-color: var(--primary-sage);
+      }
+      .stress-word.correct {
+        background: rgba(46, 125, 50, 0.2);
+        border-color: #2e7d32;
+      }
+      .stress-word.incorrect {
+        background: rgba(198, 40, 40, 0.2);
+        border-color: #c62828;
+      }
+      .slide-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: rgba(254, 252, 247, 0.85);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        box-shadow: var(--shadow-2);
+        cursor: pointer;
+        z-index: 10;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .slide-nav:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
+      }
+      .slide-nav-prev {
+        left: -24px;
+      }
+      .slide-nav-next {
+        right: -24px;
+      }
+      .blank-slide {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+      }
+      .blank-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .blank-canvas {
+        flex: 1;
+        border-radius: var(--radius-lg);
+        border: 1px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.8);
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-height: 320px;
+      }
+      .blank-hint {
+        font-size: var(--step--1);
+        color: var(--ink-muted);
+      }
+      .textbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        box-shadow: var(--shadow-1);
+        background: var(--soft-white);
+        width: clamp(240px, 35%, 420px);
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        cursor: move;
+        touch-action: none;
+      }
+      .textbox-handle {
+        padding: 0.5rem 0.75rem;
+        background: rgba(122, 132, 113, 0.16);
+        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        cursor: grab;
+        border-top-left-radius: var(--radius);
+        border-top-right-radius: var(--radius);
+      }
+      .textbox-body {
+        flex: 1;
+        padding: 0.75rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        outline: none;
+        cursor: text;
+        overflow: auto;
+      }
+      .textbox-body:focus {
+        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
+      }
+      .textbox-remove {
+        position: absolute;
+        top: 0.35rem;
+        right: 0.35rem;
+        border: none;
+        background: rgba(254, 252, 247, 0.8);
+        color: var(--forest-shadow);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-1);
+      }
+      .textbox-remove:hover {
+        color: #c62828;
+      }
+      .mindmap {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        background: linear-gradient(
+          135deg,
+          rgba(248, 246, 240, 0.92),
+          rgba(236, 231, 220, 0.75)
+        );
+        box-shadow: var(--shadow-1);
+        padding: clamp(1.2rem, 3vw, 1.8rem);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .mindmap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+      .mindmap-title {
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+        margin: 0;
+        color: var(--deep-forest);
+      }
+      .mindmap-remove {
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .mindmap-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-center {
+        align-self: center;
+        min-width: 180px;
+        padding: 0.9rem 1.1rem;
+        border-radius: 999px;
+        background: var(--primary-sage);
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        font-family: var(--font-display);
+        letter-spacing: 0.03em;
+        outline: none;
+      }
+      .mindmap-center:focus {
+        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
+      }
+      .mindmap-branches {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      .mindmap-branch {
+        position: relative;
+        padding: 0.75rem 0.85rem;
+        border-radius: var(--radius);
+        background: rgba(254, 252, 247, 0.95);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .mindmap-branch textarea {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 64px;
+      }
+      .branch-remove {
+        align-self: flex-end;
+        border: none;
+        background: transparent;
+        color: var(--forest-shadow);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .branch-remove:hover {
+        color: #c62828;
+      }
+      .mindmap-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .mindmap-form input {
+        flex: 1 1 220px;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 0.85rem;
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+      }
+      .mindmap-form button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        background: var(--secondary-sage);
+        color: var(--deep-forest);
+        box-shadow: var(--shadow-1);
+      }
+      .mindmap-form button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-2);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+/* =====================================================================
          Organic Sage UI — V3 Redraft
          ===================================================================== */
       :root {
@@ -99,386 +1986,1495 @@
         ol li::before { background-color: var(--primary-sage); }
       }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="deck-app">
-        <header class="deck-toolbar">
-            <div class="toolbar-brand">
-                <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
-                <span>Noor Community</span>
-            </div>
-            <div id="slide-counter" class="slide-counter">1 / 16</div>
-        </header>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling" style="color: var(--primary-sage)"></i>
+          <span>Noor Community</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 16</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input id="load-state-input" class="sr-only" type="file" accept="application/json" />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <!-- SLIDE 1: Title -->
+                          <div class="slide-stage">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                       <div class="col-span-7">
+                                          <p class="subtitle" style="color: var(--primary-sage);">A2 English Lesson</p>
+                                          <h1>A Day in the City</h1>
+                                          <p style="font-size: var(--step-2); color: var(--ink-muted);">A good day, or a disastrous day?</p>
+                                      </div>
+                                      <div class="col-span-5 centered-text">
+                                          <i class="fa-solid fa-city" style="font-size: 9rem; color: var(--tertiary-sage); opacity: 0.8;"></i>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-        <main class="deck-workspace">
-            <div class="stage-viewport">
-                
-                <!-- SLIDE 1: Title -->
-                <div class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                             <div class="col-span-7">
-                                <p class="subtitle" style="color: var(--primary-sage);">A2 English Lesson</p>
-                                <h1>A Day in the City</h1>
-                                <p style="font-size: var(--step-2); color: var(--ink-muted);">A good day, or a disastrous day?</p>
-                            </div>
-                            <div class="col-span-5 centered-text">
-                                <i class="fa-solid fa-city" style="font-size: 9rem; color: var(--tertiary-sage); opacity: 0.8;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 2: Objectives -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                      <div class="col-span-12 centered-text">
+                                          <h2 class="subtitle">Today's Goals</h2>
+                                      </div>
+                                      <div class="col-span-4">
+                                          <div class="card card-full-height"><i class="fas fa-edit icon"></i><h3>Plan a Story</h3><p>Choose places and events to create a story about your day.</p></div>
+                                      </div>
+                                      <div class="col-span-4">
+                                          <div class="card card-full-height"><i class="fas fa-stream icon"></i><h3>Use Sequencing Words</h3><p>Tell your story in order using <strong>first, then, finally</strong> and the Past Simple.</p></div>
+                                      </div>
+                                      <div class="col-span-4">
+                                          <div class="card card-full-height"><i class="fas fa-smile icon"></i><i class="fas fa-frown icon"></i><h3>Choose the Mood</h3><p>Decide if your story is about a lucky, happy day or a disastrous, unlucky day.</p></div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 2: Objectives -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h2 class="subtitle">Today's Goals</h2>
-                            </div>
-                            <div class="col-span-4">
-                                <div class="card card-full-height"><i class="fas fa-edit icon"></i><h3>Plan a Story</h3><p>Choose places and events to create a story about your day.</p></div>
-                            </div>
-                            <div class="col-span-4">
-                                <div class="card card-full-height"><i class="fas fa-stream icon"></i><h3>Use Sequencing Words</h3><p>Tell your story in order using <strong>first, then, finally</strong> and the Past Simple.</p></div>
-                            </div>
-                            <div class="col-span-4">
-                                <div class="card card-full-height"><i class="fas fa-smile icon"></i><i class="fas fa-frown icon"></i><h3>Choose the Mood</h3><p>Decide if your story is about a lucky, happy day or a disastrous, unlucky day.</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 3: Warm-Up / Lead-in -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                      <div class="col-span-5 centered-text">
+                                         <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
+                                         <h2 style="margin-top: 1rem;">Let's Talk!</h2>
+                                      </div>
+                                      <div class="col-span-7">
+                                          <p><strong>1.</strong> Think about your city. What are three interesting places to visit in <span class="text-highlight">one day</span>? (e.g., park, shop, museum)</p>
+                                          <hr class="divider">
+                                          <p><strong>2.</strong> What small thing can happen to make a normal day a <span class="text-highlight">"good day"</span>?</p>
+                                          <hr class="divider">
+                                          <p><strong>3.</strong> What small thing can happen to make a normal day a <span class="text-highlight">"disastrous day"</span>?</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 3: Warm-Up / Lead-in -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-5 centered-text">
-                               <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
-                               <h2 style="margin-top: 1rem;">Let's Talk!</h2>
-                            </div>
-                            <div class="col-span-7">
-                                <p><strong>1.</strong> Think about your city. What are three interesting places to visit in <span class="text-highlight">one day</span>? (e.g., park, shop, museum)</p>
-                                <hr class="divider">
-                                <p><strong>2.</strong> What small thing can happen to make a normal day a <span class="text-highlight">"good day"</span>?</p>
-                                <hr class="divider">
-                                <p><strong>3.</strong> What small thing can happen to make a normal day a <span class="text-highlight">"disastrous day"</span>?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- SLIDE 4: Activity 1 Intro -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                         <div class="grid-container">
-                            <div class="col-span-5">
-                                <h2 class="subtitle">Activity 1</h2>
-                                <h2>Places &amp; Events</h2>
-                                <p>Every place has possibilities for good events and bad events.</p>
-                            </div>
-                             <div class="col-span-7">
-                                <div class="dialogue-box">
-                                    <h3>For example:</h3>
-                                    <p><i class="fa-solid fa-tree" style="color:var(--secondary-sage); margin-right: 8px;"></i> At the <strong>park</strong>...</p>
-                                    <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-up" style="color: #6E7A67;"></i> You could <span class="text-highlight">see a friend</span>.</p>
-                                    <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-down" style="color: #A98484;"></i> It could start to <span class="text-highlight">rain</span>.</p>
-                                    <hr class="divider">
-                                    <p><i class="fa-solid fa-shopping-cart" style="color:var(--secondary-sage); margin-right: 8px;"></i> At the <strong>shop</strong>...</p>
-                                    <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-up" style="color: #6E7A67;"></i> You could <span class="text-highlight">find some money</span>.</p>
-                                    <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-down" style="color: #A98484;"></i> You could <span class="text-highlight">forget your wallet</span>.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 4: Activity 1 Intro -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                   <div class="grid-container">
+                                      <div class="col-span-5">
+                                          <h2 class="subtitle">Activity 1</h2>
+                                          <h2>Places &amp; Events</h2>
+                                          <p>Every place has possibilities for good events and bad events.</p>
+                                      </div>
+                                       <div class="col-span-7">
+                                          <div class="dialogue-box">
+                                              <h3>For example:</h3>
+                                              <p><i class="fa-solid fa-tree" style="color:var(--secondary-sage); margin-right: 8px;"></i> At the <strong>park</strong>...</p>
+                                              <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-up" style="color: #6E7A67;"></i> You could <span class="text-highlight">see a friend</span>.</p>
+                                              <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-down" style="color: #A98484;"></i> It could start to <span class="text-highlight">rain</span>.</p>
+                                              <hr class="divider">
+                                              <p><i class="fa-solid fa-shopping-cart" style="color:var(--secondary-sage); margin-right: 8px;"></i> At the <strong>shop</strong>...</p>
+                                              <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-up" style="color: #6E7A67;"></i> You could <span class="text-highlight">find some money</span>.</p>
+                                              <p style="padding-left: 2em;"><i class="fa-solid fa-thumbs-down" style="color: #A98484;"></i> You could <span class="text-highlight">forget your wallet</span>.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 5: Activity 1 Task -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-5 centered-text">
-                                <i class="fa-solid fa-lightbulb" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                            </div>
-                            <div class="col-span-7">
-                                <h2 class="subtitle">Activity 1: Your Turn!</h2>
-                                <p>With your partner, choose <strong>three places</strong> (e.g., museum, mosque, market).</p>
-                                <div class="card" style="margin-top: 1rem;">
-                                    <h3>For each place, brainstorm:</h3>
-                                    <ul>
-                                        <li>One possible <strong>good event</strong> that could happen there.</li>
-                                        <li>One possible <strong>bad event</strong> that could happen there.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 5: Activity 1 Task -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                      <div class="col-span-5 centered-text">
+                                          <i class="fa-solid fa-lightbulb" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                      </div>
+                                      <div class="col-span-7">
+                                          <h2 class="subtitle">Activity 1: Your Turn!</h2>
+                                          <p>With your partner, choose <strong>three places</strong> (e.g., museum, mosque, market).</p>
+                                          <div class="card" style="margin-top: 1rem;">
+                                              <h3>For each place, brainstorm:</h3>
+                                              <ul>
+                                                  <li>One possible <strong>good event</strong> that could happen there.</li>
+                                                  <li>One possible <strong>bad event</strong> that could happen there.</li>
+                                              </ul>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 6: Activity 2 Intro -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                         <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h2 class="subtitle">Activity 2</h2>
-                                <h2>Telling the Story's Order</h2>
-                                <p>We can tell two different stories with the same structure.</p>
-                            </div>
-                            <div class="col-span-6">
-                                <div class="card card-full-height">
-                                    <h3>A Good Day</h3>
-                                    <p><strong>First</strong>, I <strong>went</strong> to the park.</p>
-                                    <p><strong>Then</strong>, I <strong>saw</strong> my friend.</p>
-                                    <p><strong>Finally</strong>, we <strong>ate</strong> ice cream.</p>
-                                </div>
-                            </div>
-                            <div class="col-span-6">
-                                <div class="card card-full-height">
-                                    <h3>A Bad Day</h3>
-                                    <p><strong>First</strong>, I <strong>went</strong> to the park.</p>
-                                    <p><strong>Then</strong>, I <strong>lost</strong> my keys.</p>
-                                    <p><strong>Finally</strong>, I <strong>missed</strong> the bus home.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- SLIDE 7: Activity 2 Task -->
-                 <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                             <div class="col-span-5 centered-text">
-                                 <i class="fa-solid fa-link" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                 <h2 style="margin-top: 1rem;">Story Chains</h2>
-                            </div>
-                             <div class="col-span-7">
-                                <h2 class="subtitle">Activity 2: Your Turn!</h2>
-                                <p>In your group, you will build a story together, sentence by sentence.</p>
-                                <div class="card">
-                                <h3>How to play:</h3>
-                                <p>I will give you the first sentence. The first student adds the next sentence (make it good or bad!). The next student continues. The last student finishes the story.</p>
-                                <blockquote><strong>Start with this:</strong> "First, I went to the museum..."</blockquote>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 6: Activity 2 Intro -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                   <div class="grid-container">
+                                      <div class="col-span-12 centered-text">
+                                          <h2 class="subtitle">Activity 2</h2>
+                                          <h2>Telling the Story's Order</h2>
+                                          <p>We can tell two different stories with the same structure.</p>
+                                      </div>
+                                      <div class="col-span-6">
+                                          <div class="card card-full-height">
+                                              <h3>A Good Day</h3>
+                                              <p><strong>First</strong>, I <strong>went</strong> to the park.</p>
+                                              <p><strong>Then</strong>, I <strong>saw</strong> my friend.</p>
+                                              <p><strong>Finally</strong>, we <strong>ate</strong> ice cream.</p>
+                                          </div>
+                                      </div>
+                                      <div class="col-span-6">
+                                          <div class="card card-full-height">
+                                              <h3>A Bad Day</h3>
+                                              <p><strong>First</strong>, I <strong>went</strong> to the park.</p>
+                                              <p><strong>Then</strong>, I <strong>lost</strong> my keys.</p>
+                                              <p><strong>Finally</strong>, I <strong>missed</strong> the bus home.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 8: Activity 3 Intro -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                         <div class="grid-container">
-                            <div class="col-span-5">
-                                <h2 class="subtitle">Activity 3</h2>
-                                <h2>Adding Detail</h2>
-                                <p>We can connect ideas into one sentence using 'and' or 'but'.</p>
-                            </div>
-                             <div class="col-span-7">
-                                <div class="dialogue-box">
-                                    <h3>For example:</h3>
-                                    <p><i class="fa-solid fa-plus" style="color:var(--secondary-sage); margin-right: 8px;"></i> I <strong>walked</strong> through the park <span class="text-highlight">and</span> I <strong>found</strong> 20 shekels!</p>
-                                    <hr class="divider">
-                                    <p><i class="fa-solid fa-exclamation-triangle" style="color:var(--secondary-sage); margin-right: 8px;"></i> I <strong>went</strong> to the shop to buy bread, <span class="text-highlight">but</span> I <strong>forgot</strong> my money.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 7: Activity 2 Task -->
+                           <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                       <div class="col-span-5 centered-text">
+                                           <i class="fa-solid fa-link" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                           <h2 style="margin-top: 1rem;">Story Chains</h2>
+                                      </div>
+                                       <div class="col-span-7">
+                                          <h2 class="subtitle">Activity 2: Your Turn!</h2>
+                                          <p>In your group, you will build a story together, sentence by sentence.</p>
+                                          <div class="card">
+                                          <h3>How to play:</h3>
+                                          <p>I will give you the first sentence. The first student adds the next sentence (make it good or bad!). The next student continues. The last student finishes the story.</p>
+                                          <blockquote><strong>Start with this:</strong> "First, I went to the museum..."</blockquote>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 9: Activity 3 Task -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-5 centered-text">
-                                <i class="fa-solid fa-pen-fancy" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                <h2 style="margin-top: 1rem;">One Place, Two Stories</h2>
-                            </div>
-                            <div class="col-span-7">
-                                <h2 class="subtitle">Activity 3: Your Turn!</h2>
-                                <p>With your partner, I will give you a place. You must create two different sentences about it.</p>
-                                <ol>
-                                    <li>One sentence describing a <strong>good event</strong>.</li>
-                                    <li>One sentence describing a <strong>bad event</strong>.</li>
-                                </ol>
-                                <div class="card" style="margin-top: 1rem;">
-                                    <p><strong>Your Place:</strong> The Mosque</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                 <!-- SLIDE 10: Activity 4 Intro -->
-                 <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h2 class="subtitle">Activity 4</h2>
-                                <h2>What Happened Next?</h2>
-                                <p>Let's practice connecting events in a story.</p>
-                            </div>
-                            <div class="col-span-12">
-                               <div class="card centered-text">
-                                 <h3>The Scenario:</h3>
-                                 <p>Your plan was: <strong>First</strong>, go to the shop, <strong>then</strong> meet a friend at the park.</p>
-                                 <p>But a <span class="text-highlight">disaster</span> happened at the shop!</p>
-                                 <p><strong>What was the disaster, and what did you do next?</strong></p>
-                               </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 8: Activity 3 Intro -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                   <div class="grid-container">
+                                      <div class="col-span-5">
+                                          <h2 class="subtitle">Activity 3</h2>
+                                          <h2>Adding Detail</h2>
+                                          <p>We can connect ideas into one sentence using 'and' or 'but'.</p>
+                                      </div>
+                                       <div class="col-span-7">
+                                          <div class="dialogue-box">
+                                              <h3>For example:</h3>
+                                              <p><i class="fa-solid fa-plus" style="color:var(--secondary-sage); margin-right: 8px;"></i> I <strong>walked</strong> through the park <span class="text-highlight">and</span> I <strong>found</strong> 20 shekels!</p>
+                                              <hr class="divider">
+                                              <p><i class="fa-solid fa-exclamation-triangle" style="color:var(--secondary-sage); margin-right: 8px;"></i> I <strong>went</strong> to the shop to buy bread, <span class="text-highlight">but</span> I <strong>forgot</strong> my money.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 11: Activity 4 Task -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                         <div class="grid-container">
-                             <div class="col-span-5 centered-text">
-                                 <i class="fa-solid fa-user-secret" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                 <h2 style="margin-top: 1rem;">Finish the Story</h2>
-                            </div>
-                             <div class="col-span-7">
-                                <h2 class="subtitle">Activity 4: Your Turn!</h2>
-                                <p>In your group, create a short story based on this plan:</p>
-                                <div class="card">
-                                <h3>Plan: Go to the mosque, then go to the market.</h3>
-                                <p><strong>1. Invent a "disaster"</strong> that happens at the mosque.</p>
-                                <p><strong>2. Decide what happened next</strong> at the market.</p>
-                                <p><strong>3. How did the story end?</strong></p>
-                                <p>Be ready to share your group's story.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 9: Activity 3 Task -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                      <div class="col-span-5 centered-text">
+                                          <i class="fa-solid fa-pen-fancy" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                          <h2 style="margin-top: 1rem;">One Place, Two Stories</h2>
+                                      </div>
+                                      <div class="col-span-7">
+                                          <h2 class="subtitle">Activity 3: Your Turn!</h2>
+                                          <p>With your partner, I will give you a place. You must create two different sentences about it.</p>
+                                          <ol>
+                                              <li>One sentence describing a <strong>good event</strong>.</li>
+                                              <li>One sentence describing a <strong>bad event</strong>.</li>
+                                          </ol>
+                                          <div class="card" style="margin-top: 1rem;">
+                                              <p><strong>Your Place:</strong> The Mosque</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 12: Main Task Intro -->
-                <div class="slide-stage hidden centered-text">
-                    <div class="slide-inner">
-                        <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
-                        <h1>Main Task: My Day in the City</h1>
-                        <h2 class="subtitle">Time to be the storyteller!</h2>
-                    </div>
-                </div>
-                
-                <!-- SLIDE 13: Main Task Part 1 -->
-                <div class="slide-stage hidden full-width-bg">
-                    <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Two friends catching up over coffee" class="img-bg" style="opacity: 0.12;">
-                    <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
-                    <div class="slide-inner">
-                        <div class="bg-content grid-container align-self-start">
-                            <div class="col-span-12 centered-text">
-                                <h2>Part 1: Create &amp; Tell Your Story</h2>
-                                <p>You will tell a story to your partner.</p>
-                            </div>
-                            <div class="col-span-12">
-                                <div class="card">
-                                     <ol>
-                                        <li><strong>Choose:</strong> Is your story about a <span class="text-highlight">GOOD day</span> or a <span class="text-highlight">DISASTROUS day</span>?</li>
-                                        <li><strong>Plan:</strong> Think of a short story with 3 steps. Use <strong>First, Then, Finally</strong>. Your story should visit at least two different places.</li>
-                                        <li><strong>Tell:</strong> Tell your story to your partner. The listener must ask at least one follow-up question!</li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- SLIDE 14: Main Task Part 2 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                         <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h2 class="subtitle">Main Task</h2>
-                                <h2>Part 2: Guess the Story!</h2>
-                            </div>
-                            <div class="col-span-5 centered-text">
-                                <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
-                            </div>
-                            <div class="col-span-7">
-                                <div class="card card-full-height">
-                                    <i class="fa-solid fa-question-circle icon"></i>
-                                    <h3>Report your partner's story.</h3>
-                                    <p>Tell your new group about your first partner's story. But... <strong>do not say</strong> if it was a good or disastrous day!</p>
-                                    <hr class="divider">
-                                    <p>The group must listen and then <strong>guess:</strong> Was it a good day or a disastrous day?</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                           <!-- SLIDE 10: Activity 4 Intro -->
+                           <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                      <div class="col-span-12 centered-text">
+                                          <h2 class="subtitle">Activity 4</h2>
+                                          <h2>What Happened Next?</h2>
+                                          <p>Let's practice connecting events in a story.</p>
+                                      </div>
+                                      <div class="col-span-12">
+                                         <div class="card centered-text">
+                                           <h3>The Scenario:</h3>
+                                           <p>Your plan was: <strong>First</strong>, go to the shop, <strong>then</strong> meet a friend at the park.</p>
+                                           <p>But a <span class="text-highlight">disaster</span> happened at the shop!</p>
+                                           <p><strong>What was the disaster, and what did you do next?</strong></p>
+                                         </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 15: Reflection -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                             <div class="col-span-12 centered-text">
-                                <h2 class="subtitle">Let's Reflect!</h2>
-                                <p>Think about your learning today.</p>
-                            </div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>Was it easier to create a "good day" story or a "disastrous day" story? Why?</p></div></div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>What new vocabulary for places or events did you use today?</p></div></div>
-                            <div class="col-span-4"><div class="card card-full-height"><p>What is one thing you feel more confident about now?</p></div></div>
-                        </div>
-                    </div>
-                </div>
+                          <!-- SLIDE 11: Activity 4 Task -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                   <div class="grid-container">
+                                       <div class="col-span-5 centered-text">
+                                           <i class="fa-solid fa-user-secret" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                           <h2 style="margin-top: 1rem;">Finish the Story</h2>
+                                      </div>
+                                       <div class="col-span-7">
+                                          <h2 class="subtitle">Activity 4: Your Turn!</h2>
+                                          <p>In your group, create a short story based on this plan:</p>
+                                          <div class="card">
+                                          <h3>Plan: Go to the mosque, then go to the market.</h3>
+                                          <p><strong>1. Invent a "disaster"</strong> that happens at the mosque.</p>
+                                          <p><strong>2. Decide what happened next</strong> at the market.</p>
+                                          <p><strong>3. How did the story end?</strong></p>
+                                          <p>Be ready to share your group's story.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-                <!-- SLIDE 16: End -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <i class="fa-solid fa-hands-clpping" style="font-size: 4rem; color: var(--primary-sage);"></i>
-                        <h1>Great work today!</h1>
-                        <h2 class="subtitle">See you next time!</h2>
-                    </div>
-                </div>
+                          <!-- SLIDE 12: Main Task Intro -->
+                          <div class="slide-stage hidden centered-text">
+                              <div class="slide-inner">
+                                  <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                                  <h1>Main Task: My Day in the City</h1>
+                                  <h2 class="subtitle">Time to be the storyteller!</h2>
+                              </div>
+                          </div>
 
-                <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button class="slide-nav slide-nav-next" aria-label="Next Slide">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+                          <!-- SLIDE 13: Main Task Part 1 -->
+                          <div class="slide-stage hidden full-width-bg">
+                              <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Two friends catching up over coffee" class="img-bg" style="opacity: 0.12;">
+                              <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
+                              <div class="slide-inner">
+                                  <div class="bg-content grid-container align-self-start">
+                                      <div class="col-span-12 centered-text">
+                                          <h2>Part 1: Create &amp; Tell Your Story</h2>
+                                          <p>You will tell a story to your partner.</p>
+                                      </div>
+                                      <div class="col-span-12">
+                                          <div class="card">
+                                               <ol>
+                                                  <li><strong>Choose:</strong> Is your story about a <span class="text-highlight">GOOD day</span> or a <span class="text-highlight">DISASTROUS day</span>?</li>
+                                                  <li><strong>Plan:</strong> Think of a short story with 3 steps. Use <strong>First, Then, Finally</strong>. Your story should visit at least two different places.</li>
+                                                  <li><strong>Tell:</strong> Tell your story to your partner. The listener must ask at least one follow-up question!</li>
+                                              </ol>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
-            </div>
-        </main>
+                          <!-- SLIDE 14: Main Task Part 2 -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                   <div class="grid-container">
+                                      <div class="col-span-12 centered-text">
+                                          <h2 class="subtitle">Main Task</h2>
+                                          <h2>Part 2: Guess the Story!</h2>
+                                      </div>
+                                      <div class="col-span-5 centered-text">
+                                          <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
+                                          <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
+                                      </div>
+                                      <div class="col-span-7">
+                                          <div class="card card-full-height">
+                                              <i class="fa-solid fa-question-circle icon"></i>
+                                              <h3>Report your partner's story.</h3>
+                                              <p>Tell your new group about your first partner's story. But... <strong>do not say</strong> if it was a good or disastrous day!</p>
+                                              <hr class="divider">
+                                              <p>The group must listen and then <strong>guess:</strong> Was it a good day or a disastrous day?</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <!-- SLIDE 15: Reflection -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner">
+                                  <div class="grid-container">
+                                       <div class="col-span-12 centered-text">
+                                          <h2 class="subtitle">Let's Reflect!</h2>
+                                          <p>Think about your learning today.</p>
+                                      </div>
+                                      <div class="col-span-4"><div class="card card-full-height"><p>Was it easier to create a "good day" story or a "disastrous day" story? Why?</p></div></div>
+                                      <div class="col-span-4"><div class="card card-full-height"><p>What new vocabulary for places or events did you use today?</p></div></div>
+                                      <div class="col-span-4"><div class="card card-full-height"><p>What is one thing you feel more confident about now?</p></div></div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <!-- SLIDE 16: End -->
+                          <div class="slide-stage hidden">
+                              <div class="slide-inner centered-text">
+                                  <i class="fa-solid fa-hands-clpping" style="font-size: 4rem; color: var(--primary-sage);"></i>
+                                  <h1>Great work today!</h1>
+                                  <h2 class="subtitle">See you next time!</h2>
+                              </div>
+                          </div>
+
+                          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+                              <i class="fa-solid fa-chevron-left"></i>
+                          </button>
+                          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+                              <i class="fa-solid fa-chevron-right"></i>
+                          </button>
+        </div>
+      </main>
     </div>
-
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const slides = Array.from(document.querySelectorAll('.slide-stage'));
-        const nextBtn = document.querySelector('.slide-nav-next');
-        const prevBtn = document.querySelector('.slide-nav-prev');
-        const counter = document.getElementById('slide-counter');
-        let currentSlideIndex = 0;
-        const totalSlides = slides.length;
+const stageViewport = document.querySelector(".stage-viewport");
+      const nextBtn = stageViewport?.querySelector(".slide-nav-next");
+      const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
+      const counter = document.getElementById("slide-counter");
+      const addSlideBtn = document.getElementById("add-slide-btn");
+      const saveStateBtn = document.getElementById("save-state-btn");
+      const loadStateBtn = document.getElementById("load-state-btn");
+      const loadStateInput = document.getElementById("load-state-input");
+      const highlightBtn = document.getElementById("highlight-btn");
+      const highlightColorSelect = document.getElementById("highlight-color");
+      const removeHighlightBtn = document.getElementById("remove-highlight-btn");
 
-        function showSlide(index) {
-          slides.forEach((slide, i) => {
-            slide.classList.toggle('hidden', i !== index);
-          });
-          counter.textContent = `${index + 1} / ${totalSlides}`;
+      const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
+      const remoteImageHydrations = new WeakMap();
+
+      function getRemoteImageContainer(img) {
+        if (!(img instanceof HTMLElement)) {
+          return null;
+        }
+        return (
+          img.closest(".bg-media") ??
+          img.closest(".context-image") ??
+          img.parentElement
+        );
+      }
+
+      function applyRemoteImageFallback(img, error) {
+        if (error) {
+          console.warn(
+            `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? "unknown"}`,
+            error,
+          );
+        }
+        const container = getRemoteImageContainer(img);
+        if (container) {
+          container.classList.add("remote-image-fallback");
+        }
+        img.dataset.remoteHydrated = "failed";
+      }
+
+      async function hydrateRemoteImage(img) {
+        if (!(img instanceof HTMLImageElement)) {
+          return;
         }
 
-        function navigate(direction) {
-          currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
-          showSlide(currentSlideIndex);
+        const remoteSrc = img.dataset.remoteSrc;
+        if (!remoteSrc) {
+          return;
         }
 
-        nextBtn.addEventListener('click', () => navigate(1));
-        prevBtn.addEventListener('click', () => navigate(-1));
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') {
-                e.preventDefault(); navigate(1);
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault(); navigate(-1);
+        if (typeof fetch !== "function") {
+          applyRemoteImageFallback(img, new Error("Fetch API is unavailable"));
+          return;
+        }
+
+        const hydrationState = img.dataset.remoteHydrated;
+        if (hydrationState === "success" || hydrationState === "failed") {
+          return;
+        }
+
+        if (remoteImageHydrations.has(img)) {
+          return remoteImageHydrations.get(img);
+        }
+
+        const hydrationPromise = (async () => {
+          try {
+            await new Promise((resolve, reject) => {
+              function cleanup() {
+                img.removeEventListener("load", handleLoad);
+                img.removeEventListener("error", handleError);
+              }
+
+              function handleLoad() {
+                cleanup();
+                resolve();
+              }
+
+              function handleError(err) {
+                cleanup();
+                reject(new Error("Image failed to load from src", { cause: err }));
+              }
+
+              img.addEventListener("load", handleLoad, { once: true });
+              img.addEventListener("error", handleError, { once: true });
+              img.removeAttribute("loading");
+              img.src = remoteSrc; // The key change is here
+            });
+
+            img.dataset.remoteHydrated = "success";
+          } catch (error) {
+            applyRemoteImageFallback(img, error);
+          } finally {
+            remoteImageHydrations.delete(img);
+          }
+        })();
+
+        remoteImageHydrations.set(img, hydrationPromise);
+        return hydrationPromise;
+      }
+
+      async function hydrateRemoteImages(root = document) {
+        if (!root) {
+          return;
+        }
+
+        const scope =
+          root instanceof Element || root instanceof Document ? root : document;
+        const queryFn =
+          typeof scope.querySelectorAll === "function"
+            ? scope.querySelectorAll.bind(scope)
+            : null;
+        const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
+
+        if (!remoteImages.length) {
+          return;
+        }
+
+        await Promise.all(
+          remoteImages.map((img) => {
+            const hydration = hydrateRemoteImage(img);
+            if (hydration && typeof hydration.then === "function") {
+              return hydration.catch((error) => {
+                console.warn("Remote image hydration failed", error);
+              });
             }
+            return undefined;
+          }),
+        );
+      }
+
+      let slides = [];
+      let currentSlideIndex = 0;
+      let mindMapId = 0;
+
+      function refreshSlides() {
+        slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
+      }
+
+      function updateCounter() {
+        if (!counter) return;
+        const total = slides.length;
+        const current = total ? currentSlideIndex + 1 : 0;
+        counter.textContent = `${current} / ${total}`;
+      }
+
+      function showSlide(index) {
+        if (!slides.length) return;
+        currentSlideIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
+        });
+        updateCounter();
+      }
+
+      function navigate(direction) {
+        showSlide(currentSlideIndex + direction);
+      }
+
+      function setupNavigation() {
+        nextBtn?.addEventListener("click", () => navigate(1));
+        prevBtn?.addEventListener("click", () => navigate(-1));
+
+        document.addEventListener("keydown", (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement) {
+            if (
+              target.tagName === "INPUT" ||
+              target.tagName === "TEXTAREA" ||
+              target.isContentEditable
+            ) {
+              return;
+            }
+          }
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            navigate(1);
+          }
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            navigate(-1);
+          }
+        });
+      }
+
+      function addBlankSlide() {
+        if (!stageViewport) return;
+        const newSlide = createBlankSlide();
+        const insertionPoint = prevBtn ?? nextBtn ?? null;
+        stageViewport.insertBefore(newSlide, insertionPoint);
+        attachBlankSlideEvents(newSlide);
+        refreshSlides();
+        showSlide(slides.length - 1);
+      }
+
+      function createBlankSlide() {
+        const slide = document.createElement("div");
+        slide.className = "slide-stage hidden";
+        slide.dataset.type = "blank";
+        slide.innerHTML = `
+    <div class="slide-inner">
+      <div class="blank-slide">
+        <div class="blank-controls">
+          <button class="activity-btn" type="button" data-action="add-textbox">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Add Textbox
+          </button>
+          <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+            <i class="fa-solid fa-diagram-project"></i>
+            Add Mind Map
+          </button>
+        </div>
+        <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
+        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
+      </div>
+    </div>
+  `;
+        return slide;
+      }
+
+      function attachBlankSlideEvents(slide) {
+        const canvas = slide.querySelector(".blank-canvas");
+        const hint = slide.querySelector('[data-role="hint"]');
+        const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
+        const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
+
+        if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+          return;
+        }
+
+        const DEFAULT_HINT =
+          "Add textboxes for free typing or build a mind map to capture relationships.";
+        const TEXTBOX_HINT =
+          "Drag your textboxes into place and double-click to edit the content.";
+        const MINDMAP_HINT =
+          "Mind map ready. Add branches to capture ideas and connections.";
+
+        function updateHintForCanvas() {
+          if (!(hint instanceof HTMLElement)) return;
+          if (canvas.querySelector(".mindmap")) {
+            hint.textContent = MINDMAP_HINT;
+          } else if (canvas.querySelector(".textbox")) {
+            hint.textContent = TEXTBOX_HINT;
+          } else {
+            hint.textContent = DEFAULT_HINT;
+          }
+        }
+
+        addTextboxBtn?.addEventListener("click", () => {
+          const textbox = createTextbox({ onRemove: updateHintForCanvas });
+          canvas.appendChild(textbox);
+          positionTextbox(textbox, canvas);
+          updateHintForCanvas();
         });
 
-        showSlide(currentSlideIndex);
+        addMindmapBtn?.addEventListener("click", () => {
+          if (canvas.querySelector(".mindmap")) {
+            const existing = canvas.querySelector(".mindmap");
+            existing?.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+          }
+          const mindmap = createMindMap(() => {
+            updateHintForCanvas();
+          });
+          initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
+          canvas.appendChild(mindmap);
+          updateHintForCanvas();
+        });
+
+        canvas
+          .querySelectorAll(".textbox")
+          .forEach((textbox) =>
+            initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
+          );
+
+        canvas
+          .querySelectorAll(".mindmap")
+          .forEach((mindmap) =>
+            initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
+          );
+
+        updateHintForCanvas();
+      }
+
+      function positionTextbox(textbox, canvas) {
+        const count = canvas.querySelectorAll(".textbox").length - 1;
+        const offset = 24 * count;
+        textbox.style.left = `${offset}px`;
+        textbox.style.top = `${offset}px`;
+      }
+
+      function createTextbox({ onRemove } = {}) {
+        const textbox = document.createElement("div");
+        textbox.className = "textbox";
+        textbox.innerHTML = `
+    <button type="button" class="textbox-remove" aria-label="Remove textbox">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="textbox-handle">Textbox</div>
+    <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
+  `;
+        initialiseTextbox(textbox, { onRemove });
+        return textbox;
+      }
+
+      function initialiseTextbox(textbox, { onRemove } = {}) {
+        if (!(textbox instanceof HTMLElement)) {
+          return textbox;
+        }
+
+        textbox.__deckTextboxOnRemove = onRemove;
+        if (textbox.__deckTextboxInitialised) {
+          return textbox;
+        }
+        textbox.__deckTextboxInitialised = true;
+
+        const removeBtn = textbox.querySelector(".textbox-remove");
+        removeBtn?.addEventListener("click", () => {
+          textbox.remove();
+          if (typeof textbox.__deckTextboxOnRemove === "function") {
+            textbox.__deckTextboxOnRemove();
+          }
+        });
+
+        const body = textbox.querySelector(".textbox-body");
+        body?.addEventListener("dblclick", () => {
+          if (body instanceof HTMLElement) {
+            body.focus();
+          }
+        });
+
+        makeDraggable(textbox);
+        return textbox;
+      }
+
+      function makeDraggable(element) {
+        if (!(element instanceof HTMLElement)) return;
+        if (element.__deckDraggableInitialised) {
+          return;
+        }
+        element.__deckDraggableInitialised = true;
+
+        const handle = element.querySelector(".textbox-handle") ?? element;
+        let pointerId = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        handle.addEventListener("pointerdown", (event) => {
+          const canvas = element.parentElement;
+          if (!(canvas instanceof HTMLElement)) return;
+          pointerId = event.pointerId;
+          try {
+            element.setPointerCapture(pointerId);
+          } catch (error) {
+            // ignore when pointer capture is not supported
+          }
+          const elementRect = element.getBoundingClientRect();
+          offsetX = event.clientX - elementRect.left;
+          offsetY = event.clientY - elementRect.top;
+          element.dataset.dragging = "true";
+          event.preventDefault();
+        });
+
+        element.addEventListener("pointermove", (event) => {
+          if (element.dataset.dragging !== "true" || event.pointerId !== pointerId)
+            return;
+          const canvas = element.parentElement;
+          if (!(canvas instanceof HTMLElement)) return;
+          const canvasRect = canvas.getBoundingClientRect();
+          const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
+          const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
+          const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
+          const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
+          const clampedX = Math.min(Math.max(0, rawX), maxX);
+          const clampedY = Math.min(Math.max(0, rawY), maxY);
+          element.style.left = `${clampedX}px`;
+          element.style.top = `${clampedY}px`;
+        });
+
+        function clearPointerState(event) {
+          if (event.pointerId !== pointerId) return;
+          delete element.dataset.dragging;
+          if (pointerId !== null) {
+            try {
+              element.releasePointerCapture(pointerId);
+            } catch (error) {
+              // ignore release errors when pointer capture is not active
+            }
+          }
+          pointerId = null;
+        }
+
+        element.addEventListener("pointerup", clearPointerState);
+        element.addEventListener("pointercancel", clearPointerState);
+      }
+
+      function createMindMap(onRemove) {
+        const container = document.createElement("section");
+        container.className = "mindmap";
+        const branchInputId = `mindmap-branch-${++mindMapId}`;
+        container.innerHTML = `
+    <div class="mindmap-header">
+      <h3 class="mindmap-title">Mind Map</h3>
+      <button type="button" class="mindmap-remove">
+        <i class="fa-solid fa-trash-can"></i>
+        Remove
+      </button>
+    </div>
+    <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
+    <div class="mindmap-branches" aria-live="polite"></div>
+    <form class="mindmap-form">
+      <label class="sr-only" for="${branchInputId}">New branch label</label>
+      <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
+      <button type="submit">
+        <i class="fa-solid fa-plus"></i>
+        Add Branch
+      </button>
+    </form>
+  `;
+        const branches = container.querySelector(".mindmap-branches");
+        if (branches && !branches.querySelector(".mindmap-branch")) {
+          const defaultBranch = createMindMapBranch("Add supporting detail...");
+          branches.appendChild(defaultBranch);
+        }
+
+        initialiseMindMap(container, { onRemove });
+        return container;
+      }
+
+      function initialiseMindMap(container, { onRemove } = {}) {
+        if (!(container instanceof HTMLElement)) {
+          return container;
+        }
+
+        container.__deckMindmapOnRemove = onRemove;
+        if (!container.__deckMindmapInitialised) {
+          container.__deckMindmapInitialised = true;
+          const removeBtn = container.querySelector(".mindmap-remove");
+          removeBtn?.addEventListener("click", () => {
+            container.remove();
+            if (typeof container.__deckMindmapOnRemove === "function") {
+              container.__deckMindmapOnRemove();
+            }
+          });
+        }
+
+        const form = container.querySelector(".mindmap-form");
+        const input = container.querySelector(".mindmap-form input");
+        const branches = container.querySelector(".mindmap-branches");
+
+        if (form && !form.__deckSubmitInitialised) {
+          form.__deckSubmitInitialised = true;
+          form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!branches || !input) return;
+            const value = input.value.trim();
+            if (!value) return;
+            const newBranch = createMindMapBranch(value);
+            branches.appendChild(newBranch);
+            initialiseMindMapBranch(newBranch);
+            input.value = "";
+            input.focus();
+          });
+        }
+
+        container
+          .querySelectorAll(".mindmap-branch")
+          .forEach((branch) => initialiseMindMapBranch(branch));
+
+        return container;
+      }
+
+      function createMindMapBranch(text) {
+        const branch = document.createElement("div");
+        branch.className = "mindmap-branch";
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("aria-label", "Mind map branch");
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "branch-remove";
+        removeBtn.textContent = "Remove";
+        branch.append(textarea, removeBtn);
+        initialiseMindMapBranch(branch);
+        return branch;
+      }
+
+      function initialiseMindMapBranch(branch) {
+        if (!(branch instanceof HTMLElement)) {
+          return branch;
+        }
+
+        if (branch.__deckMindmapBranchInitialised) {
+          return branch;
+        }
+        branch.__deckMindmapBranchInitialised = true;
+        const removeBtn = branch.querySelector(".branch-remove");
+        removeBtn?.addEventListener("click", () => {
+          branch.remove();
+        });
+        return branch;
+      }
+
+      function recalibrateMindMapCounter() {
+        if (!stageViewport) return;
+        const inputs = stageViewport.querySelectorAll(
+          '.mindmap-form input[id^="mindmap-branch-"]',
+        );
+        inputs.forEach((input) => {
+          if (!(input instanceof HTMLInputElement)) return;
+          const match = input.id.match(/mindmap-branch-(\d+)/);
+          if (match) {
+            const value = Number.parseInt(match[1], 10);
+            if (!Number.isNaN(value)) {
+              mindMapId = Math.max(mindMapId, value);
+            }
+          }
+        });
+      }
+
+      function getDeckState() {
+        refreshSlides();
+        return {
+          version: 1,
+          currentSlideIndex,
+          slides: slides.map((slide) => slide.outerHTML),
+        };
+      }
+
+      function downloadDeckState() {
+        try {
+          const state = getDeckState();
+          const blob = new Blob([JSON.stringify(state, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = "deck-state.json";
+          anchor.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("Failed to save deck state", error);
+          window.alert(
+            "Sorry, we couldn't save the deck right now. Please try again.",
+          );
+        }
+      }
+
+      function parseDeckState(raw) {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.slides)) {
+          throw new Error("Invalid deck state structure");
+        }
+        return parsed;
+      }
+
+      function applyDeckState(state) {
+        if (!stageViewport || !state || !Array.isArray(state.slides)) {
+          throw new Error("Deck state does not include slides");
+        }
+
+        const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
+        const fragment = document.createDocumentFragment();
+
+        state.slides.forEach((slideHTML) => {
+          if (typeof slideHTML !== "string") {
+            return;
+          }
+          const template = document.createElement("template");
+          template.innerHTML = slideHTML.trim();
+          const slide = template.content.firstElementChild;
+          if (slide instanceof HTMLElement && slide.classList.contains("slide-stage")) {
+            fragment.appendChild(slide);
+          }
+        });
+
+        stageViewport.innerHTML = "";
+        stageViewport.appendChild(fragment);
+        navButtons.forEach((button) => stageViewport.appendChild(button));
+
+        refreshSlides();
+        slides
+          .filter((slide) => slide.dataset.type === "blank")
+          .forEach((slide) => attachBlankSlideEvents(slide));
+
+        initialiseActivities();
+        recalibrateMindMapCounter();
+
+        if (slides.length) {
+          const requestedIndex =
+            typeof state.currentSlideIndex === "number"
+              ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
+              : 0;
+          showSlide(requestedIndex);
+        } else {
+          updateCounter();
+        }
+
+        hydrateRemoteImages(stageViewport).catch((error) => {
+          console.warn("Remote image hydration failed after loading state", error);
+        });
+      }
+
+      function handleStateFileSelection(event) {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || !input.files?.length) {
+          return;
+        }
+
+        const [file] = input.files;
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          try {
+            const text = typeof reader.result === "string" ? reader.result : "";
+            const state = parseDeckState(text);
+            applyDeckState(state);
+          } catch (error) {
+            console.error("Failed to load deck state", error);
+            window.alert(
+              "The selected file couldn't be loaded. Please choose a valid deck state JSON file.",
+            );
+          } finally {
+            input.value = "";
+          }
+        });
+
+        reader.addEventListener("error", () => {
+          console.error("Failed to read deck state file", reader.error);
+          window.alert(
+            "We couldn't read that file. Please try again with a different JSON file.",
+          );
+          input.value = "";
+        });
+
+        reader.readAsText(file);
+      }
+
+      function findSlideForNode(node) {
+        if (!node) return null;
+        if (node instanceof HTMLElement) {
+          return node.closest(".slide-stage");
+        }
+        if (node instanceof Text) {
+          return node.parentElement?.closest(".slide-stage") ?? null;
+        }
+        return null;
+      }
+
+      function applyHighlight(color) {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+          window.alert("Select some text in a slide before applying a highlight.");
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+        const startSlide = findSlideForNode(range.startContainer);
+        const endSlide = findSlideForNode(range.endContainer);
+
+        if (!startSlide || !endSlide || startSlide !== endSlide) {
+          window.alert("Highlights must stay within a single slide.");
+          return;
+        }
+
+        if (!stageViewport?.contains(startSlide)) {
+          window.alert("Please highlight text within the slide area.");
+          return;
+        }
+
+        try {
+          const contents = range.extractContents();
+          const textSample = contents.textContent?.trim();
+          if (!textSample) {
+            window.alert("Select some text to highlight first.");
+            range.insertNode(contents);
+            return;
+          }
+
+          const highlight = document.createElement("mark");
+          highlight.className = "text-highlight";
+          highlight.dataset.color = color;
+          highlight.style.setProperty("--highlight-color", color);
+          highlight.appendChild(contents);
+          range.insertNode(highlight);
+
+          selection.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.selectNodeContents(highlight);
+          selection.addRange(newRange);
+        } catch (error) {
+          console.error("Failed to apply highlight", error);
+          window.alert(
+            "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
+          );
+        }
+      }
+
+      function removeHighlight() {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        let container = selection.anchorNode;
+        if (container instanceof Text) {
+          container = container.parentElement;
+        }
+
+        const highlight =
+          container instanceof HTMLElement ? container.closest(".text-highlight") : null;
+
+        if (!highlight || !stageViewport?.contains(highlight)) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        const parent = highlight.parentNode;
+        if (!parent) {
+          return;
+        }
+
+        while (highlight.firstChild) {
+          parent.insertBefore(highlight.firstChild, highlight);
+        }
+        highlight.remove();
+        if (parent instanceof HTMLElement) {
+          parent.normalize();
+        }
+        selection.removeAllRanges();
+      }
+
+      function setupUnscramble(activityEl) {
+        const inputs = activityEl.querySelectorAll(".unscramble-input");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          inputs.forEach((input) => {
+            const answer = input.dataset.answer
+              ?.trim()
+              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+              .replace(/\s+/g, " ")
+              .toLowerCase();
+            const value = input.value
+              .trim()
+              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+              .replace(/\s+/g, " ")
+              .toLowerCase();
+            if (answer && answer === value) {
+              input.classList.add("correct");
+              input.classList.remove("incorrect");
+              correctCount++;
+            } else {
+              input.classList.add("incorrect");
+              input.classList.remove("correct");
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${inputs.length} correct.`;
+            feedback.className =
+              correctCount === inputs.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          inputs.forEach((input) => {
+            input.value = "";
+            input.classList.remove("correct", "incorrect");
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupMatching(activityEl) {
+        const options = activityEl.querySelectorAll(".matching-option");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          options.forEach((option) => {
+            const select = option.querySelector("select");
+            if (select && select.value === option.dataset.correct) {
+              option.style.borderColor = "#2E7D32";
+              correctCount++;
+            } else {
+              option.style.borderColor = "#C62828";
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${options.length} correct.`;
+            feedback.className =
+              correctCount === options.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          options.forEach((option) => {
+            const select = option.querySelector("select");
+            if (select) {
+              select.selectedIndex = 0;
+            }
+            option.style.borderColor = "rgba(122,132,113,0.16)";
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupMcGrammar(activityEl) {
+        const cards = activityEl.querySelectorAll(".quiz-card");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (select && select.value === card.dataset.answer) {
+              card.classList.add("correct");
+              card.classList.remove("incorrect");
+              correctCount++;
+            } else {
+              card.classList.add("incorrect");
+              card.classList.remove("correct");
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${cards.length} correct.`;
+            feedback.className =
+              correctCount === cards.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (select) {
+              select.selectedIndex = 0;
+            }
+            card.classList.remove("correct", "incorrect");
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupMcGrammarRadio(container) {
+        const questions = container.querySelectorAll(".quiz-card");
+        const checkBtn = container.querySelector('[data-action="check"]');
+        const resetBtn = container.querySelector('[data-action="reset"]');
+        const feedback = container.querySelector(".feedback-msg");
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          questions.forEach((question) => {
+            const selected = question.querySelector("input:checked");
+            const options = question.querySelectorAll(".quiz-option");
+            options.forEach((option) =>
+              option.classList.remove("correct", "incorrect"),
+            );
+            if (selected) {
+              const label = selected.closest(".quiz-option");
+              const value = label?.textContent?.trim();
+              if (value === question.dataset.answer) {
+                label?.classList.add("correct");
+                correctCount++;
+              } else {
+                label?.classList.add("incorrect");
+              }
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You scored ${correctCount} out of ${questions.length}.`;
+            feedback.className =
+              correctCount === questions.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          questions.forEach((question) => {
+            question.querySelectorAll("input").forEach((radio) => {
+              radio.checked = false;
+            });
+            question
+              .querySelectorAll(".quiz-option")
+              .forEach((option) => option.classList.remove("correct", "incorrect"));
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupCategorization(activityEl) {
+        const tokenBank = activityEl.querySelector(".token-bank");
+        const tokens = Array.from(activityEl.querySelectorAll(".click-token"));
+        const dropZones = Array.from(activityEl.querySelectorAll(".drop-zone"));
+        const columns = Array.from(activityEl.querySelectorAll(".category-column"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+        let selectedToken = null;
+
+        tokens.forEach((token) => {
+          token.addEventListener("click", () => {
+            if (selectedToken) selectedToken.classList.remove("selected");
+            if (selectedToken === token) {
+              selectedToken = null;
+            } else {
+              selectedToken = token;
+              selectedToken.classList.add("selected");
+            }
+          });
+        });
+
+        dropZones.forEach((zone) => {
+          zone.addEventListener("click", () => {
+            if (selectedToken) {
+              zone.appendChild(selectedToken);
+              selectedToken.classList.remove("selected");
+              selectedToken = null;
+            }
+          });
+        });
+
+        checkBtn?.addEventListener("click", () => {
+          columns.forEach((col) => col.classList.remove("correct", "incorrect"));
+          let correctTotal = 0;
+          tokens.forEach((token) => {
+            const parentColumn = token.closest(".category-column");
+            if (
+              parentColumn &&
+              token.dataset.category === parentColumn.dataset.category
+            ) {
+              correctTotal++;
+            }
+          });
+          columns.forEach((column) => {
+            const zone = column.querySelector(".drop-zone");
+            const hasTokens = zone?.querySelector(".click-token");
+            if (hasTokens && column.dataset.category) {
+              const allMatch = Array.from(
+                zone?.querySelectorAll(".click-token") ?? [],
+              ).every(
+                (token) => token.dataset.category === column.dataset.category,
+              );
+              column.classList.add(allMatch ? "correct" : "incorrect");
+            } else {
+              column.classList.add("incorrect");
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You correctly placed ${correctTotal} out of ${tokens.length} items.`;
+            feedback.className =
+              correctTotal === tokens.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          tokens.forEach((token) => {
+            tokenBank?.appendChild(token);
+            token.classList.remove("selected");
+          });
+          columns.forEach((column) =>
+            column.classList.remove("correct", "incorrect"),
+          );
+          selectedToken = null;
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupStressMark(activityEl) {
+        const sentences = activityEl.querySelectorAll(".stress-sentence");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        sentences.forEach((sentence) => {
+          const words = sentence.querySelectorAll(".stress-word");
+          words.forEach((word) => {
+            word.addEventListener("click", () => {
+              words.forEach((w) => w.classList.remove("marked"));
+              word.classList.add("marked");
+            });
+          });
+        });
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          sentences.forEach((sentence) => {
+            const markedWord = sentence.querySelector(".stress-word.marked");
+            const correctWordText = sentence.dataset.correct?.trim().toLowerCase();
+            sentence
+              .querySelectorAll(".stress-word")
+              .forEach((word) => word.classList.remove("correct", "incorrect"));
+            if (markedWord) {
+              const markedText = markedWord.textContent
+                ?.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+                .trim()
+                .toLowerCase();
+              if (markedText && markedText === correctWordText) {
+                markedWord.classList.add("correct");
+                correctCount++;
+              } else {
+                markedWord.classList.add("incorrect");
+              }
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${sentences.length} correct.`;
+            feedback.className =
+              correctCount === sentences.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          sentences.forEach((sentence) => {
+            sentence.querySelectorAll(".stress-word").forEach((word) => {
+              word.classList.remove("marked", "correct", "incorrect");
+            });
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function initialiseActivities() {
+        document
+          .querySelectorAll('[data-activity="unscramble"]')
+          .forEach((el) => setupUnscramble(el));
+        document
+          .querySelectorAll('[data-activity="matching"]')
+          .forEach((el) => setupMatching(el));
+        document
+          .querySelectorAll('[data-activity="mc-grammar"]')
+          .forEach((el) => setupMcGrammar(el));
+        document
+          .querySelectorAll('[data-activity="mc-grammar-radio"]')
+          .forEach((el) => setupMcGrammarRadio(el));
+        document
+          .querySelectorAll('[data-activity="categorization"]')
+          .forEach((el) => setupCategorization(el));
+        document
+          .querySelectorAll('[data-activity="stress-mark"]')
+          .forEach((el) => setupStressMark(el));
+      }
+
+      async function initialiseDeck() {
+        await hydrateRemoteImages().catch((error) => {
+          console.warn(
+            "Remote imagery could not be hydrated during initialisation",
+            error,
+          );
+        });
+
+        refreshSlides();
+        if (slides.length) {
+          showSlide(0);
+        }
+        setupNavigation();
+        updateCounter();
+        initialiseActivities();
+        document
+          .querySelectorAll('.slide-stage[data-type="blank"]')
+          .forEach((slide) => attachBlankSlideEvents(slide));
+        addSlideBtn?.addEventListener("click", addBlankSlide);
+        saveStateBtn?.addEventListener("click", downloadDeckState);
+        loadStateBtn?.addEventListener("click", () => {
+          loadStateInput?.click();
+        });
+        loadStateInput?.addEventListener("change", handleStateFileSelection);
+        highlightBtn?.addEventListener("click", () => {
+          const selectedColor = highlightColorSelect?.value || "#F9E27D";
+          applyHighlight(selectedColor);
+        });
+        removeHighlightBtn?.addEventListener("click", () => {
+          removeHighlight();
+        });
+        recalibrateMindMapCounter();
+      }
+
+      initialiseDeck().catch((error) => {
+        console.error("Deck initialisation failed", error);
       });
     </script>
-</body>
+  </body>
+</html>
