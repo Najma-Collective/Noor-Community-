@@ -1,10 +1,3 @@
-Of course. The issue with the images not displaying stems from the JavaScript code attempting to fetch them in a way that is blocked by the image host's (Pexels) cross-origin policies.
-
-The fix involves modifying the JavaScript function responsible for loading the images (`hydrateRemoteImage`) to assign the image URL directly to the `src` attribute. This uses the browser's standard, more reliable image loading mechanism, which is not subject to the same restrictions.
-
-Here is the full, corrected codeblock for your presentation:
-
-```html
 <!doctype html>
 <html lang="en">
   <head>
