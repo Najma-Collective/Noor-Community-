@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pre-Class Activity: Preparing for the Networking Event</title>
+  <title>Pre-Class Worksheet: Planning the Nablus Artisans Pilot Program</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -98,7 +98,7 @@
     }
 
     html {
-      -webkit-text-size-adjust: 100%; /* iOS font scaling fix */
+      -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
       hanging-punctuation: first last;
     }
@@ -107,7 +107,7 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      min-height: 100dvh; /* mobile address bar safe */
+      min-height: 100dvh;
       font-family: var(--font-body);
       font-size: var(--step-0);
       line-height: 1.6;
@@ -441,59 +441,74 @@
       background: color-mix(in srgb, #fff 92%, var(--warm-cream) 8%);
     }
 
+    select:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .dropdown-group {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .dropdown-group label {
+      font-weight: 600;
+      color: var(--forest-shadow);
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+
+    .dropdown-group select {
+      margin-bottom: var(--space-1);
+    }
+
+    [data-activity="word-order"] {
+      display: grid;
+      gap: var(--space-6);
+    }
+
+    .arrange-item {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      background: color-mix(in srgb, var(--warm-cream) 80%, #fff 20%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-sage);
+    }
+
     .word-bank {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-2);
-      margin-bottom: var(--space-3);
-    }
-
-    .arrange-item {
-      margin-bottom: var(--space-5);
-      padding-bottom: var(--space-4);
-      border-bottom: 1px solid rgba(122, 132, 113, 0.15);
-    }
-
-    .arrange-item:last-of-type {
-      border-bottom: none;
-      padding-bottom: 0;
     }
 
     .word-token {
       border: 1px solid var(--border-sage);
-      border-radius: 999px;
       background: color-mix(in srgb, var(--soft-white) 85%, #fff 15%);
       padding: 8px 14px;
-      font-weight: 700;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
       color: var(--forest-shadow);
       cursor: pointer;
-      transition: transform var(--dur-1) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+      transition: transform var(--dur-1) var(--ease-ambient), background var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient);
     }
 
-    .word-token:not(:disabled):hover {
+    .word-token:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(34, 41, 32, 0.12);
+      background: color-mix(in srgb, var(--tertiary-sage) 25%, #fff 75%);
     }
 
     .word-token:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .word-token.selected {
-      background: color-mix(in srgb, var(--secondary-sage) 25%, #fff 75%);
-      border-color: var(--secondary-sage);
-    }
-
     .drop-zone {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: var(--space-2);
-      min-height: var(--target-min);
     }
 
     .drop-slot {
-      min-width: 80px;
       min-height: var(--target-min);
       border-radius: var(--radius-sm);
       border: 1px dashed var(--border-sage);
@@ -513,14 +528,19 @@
       background: color-mix(in srgb, var(--tertiary-sage) 35%, #fff 65%);
     }
 
+    [data-activity="classify"] {
+      display: grid;
+      gap: var(--space-5);
+    }
+
     .classify-columns {
       display: grid;
       gap: var(--space-4);
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: 768px) {
       .classify-columns {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
@@ -593,57 +613,51 @@
   <div id="app-wrapper">
     <main id="activity-container" aria-labelledby="page-title">
       <header>
-        <h1 id="page-title">Pre-Class Activity: Preparing for the Networking Event</h1>
-        <h2 class="rubric">Welcome! This activity will prepare you for our next lesson on professional networking. It will take about 30 minutes. Please complete all activities before class.</h2>
+        <h1 id="page-title">Pre-Class Worksheet: Planning the Nablus Artisans Pilot Program</h1>
+        <h2 class="rubric">Instructions for the Learner: Welcome! This 30-minute activity will prepare you for our next lesson on strategic planning. Please complete all activities before class.</h2>
       </header>
 
       <section class="intro-section" aria-labelledby="intro-heading">
         <h2 class="visually-hidden" id="intro-heading">Learner instructions</h2>
-        <p class="intro-lead"><strong>Instructions for the Learner:</strong> Read the model dialogue, review the vocabulary, and complete each activity below. Use the tasks to help you describe your work clearly and ask good networking questions.</p>
+        <p class="intro-lead"><strong>Pre-Class Worksheet:</strong> Review the model dialogue and complete each activity. You will practice key vocabulary, language for meetings, and grammar that will help you explain your plan for the Nablus Artisans pilot program.</p>
       </section>
 
       <section class="model-section" aria-labelledby="model-heading">
         <div class="model-header">
-          <h2 class="model-title" id="model-heading">Model Dialogue: An Online Tech Meet-up</h2>
-          <p class="model-description">Two Palestinian professionals are meeting virtually. Read their short conversation.</p>
+          <h2 class="model-title" id="model-heading">Model Dialogue: Designing a Digital Skills Program</h2>
+          <p class="model-description">Read the dialogue between two NGO project managers, Fatima and Yousef. They are discussing a report about local artisans in Nablus.</p>
         </div>
         <div class="model-dialogue" role="list">
-          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> Hi, I'm Layla. It's great to connect. I see you're based in Ramallah?</p>
-          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Hi Layla! Yes, I am. And you're in Dublin, right? Great to meet you. So, what do you do?</p>
-          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> I'm a marketing specialist for a software company. I handle all our social media campaigns. How about you?</p>
-          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Nice. I'm a project manager. I'm in charge of a team of developers. We build mobile apps.</p>
-          <p class="dialogue-line" role="listitem"><span class="speaker">Layla:</span> That's really interesting.</p>
-          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Thanks! My main job is to make sure we finish our projects on time. I'm responsible for planning everything.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> Okay, so the Nablus report is clear. The data confirmed what we had suspected for a while: the core issue is a lack of digital skills, not product quality.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> Exactly. For the new pilot program, I propose we start with a mentorship model. We could train university students to mentor the artisans one-on-one. For me, the key to long-term sustainability is building those supportive relationships.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> I see the value in mentorship. However, my only concern is that it might be too slow. The artisans need practical skills now. An alternative approach could be to run intensive, hands-on workshops.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> That's a fair point. But what's the main advantage of workshops?</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> The evidence strongly suggests that group training builds confidence quickly. We could focus on smartphone photography and social media marketing. My priority would be ensuring a baseline of skills for everyone.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Yousef:</span> I like that. What if we create a hybrid model? We could run the workshops first to teach the core skills, and then the student mentors could provide follow-up support.</p>
+          <p class="dialogue-line" role="listitem"><span class="speaker">Fatima:</span> Now that's a great idea. It's the best of both worlds. Let's start planning the details.</p>
         </div>
       </section>
+
       <section class="activity-section" aria-labelledby="activity-1-heading">
         <div class="activity-header">
           <h2 class="activity-title" id="activity-1-heading">Activity 1. Check Your Understanding</h2>
-          <p class="activity-instruction">Read the dialogue again and choose the correct answer for each question.</p>
+          <p class="activity-instruction">Read the dialogue again and choose the best answer for each question.</p>
         </div>
         <form id="activity-1" class="question-block" data-activity="multiple-choice">
           <fieldset>
-            <legend>1. Where are Layla and Yousef meeting?</legend>
+            <legend>1. What is the main problem the NGO wants to solve?</legend>
             <div class="option-group">
-              <label class="option-pill"><input type="radio" name="q1" value="a" /> a) In an office in Ramallah</label>
-              <label class="option-pill"><input type="radio" name="q1" value="b" /> b) At an online event</label>
-              <label class="option-pill"><input type="radio" name="q1" value="c" /> c) In a cafe in Dublin</label>
+              <label class="option-pill"><input type="radio" name="q1" value="a" /> a) The artisans' products are not good enough.</label>
+              <label class="option-pill"><input type="radio" name="q1" value="b" /> b) The university students need training.</label>
+              <label class="option-pill"><input type="radio" name="q1" value="c" /> c) Local artisans lack the digital skills to sell their products online.</label>
             </div>
           </fieldset>
           <fieldset>
-            <legend>2. What is Layla's job?</legend>
+            <legend>2. What is the final decision Fatima and Yousef make?</legend>
             <div class="option-group">
-              <label class="option-pill"><input type="radio" name="q2" value="a" /> a) A project manager</label>
-              <label class="option-pill"><input type="radio" name="q2" value="b" /> b) A developer</label>
-              <label class="option-pill"><input type="radio" name="q2" value="c" /> c) A marketing specialist</label>
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend>3. What does Yousef's team do?</legend>
-            <div class="option-group">
-              <label class="option-pill"><input type="radio" name="q3" value="a" /> a) They handle social media.</label>
-              <label class="option-pill"><input type="radio" name="q3" value="b" /> b) They build mobile apps.</label>
-              <label class="option-pill"><input type="radio" name="q3" value="c" /> c) They plan marketing campaigns.</label>
+              <label class="option-pill"><input type="radio" name="q2" value="a" /> a) To choose Yousef's mentorship idea only.</label>
+              <label class="option-pill"><input type="radio" name="q2" value="b" /> b) To combine workshops with a mentorship program.</label>
+              <label class="option-pill"><input type="radio" name="q2" value="c" /> c) To run hands-on workshops only.</label>
             </div>
           </fieldset>
           <div class="controls">
@@ -656,68 +670,68 @@
 
       <section class="activity-section" aria-labelledby="activity-2-heading">
         <div class="activity-header">
-          <h2 class="activity-title" id="activity-2-heading">Activity 2. Vocabulary: Roles &amp; Responsibilities</h2>
-          <p class="activity-instruction">Match the words and phrases from the dialogue (Column A) with their meanings (Column B).</p>
+          <h2 class="activity-title" id="activity-2-heading">Activity 2. Key Vocabulary</h2>
+          <p class="activity-instruction">Match the vocabulary from the dialogue to its correct definition.</p>
         </div>
         <form id="activity-2" class="matching-grid" data-activity="matching">
           <div class="matching-row">
-            <span class="matching-question">1. marketing specialist</span>
-            <label class="visually-hidden" for="match-1">Meaning for marketing specialist</label>
-            <select id="match-1" data-answer="e">
+            <span class="matching-question">1. Pilot program</span>
+            <label class="visually-hidden" for="match-1">Definition for pilot program</label>
+            <select id="match-1" data-answer="c">
               <option value="">Choose...</option>
-              <option value="a">a) to manage or deal with something</option>
-              <option value="b">b) having control and authority over a team or area</option>
-              <option value="c">c) a person who plans and organizes a project</option>
-              <option value="d">d) having a duty to do something</option>
-              <option value="e">e) a person who works in advertising and promotion</option>
+              <option value="a">a) The ability to continue for a long time.</option>
+              <option value="b">b) A system that is a mix of two different things.</option>
+              <option value="c">c) A small, preliminary project to test if an idea will work.</option>
+              <option value="d">d) A system where an experienced person advises and helps someone with less experience.</option>
+              <option value="e">e) Involving active participation rather than just observing.</option>
             </select>
           </div>
           <div class="matching-row">
-            <span class="matching-question">2. handle</span>
-            <label class="visually-hidden" for="match-2">Meaning for handle</label>
+            <span class="matching-question">2. Sustainability</span>
+            <label class="visually-hidden" for="match-2">Definition for sustainability</label>
             <select id="match-2" data-answer="a">
               <option value="">Choose...</option>
-              <option value="a">a) to manage or deal with something</option>
-              <option value="b">b) having control and authority over a team or area</option>
-              <option value="c">c) a person who plans and organizes a project</option>
-              <option value="d">d) having a duty to do something</option>
-              <option value="e">e) a person who works in advertising and promotion</option>
+              <option value="a">a) The ability to continue for a long time.</option>
+              <option value="b">b) A system that is a mix of two different things.</option>
+              <option value="c">c) A small, preliminary project to test if an idea will work.</option>
+              <option value="d">d) A system where an experienced person advises and helps someone with less experience.</option>
+              <option value="e">e) Involving active participation rather than just observing.</option>
             </select>
           </div>
           <div class="matching-row">
-            <span class="matching-question">3. project manager</span>
-            <label class="visually-hidden" for="match-3">Meaning for project manager</label>
-            <select id="match-3" data-answer="c">
+            <span class="matching-question">3. Mentorship</span>
+            <label class="visually-hidden" for="match-3">Definition for mentorship</label>
+            <select id="match-3" data-answer="d">
               <option value="">Choose...</option>
-              <option value="a">a) to manage or deal with something</option>
-              <option value="b">b) having control and authority over a team or area</option>
-              <option value="c">c) a person who plans and organizes a project</option>
-              <option value="d">d) having a duty to do something</option>
-              <option value="e">e) a person who works in advertising and promotion</option>
+              <option value="a">a) The ability to continue for a long time.</option>
+              <option value="b">b) A system that is a mix of two different things.</option>
+              <option value="c">c) A small, preliminary project to test if an idea will work.</option>
+              <option value="d">d) A system where an experienced person advises and helps someone with less experience.</option>
+              <option value="e">e) Involving active participation rather than just observing.</option>
             </select>
           </div>
           <div class="matching-row">
-            <span class="matching-question">4. in charge of</span>
-            <label class="visually-hidden" for="match-4">Meaning for in charge of</label>
-            <select id="match-4" data-answer="b">
+            <span class="matching-question">4. Hands-on</span>
+            <label class="visually-hidden" for="match-4">Definition for hands-on</label>
+            <select id="match-4" data-answer="e">
               <option value="">Choose...</option>
-              <option value="a">a) to manage or deal with something</option>
-              <option value="b">b) having control and authority over a team or area</option>
-              <option value="c">c) a person who plans and organizes a project</option>
-              <option value="d">d) having a duty to do something</option>
-              <option value="e">e) a person who works in advertising and promotion</option>
+              <option value="a">a) The ability to continue for a long time.</option>
+              <option value="b">b) A system that is a mix of two different things.</option>
+              <option value="c">c) A small, preliminary project to test if an idea will work.</option>
+              <option value="d">d) A system where an experienced person advises and helps someone with less experience.</option>
+              <option value="e">e) Involving active participation rather than just observing.</option>
             </select>
           </div>
           <div class="matching-row">
-            <span class="matching-question">5. responsible for</span>
-            <label class="visually-hidden" for="match-5">Meaning for responsible for</label>
-            <select id="match-5" data-answer="d">
+            <span class="matching-question">5. Hybrid model</span>
+            <label class="visually-hidden" for="match-5">Definition for hybrid model</label>
+            <select id="match-5" data-answer="b">
               <option value="">Choose...</option>
-              <option value="a">a) to manage or deal with something</option>
-              <option value="b">b) having control and authority over a team or area</option>
-              <option value="c">c) a person who plans and organizes a project</option>
-              <option value="d">d) having a duty to do something</option>
-              <option value="e">e) a person who works in advertising and promotion</option>
+              <option value="a">a) The ability to continue for a long time.</option>
+              <option value="b">b) A system that is a mix of two different things.</option>
+              <option value="c">c) A small, preliminary project to test if an idea will work.</option>
+              <option value="d">d) A system where an experienced person advises and helps someone with less experience.</option>
+              <option value="e">e) Involving active participation rather than just observing.</option>
             </select>
           </div>
           <div class="controls">
@@ -730,56 +744,115 @@
 
       <section class="activity-section" aria-labelledby="activity-3-heading">
         <div class="activity-header">
-          <h2 class="activity-title" id="activity-3-heading">Activity 3. Language Focus: Describing Your Job</h2>
-          <p class="activity-instruction">Complete the sentences about Layla and Yousef using the phrases from the dialogue. Choose the correct option from the dropdown menu.</p>
+          <h2 class="activity-title" id="activity-3-heading">Activity 3. Useful Phrases for Meetings</h2>
+          <p class="activity-instruction">Read the phrases taken from the dialogue. Classify each phrase according to its function in a discussion.</p>
         </div>
-        <form id="activity-3" class="question-block" data-activity="dropdown">
-          <label for="job-1">1. Layla says, "I --- handle / am responsible / am in charge of --- all our social media campaigns."</label>
-          <select id="job-1" data-answer="handle">
-            <option value="">Select...</option>
-            <option value="handle">handle</option>
-            <option value="am responsible">am responsible</option>
-            <option value="am in charge of">am in charge of</option>
-          </select>
-
-          <label for="job-2">2. Yousef is --- handle / responsible for / specialist --- planning everything for his team's projects.</label>
-          <select id="job-2" data-answer="responsible for">
-            <option value="">Select...</option>
-            <option value="handle">handle</option>
-            <option value="responsible for">responsible for</option>
-            <option value="specialist">specialist</option>
-          </select>
-
-          <label for="job-3">3. Yousef is --- in charge of / handle / responsible --- a team of developers.</label>
-          <select id="job-3" data-answer="in charge of">
-            <option value="">Select...</option>
-            <option value="in charge of">in charge of</option>
-            <option value="handle">handle</option>
-            <option value="responsible">responsible</option>
-          </select>
-
+        <div id="activity-3" data-activity="classify">
+          <div class="word-bank" aria-label="Phrases to classify">
+            <button type="button" class="word-token" data-token="I propose we start with...">I propose we start with...</button>
+            <button type="button" class="word-token" data-token="My only concern is that...">My only concern is that...</button>
+            <button type="button" class="word-token" data-token="The evidence strongly suggests that...">The evidence strongly suggests that...</button>
+            <button type="button" class="word-token" data-token="An alternative approach could be to...">An alternative approach could be to...</button>
+            <button type="button" class="word-token" data-token="For me, the key to... is...">For me, the key to... is...</button>
+            <button type="button" class="word-token" data-token="My priority would be...">My priority would be...</button>
+          </div>
+          <div class="classify-columns">
+            <div class="classify-column" data-correct='["I propose we start with...","An alternative approach could be to..."]'>
+              <p class="category-header">Proposing an Idea</p>
+              <div class="classify-drop-zone" role="list" aria-label="Phrases that propose an idea">
+                <button type="button" class="classify-slot" data-index="0" aria-label="Proposing slot 1"></button>
+                <button type="button" class="classify-slot" data-index="1" aria-label="Proposing slot 2"></button>
+              </div>
+            </div>
+            <div class="classify-column" data-correct='["The evidence strongly suggests that...","For me, the key to... is...","My priority would be..."]'>
+              <p class="category-header">Justifying an Idea</p>
+              <div class="classify-drop-zone" role="list" aria-label="Phrases that justify an idea">
+                <button type="button" class="classify-slot" data-index="0" aria-label="Justifying slot 1"></button>
+                <button type="button" class="classify-slot" data-index="1" aria-label="Justifying slot 2"></button>
+                <button type="button" class="classify-slot" data-index="2" aria-label="Justifying slot 3"></button>
+              </div>
+            </div>
+            <div class="classify-column" data-correct='["My only concern is that..."]'>
+              <p class="category-header">Expressing a Concern</p>
+              <div class="classify-drop-zone" role="list" aria-label="Phrases that express a concern">
+                <button type="button" class="classify-slot" data-index="0" aria-label="Concern slot 1"></button>
+              </div>
+            </div>
+          </div>
           <div class="controls">
-            <button type="button" class="activity-btn" data-action="check">Check sentences</button>
+            <button type="button" class="activity-btn" data-action="check">Check categories</button>
+            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+          </div>
+          <p class="feedback" role="status"></p>
+        </div>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-4-heading">
+        <div class="activity-header">
+          <h2 class="activity-title" id="activity-4-heading">Activity 4. Talking About the Past</h2>
+          <p class="activity-instruction">Choose the correct verb form to show which action happened first.</p>
+        </div>
+        <form id="activity-4" class="dropdown-group" data-activity="dropdown">
+          <div>
+            <label for="past-1">1. Before they wrote the report, the research team</label>
+            <select id="past-1" data-answer="had interviewed">
+              <option value="">Select...</option>
+              <option value="had interviewed">had interviewed</option>
+              <option value="interviewed">interviewed</option>
+            </select>
+            <span>twenty local artisans.</span>
+          </div>
+          <div>
+            <label for="past-2">2. The artisans' online sales</label>
+            <select id="past-2" data-answer="had fallen">
+              <option value="">Select...</option>
+              <option value="fell">fell</option>
+              <option value="had fallen">had fallen</option>
+            </select>
+            <span>significantly before the NGO decided to intervene.</span>
+          </div>
+          <div>
+            <label for="past-3">3. After the project manager</label>
+            <select id="past-3" data-answer="had secured">
+              <option value="">Select...</option>
+              <option value="secured">secured</option>
+              <option value="had secured">had secured</option>
+            </select>
+            <span>the funding, she announced the new pilot program.</span>
+          </div>
+          <div>
+            <label for="past-4">4. Yousef didn't know about the sales figures because he</label>
+            <select id="past-4" data-answer="hadn't read">
+              <option value="">Select...</option>
+              <option value="didn't read">didn't read</option>
+              <option value="hadn't read">hadn't read</option>
+            </select>
+            <span>the final report yet.</span>
+          </div>
+          <div class="controls">
+            <button type="button" class="activity-btn" data-action="check">Check verb forms</button>
             <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
           </div>
           <p class="feedback" role="status"></p>
         </form>
       </section>
 
-      <section class="activity-section" aria-labelledby="activity-4-heading">
+      <section class="activity-section" aria-labelledby="activity-5-heading">
         <div class="activity-header">
-          <h2 class="activity-title" id="activity-4-heading">Activity 4. Build the Sentences</h2>
-          <p class="activity-instruction">Click the words to place them in order and build sentences from the dialogue. Click a word in the sentence to remove it.</p>
+          <h2 class="activity-title" id="activity-5-heading">Activity 5. Build the Sentences</h2>
+          <p class="activity-instruction">Click and drop the words into the correct order to rebuild key sentences from the dialogue.</p>
         </div>
-        <div id="activity-4" data-activity="word-order">
-          <div class="arrange-item" data-answer='["I'm","a","marketing","specialist","."]'>
-            <h3>1. Sentence about Layla</h3>
+        <div id="activity-5" data-activity="word-order">
+          <div class="arrange-item" data-answer='["The","data","confirmed","what","we","had suspected","for a while."]'>
+            <h3>1. Reporting the main finding</h3>
             <div class="word-bank" aria-label="Word bank for sentence 1">
-              <button type="button" class="word-token" data-token="I'm">I'm</button>
-              <button type="button" class="word-token" data-token="a">a</button>
-              <button type="button" class="word-token" data-token="marketing">marketing</button>
-              <button type="button" class="word-token" data-token="specialist">specialist</button>
-              <button type="button" class="word-token" data-token=".">.</button>
+              <button type="button" class="word-token" data-token="The">The</button>
+              <button type="button" class="word-token" data-token="data">data</button>
+              <button type="button" class="word-token" data-token="confirmed">confirmed</button>
+              <button type="button" class="word-token" data-token="what">what</button>
+              <button type="button" class="word-token" data-token="we">we</button>
+              <button type="button" class="word-token" data-token="had suspected">had suspected</button>
+              <button type="button" class="word-token" data-token="for a while.">for a while.</button>
             </div>
             <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 1">
               <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
@@ -787,20 +860,22 @@
               <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
               <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
               <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
+              <button type="button" class="drop-slot" data-index="5" aria-label="Slot 6"></button>
+              <button type="button" class="drop-slot" data-index="6" aria-label="Slot 7"></button>
             </div>
           </div>
 
-          <div class="arrange-item" data-answer='["I","handle","all","our","social","media","campaigns","."]'>
-            <h3>2. Sentence about Layla's responsibilities</h3>
+          <div class="arrange-item" data-answer='["My","only","concern","is","that","it","might be","too slow."]'>
+            <h3>2. Flagging a risk</h3>
             <div class="word-bank" aria-label="Word bank for sentence 2">
-              <button type="button" class="word-token" data-token="I">I</button>
-              <button type="button" class="word-token" data-token="handle">handle</button>
-              <button type="button" class="word-token" data-token="all">all</button>
-              <button type="button" class="word-token" data-token="our">our</button>
-              <button type="button" class="word-token" data-token="social">social</button>
-              <button type="button" class="word-token" data-token="media">media</button>
-              <button type="button" class="word-token" data-token="campaigns">campaigns</button>
-              <button type="button" class="word-token" data-token=".">.</button>
+              <button type="button" class="word-token" data-token="My">My</button>
+              <button type="button" class="word-token" data-token="only">only</button>
+              <button type="button" class="word-token" data-token="concern">concern</button>
+              <button type="button" class="word-token" data-token="is">is</button>
+              <button type="button" class="word-token" data-token="that">that</button>
+              <button type="button" class="word-token" data-token="it">it</button>
+              <button type="button" class="word-token" data-token="might be">might be</button>
+              <button type="button" class="word-token" data-token="too slow.">too slow.</button>
             </div>
             <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 2">
               <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
@@ -814,18 +889,16 @@
             </div>
           </div>
 
-          <div class="arrange-item" data-answer='["I'm","in","charge","of","a","team","of","developers","."]'>
-            <h3>3. Sentence about Yousef's leadership</h3>
+          <div class="arrange-item" data-answer='["We","could","run","the workshops","first","to teach","the core skills."]'>
+            <h3>3. Planning the pilot</h3>
             <div class="word-bank" aria-label="Word bank for sentence 3">
-              <button type="button" class="word-token" data-token="I'm">I'm</button>
-              <button type="button" class="word-token" data-token="in">in</button>
-              <button type="button" class="word-token" data-token="charge">charge</button>
-              <button type="button" class="word-token" data-token="of">of</button>
-              <button type="button" class="word-token" data-token="a">a</button>
-              <button type="button" class="word-token" data-token="team">team</button>
-              <button type="button" class="word-token" data-token="of">of</button>
-              <button type="button" class="word-token" data-token="developers">developers</button>
-              <button type="button" class="word-token" data-token=".">.</button>
+              <button type="button" class="word-token" data-token="We">We</button>
+              <button type="button" class="word-token" data-token="could">could</button>
+              <button type="button" class="word-token" data-token="run">run</button>
+              <button type="button" class="word-token" data-token="the workshops">the workshops</button>
+              <button type="button" class="word-token" data-token="first">first</button>
+              <button type="button" class="word-token" data-token="to teach">to teach</button>
+              <button type="button" class="word-token" data-token="the core skills.">the core skills.</button>
             </div>
             <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 3">
               <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
@@ -835,69 +908,11 @@
               <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
               <button type="button" class="drop-slot" data-index="5" aria-label="Slot 6"></button>
               <button type="button" class="drop-slot" data-index="6" aria-label="Slot 7"></button>
-              <button type="button" class="drop-slot" data-index="7" aria-label="Slot 8"></button>
-              <button type="button" class="drop-slot" data-index="8" aria-label="Slot 9"></button>
-            </div>
-          </div>
-
-          <div class="arrange-item" data-answer='["What","do","you","do","?"]'>
-            <h3>4. Question to start a conversation</h3>
-            <div class="word-bank" aria-label="Word bank for sentence 4">
-              <button type="button" class="word-token" data-token="What">What</button>
-              <button type="button" class="word-token" data-token="do">do</button>
-              <button type="button" class="word-token" data-token="you">you</button>
-              <button type="button" class="word-token" data-token="do">do</button>
-              <button type="button" class="word-token" data-token="?">?</button>
-            </div>
-            <div class="drop-zone" role="list" aria-label="Arrange the words to form sentence 4">
-              <button type="button" class="drop-slot" data-index="0" aria-label="Slot 1"></button>
-              <button type="button" class="drop-slot" data-index="1" aria-label="Slot 2"></button>
-              <button type="button" class="drop-slot" data-index="2" aria-label="Slot 3"></button>
-              <button type="button" class="drop-slot" data-index="3" aria-label="Slot 4"></button>
-              <button type="button" class="drop-slot" data-index="4" aria-label="Slot 5"></button>
             </div>
           </div>
 
           <div class="controls">
             <button type="button" class="activity-btn" data-action="check">Check sentences</button>
-            <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
-          </div>
-          <p class="feedback" role="status"></p>
-        </div>
-      </section>
-
-      <section class="activity-section" aria-labelledby="activity-5-heading">
-        <div class="activity-header">
-          <h2 class="activity-title" id="activity-5-heading">Activity 5. Get Ready to Speak: Word Stress</h2>
-          <p class="activity-instruction">Imagine you are listening to the pronunciation of each job title. Notice which part is stressed. Click a word, then click a category to place it. Click a word in a category to remove it.</p>
-        </div>
-        <div id="activity-5" data-activity="classify">
-          <div class="word-bank" aria-label="Word bank for stress practice">
-            <button type="button" class="word-token" data-token="developer">developer</button>
-            <button type="button" class="word-token" data-token="manager">manager</button>
-            <button type="button" class="word-token" data-token="specialist">specialist</button>
-            <button type="button" class="word-token" data-token="analyst">analyst</button>
-          </div>
-          <div class="classify-columns">
-            <div class="classify-column" data-correct='["manager","specialist","analyst"]'>
-              <p class="category-header">Stress on the FIRST syllable (O o o)</p>
-              <div class="classify-drop-zone" role="list" aria-label="Words with stress on the first syllable">
-                <button type="button" class="classify-slot" data-index="0" aria-label="First syllable slot 1"></button>
-                <button type="button" class="classify-slot" data-index="1" aria-label="First syllable slot 2"></button>
-                <button type="button" class="classify-slot" data-index="2" aria-label="First syllable slot 3"></button>
-              </div>
-            </div>
-            <div class="classify-column" data-correct='["developer"]'>
-              <p class="category-header">Stress on the SECOND syllable (o O o)</p>
-              <div class="classify-drop-zone" role="list" aria-label="Words with stress on the second syllable">
-                <button type="button" class="classify-slot" data-index="0" aria-label="Second syllable slot 1"></button>
-                <button type="button" class="classify-slot" data-index="1" aria-label="Second syllable slot 2"></button>
-                <button type="button" class="classify-slot" data-index="2" aria-label="Second syllable slot 3"></button>
-              </div>
-            </div>
-          </div>
-          <div class="controls">
-            <button type="button" class="activity-btn" data-action="check">Check stress patterns</button>
             <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
           </div>
           <p class="feedback" role="status"></p>
@@ -987,7 +1002,7 @@
     }
 
     function checkMultipleChoice(container) {
-      const answers = { q1: 'b', q2: 'c', q3: 'b' };
+      const answers = { q1: 'c', q2: 'b' };
       const keys = Object.keys(answers);
       let allAnswered = true;
       let correctCount = 0;
@@ -1010,8 +1025,8 @@
 
       const isPerfect = correctCount === keys.length;
       const message = isPerfect
-        ? 'Great job! You understood the conversation.'
-        : 'Almost there. Review the dialogue and try again.';
+        ? 'Great job! You captured the main ideas from the dialogue.'
+        : 'Almost there. Review the conversation and try again.';
       showFeedback(container, message, isPerfect);
     }
 
@@ -1023,8 +1038,8 @@
       }
       const allCorrect = selects.every((select) => select.value === select.dataset.answer);
       const message = allCorrect
-        ? 'Excellent! Every match is correct.'
-        : 'Some matches need review. Think about what each person does.';
+        ? 'Excellent! You matched each term with the correct definition.'
+        : 'Some matches need review. Re-read the dialogue and try again.';
       showFeedback(container, message, allCorrect);
     }
 
@@ -1036,8 +1051,8 @@
       }
       const allCorrect = selects.every((select) => select.value === select.dataset.answer);
       const message = allCorrect
-        ? 'Well done! Your sentences sound natural.'
-        : 'Review the dialogue and adjust your choices.';
+        ? 'Well done! You used the past perfect accurately.'
+        : 'Review the timeline of events and adjust your choices.';
       showFeedback(container, message, allCorrect);
     }
 
@@ -1084,13 +1099,6 @@
     }
 
     function checkClassify(container) {
-      const tokens = Array.from(container.querySelectorAll('.word-token'));
-      const unplaced = tokens.some((token) => !token.disabled);
-      if (unplaced) {
-        showFeedback(container, 'Place every job title into a stress category.', false);
-        return;
-      }
-
       const columns = Array.from(container.querySelectorAll('.classify-column'));
       let allCorrect = true;
 
@@ -1114,8 +1122,8 @@
       });
 
       const message = allCorrect
-        ? 'Great ear! You sorted the stress patterns correctly.'
-        : 'Listen again and move any words that are in the wrong column.';
+        ? 'Great work! You sorted the phrases into the right functions.'
+        : 'Reconsider where each phrase fits best and try again.';
       showFeedback(container, message, allCorrect);
     }
 
