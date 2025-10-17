@@ -21,6 +21,7 @@
       --border-sage: rgba(122,132,113,0.20);
       --hover-sage: rgba(156,175,136,0.15);
       --deep-forest: #3E4A3A;
+      --primary-forest: #3F4D39;
       --font-display: 'Questrial', system-ui, sans-serif;
       --font-body: 'Nunito', system-ui, sans-serif;
       --font-size-adjustment: 0pt;
@@ -108,7 +109,91 @@
       letter-spacing: 0.06em;
     }
 
-    .deck-workspace {
+    
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .toolbar-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--primary-sage);
+      color: #fff;
+      box-shadow: var(--shadow-1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toolbar-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .toolbar-btn.secondary {
+      background: var(--primary-forest);
+    }
+
+    .toolbar-btn.ghost {
+      background: var(--soft-white);
+      color: var(--primary-forest);
+      border: 1px solid var(--border-sage);
+      box-shadow: none;
+    }
+
+    .toolbar-btn.ghost:hover {
+      box-shadow: var(--shadow-1);
+    }
+
+    .toolbar-select {
+      border-radius: 999px;
+      border: 1px solid var(--border-sage);
+      background: #fff;
+      padding: 0.45rem 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--primary-forest);
+      cursor: pointer;
+    }
+
+    .toolbar-select:focus {
+      outline: 2px solid var(--primary-sage);
+      outline-offset: 2px;
+    }
+
+    .highlight-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.65);
+      box-shadow: var(--shadow-1);
+    }
+
+    .highlight-controls i {
+      color: var(--primary-forest);
+    }
+
+    .text-highlight {
+      background-color: var(--highlight-color, rgba(249,226,125,0.85));
+      padding: 0.05em 0.15em;
+      border-radius: 0.35em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      transition: background-color 200ms ease;
+    }
+.deck-workspace {
       height: calc(100dvh - var(--toolbar-h));
       padding: var(--workspace-pad);
       display: grid;
@@ -704,6 +789,249 @@
     .slide-nav-prev { left: -24px; }
     .slide-nav-next { right: -24px; }
 
+    
+
+    .blank-slide {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+    }
+
+    .blank-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .blank-canvas {
+      flex: 1;
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(122,132,113,0.35);
+      background: rgba(254,252,247,0.8);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 320px;
+    }
+
+    .blank-hint {
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+    }
+
+    .textbox {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.35);
+      box-shadow: var(--shadow-1);
+      background: var(--soft-white);
+      width: clamp(240px, 35%, 420px);
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      cursor: move;
+      touch-action: none;
+    }
+
+    .textbox-handle {
+      padding: 0.5rem 0.75rem;
+      background: rgba(122,132,113,0.16);
+      border-bottom: 1px solid rgba(122,132,113,0.2);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      cursor: grab;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+    }
+
+    .textbox-body {
+      flex: 1;
+      padding: 0.75rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      outline: none;
+      cursor: text;
+      overflow: auto;
+    }
+
+    .textbox-body:focus {
+      box-shadow: inset 0 0 0 2px rgba(122,132,113,0.35);
+    }
+
+    .textbox-remove {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.35rem;
+      border: none;
+      background: rgba(254,252,247,0.8);
+      color: var(--forest-shadow);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-1);
+    }
+
+    .textbox-remove:hover {
+      color: #C62828;
+    }
+
+    .mindmap {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(122,132,113,0.35);
+      background: linear-gradient(135deg, rgba(248,246,240,0.92), rgba(236,231,220,0.75));
+      box-shadow: var(--shadow-1);
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mindmap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mindmap-title {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      margin: 0;
+      color: var(--deep-forest);
+    }
+
+    .mindmap-remove {
+      border: none;
+      background: transparent;
+      color: var(--forest-shadow);
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .mindmap-remove:hover {
+      color: #C62828;
+    }
+
+    .mindmap-center {
+      align-self: center;
+      min-width: 180px;
+      padding: 0.9rem 1.1rem;
+      border-radius: 999px;
+      background: var(--primary-sage);
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      font-family: var(--font-display);
+      letter-spacing: 0.03em;
+      outline: none;
+    }
+
+    .mindmap-center:focus {
+      box-shadow: 0 0 0 3px rgba(156,175,136,0.35);
+    }
+
+    .mindmap-branches {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .mindmap-branch {
+      position: relative;
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius);
+      background: rgba(254,252,247,0.95);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .mindmap-branch textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 64px;
+    }
+
+    .branch-remove {
+      align-self: flex-end;
+      border: none;
+      background: transparent;
+      color: var(--forest-shadow);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .branch-remove:hover {
+      color: #C62828;
+    }
+
+    .mindmap-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .mindmap-form input {
+      flex: 1 1 220px;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+    }
+
+    .mindmap-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      background: var(--secondary-sage);
+      color: var(--deep-forest);
+      box-shadow: var(--shadow-1);
+    }
+
+    .mindmap-form button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
     @media (max-width: 1200px) {
       .deck-workspace { padding: 12px; }
       .slide-stage { width: 100%; }
@@ -757,6 +1085,41 @@
         <span>Organic Sage System · B2 Lesson</span>
       </div>
       <div id="slide-counter" class="slide-counter">1 / 19</div>
+      <div class="toolbar-actions">
+        <button id="save-state-btn" class="toolbar-btn" type="button">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Save Deck
+        </button>
+        <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+          <i class="fa-solid fa-file-import"></i>
+          Load Deck
+        </button>
+        <input
+          id="load-state-input"
+          class="sr-only"
+          type="file"
+          accept="application/json"
+        />
+        <div class="highlight-controls" role="group" aria-label="Highlight text">
+          <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+          <label class="sr-only" for="highlight-color">Highlight colour</label>
+          <select id="highlight-color" class="toolbar-select">
+            <option value="#F9E27D">Sunbeam</option>
+            <option value="#A5D6A7">Meadow</option>
+            <option value="#FFCCBC">Coral</option>
+          </select>
+          <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+            Apply
+          </button>
+          <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">
+            Clear
+          </button>
+        </div>
+        <button id="add-slide-btn" class="toolbar-btn" type="button">
+          <i class="fa-solid fa-plus"></i>
+          Add Blank Slide
+        </button>
+      </div>
     </header>
 
     <main class="deck-workspace">
@@ -1223,169 +1586,1645 @@
     </main>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const counter = document.getElementById('slide-counter');
+  <script type="module">
+      const stageViewport = document.querySelector(".stage-viewport");
+      const nextBtn = stageViewport?.querySelector(".slide-nav-next");
+      const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
+      const counter = document.getElementById("slide-counter");
+      const addSlideBtn = document.getElementById("add-slide-btn");
+      const saveStateBtn = document.getElementById("save-state-btn");
+      const loadStateBtn = document.getElementById("load-state-btn");
+      const loadStateInput = document.getElementById("load-state-input");
+      const highlightBtn = document.getElementById("highlight-btn");
+      const highlightColorSelect = document.getElementById("highlight-color");
+      const removeHighlightBtn = document.getElementById("remove-highlight-btn");
+
+      const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
+      const remoteImageHydrations = new WeakMap();
+
+      function getRemoteImageContainer(img) {
+        if (!(img instanceof HTMLElement)) {
+          return null;
+        }
+        return (
+          img.closest(".bg-media") ??
+          img.closest(".context-image") ??
+          img.parentElement
+        );
+      }
+
+      function applyRemoteImageFallback(img, error) {
+        if (error) {
+          console.warn(
+            `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? "unknown"}`,
+            error,
+          );
+        }
+        const container = getRemoteImageContainer(img);
+        if (container) {
+          container.classList.add("remote-image-fallback");
+        }
+        img.dataset.remoteHydrated = "failed";
+      }
+
+      async function hydrateRemoteImage(img) {
+        if (!(img instanceof HTMLImageElement)) {
+          return;
+        }
+
+        const remoteSrc = img.dataset.remoteSrc;
+        if (!remoteSrc) {
+          return;
+        }
+
+        if (typeof fetch !== "function") {
+          applyRemoteImageFallback(img, new Error("Fetch API is unavailable"));
+          return;
+        }
+
+        const hydrationState = img.dataset.remoteHydrated;
+        if (hydrationState === "success" || hydrationState === "failed") {
+          return;
+        }
+
+        if (remoteImageHydrations.has(img)) {
+          return remoteImageHydrations.get(img);
+        }
+
+        const hydrationPromise = (async () => {
+          try {
+            await new Promise((resolve, reject) => {
+              function cleanup() {
+                img.removeEventListener("load", handleLoad);
+                img.removeEventListener("error", handleError);
+              }
+
+              function handleLoad() {
+                cleanup();
+                resolve();
+              }
+
+              function handleError(err) {
+                cleanup();
+                reject(new Error("Image failed to load from src", { cause: err }));
+              }
+
+              img.addEventListener("load", handleLoad, { once: true });
+              img.addEventListener("error", handleError, { once: true });
+              img.removeAttribute("loading");
+              img.src = remoteSrc; // The key change is here
+            });
+
+            img.dataset.remoteHydrated = "success";
+          } catch (error) {
+            applyRemoteImageFallback(img, error);
+          } finally {
+            remoteImageHydrations.delete(img);
+          }
+        })();
+
+        remoteImageHydrations.set(img, hydrationPromise);
+        return hydrationPromise;
+      }
+
+      async function hydrateRemoteImages(root = document) {
+        if (!root) {
+          return;
+        }
+
+        const scope =
+          root instanceof Element || root instanceof Document ? root : document;
+        const queryFn =
+          typeof scope.querySelectorAll === "function"
+            ? scope.querySelectorAll.bind(scope)
+            : null;
+        const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
+
+        if (!remoteImages.length) {
+          return;
+        }
+
+        await Promise.all(
+          remoteImages.map((img) => {
+            const hydration = hydrateRemoteImage(img);
+            if (hydration && typeof hydration.then === "function") {
+              return hydration.catch((error) => {
+                console.warn("Remote image hydration failed", error);
+              });
+            }
+            return undefined;
+          }),
+        );
+      }
+
+      let slides = [];
       let currentSlideIndex = 0;
-      const totalSlides = slides.length;
+      let mindMapId = 0;
+
+      function refreshSlides() {
+        slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
+      }
+
+      function updateCounter() {
+        if (!counter) return;
+        const total = slides.length;
+        const current = total ? currentSlideIndex + 1 : 0;
+        counter.textContent = `${current} / ${total}`;
+      }
 
       function showSlide(index) {
-        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
-        counter.textContent = `${index + 1} / ${totalSlides}`;
+        if (!slides.length) return;
+        currentSlideIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
+        });
+        updateCounter();
       }
 
       function navigate(direction) {
-        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
-        showSlide(currentSlideIndex);
+        showSlide(currentSlideIndex + direction);
       }
 
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
+      function setupNavigation() {
+        nextBtn?.addEventListener("click", () => navigate(1));
+        prevBtn?.addEventListener("click", () => navigate(-1));
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          navigate(1);
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          navigate(-1);
+        document.addEventListener("keydown", (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement) {
+            if (
+              target.tagName === "INPUT" ||
+              target.tagName === "TEXTAREA" ||
+              target.isContentEditable
+            ) {
+              return;
+            }
+          }
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            navigate(1);
+          }
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            navigate(-1);
+          }
+        });
+      }
+
+      function addBlankSlide() {
+        if (!stageViewport) return;
+        const newSlide = createBlankSlide();
+        const insertionPoint = prevBtn ?? nextBtn ?? null;
+        stageViewport.insertBefore(newSlide, insertionPoint);
+        attachBlankSlideEvents(newSlide);
+        refreshSlides();
+        showSlide(slides.length - 1);
+      }
+
+      function createBlankSlide() {
+        const slide = document.createElement("div");
+        slide.className = "slide-stage hidden";
+        slide.dataset.type = "blank";
+        slide.innerHTML = `
+    <div class="slide-inner">
+      <div class="blank-slide">
+        <div class="blank-controls">
+          <button class="activity-btn" type="button" data-action="add-textbox">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Add Textbox
+          </button>
+          <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+            <i class="fa-solid fa-diagram-project"></i>
+            Add Mind Map
+          </button>
+        </div>
+        <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
+        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
+      </div>
+    </div>
+  `;
+        return slide;
+      }
+
+      function attachBlankSlideEvents(slide) {
+        const canvas = slide.querySelector(".blank-canvas");
+        const hint = slide.querySelector('[data-role="hint"]');
+        const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
+        const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
+
+        if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+          return;
         }
-      });
 
-      showSlide(currentSlideIndex);
+        const DEFAULT_HINT =
+          "Add textboxes for free typing or build a mind map to capture relationships.";
+        const TEXTBOX_HINT =
+          "Drag your textboxes into place and double-click to edit the content.";
+        const MINDMAP_HINT =
+          "Mind map ready. Add branches to capture ideas and connections.";
+
+        function updateHintForCanvas() {
+          if (!(hint instanceof HTMLElement)) return;
+          if (canvas.querySelector(".mindmap")) {
+            hint.textContent = MINDMAP_HINT;
+          } else if (canvas.querySelector(".textbox")) {
+            hint.textContent = TEXTBOX_HINT;
+          } else {
+            hint.textContent = DEFAULT_HINT;
+          }
+        }
+
+        addTextboxBtn?.addEventListener("click", () => {
+          const textbox = createTextbox({ onRemove: updateHintForCanvas });
+          canvas.appendChild(textbox);
+          positionTextbox(textbox, canvas);
+          updateHintForCanvas();
+        });
+
+        addMindmapBtn?.addEventListener("click", () => {
+          if (canvas.querySelector(".mindmap")) {
+            const existing = canvas.querySelector(".mindmap");
+            existing?.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+          }
+          const mindmap = createMindMap(() => {
+            updateHintForCanvas();
+          });
+          initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
+          canvas.appendChild(mindmap);
+          updateHintForCanvas();
+        });
+
+        canvas
+          .querySelectorAll(".textbox")
+          .forEach((textbox) =>
+            initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
+          );
+
+        canvas
+          .querySelectorAll(".mindmap")
+          .forEach((mindmap) =>
+            initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
+          );
+
+        updateHintForCanvas();
+      }
+
+      function positionTextbox(textbox, canvas) {
+        const count = canvas.querySelectorAll(".textbox").length - 1;
+        const offset = 24 * count;
+        textbox.style.left = `${offset}px`;
+        textbox.style.top = `${offset}px`;
+      }
+
+      function createTextbox({ onRemove } = {}) {
+        const textbox = document.createElement("div");
+        textbox.className = "textbox";
+        textbox.innerHTML = `
+    <button type="button" class="textbox-remove" aria-label="Remove textbox">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="textbox-handle">Textbox</div>
+    <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
+  `;
+        initialiseTextbox(textbox, { onRemove });
+        return textbox;
+      }
+
+      function initialiseTextbox(textbox, { onRemove } = {}) {
+        if (!(textbox instanceof HTMLElement)) {
+          return textbox;
+        }
+
+        textbox.__deckTextboxOnRemove = onRemove;
+        if (textbox.__deckTextboxInitialised) {
+          return textbox;
+        }
+        textbox.__deckTextboxInitialised = true;
+
+        const removeBtn = textbox.querySelector(".textbox-remove");
+        removeBtn?.addEventListener("click", () => {
+          textbox.remove();
+          if (typeof textbox.__deckTextboxOnRemove === "function") {
+            textbox.__deckTextboxOnRemove();
+          }
+        });
+
+        const body = textbox.querySelector(".textbox-body");
+        body?.addEventListener("dblclick", () => {
+          if (body instanceof HTMLElement) {
+            body.focus();
+          }
+        });
+
+        makeDraggable(textbox);
+        return textbox;
+      }
+
+      function makeDraggable(element) {
+        if (!(element instanceof HTMLElement)) return;
+        if (element.__deckDraggableInitialised) {
+          return;
+        }
+        element.__deckDraggableInitialised = true;
+
+        const handle = element.querySelector(".textbox-handle") ?? element;
+        let pointerId = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        handle.addEventListener("pointerdown", (event) => {
+          const canvas = element.parentElement;
+          if (!(canvas instanceof HTMLElement)) return;
+          pointerId = event.pointerId;
+          try {
+            element.setPointerCapture(pointerId);
+          } catch (error) {
+            // ignore when pointer capture is not supported
+          }
+          const elementRect = element.getBoundingClientRect();
+          offsetX = event.clientX - elementRect.left;
+          offsetY = event.clientY - elementRect.top;
+          element.dataset.dragging = "true";
+          event.preventDefault();
+        });
+
+        element.addEventListener("pointermove", (event) => {
+          if (element.dataset.dragging !== "true" || event.pointerId !== pointerId)
+            return;
+          const canvas = element.parentElement;
+          if (!(canvas instanceof HTMLElement)) return;
+          const canvasRect = canvas.getBoundingClientRect();
+          const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
+          const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
+          const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
+          const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
+          const clampedX = Math.min(Math.max(0, rawX), maxX);
+          const clampedY = Math.min(Math.max(0, rawY), maxY);
+          element.style.left = `${clampedX}px`;
+          element.style.top = `${clampedY}px`;
+        });
+
+        function clearPointerState(event) {
+          if (event.pointerId !== pointerId) return;
+          delete element.dataset.dragging;
+          if (pointerId !== null) {
+            try {
+              element.releasePointerCapture(pointerId);
+            } catch (error) {
+              // ignore release errors when pointer capture is not active
+            }
+          }
+          pointerId = null;
+        }
+
+        element.addEventListener("pointerup", clearPointerState);
+        element.addEventListener("pointercancel", clearPointerState);
+      }
+
+      function createMindMap(onRemove) {
+        const container = document.createElement("section");
+        container.className = "mindmap";
+        const branchInputId = `mindmap-branch-${++mindMapId}`;
+        container.innerHTML = `
+    <div class="mindmap-header">
+      <h3 class="mindmap-title">Mind Map</h3>
+      <button type="button" class="mindmap-remove">
+        <i class="fa-solid fa-trash-can"></i>
+        Remove
+      </button>
+    </div>
+    <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
+    <div class="mindmap-branches" aria-live="polite"></div>
+    <form class="mindmap-form">
+      <label class="sr-only" for="${branchInputId}">New branch label</label>
+      <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
+      <button type="submit">
+        <i class="fa-solid fa-plus"></i>
+        Add Branch
+      </button>
+    </form>
+  `;
+        const branches = container.querySelector(".mindmap-branches");
+        if (branches && !branches.querySelector(".mindmap-branch")) {
+          const defaultBranch = createMindMapBranch("Add supporting detail...");
+          branches.appendChild(defaultBranch);
+        }
+
+        initialiseMindMap(container, { onRemove });
+        return container;
+      }
+
+      function initialiseMindMap(container, { onRemove } = {}) {
+        if (!(container instanceof HTMLElement)) {
+          return container;
+        }
+
+        container.__deckMindmapOnRemove = onRemove;
+        if (!container.__deckMindmapInitialised) {
+          container.__deckMindmapInitialised = true;
+          const removeBtn = container.querySelector(".mindmap-remove");
+          removeBtn?.addEventListener("click", () => {
+            container.remove();
+            if (typeof container.__deckMindmapOnRemove === "function") {
+              container.__deckMindmapOnRemove();
+            }
+          });
+        }
+
+        const form = container.querySelector(".mindmap-form");
+        const input = container.querySelector(".mindmap-form input");
+        const branches = container.querySelector(".mindmap-branches");
+
+        if (form && !form.__deckSubmitInitialised) {
+          form.__deckSubmitInitialised = true;
+          form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!branches || !input) return;
+            const value = input.value.trim();
+            if (!value) return;
+            const newBranch = createMindMapBranch(value);
+            branches.appendChild(newBranch);
+            initialiseMindMapBranch(newBranch);
+            input.value = "";
+            input.focus();
+          });
+        }
+
+        container
+          .querySelectorAll(".mindmap-branch")
+          .forEach((branch) => initialiseMindMapBranch(branch));
+
+        return container;
+      }
+
+      function createMindMapBranch(text) {
+        const branch = document.createElement("div");
+        branch.className = "mindmap-branch";
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("aria-label", "Mind map branch");
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "branch-remove";
+        removeBtn.textContent = "Remove";
+        branch.append(textarea, removeBtn);
+        initialiseMindMapBranch(branch);
+        return branch;
+      }
+
+      function initialiseMindMapBranch(branch) {
+        if (!(branch instanceof HTMLElement)) {
+          return branch;
+        }
+
+        if (branch.__deckMindmapBranchInitialised) {
+          return branch;
+        }
+        branch.__deckMindmapBranchInitialised = true;
+        const removeBtn = branch.querySelector(".branch-remove");
+        removeBtn?.addEventListener("click", () => {
+          branch.remove();
+        });
+        return branch;
+      }
+
+      function recalibrateMindMapCounter() {
+        if (!stageViewport) return;
+        const inputs = stageViewport.querySelectorAll(
+          '.mindmap-form input[id^="mindmap-branch-"]',
+        );
+        inputs.forEach((input) => {
+          if (!(input instanceof HTMLInputElement)) return;
+          const match = input.id.match(/mindmap-branch-(\d+)/);
+          if (match) {
+            const value = Number.parseInt(match[1], 10);
+            if (!Number.isNaN(value)) {
+              mindMapId = Math.max(mindMapId, value);
+            }
+          }
+        });
+      }
+
+      function getDeckState() {
+        refreshSlides();
+        return {
+          version: 1,
+          currentSlideIndex,
+          slides: slides.map((slide) => slide.outerHTML),
+        };
+      }
+
+      function downloadDeckState() {
+        try {
+          const state = getDeckState();
+          const blob = new Blob([JSON.stringify(state, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = "deck-state.json";
+          anchor.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("Failed to save deck state", error);
+          window.alert(
+            "Sorry, we couldn't save the deck right now. Please try again.",
+          );
+        }
+      }
+
+      function parseDeckState(raw) {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.slides)) {
+          throw new Error("Invalid deck state structure");
+        }
+        return parsed;
+      }
+
+      function applyDeckState(state) {
+        if (!stageViewport || !state || !Array.isArray(state.slides)) {
+          throw new Error("Deck state does not include slides");
+        }
+
+        const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
+        const fragment = document.createDocumentFragment();
+
+        state.slides.forEach((slideHTML) => {
+          if (typeof slideHTML !== "string") {
+            return;
+          }
+          const template = document.createElement("template");
+          template.innerHTML = slideHTML.trim();
+          const slide = template.content.firstElementChild;
+          if (slide instanceof HTMLElement && slide.classList.contains("slide-stage")) {
+            fragment.appendChild(slide);
+          }
+        });
+
+        stageViewport.innerHTML = "";
+        stageViewport.appendChild(fragment);
+        navButtons.forEach((button) => stageViewport.appendChild(button));
+
+        refreshSlides();
+        slides
+          .filter((slide) => slide.dataset.type === "blank")
+          .forEach((slide) => attachBlankSlideEvents(slide));
+
+        initialiseActivities();
+        recalibrateMindMapCounter();
+
+        if (slides.length) {
+          const requestedIndex =
+            typeof state.currentSlideIndex === "number"
+              ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
+              : 0;
+          showSlide(requestedIndex);
+        } else {
+          updateCounter();
+        }
+
+        hydrateRemoteImages(stageViewport).catch((error) => {
+          console.warn("Remote image hydration failed after loading state", error);
+        });
+      }
+
+      function handleStateFileSelection(event) {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || !input.files?.length) {
+          return;
+        }
+
+        const [file] = input.files;
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          try {
+            const text = typeof reader.result === "string" ? reader.result : "";
+            const state = parseDeckState(text);
+            applyDeckState(state);
+          } catch (error) {
+            console.error("Failed to load deck state", error);
+            window.alert(
+              "The selected file couldn't be loaded. Please choose a valid deck state JSON file.",
+            );
+          } finally {
+            input.value = "";
+          }
+        });
+
+        reader.addEventListener("error", () => {
+          console.error("Failed to read deck state file", reader.error);
+          window.alert(
+            "We couldn't read that file. Please try again with a different JSON file.",
+          );
+          input.value = "";
+        });
+
+        reader.readAsText(file);
+      }
+
+      function findSlideForNode(node) {
+        if (!node) return null;
+        if (node instanceof HTMLElement) {
+          return node.closest(".slide-stage");
+        }
+        if (node instanceof Text) {
+          return node.parentElement?.closest(".slide-stage") ?? null;
+        }
+        return null;
+      }
+
+      function applyHighlight(color) {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+          window.alert("Select some text in a slide before applying a highlight.");
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+        const startSlide = findSlideForNode(range.startContainer);
+        const endSlide = findSlideForNode(range.endContainer);
+
+        if (!startSlide || !endSlide || startSlide !== endSlide) {
+          window.alert("Highlights must stay within a single slide.");
+          return;
+        }
+
+        if (!stageViewport?.contains(startSlide)) {
+          window.alert("Please highlight text within the slide area.");
+          return;
+        }
+
+        try {
+          const contents = range.extractContents();
+          const textSample = contents.textContent?.trim();
+          if (!textSample) {
+            window.alert("Select some text to highlight first.");
+            range.insertNode(contents);
+            return;
+          }
+
+          const highlight = document.createElement("mark");
+          highlight.className = "text-highlight";
+          highlight.dataset.color = color;
+          highlight.style.setProperty("--highlight-color", color);
+          highlight.appendChild(contents);
+          range.insertNode(highlight);
+
+          selection.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.selectNodeContents(highlight);
+          selection.addRange(newRange);
+        } catch (error) {
+          console.error("Failed to apply highlight", error);
+          window.alert(
+            "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
+          );
+        }
+      }
+
+      function removeHighlight() {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        let container = selection.anchorNode;
+        if (container instanceof Text) {
+          container = container.parentElement;
+        }
+
+        const highlight =
+          container instanceof HTMLElement ? container.closest(".text-highlight") : null;
+
+        if (!highlight || !stageViewport?.contains(highlight)) {
+          window.alert("Place your cursor inside a highlight to clear it.");
+          return;
+        }
+
+        const parent = highlight.parentNode;
+        if (!parent) {
+          return;
+        }
+
+        while (highlight.firstChild) {
+          parent.insertBefore(highlight.firstChild, highlight);
+        }
+        highlight.remove();
+        if (parent instanceof HTMLElement) {
+          parent.normalize();
+        }
+        selection.removeAllRanges();
+      }
+
+      function setupUnscramble(activityEl) {
+        const inputs = activityEl.querySelectorAll(".unscramble-input");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          inputs.forEach((input) => {
+            const answer = input.dataset.answer
+              ?.trim()
+              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+              .replace(/\s+/g, " ")
+              .toLowerCase();
+            const value = input.value
+              .trim()
+              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+              .replace(/\s+/g, " ")
+              .toLowerCase();
+            if (answer && answer === value) {
+              input.classList.add("correct");
+              input.classList.remove("incorrect");
+              correctCount++;
+            } else {
+              input.classList.add("incorrect");
+              input.classList.remove("correct");
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${inputs.length} correct.`;
+            feedback.className =
+              correctCount === inputs.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          inputs.forEach((input) => {
+            input.value = "";
+            input.classList.remove("correct", "incorrect");
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
 
       function setupMatching(activityEl) {
-        const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
+        const options = Array.from(activityEl.querySelectorAll(".matching-option"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                const isCorrect = select.value === option.dataset.correct;
-                option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === options.length) {
-                feedback.textContent = 'Excellent! Every match is correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                select.value = '';
-                option.style.borderColor = 'rgba(122,132,113,0.16)';
-                option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          options.forEach((option) => {
+            const select = option.querySelector("select");
+            if (!select) return;
+            const correctValue = option.dataset.correct ?? option.dataset.answer ?? "";
+            const isCorrect = select.value === correctValue;
+            const hasResponse = select.value !== "";
+            option.style.borderColor = isCorrect
+              ? "#2E7D32"
+              : hasResponse
+              ? "#C62828"
+              : "rgba(122,132,113,0.16)";
+            option.style.background = isCorrect
+              ? "rgba(46,125,50,0.12)"
+              : hasResponse
+              ? "rgba(198,40,40,0.12)"
+              : "color-mix(in srgb, var(--warm-cream) 60%, transparent)";
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === options.length) {
+              feedback.textContent = "Excellent! Every match is correct.";
+              feedback.className = "feedback-msg success";
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
+              feedback.className = "feedback-msg error";
+            }
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          options.forEach((option) => {
+            const select = option.querySelector("select");
+            if (select) {
+              select.value = "";
+            }
+            option.style.borderColor = "rgba(122,132,113,0.16)";
+            option.style.background =
+              "color-mix(in srgb, var(--warm-cream) 60%, transparent)";
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
           }
         });
       }
 
       function setupMcGrammar(activityEl) {
-        const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
+        const cards = Array.from(activityEl.querySelectorAll(".quiz-card"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                const isCorrect = select.value === card.dataset.correct;
-                card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === cards.length) {
-                feedback.textContent = 'Great job! All answers are correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                select.value = '';
-                card.style.borderColor = 'rgba(122,132,113,0.2)';
-                card.style.background = 'var(--soft-white)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (!select) return;
+            const correctValue = card.dataset.answer ?? card.dataset.correct ?? "";
+            const isCorrect = select.value === correctValue;
+            const hasResponse = select.value !== "";
+            card.classList.toggle("correct", isCorrect);
+            card.classList.toggle("incorrect", hasResponse && !isCorrect);
+            card.style.borderColor = isCorrect
+              ? "#2E7D32"
+              : hasResponse
+              ? "#C62828"
+              : "rgba(122,132,113,0.2)";
+            card.style.background = isCorrect
+              ? "rgba(46,125,50,0.12)"
+              : hasResponse
+              ? "rgba(198,40,40,0.12)"
+              : "var(--soft-white)";
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === cards.length) {
+              feedback.textContent = "Great job! All answers are correct.";
+              feedback.className = "feedback-msg success";
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
+              feedback.className = "feedback-msg error";
+            }
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (select) {
+              select.value = "";
+            }
+            card.classList.remove("correct", "incorrect");
+            card.style.borderColor = "rgba(122,132,113,0.2)";
+            card.style.background = "var(--soft-white)";
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
           }
         });
       }
 
-      function setupHighlight(activityEl) {
-        const textEl = activityEl.querySelector('.highlight-text');
+      function setupMcQuiz(activityEl) {
+        const cards = Array.from(activityEl.querySelectorAll(".quiz-card"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (!select) return;
+            const isCorrect = select.value === card.dataset.correct;
+            const hasResponse = select.value !== "";
+            card.style.borderColor = isCorrect
+              ? "#2E7D32"
+              : hasResponse
+              ? "#C62828"
+              : "rgba(122,132,113,0.2)";
+            card.style.background = isCorrect
+              ? "rgba(46,125,50,0.12)"
+              : hasResponse
+              ? "rgba(198,40,40,0.12)"
+              : "var(--soft-white)";
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === cards.length) {
+              feedback.textContent = "Great job! All answers are correct.";
+              feedback.className = "feedback-msg success";
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
+              feedback.className = "feedback-msg error";
+            }
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          cards.forEach((card) => {
+            const select = card.querySelector("select");
+            if (select) {
+              select.value = "";
+            }
+            card.style.borderColor = "rgba(122,132,113,0.2)";
+            card.style.background = "var(--soft-white)";
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupClickPlacement(activityEl) {
+        const dropZones = Array.from(activityEl.querySelectorAll(".drop-zone"));
+        const tokens = Array.from(activityEl.querySelectorAll(".click-token"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+        let activeToken = null;
+
+        dropZones.forEach((zone, index) => {
+          if (!zone.dataset.zoneId) {
+            zone.dataset.zoneId = `zone-${index}-${Math.random()
+              .toString(16)
+              .slice(2, 6)}`;
+          }
+          if (!zone.dataset.placeholder) {
+            zone.dataset.placeholder = zone.textContent?.trim() || "Select";
+          }
+          zone.dataset.current = zone.dataset.current || "";
+          zone.addEventListener("click", () => {
+            if (activeToken) {
+              if (
+                activeToken.dataset.assigned === "true" &&
+                activeToken.dataset.zoneId
+              ) {
+                const previousZone = dropZones.find(
+                  (candidate) => candidate.dataset.zoneId === activeToken.dataset.zoneId,
+                );
+                if (previousZone) {
+                  previousZone.dataset.current = "";
+                  previousZone.innerHTML = previousZone.dataset.placeholder ?? "";
+                  previousZone.classList.remove(
+                    "filled",
+                    "correct",
+                    "incorrect",
+                    "selected",
+                  );
+                  previousZone.classList.add("placeholder");
+                }
+              }
+
+              if (zone.dataset.current) {
+                const assignedToken = tokens.find(
+                  (token) => token.dataset.tokenId === zone.dataset.current,
+                );
+                if (assignedToken) {
+                  assignedToken.dataset.assigned = "false";
+                  assignedToken.dataset.zoneId = "";
+                  assignedToken.classList.remove("used");
+                }
+              }
+
+              zone.dataset.current = activeToken.dataset.tokenId ?? "";
+              zone.innerHTML = activeToken.innerHTML;
+              zone.classList.remove("placeholder", "correct", "incorrect", "selected");
+              zone.classList.add("filled");
+
+              activeToken.dataset.assigned = "true";
+              activeToken.dataset.zoneId = zone.dataset.zoneId ?? "";
+              activeToken.classList.remove("selected");
+              activeToken.classList.add("used");
+              activeToken = null;
+            } else if (zone.dataset.current) {
+              const assignedToken = tokens.find(
+                (token) => token.dataset.tokenId === zone.dataset.current,
+              );
+              if (assignedToken) {
+                assignedToken.dataset.assigned = "false";
+                assignedToken.dataset.zoneId = "";
+                assignedToken.classList.remove("used");
+              }
+              zone.dataset.current = "";
+              zone.innerHTML = zone.dataset.placeholder ?? "";
+              zone.classList.remove("filled", "correct", "incorrect", "selected");
+              zone.classList.add("placeholder");
+            } else {
+              zone.classList.add("selected");
+              window.setTimeout(() => zone.classList.remove("selected"), 200);
+            }
+          });
+        });
+
+        tokens.forEach((token, index) => {
+          if (!token.dataset.tokenId) {
+            token.dataset.tokenId = `token-${index}-${Math.random()
+              .toString(16)
+              .slice(2, 6)}`;
+          }
+
+          token.addEventListener("click", () => {
+            if (token.dataset.assigned === "true" && token.dataset.zoneId) {
+              const zone = dropZones.find((item) => item.dataset.zoneId === token.dataset.zoneId);
+              if (zone) {
+                zone.dataset.current = "";
+                zone.innerHTML = zone.dataset.placeholder ?? "";
+                zone.classList.remove("filled", "correct", "incorrect", "selected");
+                zone.classList.add("placeholder");
+              }
+              token.dataset.assigned = "false";
+              token.dataset.zoneId = "";
+              token.classList.remove("used");
+            }
+
+            if (activeToken === token) {
+              token.classList.remove("selected");
+              activeToken = null;
+            } else {
+              tokens.forEach((item) => item.classList.remove("selected"));
+              token.classList.add("selected");
+              activeToken = token;
+            }
+          });
+        });
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          dropZones.forEach((zone) => {
+            const tokenId = zone.dataset.current;
+            const assignedToken = tokens.find((token) => token.dataset.tokenId === tokenId);
+            const selectedValue =
+              assignedToken?.dataset.value || assignedToken?.textContent?.trim() || "";
+            const isCorrect = Boolean(tokenId) && selectedValue === zone.dataset.answer;
+
+            zone.classList.toggle("correct", isCorrect);
+            zone.classList.toggle("incorrect", Boolean(tokenId) && !isCorrect);
+
+            if (!tokenId) {
+              zone.classList.remove("correct", "incorrect");
+            }
+
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+
+          if (feedback) {
+            if (correctCount === dropZones.length) {
+              feedback.textContent = "Perfect! Every response is accurate.";
+              feedback.className = "feedback-msg success";
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
+              feedback.className = "feedback-msg error";
+            }
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          dropZones.forEach((zone) => {
+            zone.dataset.current = "";
+            zone.innerHTML = zone.dataset.placeholder ?? "";
+            zone.classList.remove("filled", "correct", "incorrect", "selected");
+            zone.classList.add("placeholder");
+          });
+
+          tokens.forEach((token) => {
+            token.dataset.assigned = "false";
+            token.dataset.zoneId = "";
+            token.classList.remove("selected", "used");
+          });
+
+          activeToken = null;
+
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupMcGrammarRadio(container) {
+
+        const questions = container.querySelectorAll(".quiz-card");
+        const checkBtn = container.querySelector('[data-action="check"]');
+        const resetBtn = container.querySelector('[data-action="reset"]');
+        const feedback = container.querySelector(".feedback-msg");
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          questions.forEach((question) => {
+            const selected = question.querySelector("input:checked");
+            const options = question.querySelectorAll(".quiz-option");
+            options.forEach((option) =>
+              option.classList.remove("correct", "incorrect"),
+            );
+            if (selected) {
+              const label = selected.closest(".quiz-option");
+              const value = label?.textContent?.trim();
+              if (value === question.dataset.answer) {
+                label?.classList.add("correct");
+                correctCount++;
+              } else {
+                label?.classList.add("incorrect");
+              }
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You scored ${correctCount} out of ${questions.length}.`;
+            feedback.className =
+              correctCount === questions.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          questions.forEach((question) => {
+            question.querySelectorAll("input").forEach((radio) => {
+              radio.checked = false;
+            });
+            question
+              .querySelectorAll(".quiz-option")
+              .forEach((option) => option.classList.remove("correct", "incorrect"));
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function setupCategorization(activityEl) {
+        const tokenBank = activityEl.querySelector(".token-bank");
+        const tokens = Array.from(activityEl.querySelectorAll(".click-token"));
+        const dropZones = Array.from(activityEl.querySelectorAll(".drop-zone"));
+        const columns = Array.from(activityEl.querySelectorAll(".category-column"));
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+        let selectedToken = null;
+
+        tokens.forEach((token) => {
+          token.addEventListener("click", () => {
+            if (selectedToken) selectedToken.classList.remove("selected");
+            if (selectedToken === token) {
+              selectedToken = null;
+            } else {
+              selectedToken = token;
+              selectedToken.classList.add("selected");
+            }
+          });
+        });
+
+        dropZones.forEach((zone) => {
+          zone.addEventListener("click", () => {
+            if (selectedToken) {
+              zone.appendChild(selectedToken);
+              selectedToken.classList.remove("selected");
+              selectedToken = null;
+            }
+          });
+        });
+
+        checkBtn?.addEventListener("click", () => {
+          columns.forEach((col) => col.classList.remove("correct", "incorrect"));
+          let correctTotal = 0;
+          tokens.forEach((token) => {
+            const parentColumn = token.closest(".category-column");
+            if (
+              parentColumn &&
+              token.dataset.category === parentColumn.dataset.category
+            ) {
+              correctTotal++;
+            }
+          });
+          columns.forEach((column) => {
+            const zone = column.querySelector(".drop-zone");
+            const hasTokens = zone?.querySelector(".click-token");
+            if (hasTokens && column.dataset.category) {
+              const allMatch = Array.from(
+                zone?.querySelectorAll(".click-token") ?? [],
+              ).every(
+                (token) => token.dataset.category === column.dataset.category,
+              );
+              column.classList.add(allMatch ? "correct" : "incorrect");
+            } else {
+              column.classList.add("incorrect");
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You correctly placed ${correctTotal} out of ${tokens.length} items.`;
+            feedback.className =
+              correctTotal === tokens.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          tokens.forEach((token) => {
+            tokenBank?.appendChild(token);
+            token.classList.remove("selected");
+          });
+          columns.forEach((column) =>
+            column.classList.remove("correct", "incorrect"),
+          );
+          selectedToken = null;
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+
+      function setupGapfill(activityEl) {
+        const blanks = Array.from(activityEl.querySelectorAll(".gapfill-blank"));
+        if (!blanks.length) {
+          return;
+        }
+        const feedback =
+          activityEl.querySelector('[data-feedback]') ?? activityEl.querySelector('.feedback-msg');
+        const checkBtn =
+          activityEl.querySelector('.check-btn') ?? activityEl.querySelector('[data-action="check"]');
+        const resetBtn =
+          activityEl.querySelector('.reset-btn') ?? activityEl.querySelector('[data-action="reset"]');
+        const isCreative = activityEl.dataset.name === "adapting-model";
+
+        const resetBlanks = () => {
+          blanks.forEach((blank) => {
+            const input = blank.querySelector('input');
+            if (input) {
+              input.value = '';
+            }
+            blank.classList.remove('correct', 'incorrect');
+          });
+          if (feedback) {
+            if (isCreative) {
+              feedback.textContent = 'Creative answers welcome—use the model for guidance.';
+              feedback.className = 'feedback-msg';
+            } else {
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
+            }
+          }
+        };
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          blanks.forEach((blank) => {
+            const input = blank.querySelector('input');
+            if (!input) return;
+            const value = input.value.trim().toLowerCase();
+            const expected = (blank.dataset.answer || '').trim().toLowerCase();
+            blank.classList.remove('correct', 'incorrect');
+            if (!value) {
+              return;
+            }
+            if (isCreative) {
+              blank.classList.add('correct');
+              correctCount += 1;
+              return;
+            }
+            if (value === expected) {
+              blank.classList.add('correct');
+              correctCount += 1;
+            } else {
+              blank.classList.add('incorrect');
+            }
+          });
+          if (feedback) {
+            if (isCreative) {
+              feedback.textContent = 'Great! Compare your ideas with your partner.';
+              feedback.className = 'feedback-msg success';
+            } else if (correctCount === blanks.length) {
+              feedback.textContent = 'Perfect accuracy—excellent command of the vocabulary!';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You solved ${correctCount} / ${blanks.length}. Adjust the highlighted blanks.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', resetBlanks);
+        resetBlanks();
+      }
+
+      function setupDropdown(activityEl) {
+        const blanks = Array.from(activityEl.querySelectorAll('.dropdown-blank'));
+        if (!blanks.length) {
+          return;
+        }
+        const feedback =
+          activityEl.querySelector('[data-feedback]') ?? activityEl.querySelector('.feedback-msg');
+        const checkBtn =
+          activityEl.querySelector('.check-btn') ?? activityEl.querySelector('[data-action="check"]');
+        const resetBtn =
+          activityEl.querySelector('.reset-btn') ?? activityEl.querySelector('[data-action="reset"]');
+
+        const reset = () => {
+          blanks.forEach((blank) => {
+            const select = blank.querySelector('select');
+            if (select) {
+              select.value = '';
+            }
+            blank.classList.remove('correct', 'incorrect');
+          });
+          if (feedback) {
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          }
+        };
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          blanks.forEach((blank) => {
+            const select = blank.querySelector('select');
+            const value = select?.value ?? '';
+            const answer = blank.dataset.answer ?? '';
+            const isAnswered = value !== '';
+            const isCorrect = isAnswered && value === answer;
+            blank.classList.toggle('correct', isCorrect);
+            blank.classList.toggle('incorrect', isAnswered && !isCorrect);
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === blanks.length) {
+              feedback.textContent = 'All answers correct! Excellent accuracy.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You solved ${correctCount} / ${blanks.length}. Adjust the highlighted choices.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', reset);
+        reset();
+      }
+
+      function setupTableActivity(activityEl) {
+        const items = Array.from(activityEl.querySelectorAll('.table-item'));
+        if (!items.length) {
+          return;
+        }
+        const feedback =
+          activityEl.querySelector('[data-feedback]') ?? activityEl.querySelector('.feedback-msg');
+        const checkBtn =
+          activityEl.querySelector('.check-btn') ?? activityEl.querySelector('[data-action="check"]');
+        const resetBtn =
+          activityEl.querySelector('.reset-btn') ?? activityEl.querySelector('[data-action="reset"]');
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          items.forEach((item) => {
+            const select = item.querySelector('select');
+            const value = (select?.value || '').toLowerCase();
+            const expected = (item.dataset.answer || '').toLowerCase();
+            const isAnswered = value !== '';
+            const isCorrect = isAnswered && value === expected;
+            item.classList.toggle('correct', isCorrect);
+            item.classList.toggle('incorrect', isAnswered && !isCorrect);
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === items.length) {
+              feedback.textContent = 'Great categorizing! Every modal function is spot on.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You sorted ${correctCount} / ${items.length}. Review the highlighted statements.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => {
+          items.forEach((item) => {
+            const select = item.querySelector('select');
+            if (select) {
+              select.value = '';
+            }
+            item.classList.remove('correct', 'incorrect');
+          });
+          if (feedback) {
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          }
+        });
+      }
+
+      function setupMcRadio(activityEl) {
+        const questions = Array.from(activityEl.querySelectorAll('.mc-question'));
+        if (!questions.length) {
+          return;
+        }
+        const feedback =
+          activityEl.querySelector('[data-feedback]') ?? activityEl.querySelector('.feedback-msg');
+        const checkBtn =
+          activityEl.querySelector('.check-btn') ?? activityEl.querySelector('[data-action="check"]');
+        const resetBtn =
+          activityEl.querySelector('.reset-btn') ?? activityEl.querySelector('[data-action="reset"]');
+
+        activityEl
+          .querySelectorAll('input[type="radio"]')
+          .forEach((input) => {
+            input.addEventListener('change', () => {
+              const question = input.closest('.mc-question');
+              question
+                ?.querySelectorAll('.mc-option')
+                .forEach((option) => option.classList.remove('selected', 'correct', 'incorrect'));
+              input.closest('.mc-option')?.classList.add('selected');
+              if (feedback) {
+                feedback.textContent = '';
+                feedback.className = 'feedback-msg';
+              }
+            });
+          });
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          questions.forEach((question) => {
+            const answer = (question.dataset.answer || '').toLowerCase();
+            const selectedInput = question.querySelector('input[type="radio"]:checked');
+            question
+              .querySelectorAll('.mc-option')
+              .forEach((option) => option.classList.remove('correct', 'incorrect'));
+            if (selectedInput) {
+              const value = (selectedInput.value || '').toLowerCase();
+              const option = selectedInput.closest('.mc-option');
+              const isCorrect = value === answer;
+              option?.classList.add(isCorrect ? 'correct' : 'incorrect');
+              if (isCorrect) {
+                correctCount += 1;
+              }
+            }
+          });
+          if (feedback) {
+            if (correctCount === questions.length) {
+              feedback.textContent = 'Excellent! All of your choices are correct.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${questions.length} correct. Review the highlighted options.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => {
+          activityEl.querySelectorAll('input[type="radio"]').forEach((input) => {
+            input.checked = false;
+          });
+          activityEl
+            .querySelectorAll('.mc-option')
+            .forEach((option) => option.classList.remove('selected', 'correct', 'incorrect'));
+          if (feedback) {
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          }
+        });
+      }
+
+      function setupTokenBoard(container) {
+        const pool = container.querySelector('[data-pool]');
+        const tokens = Array.from(container.querySelectorAll('.intonation-token'));
+        const columns = Array.from(container.querySelectorAll('.intonation-column'));
+        const checkBtn = container.querySelector('.check-btn') ?? container.querySelector('[data-action="check"]');
+        const resetBtn = container.querySelector('.reset-btn') ?? container.querySelector('[data-action="reset"]');
+        const feedback = container.querySelector('[data-feedback]') ?? container.querySelector('.feedback-msg');
+        let selectedToken = null;
+
+        const resetBoard = () => {
+          tokens.forEach((token) => {
+            pool?.appendChild(token);
+            token.classList.remove('selected', 'correct', 'incorrect');
+            token.dataset.placed = '';
+          });
+          if (feedback) {
+            feedback.textContent =
+              container.dataset.activity === 'intonation-grouping'
+                ? 'Tap a sentence to select it, then tap a column.'
+                : 'Select a phrase, then tap a question.';
+            feedback.className = 'feedback-msg';
+          }
+        };
+
+        pool?.addEventListener('click', (event) => {
+          const token = event.target.closest('.intonation-token');
+          if (!token) return;
+          if (token.classList.contains('used')) {
+            return;
+          }
+          if (selectedToken && selectedToken !== token) {
+            selectedToken.classList.remove('selected');
+          }
+          if (token.classList.contains('selected')) {
+            token.classList.remove('selected');
+            selectedToken = null;
+          } else {
+            token.classList.add('selected');
+            selectedToken = token;
+          }
+        });
+
+        columns.forEach((column) => {
+          column.addEventListener('click', () => {
+            const dropzone = column.querySelector('.dropzone');
+            if (!dropzone || !selectedToken) return;
+            dropzone.appendChild(selectedToken);
+            selectedToken.classList.remove('selected');
+            selectedToken.dataset.placed = column.dataset.column || '';
+            selectedToken = null;
+          });
+        });
+
+        tokens.forEach((token) => {
+          token.addEventListener('dblclick', () => {
+            pool?.appendChild(token);
+            token.classList.remove('selected', 'correct', 'incorrect');
+            token.dataset.placed = '';
+          });
+        });
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          tokens.forEach((token) => {
+            const expected = token.dataset.answer;
+            const placed = token.dataset.placed;
+            const isCorrect = expected === placed;
+            token.classList.toggle('correct', isCorrect);
+            token.classList.toggle('incorrect', placed && !isCorrect);
+            if (isCorrect) {
+              correctCount += 1;
+            }
+          });
+          if (feedback) {
+            if (correctCount === tokens.length) {
+              feedback.textContent = 'Beautiful placement! Listen for that intonation when you speak.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You placed ${correctCount} / ${tokens.length}. Adjust tokens with the amber highlight.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', resetBoard);
+        resetBoard();
+      }
+
+      function setupHighlightActivity(activityEl) {
+        const textEl = activityEl.querySelector('[data-highlight-text]') ?? activityEl.querySelector('.highlight-text');
         const feedback = activityEl.querySelector('.feedback-msg');
         const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!textEl || !feedback) return;
-
+        if (!textEl || !buttons.length) {
+          return;
+        }
+        const correctPhrases = Array.from(activityEl.querySelectorAll('[data-phrase]')).map((el) =>
+          (el.dataset.phrase || '').trim(),
+        );
         const originalHTML = textEl.innerHTML;
-        const correctPhrases = (textEl.dataset.correctPhrases || '')
-          .split('|')
-          .map(str => str.trim())
-          .filter(Boolean);
 
-        const normalize = (value) => value
-          .toLowerCase()
-          .replace(/[^a-z\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
+        const normalize = (value) =>
+          value
+            .toLowerCase()
+            .replace(/[\s]+/g, ' ')
+            .replace(/[\.,!?]/g, '')
+            .trim();
 
         const clearSelection = () => {
           const selection = window.getSelection();
-          if (selection) {
-            selection.removeAllRanges();
-          }
-        };
-
-        const removeMark = (mark) => {
-          if (!mark || !mark.parentNode) return;
-          const parent = mark.parentNode;
-          while (mark.firstChild) {
-            parent.insertBefore(mark.firstChild, mark);
-          }
-          parent.removeChild(mark);
-          parent.normalize();
+          selection?.removeAllRanges();
         };
 
         const attachMarkHandlers = (mark) => {
+          mark.addEventListener('click', () => {
+            mark.classList.toggle('marked');
+          });
           mark.addEventListener('dblclick', () => {
-            removeMark(mark);
+            const parent = mark.parentNode;
+            while (mark.firstChild) {
+              parent.insertBefore(mark.firstChild, mark);
+            }
+            mark.remove();
+            parent.normalize();
           });
         };
 
         const getContainingMark = (node) => {
           if (!node) return null;
           let current = node;
-          if (current.nodeType === 3) {
+          if (current.nodeType === Node.TEXT_NODE) {
             current = current.parentNode;
           }
-          while (current && current.nodeType === 1) {
-            if (current.classList && current.classList.contains('highlight-mark')) {
+          while (current && current.nodeType === Node.ELEMENT_NODE) {
+            if (current.classList?.contains('highlight-mark')) {
               return current;
             }
             current = current.parentNode;
@@ -1401,25 +3240,21 @@
             clearSelection();
             return;
           }
-
           const selectedText = selection.toString();
           const normalized = normalize(selectedText);
           if (!normalized) {
             clearSelection();
             return;
           }
-
           const startMark = getContainingMark(range.startContainer);
           const endMark = getContainingMark(range.endContainer);
           if (startMark || endMark) {
             clearSelection();
             return;
           }
-
           const mark = document.createElement('span');
           mark.className = 'highlight-mark';
           mark.dataset.highlightValue = normalized;
-
           try {
             range.surroundContents(mark);
           } catch (error) {
@@ -1427,21 +3262,19 @@
             mark.appendChild(contents);
             range.insertNode(mark);
           }
-
           mark.normalize();
           attachMarkHandlers(mark);
           clearSelection();
           textEl.normalize();
         });
 
-        buttons.forEach(btn => {
+        buttons.forEach((btn) => {
           if (btn.dataset.action === 'check') {
             btn.addEventListener('click', () => {
               const marks = Array.from(textEl.querySelectorAll('.highlight-mark'));
               const expected = new Set(correctPhrases.map(normalize));
               let allCorrect = true;
-
-              marks.forEach(mark => {
+              marks.forEach((mark) => {
                 const value = normalize(mark.textContent || '');
                 mark.classList.remove('correct', 'incorrect');
                 if (!value) {
@@ -1457,123 +3290,291 @@
                   allCorrect = false;
                 }
               });
-
-              if (allCorrect && expected.size === 0 && marks.length === correctPhrases.length) {
-                feedback.textContent = 'Beautiful listening! All linked phrases identified.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = 'Review your highlights and try again.';
-                feedback.className = 'feedback-msg error';
+              if (feedback) {
+                if (allCorrect && expected.size === 0 && marks.length === correctPhrases.length) {
+                  feedback.textContent = 'Beautiful listening! All linked phrases identified.';
+                  feedback.className = 'feedback-msg success';
+                } else {
+                  feedback.textContent = 'Review your highlights and try again.';
+                  feedback.className = 'feedback-msg error';
+                }
               }
             });
           } else if (btn.dataset.action === 'reset') {
             btn.addEventListener('click', () => {
               textEl.innerHTML = originalHTML;
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      function setupGapFill(activityEl) {
-        const inputs = Array.from(activityEl.querySelectorAll('.gap-input'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              inputs.forEach(input => {
-                const answer = (input.dataset.answer || '').trim().toLowerCase();
-                const value = input.value.trim().toLowerCase();
-                const isCorrect = answer === value;
-                input.classList.remove('correct', 'incorrect');
-                if (value.length === 0) {
-                  input.classList.remove('correct', 'incorrect');
-                } else if (isCorrect) {
-                  input.classList.add('correct');
-                  correctCount += 1;
-                } else {
-                  input.classList.add('incorrect');
-                }
-              });
-
-              if (correctCount === inputs.length) {
-                feedback.textContent = 'Spot on! Every gap is filled accurately.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${inputs.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
+              if (feedback) {
+                feedback.textContent = '';
+                feedback.className = 'feedback-msg';
               }
             });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('correct', 'incorrect');
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
           }
         });
       }
 
-      function setupUnscramble(activityEl) {
-        const inputs = Array.from(activityEl.querySelectorAll('.unscramble-input'));
+      function setupRhetoricalMoves(activityEl) {
+        const selects = Array.from(activityEl.querySelectorAll('.rhetoric-select'));
+        if (!selects.length) {
+          return;
+        }
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
         const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              inputs.forEach(input => {
-                const answer = (input.dataset.answer || '').trim().toLowerCase();
-                const value = input.value.trim().toLowerCase();
-                const isCorrect = answer === value;
-                input.classList.remove('correct', 'incorrect');
-                if (value.length === 0) {
-                  input.classList.remove('correct', 'incorrect');
-                } else if (isCorrect) {
-                  input.classList.add('correct');
-                  correctCount += 1;
-                } else {
-                  input.classList.add('incorrect');
-                }
-              });
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          selects.forEach((select) => {
+            const isCorrect = select.value === select.dataset.correct;
+            select.style.borderColor = '';
+            if (!select.value) {
+              return;
+            }
+            if (isCorrect) {
+              select.style.borderColor = '#2E7D32';
+              correctCount += 1;
+            } else {
+              select.style.borderColor = '#C62828';
+            }
+          });
+          if (feedback) {
+            if (correctCount === selects.length) {
+              feedback.textContent = 'Excellent! All moves identified correctly.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${selects.length} correct. Try again.`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
 
-              if (correctCount === inputs.length) {
-                feedback.textContent = 'Excellent! All sentences are in the correct order.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${inputs.length} accurate sentences. Keep refining!`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('correct', 'incorrect');
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
+        resetBtn?.addEventListener('click', () => {
+          selects.forEach((select) => {
+            select.value = '';
+            select.style.borderColor = '';
+          });
+          if (feedback) {
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
           }
         });
       }
 
-      document.querySelectorAll('[data-activity="matching-vocab"]').forEach(setupMatching);
-      document.querySelectorAll('[data-activity="mc-grammar"]').forEach(setupMcGrammar);
-      document.querySelectorAll('[data-activity="highlight"]').forEach(setupHighlight);
-      document.querySelectorAll('[data-activity="gap-fill"]').forEach(setupGapFill);
-      document.querySelectorAll('[data-activity="unscramble"]').forEach(setupUnscramble);
-    });
-  </script>
+      function setupClickAndDrop(activityEl) {
+        const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
+        const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+        const feedback = activityEl.querySelector('.feedback-msg');
+        let activeToken = null;
+
+        tokens.forEach((token) => {
+          token.addEventListener('click', () => {
+            if (token.classList.contains('used')) {
+              return;
+            }
+            if (activeToken) {
+              activeToken.classList.remove('active');
+            }
+            if (activeToken === token) {
+              activeToken = null;
+            } else {
+              token.classList.add('active');
+              activeToken = token;
+            }
+          });
+        });
+
+        dropZones.forEach((zone) => {
+          zone.addEventListener('click', () => {
+            if (!activeToken) {
+              return;
+            }
+            if (zone.dataset.value) {
+              const previousToken = activityEl.querySelector(
+                `.click-token[data-value="${zone.dataset.value}"]`,
+              );
+              previousToken?.classList.remove('used');
+            }
+            zone.textContent = activeToken.dataset.value || '';
+            zone.dataset.value = activeToken.dataset.value || '';
+            zone.classList.remove('placeholder');
+            activeToken.classList.add('used');
+            activeToken.classList.remove('active');
+            activeToken = null;
+          });
+        });
+
+        checkBtn?.addEventListener('click', () => {
+          let correctCount = 0;
+          dropZones.forEach((zone) => {
+            const isCorrect = zone.dataset.value === zone.dataset.answer;
+            zone.classList.remove('correct', 'incorrect');
+            if (!zone.dataset.value) {
+              return;
+            }
+            if (isCorrect) {
+              zone.classList.add('correct');
+              correctCount += 1;
+            } else {
+              zone.classList.add('incorrect');
+            }
+          });
+          if (feedback) {
+            if (correctCount === dropZones.length) {
+              feedback.textContent = 'Perfect! All verbs are correctly placed.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Keep trying!`;
+              feedback.className = 'feedback-msg error';
+            }
+          }
+        });
+
+        resetBtn?.addEventListener('click', () => {
+          dropZones.forEach((zone) => {
+            zone.textContent = '';
+            zone.dataset.value = '';
+            zone.classList.remove('correct', 'incorrect', 'placeholder');
+          });
+          tokens.forEach((token) => {
+            token.classList.remove('used', 'active');
+          });
+          activeToken = null;
+          if (feedback) {
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          }
+        });
+      }
+
+      function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      }
+
+      function setupStressMark(activityEl) {
+        const sentences = activityEl.querySelectorAll(".stress-sentence");
+        const feedback = activityEl.querySelector(".feedback-msg");
+        const checkBtn = activityEl.querySelector('[data-action="check"]');
+        const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+        sentences.forEach((sentence) => {
+          const words = sentence.querySelectorAll(".stress-word");
+          words.forEach((word) => {
+            word.addEventListener("click", () => {
+              words.forEach((w) => w.classList.remove("marked"));
+              word.classList.add("marked");
+            });
+          });
+        });
+
+        checkBtn?.addEventListener("click", () => {
+          let correctCount = 0;
+          sentences.forEach((sentence) => {
+            const markedWord = sentence.querySelector(".stress-word.marked");
+            const correctWordText = sentence.dataset.correct?.trim().toLowerCase();
+            sentence
+              .querySelectorAll(".stress-word")
+              .forEach((word) => word.classList.remove("correct", "incorrect"));
+            if (markedWord) {
+              const markedText = markedWord.textContent
+                ?.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+                .trim()
+                .toLowerCase();
+              if (markedText && markedText === correctWordText) {
+                markedWord.classList.add("correct");
+                correctCount++;
+              } else {
+                markedWord.classList.add("incorrect");
+              }
+            }
+          });
+          if (feedback) {
+            feedback.textContent = `You have ${correctCount} of ${sentences.length} correct.`;
+            feedback.className =
+              correctCount === sentences.length
+                ? "feedback-msg success"
+                : "feedback-msg error";
+          }
+        });
+
+        resetBtn?.addEventListener("click", () => {
+          sentences.forEach((sentence) => {
+            sentence.querySelectorAll(".stress-word").forEach((word) => {
+              word.classList.remove("marked", "correct", "incorrect");
+            });
+          });
+          if (feedback) {
+            feedback.textContent = "";
+            feedback.className = "feedback-msg";
+          }
+        });
+      }
+
+      function initialiseActivities() {
+        const attach = (selector, handler) => {
+          document.querySelectorAll(selector).forEach((el) => handler(el));
+        };
+
+        attach('[data-activity="unscramble"]', setupUnscramble);
+        attach('[data-activity="matching"]', setupMatching);
+        attach('[data-activity="matching-vocab"]', setupMatching);
+        attach('[data-activity="mc-grammar"]', setupMcGrammar);
+        attach('[data-activity="mc-quiz"]', setupMcQuiz);
+        attach('[data-activity="mc-grammar-radio"]', setupMcGrammarRadio);
+        attach('[data-activity="categorization"]', setupCategorization);
+        attach('[data-activity="stress-mark"]', setupStressMark);
+        attach('[data-activity="table-completion"]', setupClickPlacement);
+        attach('[data-activity="click-drop"]', setupClickPlacement);
+        attach('[data-activity="gapfill"]', setupGapfill);
+        attach('[data-activity="gap-fill"]', setupGapfill);
+        attach('[data-activity="dropdown"]', setupDropdown);
+        attach('[data-activity="table"]', setupTableActivity);
+        attach('[data-activity="mc"]', setupMcRadio);
+        attach('[data-activity="intonation-grouping"]', setupTokenBoard);
+        attach('[data-activity="highlight"]', setupHighlightActivity);
+        attach('[data-activity="rhetorical-moves"]', setupRhetoricalMoves);
+        attach('[data-activity="verb-choice-drop"]', setupClickAndDrop);
+      }
+
+      async function initialiseDeck() {
+        await hydrateRemoteImages().catch((error) => {
+          console.warn(
+            "Remote imagery could not be hydrated during initialisation",
+            error,
+          );
+        });
+
+        refreshSlides();
+        if (slides.length) {
+          showSlide(0);
+        }
+        setupNavigation();
+        updateCounter();
+        initialiseActivities();
+        document
+          .querySelectorAll('.slide-stage[data-type="blank"]')
+          .forEach((slide) => attachBlankSlideEvents(slide));
+        addSlideBtn?.addEventListener("click", addBlankSlide);
+        saveStateBtn?.addEventListener("click", downloadDeckState);
+        loadStateBtn?.addEventListener("click", () => {
+          loadStateInput?.click();
+        });
+        loadStateInput?.addEventListener("change", handleStateFileSelection);
+        highlightBtn?.addEventListener("click", () => {
+          const selectedColor = highlightColorSelect?.value || "#F9E27D";
+          applyHighlight(selectedColor);
+        });
+        removeHighlightBtn?.addEventListener("click", () => {
+          removeHighlight();
+        });
+        recalibrateMindMapCounter();
+      }
+
+      initialiseDeck().catch((error) => {
+        console.error("Deck initialisation failed", error);
+      });
+
+    </script>
 </body>
 </html>
