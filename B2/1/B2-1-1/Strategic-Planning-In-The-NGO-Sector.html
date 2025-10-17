@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Strategic Planning in the NGO Sector · Water Conservation</title>
+  <title>Strategic Planning in the NGO Sector · Digital Literacy for Artisans</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
@@ -51,6 +51,18 @@
       box-sizing: border-box;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -93,6 +105,95 @@
       font-family: var(--font-display);
       font-size: calc(1.05rem + var(--font-size-adjustment));
       color: var(--forest-shadow);
+    }
+
+    .toolbar-brand span {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .toolbar-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--primary-sage);
+      color: #fff;
+      box-shadow: var(--shadow-1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toolbar-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+
+    .toolbar-btn.secondary {
+      background: var(--deep-forest);
+    }
+
+    .toolbar-btn.ghost {
+      background: var(--soft-white);
+      color: var(--forest-shadow);
+      border: 1px solid var(--border-sage);
+      box-shadow: none;
+    }
+
+    .toolbar-btn.ghost:hover {
+      box-shadow: var(--shadow-1);
+    }
+
+    .toolbar-select {
+      border-radius: 999px;
+      border: 1px solid var(--border-sage);
+      background: #fff;
+      padding: 0.45rem 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--forest-shadow);
+      cursor: pointer;
+    }
+
+    .toolbar-select:focus {
+      outline: 2px solid var(--primary-sage);
+      outline-offset: 2px;
+    }
+
+    .highlight-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.65);
+      box-shadow: var(--shadow-1);
+    }
+
+    .highlight-controls i {
+      color: var(--forest-shadow);
+    }
+
+    .text-highlight {
+      background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
+      padding: 0.05em 0.15em;
+      border-radius: 0.35em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      transition: background-color 200ms ease;
     }
 
     .slide-counter {
@@ -264,6 +365,19 @@
       background-repeat: no-repeat;
       transform: scale(1.02);
       transition: transform 1200ms ease-in-out;
+    }
+
+    .bg-media.remote-image-fallback {
+      background: linear-gradient(
+        135deg,
+        rgba(16, 28, 21, 0.85) 0%,
+        rgba(16, 28, 21, 0.6) 65%,
+        rgba(16, 28, 21, 0.45) 100%
+      );
+    }
+
+    .bg-media.remote-image-fallback img {
+      display: none;
     }
 
     .full-width-bg:not(.hidden) .bg-media {
@@ -846,6 +960,232 @@
     .slide-nav-prev { left: 24px; }
     .slide-nav-next { right: 24px; }
 
+    .blank-slide {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+    }
+
+    .blank-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .blank-canvas {
+      flex: 1;
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(122,132,113,0.35);
+      background: rgba(254,252,247,0.8);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 320px;
+    }
+
+    .blank-hint {
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+    }
+
+    .textbox {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(122,132,113,0.35);
+      box-shadow: var(--shadow-1);
+      background: var(--soft-white);
+      width: clamp(240px, 35%, 420px);
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      cursor: move;
+      touch-action: none;
+    }
+
+    .textbox-handle {
+      padding: 0.5rem 0.75rem;
+      background: rgba(122,132,113,0.16);
+      border-bottom: 1px solid rgba(122,132,113,0.2);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      cursor: grab;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+    }
+
+    .textbox-body {
+      flex: 1;
+      padding: 0.75rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      outline: none;
+      cursor: text;
+      overflow: auto;
+    }
+
+    .textbox-body:focus {
+      box-shadow: inset 0 0 0 2px rgba(122,132,113,0.35);
+    }
+
+    .textbox-remove {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.35rem;
+      border: none;
+      background: rgba(254,252,247,0.8);
+      color: var(--forest-shadow);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-1);
+    }
+
+    .textbox-remove:hover { color: #C62828; }
+
+    .mindmap {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(122,132,113,0.35);
+      background: linear-gradient(135deg, rgba(248,246,240,0.92), rgba(236,231,220,0.75));
+      box-shadow: var(--shadow-1);
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mindmap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mindmap-title {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      margin: 0;
+      color: var(--deep-forest);
+    }
+
+    .mindmap-remove {
+      border: none;
+      background: transparent;
+      color: var(--forest-shadow);
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .mindmap-remove:hover { color: #C62828; }
+
+    .mindmap-center {
+      align-self: center;
+      min-width: 180px;
+      padding: 0.9rem 1.1rem;
+      border-radius: 999px;
+      background: var(--primary-sage);
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      font-family: var(--font-display);
+      letter-spacing: 0.03em;
+      outline: none;
+    }
+
+    .mindmap-center:focus {
+      box-shadow: 0 0 0 3px rgba(156,175,136,0.35);
+    }
+
+    .mindmap-branches {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .mindmap-branch {
+      position: relative;
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius);
+      background: rgba(254,252,247,0.95);
+      border: 1px solid rgba(122,132,113,0.2);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .mindmap-branch textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 64px;
+    }
+
+    .branch-remove {
+      align-self: flex-end;
+      border: none;
+      background: transparent;
+      color: var(--forest-shadow);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .branch-remove:hover { color: #C62828; }
+
+    .mindmap-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .mindmap-form input {
+      flex: 1 1 220px;
+      border-radius: 999px;
+      border: 1px solid rgba(122,132,113,0.35);
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-body);
+      font-size: var(--step--1);
+    }
+
+    .mindmap-form button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      background: var(--secondary-sage);
+      color: var(--forest-shadow);
+      box-shadow: var(--shadow-1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .mindmap-form button:hover {
+      background: color-mix(in srgb, var(--secondary-sage) 85%, #fff 15%);
+    }
+
     @media (max-width: 1024px) {
       .slide-inner { padding: clamp(24px, 6vw, 40px); }
       .grid-container { grid-template-columns: repeat(6, 1fr); }
@@ -882,10 +1222,36 @@
   <div class="deck-app">
     <header class="deck-toolbar">
       <div class="toolbar-brand">
-        <i class="fa-solid fa-droplet" style="color: var(--primary-sage);"></i>
-        <span>Mosaic | Water Conservation Strategy</span>
+        <i class="fa-solid fa-laptop" style="color: var(--primary-sage);"></i>
+        <span>Mosaic | Digital Literacy for Artisans</span>
       </div>
-      <div id="slide-counter" class="slide-counter">1 / 20</div>
+      <div id="slide-counter" class="slide-counter">1 / 19</div>
+      <div class="toolbar-actions">
+        <button id="save-state-btn" class="toolbar-btn" type="button">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Save Deck
+        </button>
+        <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+          <i class="fa-solid fa-file-import"></i>
+          Load Deck
+        </button>
+        <input id="load-state-input" class="sr-only" type="file" accept="application/json">
+        <div class="highlight-controls" role="group" aria-label="Highlight text">
+          <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+          <label class="sr-only" for="highlight-color">Highlight colour</label>
+          <select id="highlight-color" class="toolbar-select">
+            <option value="#F9E27D">Sunbeam</option>
+            <option value="#A5D6A7">Meadow</option>
+            <option value="#FFCCBC">Coral</option>
+          </select>
+          <button id="highlight-btn" class="toolbar-btn ghost" type="button">Apply</button>
+          <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">Clear</button>
+        </div>
+        <button id="add-slide-btn" class="toolbar-btn" type="button">
+          <i class="fa-solid fa-plus"></i>
+          Add Blank Slide
+        </button>
+      </div>
     </header>
 
     <main class="deck-workspace">
@@ -893,14 +1259,14 @@
 
         <!-- Slide 1 -->
         <div class="slide-stage full-width-bg">
-          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
-          <div class="img-overlay" style="background: linear-gradient(120deg, rgba(10,24,16,0.65) 0%, rgba(10,24,16,0.35) 42%, rgba(10,24,16,0.15) 75%, transparent 100%);"></div>
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3815750/pexels-photo-3815750.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="img-overlay" style="background: linear-gradient(115deg, rgba(14,25,19,0.65) 0%, rgba(14,25,19,0.35) 48%, rgba(14,25,19,0.15) 80%, transparent 100%);"></div>
           <div class="slide-inner">
             <div class="bg-content">
               <div class="overlay-card">
                 <span class="pill overlay-pill"><i class="fa-solid fa-landmark"></i> Mosaic Lesson Deck</span>
                 <h1>Strategic Planning in the NGO Sector</h1>
-                <p class="deck-subtitle">Water Conservation Strategy · Hebron</p>
+                <p class="deck-subtitle">Digital Literacy for Artisans · Nablus</p>
               </div>
             </div>
           </div>
@@ -908,7 +1274,7 @@
 
         <!-- Slide 2 -->
         <div class="slide-stage hidden full-width-bg">
-          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/1428277/pexels-photo-1428277.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080');" role="presentation" aria-hidden="true"></div>
           <div class="img-overlay" style="background: linear-gradient(145deg, rgba(9,28,18,0.55) 0%, rgba(9,28,18,0.3) 50%, rgba(9,28,18,0.1) 100%);"></div>
           <div class="slide-inner" style="justify-content: center;">
             <div class="bg-content centered">
@@ -928,7 +1294,7 @@
             <h2>By the end of this lesson, you will be able to...</h2>
             <div class="card" style="gap: 1rem;">
               <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                <li><i class="fa-solid fa-magnifying-glass-chart" style="margin-right: 10px; color: var(--primary-sage);"></i>Analyze a report on a local environmental issue to identify key challenges.</li>
+                <li><i class="fa-solid fa-magnifying-glass-chart" style="margin-right: 10px; color: var(--primary-sage);"></i>Analyze a report on a local economic issue to identify key challenges.</li>
                 <li><i class="fa-solid fa-scale-unbalanced" style="margin-right: 10px; color: var(--primary-sage);"></i>Evaluate two proposed strategies and justify your choice using persuasive language.</li>
                 <li><i class="fa-solid fa-people-line" style="margin-right: 10px; color: var(--primary-sage);"></i>Collaborate with a group to summarize your analysis and recommendations.</li>
                 <li><i class="fa-solid fa-bullhorn" style="margin-right: 10px; color: var(--primary-sage);"></i>Use sentence stress effectively to emphasize key data and findings in a discussion.</li>
@@ -940,14 +1306,14 @@
         <!-- Slide 4 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-lightbulb"></i> Pre-task A (10 mins)</span>
-            <h2>Activate: Successful Community Projects</h2>
+            <span class="pill"><i class="fa-solid fa-lightbulb"></i> Pre-task A</span>
+            <h2>Activate: Successful Local Artisans</h2>
             <div class="card" style="gap: 1rem;">
               <p><strong>Paired Discussion</strong></p>
               <ul>
-                <li>Think of a successful community-based project you know of in Palestine. What was its goal?</li>
-                <li>What made it successful? What challenges did it face?</li>
-                <li>Why are community-based projects often important for creating sustainable change?</li>
+                <li>Think of a successful local artisan or small business you know of in Palestine. What do they create or sell?</li>
+                <li>What made their business successful? What challenges might they have faced?</li>
+                <li>Why is supporting local artisans important for creating a sustainable local economy?</li>
               </ul>
               <p class="hint">Capture one key insight from your partner that you want to share with the group.</p>
             </div>
@@ -958,9 +1324,9 @@
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-file-alt"></i> Pre-task B · Part 1</span>
-            <h2>Analyzing the Hebron Water Report</h2>
+            <h2>Analyzing the Nablus Artisan Report</h2>
             <div class="table-completion-wrapper" data-activity="table-completion">
-              <p class="report-text">A recent study in the Hebron governorate <em>found</em> residential water consumption <em>had risen</em> by 15% in five years. It <em>identified</em> that the primary cause was not faulty infrastructure but a lack of public awareness about simple conservation techniques, especially among younger households. The report <em>concluded</em> that technical solutions alone were unlikely to foster long-term change.</p>
+              <p class="report-text">A recent study in the Nablus governorate <em>found</em> online sales for local artisans <em>had fallen</em> by 20% in two years. It <em>identified</em> that the primary cause was not product quality but a lack of digital marketing skills, especially in product photography and social media engagement. The report <em>concluded</em> that simply building a central website for them was unlikely to foster long-term success.</p>
               <div class="card" style="gap: 1.25rem;">
                 <p style="margin: 0;">Read the report summary. Then, click an answer below and tap the matching space in the table.</p>
                 <div class="table-responsive">
@@ -974,24 +1340,24 @@
                     <tbody>
                       <tr>
                         <td>Key Statistic</td>
-                        <td><button type="button" class="drop-zone placeholder" data-answer="risen by 15% in five years" data-placeholder="Select answer" aria-label="Key statistic answer"></button></td>
+                        <td><button type="button" class="drop-zone placeholder" data-answer="fallen by 20% in two years" data-placeholder="Select answer" aria-label="Key statistic answer"></button></td>
                       </tr>
                       <tr>
                         <td>Primary Cause</td>
-                        <td><button type="button" class="drop-zone placeholder" data-answer="lack of public awareness" data-placeholder="Select answer" aria-label="Primary cause answer"></button></td>
+                        <td><button type="button" class="drop-zone placeholder" data-answer="lack of digital marketing skills" data-placeholder="Select answer" aria-label="Primary cause answer"></button></td>
                       </tr>
                       <tr>
                         <td>Main Conclusion</td>
-                        <td><button type="button" class="drop-zone placeholder" data-answer="technical solutions alone were unlikely to foster long-term change" data-placeholder="Select answer" aria-label="Main conclusion answer"></button></td>
+                        <td><button type="button" class="drop-zone placeholder" data-answer="simply building a central website was unlikely to foster long-term success" data-placeholder="Select answer" aria-label="Main conclusion answer"></button></td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <div class="token-bank" aria-label="Answer options">
-                  <button type="button" class="click-token" data-value="risen by 15% in five years" data-token-id="table-token-1"><i class="fa-solid fa-water"></i> risen by 15% in five years</button>
-                  <button type="button" class="click-token" data-value="faulty infrastructure" data-token-id="table-token-2"><i class="fa-solid fa-screwdriver-wrench"></i> faulty infrastructure</button>
-                  <button type="button" class="click-token" data-value="lack of public awareness" data-token-id="table-token-3"><i class="fa-solid fa-people-arrows"></i> lack of public awareness</button>
-                  <button type="button" class="click-token" data-value="technical solutions alone were unlikely to foster long-term change" data-token-id="table-token-4"><i class="fa-solid fa-route"></i> technical solutions alone were unlikely to foster long-term change</button>
+                  <button type="button" class="click-token" data-value="fallen by 20% in two years" data-token-id="table-token-1"><i class="fa-solid fa-chart-line"></i> fallen by 20% in two years</button>
+                  <button type="button" class="click-token" data-value="poor product quality" data-token-id="table-token-2"><i class="fa-solid fa-circle-exclamation"></i> poor product quality</button>
+                  <button type="button" class="click-token" data-value="lack of digital marketing skills" data-token-id="table-token-3"><i class="fa-solid fa-hashtag"></i> lack of digital marketing skills</button>
+                  <button type="button" class="click-token" data-value="simply building a central website was unlikely to foster long-term success" data-token-id="table-token-4"><i class="fa-solid fa-globe"></i> simply building a central website was unlikely to foster long-term success</button>
                 </div>
                 <div class="activity-actions">
                   <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
@@ -1011,8 +1377,8 @@
             <div class="card" style="gap: 1rem;">
               <p>In your pairs, discuss these questions based on the report:</p>
               <ul>
-                <li>The report states the main cause is a "lack of public awareness." What does this look like in daily life?</li>
-                <li>Why do you think the report concluded that "technical solutions alone were unlikely to foster long-term change"?</li>
+                <li>The report states the main cause is a "lack of digital marketing skills." What does this look like in daily life for an artisan?</li>
+                <li>Why do you think the report concluded that "simply building a central website was unlikely to foster long-term success"?</li>
               </ul>
             </div>
           </div>
@@ -1024,11 +1390,11 @@
             <span class="pill"><i class="fa-solid fa-brain"></i> Pre-task B · Part 3</span>
             <h2>Brainstorming Solutions</h2>
             <div class="card" style="gap: 1rem;">
-              <p>Based on the report, the problem is awareness, not infrastructure. In your groups, brainstorm a list of possible community-based projects to solve this problem. Be ready to share one idea.</p>
+              <p>Based on the report, the problem is skills, not product quality. In your groups, brainstorm a list of possible community-based projects to solve this problem. Be ready to share one idea.</p>
               <div class="discussion-table">
-                <div class="card"><h3>Focus</h3><p>Which audience in Hebron needs the most support to build awareness?</p></div>
-                <div class="card"><h3>Approach</h3><p>What creative activities or media could inspire households to conserve water?</p></div>
-                <div class="card"><h3>Impact</h3><p>How might you measure whether awareness is truly improving?</p></div>
+                <div class="card"><h3>Focus</h3><p>Which group of artisans in Nablus might need the most support to build their digital skills?</p></div>
+                <div class="card"><h3>Approach</h3><p>What creative training activities could inspire artisans to market their products online?</p></div>
+                <div class="card"><h3>Impact</h3><p>How might you measure whether their digital skills are truly improving?</p></div>
               </div>
             </div>
           </div>
@@ -1041,9 +1407,9 @@
             <h2>Model: Listening for Detail</h2>
             <div class="card quiz-wrapper" data-activity="mc-quiz" aria-labelledby="mc-quiz-title" style="gap: 1.4rem;">
               <div class="audio-player">
-                <p>You will listen to a dialogue between two NGO workers, Fatima and Yousef, discussing how to set up a water conservation pilot program in Hebron. Listen and answer the questions.</p>
+                <p>You will listen to a dialogue between two NGO workers, Fatima and Yousef, discussing how to set up a digital literacy pilot program in Nablus. Listen and answer the questions.</p>
                 <audio controls>
-                  <source src="assets/audio/ngo-water-conservation-discussion.mp3" type="audio/mpeg">
+                  <source src="assets/audio/ngo-artisan-literacy-discussion.mp3" type="audio/mpeg">
                   Your browser does not support the audio element.
                 </audio>
               </div>
@@ -1052,90 +1418,49 @@
                   <div class="quiz-card" data-correct="c">
                     <p><strong>1.</strong> What key finding from the report does Fatima emphasize at the start?</p>
                     <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q1" value="a"> Consumption rose by 15%</label>
-                      <label class="quiz-option"><input type="radio" name="q1" value="b"> The problem is infrastructure</label>
-                      <label class="quiz-option"><input type="radio" name="q1" value="c"> Younger households are the main issue</label>
+                      <label class="quiz-option"><input type="radio" name="q1" value="a"> Sales fell by 20%.</label>
+                      <label class="quiz-option"><input type="radio" name="q1" value="b"> The problem is product quality.</label>
+                      <label class="quiz-option"><input type="radio" name="q1" value="c"> The core issue is a lack of digital skills.</label>
                     </div>
                   </div>
                   <div class="quiz-card" data-correct="c">
                     <p><strong>2.</strong> What is Yousef's proposed pilot program called?</p>
                     <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q2" value="a"> Water Savers</label>
-                      <label class="quiz-option"><input type="radio" name="q2" value="b"> The Schools Project</label>
-                      <label class="quiz-option"><input type="radio" name="q2" value="c"> Future Guardians</label>
+                      <label class="quiz-option"><input type="radio" name="q2" value="a"> Artisan Online</label>
+                      <label class="quiz-option"><input type="radio" name="q2" value="b"> The University Project</label>
+                      <label class="quiz-option"><input type="radio" name="q2" value="c"> Digital Pioneers</label>
                     </div>
                   </div>
                   <div class="quiz-card" data-correct="b">
-                    <p><strong>3.</strong> Who is the main target audience for Yousef's proposal?</p>
+                    <p><strong>3.</strong> What is Fatima's main concern about focusing only on student mentors?</p>
                     <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q3" value="a"> Community leaders</label>
-                      <label class="quiz-option"><input type="radio" name="q3" value="b"> Schoolchildren</label>
-                      <label class="quiz-option"><input type="radio" name="q3" value="c"> All households</label>
+                      <label class="quiz-option"><input type="radio" name="q3" value="a"> It's too expensive.</label>
+                      <label class="quiz-option"><input type="radio" name="q3" value="b"> It might be too slow and indirect for the artisans.</label>
+                      <label class="quiz-option"><input type="radio" name="q3" value="c"> The university is not interested.</label>
                     </div>
                   </div>
                   <div class="quiz-card" data-correct="b">
-                    <p><strong>4.</strong> What is Fatima's main concern about focusing only on schools?</p>
+                    <p><strong>4.</strong> What is the core activity in Fatima's "Artisan Accelerate" proposal?</p>
                     <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q4" value="a"> It's too expensive</label>
-                      <label class="quiz-option"><input type="radio" name="q4" value="b"> It won't create immediate change at home</label>
-                      <label class="quiz-option"><input type="radio" name="q4" value="c"> Schools are not interested</label>
-                    </div>
-                  </div>
-                  <div class="quiz-card" data-correct="a">
-                    <p><strong>5.</strong> What is the name of Fatima's proposed program?</p>
-                    <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q5" value="a"> Household Champions</label>
-                      <label class="quiz-option"><input type="radio" name="q5" value="b"> Community Action</label>
-                      <label class="quiz-option"><input type="radio" name="q5" value="c"> Water Wise Homes</label>
+                      <label class="quiz-option"><input type="radio" name="q4" value="a"> Giving out free smartphones.</label>
+                      <label class="quiz-option"><input type="radio" name="q4" value="b"> Intensive, hands-on workshops for the artisans themselves.</label>
+                      <label class="quiz-option"><input type="radio" name="q4" value="c"> Building an e-commerce website.</label>
                     </div>
                   </div>
                   <div class="quiz-card" data-correct="c">
-                    <p><strong>6.</strong> What is the core activity in Fatima's proposal?</p>
+                    <p><strong>5.</strong> What is their final decision?</p>
                     <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q6" value="a"> Giving out free taps</label>
-                      <label class="quiz-option"><input type="radio" name="q6" value="b"> Community meetings</label>
-                      <label class="quiz-option"><input type="radio" name="q6" value="c"> Training local volunteers to do home visits</label>
+                      <label class="quiz-option"><input type="radio" name="q5" value="a"> To choose Yousef's idea.</label>
+                      <label class="quiz-option"><input type="radio" name="q5" value="b"> To reject Fatima's idea.</label>
+                      <label class="quiz-option"><input type="radio" name="q5" value="c"> To create a hybrid program combining workshops and mentorship.</label>
                     </div>
                   </div>
-                  <div class="quiz-card" data-correct="c">
-                    <p><strong>7.</strong> Yousef worries Fatima's idea might be seen as...</p>
-                    <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q7" value="a"> ineffective</label>
-                      <label class="quiz-option"><input type="radio" name="q7" value="b"> too slow</label>
-                      <label class="quiz-option"><input type="radio" name="q7" value="c"> intrusive</label>
-                    </div>
-                  </div>
-                  <div class="quiz-card" data-correct="b">
-                    <p><strong>8.</strong> How does Fatima suggest they measure success for her pilot?</p>
-                    <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q8" value="a"> By counting volunteers</label>
-                      <label class="quiz-option"><input type="radio" name="q8" value="b"> Through follow-up surveys and checking water bills</label>
-                      <label class="quiz-option"><input type="radio" name="q8" value="c"> By interviewing school principals</label>
-                    </div>
-                  </div>
-                  <div class="quiz-card" data-correct="a">
-                    <p><strong>9.</strong> What does Yousef say is the "key to long-term sustainability"?</p>
-                    <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q9" value="a"> Changing the mindset of the next generation</label>
-                      <label class="quiz-option"><input type="radio" name="q9" value="b"> Giving people the right equipment</label>
-                      <label class="quiz-option"><input type="radio" name="q9" value="c"> Getting immediate results</label>
-                    </div>
-                  </div>
-                  <div class="quiz-card" data-correct="c">
-                    <p><strong>10.</strong> What is their final decision?</p>
-                    <div class="quiz-options">
-                      <label class="quiz-option"><input type="radio" name="q10" value="a"> To choose Yousef's idea</label>
-                      <label class="quiz-option"><input type="radio" name="q10" value="b"> To reject Fatima's idea</label>
-                      <label class="quiz-option"><input type="radio" name="q10" value="c"> To create a hybrid program combining both ideas</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
-                  <button class="activity-btn" type="button" data-action="check">Check</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
               </div>
+              <div class="activity-actions">
+                <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                <button class="activity-btn" type="button" data-action="check">Check</button>
+              </div>
+              <div class="feedback-msg" aria-live="polite"></div>
             </div>
           </div>
         </div>
@@ -1148,14 +1473,14 @@
             <div class="card" style="gap: 1.25rem;">
               <p>Read the transcript. In your pairs, identify the phrases Yousef and Fatima use to propose, justify, and express concerns about an idea.</p>
               <div class="dialogue-box">
-                <p><strong>Fatima:</strong> Okay, so we’ve agreed that the Hebron report is clear: we need a community awareness program. The data <em>showed</em> that the biggest issue was with younger households, so that’s where we need to focus.</p>
-                <p><strong>Yousef:</strong> Exactly. So, for the pilot program, <strong>I propose we start with</strong> the schools. We could call it the "Future Guardians" program. We would develop workshops for students aged 10 to 14. For me, <strong>the key to long-term sustainability is</strong> changing the mindset of the next generation.</p>
-                <p><strong>Fatima:</strong> I agree that schools are important. But, <strong>my only concern is that</strong> it might not create immediate change in the home. The children learn, but do the parents change their habits? <strong>An alternative approach could be to</strong> focus directly on the households. I'm thinking of a "Household Champions" program.</p>
+                <p><strong>Fatima:</strong> Okay, so we’ve agreed that the Nablus report is clear: we need a digital skills program. The data <em>showed</em> that the biggest issue was a lack of marketing know-how, so that’s where we need to focus.</p>
+                <p><strong>Yousef:</strong> Exactly. So, for the pilot program, <strong>I propose we start with</strong> a mentorship model. We could call it the "Digital Pioneers" program. We would train tech-savvy university students to mentor the artisans one-on-one. For me, <strong>the key to long-term sustainability is</strong> building those supportive relationships.</p>
+                <p><strong>Fatima:</strong> I agree that mentorship is powerful. But, <strong>my only concern is that</strong> it might be too slow to show results. The artisans need skills now. <strong>An alternative approach could be to</strong> focus on direct training. I'm thinking of an "Artisan Accelerate" program.</p>
                 <p><strong>Yousef:</strong> Tell me more. How would that work?</p>
-                <p><strong>Fatima:</strong> We would train local volunteers to conduct friendly home visits. They would offer practical tips and check for simple leaks. <strong>The evidence strongly suggests that</strong> this kind of peer-to-peer approach builds trust. We could measure success with follow-up surveys and even ask to see their water bills before and after.</p>
-                <p><strong>Yousef:</strong> That’s a good point about building trust. But I wonder if people would find home visits a bit intrusive. With the "Future Guardians" idea, we are invited into the schools. <strong>The main advantage is that</strong> we can reach a large number of young people efficiently.</p>
-                <p><strong>Fatima:</strong> That's true. Access is easier. But <strong>my priority would be</strong> ensuring immediate, measurable impact in water consumption. Perhaps we can combine the ideas? We could run the school workshops, and the students' "homework" could be to conduct a simple water audit at home with their parents, guided by our volunteers.</p>
-                <p><strong>Yousef:</strong> A hybrid model... I like that. <strong>It's the best of both worlds.</strong> We get the long-term educational impact and the immediate household engagement. Okay, let's design that pilot.</p>
+                <p><strong>Fatima:</strong> We would run intensive, hands-on workshops on topics like smartphone photography and social media. <strong>The evidence strongly suggests that</strong> this kind of practical group training builds confidence quickly. We could measure success with follow-up surveys and by tracking their online sales.</p>
+                <p><strong>Yousef:</strong> That’s a good point about building confidence. But I wonder if some artisans would be intimidated by a formal workshop. With the "Digital Pioneers" idea, the learning is personalized. <strong>The main advantage is that</strong> we can tailor the support to each person's needs.</p>
+                <p><strong>Fatima:</strong> That's true. Custom support is better. But <strong>my priority would be</strong> ensuring a baseline of skills for everyone. Perhaps we can combine the ideas? We could run the workshops to teach the core skills, and then the student mentors could provide follow-up, one-on-one support.</p>
+                <p><strong>Yousef:</strong> A hybrid model... I like that. <strong>It's the best of both worlds.</strong> We get the fast-paced group learning and the long-term personalized support. Okay, let's design that pilot.</p>
               </div>
               <ul>
                 <li>What phrases do Yousef and Fatima use to introduce their ideas?</li>
@@ -1165,22 +1490,23 @@
             </div>
           </div>
         </div>
+
         <!-- Slide 10 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-gavel"></i> Pre-task C · Part 3</span>
             <h2>Language Focus: Mini-Debate</h2>
             <div class="card" style="gap: 1rem;">
-              <p>Your team needs to decide on the FIRST activity for the new water conservation pilot program. In pairs, argue for one option below using phrases from the model.</p>
+              <p>Your team needs to decide on the FIRST activity for the new digital literacy pilot program. In pairs, argue for one option below using phrases from the model.</p>
               <div class="role-options">
                 <div class="role-card">
                   <h3>Option A</h3>
-                  <p>Launch a social media video competition for students.</p>
-                  <p style="font-style: italic; color: var(--ink-muted);">Example: "I propose we start with the social media competition because the key to long-term sustainability is engaging young people online."</p>
+                  <p>Launch a workshop on "Smartphone Photography for Products."</p>
+                  <p style="font-style: italic; color: var(--ink-muted);">Example: "I propose we start with the photography workshop because the key to success is making the products look great online."</p>
                 </div>
                 <div class="role-card">
                   <h3>Option B</h3>
-                  <p>Host a public launch event in a community center with a well-known local figure.</p>
+                  <p>Host a networking event to connect artisans with successful local online sellers for inspiration.</p>
                   <p style="font-style: italic; color: var(--ink-muted);">Remember to justify your idea and acknowledge any concerns your partner raises.</p>
                 </div>
               </div>
@@ -1193,21 +1519,17 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-bullhorn"></i> Pre-task D · Part 1</span>
             <h2>Pronunciation: Using Stress to Emphasize Data</h2>
-            <div class="card" style="gap: 1.2rem;">
-              <p>Model both sentences below for your learners. Ask them to notice which word you stressed and how the meaning shifts.</p>
+            <div class="card" style="gap: 1rem;">
+              <p>Your teacher will model both sentences below. Notice which word is stressed and how the meaning shifts.</p>
               <div class="stress-grid">
-                <div class="stress-example">
-                  <span class="stress-badge"><i class="fa-solid fa-volume-high"></i> Version A</span>
-                  <p>The report showed a <strong class="stress-highlight">fifteen</strong> percent increase in water usage.</p>
-                  <p class="hint">Use this when correcting the number (not fifty).</p>
+                <div class="card">
+                  <p><strong>Version A:</strong> The report showed a <strong>twenty</strong> percent decrease in online sales. <span class="hint">Use this when correcting the number, e.g., not fifty.</span></p>
                 </div>
-                <div class="stress-example">
-                  <span class="stress-badge"><i class="fa-solid fa-volume-high"></i> Version B</span>
-                  <p>The report showed a fifteen percent <strong class="stress-highlight">increase</strong> in water usage.</p>
-                  <p class="hint">Use this when correcting the trend (not a decrease).</p>
+                <div class="card">
+                  <p><strong>Version B:</strong> The report showed a twenty percent <strong>decrease</strong> in online sales. <span class="hint">Use this when correcting the trend, e.g., not an increase.</span></p>
                 </div>
               </div>
-              <p style="margin: 0;">Invite pairs to repeat the sentences, swapping roles between speaker and listener. Encourage them to exaggerate the stressed word so the contrast is clear.</p>
+              <p>In pairs, repeat the sentences, swapping roles. Exaggerate the stressed word.</p>
             </div>
           </div>
         </div>
@@ -1216,28 +1538,27 @@
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-exchange-alt"></i> Pre-task D · Part 2</span>
-            <h2>Scenario 1 · Checking the Facts (5 mins)</h2>
+            <h2>Scenario 1 · Checking the Facts</h2>
             <div class="card" style="gap: 1rem;">
               <p>Student A has the correct project data. Student B, your information is slightly off—ask questions and listen for the stressed corrections.</p>
               <div class="role-columns">
-                <div class="role-card subtle">
+                <div class="role-card">
                   <h3>Student A · Project Analyst</h3>
                   <ul>
-                    <li>Pilot program duration: <strong>Three</strong> months</li>
-                    <li>Number of schools involved: <strong>Twelve</strong></li>
-                    <li>Targeted reduction in water use: <strong>10%</strong></li>
+                    <li>Pilot program duration: <strong>Four</strong> months</li>
+                    <li>Number of artisans involved: <strong>Fifteen</strong></li>
+                    <li>Targeted increase in online sales: <strong>10%</strong></li>
                   </ul>
                 </div>
-                <div class="role-card subtle">
+                <div class="role-card">
                   <h3>Student B · Data Checker</h3>
                   <ul>
                     <li>Pilot program duration: Six months?</li>
-                    <li>Number of schools involved: Twenty?</li>
-                    <li>Targeted reduction in water use: 30%?</li>
+                    <li>Number of artisans involved: Fifty?</li>
+                    <li>Targeted increase in online sales: 30%?</li>
                   </ul>
                 </div>
               </div>
-              <p class="hint">Focus on stressing the corrected numbers so your partner hears the accurate version.</p>
             </div>
           </div>
         </div>
@@ -1245,58 +1566,25 @@
         <!-- Slide 13 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-exchange-alt"></i> Pre-task D · Part 2</span>
-            <h2>Scenario 2 · Correcting a Colleague (5 mins)</h2>
+            <span class="pill"><i class="fa-solid fa-exchange-alt"></i> Pre-task D · Part 3</span>
+            <h2>Scenario 2 · Correcting a Colleague</h2>
             <div class="card" style="gap: 1rem;">
               <p>You are in a team meeting. Student B is presenting an outdated summary. Student A, step in kindly and stress the corrected information.</p>
               <div class="role-columns">
-                <div class="role-card subtle">
+                <div class="role-card">
                   <h3>Student B · Presenter</h3>
-                  <p>Share this summary aloud:</p>
                   <ul>
-                    <li>"The project will begin in <strong>September</strong>."</li>
-                    <li>"We'll be working with <strong>community centers</strong>."</li>
-                    <li>"The main goal is to reduce <strong>electricity</strong> consumption."</li>
+                    <li>"The project will begin in <strong>June</strong>."</li>
+                    <li>"We'll be working mainly with <strong>textile weavers</strong>."</li>
+                    <li>"The main goal is to improve their <strong>packaging</strong>."</li>
                   </ul>
                 </div>
-                <div class="role-card subtle">
+                <div class="role-card">
                   <h3>Student A · Project Lead</h3>
-                  <p>Interrupt politely and correct each point with strong stress on the accurate detail:</p>
                   <ul>
-                    <li>Start Date: <strong>October</strong></li>
-                    <li>Location: <strong>Schools</strong></li>
-                    <li>Goal: Reduce <strong>water</strong> consumption</li>
-                  </ul>
-                </div>
-              </div>
-              <p class="hint">Use phrases like "My only concern is that..." or "Let me clarify..." before stressing the key correction.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 14 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-exchange-alt"></i> Pre-task D · Part 2</span>
-            <h2>Scenario 3 · Answering a Journalist (5 mins)</h2>
-            <div class="card" style="gap: 1rem;">
-              <p>Student B is a journalist with outdated notes. Student A, respond confidently and stress the updated facts.</p>
-              <div class="role-columns">
-                <div class="role-card subtle">
-                  <h3>Student B · Journalist</h3>
-                  <p>Begin with:</p>
-                  <ul>
-                    <li>"I read that the budget for this is <strong>$50,000</strong>. Is that correct?"</li>
-                    <li>Follow-up prompts: timeline, volunteer numbers, target households.</li>
-                  </ul>
-                </div>
-                <div class="role-card subtle">
-                  <h3>Student A · Project Manager</h3>
-                  <ul>
-                    <li>Budget: <strong>$15,000</strong></li>
-                    <li>Timeline: <strong>Three</strong> months</li>
-                    <li>Volunteers: <strong>18</strong> trained community members</li>
-                    <li>Household focus: <strong>Two districts</strong> with high usage</li>
+                    <li>Start Date: <strong>July</strong></li>
+                    <li>Focus Group: <strong>All artisans</strong></li>
+                    <li>Goal: Improve <strong>digital marketing</strong></li>
                   </ul>
                 </div>
               </div>
@@ -1305,9 +1593,9 @@
           </div>
         </div>
 
-        <!-- Slide 15 -->
+        <!-- Slide 14 -->
         <div class="slide-stage hidden section-break full-width-bg">
-          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1920&amp;h=1080');" role="presentation" aria-hidden="true"></div>
+          <div class="bg-media" style="background-image: url('https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080');" role="presentation" aria-hidden="true"></div>
           <div class="img-overlay" style="background: linear-gradient(140deg, rgba(12,28,18,0.45) 0%, rgba(12,28,18,0.25) 40%, rgba(12,28,18,0.3) 100%);"></div>
           <div class="slide-inner">
             <div class="bg-content centered">
@@ -1320,46 +1608,43 @@
           </div>
         </div>
 
-        <!-- Slide 16 -->
+        <!-- Slide 15 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-info-circle"></i> Task Context</span>
-            <h2>The Hebron Water Project</h2>
+            <h2>The Nablus Artisans Project</h2>
             <div class="card content-body">
-              <p><strong>The Situation:</strong> Your NGO has analyzed the recent Hebron Water Report.</p>
-              <p><strong>The Key Finding:</strong> Water consumption has risen by 15% in five years. The report identified the main cause is a lack of awareness about water-saving techniques, especially in younger households.</p>
+              <p><strong>The Situation:</strong> Your NGO has analyzed the recent Nablus Artisan Market Report.</p>
+              <p><strong>The Key Finding:</strong> Online sales have fallen by 20% in two years. The report identified the main cause as a lack of digital marketing skills, not poor product quality.</p>
               <p><strong>The Goal:</strong> Your team must design a 3-month "pilot program" to test a solution before launching a bigger, more expensive project.</p>
-              <p><strong>The Agreed Strategy:</strong> After discussion, your management has decided on a "hybrid" approach, which will include activities for both schools and households.</p>
+              <p><strong>The Agreed Strategy:</strong> After discussion, your management has decided on a "hybrid" approach, which will include both group workshops and one-on-one mentorship.</p>
               <p><strong>Your Role:</strong> You are the project planning team. Your job is to decide on the specific details of this pilot program.</p>
             </div>
           </div>
         </div>
 
-        <!-- Slide 17 -->
+        <!-- Slide 16 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-clipboard-list"></i> Task Instructions</span>
             <h2>Design the Pilot Program (15 mins)</h2>
-            <div class="card" style="gap: 1.2rem;">
+            <div class="card" style="gap: 1rem;">
               <p>In your group, discuss and make decisions on the key details below.</p>
               <ul>
                 <li>Use language from the lesson to propose ideas, justify your choices, and express concerns.</li>
                 <li>Prepare a 2-minute summary of your pilot program plan to present to the class.</li>
               </ul>
-              <div class="task-deliverable">
-                <h3>Key Decisions to Make:</h3>
-                <ol style="margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.6rem;">
-                  <li><strong>Program Name:</strong> What is a catchy, positive name for your program?</li>
-                  <li><strong>Target Districts:</strong> Which two districts in Hebron will you target for the pilot? Why them?</li>
-                  <li><strong>Core Activities:</strong> What will be the ONE main activity for schools, and the ONE main activity for households?</li>
-                  <li><strong>Measuring Success:</strong> What is the main way you will measure if the pilot is successful?</li>
-                </ol>
-              </div>
+              <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem;">
+                <li><strong>Program Name:</strong> What is a catchy, positive name for your program?</li>
+                <li><strong>Target Artisan Group:</strong> Which specific artisan group in Nablus will you target for the pilot (e.g., potters, embroiderers, olive wood carvers)? Why them?</li>
+                <li><strong>Core Activities:</strong> What will be the ONE main activity for the workshops, and the ONE main activity for the mentorship?</li>
+                <li><strong>Measuring Success:</strong> What is the main way you will measure if the pilot is successful?</li>
+              </ol>
             </div>
           </div>
         </div>
 
-        <!-- Slide 18 -->
+        <!-- Slide 17 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-chalkboard-teacher"></i> Reporting</span>
@@ -1375,14 +1660,14 @@
           </div>
         </div>
 
-        <!-- Slide 19 -->
+        <!-- Slide 18 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Practice Activities</span>
+            <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Practice Activities (Homework)</span>
             <h2>Language Practice</h2>
             <div class="card" style="gap: 1.5rem;">
               <div class="interactive-block" data-activity="mc-grammar">
-                <h3><i class="fa-solid fa-spell-check" style="margin-right: 8px;"></i>Grammar: Choose the sentence with the correct past tense.</h3>
+                <h3><i class="fa-solid fa-spell-check" style="margin-right: 8px;"></i>Grammar: Choose the correct past perfect form.</h3>
                 <div class="quiz-grid">
                   <div class="quiz-card" data-correct="had collected">
                     <p>The report used data that the team ____ earlier.</p>
@@ -1417,7 +1702,7 @@
                     </select>
                   </div>
                   <div class="quiz-card" data-correct="had consulted">
-                    <p>They ____ the community leaders before they designed the program.</p>
+                    <p>They ____ the artisan cooperative before they designed the program.</p>
                     <select>
                       <option value="">Select</option>
                       <option value="consulted">consulted</option>
@@ -1436,11 +1721,11 @@
                   <h3><i class="fa-solid fa-language" style="margin-right: 8px;"></i>Vocabulary: Match the term to its meaning.</h3>
                   <p class="hint">Select the best term from the menu for each definition.</p>
                   <div class="matching-stack">
-                    <div class="matching-option" data-correct="Sustainability"><span>The ability to continue long-term without depleting resources.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Intervention">Intervention</option><option value="Feasibility">Feasibility</option></select></div>
-                    <div class="matching-option" data-correct="Pilot Program"><span>A small-scale preliminary study to evaluate if an idea will work.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Intervention">Intervention</option><option value="Feasibility">Feasibility</option></select></div>
-                    <div class="matching-option" data-correct="Stakeholder"><span>A person or group with an interest or concern in a project.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Intervention">Intervention</option><option value="Feasibility">Feasibility</option></select></div>
-                    <div class="matching-option" data-correct="Intervention"><span>A specific action taken to improve a situation.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Intervention">Intervention</option><option value="Feasibility">Feasibility</option></select></div>
-                    <div class="matching-option" data-correct="Feasibility"><span>The state or degree of being easily or conveniently done.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Intervention">Intervention</option><option value="Feasibility">Feasibility</option></select></div>
+                    <div class="matching-option" data-correct="Sustainability"><span>The ability to continue long-term without depleting resources.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Digital Literacy">Digital Literacy</option><option value="E-commerce">E-commerce</option></select></div>
+                    <div class="matching-option" data-correct="Pilot Program"><span>A small-scale preliminary study to evaluate if an idea will work.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Digital Literacy">Digital Literacy</option><option value="E-commerce">E-commerce</option></select></div>
+                    <div class="matching-option" data-correct="Stakeholder"><span>A person or group with an interest or concern in a project.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Digital Literacy">Digital Literacy</option><option value="E-commerce">E-commerce</option></select></div>
+                    <div class="matching-option" data-correct="Digital Literacy"><span>The ability to use information and communication technologies.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Digital Literacy">Digital Literacy</option><option value="E-commerce">E-commerce</option></select></div>
+                    <div class="matching-option" data-correct="E-commerce"><span>The buying and selling of goods or services using the internet.</span><select><option value="">Select term</option><option value="Sustainability">Sustainability</option><option value="Pilot Program">Pilot Program</option><option value="Stakeholder">Stakeholder</option><option value="Digital Literacy">Digital Literacy</option><option value="E-commerce">E-commerce</option></select></div>
                   </div>
                 </div>
                 <div class="activity-actions">
@@ -1453,11 +1738,11 @@
               <div class="card" style="gap: 1rem;" data-activity="click-drop">
                 <h3><i class="fa-solid fa-arrows-left-right"></i>Prepositions: Click a word and then the sentence slot where it belongs.</h3>
                 <ol class="click-drop-sentences">
-                  <li>The report focused <button type="button" class="drop-zone placeholder" data-answer="on" data-placeholder="Select" aria-label="Sentence 1"></button> the issue of water waste.</li>
-                  <li>We need to invest <button type="button" class="drop-zone placeholder" data-answer="in" data-placeholder="Select" aria-label="Sentence 2"></button> new educational materials.</li>
-                  <li>We must consult <button type="button" class="drop-zone placeholder" data-answer="with" data-placeholder="Select" aria-label="Sentence 3"></button> local leaders before starting.</li>
+                  <li>The report focused <button type="button" class="drop-zone placeholder" data-answer="on" data-placeholder="Select" aria-label="Sentence 1"></button> the challenges for artisans.</li>
+                  <li>We need to invest <button type="button" class="drop-zone placeholder" data-answer="in" data-placeholder="Select" aria-label="Sentence 2"></button> new training materials.</li>
+                  <li>We must consult <button type="button" class="drop-zone placeholder" data-answer="with" data-placeholder="Select" aria-label="Sentence 3"></button> local artisans before starting.</li>
                   <li>The success of the project depends <button type="button" class="drop-zone placeholder" data-answer="on" data-placeholder="Select" aria-label="Sentence 4"></button> community participation.</li>
-                  <li>This program is aimed <button type="button" class="drop-zone placeholder" data-answer="at" data-placeholder="Select" aria-label="Sentence 5"></button> younger households.</li>
+                  <li>This program is aimed <button type="button" class="drop-zone placeholder" data-answer="at" data-placeholder="Select" aria-label="Sentence 5"></button> improving economic outcomes.</li>
                 </ol>
                 <div class="token-bank" aria-label="Preposition options">
                   <button type="button" class="click-token" data-value="on" data-token-id="prep-token-1">on</button>
@@ -1476,7 +1761,7 @@
           </div>
         </div>
 
-        <!-- Slide 20 -->
+        <!-- Slide 19 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-pen-fancy"></i> Reflection</span>
@@ -1484,331 +1769,1056 @@
             <div class="card">
               <p>In the chatbox, please answer the following questions:</p>
               <ul class="reflection-list">
-                <li><strong>1.</strong> How confident do you feel now about justifying a decision in English? (1 = Not confident, 5 = Very confident)</li>
-                <li><strong>2.</strong> Share one new phrase or vocabulary word you learned today that you will try to use in the future.</li>
-                <li><strong>3.</strong> What was the most challenging part of designing the pilot program for your group?</li>
+                <li><strong>3 Things I Learned:</strong> Name three key takeaways from today's session.</li>
+                <li><strong>2 Things I Found Interesting:</strong> Share two points or ideas that caught your attention.</li>
+                <li><strong>1 Question I Still Have:</strong> What is one question you still have about strategic planning or the language we practiced?</li>
               </ul>
             </div>
           </div>
         </div>
-
         <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
         <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
     </main>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const counter = document.getElementById('slide-counter');
-      let currentSlideIndex = 0;
-      const totalSlides = slides.length;
+  <script type="module">
+    const stageViewport = document.querySelector('.stage-viewport');
+    const nextBtn = stageViewport?.querySelector('.slide-nav-next');
+    const prevBtn = stageViewport?.querySelector('.slide-nav-prev');
+    const counter = document.getElementById('slide-counter');
+    const addSlideBtn = document.getElementById('add-slide-btn');
+    const saveStateBtn = document.getElementById('save-state-btn');
+    const loadStateBtn = document.getElementById('load-state-btn');
+    const loadStateInput = document.getElementById('load-state-input');
+    const highlightBtn = document.getElementById('highlight-btn');
+    const highlightColorSelect = document.getElementById('highlight-color');
+    const removeHighlightBtn = document.getElementById('remove-highlight-btn');
 
-      function showSlide(index) {
-        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
-        counter.textContent = `${index + 1} / ${totalSlides}`;
+    const REMOTE_IMAGE_SELECTOR = 'img[data-remote-src]';
+    const remoteImageHydrations = new WeakMap();
+
+    function getRemoteImageContainer(img) {
+      if (!(img instanceof HTMLElement)) {
+        return null;
+      }
+      return img.closest('.bg-media') ?? img.closest('.context-image') ?? img.parentElement;
+    }
+
+    function applyRemoteImageFallback(img, error) {
+      if (error) {
+        console.warn(
+          `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? 'unknown'}`,
+          error,
+        );
+      }
+      const container = getRemoteImageContainer(img);
+      if (container) {
+        container.classList.add('remote-image-fallback');
+      }
+      img.dataset.remoteHydrated = 'failed';
+    }
+
+    async function hydrateRemoteImage(img) {
+      if (!(img instanceof HTMLImageElement)) {
+        return;
       }
 
-      function navigate(direction) {
-        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
-        showSlide(currentSlideIndex);
+      const remoteSrc = img.dataset.remoteSrc;
+      if (!remoteSrc) {
+        return;
       }
 
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
+      if (typeof fetch !== 'function') {
+        applyRemoteImageFallback(img, new Error('Fetch API is unavailable'));
+        return;
+      }
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
+      const hydrationState = img.dataset.remoteHydrated;
+      if (hydrationState === 'success' || hydrationState === 'failed') {
+        return;
+      }
+
+      if (remoteImageHydrations.has(img)) {
+        return remoteImageHydrations.get(img);
+      }
+
+      const hydrationPromise = (async () => {
+        try {
+          await new Promise((resolve, reject) => {
+            function cleanup() {
+              img.removeEventListener('load', handleLoad);
+              img.removeEventListener('error', handleError);
+            }
+
+            function handleLoad() {
+              cleanup();
+              resolve();
+            }
+
+            function handleError(err) {
+              cleanup();
+              reject(new Error('Image failed to load from src', { cause: err }));
+            }
+
+            img.addEventListener('load', handleLoad, { once: true });
+            img.addEventListener('error', handleError, { once: true });
+            img.removeAttribute('loading');
+            img.src = remoteSrc;
+          });
+
+          img.dataset.remoteHydrated = 'success';
+        } catch (error) {
+          applyRemoteImageFallback(img, error);
+        } finally {
+          remoteImageHydrations.delete(img);
+        }
+      })();
+
+      remoteImageHydrations.set(img, hydrationPromise);
+      return hydrationPromise;
+    }
+
+    async function hydrateRemoteImages(root = document) {
+      if (!root) {
+        return;
+      }
+
+      const scope = root instanceof Element || root instanceof Document ? root : document;
+      const queryFn = typeof scope.querySelectorAll === 'function' ? scope.querySelectorAll.bind(scope) : null;
+      const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
+
+      if (!remoteImages.length) {
+        return;
+      }
+
+      await Promise.all(
+        remoteImages.map((img) => {
+          const hydration = hydrateRemoteImage(img);
+          if (hydration && typeof hydration.then === 'function') {
+            return hydration.catch((error) => {
+              console.warn('Remote image hydration failed', error);
+            });
+          }
+          return undefined;
+        }),
+      );
+    }
+
+    let slides = [];
+    let currentSlideIndex = 0;
+    let mindMapId = 0;
+
+    function refreshSlides() {
+      slides = Array.from(stageViewport?.querySelectorAll('.slide-stage') ?? []);
+    }
+
+    function updateCounter() {
+      if (!counter) return;
+      const total = slides.length;
+      const current = total ? currentSlideIndex + 1 : 0;
+      counter.textContent = `${current} / ${total}`;
+    }
+
+    function showSlide(index) {
+      if (!slides.length) return;
+      currentSlideIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('hidden', slideIndex !== currentSlideIndex);
+      });
+      updateCounter();
+    }
+
+    function navigate(direction) {
+      showSlide(currentSlideIndex + direction);
+    }
+
+    function setupNavigation() {
+      nextBtn?.addEventListener('click', () => navigate(1));
+      prevBtn?.addEventListener('click', () => navigate(-1));
+
+      document.addEventListener('keydown', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement) {
+          if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+            return;
+          }
+        }
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
           navigate(1);
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
           navigate(-1);
         }
       });
+    }
 
-      showSlide(currentSlideIndex);
+    function addBlankSlide() {
+      if (!stageViewport) return;
+      const newSlide = createBlankSlide();
+      const insertionPoint = prevBtn ?? nextBtn ?? null;
+      stageViewport.insertBefore(newSlide, insertionPoint);
+      attachBlankSlideEvents(newSlide);
+      refreshSlides();
+      showSlide(slides.length - 1);
+    }
 
-      function setupMatching(activityEl) {
-        const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
+    function createBlankSlide() {
+      const slide = document.createElement('div');
+      slide.className = 'slide-stage hidden';
+      slide.dataset.type = 'blank';
+      slide.innerHTML = `
+    <div class="slide-inner">
+      <div class="blank-slide">
+        <div class="blank-controls">
+          <button class="activity-btn" type="button" data-action="add-textbox">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Add Textbox
+          </button>
+          <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+            <i class="fa-solid fa-diagram-project"></i>
+            Add Mind Map
+          </button>
+        </div>
+        <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
+        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
+      </div>
+    </div>
+  `;
+      return slide;
+    }
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                const isCorrect = select.value === option.dataset.correct;
-                option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === options.length) {
-                feedback.textContent = 'Excellent! Every match is correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                select.value = '';
-                option.style.borderColor = 'rgba(122,132,113,0.16)';
-                option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
+    function attachBlankSlideEvents(slide) {
+      const canvas = slide.querySelector('.blank-canvas');
+      const hint = slide.querySelector('[data-role="hint"]');
+      const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
+      const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
+
+      if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+        return;
+      }
+
+      const DEFAULT_HINT = 'Add textboxes for free typing or build a mind map to capture relationships.';
+      const TEXTBOX_HINT = 'Drag your textboxes into place and double-click to edit the content.';
+      const MINDMAP_HINT = 'Mind map ready. Add branches to capture ideas and connections.';
+
+      function updateHintForCanvas() {
+        if (!(hint instanceof HTMLElement)) return;
+        if (canvas.querySelector('.mindmap')) {
+          hint.textContent = MINDMAP_HINT;
+        } else if (canvas.querySelector('.textbox')) {
+          hint.textContent = TEXTBOX_HINT;
+        } else {
+          hint.textContent = DEFAULT_HINT;
+        }
+      }
+
+      addTextboxBtn?.addEventListener('click', () => {
+        const textbox = createTextbox({ onRemove: updateHintForCanvas });
+        canvas.appendChild(textbox);
+        positionTextbox(textbox, canvas);
+        updateHintForCanvas();
+      });
+
+      addMindmapBtn?.addEventListener('click', () => {
+        if (canvas.querySelector('.mindmap')) {
+          const existing = canvas.querySelector('.mindmap');
+          existing?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        const mindmap = createMindMap(() => {
+          updateHintForCanvas();
+        });
+        initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
+        canvas.appendChild(mindmap);
+        updateHintForCanvas();
+      });
+
+      canvas
+        .querySelectorAll('.textbox')
+        .forEach((textbox) => initialiseTextbox(textbox, { onRemove: updateHintForCanvas }));
+
+      canvas
+        .querySelectorAll('.mindmap')
+        .forEach((mindmap) => initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }));
+
+      updateHintForCanvas();
+    }
+
+    function positionTextbox(textbox, canvas) {
+      const count = canvas.querySelectorAll('.textbox').length - 1;
+      const offset = 24 * count;
+      textbox.style.left = `${offset}px`;
+      textbox.style.top = `${offset}px`;
+    }
+
+    function createTextbox({ onRemove } = {}) {
+      const textbox = document.createElement('div');
+      textbox.className = 'textbox';
+      textbox.innerHTML = `
+    <button type="button" class="textbox-remove" aria-label="Remove textbox">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="textbox-handle">Textbox</div>
+    <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
+  `;
+      initialiseTextbox(textbox, { onRemove });
+      return textbox;
+    }
+
+    function initialiseTextbox(textbox, { onRemove } = {}) {
+      if (!(textbox instanceof HTMLElement)) {
+        return textbox;
+      }
+
+      textbox.__deckTextboxOnRemove = onRemove;
+      if (textbox.__deckTextboxInitialised) {
+        return textbox;
+      }
+      textbox.__deckTextboxInitialised = true;
+
+      const removeBtn = textbox.querySelector('.textbox-remove');
+      removeBtn?.addEventListener('click', () => {
+        textbox.remove();
+        if (typeof textbox.__deckTextboxOnRemove === 'function') {
+          textbox.__deckTextboxOnRemove();
+        }
+      });
+
+      const body = textbox.querySelector('.textbox-body');
+      body?.addEventListener('dblclick', () => {
+        if (body instanceof HTMLElement) {
+          body.focus();
+        }
+      });
+
+      makeDraggable(textbox);
+      return textbox;
+    }
+
+    function makeDraggable(element) {
+      if (!(element instanceof HTMLElement)) return;
+      if (element.__deckDraggableInitialised) {
+        return;
+      }
+      element.__deckDraggableInitialised = true;
+
+      const handle = element.querySelector('.textbox-handle') ?? element;
+      let pointerId = null;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      handle.addEventListener('pointerdown', (event) => {
+        const canvas = element.parentElement;
+        if (!(canvas instanceof HTMLElement)) return;
+        pointerId = event.pointerId;
+        try {
+          element.setPointerCapture(pointerId);
+        } catch (error) {
+          // ignore when pointer capture is not supported
+        }
+        const elementRect = element.getBoundingClientRect();
+        offsetX = event.clientX - elementRect.left;
+        offsetY = event.clientY - elementRect.top;
+        element.dataset.dragging = 'true';
+        event.preventDefault();
+      });
+
+      element.addEventListener('pointermove', (event) => {
+        if (element.dataset.dragging !== 'true' || event.pointerId !== pointerId) return;
+        const canvas = element.parentElement;
+        if (!(canvas instanceof HTMLElement)) return;
+        const canvasRect = canvas.getBoundingClientRect();
+        const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
+        const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
+        const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
+        const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
+        const clampedX = Math.min(Math.max(0, rawX), maxX);
+        const clampedY = Math.min(Math.max(0, rawY), maxY);
+        element.style.left = `${clampedX}px`;
+        element.style.top = `${clampedY}px`;
+      });
+
+      function clearPointerState(event) {
+        if (event.pointerId !== pointerId) return;
+        delete element.dataset.dragging;
+        if (pointerId !== null) {
+          try {
+            element.releasePointerCapture(pointerId);
+          } catch (error) {
+            // ignore release errors when pointer capture is not active
+          }
+        }
+        pointerId = null;
+      }
+
+      element.addEventListener('pointerup', clearPointerState);
+      element.addEventListener('pointercancel', clearPointerState);
+    }
+
+    function createMindMap(onRemove) {
+      const container = document.createElement('section');
+      container.className = 'mindmap';
+      const branchInputId = `mindmap-branch-${++mindMapId}`;
+      container.innerHTML = `
+    <div class="mindmap-header">
+      <h3 class="mindmap-title">Mind Map</h3>
+      <button type="button" class="mindmap-remove">
+        <i class="fa-solid fa-trash-can"></i>
+        Remove
+      </button>
+    </div>
+    <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
+    <div class="mindmap-branches" aria-live="polite"></div>
+    <form class="mindmap-form">
+      <label class="sr-only" for="${branchInputId}">New branch label</label>
+      <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
+      <button type="submit">
+        <i class="fa-solid fa-plus"></i>
+        Add Branch
+      </button>
+    </form>
+  `;
+      const branches = container.querySelector('.mindmap-branches');
+      if (branches && !branches.querySelector('.mindmap-branch')) {
+        const defaultBranch = createMindMapBranch('Add supporting detail...');
+        branches.appendChild(defaultBranch);
+      }
+
+      initialiseMindMap(container, { onRemove });
+      return container;
+    }
+
+    function initialiseMindMap(container, { onRemove } = {}) {
+      if (!(container instanceof HTMLElement)) {
+        return container;
+      }
+
+      container.__deckMindmapOnRemove = onRemove;
+      if (!container.__deckMindmapInitialised) {
+        container.__deckMindmapInitialised = true;
+        const removeBtn = container.querySelector('.mindmap-remove');
+        removeBtn?.addEventListener('click', () => {
+          container.remove();
+          if (typeof container.__deckMindmapOnRemove === 'function') {
+            container.__deckMindmapOnRemove();
           }
         });
       }
 
-      function setupMcGrammar(activityEl) {
-        const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
+      const form = container.querySelector('.mindmap-form');
+      const input = container.querySelector('.mindmap-form input');
+      const branches = container.querySelector('.mindmap-branches');
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                const isCorrect = select.value === card.dataset.correct;
-                card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === cards.length) {
-                feedback.textContent = 'Great job! All answers are correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                select.value = '';
-                card.style.borderColor = 'rgba(122,132,113,0.2)';
-                card.style.background = 'var(--soft-white)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
+      if (form && !form.__deckSubmitInitialised) {
+        form.__deckSubmitInitialised = true;
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (!branches || !input) return;
+          const value = input.value.trim();
+          if (!value) return;
+          const newBranch = createMindMapBranch(value);
+          branches.appendChild(newBranch);
+          initialiseMindMapBranch(newBranch);
+          input.value = '';
+          input.focus();
         });
       }
 
-      function setupMcQuiz(activityEl) {
-        const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
+      container
+        .querySelectorAll('.mindmap-branch')
+        .forEach((branch) => initialiseMindMapBranch(branch));
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              cards.forEach(card => {
-                const options = Array.from(card.querySelectorAll('.quiz-option'));
-                const selected = options.find(option => option.querySelector('input').checked);
-                options.forEach(option => option.classList.remove('correct', 'incorrect'));
-                if (selected) {
-                  const value = selected.querySelector('input').value;
-                  const isCorrect = value === card.dataset.correct;
-                  selected.classList.add(isCorrect ? 'correct' : 'incorrect');
-                  if (isCorrect) correctCount += 1;
-                }
-              });
-              if (correctCount === cards.length) {
-                feedback.textContent = 'Brilliant listening! All answers correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${cards.length} correct. Review the audio and try again.`;
-                feedback.className = 'feedback-msg error';
+      return container;
+    }
+
+    function createMindMapBranch(text) {
+      const branch = document.createElement('div');
+      branch.className = 'mindmap-branch';
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('aria-label', 'Mind map branch');
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'branch-remove';
+      removeBtn.textContent = 'Remove';
+      branch.append(textarea, removeBtn);
+      initialiseMindMapBranch(branch);
+      return branch;
+    }
+
+    function initialiseMindMapBranch(branch) {
+      if (!(branch instanceof HTMLElement)) {
+        return branch;
+      }
+
+      if (branch.__deckMindmapBranchInitialised) {
+        return branch;
+      }
+      branch.__deckMindmapBranchInitialised = true;
+      const removeBtn = branch.querySelector('.branch-remove');
+      removeBtn?.addEventListener('click', () => {
+        branch.remove();
+      });
+      return branch;
+    }
+
+    function recalibrateMindMapCounter() {
+      if (!stageViewport) return;
+      const inputs = stageViewport.querySelectorAll('.mindmap-form input[id^="mindmap-branch-"]');
+      inputs.forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const match = input.id.match(/mindmap-branch-(\d+)/);
+        if (match) {
+          const value = Number.parseInt(match[1], 10);
+          if (!Number.isNaN(value)) {
+            mindMapId = Math.max(mindMapId, value);
+          }
+        }
+      });
+    }
+
+    function getDeckState() {
+      refreshSlides();
+      return {
+        version: 1,
+        currentSlideIndex,
+        slides: slides.map((slide) => slide.outerHTML),
+      };
+    }
+
+    function downloadDeckState() {
+      try {
+        const state = getDeckState();
+        const blob = new Blob([JSON.stringify(state, null, 2)], {
+          type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'deck-state.json';
+        anchor.click();
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Failed to save deck state', error);
+        window.alert("Sorry, we couldn't save the deck right now. Please try again.");
+      }
+    }
+
+    function parseDeckState(raw) {
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.slides)) {
+        throw new Error('Invalid deck state structure');
+      }
+      return parsed;
+    }
+
+    function applyDeckState(state) {
+      if (!stageViewport || !state || !Array.isArray(state.slides)) {
+        throw new Error('Deck state does not include slides');
+      }
+
+      const navButtons = Array.from(stageViewport.querySelectorAll('.slide-nav'));
+      const fragment = document.createDocumentFragment();
+
+      state.slides.forEach((slideHTML) => {
+        if (typeof slideHTML !== 'string') {
+          return;
+        }
+        const template = document.createElement('template');
+        template.innerHTML = slideHTML.trim();
+        const slide = template.content.firstElementChild;
+        if (slide instanceof HTMLElement && slide.classList.contains('slide-stage')) {
+          fragment.appendChild(slide);
+        }
+      });
+
+      stageViewport.innerHTML = '';
+      stageViewport.appendChild(fragment);
+      navButtons.forEach((button) => stageViewport.appendChild(button));
+
+      refreshSlides();
+      slides
+        .filter((slide) => slide.dataset.type === 'blank')
+        .forEach((slide) => attachBlankSlideEvents(slide));
+
+      initialiseActivities();
+      recalibrateMindMapCounter();
+
+      if (slides.length) {
+        const requestedIndex =
+          typeof state.currentSlideIndex === 'number'
+            ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
+            : 0;
+        showSlide(requestedIndex);
+      } else {
+        updateCounter();
+      }
+
+      hydrateRemoteImages(stageViewport).catch((error) => {
+        console.warn('Remote image hydration failed after loading state', error);
+      });
+    }
+
+    function handleStateFileSelection(event) {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement) || !input.files?.length) {
+        return;
+      }
+
+      const [file] = input.files;
+      const reader = new FileReader();
+
+      reader.addEventListener('load', () => {
+        try {
+          const text = typeof reader.result === 'string' ? reader.result : '';
+          const state = parseDeckState(text);
+          applyDeckState(state);
+        } catch (error) {
+          console.error('Failed to load deck state', error);
+          window.alert('The selected file could not be loaded. Please choose a valid deck state JSON file.');
+        } finally {
+          input.value = '';
+        }
+      });
+
+      reader.addEventListener('error', () => {
+        console.error('Failed to read deck state file', reader.error);
+        window.alert('We could not read that file. Please try again with a different JSON file.');
+        input.value = '';
+      });
+
+      reader.readAsText(file);
+    }
+
+    function findSlideForNode(node) {
+      if (!node) return null;
+      if (node instanceof HTMLElement) {
+        return node.closest('.slide-stage');
+      }
+      if (node instanceof Text) {
+        return node.parentElement?.closest('.slide-stage') ?? null;
+      }
+      return null;
+    }
+
+    function applyHighlight(color) {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+        window.alert('Select some text in a slide before applying a highlight.');
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      const startSlide = findSlideForNode(range.startContainer);
+      const endSlide = findSlideForNode(range.endContainer);
+
+      if (!startSlide || !endSlide || startSlide !== endSlide) {
+        window.alert('Highlights must stay within a single slide.');
+        return;
+      }
+
+      if (!stageViewport?.contains(startSlide)) {
+        window.alert('Please highlight text within the slide area.');
+        return;
+      }
+
+      try {
+        const contents = range.extractContents();
+        const textSample = contents.textContent?.trim();
+        if (!textSample) {
+          window.alert('Select some text to highlight first.');
+          range.insertNode(contents);
+          return;
+        }
+
+        const highlight = document.createElement('mark');
+        highlight.className = 'text-highlight';
+        highlight.dataset.color = color;
+        highlight.style.setProperty('--highlight-color', color);
+        highlight.appendChild(contents);
+        range.insertNode(highlight);
+
+        selection.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(highlight);
+        selection.addRange(newRange);
+      } catch (error) {
+        console.error('Failed to apply highlight', error);
+        window.alert("Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.");
+      }
+    }
+
+    function removeHighlight() {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        window.alert('Place your cursor inside a highlight to clear it.');
+        return;
+      }
+
+      let container = selection.anchorNode;
+      if (container instanceof Text) {
+        container = container.parentElement;
+      }
+
+      const highlight = container instanceof HTMLElement ? container.closest('.text-highlight') : null;
+
+      if (!highlight || !stageViewport?.contains(highlight)) {
+        window.alert('Place your cursor inside a highlight to clear it.');
+        return;
+      }
+
+      const parent = highlight.parentNode;
+      if (!parent) {
+        return;
+      }
+
+      while (highlight.firstChild) {
+        parent.insertBefore(highlight.firstChild, highlight);
+      }
+      highlight.remove();
+      if (parent instanceof HTMLElement) {
+        parent.normalize();
+      }
+      selection.removeAllRanges();
+    }
+
+    function setupMatching(activityEl) {
+      const options = Array.from(activityEl.querySelectorAll('.matching-option'));
+      const feedback = activityEl.querySelector('.feedback-msg');
+      const buttons = activityEl.querySelectorAll('.activity-actions button');
+      if (!feedback) return;
+
+      buttons.forEach((btn) => {
+        if (btn.dataset.action === 'check') {
+          btn.addEventListener('click', () => {
+            let correctCount = 0;
+            options.forEach((option) => {
+              const select = option.querySelector('select');
+              const isCorrect = select?.value === option.dataset.correct;
+              option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+              option.style.background = isCorrect
+                ? 'rgba(46,125,50,0.12)'
+                : 'rgba(198,40,40,0.12)';
+              if (isCorrect) correctCount += 1;
+            });
+            if (correctCount === options.length) {
+              feedback.textContent = 'Excellent! Every match is correct.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
+              feedback.className = 'feedback-msg error';
+            }
+          });
+        } else if (btn.dataset.action === 'reset') {
+          btn.addEventListener('click', () => {
+            options.forEach((option) => {
+              const select = option.querySelector('select');
+              if (select) {
+                select.value = '';
+              }
+              option.style.borderColor = 'rgba(122,132,113,0.16)';
+              option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
+            });
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          });
+        }
+      });
+    }
+
+    function setupMcGrammar(activityEl) {
+      const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
+      const feedback = activityEl.querySelector('.feedback-msg');
+      const buttons = activityEl.querySelectorAll('.activity-actions button');
+      if (!feedback) return;
+
+      buttons.forEach((btn) => {
+        if (btn.dataset.action === 'check') {
+          btn.addEventListener('click', () => {
+            let correctCount = 0;
+            cards.forEach((card) => {
+              const select = card.querySelector('select');
+              const isCorrect = select?.value === card.dataset.correct;
+              card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+              card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
+              if (isCorrect) correctCount += 1;
+            });
+            if (correctCount === cards.length) {
+              feedback.textContent = 'Great job! All answers are correct.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
+              feedback.className = 'feedback-msg error';
+            }
+          });
+        } else if (btn.dataset.action === 'reset') {
+          btn.addEventListener('click', () => {
+            cards.forEach((card) => {
+              const select = card.querySelector('select');
+              if (select) {
+                select.value = '';
+              }
+              card.style.borderColor = 'rgba(122,132,113,0.2)';
+              card.style.background = 'var(--soft-white)';
+            });
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          });
+        }
+      });
+    }
+
+    function setupMcQuiz(activityEl) {
+      const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
+      const feedback = activityEl.querySelector('.feedback-msg');
+      const buttons = activityEl.querySelectorAll('.activity-actions button');
+      if (!feedback) return;
+
+      buttons.forEach((btn) => {
+        if (btn.dataset.action === 'check') {
+          btn.addEventListener('click', () => {
+            let correctCount = 0;
+            cards.forEach((card) => {
+              const options = Array.from(card.querySelectorAll('.quiz-option'));
+              const selected = options.find((option) => option.querySelector('input')?.checked);
+              options.forEach((option) => option.classList.remove('correct', 'incorrect'));
+              if (selected) {
+                const input = selected.querySelector('input');
+                const value = input?.value;
+                const isCorrect = value === card.dataset.correct;
+                selected.classList.add(isCorrect ? 'correct' : 'incorrect');
+                if (isCorrect) correctCount += 1;
               }
             });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              cards.forEach(card => {
-                const options = Array.from(card.querySelectorAll('.quiz-option'));
-                options.forEach(option => {
-                  const input = option.querySelector('input');
+            if (correctCount === cards.length) {
+              feedback.textContent = 'Brilliant listening! All answers correct.';
+              feedback.className = 'feedback-msg success';
+            } else {
+              feedback.textContent = `You have ${correctCount} / ${cards.length} correct. Review the audio and try again.`;
+              feedback.className = 'feedback-msg error';
+            }
+          });
+        } else if (btn.dataset.action === 'reset') {
+          btn.addEventListener('click', () => {
+            cards.forEach((card) => {
+              const options = Array.from(card.querySelectorAll('.quiz-option'));
+              options.forEach((option) => {
+                const input = option.querySelector('input');
+                if (input) {
                   input.checked = false;
-                  option.classList.remove('correct', 'incorrect');
-                });
+                }
+                option.classList.remove('correct', 'incorrect');
               });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
             });
+            feedback.textContent = '';
+            feedback.className = 'feedback-msg';
+          });
+        }
+      });
+    }
+
+    function setupClickPlacement(activityEl) {
+      const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
+      const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
+      const feedback = activityEl.querySelector('.feedback-msg');
+      const buttons = Array.from(activityEl.querySelectorAll('.activity-actions button'));
+      let activeToken = null;
+
+      dropZones.forEach((zone, index) => {
+        if (!zone.dataset.zoneId) {
+          zone.dataset.zoneId = `${activityEl.dataset.activity || 'zone'}-${index + 1}-${Math.random()
+            .toString(16)
+            .slice(2, 6)}`;
+        }
+        if (!zone.dataset.placeholder) {
+          zone.dataset.placeholder = 'Select';
+        }
+        zone.innerHTML = zone.dataset.placeholder;
+        zone.classList.add('placeholder');
+        zone.classList.remove('filled');
+
+        zone.addEventListener('click', () => {
+          if (activeToken) {
+            const previousTokenId = zone.dataset.current;
+            if (previousTokenId) {
+              const previousToken = tokens.find((token) => token.dataset.tokenId === previousTokenId);
+              if (previousToken) {
+                previousToken.dataset.assigned = 'false';
+                previousToken.dataset.zoneId = '';
+                previousToken.classList.remove('used');
+              }
+            }
+
+            zone.dataset.current = activeToken.dataset.tokenId;
+            zone.innerHTML = activeToken.innerHTML;
+            zone.classList.remove('placeholder', 'correct', 'incorrect', 'selected');
+            zone.classList.add('filled');
+
+            activeToken.dataset.assigned = 'true';
+            activeToken.dataset.zoneId = zone.dataset.zoneId;
+            activeToken.classList.remove('selected');
+            activeToken.classList.add('used');
+            activeToken = null;
+          } else if (zone.dataset.current) {
+            const assignedToken = tokens.find((token) => token.dataset.tokenId === zone.dataset.current);
+            if (assignedToken) {
+              assignedToken.dataset.assigned = 'false';
+              assignedToken.dataset.zoneId = '';
+              assignedToken.classList.remove('used');
+            }
+            zone.dataset.current = '';
+            zone.innerHTML = zone.dataset.placeholder;
+            zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
+            zone.classList.add('placeholder');
+          } else {
+            zone.classList.add('selected');
+            window.setTimeout(() => zone.classList.remove('selected'), 200);
           }
         });
-      }
+      });
 
-      function setupClickPlacement(activityEl) {
-        const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
-        const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = Array.from(activityEl.querySelectorAll('.activity-actions button'));
-        let activeToken = null;
+      tokens.forEach((token, index) => {
+        if (!token.dataset.tokenId) {
+          token.dataset.tokenId = `token-${index}-${Math.random().toString(16).slice(2, 6)}`;
+        }
 
-        dropZones.forEach((zone, index) => {
-          if (!zone.dataset.zoneId) {
-            zone.dataset.zoneId = `${activityEl.dataset.activity || 'zone'}-${index + 1}-${Math.random().toString(16).slice(2, 6)}`;
-          }
-          if (!zone.dataset.placeholder) {
-            zone.dataset.placeholder = 'Select';
-          }
-          zone.innerHTML = zone.dataset.placeholder;
-          zone.classList.add('placeholder');
-          zone.classList.remove('filled');
-
-          zone.addEventListener('click', () => {
-            if (activeToken) {
-              const previousTokenId = zone.dataset.current;
-              if (previousTokenId) {
-                const previousToken = tokens.find(token => token.dataset.tokenId === previousTokenId);
-                if (previousToken) {
-                  previousToken.dataset.assigned = 'false';
-                  previousToken.dataset.zoneId = '';
-                  previousToken.classList.remove('used');
-                }
-              }
-
-              zone.dataset.current = activeToken.dataset.tokenId;
-              zone.innerHTML = activeToken.innerHTML;
-              zone.classList.remove('placeholder', 'correct', 'incorrect', 'selected');
-              zone.classList.add('filled');
-
-              activeToken.dataset.assigned = 'true';
-              activeToken.dataset.zoneId = zone.dataset.zoneId;
-              activeToken.classList.remove('selected');
-              activeToken.classList.add('used');
-              activeToken = null;
-            } else if (zone.dataset.current) {
-              const assignedToken = tokens.find(token => token.dataset.tokenId === zone.dataset.current);
-              if (assignedToken) {
-                assignedToken.dataset.assigned = 'false';
-                assignedToken.dataset.zoneId = '';
-                assignedToken.classList.remove('used');
-              }
+        token.addEventListener('click', () => {
+          if (token.dataset.assigned === 'true' && token.dataset.zoneId) {
+            const zone = dropZones.find((item) => item.dataset.zoneId === token.dataset.zoneId);
+            if (zone) {
               zone.dataset.current = '';
               zone.innerHTML = zone.dataset.placeholder;
               zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
               zone.classList.add('placeholder');
-            } else {
-              zone.classList.add('selected');
-              setTimeout(() => zone.classList.remove('selected'), 200);
             }
-          });
-        });
-
-        tokens.forEach((token, index) => {
-          if (!token.dataset.tokenId) {
-            token.dataset.tokenId = `token-${index}-${Math.random().toString(16).slice(2, 6)}`;
+            token.dataset.assigned = 'false';
+            token.dataset.zoneId = '';
+            token.classList.remove('used');
           }
 
-          token.addEventListener('click', () => {
-            if (token.dataset.assigned === 'true' && token.dataset.zoneId) {
-              const zone = dropZones.find(item => item.dataset.zoneId === token.dataset.zoneId);
-              if (zone) {
-                zone.dataset.current = '';
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-                zone.classList.add('placeholder');
+          if (activeToken === token) {
+            token.classList.remove('selected');
+            activeToken = null;
+          } else {
+            tokens.forEach((item) => item.classList.remove('selected'));
+            token.classList.add('selected');
+            activeToken = token;
+          }
+        });
+      });
+
+      buttons.forEach((btn) => {
+        if (btn.dataset.action === 'check') {
+          btn.addEventListener('click', () => {
+            let correctCount = 0;
+            dropZones.forEach((zone) => {
+              const tokenId = zone.dataset.current;
+              const assignedToken = tokens.find((token) => token.dataset.tokenId === tokenId);
+              const selectedValue = assignedToken ? assignedToken.dataset.value || assignedToken.textContent.trim() : '';
+              const isCorrect = !!tokenId && selectedValue === zone.dataset.answer;
+
+              zone.classList.toggle('correct', isCorrect);
+              zone.classList.toggle('incorrect', !!tokenId && !isCorrect);
+
+              if (!tokenId) {
+                zone.classList.remove('correct', 'incorrect');
               }
+
+              if (isCorrect) {
+                correctCount += 1;
+              }
+            });
+
+            if (feedback) {
+              if (correctCount === dropZones.length) {
+                feedback.textContent = 'Perfect! Every response is accurate.';
+                feedback.className = 'feedback-msg success';
+              } else {
+                feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
+                feedback.className = 'feedback-msg error';
+              }
+            }
+          });
+        } else if (btn.dataset.action === 'reset') {
+          btn.addEventListener('click', () => {
+            dropZones.forEach((zone) => {
+              zone.dataset.current = '';
+              zone.innerHTML = zone.dataset.placeholder;
+              zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
+              zone.classList.add('placeholder');
+            });
+
+            tokens.forEach((token) => {
               token.dataset.assigned = 'false';
               token.dataset.zoneId = '';
-              token.classList.remove('used');
-            }
+              token.classList.remove('selected', 'used');
+            });
 
-            if (activeToken === token) {
-              token.classList.remove('selected');
-              activeToken = null;
-            } else {
-              tokens.forEach(item => item.classList.remove('selected'));
-              token.classList.add('selected');
-              activeToken = token;
+            activeToken = null;
+
+            if (feedback) {
+              feedback.textContent = '';
+              feedback.className = 'feedback-msg';
             }
           });
-        });
+        }
+      });
+    }
 
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              dropZones.forEach(zone => {
-                const tokenId = zone.dataset.current;
-                const assignedToken = tokens.find(token => token.dataset.tokenId === tokenId);
-                const selectedValue = assignedToken ? assignedToken.dataset.value || assignedToken.textContent.trim() : '';
-                const isCorrect = !!tokenId && selectedValue === zone.dataset.answer;
+    function initialiseActivities() {
+      document
+        .querySelectorAll('[data-activity="matching-vocab"]')
+        .forEach((el) => setupMatching(el));
+      document
+        .querySelectorAll('[data-activity="mc-grammar"]')
+        .forEach((el) => setupMcGrammar(el));
+      document
+        .querySelectorAll('[data-activity="mc-quiz"]')
+        .forEach((el) => setupMcQuiz(el));
+      document
+        .querySelectorAll('[data-activity="table-completion"]')
+        .forEach((el) => setupClickPlacement(el));
+      document
+        .querySelectorAll('[data-activity="click-drop"]')
+        .forEach((el) => setupClickPlacement(el));
+    }
 
-                zone.classList.toggle('correct', isCorrect);
-                zone.classList.toggle('incorrect', !!tokenId && !isCorrect);
+    async function initialiseDeck() {
+      await hydrateRemoteImages().catch((error) => {
+        console.warn('Remote imagery could not be hydrated during initialisation', error);
+      });
 
-                if (!tokenId) {
-                  zone.classList.remove('correct', 'incorrect');
-                }
-
-                if (isCorrect) {
-                  correctCount += 1;
-                }
-              });
-
-              if (feedback) {
-                if (correctCount === dropZones.length) {
-                  feedback.textContent = 'Perfect! Every response is accurate.';
-                  feedback.className = 'feedback-msg success';
-                } else {
-                  feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
-                  feedback.className = 'feedback-msg error';
-                }
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              dropZones.forEach(zone => {
-                zone.dataset.current = '';
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-                zone.classList.add('placeholder');
-              });
-
-              tokens.forEach(token => {
-                token.dataset.assigned = 'false';
-                token.dataset.zoneId = '';
-                token.classList.remove('selected', 'used');
-              });
-
-              activeToken = null;
-
-              if (feedback) {
-                feedback.textContent = '';
-                feedback.className = 'feedback-msg';
-              }
-            });
-          }
-        });
+      refreshSlides();
+      if (slides.length) {
+        showSlide(0);
       }
+      setupNavigation();
+      updateCounter();
+      initialiseActivities();
+      document
+        .querySelectorAll('.slide-stage[data-type="blank"]')
+        .forEach((slide) => attachBlankSlideEvents(slide));
+      addSlideBtn?.addEventListener('click', addBlankSlide);
+      saveStateBtn?.addEventListener('click', downloadDeckState);
+      loadStateBtn?.addEventListener('click', () => {
+        loadStateInput?.click();
+      });
+      loadStateInput?.addEventListener('change', handleStateFileSelection);
+      highlightBtn?.addEventListener('click', () => {
+        const selectedColor = highlightColorSelect?.value || '#F9E27D';
+        applyHighlight(selectedColor);
+      });
+      removeHighlightBtn?.addEventListener('click', () => {
+        removeHighlight();
+      });
+      recalibrateMindMapCounter();
+    }
 
-      document.querySelectorAll('[data-activity="matching-vocab"]').forEach(setupMatching);
-      document.querySelectorAll('[data-activity="mc-grammar"]').forEach(setupMcGrammar);
-      document.querySelectorAll('[data-activity="mc-quiz"]').forEach(setupMcQuiz);
-      document.querySelectorAll('[data-activity="table-completion"]').forEach(setupClickPlacement);
-      document.querySelectorAll('[data-activity="click-drop"]').forEach(setupClickPlacement);
+    initialiseDeck().catch((error) => {
+      console.error('Deck initialisation failed', error);
     });
   </script>
 </body>
