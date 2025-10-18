@@ -1439,13 +1439,28 @@
       ];
       const DEFAULT_TEXTBOX_COLOR = TEXTBOX_COLOR_OPTIONS[0].value;
 
-      const MINDMAP_BRANCH_CATEGORIES = [
+      const MINDMAP_BRANCH_PRESETS = [
         { value: "idea", label: "Idea" },
         { value: "opportunity", label: "Opportunity" },
         { value: "challenge", label: "Challenge" },
         { value: "evidence", label: "Evidence" },
         { value: "question", label: "Question" },
       ];
+
+      const getMindmapPreset = (value) =>
+        MINDMAP_BRANCH_PRESETS.find((preset) => preset.value === value);
+
+      const getMindmapLabelForCategory = (value) =>
+        getMindmapPreset(value)?.label ?? MINDMAP_BRANCH_PRESETS[0].label;
+
+      const getNextBranchCategory = (branchesEl) => {
+        const existing = Array.from(
+          branchesEl?.querySelectorAll(".mindmap-branch") ?? [],
+        ).length;
+        const preset =
+          MINDMAP_BRANCH_PRESETS[existing % MINDMAP_BRANCH_PRESETS.length];
+        return preset?.value ?? MINDMAP_BRANCH_PRESETS[0].value;
+      };
 
       const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
       const remoteImageHydrations = new WeakMap();
@@ -1939,7 +1954,14 @@ ${colorControls}
   `;
         const branches = container.querySelector(".mindmap-branches");
         if (branches && !branches.querySelector(".mindmap-branch")) {
-          const defaultBranch = createMindMapBranch("Add supporting detail...");
+          const defaultCategory = getNextBranchCategory(branches);
+          const defaultBranch = createMindMapBranch(
+            "Add supporting detail...",
+            {
+              category: defaultCategory,
+              label: getMindmapLabelForCategory(defaultCategory),
+            },
+          );
           branches.appendChild(defaultBranch);
         }
 
@@ -2001,11 +2023,13 @@ ${colorControls}
           }
         };
 
-        const getCategoryLabel = (value) => {
-          const match = MINDMAP_BRANCH_CATEGORIES.find(
-            (category) => category.value === value,
-          );
-          return match?.label ?? (value ? value : "Idea");
+        const getBranchLabelText = (branch) => {
+          if (!(branch instanceof HTMLElement)) {
+            return getMindmapLabelForCategory();
+          }
+          const category = branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value;
+          const savedLabel = branch.dataset.label?.trim();
+          return savedLabel || getMindmapLabelForCategory(category);
         };
 
         const updateBranchMetrics = () => {
@@ -2022,12 +2046,16 @@ ${colorControls}
             if (indexEl instanceof HTMLElement) {
               indexEl.textContent = String(index + 1);
             }
-            const select = branch.querySelector(".mindmap-branch-select");
-            if (select instanceof HTMLSelectElement) {
-              if (branch.dataset.category) {
-                select.value = branch.dataset.category;
-              } else {
-                branch.dataset.category = select.value || "idea";
+            const labelInput = branch.querySelector(".mindmap-branch-select");
+            if (labelInput instanceof HTMLInputElement) {
+              const category =
+                branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value;
+              const presetLabel = getMindmapLabelForCategory(category);
+              labelInput.placeholder = presetLabel;
+              if (branch.dataset.label) {
+                labelInput.value = branch.dataset.label;
+              } else if (!labelInput.value.trim()) {
+                labelInput.value = "";
               }
             }
             const textarea = branch.querySelector("textarea");
@@ -2048,23 +2076,26 @@ ${colorControls}
               if (!text) {
                 return null;
               }
-              const category = branch.dataset.category ?? "idea";
-              const label = getCategoryLabel(category);
+              const label = getBranchLabelText(branch);
               return `${index + 1}. [${label}] ${text}`;
             })
             .filter(Boolean);
           return [central, ...branchLines].join("\n").trim();
         };
 
-        const handleBranchUpdate = ({ type, value } = {}) => {
+        const handleBranchUpdate = ({ type, value, branch } = {}) => {
           updateBranchMetrics();
           switch (type) {
-            case "category":
-              showStatus(`Branch labelled as ${getCategoryLabel(value)}.`);
-              break;
             case "text":
               showStatus("Branch text updated.");
               break;
+            case "label": {
+              const label =
+                (typeof value === "string" && value.trim()) ||
+                getBranchLabelText(branch);
+              showStatus(`Branch label updated to "${label}".`);
+              break;
+            }
             case "removed":
               showStatus("Branch removed.");
               break;
@@ -2093,7 +2124,11 @@ ${colorControls}
               showStatus("Enter a branch idea before adding it.");
               return;
             }
-            const newBranch = createMindMapBranch(value);
+            const category = getNextBranchCategory(branches);
+            const newBranch = createMindMapBranch(value, {
+              category,
+              label: getMindmapLabelForCategory(category),
+            });
             branches.appendChild(newBranch);
             initialiseMindMapBranch(newBranch, branchCallbacks);
             handleBranchUpdate({ type: "added" });
@@ -2201,10 +2236,16 @@ ${colorControls}
         return container;
       }
 
-      function createMindMapBranch(text, category = "idea") {
+      function createMindMapBranch(text, { category, label } = {}) {
+        const preset = getMindmapPreset(category) ?? MINDMAP_BRANCH_PRESETS[0];
         const branch = document.createElement("div");
         branch.className = "mindmap-branch";
-        branch.dataset.category = category;
+        branch.dataset.category = preset.value;
+        if (typeof label === "string" && label.trim()) {
+          branch.dataset.label = label.trim();
+        } else {
+          branch.dataset.label = preset.label;
+        }
 
         const header = document.createElement("div");
         header.className = "mindmap-branch-header";
@@ -2213,16 +2254,13 @@ ${colorControls}
         indexBadge.className = "mindmap-branch-index";
         indexBadge.setAttribute("aria-hidden", "true");
 
-        const select = document.createElement("select");
-        select.className = "mindmap-branch-select";
-        select.setAttribute("aria-label", "Branch category");
-        MINDMAP_BRANCH_CATEGORIES.forEach(({ value, label }) => {
-          const option = document.createElement("option");
-          option.value = value;
-          option.textContent = label;
-          select.append(option);
-        });
-        select.value = category;
+        const labelInput = document.createElement("input");
+        labelInput.type = "text";
+        labelInput.className = "mindmap-branch-select";
+        labelInput.setAttribute("aria-label", "Branch label");
+        labelInput.placeholder = preset.label;
+        labelInput.autocomplete = "off";
+        labelInput.value = branch.dataset.label ?? "";
 
         const textarea = document.createElement("textarea");
         textarea.value = text;
@@ -2243,7 +2281,7 @@ ${colorControls}
         removeBtn.append(removeIcon, removeLabel);
         actions.append(removeBtn);
 
-        header.append(indexBadge, select);
+        header.append(indexBadge, labelInput);
         branch.append(header, textarea, actions);
 
         return branch;
@@ -2269,21 +2307,62 @@ ${colorControls}
         branch.__deckMindmapBranchInitialised = true;
 
         if (!branch.dataset.category) {
-          const preset = branch.querySelector(".mindmap-branch-select");
-          branch.dataset.category =
-            preset instanceof HTMLSelectElement ? preset.value || "idea" : "idea";
+          const preset = branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value;
+          branch.dataset.category = preset;
         }
 
         const textarea = branch.querySelector("textarea");
-        const select = branch.querySelector(".mindmap-branch-select");
+        let labelInput = branch.querySelector(".mindmap-branch-select");
+
+        if (labelInput instanceof HTMLSelectElement) {
+          const replacement = document.createElement("input");
+          replacement.type = "text";
+          replacement.className = "mindmap-branch-select";
+          replacement.setAttribute("aria-label", "Branch label");
+          replacement.autocomplete = "off";
+          const legacyValue = labelInput.value || branch.dataset.category;
+          const presetLabel = getMindmapLabelForCategory(legacyValue);
+          replacement.placeholder = presetLabel;
+          const existingLabel = branch.dataset.label?.trim();
+          replacement.value = existingLabel || presetLabel;
+          labelInput.replaceWith(replacement);
+          labelInput = replacement;
+        }
+
+        if (!(labelInput instanceof HTMLInputElement)) {
+          const replacement = document.createElement("input");
+          replacement.type = "text";
+          replacement.className = "mindmap-branch-select";
+          replacement.setAttribute("aria-label", "Branch label");
+          replacement.autocomplete = "off";
+          const presetLabel = getMindmapLabelForCategory(branch.dataset.category);
+          replacement.placeholder = presetLabel;
+          replacement.value = branch.dataset.label?.trim() || presetLabel;
+          const header = branch.querySelector(".mindmap-branch-header");
+          const indexEl = branch.querySelector(".mindmap-branch-index");
+          if (header instanceof HTMLElement) {
+            if (indexEl) {
+              header.insertBefore(replacement, indexEl.nextSibling);
+            } else {
+              header.appendChild(replacement);
+            }
+          }
+          labelInput = replacement;
+        }
+
         const removeBtn = branch.querySelector(".branch-remove");
 
         const syncBranchState = () => {
-          if (select instanceof HTMLSelectElement) {
-            if (branch.dataset.category) {
-              select.value = branch.dataset.category;
+          const currentCategory =
+            branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value;
+          const presetLabel = getMindmapLabelForCategory(currentCategory);
+          if (labelInput instanceof HTMLInputElement) {
+            labelInput.placeholder = presetLabel;
+            const trimmed = labelInput.value.trim();
+            if (trimmed) {
+              branch.dataset.label = trimmed;
             } else {
-              branch.dataset.category = select.value || "idea";
+              delete branch.dataset.label;
             }
           }
           if (textarea instanceof HTMLTextAreaElement) {
@@ -2294,23 +2373,27 @@ ${colorControls}
         branch.__deckMindmapBranchSync = syncBranchState;
         syncBranchState();
 
-        select?.addEventListener("change", () => {
-          if (!(select instanceof HTMLSelectElement)) return;
-          const value = select.value || "idea";
-          branch.dataset.category = value;
-          syncBranchState();
-          if (typeof branch.__deckMindmapBranchOnChange === "function") {
-            branch.__deckMindmapBranchOnChange({ type: "category", value });
-          }
-        });
-
         textarea?.addEventListener("input", () => {
           syncBranchState();
         });
 
         textarea?.addEventListener("blur", () => {
           if (typeof branch.__deckMindmapBranchOnChange === "function") {
-            branch.__deckMindmapBranchOnChange({ type: "text" });
+            branch.__deckMindmapBranchOnChange({ type: "text", branch });
+          }
+        });
+
+        labelInput?.addEventListener("input", () => {
+          syncBranchState();
+        });
+
+        labelInput?.addEventListener("blur", () => {
+          if (typeof branch.__deckMindmapBranchOnChange === "function") {
+            branch.__deckMindmapBranchOnChange({
+              type: "label",
+              value: labelInput.value,
+              branch,
+            });
           }
         });
 
