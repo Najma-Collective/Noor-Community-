@@ -1583,6 +1583,17 @@ ol {
   color: var(--forest-shadow);
 }
 
+.mindmap-color-options {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.mindmap-color-options .textbox-color-swatch {
+  --swatch-size: 16px;
+}
+
 .mindmap-branch-select:focus {
   outline: 2px solid color-mix(in srgb, var(--mindmap-branch-border) 65%, transparent);
   outline-offset: 2px;
@@ -1668,6 +1679,46 @@ ol {
   --mindmap-index-bg: rgba(122, 132, 113, 0.18);
   --mindmap-index-fg: var(--deep-forest);
   --mindmap-branch-select-bg: rgba(255, 255, 255, 0.9);
+}
+
+.mindmap-branch[data-color="sage"] {
+  --mindmap-branch-bg: rgba(254, 252, 247, 0.95);
+  --mindmap-branch-border: rgba(122, 132, 113, 0.35);
+  --mindmap-index-bg: rgba(122, 132, 113, 0.18);
+  --mindmap-index-fg: var(--deep-forest);
+  --mindmap-branch-select-bg: rgba(255, 255, 255, 0.9);
+}
+
+.mindmap-branch[data-color="wheat"] {
+  --mindmap-branch-bg: rgba(255, 249, 236, 0.96);
+  --mindmap-branch-border: rgba(199, 147, 79, 0.55);
+  --mindmap-index-bg: rgba(199, 147, 79, 0.85);
+  --mindmap-index-fg: #3d2a12;
+  --mindmap-branch-select-bg: rgba(255, 247, 228, 0.92);
+}
+
+.mindmap-branch[data-color="sky"] {
+  --mindmap-branch-bg: rgba(239, 247, 255, 0.96);
+  --mindmap-branch-border: rgba(79, 130, 196, 0.45);
+  --mindmap-index-bg: rgba(79, 130, 196, 0.85);
+  --mindmap-index-fg: #f5f8ff;
+  --mindmap-branch-select-bg: rgba(232, 242, 255, 0.94);
+}
+
+.mindmap-branch[data-color="rose"] {
+  --mindmap-branch-bg: rgba(255, 241, 245, 0.96);
+  --mindmap-branch-border: rgba(191, 106, 130, 0.45);
+  --mindmap-index-bg: rgba(191, 106, 130, 0.85);
+  --mindmap-index-fg: #622b3b;
+  --mindmap-branch-select-bg: rgba(255, 236, 243, 0.94);
+}
+
+.mindmap-branch[data-color="slate"] {
+  --mindmap-branch-bg: rgba(245, 248, 251, 0.96);
+  --mindmap-branch-border: rgba(92, 111, 130, 0.5);
+  --mindmap-index-bg: rgba(92, 111, 130, 0.85);
+  --mindmap-index-fg: #f8fbff;
+  --mindmap-branch-select-bg: rgba(238, 243, 248, 0.94);
 }
 
 .mindmap-form {
