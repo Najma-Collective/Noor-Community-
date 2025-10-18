@@ -1642,6 +1642,169 @@ function setupMatching(activityEl) {
   });
 }
 
+function setupMatchingConnect(activityEl) {
+  const questions = Array.from(activityEl.querySelectorAll('.match-question'));
+  const answers = Array.from(activityEl.querySelectorAll('.match-answer'));
+  const feedback = activityEl.querySelector('.feedback-msg');
+  const checkBtn = activityEl.querySelector('[data-action="check"]');
+  const resetBtn = activityEl.querySelector('[data-action="reset"]');
+  let activeQuestion = null;
+
+  const findAnswerByValue = (value) =>
+    answers.find((answer) => answer.dataset.value === value);
+
+  const findQuestionById = (id) =>
+    questions.find((question) => question.dataset.questionId === id);
+
+  const clearAssignment = (question) => {
+    if (!question) {
+      return;
+    }
+
+    const selectedValue = question.dataset.selected;
+    if (selectedValue) {
+      const answer = findAnswerByValue(selectedValue);
+      if (answer) {
+        answer.dataset.selected = '';
+        answer.classList.remove('paired', 'incorrect', 'active');
+      }
+    }
+    question.dataset.selected = '';
+    question.classList.remove('paired', 'incorrect', 'active');
+    const label = question.querySelector('.match-assignment');
+    if (label) {
+      label.textContent = '';
+    }
+  };
+
+  const assignPair = (question, answer) => {
+    if (!question || !answer) {
+      return;
+    }
+
+    if (question.dataset.selected) {
+      clearAssignment(question);
+    }
+
+    if (answer.dataset.selected) {
+      const previousQuestion = findQuestionById(answer.dataset.selected);
+      if (previousQuestion) {
+        clearAssignment(previousQuestion);
+      }
+    }
+
+    question.dataset.selected = answer.dataset.value || '';
+    answer.dataset.selected = question.dataset.questionId || '';
+    question.classList.add('paired');
+    answer.classList.add('paired');
+    question.classList.remove('incorrect');
+    answer.classList.remove('incorrect');
+    const label = question.querySelector('.match-assignment');
+    if (label) {
+      label.textContent = answer.textContent.trim();
+    }
+  };
+
+  const setActiveQuestion = (question) => {
+    questions.forEach((item) => item.classList.remove('active'));
+    if (question) {
+      question.classList.add('active');
+      activeQuestion = question;
+    } else {
+      activeQuestion = null;
+    }
+  };
+
+  questions.forEach((question) => {
+    question.addEventListener('click', () => {
+      if (activeQuestion === question) {
+        if (question.dataset.selected) {
+          clearAssignment(question);
+        }
+        setActiveQuestion(null);
+        return;
+      }
+
+      if (question.dataset.selected) {
+        clearAssignment(question);
+      }
+
+      setActiveQuestion(question);
+    });
+  });
+
+  answers.forEach((answer) => {
+    answer.addEventListener('click', () => {
+      if (activeQuestion) {
+        assignPair(activeQuestion, answer);
+        setActiveQuestion(null);
+      } else if (answer.dataset.selected) {
+        const linkedQuestion = findQuestionById(answer.dataset.selected);
+        if (linkedQuestion) {
+          setActiveQuestion(linkedQuestion);
+        }
+      }
+    });
+  });
+
+  checkBtn?.addEventListener('click', () => {
+    let correctCount = 0;
+
+    questions.forEach((question) => {
+      const expectedAnswer = question.dataset.answer;
+      const selectedValue = question.dataset.selected;
+      const assignedAnswer = selectedValue
+        ? findAnswerByValue(selectedValue)
+        : null;
+      const isCorrect = Boolean(selectedValue) && selectedValue === expectedAnswer;
+
+      question.classList.toggle('paired', Boolean(selectedValue));
+      question.classList.toggle(
+        'incorrect',
+        Boolean(selectedValue) && !isCorrect,
+      );
+
+      if (assignedAnswer) {
+        assignedAnswer.classList.toggle('paired', Boolean(selectedValue));
+        assignedAnswer.classList.toggle(
+          'incorrect',
+          Boolean(selectedValue) && !isCorrect,
+        );
+      }
+
+      if (isCorrect) {
+        correctCount += 1;
+      }
+    });
+
+    if (feedback) {
+      feedback.textContent =
+        correctCount === questions.length
+          ? 'Excellent! Every match is correct.'
+          : `You have ${correctCount} of ${questions.length} correct. Adjust and try again.`;
+      feedback.className =
+        correctCount === questions.length
+          ? 'feedback-msg success'
+          : 'feedback-msg error';
+    }
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    questions.forEach((question) => {
+      clearAssignment(question);
+    });
+    answers.forEach((answer) => {
+      answer.dataset.selected = '';
+      answer.classList.remove('paired', 'incorrect', 'active');
+    });
+    setActiveQuestion(null);
+    if (feedback) {
+      feedback.textContent = '';
+      feedback.className = 'feedback-msg';
+    }
+  });
+}
+
 function setupMcGrammar(activityEl) {
   const cards = activityEl.querySelectorAll(".quiz-card");
   const feedback = activityEl.querySelector(".feedback-msg");
@@ -1893,6 +2056,9 @@ function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="matching"]')
     .forEach((el) => setupMatching(el));
+  document
+    .querySelectorAll('[data-activity="matching-connect"]')
+    .forEach((el) => setupMatchingConnect(el));
   document
     .querySelectorAll('[data-activity="mc-grammar"]')
     .forEach((el) => setupMcGrammar(el));

@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiences &amp; Storytelling | How Was Your Weekend?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://najma-collective.github.io/Noor-Community-/CSS-slides.css"
+    />
+    <style>
+      .inline-drop-zone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 88px;
+        min-height: 44px;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 2px dashed rgba(122, 132, 113, 0.35);
+        background: rgba(254, 252, 247, 0.75);
+        transition: all 0.2s ease;
+      }
+
+      .inline-drop-zone.placeholder {
+        color: rgba(122, 132, 113, 0.75);
+      }
+
+      .inline-drop-zone.filled {
+        background: rgba(156, 175, 136, 0.18);
+        border-color: rgba(95, 125, 87, 0.65);
+        color: var(--deep-forest);
+      }
+
+      .token-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .token-bank .click-token {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(122, 132, 113, 0.28);
+        border-radius: 999px;
+        box-shadow: var(--shadow-1);
+        color: var(--deep-forest);
+        font-weight: 600;
+        padding: 0.4rem 0.95rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .token-bank .click-token:hover,
+      .token-bank .click-token:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-2);
+      }
+
+      .token-bank .click-token.used {
+        opacity: 0.45;
+        box-shadow: none;
+      }
+
+      .click-token .sr-only {
+        clip: rect(0 0 0 0);
+        border: 0;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+
+      .sentence-rebuild {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .sentence-card {
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        border-radius: var(--radius);
+        background: color-mix(in srgb, var(--warm-cream) 88%, transparent);
+        box-shadow: var(--shadow-1);
+        padding: 1.25rem;
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .sentence-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      .sentence-card h3 i {
+        color: var(--primary-sage);
+      }
+
+      .dialogue-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .media-block {
+        display: grid;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: var(--radius);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.85) 0%,
+          rgba(214, 225, 207, 0.75) 100%
+        );
+        border: 1px solid rgba(122, 132, 113, 0.2);
+      }
+
+      .media-block p {
+        margin: 0;
+        color: rgba(53, 79, 52, 0.85);
+      }
+
+      .media-block audio {
+        width: 100%;
+        filter: drop-shadow(0 8px 16px rgba(53, 79, 52, 0.2));
+      }
+
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .table-responsive table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table-responsive th,
+      .table-responsive td {
+        padding: 0.65rem;
+        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
+        text-align: left;
+      }
+
+      .table-responsive thead th {
+        background: var(--tertiary-sage);
+        color: var(--deep-forest);
+        font-weight: 700;
+      }
+
+      .table-responsive tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .table-responsive .drop-zone {
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .quiz-card {
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        border-radius: var(--radius);
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--shadow-1);
+      }
+
+      .quiz-card select {
+        margin-top: 0.75rem;
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.5rem 1.25rem;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(225, 234, 221, 0.85) 100%
+        );
+        font-weight: 600;
+        color: var(--deep-forest);
+        appearance: none;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23584F3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpolyline points="6 9 12 15 18 9"/%3E%3C/svg%3E');
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+      }
+
+      .quiz-card select:focus {
+        outline: 3px solid rgba(134, 161, 120, 0.45);
+        outline-offset: 2px;
+      }
+
+      .grid-two {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .pill + h1,
+      .pill + h2 {
+        margin-top: 0.75rem;
+      }
+
+      .image-card {
+        display: grid;
+        gap: 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        align-items: stretch;
+      }
+
+      .image-card figure {
+        margin: 0;
+        background: rgba(254, 252, 247, 0.8);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-1);
+        display: grid;
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .image-card figcaption {
+        padding: 0.85rem 1rem;
+        font-weight: 700;
+        color: var(--deep-forest);
+        background: rgba(255, 255, 255, 0.65);
+      }
+
+      .list-grid {
+        display: grid;
+        gap: 0.65rem;
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+
+      .list-grid li {
+        margin: 0;
+      }
+
+      .matching-connect-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem 2.5rem;
+        position: relative;
+      }
+
+      .match-column {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .match-item {
+        position: relative;
+        padding: 0.85rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        background: rgba(255, 255, 255, 0.88);
+        text-align: left;
+        font-weight: 600;
+        color: var(--deep-forest);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .match-item:hover,
+      .match-item:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-2);
+      }
+
+      .match-item.active {
+        outline: 3px solid rgba(134, 161, 120, 0.45);
+        outline-offset: 2px;
+      }
+
+      .match-question {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-height: 88px;
+      }
+
+      .match-answer {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.92),
+          rgba(215, 231, 221, 0.8)
+        );
+      }
+
+      .match-item.paired {
+        border-color: rgba(95, 125, 87, 0.65);
+        background: rgba(156, 175, 136, 0.18);
+        box-shadow: var(--shadow-1) inset;
+      }
+
+      .match-item.incorrect {
+        border-color: rgba(175, 75, 75, 0.6);
+        background: rgba(255, 240, 240, 0.85);
+      }
+
+      .match-assignment {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: rgba(53, 79, 52, 0.8);
+        margin-top: 0.5rem;
+      }
+
+      .match-item .match-icon {
+        color: var(--primary-sage);
+        margin-right: 0.5rem;
+      }
+
+      .gap-input {
+        border-radius: 999px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        padding: 0.45rem 1rem;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow-1);
+      }
+
+      .gap-input.correct {
+        border-color: rgba(95, 125, 87, 0.75);
+        background: rgba(156, 175, 136, 0.2);
+      }
+
+      .gap-input.incorrect {
+        border-color: rgba(175, 75, 75, 0.6);
+        background: rgba(255, 240, 240, 0.85);
+      }
+
+      .success-criteria {
+        display: grid;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: var(--radius);
+        padding: 1rem;
+        border: 1px solid rgba(122, 132, 113, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling" style="color: var(--primary-sage)"></i>
+          <span>Noor Community</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 19</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+          <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+            Apply
+          </button>
+          <button
+            id="remove-highlight-btn"
+            class="toolbar-btn ghost"
+            type="button"
+          >
+            Clear
+          </button>
+        </div>
+        <button id="add-slide-btn" class="toolbar-btn" type="button">
+          <i class="fa-solid fa-plus"></i>
+          Add Blank Slide
+        </button>
+      </div>
+    </header>
+
+    <main class="deck-workspace">
+      <div class="stage-viewport">
+          <!-- Slide 1: Title Slide (Full Bleed) -->
+          <div class="slide-stage full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/3184431/pexels-photo-3184431.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Colleagues smiling during an informal meeting"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay"></div>
+            <div class="slide-inner">
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <h1>Experiences &amp; Storytelling</h1>
+                  <p class="deck-subtitle">How Was Your Weekend?</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Grounding Activity -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/1128797/pexels-photo-1128797.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Soft sunrise over calm water"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(0, 0, 0, 0.35)"></div>
+            <div class="slide-inner" style="justify-content: center">
+              <div class="bg-content centered">
+                <div class="overlay-card centered">
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-leaf"></i> Grounding Activity</span
+                  >
+                  <p class="deck-subtitle" style="max-width: 48ch">
+                    Welcome to class. Let's begin. Take a deep breath in... and
+                    out. Relax your shoulders. Let's get ready to learn.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Lesson Aims -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-bullseye"></i> Lesson Aims</span>
+              <h2>Today's Aims</h2>
+              <div class="card">
+                <p>By the end of this lesson, you will be able to:</p>
+                <ul class="list-grid">
+                  <li>Ask and answer questions about past activities with colleagues.</li>
+                  <li>Use past time expressions like <em>yesterday</em>, <em>last week</em>, and <em>on Saturday</em>.</li>
+                  <li>Pronounce regular past tense verbs with <strong>-ed</strong> endings correctly.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Pre-task A: Activating Schemata -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-mug-hot"></i> Pre-task A · Activating Schemata · 5 minutes</span>
+              <h2>Monday Morning Mindset</h2>
+              <div class="card">
+                <p>It's Monday! You're back at work. Discuss with a partner:</p>
+                <ol class="list-grid" style="padding-left: 1.5rem;">
+                  <li>How do you usually feel on a Monday morning?</li>
+                  <li>What is the first thing you talk about with your colleagues?</li>
+                  <li>Is it important to have these small conversations at work? Why?</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Pre-task B: Restrictive Practice (Unscramble) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Pre-task B · Restrictive Practice · 7 minutes</span>
+              <h2>The Coffee Corner Chat</h2>
+              <div class="card" style="display: grid; gap: 1.5rem;">
+                <div class="media-block">
+                  <h3 class="icon-heading"><i class="fa-solid fa-headphones"></i><span>Listen first</span></h3>
+                  <p>Play the clip to hear Maria and Ben greeting each other. Then rebuild each line of their conversation with the correct word tiles.</p>
+                  <audio controls preload="none" aria-label="Coffee Corner conversation audio">
+                    <source src="/audio/coffee-corner-chat.mp3" type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <div class="sentence-rebuild">
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-1"></i><span>Greeting question</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 1 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="How" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="was" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="your" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="weekend" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="?" data-placeholder="?"></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 1">
+                      <button type="button" class="click-token" data-value="How">How</button>
+                      <button type="button" class="click-token" data-value="was">was</button>
+                      <button type="button" class="click-token" data-value="your">your</button>
+                      <button type="button" class="click-token" data-value="weekend">weekend</button>
+                      <button type="button" class="click-token" data-value="?" aria-label="Question mark tile">?</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-2"></i><span>Polite reply</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 2 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="It" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="was" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="good" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="," data-placeholder=","></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="thanks" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="." data-placeholder="."></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 2">
+                      <button type="button" class="click-token" data-value="It">It</button>
+                      <button type="button" class="click-token" data-value="was">was</button>
+                      <button type="button" class="click-token" data-value="good">good</button>
+                      <button type="button" class="click-token" data-value="," aria-label="Comma tile">,</button>
+                      <button type="button" class="click-token" data-value="thanks">thanks</button>
+                      <button type="button" class="click-token" data-value="." aria-label="Full stop tile">.</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-3"></i><span>Weekend follow-up</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 3 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="What" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="did" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="you" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="do" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="?" data-placeholder="?"></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 3">
+                      <button type="button" class="click-token" data-value="What">What</button>
+                      <button type="button" class="click-token" data-value="did">did</button>
+                      <button type="button" class="click-token" data-value="you">you</button>
+                      <button type="button" class="click-token" data-value="do">do</button>
+                      <button type="button" class="click-token" data-value="?" aria-label="Question mark tile">?</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-4"></i><span>Sharing plans</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 4 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="I" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="visited" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="the" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="new" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="park" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="." data-placeholder="."></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 4">
+                      <button type="button" class="click-token" data-value="I">I</button>
+                      <button type="button" class="click-token" data-value="visited">visited</button>
+                      <button type="button" class="click-token" data-value="the">the</button>
+                      <button type="button" class="click-token" data-value="new">new</button>
+                      <button type="button" class="click-token" data-value="park">park</button>
+                      <button type="button" class="click-token" data-value="." aria-label="Full stop tile">.</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-5"></i><span>Checking details</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 5 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="Did" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="you" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="go" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="with" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="friends" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="?" data-placeholder="?"></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 5">
+                      <button type="button" class="click-token" data-value="Did">Did</button>
+                      <button type="button" class="click-token" data-value="you">you</button>
+                      <button type="button" class="click-token" data-value="go">go</button>
+                      <button type="button" class="click-token" data-value="with">with</button>
+                      <button type="button" class="click-token" data-value="friends">friends</button>
+                      <button type="button" class="click-token" data-value="?" aria-label="Question mark tile">?</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                  <div class="sentence-card" data-activity="token-drop">
+                    <h3><i class="fa-solid fa-6"></i><span>Short answer</span></h3>
+                    <p class="dialogue-line" role="group" aria-label="Sentence 6 blanks">
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="Yes" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="," data-placeholder=","></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="I" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="did" data-placeholder="..."></button>
+                      <button type="button" class="drop-zone inline-drop-zone placeholder" data-answer="." data-placeholder="."></button>
+                    </p>
+                    <div class="token-bank" aria-label="Word bank for sentence 6">
+                      <button type="button" class="click-token" data-value="Yes">Yes</button>
+                      <button type="button" class="click-token" data-value="," aria-label="Comma tile">,</button>
+                      <button type="button" class="click-token" data-value="I">I</button>
+                      <button type="button" class="click-token" data-value="did">did</button>
+                      <button type="button" class="click-token" data-value="." aria-label="Full stop tile">.</button>
+                    </div>
+                    <div class="activity-actions">
+                      <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                      <button class="activity-btn" type="button" data-action="check">Check</button>
+                    </div>
+                    <div class="feedback-msg" aria-live="polite"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Pre-task B: Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> Pre-task B · Semi-controlled Practice · 7 minutes</span>
+              <h2>Dialogue Deconstruction</h2>
+              <div class="grid-two">
+                <div class="card" style="display: grid; gap: 1rem;">
+                  <figure class="image-card" style="grid-template-columns: 1fr;">
+                    <img
+                      data-remote-src="https://images.pexels.com/photos/109669/pexels-photo-109669.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1200&h=800"
+                      alt="Two colleagues laughing as they chat over coffee"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                  <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Model Dialogue</span></h3>
+                  <div class="dialogue-card" role="presentation">
+                    <p><strong>Maria:</strong> Hi Ben. How was your weekend?</p>
+                    <p><strong>Ben:</strong> It was good, thanks.</p>
+                    <p><strong>Maria:</strong> What did you do?</p>
+                    <p><strong>Ben:</strong> I visited the new park on Saturday.</p>
+                    <p><strong>Maria:</strong> Oh, nice! Did you go with friends?</p>
+                    <p><strong>Ben:</strong> Yes, I did. I went with two friends. We walked for hours!</p>
+                  </div>
+                </div>
+                <div class="card" style="display: grid; gap: 1rem;">
+                  <h3 class="icon-heading"><i class="fa-solid fa-circle-question"></i><span>Comprehension</span></h3>
+                  <ol class="list-grid" style="padding-left: 1.5rem;">
+                    <li>When did Ben go to the park?</li>
+                    <li>What did he do there?</li>
+                    <li>Did he go alone?</li>
+                  </ol>
+                  <p style="margin: 0;">
+                    Highlight the different question forms in the dialogue. Which ones ask for information and which ones confirm details?
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Pre-task B: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-microphone-lines"></i> Pre-task B · Freer Practice · 6 minutes</span>
+              <h2>Practice Chat: The Cinema Trip</h2>
+              <div class="card">
+                <div class="image-card">
+                  <figure>
+                    <img
+                      data-remote-src="https://images.pexels.com/photos/226589/pexels-photo-226589.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1200&h=800"
+                      alt="Friends enjoying a cinema experience"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>Imagine your weekend at the cinema.</figcaption>
+                  </figure>
+                  <div style="display: grid; gap: 1rem;">
+                    <p>
+                      Imagine you went to the cinema this weekend. Your partner is asking you about it. Use the sentence stems to create a short dialogue.
+                    </p>
+                    <div class="column-card" style="display: grid; gap: 0.5rem;">
+                      <p><strong>A:</strong> How was your weekend?</p>
+                      <p><strong>B:</strong> It was great, thanks.</p>
+                      <p><strong>A:</strong> What did you do?</p>
+                      <p><strong>B:</strong> I saw...</p>
+                      <p><strong>A:</strong> Did you...?</p>
+                      <p><strong>B:</strong> Yes, I did. / No, I didn't.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Pre-task C: Restrictive Practice (MC Grammar) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-list-check"></i> Pre-task C · Restrictive Practice · 7 minutes</span>
+              <h2>Asking the Right Questions</h2>
+              <div class="card" data-activity="mc-grammar">
+                <p>Choose the question that matches the answer. Focus on the difference between information questions and confirmation questions.</p>
+                <div class="quiz-card" data-answer="B">
+                  <p>
+                    1. Answer: <strong>I went to the beach.</strong> (Asks for information)
+                    <select>
+                      <option>...</option>
+                      <option value="A">Did you go to the beach?</option>
+                      <option value="B">What did you do?</option>
+                    </select>
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="A">
+                  <p>
+                    2. Answer: <strong>Yes, I did.</strong> (Confirms information)
+                    <select>
+                      <option>...</option>
+                      <option value="A">Did you see a movie?</option>
+                      <option value="B">What movie did you see?</option>
+                    </select>
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="B">
+                  <p>
+                    3. Answer: <strong>On Saturday.</strong> (Asks for information)
+                    <select>
+                      <option>...</option>
+                      <option value="A">Did you have a good time?</option>
+                      <option value="B">When did you go?</option>
+                    </select>
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="B">
+                  <p>
+                    4. Answer: <strong>No, I didn't. I stayed home.</strong> (Confirms information)
+                    <select>
+                      <option>...</option>
+                      <option value="A">Where did you stay?</option>
+                      <option value="B">Did you visit your parents?</option>
+                    </select>
+                  </p>
+                </div>
+                <div class="quiz-card" data-answer="A">
+                  <p>
+                    5. Answer: <strong>I saw my friends.</strong> (Asks for information)
+                    <select>
+                      <option>...</option>
+                      <option value="A">Who did you see?</option>
+                      <option value="B">Did you see your friends?</option>
+                    </select>
+                  </p>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 9: Pre-task C: Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-pen-to-square"></i> Pre-task C · Semi-controlled Practice · 7 minutes</span>
+              <h2>Question Formation Practice</h2>
+              <div class="card" data-activity="gap-fill" style="display: grid; gap: 1.25rem;">
+                <p>
+                  You want to ask your colleague about their weekend. Turn each prompt into a full question. Capitalise the first word and include the question mark.
+                </p>
+                <ol class="list-grid" style="padding-left: 1.5rem; gap: 1rem;">
+                  <li>
+                    <span>(you / watch / TV / yesterday?)</span>
+                    <input
+                      type="text"
+                      class="gap-input"
+                      aria-label="Prompt 1 full question"
+                      placeholder="Type the full question..."
+                      data-answer="did you watch tv yesterday?"
+                    />
+                  </li>
+                  <li>
+                    <span>(what / you / do / last night?)</span>
+                    <input
+                      type="text"
+                      class="gap-input"
+                      aria-label="Prompt 2 full question"
+                      placeholder="Type the full question..."
+                      data-answer="what did you do last night?"
+                    />
+                  </li>
+                  <li>
+                    <span>(you / visit / family / on Sunday?)</span>
+                    <input
+                      type="text"
+                      class="gap-input"
+                      aria-label="Prompt 3 full question"
+                      placeholder="Type the full question..."
+                      data-answer="did you visit family on sunday?"
+                    />
+                  </li>
+                  <li>
+                    <span>(where / you / go / on Saturday?)</span>
+                    <input
+                      type="text"
+                      class="gap-input"
+                      aria-label="Prompt 4 full question"
+                      placeholder="Type the full question..."
+                      data-answer="where did you go on saturday?"
+                    />
+                  </li>
+                  <li>
+                    <span>(she / work / last week?)</span>
+                    <input
+                      type="text"
+                      class="gap-input"
+                      aria-label="Prompt 5 full question"
+                      placeholder="Type the full question..."
+                      data-answer="did she work last week?"
+                    />
+                  </li>
+                </ol>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+                <p style="margin: 0;">
+                  Compare with a partner. Which questions ask for new information and which confirm something you think is true?
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 10: Pre-task C: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-people-arrows"></i> Pre-task C · Freer Practice · 6 minutes</span>
+              <h2>Office Icebreaker: Find Someone Who...</h2>
+              <div class="card">
+                <p>Stand up and talk to your colleagues. Ask full Past Simple questions to find a name for each box. Write their name in the table.</p>
+                <div class="table-responsive">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Find someone who...</th>
+                        <th>Colleague's Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>...watched a movie.</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>...visited family.</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>...stayed home all weekend.</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>...played a sport.</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>...listened to music.</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>Example question: <em>Hi Kenji. Did you watch a movie this weekend?</em></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 11: Pre-task D: Restrictive Practice (Pronunciation) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-ear-listen"></i> Pre-task D · Restrictive Practice · 7 minutes</span>
+              <h2>The Three Sounds of "-ed"</h2>
+              <div class="card" data-activity="table-completion">
+                <p>Listen to the verbs. Then click and drop each verb into the column with the matching final sound.</p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-volume-high"></i><div><strong>/t/</strong>: watched, walked</div></li>
+                  <li><i class="fa-solid fa-volume-high"></i><div><strong>/d/</strong>: lived, stayed</div></li>
+                  <li><i class="fa-solid fa-volume-high"></i><div><strong>/ɪd/</strong>: visited, decided</div></li>
+                </ul>
+                <div class="table-responsive" style="margin-top: 1rem;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>/t/</th>
+                        <th>/d/</th>
+                        <th>/ɪd/</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="watched" data-placeholder="Select" aria-label="Drop zone for /t/ sound 1"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="lived" data-placeholder="Select" aria-label="Drop zone for /d/ sound 1"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="visited" data-placeholder="Select" aria-label="Drop zone for /ɪd/ sound 1"></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="walked" data-placeholder="Select" aria-label="Drop zone for /t/ sound 2"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="stayed" data-placeholder="Select" aria-label="Drop zone for /d/ sound 2"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="decided" data-placeholder="Select" aria-label="Drop zone for /ɪd/ sound 2"></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="token-bank" aria-label="Verb choices">
+                  <button type="button" class="click-token" data-value="watched">watched</button>
+                  <button type="button" class="click-token" data-value="walked">walked</button>
+                  <button type="button" class="click-token" data-value="visited">visited</button>
+                  <button type="button" class="click-token" data-value="decided">decided</button>
+                  <button type="button" class="click-token" data-value="lived">lived</button>
+                  <button type="button" class="click-token" data-value="stayed">stayed</button>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 12: Pre-task D: Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-wave-square"></i> Pre-task D · Semi-controlled Practice · 7 minutes</span>
+              <h2>Pronunciation Drill</h2>
+              <div class="card">
+                <p>Listen to the sentences and repeat them. Focus on the bolded -ed sounds.</p>
+                <ul class="list-grid" style="padding-left: 1.5rem;">
+                  <li>I <strong>walked</strong> <span style="color: var(--primary-sage);">/t/</span> in the park.</li>
+                  <li>He <strong>visited</strong> <span style="color: var(--primary-sage);">/ɪd/</span> his family.</li>
+                  <li>We <strong>stayed</strong> <span style="color: var(--primary-sage);">/d/</span> in a hotel.</li>
+                  <li>She <strong>watched</strong> <span style="color: var(--primary-sage);">/t/</span> a good movie.</li>
+                  <li>They <strong>lived</strong> <span style="color: var(--primary-sage);">/d/</span> in London.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 13: Pre-task D: Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-comments-dollar"></i> Pre-task D · Freer Practice · 6 minutes</span>
+              <h2>Your Weekend Pronunciation</h2>
+              <div class="card" style="display: grid; gap: 1rem;">
+                <p>Think about your real weekend. Write two true sentences about what you did using different regular past tense verbs.</p>
+                <p>Share your sentences with a partner. Listen carefully to the -ed sounds and give feedback.</p>
+                <blockquote style="margin: 0; border-left: 4px solid var(--primary-sage); padding-left: 1rem; color: var(--primary-forest);">
+                  <p style="margin: 0;"><strong>Example</strong></p>
+                  <p style="margin: 0;">Student A: "I chatted with my friend and I watched a movie."</p>
+                  <p style="margin: 0;">Student B: "Good! 'watched' sounded perfect. Can you repeat 'chatted'?"</p>
+                </blockquote>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 14: Task Introduction -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Team members preparing for a collaborative meeting"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay"></div>
+            <div class="slide-inner" style="justify-content: center; align-items: flex-start;">
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <span class="pill overlay-pill"><i class="fa-solid fa-list-check"></i> Main Task</span>
+                  <h2>Task</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 15: Task Preparation -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-lightbulb"></i> Task Preparation</span>
+              <h2>Prepare for Your Chat</h2>
+              <div class="card" style="display: grid; gap: 1rem;">
+                <p><strong>Scenario:</strong> It's Monday morning. You meet your colleague in the office kitchen. It's the first real chat of the week. Your colleague was off work on Friday.</p>
+                <div class="column-card" style="display: grid; gap: 0.5rem;">
+                  <p><strong>Your Goal:</strong></p>
+                  <ul class="list-grid">
+                    <li>Ask your colleague about their long weekend.</li>
+                    <li>Answer their questions about your regular weekend.</li>
+                  </ul>
+                </div>
+                <p><strong>Preparation (3 minutes):</strong> Read your role card. Plan your questions and answers.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 16: Task -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-user-group"></i> Task</span>
+              <h2>Role-Play: Monday Morning Catch-up</h2>
+              <div class="card" style="display: grid; gap: 1.5rem;">
+                <p style="margin: 0; font-size: 1.05rem;">
+                  Pair up, choose a role card, and create a warm Monday catch-up that sounds natural and curious.
+                </p>
+                <div class="grid-two">
+                  <div
+                    class="column-card"
+                    style="display: grid; gap: 0.75rem; padding: 1.25rem; border-radius: var(--radius); background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(210, 225, 205, 0.75)); box-shadow: var(--shadow-2);"
+                  >
+                    <h3 class="icon-heading"><i class="fa-solid fa-id-card-clip"></i><span>Role Card A</span></h3>
+                    <ul class="list-grid" style="gap: 0.55rem; list-style: none;">
+                      <li><i class="fa-solid fa-calendar-day" aria-hidden="true"></i> You had a normal weekend (Saturday &amp; Sunday).</li>
+                      <li><i class="fa-solid fa-couch" aria-hidden="true"></i> Saturday: You stayed home and watched movies.</li>
+                      <li><i class="fa-solid fa-people-roof" aria-hidden="true"></i> Sunday: You visited your parents.</li>
+                      <li><i class="fa-solid fa-question" aria-hidden="true"></i> Your focus: ask about your colleague's long weekend.</li>
+                    </ul>
+                  </div>
+                  <div
+                    class="column-card"
+                    style="display: grid; gap: 0.75rem; padding: 1.25rem; border-radius: var(--radius); background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(198, 222, 210, 0.75)); box-shadow: var(--shadow-2);"
+                  >
+                    <h3 class="icon-heading"><i class="fa-solid fa-id-card-clip"></i><span>Role Card B</span></h3>
+                    <ul class="list-grid" style="gap: 0.55rem; list-style: none;">
+                      <li><i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i> You enjoyed a long weekend (off on Friday).</li>
+                      <li><i class="fa-solid fa-water" aria-hidden="true"></i> Friday: You went to the beach.</li>
+                      <li><i class="fa-solid fa-people-group" aria-hidden="true"></i> Saturday: You saw your friends.</li>
+                      <li><i class="fa-solid fa-comments" aria-hidden="true"></i> Your focus: answer and ask about their regular weekend.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="success-criteria">
+                  <h3 class="icon-heading" style="margin: 0;"><i class="fa-solid fa-star"></i><span>Success Checklist</span></h3>
+                  <ul class="list-grid" style="gap: 0.5rem; padding-left: 1.25rem; list-style: none;">
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ask at least two <strong>Wh-</strong> questions.</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Include at least one <strong>Yes/No</strong> question.</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Use three different past tense verbs accurately.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 17: Reporting -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-person-chalkboard"></i> Reporting</span>
+              <h2>Team Meeting Update</h2>
+              <div class="card" style="display: grid; gap: 1rem;">
+                <p>Imagine it's your team's morning meeting. The manager asks, "Did everyone have a good weekend?" Share one interesting thing your partner did.</p>
+                <blockquote style="margin: 0; border-left: 4px solid var(--secondary-sage); padding-left: 1rem; color: var(--primary-forest);">
+                  <p style="margin: 0;">Example: "It sounds like Anna had a great weekend. She visited the new park on Saturday."</p>
+                </blockquote>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 18: Practice Activities -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-dumbbell"></i> Practice Activities</span>
+              <h2>Homework: Reinforcement Activities</h2>
+              <div class="grid-two">
+                <div class="card" data-activity="gap-fill">
+                  <h3 class="icon-heading"><i class="fa-solid fa-ellipsis"></i><span>Activity 1 · Gap Fill</span></h3>
+                  <p>Complete the sentences with the Past Simple form of the verb in brackets.</p>
+                  <ol class="list-grid" style="padding-left: 1.5rem;">
+                    <li>
+                      I
+                      <input type="text" class="gap-input" data-answer="saw" aria-label="Gap 1" />
+                      (see) a great film last night.
+                    </li>
+                    <li>
+                      What
+                      <input type="text" class="gap-input" data-answer="did" aria-label="Gap 2" />
+                      you
+                      <input type="text" class="gap-input" data-answer="do" aria-label="Gap 3" />
+                      (do) on Saturday?
+                    </li>
+                    <li>
+                      He
+                      <input type="text" class="gap-input" data-answer="didn't go" aria-label="Gap 4" />
+                      (not go) to work yesterday.
+                    </li>
+                    <li>
+                      They
+                      <input type="text" class="gap-input" data-answer="visited" aria-label="Gap 5" />
+                      (visit) a museum last week.
+                    </li>
+                    <li>
+                      <input type="text" class="gap-input" data-answer="Did" aria-label="Gap 6" />
+                      she
+                      <input type="text" class="gap-input" data-answer="stay" aria-label="Gap 7" />
+                      (stay) home?
+                    </li>
+                  </ol>
+                  <div class="activity-actions">
+                    <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                    <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                  </div>
+                  <div class="feedback-msg" aria-live="polite"></div>
+                </div>
+                <div class="card" data-activity="matching-connect">
+                  <h3 class="icon-heading"><i class="fa-solid fa-link"></i><span>Activity 2 · Matching</span></h3>
+                  <p>Tap a question, then tap the answer that completes it. A glowing highlight shows paired items.</p>
+                  <div class="matching-connect-grid" role="group" aria-label="Click to connect questions and answers">
+                    <div class="match-column" aria-label="Questions">
+                      <button type="button" class="match-item match-question" data-question-id="q1" data-answer="I went to the cinema.">
+                        <span class="match-text">1. What did you do?</span>
+                        <span class="match-assignment" aria-live="polite"></span>
+                      </button>
+                      <button type="button" class="match-item match-question" data-question-id="q2" data-answer="Yes, I did.">
+                        <span class="match-text">2. Did you have fun?</span>
+                        <span class="match-assignment" aria-live="polite"></span>
+                      </button>
+                      <button type="button" class="match-item match-question" data-question-id="q3" data-answer="I stayed home.">
+                        <span class="match-text">3. Where did you go?</span>
+                        <span class="match-assignment" aria-live="polite"></span>
+                      </button>
+                      <button type="button" class="match-item match-question" data-question-id="q4" data-answer="I went with Maria.">
+                        <span class="match-text">4. Who did you go with?</span>
+                        <span class="match-assignment" aria-live="polite"></span>
+                      </button>
+                      <button type="button" class="match-item match-question" data-question-id="q5" data-answer="On Sunday.">
+                        <span class="match-text">5. When did you visit them?</span>
+                        <span class="match-assignment" aria-live="polite"></span>
+                      </button>
+                    </div>
+                    <div class="match-column" aria-label="Answers">
+                      <button type="button" class="match-item match-answer" data-value="I went to the cinema.">
+                        <span class="match-text">A. I went to the cinema.</span>
+                      </button>
+                      <button type="button" class="match-item match-answer" data-value="Yes, I did.">
+                        <span class="match-text">B. Yes, I did.</span>
+                      </button>
+                      <button type="button" class="match-item match-answer" data-value="I went with Maria.">
+                        <span class="match-text">C. I went with Maria.</span>
+                      </button>
+                      <button type="button" class="match-item match-answer" data-value="I stayed home.">
+                        <span class="match-text">D. I stayed home.</span>
+                      </button>
+                      <button type="button" class="match-item match-answer" data-value="On Sunday.">
+                        <span class="match-text">E. On Sunday.</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="activity-actions">
+                    <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                    <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                  </div>
+                  <div class="feedback-msg" aria-live="polite"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 19: Reflection -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-seedling"></i> Reflection</span>
+              <h2>Reflection: What, So What, Now What?</h2>
+              <div class="card" style="display: grid; gap: 1rem;">
+                <p>Think about our lesson today and write a short answer for each question.</p>
+                <div class="column-card" style="display: grid; gap: 0.75rem;">
+                  <p><strong>What?</strong> What was the most important grammar point you learned today for making conversation?</p>
+                  <p><strong>So What?</strong> Why is it useful to be able to ask these questions to colleagues?</p>
+                  <p><strong>Now What?</strong> How can you practice this tomorrow at work or with a friend?</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+    <script type="module">
+      import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+      setupInteractiveDeck();
+    </script>
+  </body>
+</html>
