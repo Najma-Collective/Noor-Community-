@@ -1439,6 +1439,20 @@
       ];
       const DEFAULT_TEXTBOX_COLOR = TEXTBOX_COLOR_OPTIONS[0].value;
 
+      const renderColorSwatchButtons = () =>
+        TEXTBOX_COLOR_OPTIONS.map(
+          ({ value, label }) => `
+      <button
+        type="button"
+        class="textbox-color-swatch"
+        data-color="${value}"
+        aria-pressed="false"
+      >
+        <span class="sr-only">${label}</span>
+      </button>
+    `,
+        ).join("");
+
       const MINDMAP_BRANCH_PRESETS = [
         { value: "idea", label: "Idea" },
         { value: "opportunity", label: "Opportunity" },
@@ -1446,6 +1460,30 @@
         { value: "evidence", label: "Evidence" },
         { value: "question", label: "Question" },
       ];
+
+      const MINDMAP_CATEGORY_COLOR_MAP = {
+        idea: "sage",
+        opportunity: "wheat",
+        challenge: "rose",
+        evidence: "sky",
+        question: "slate",
+      };
+
+      const isValidMindmapColor = (color) =>
+        typeof color === "string" &&
+        TEXTBOX_COLOR_OPTIONS.some((option) => option.value === color);
+
+      const getMindmapColorForCategory = (value) => {
+        const fallback = TEXTBOX_COLOR_OPTIONS[0]?.value ?? "sage";
+        if (typeof value !== "string") {
+          return fallback;
+        }
+        return MINDMAP_CATEGORY_COLOR_MAP[value] ?? fallback;
+      };
+
+      const getMindmapColourLabel = (value) =>
+        TEXTBOX_COLOR_OPTIONS.find((option) => option.value === value)?.label ??
+        value;
 
       const getMindmapPreset = (value) =>
         MINDMAP_BRANCH_PRESETS.find((preset) => preset.value === value);
@@ -1743,18 +1781,6 @@
       function createTextbox({ onRemove } = {}) {
         const textbox = document.createElement("div");
         textbox.className = "textbox";
-        const colorControls = TEXTBOX_COLOR_OPTIONS.map(
-          ({ value, label }) => `
-      <button
-        type="button"
-        class="textbox-color-swatch"
-        data-color="${value}"
-        aria-pressed="false"
-      >
-        <span class="sr-only">${label}</span>
-      </button>
-    `,
-        ).join("");
         textbox.dataset.color = DEFAULT_TEXTBOX_COLOR;
         textbox.innerHTML = `
     <button type="button" class="textbox-remove" aria-label="Remove textbox">
@@ -1766,7 +1792,7 @@
         Textbox
       </span>
       <div class="textbox-color-options" role="group" aria-label="Textbox colours">
-${colorControls}
+${renderColorSwatchButtons()}
       </div>
     </div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
@@ -1960,6 +1986,7 @@ ${colorControls}
             {
               category: defaultCategory,
               label: getMindmapLabelForCategory(defaultCategory),
+              color: getMindmapColorForCategory(defaultCategory),
             },
           );
           branches.appendChild(defaultBranch);
@@ -2096,6 +2123,14 @@ ${colorControls}
               showStatus(`Branch label updated to "${label}".`);
               break;
             }
+            case "color": {
+              const label =
+                typeof value === "string"
+                  ? getMindmapColourLabel(value)
+                  : getMindmapColourLabel(branch?.dataset?.color);
+              showStatus(`Branch colour updated to "${label}".`);
+              break;
+            }
             case "removed":
               showStatus("Branch removed.");
               break;
@@ -2128,6 +2163,7 @@ ${colorControls}
             const newBranch = createMindMapBranch(value, {
               category,
               label: getMindmapLabelForCategory(category),
+              color: getMindmapColorForCategory(category),
             });
             branches.appendChild(newBranch);
             initialiseMindMapBranch(newBranch, branchCallbacks);
@@ -2236,11 +2272,15 @@ ${colorControls}
         return container;
       }
 
-      function createMindMapBranch(text, { category, label } = {}) {
+      function createMindMapBranch(text, { category, label, color } = {}) {
         const preset = getMindmapPreset(category) ?? MINDMAP_BRANCH_PRESETS[0];
         const branch = document.createElement("div");
         branch.className = "mindmap-branch";
         branch.dataset.category = preset.value;
+        const initialColor = isValidMindmapColor(color)
+          ? color
+          : getMindmapColorForCategory(preset.value);
+        branch.dataset.color = initialColor;
         if (typeof label === "string" && label.trim()) {
           branch.dataset.label = label.trim();
         } else {
@@ -2262,6 +2302,12 @@ ${colorControls}
         labelInput.autocomplete = "off";
         labelInput.value = branch.dataset.label ?? "";
 
+        const colorOptions = document.createElement("div");
+        colorOptions.className = "mindmap-color-options";
+        colorOptions.setAttribute("role", "group");
+        colorOptions.setAttribute("aria-label", "Branch colour");
+        colorOptions.innerHTML = renderColorSwatchButtons();
+
         const textarea = document.createElement("textarea");
         textarea.value = text;
         textarea.placeholder = "Add supporting detail...";
@@ -2281,7 +2327,7 @@ ${colorControls}
         removeBtn.append(removeIcon, removeLabel);
         actions.append(removeBtn);
 
-        header.append(indexBadge, labelInput);
+        header.append(indexBadge, labelInput, colorOptions);
         branch.append(header, textarea, actions);
 
         return branch;
@@ -2311,6 +2357,8 @@ ${colorControls}
           branch.dataset.category = preset;
         }
 
+        const header = branch.querySelector(".mindmap-branch-header");
+        const indexEl = branch.querySelector(".mindmap-branch-index");
         const textarea = branch.querySelector("textarea");
         let labelInput = branch.querySelector(".mindmap-branch-select");
 
@@ -2338,8 +2386,6 @@ ${colorControls}
           const presetLabel = getMindmapLabelForCategory(branch.dataset.category);
           replacement.placeholder = presetLabel;
           replacement.value = branch.dataset.label?.trim() || presetLabel;
-          const header = branch.querySelector(".mindmap-branch-header");
-          const indexEl = branch.querySelector(".mindmap-branch-index");
           if (header instanceof HTMLElement) {
             if (indexEl) {
               header.insertBefore(replacement, indexEl.nextSibling);
@@ -2349,6 +2395,63 @@ ${colorControls}
           }
           labelInput = replacement;
         }
+
+        if (!isValidMindmapColor(branch.dataset.color)) {
+          branch.dataset.color = getMindmapColorForCategory(
+            branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value,
+          );
+        }
+
+        let colorOptions = branch.querySelector(".mindmap-color-options");
+        if (!(colorOptions instanceof HTMLElement)) {
+          colorOptions = document.createElement("div");
+          colorOptions.className = "mindmap-color-options";
+          colorOptions.setAttribute("role", "group");
+          colorOptions.setAttribute("aria-label", "Branch colour");
+          colorOptions.innerHTML = renderColorSwatchButtons();
+        } else {
+          colorOptions.classList.add("mindmap-color-options");
+          colorOptions.setAttribute("role", "group");
+          colorOptions.setAttribute("aria-label", "Branch colour");
+          if (!colorOptions.querySelector(".textbox-color-swatch")) {
+            colorOptions.innerHTML = renderColorSwatchButtons();
+          }
+        }
+
+        if (header instanceof HTMLElement) {
+          if (colorOptions.parentElement !== header) {
+            if (
+              labelInput instanceof HTMLElement &&
+              labelInput.parentElement === header
+            ) {
+              header.insertBefore(colorOptions, labelInput.nextSibling);
+            } else if (indexEl instanceof HTMLElement) {
+              header.insertBefore(colorOptions, indexEl.nextSibling);
+            } else {
+              header.appendChild(colorOptions);
+            }
+          }
+        } else if (!colorOptions.parentElement) {
+          branch.insertBefore(colorOptions, branch.firstChild);
+        }
+
+        const colorButtons = Array.from(
+          colorOptions.querySelectorAll(".textbox-color-swatch"),
+        );
+
+        const syncColourState = (target = branch.dataset.color) => {
+          const chosen = isValidMindmapColor(target)
+            ? target
+            : getMindmapColorForCategory(
+                branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value,
+              );
+          branch.dataset.color = chosen;
+          colorButtons.forEach((button) => {
+            const isActive = button.dataset.color === chosen;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+        };
 
         const removeBtn = branch.querySelector(".branch-remove");
 
@@ -2368,9 +2471,11 @@ ${colorControls}
           if (textarea instanceof HTMLTextAreaElement) {
             branch.dataset.empty = textarea.value.trim() ? "false" : "true";
           }
+          syncColourState();
         };
 
         branch.__deckMindmapBranchSync = syncBranchState;
+        branch.__deckMindmapBranchSyncColor = () => syncColourState();
         syncBranchState();
 
         textarea?.addEventListener("input", () => {
@@ -2402,6 +2507,24 @@ ${colorControls}
           if (typeof branch.__deckMindmapBranchOnRemove === "function") {
             branch.__deckMindmapBranchOnRemove();
           }
+        });
+
+        colorButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            if (!button.dataset.color) return;
+            const chosen = button.dataset.color;
+            syncColourState(chosen);
+            if (typeof branch.__deckMindmapBranchOnChange === "function") {
+              branch.__deckMindmapBranchOnChange({
+                type: "color",
+                value: chosen,
+                branch,
+              });
+            }
+          });
+          button.addEventListener("pointerdown", (event) => {
+            event.stopPropagation();
+          });
         });
 
         return branch;
