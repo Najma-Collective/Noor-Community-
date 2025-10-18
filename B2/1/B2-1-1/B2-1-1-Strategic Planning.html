@@ -202,6 +202,13 @@
       .img-overlay { position: absolute; inset: 0; z-index: 0; }
       .bg-content { position: relative; z-index: 1; padding: var(--stage-pad); }
 
+      .hero-content { display: flex; flex-direction: column; gap: 1.35rem; max-width: 60%; }
+      .hero-content .subtitle { font-size: calc(clamp(1.05rem, 1rem + 0.5vw, 1.4rem) + var(--font-size-adjustment)); color: var(--ink-muted); margin: 0; }
+      .hero-objectives { gap: 0.75rem; }
+      .hero-objectives ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: calc(clamp(1rem, 0.95rem + 0.3vw, 1.2rem) + var(--font-size-adjustment)); }
+      .hero-objectives li { display: flex; align-items: center; gap: 0.6rem; }
+      .hero-objectives i { color: var(--primary-sage); }
+
       .pill {
         display: inline-flex;
         align-items: center;
@@ -252,6 +259,73 @@
 
       .definition-card h4 { font-size: calc(clamp(1.1rem, 1rem + 0.4vw, 1.4rem) + var(--font-size-adjustment)); color: var(--deep-forest); margin: 0; }
       .definition-card p { font-size: calc(clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem) + var(--font-size-adjustment)); margin: 0; }
+
+      .grounding-layout { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; align-items: center; }
+      .grounding-image { grid-column: span 5; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-2); }
+      .grounding-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .grounding-prompt { grid-column: span 7; gap: 0.75rem; }
+      .calm-steps { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+      .pretask-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+      .pretask-grid .card { display: flex; flex-direction: column; gap: 0.8rem; }
+
+      .lead { font-size: calc(clamp(1.05rem, 1rem + 0.4vw, 1.35rem) + var(--font-size-adjustment)); color: var(--ink-muted); }
+
+      .interactive-card { display: flex; flex-direction: column; gap: 1rem; }
+
+      .table-completion-layout { display: grid; grid-template-columns: 7fr 5fr; gap: 20px; align-items: start; }
+      .table-grid table { width: 100%; border-collapse: collapse; }
+      .table-grid th, .table-grid td { border: 1px solid rgba(122,132,113,0.18); padding: 0.75rem 1rem; font-size: calc(1rem + var(--font-size-adjustment)); }
+      .table-grid th { background: rgba(156,175,136,0.12); font-weight: 700; color: var(--deep-forest); }
+      .table-cell select { width: 100%; padding: 0.55rem 0.75rem; border-radius: 12px; border: 2px solid rgba(122,132,113,0.24); font-family: var(--font-body); font-size: calc(1rem + var(--font-size-adjustment)); color: var(--primary-sage); font-weight: 600; background: var(--soft-white); }
+      .option-bank { display: flex; flex-direction: column; gap: 0.6rem; }
+      .option-bank h3 { margin: 0; font-size: calc(1.15rem + var(--font-size-adjustment)); display: flex; align-items: center; gap: 0.5rem; }
+      .option-pill { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.9rem; border-radius: 999px; background: rgba(156,175,136,0.18); font-weight: 600; color: var(--deep-forest); font-size: calc(0.95rem + var(--font-size-adjustment)); }
+
+      .hint { margin-top: 0.75rem; font-size: calc(0.95rem + var(--font-size-adjustment)); color: var(--ink-muted); display: flex; align-items: center; gap: 0.5rem; }
+
+      .brainstorm-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .brainstorm-tip { background: rgba(122,132,113,0.12); border: 1px dashed rgba(122,132,113,0.35); border-radius: var(--radius); padding: 0.95rem 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; }
+      .brainstorm-tip i { color: var(--primary-sage); }
+
+      .audio-placeholder { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.65rem 1rem; border-radius: 12px; background: rgba(90,107,82,0.12); color: var(--deep-forest); font-weight: 600; }
+      .audio-placeholder i { color: var(--primary-sage); }
+
+      .option-list { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.5rem; }
+      .option-chip { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.75rem; border-radius: 999px; background: rgba(248,246,240,0.9); border: 1px solid rgba(122,132,113,0.18); font-weight: 600; font-size: calc(0.95rem + var(--font-size-adjustment)); }
+
+      .transcript-box { max-height: 520px; }
+
+      .role-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 1rem; }
+      .role-card { background: var(--soft-white); border-radius: var(--radius); border: 1px solid rgba(122,132,113,0.18); padding: 1rem 1.2rem; box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 0.6rem; }
+      .model-sentence { margin: 1rem 0 0; font-size: calc(0.95rem + var(--font-size-adjustment)); color: var(--ink-muted); }
+
+      .audio-choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+      .audio-choice-card { background: var(--soft-white); border-radius: var(--radius); border: 1px solid rgba(122,132,113,0.18); padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: var(--shadow-1); }
+      .audio-choice-card select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 12px; border: 2px solid rgba(122,132,113,0.24); font-weight: 600; color: var(--primary-sage); font-family: var(--font-body); }
+      .audio-choice-card .meaning { margin: 0; font-size: calc(0.95rem + var(--font-size-adjustment)); color: var(--ink-muted); }
+
+      .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+      .scenario-grid .card { display: flex; flex-direction: column; gap: 0.6rem; }
+
+      .section-break { color: white; display: flex; flex-direction: column; gap: 0.8rem; }
+      .section-break h2 { color: white; }
+      .section-break p { max-width: 420px; font-size: calc(1.05rem + var(--font-size-adjustment)); }
+
+      .context-card { display: flex; flex-direction: column; gap: 0.7rem; font-size: calc(1rem + var(--font-size-adjustment)); }
+
+      .instruction-steps { margin: 0 0 1rem 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: calc(1rem + var(--font-size-adjustment)); }
+      .deliverable-list { display: flex; flex-direction: column; gap: 0.6rem; }
+      .deliverable-list h3 { margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment)); }
+      .deliverable-list ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.55rem; }
+
+      .practice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+
+      .preposition-list { display: flex; flex-direction: column; gap: 0.75rem; }
+      .preposition-item { display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; align-items: center; background: color-mix(in srgb, var(--warm-cream) 65%, transparent); border: 1px solid rgba(122,132,113,0.18); border-radius: var(--radius); padding: 0.8rem 1rem; font-weight: 600; }
+      .preposition-item select { width: 120px; padding: 0.45rem 0.6rem; border-radius: 12px; border: 2px solid rgba(122,132,113,0.24); font-family: var(--font-body); font-weight: 600; color: var(--primary-sage); }
+
+      .reflection-card { display: flex; flex-direction: column; gap: 0.8rem; font-size: calc(1rem + var(--font-size-adjustment)); }
 
       .matching-wrapper {
         display: grid;
@@ -546,13 +620,22 @@
 
                 <!-- Slide 1 -->
                 <div class="slide-stage full-width-bg">
-                    <img class="img-bg" src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A diverse team planning a project together.">
-                    <div class="img-overlay" style="background: linear-gradient(110deg, rgba(254,252,247,0.9) 35%, rgba(254,252,247,0.55) 60%, transparent 90%);"></div>
+                    <img class="img-bg" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A diverse team of professionals shaking hands over a table with documents.">
+                    <div class="img-overlay" style="background: linear-gradient(105deg, rgba(254,252,247,0.92) 35%, rgba(254,252,247,0.65) 62%, transparent 90%);"></div>
                     <div class="slide-inner">
-                        <div class="bg-content" style="max-width: 62%; display: flex; flex-direction: column; gap: 1.2rem;">
-                            <span class="pill"><i class="fa-solid fa-seedling"></i> B2 | NGO English</span>
+                        <div class="bg-content hero-content">
+                            <span class="pill"><i class="fa-solid fa-landmark"></i> Strategic Planning Series</span>
                             <h1>Strategic Planning in the NGO Sector</h1>
-                            <p style="font-size: var(--step-1); color: var(--ink-muted);">Collaborate, analyze, and communicate like an experienced project officer.</p>
+                            <p class="subtitle">Choosing a Water Conservation Strategy in Hebron</p>
+                            <div class="card hero-objectives">
+                                <h3><i class="fa-solid fa-bullseye"></i> Today's Objectives</h3>
+                                <ul>
+                                    <li><i class="fa-solid fa-chart-line"></i> Analyze a report on a local environmental issue.</li>
+                                    <li><i class="fa-solid fa-scale-balanced"></i> Evaluate two proposed strategies and justify your choice.</li>
+                                    <li><i class="fa-solid fa-people-group"></i> Collaborate to summarize your analysis and recommendations.</li>
+                                    <li><i class="fa-solid fa-wave-square"></i> Use sentence stress to emphasize key data and findings.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -560,20 +643,20 @@
                 <!-- Slide 2 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12">
-                                <span class="pill"><i class="fa-solid fa-compass"></i> Today's Aims</span>
-                                <h2>By the end of this lesson, you will be able to...</h2>
+                        <span class="pill"><i class="fa-solid fa-leaf"></i> Grounding Activity</span>
+                        <h2>Breathe &amp; Refocus</h2>
+                        <div class="grounding-layout">
+                            <div class="grounding-image">
+                                <img src="https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A serene, winding river through a calm forest at sunset.">
                             </div>
-                            <div class="col-span-12">
-                                <div class="card" style="gap: 1.1rem;">
-                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                                        <li><i class="fa-solid fa-magnifying-glass-chart" style="margin-right: 10px; color: #005a70;"></i>Define key vocabulary for strategic planning and project management.</li>
-                                        <li><i class="fa-solid fa-clock-rotate-left" style="margin-right: 10px; color: #005a70;"></i>Use a range of past tenses to describe a project's background accurately.</li>
-                                        <li><i class="fa-solid fa-bullhorn" style="margin-right: 10px; color: #005a70;"></i>Apply sentence stress to emphasize critical data and findings.</li>
-                                        <li><i class="fa-solid fa-users" style="margin-right: 10px; color: #005a70;"></i>Collaborate to analyze a problem, evaluate strategies, and justify a recommendation.</li>
-                                    </ul>
-                                </div>
+                            <div class="grounding-prompt card">
+                                <h3><i class="fa-solid fa-wind"></i> Focus Prompt</h3>
+                                <p>Take a deep breath in. Hold for a moment. As you breathe out, let go of any distractions and bring your focus here.</p>
+                                <ul class="calm-steps">
+                                    <li>Repeat this breath cycle three times.</li>
+                                    <li>Notice three things you can see or hear in the room.</li>
+                                    <li>Share one word describing how you feel right now.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -582,37 +665,121 @@
                 <!-- Slide 3 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-anchor"></i> Grounding Activity</span>
-                        <h2>What is a "Strategy"?</h2>
-                        <p style="max-width: 70%;">Take 5 minutes to connect your personal goals to strategic planning. Reflect individually, then share with a partner.</p>
-                        <div class="three-column-grid">
-                            <div class="question-card">What is one personal or professional goal you have achieved?</div>
-                            <div class="question-card">What were the key steps (your "strategy") that helped you succeed?</div>
-                            <div class="question-card">What was the biggest challenge you faced along the way?</div>
+                        <span class="pill"><i class="fa-solid fa-list-check"></i> Lesson Aims</span>
+                        <h2>By the end of this lesson, you will be able to:</h2>
+                        <div class="card objectives-card">
+                            <ul>
+                                <li>Analyze a report on a local environmental issue to identify key challenges.</li>
+                                <li>Evaluate two proposed strategies and justify your choice using persuasive language.</li>
+                                <li>Collaborate with a group to summarize your analysis and recommendations.</li>
+                                <li>Use sentence stress effectively to emphasize key data and findings in a discussion.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
 
                 <!-- Slide 4 -->
                 <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-lightbulb"></i> Pre-Task 1</span>
-                        <h2>The Language of Planning</h2>
-                        <p style="max-width: 70%; margin: 0 auto;">Understanding the essential vocabulary for project management.</p>
+                    <div class="slide-inner">
+                        <span class="pill"><i class="fa-solid fa-lightbulb"></i> Pre-task A · 20 mins</span>
+                        <h2>Activate: Successful Community Projects</h2>
+                        <div class="pretask-grid">
+                            <div class="card">
+                                <h3>Part 1 · Paired Discussion (5 mins)</h3>
+                                <ul>
+                                    <li>Think of a successful community-based project you know of in Palestine. What was its goal?</li>
+                                    <li>What made it successful? What challenges did it face?</li>
+                                    <li>Why are community-based projects often important for creating sustainable change?</li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>Part 2 · Group Analysis (10 mins)</h3>
+                                <p>As a class, examine a short case study of a <strong>Greywater Recycling</strong> project in a village in Jordan. Discuss what made it successful and note any transferable lessons for Hebron.</p>
+                            </div>
+                            <div class="card">
+                                <h3>Part 3 · Individual Reflection (5 mins)</h3>
+                                <p>Type one key factor for success that you think is most important for a project in Hebron into the chat, and briefly explain why.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Slide 5 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-book-open"></i> Core Concepts</span>
-                        <h2>Strategic Planning Essentials</h2>
-                        <div class="definition-grid">
-                            <div class="definition-card"><h4>Stakeholder</h4><p>A person, group, or organization who can affect or be affected by a project.</p></div>
-                            <div class="definition-card"><h4>Sustainability</h4><p>The ability for a project's positive outcomes to continue after the initial funding or effort has ended.</p></div>
-                            <div class="definition-card"><h4>Impact Assessment</h4><p>A process of evaluating the likely positive and negative effects of a proposed project.</p></div>
-                            <div class="definition-card"><h4>Mission Statement</h4><p>A formal summary of the aims and values of an organization.</p></div>
-                            <div class="definition-card"><h4>Deliverable</h4><p>A tangible product or service produced as the result of a project.</p></div>
+                        <span class="pill"><i class="fa-solid fa-file-alt"></i> Pre-task B · Part 1</span>
+                        <h2>Analyzing the Hebron Water Report</h2>
+                        <p class="lead">Read the summary. Then choose the correct information to complete the table.</p>
+                        <div class="card interactive-card">
+                            <p><em>A recent study in the Hebron governorate <strong>found</strong> residential water consumption <strong>had risen</strong> by 15% in five years. It <strong>identified</strong> that the primary cause was not faulty infrastructure but a lack of public awareness about simple conservation techniques, especially among younger households. The report <strong>concluded</strong> that technical solutions alone were unlikely to foster long-term change.</em></p>
+                            <div class="table-completion-layout" data-activity="table-completion">
+                                <div class="table-grid">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Finding</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th>Key Statistic</th>
+                                                <td>
+                                                    <div class="table-cell" data-correct="risen by 15% in five years">
+                                                        <select>
+                                                            <option value="">Select detail</option>
+                                                            <option value="risen by 15% in five years">risen by 15% in five years</option>
+                                                            <option value="faulty infrastructure">faulty infrastructure</option>
+                                                            <option value="lack of public awareness">lack of public awareness</option>
+                                                            <option value="technical solutions alone were unlikely to foster long-term change">technical solutions alone were unlikely to foster long-term change</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Primary Cause</th>
+                                                <td>
+                                                    <div class="table-cell" data-correct="lack of public awareness">
+                                                        <select>
+                                                            <option value="">Select detail</option>
+                                                            <option value="risen by 15% in five years">risen by 15% in five years</option>
+                                                            <option value="faulty infrastructure">faulty infrastructure</option>
+                                                            <option value="lack of public awareness">lack of public awareness</option>
+                                                            <option value="technical solutions alone were unlikely to foster long-term change">technical solutions alone were unlikely to foster long-term change</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Main Conclusion</th>
+                                                <td>
+                                                    <div class="table-cell" data-correct="technical solutions alone were unlikely to foster long-term change">
+                                                        <select>
+                                                            <option value="">Select detail</option>
+                                                            <option value="risen by 15% in five years">risen by 15% in five years</option>
+                                                            <option value="faulty infrastructure">faulty infrastructure</option>
+                                                            <option value="lack of public awareness">lack of public awareness</option>
+                                                            <option value="technical solutions alone were unlikely to foster long-term change">technical solutions alone were unlikely to foster long-term change</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card option-bank">
+                                    <h3><i class="fa-solid fa-thumbtack"></i> Option Bank</h3>
+                                    <span class="option-pill">risen by 15% in five years</span>
+                                    <span class="option-pill">faulty infrastructure</span>
+                                    <span class="option-pill">lack of public awareness</span>
+                                    <span class="option-pill">technical solutions alone were unlikely to foster long-term change</span>
+                                </div>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                <button class="activity-btn" data-action="check">Check</button>
+                            </div>
+                            <div class="feedback-msg" aria-live="polite"></div>
                         </div>
                     </div>
                 </div>
@@ -620,109 +787,260 @@
                 <!-- Slide 6 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Vocabulary Matching</span>
-                        <h2>Match Each Term with its Definition · Part 1</h2>
-                        <p style="max-width: 75%;">Use the dropdown menus to connect each NGO planning term to the correct definition. This first round covers terms 1–5.</p>
-                        <div class="matching-wrapper" data-activity="matching-vocab">
-                            <div class="matching-list">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Terms 1–5</h3>
-                                <ol>
-                                    <li>SWOT Analysis</li>
-                                    <li>Logframe</li>
-                                    <li>Baseline Data</li>
-                                    <li>Advocacy</li>
-                                    <li>Capacity Building</li>
-                                </ol>
-                            </div>
-                            <div class="matching-options">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Definitions</h3>
-                                <div class="matching-option" data-correct="1"><span>A study of a project's internal Strengths/Weaknesses and external Opportunities/Threats.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="2"><span>A planning tool that uses a matrix to connect a project's goals, activities, and outcomes.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="3"><span>Information gathered at the start of a project to measure future change.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="4"><span>Public support for a particular cause or policy.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="5"><span>The process of helping an organization develop and strengthen its skills and abilities.</span><select><option value="">Choose term #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                            </div>
+                        <span class="pill"><i class="fa-solid fa-users"></i> Pre-task B · Part 2</span>
+                        <h2>Discussing the Report's Implications</h2>
+                        <div class="card">
+                            <ol>
+                                <li>The report states the main cause is a "lack of public awareness." What does this look like in daily life?</li>
+                                <li>Why do you think the report concluded that "technical solutions alone were unlikely to foster long-term change"?</li>
+                            </ol>
+                            <p class="hint"><i class="fa-solid fa-lightbulb"></i> Be ready to summarize one key insight from your discussion.</p>
                         </div>
-                        <div class="activity-actions"><button class="activity-btn secondary" data-action="reset">Reset</button><button class="activity-btn" data-action="check">Check</button></div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <!-- Slide 7 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Vocabulary Matching</span>
-                        <h2>Match Each Term with its Definition · Part 2</h2>
-                        <p style="max-width: 75%;">Continue matching with the remaining NGO planning terms. This round focuses on terms 6–10.</p>
-                        <div class="matching-wrapper" data-activity="matching-vocab">
-                            <div class="matching-list">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Terms 6–10</h3>
-                                <ol start="6">
-                                    <li>Conservation</li>
-                                    <li>Carbon Footprint</li>
-                                    <li>Watershed</li>
-                                    <li>Grassroots</li>
-                                    <li>Monitoring &amp; Evaluation</li>
-                                </ol>
-                            </div>
-                            <div class="matching-options">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Definitions</h3>
-                                <div class="matching-option" data-correct="6"><span>The protection of animals, plants, and natural resources.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="7"><span>The total amount of greenhouse gases generated by our actions.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="8"><span>An area of land that separates waters flowing to different rivers or seas.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="9"><span>Movement or activity that starts from ordinary people in a community.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="10"><span>The process of tracking a project's progress and assessing its outcomes.</span><select><option value="">Choose term #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
+                        <span class="pill"><i class="fa-solid fa-brain"></i> Pre-task B · Part 3</span>
+                        <h2>Brainstorming Solutions</h2>
+                        <div class="card">
+                            <p>Based on the report, the problem is awareness, not infrastructure. In your groups, brainstorm a list of possible community-based projects to solve this problem. Be ready to share one idea.</p>
+                            <div class="brainstorm-board">
+                                <div class="brainstorm-tip"><i class="fa-solid fa-circle-nodes"></i> Consider schools, households, local leaders, and digital campaigns.</div>
+                                <div class="brainstorm-tip"><i class="fa-solid fa-bolt"></i> Note down one creative idea per minute.</div>
+                                <div class="brainstorm-tip"><i class="fa-solid fa-handshake"></i> Think about partnerships that could make the project successful.</div>
                             </div>
                         </div>
-                        <div class="activity-actions"><button class="activity-btn secondary" data-action="reset">Reset</button><button class="activity-btn" data-action="check">Check</button></div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <!-- Slide 8 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-comments"></i> Freer Practice</span>
-                        <h2>Describe a Successful Project</h2>
-                        <p style="max-width: 70%;">Think of a community project you admire. In pairs, use at least three words from the vocabulary to guide your discussion.</p>
-                        <div class="discussion-table">
-                            <div class="card"><h3>Goal &amp; Stakeholders</h3><p>What was the project’s main goal? Who were the key stakeholders?</p></div>
-                            <div class="card"><h3>Deliverables</h3><p>What were the main deliverables or outcomes of the project?</p></div>
-                            <div class="card"><h3>Grassroots &amp; Sustainability</h3><p>What makes this project a strong example of grassroots action or sustainability?</p></div>
+                        <span class="pill"><i class="fa-solid fa-headphones"></i> Pre-task C · Part 1</span>
+                        <h2>Model: Listening for Detail</h2>
+                        <div class="card interactive-card">
+                            <div class="audio-player">
+                                <p><strong>Audio:</strong> Fatima and Yousef plan a water conservation pilot program in Hebron.</p>
+                                <div class="audio-placeholder" data-audio-id="ngo-water-conservation-discussion">
+                                    <i class="fa-solid fa-play"></i>
+                                    <span>Audio ID: ngo-water-conservation-discussion</span>
+                                </div>
+                                <p class="hint"><i class="fa-solid fa-clipboard-check"></i> Listen for the key report findings, target audience, and concerns.</p>
+                            </div>
+                            <div class="mc-grid" data-activity="mc-quiz">
+                                <div class="mc-card" data-correct="c">
+                                    <h3>Q1</h3>
+                                    <p>What key finding from the report does Fatima emphasize at the start?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Consumption rose by 15%</span>
+                                        <span class="option-chip">B. The problem is infrastructure</span>
+                                        <span class="option-chip">C. Younger households are the main issue</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="c">
+                                    <h3>Q2</h3>
+                                    <p>What is Yousef's proposed pilot program called?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Water Savers</span>
+                                        <span class="option-chip">B. The Schools Project</span>
+                                        <span class="option-chip">C. Future Guardians</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="b">
+                                    <h3>Q3</h3>
+                                    <p>Who is the main target audience for Yousef's proposal?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Community leaders</span>
+                                        <span class="option-chip">B. Schoolchildren</span>
+                                        <span class="option-chip">C. All households</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="b">
+                                    <h3>Q4</h3>
+                                    <p>What is Fatima's main concern about focusing only on schools?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. It's too expensive.</span>
+                                        <span class="option-chip">B. It won't create immediate change at home.</span>
+                                        <span class="option-chip">C. Schools are not interested.</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="a">
+                                    <h3>Q5</h3>
+                                    <p>What is the name of Fatima's proposed program?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Household Champions</span>
+                                        <span class="option-chip">B. Community Action</span>
+                                        <span class="option-chip">C. Water Wise Homes</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="c">
+                                    <h3>Q6</h3>
+                                    <p>What is the core activity in Fatima's proposal?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Giving out free taps</span>
+                                        <span class="option-chip">B. Community meetings</span>
+                                        <span class="option-chip">C. Training local volunteers to do home visits</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="c">
+                                    <h3>Q7</h3>
+                                    <p>Yousef worries Fatima's idea might be seen as...</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Ineffective</span>
+                                        <span class="option-chip">B. Too slow</span>
+                                        <span class="option-chip">C. Intrusive</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="b">
+                                    <h3>Q8</h3>
+                                    <p>How does Fatima suggest they measure success for her pilot?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. By counting volunteers</span>
+                                        <span class="option-chip">B. Through follow-up surveys and checking water bills</span>
+                                        <span class="option-chip">C. By interviewing school principals</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="a">
+                                    <h3>Q9</h3>
+                                    <p>What does Yousef say is the "key to long-term sustainability"?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. Changing the mindset of the next generation</span>
+                                        <span class="option-chip">B. Giving people the right equipment</span>
+                                        <span class="option-chip">C. Getting immediate results</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                                <div class="mc-card" data-correct="c">
+                                    <h3>Q10</h3>
+                                    <p>What is their final decision?</p>
+                                    <div class="option-list">
+                                        <span class="option-chip">A. To choose Yousef's idea</span>
+                                        <span class="option-chip">B. To reject Fatima's idea</span>
+                                        <span class="option-chip">C. To create a hybrid program combining both ideas</span>
+                                    </div>
+                                    <select>
+                                        <option value="">Choose answer</option>
+                                        <option value="a">A</option>
+                                        <option value="b">B</option>
+                                        <option value="c">C</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                <button class="activity-btn" data-action="check">Check</button>
+                            </div>
+                            <div class="feedback-msg" aria-live="polite"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Slide 9 -->
                 <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> Pre-Task 2</span>
-                        <h2>Analyzing a Project's History</h2>
-                        <p style="max-width: 70%; margin: 0 auto;">Use past tenses to explain the background of a problem clearly.</p>
+                    <div class="slide-inner">
+                        <span class="pill"><i class="fa-solid fa-language"></i> Pre-task C · Part 2</span>
+                        <h2>Model: Language Analysis</h2>
+                        <div class="grid-container">
+                            <div class="col-span-6">
+                                <div class="dialogue-box transcript-box">
+                                    <p><strong>Fatima:</strong> Okay, so we’ve agreed that the Hebron report is clear: we need a community awareness program. The data <em>showed</em> that the biggest issue was with younger households, so that’s where we need to focus.</p>
+                                    <p><strong>Yousef:</strong> Exactly. So, for the pilot program, <strong>I propose we start with</strong> the schools. We could call it the "Future Guardians" program. We would develop workshops for students aged 10 to 14. For me, <strong>the key to long-term sustainability is</strong> changing the mindset of the next generation.</p>
+                                    <p><strong>Fatima:</strong> I agree that schools are important. But, <strong>my only concern is that</strong> it might not create immediate change in the home. The children learn, but do the parents change their habits? <strong>An alternative approach could be to</strong> focus directly on the households. I'm thinking of a "Household Champions" program.</p>
+                                    <p><strong>Yousef:</strong> Tell me more. How would that work?</p>
+                                    <p><strong>Fatima:</strong> We would train local volunteers to conduct friendly home visits. They would offer practical tips and check for simple leaks. <strong>The evidence strongly suggests that</strong> this kind of peer-to-peer approach builds trust. We could measure success with follow-up surveys and even ask to see their water bills before and after.</p>
+                                    <p><strong>Yousef:</strong> That’s a good point about building trust. But I wonder if people would find home visits a bit intrusive. With the "Future Guardians" idea, we are invited into the schools. <strong>The main advantage is that</strong> we can reach a large number of young people efficiently.</p>
+                                    <p><strong>Fatima:</strong> That's true. Access is easier. But <strong>my priority would be</strong> ensuring immediate, measurable impact in water consumption. Perhaps we can combine the ideas? We could run the school workshops, and the students' "homework" could be to conduct a simple water audit at home with their parents, guided by our volunteers.</p>
+                                    <p><strong>Yousef:</strong> A hybrid model... I like that. <strong>It's the best of both worlds.</strong> We get the long-term educational impact and the immediate household engagement. Okay, let's design that pilot.</p>
+                                </div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="card">
+                                    <h3><i class="fa-solid fa-highlighter"></i> Your Task</h3>
+                                    <ol>
+                                        <li>Identify the phrases Yousef and Fatima use to introduce their ideas.</li>
+                                        <li>How does Fatima express her concern about Yousef's idea without being too direct?</li>
+                                        <li>What phrases do they use to justify their proposals with reasons?</li>
+                                    </ol>
+                                    <p class="hint"><i class="fa-solid fa-pen"></i> Highlight or note the phrases you want to reuse later in the lesson.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Slide 10 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-ear-listen"></i> Listening Model</span>
-                        <h2>Fatima &amp; Yousef Discuss Recycling</h2>
-                        <div class="audio-layout">
-                            <div class="audio-player">
-                                <p><strong>Task:</strong> What is the main problem, and what two options are they considering?</p>
-                                <audio controls>
-                                    <source src="assets/audio/ngo-recycling-discussion.mp3" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
-                                <div class="dialogue-box">
-                                    <p><strong>Fatima:</strong> Okay, so the municipal report <em>came out</em> last week. It <em>showed</em> that while we <em>were running</em> the awareness campaign last year, recycling rates <em>hadn't improved</em> as much as we'd hoped. The main issue they <em>identified</em> was contamination in the bins.</p>
-                                    <p><strong>Yousef:</strong> I see. So, we have two options: invest in expensive sorting technology at the plant, or run a new series of targeted community workshops. For me, the choice is clear. The key to long-term <strong>sustainability</strong> is direct engagement. We need to focus on the <strong>stakeholders</strong> themselves.</p>
+                        <span class="pill"><i class="fa-solid fa-gavel"></i> Pre-task C · Part 3</span>
+                        <h2>Language Focus: Mini-Debate</h2>
+                        <div class="card">
+                            <p>Your team needs to decide on the first activity for the new water conservation pilot program. In pairs, argue for one option below using phrases from the model.</p>
+                            <div class="role-options">
+                                <div class="role-card">
+                                    <h3>Option A</h3>
+                                    <p>Launch a social media video competition for students.</p>
+                                </div>
+                                <div class="role-card">
+                                    <h3>Option B</h3>
+                                    <p>Host a public launch event in a community center with a well-known local figure.</p>
                                 </div>
                             </div>
-                            <div class="audio-visual">
-                                <img src="https://images.pexels.com/photos/935945/pexels-photo-935945.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A row of recycling bins in a city street.">
-                                <div class="caption">Recycling bins in Nablus remind residents to sort their waste carefully.</div>
-                            </div>
+                            <p class="model-sentence"><strong>Example:</strong> "I propose we start with the social media competition because the key to long-term sustainability is engaging young people online."</p>
                         </div>
                     </div>
                 </div>
@@ -730,142 +1048,322 @@
                 <!-- Slide 11 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-spell-check"></i> Grammar Practice</span>
-                        <h2>Past Tenses in NGO Storytelling</h2>
-                        <p style="max-width: 75%;">Choose the correct verb form to complete each sentence. When you're ready, check your answers.</p>
-                        <div class="mc-grid" data-activity="mc-past">
-                            <div class="mc-card" data-correct="had already decided"><label>1. When the final report arrived, we ______ (already/decide) on the new strategy.</label><select><option value="">Select</option><option value="had already decided">had already decided</option><option value="already decided">already decided</option></select></div>
-                            <div class="mc-card" data-correct="visited"><label>2. Last year, our team ______ (visit) three communities to gather baseline data.</label><select><option value="">Select</option><option value="visited">visited</option><option value="had visited">had visited</option></select></div>
-                            <div class="mc-card" data-correct="had been complaining"><label>3. The community ______ (complain) about the water quality for months before the project started.</label><select><option value="">Select</option><option value="had been complaining">had been complaining</option><option value="was complaining">was complaining</option></select></div>
-                            <div class="mc-card" data-correct="were installing"><label>4. While the engineers ______ (install) the new pumps, the education team was running workshops.</label><select><option value="">Select</option><option value="were installing">were installing</option><option value="installed">installed</option></select></div>
-                            <div class="mc-card" data-correct="did not receive"><label>5. The NGO ______ (not receive) enough funding, so it had to scale back the project.</label><select><option value="">Select</option><option value="did not receive">did not receive</option><option value="had not receive">had not receive</option></select></div>
-                            <div class="mc-card" data-correct="had completed"><label>6. By the time the international partners joined, the local team ______ (complete) the initial assessment.</label><select><option value="">Select</option><option value="completed">completed</option><option value="had completed">had completed</option></select></div>
-                            <div class="mc-card" data-correct="was working"><label>7. She ______ (work) on the advocacy campaign when she heard the news about the policy change.</label><select><option value="">Select</option><option value="worked">worked</option><option value="was working">was working</option></select></div>
-                            <div class="mc-card" data-correct="had raised"><label>8. They ______ (raise) over $10,000 before the fundraising event even began.</label><select><option value="">Select</option><option value="raised">raised</option><option value="had raised">had raised</option></select></div>
-                            <div class="mc-card" data-correct="submitted"><label>9. We ______ (submit) the proposal on Tuesday.</label><select><option value="">Select</option><option value="had submitted">had submitted</option><option value="submitted">submitted</option></select></div>
-                            <div class="mc-card" data-correct="had ever tried"><label>10. Before 2020, no one ______ (ever/try) a project like this in the region.</label><select><option value="">Select</option><option value="ever tried">ever tried</option><option value="had ever tried">had ever tried</option></select></div>
+                        <span class="pill"><i class="fa-solid fa-bullhorn"></i> Pre-task D · Part 1</span>
+                        <h2>Pronunciation: Using Stress to Emphasize Data</h2>
+                        <div class="card interactive-card">
+                            <p>Listen to your teacher say one of the sentences. Choose the sentence you hear and consider how the meaning changes.</p>
+                            <div class="audio-choice-grid" data-activity="audio-choice">
+                                <div class="audio-choice-card" data-correct="A">
+                                    <h3>Option A</h3>
+                                    <p>The report showed a <strong>fifteen</strong> percent increase in water usage.</p>
+                                    <p class="meaning">Meaning: Correcting the number (not fifty).</p>
+                                    <select>
+                                        <option value="">Did you hear this?</option>
+                                        <option value="A">Yes, Option A</option>
+                                        <option value="B">No, Option B</option>
+                                    </select>
+                                </div>
+                                <div class="audio-choice-card" data-correct="B">
+                                    <h3>Option B</h3>
+                                    <p>The report showed a fifteen percent <strong>increase</strong> in water usage.</p>
+                                    <p class="meaning">Meaning: Correcting the trend (not a decrease).</p>
+                                    <select>
+                                        <option value="">Did you hear this?</option>
+                                        <option value="A">Option A</option>
+                                        <option value="B">Option B</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                <button class="activity-btn" data-action="check">Check</button>
+                            </div>
+                            <div class="feedback-msg" aria-live="polite"></div>
                         </div>
-                        <div class="activity-actions"><button class="activity-btn secondary" data-action="reset">Reset</button><button class="activity-btn" data-action="check">Check</button></div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <!-- Slide 12 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-comments"></i> Freer Practice</span>
-                        <h2>Explain Your Choice</h2>
-                        <p style="max-width: 75%;">Your NGO has a small budget surplus. In pairs, pick an option and convince your partner using past tenses and strong reasoning.</p>
-                        <div class="discussion-table">
-                            <div class="card"><h3>Option A</h3><p>Buy new, energy-efficient office printers. <em>"Our old printers were always breaking down..."</em></p></div>
-                            <div class="card"><h3>Option B</h3><p>Fund a small community garden project. <em>"Last year, residents had asked for more green spaces..."</em></p></div>
-                            <div class="card"><h3>Convince</h3><p>Use past evidence to justify why your preferred option delivers more impact.</p></div>
+                        <span class="pill"><i class="fa-solid fa-exchange-alt"></i> Pre-task D · Part 2</span>
+                        <h2>Pronunciation: Practice Scenarios</h2>
+                        <div class="scenario-grid">
+                            <div class="card">
+                                <h3>Scenario 1 · Checking the Facts (5 mins)</h3>
+                                <p><strong>Student A:</strong> Has the correct project data.</p>
+                                <p><strong>Student B:</strong> Has incorrect data. Ask questions to check your information.</p>
+                                <ul>
+                                    <li><strong>Student A's Card:</strong> Pilot program duration: <strong>Three</strong> months; Number of schools: <strong>Twelve</strong>; Targeted reduction: <strong>10%</strong>.</li>
+                                    <li><strong>Student B's Card:</strong> Pilot program duration: Six months? Number of schools: Twenty? Targeted reduction: 30%?</li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>Scenario 2 · Correcting a Colleague (5 mins)</h3>
+                                <p>You are in a team meeting. Your colleague is summarizing the project plan to a new team member, but they are making mistakes.</p>
+                                <p><strong>Student B:</strong> "So, the project will begin in <strong>September</strong>, and we'll be working with <strong>community centers</strong>. The main goal is to reduce electricity consumption."</p>
+                                <p><strong>Student A:</strong> Interrupt politely and correct the mistakes using the stress to emphasize <strong>October</strong>, <strong>schools</strong>, and reducing <strong>water</strong> consumption.</p>
+                            </div>
+                            <div class="card">
+                                <h3>Scenario 3 · Answering a Journalist (5 mins)</h3>
+                                <p><strong>Student A:</strong> Project Manager.</p>
+                                <p><strong>Student B:</strong> Journalist with old information.</p>
+                                <p><strong>Journalist:</strong> "I read that the budget for this is <strong>$50,000</strong>. Is that correct?"</p>
+                                <p><strong>Project Manager:</strong> "Actually, the final budget is <strong>$15,000</strong>." Continue the interview using the prompts on your cards.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Slide 13 -->
-                <div class="slide-stage hidden centered-text">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-chart-line"></i> Pre-Task 3</span>
-                        <h2>Presenting Data with Impact</h2>
-                        <p style="max-width: 70%; margin: 0 auto;">Use pronunciation to make your message clear and persuasive.</p>
+                <div class="slide-stage full-width-bg hidden">
+                    <img class="img-bg" src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Diverse team of professionals in a meeting, pointing at a whiteboard with charts.">
+                    <div class="img-overlay" style="background: linear-gradient(120deg, rgba(62,74,58,0.45) 15%, rgba(62,74,58,0.2) 45%, transparent 90%);"></div>
+                    <div class="slide-inner">
+                        <div class="bg-content section-break">
+                            <span class="pill"><i class="fa-solid fa-star"></i> Task</span>
+                            <h2>Designing the Pilot Program</h2>
+                            <p>Shift into project planning mode. Apply your analysis to a real-world decision.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Slide 14 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <h2><i class="fa-solid fa-bullhorn" style="margin-right: 12px;"></i>Pronunciation: Using Stress to Emphasize Data</h2>
-                        <p>When we present data from a report, we stress the most important word to make our point. This changes the focus and the meaning of the sentence.</p>
-                        <hr style="border: none; border-top: 1px solid rgba(122,132,113,0.25); width: 100%;">
-                        <h3 style="font-family: var(--font-display); margin: 0; color: var(--primary-sage);">Noticing Task</h3>
-                        <p>Listen to your teacher say the sentences below. The stressed word is in <strong>bold</strong>. How does the meaning change?</p>
-                        <p><strong>A.</strong> The report showed a <strong>twenty</strong> percent increase in water usage. (Focus is on the number itself.)</p>
-                        <p><strong>B.</strong> The report showed a twenty percent <strong>increase</strong> in water usage. (Focus is on the direction of change.)</p>
+                        <span class="pill"><i class="fa-solid fa-info-circle"></i> Task Context</span>
+                        <h2>The Hebron Water Project</h2>
+                        <div class="card context-card">
+                            <p><strong>The Situation:</strong> Your NGO has analyzed the recent Hebron Water Report.</p>
+                            <p><strong>The Key Finding:</strong> Water consumption has risen by 15% in five years due to a lack of awareness about water-saving techniques, especially in younger households.</p>
+                            <p><strong>The Goal:</strong> Design a 3-month pilot program to test a solution before launching a bigger project.</p>
+                            <p><strong>The Agreed Strategy:</strong> A hybrid approach with activities for both schools and households.</p>
+                            <p><strong>Your Role:</strong> As the project planning team, decide on the specific details of this pilot program.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Slide 15 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-link"></i> Matching Stress to Meaning</span>
-                        <h2>Match Stress to Meaning · Part 1</h2>
-                        <p style="max-width: 75%;">Match sentences 1–5 with the correct implied meaning. Notice how stress changes the focus.</p>
-                        <div class="matching-wrapper" data-activity="matching-stress">
-                            <div class="matching-list">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Sentences 1–5</h3>
-                                <ol>
-                                    <li><strong>We</strong> need to fund the school project.</li>
-                                    <li>We need to <strong>fund</strong> the school project.</li>
-                                    <li>We need to fund the <strong>school</strong> project.</li>
-                                    <li><strong>Only ten</strong> families participated.</li>
-                                    <li>Only ten families <strong>participated</strong>.</li>
-                                </ol>
-                            </div>
-                            <div class="matching-options">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Implied Meaning</h3>
-                                <div class="matching-option" data-correct="1"><span>Not another group, but us.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="2"><span>We must provide money, not just verbal support.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="3"><span>Not the health clinic project, this specific one.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="4"><span>The number was disappointingly low.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                                <div class="matching-option" data-correct="5"><span>They came, but they didn't do much more than that.</span><select><option value="">Sentence #</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+                        <span class="pill"><i class="fa-solid fa-clipboard-list"></i> Task Instructions · 15 mins</span>
+                        <h2>Design the Pilot Program</h2>
+                        <div class="card">
+                            <ol class="instruction-steps">
+                                <li>Discuss and make decisions on the key details below.</li>
+                                <li>Use language from the lesson to propose ideas, justify your choices, and express concerns.</li>
+                                <li>Prepare a 2-minute summary of your pilot program plan to present to the class.</li>
+                            </ol>
+                            <div class="deliverable-list">
+                                <h3>Key Decisions to Make</h3>
+                                <ul>
+                                    <li><strong>Program Name:</strong> What is a catchy, positive name for your program?</li>
+                                    <li><strong>Target Districts:</strong> Which two districts in Hebron will you target for the pilot? Why?</li>
+                                    <li><strong>Core Activities:</strong> One main activity for schools and one for households.</li>
+                                    <li><strong>Measuring Success:</strong> One primary way to evaluate the pilot.</li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="activity-actions"><button class="activity-btn secondary" data-action="reset">Reset</button><button class="activity-btn" data-action="check">Check</button></div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <!-- Slide 16 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-link"></i> Matching Stress to Meaning</span>
-                        <h2>Match Stress to Meaning · Part 2</h2>
-                        <p style="max-width: 75%;">Now match sentences 6–10 with the implied meanings. Which word carries the key message?</p>
-                        <div class="matching-wrapper" data-activity="matching-stress">
-                            <div class="matching-list">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Sentences 6–10</h3>
-                                <ol start="6">
-                                    <li><strong>Our</strong> data shows a different result.</li>
-                                    <li>Our data shows a <strong>different</strong> result.</li>
-                                    <li>The project finished in <strong>May</strong>.</li>
-                                    <li>The project <strong>finished</strong> in May.</li>
-                                    <li>We need <strong>more</strong> community feedback.</li>
-                                </ol>
-                            </div>
-                            <div class="matching-options">
-                                <h3 style="margin: 0; font-size: calc(1.2rem + var(--font-size-adjustment));">Implied Meaning</h3>
-                                <div class="matching-option" data-correct="6"><span>In contrast to their data.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="7"><span>The result is not the same as we expected.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="8"><span>Not in June, as was planned.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="9"><span>It is complete and not ongoing.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                                <div class="matching-option" data-correct="10"><span>The current amount of feedback is insufficient.</span><select><option value="">Sentence #</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-                            </div>
+                        <span class="pill"><i class="fa-solid fa-chalkboard-teacher"></i> Reporting</span>
+                        <h2>Presenting Your Pilot Program</h2>
+                        <div class="card">
+                            <ol>
+                                <li>One person from each group shares the name of your program and its main goals.</li>
+                                <li>Explain the most important reason for choosing your core activities.</li>
+                                <li>Describe how you will measure the success of your pilot.</li>
+                            </ol>
+                            <p class="hint"><i class="fa-solid fa-microphone"></i> Use sentence stress to highlight the data or outcomes you want the audience to remember.</p>
                         </div>
-                        <div class="activity-actions"><button class="activity-btn secondary" data-action="reset">Reset</button><button class="activity-btn" data-action="check">Check</button></div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
                 <!-- Slide 17 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-chart-column"></i> Reporting Findings</span>
-                        <h2>Project "Green Roofs" Highlights</h2>
-                        <div class="reporting-layout">
-                            <div class="card" style="gap: 1rem;">
-                                <h3>Manager Briefing</h3>
-                                <p>Work with a partner. Take turns being the project manager and emphasize the most important data using sentence stress.</p>
-                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
-                                    <li>Participation: <strong>150</strong> households in 2023.</li>
-                                    <li>Energy Savings: Average <strong>25%</strong> reduction in cooling costs.</li>
-                                    <li>Community Satisfaction: <strong>95%</strong> positive feedback.</li>
-                                </ul>
-                                <p style="font-style: italic; color: var(--ink-muted);">Example: "Our data shows that <strong>one hundred and fifty</strong> households participated last year..."</p>
+                        <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Practice Activities</span>
+                        <h2>Language Practice</h2>
+                        <div class="practice-grid">
+                            <div class="card interactive-card">
+                                <h3><i class="fa-solid fa-gear"></i> Grammar · Past Tenses</h3>
+                                <p>Choose the sentence with the correct past tense.</p>
+                                <div class="mc-grid" data-activity="mc-select">
+                                    <div class="mc-card" data-correct="had collected">
+                                        <p>The report used data that the team ____ earlier.</p>
+                                        <select>
+                                            <option value="">Select answer</option>
+                                            <option value="collected">collected</option>
+                                            <option value="had collected">had collected</option>
+                                        </select>
+                                    </div>
+                                    <div class="mc-card" data-correct="had already secured">
+                                        <p>By the time the project started, the NGO ____ funding.</p>
+                                        <select>
+                                            <option value="">Select answer</option>
+                                            <option value="already secured">already secured</option>
+                                            <option value="had already secured">had already secured</option>
+                                        </select>
+                                    </div>
+                                    <div class="mc-card" data-correct="hadn't known">
+                                        <p>She ____ about the issue before she read the report.</p>
+                                        <select>
+                                            <option value="">Select answer</option>
+                                            <option value="didn't know">didn't know</option>
+                                            <option value="hadn't known">hadn't known</option>
+                                        </select>
+                                    </div>
+                                    <div class="mc-card" data-correct="had completed">
+                                        <p>After they ____ the pilot, they analyzed the results.</p>
+                                        <select>
+                                            <option value="">Select answer</option>
+                                            <option value="completed">completed</option>
+                                            <option value="had completed">had completed</option>
+                                        </select>
+                                    </div>
+                                    <div class="mc-card" data-correct="had consulted">
+                                        <p>They ____ the community leaders before they designed the program.</p>
+                                        <select>
+                                            <option value="">Select answer</option>
+                                            <option value="consulted">consulted</option>
+                                            <option value="had consulted">had consulted</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="activity-actions">
+                                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                    <button class="activity-btn" data-action="check">Check</button>
+                                </div>
+                                <div class="feedback-msg" aria-live="polite"></div>
                             </div>
-                            <div class="photo-card">
-                                <img src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A simple bar chart showing a rising trend on a laptop screen.">
+                            <div class="card interactive-card">
+                                <h3><i class="fa-solid fa-language"></i> Vocabulary · Matching</h3>
+                                <p>Match each term to its meaning.</p>
+                                <div class="matching-wrapper" data-activity="matching-vocab">
+                                    <div class="matching-list">
+                                        <h4>Terms</h4>
+                                        <ol>
+                                            <li>Sustainability</li>
+                                            <li>Pilot Program</li>
+                                            <li>Stakeholder</li>
+                                            <li>Intervention</li>
+                                            <li>Feasibility</li>
+                                        </ol>
+                                    </div>
+                                    <div class="matching-options">
+                                        <h4>Definitions</h4>
+                                        <div class="matching-option" data-correct="1"><span>The ability to continue long-term without depleting resources.</span><select>
+                                            <option value="">Term #</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></div>
+                                        <div class="matching-option" data-correct="2"><span>A small-scale preliminary study to evaluate if an idea will work.</span><select>
+                                            <option value="">Term #</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></div>
+                                        <div class="matching-option" data-correct="3"><span>A person or group with an interest or concern in a project.</span><select>
+                                            <option value="">Term #</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></div>
+                                        <div class="matching-option" data-correct="4"><span>A specific action taken to improve a situation.</span><select>
+                                            <option value="">Term #</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></div>
+                                        <div class="matching-option" data-correct="5"><span>The state or degree of being easily or conveniently done.</span><select>
+                                            <option value="">Term #</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></div>
+                                    </div>
+                                </div>
+                                <div class="activity-actions">
+                                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                    <button class="activity-btn" data-action="check">Check</button>
+                                </div>
+                                <div class="feedback-msg" aria-live="polite"></div>
+                            </div>
+                            <div class="card interactive-card">
+                                <h3><i class="fa-solid fa-shuffle"></i> Prepositions · Click &amp; Drop</h3>
+                                <p>Select the correct preposition for each sentence.</p>
+                                <div class="preposition-list" data-activity="preposition-select">
+                                    <div class="preposition-item" data-correct="on">
+                                        <span>The report focused ___ the issue of water waste.</span>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="on">on</option>
+                                            <option value="in">in</option>
+                                            <option value="with">with</option>
+                                            <option value="at">at</option>
+                                        </select>
+                                    </div>
+                                    <div class="preposition-item" data-correct="in">
+                                        <span>We need to invest ___ new educational materials.</span>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="on">on</option>
+                                            <option value="in">in</option>
+                                            <option value="with">with</option>
+                                            <option value="at">at</option>
+                                        </select>
+                                    </div>
+                                    <div class="preposition-item" data-correct="with">
+                                        <span>We must consult ___ local leaders before starting.</span>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="on">on</option>
+                                            <option value="in">in</option>
+                                            <option value="with">with</option>
+                                            <option value="at">at</option>
+                                        </select>
+                                    </div>
+                                    <div class="preposition-item" data-correct="on">
+                                        <span>The success of the project depends ___ community participation.</span>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="on">on</option>
+                                            <option value="in">in</option>
+                                            <option value="with">with</option>
+                                            <option value="at">at</option>
+                                        </select>
+                                    </div>
+                                    <div class="preposition-item" data-correct="at">
+                                        <span>This program is aimed ___ younger households.</span>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="on">on</option>
+                                            <option value="in">in</option>
+                                            <option value="with">with</option>
+                                            <option value="at">at</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="activity-actions">
+                                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                    <button class="activity-btn" data-action="check">Check</button>
+                                </div>
+                                <div class="feedback-msg" aria-live="polite"></div>
                             </div>
                         </div>
                     </div>
@@ -874,68 +1372,18 @@
                 <!-- Slide 18 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-bullseye"></i> Main Task</span>
-                        <h2>Planning a Water Conservation Strategy</h2>
-                        <div class="worksheet-grid">
-                            <div class="card">
-                                <h3><i class="fa-solid fa-file-lines" style="margin-right: 8px;"></i>Homework</h3>
-                                <p>Before class, read the "Hebron Water Report Summary" document to understand the context.</p>
-                                <h3><i class="fa-solid fa-water" style="margin-right: 8px;"></i>Scenario</h3>
-                                <p>You are project officers at a Hebron-based environmental NGO. Analyze the report and recommend one strategy for funding.</p>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fa-solid fa-list-check" style="margin-right: 8px;"></i>Task (20 mins)</h3>
-                                <ol style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: calc(1rem + var(--font-size-adjustment));">
-                                    <li>Discuss the key challenges identified in the report using past tenses.</li>
-                                    <li>Analyze the two proposed strategies and choose the most effective, sustainable option.</li>
-                                    <li>Justify your choice using vocabulary and sentence stress from the lesson.</li>
-                                    <li>Prepare a 3-slide summary of your decision.</li>
-                                </ol>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fa-solid fa-shuffle" style="margin-right: 8px;"></i>Strategy Options</h3>
-                                <p><strong>Strategy A – Community-Based:</strong> Public awareness campaign, workshops, and local "water-wise" committees.</p>
-                                <p><strong>Strategy B – Infrastructure-Focused:</strong> Distribute subsidized water-saving fixtures to households.</p>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fa-solid fa-file-powerpoint" style="margin-right: 8px;"></i>Deliverable</h3>
-                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
-                                    <li>Slide 1: Title &amp; Team Members</li>
-                                    <li>Slide 2: Summary of Key Challenges</li>
-                                    <li>Slide 3: Chosen Strategy &amp; Justification</li>
-                                </ul>
-                            </div>
+                        <span class="pill"><i class="fa-solid fa-pen-fancy"></i> Reflection</span>
+                        <h2>Looking Back</h2>
+                        <div class="card reflection-card">
+                            <p>In the chatbox, answer the questions below:</p>
+                            <ol>
+                                <li>What was the most challenging part of designing the pilot program for your group?</li>
+                                <li>Share one new phrase or vocabulary word you learned today that you will try to use in the future.</li>
+                                <li>How confident do you feel now about justifying a decision in English? (1 = Not confident, 5 = Very confident)</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
-
-                <!-- Slide 19 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-person-chalkboard"></i> Feedback</span>
-                        <h2>Gallery Walk</h2>
-                        <p style="max-width: 70%;">Each group presents their recommendation in 2 minutes. As you listen, prepare a clarification question and a challenge question.</p>
-                        <div class="feedback-columns">
-                            <div class="card"><h3><i class="fa-regular fa-circle-question" style="margin-right: 8px;"></i>Clarification Question</h3><p>Ask for more detail about their data, timeline, or stakeholders.</p></div>
-                            <div class="card"><h3><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i>Challenge Question</h3><p>Gently test the strength of their recommendation. What risk have they not considered?</p></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 20 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-clipboard-check"></i> Lesson Review</span>
-                        <h2>Well Done Today!</h2>
-                        <div class="checklist">
-                            <div class="card"><i class="fa-solid fa-check"></i><p>We defined key vocabulary for strategic planning.</p></div>
-                            <div class="card"><i class="fa-solid fa-check"></i><p>We used past tenses to describe project backgrounds.</p></div>
-                            <div class="card"><i class="fa-solid fa-check"></i><p>We practiced using sentence stress to emphasize data.</p></div>
-                            <div class="card"><i class="fa-solid fa-check"></i><p>We collaborated to analyze, evaluate, and recommend strategies.</p></div>
-                        </div>
-                    </div>
-                </div>
-
                 <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
                 <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
@@ -978,8 +1426,9 @@
 
         function handleMatching(activityEl) {
           const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-          const feedback = activityEl.parentElement.querySelector('.feedback-msg');
-          const buttons = activityEl.parentElement.querySelectorAll('.activity-actions button');
+          const container = activityEl.closest('.interactive-card') || activityEl.parentElement;
+          const feedback = container ? container.querySelector('.feedback-msg') : null;
+          const buttons = container ? container.querySelectorAll('.activity-actions button') : [];
 
           buttons.forEach(btn => {
             if (btn.dataset.action === 'check') {
@@ -992,12 +1441,14 @@
                   option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
                   if (isCorrect) correctCount += 1;
                 });
-                if (correctCount === options.length) {
-                  feedback.textContent = 'Excellent! Every match is correct.';
-                  feedback.className = 'feedback-msg success';
-                } else {
-                  feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-                  feedback.className = 'feedback-msg error';
+                if (feedback) {
+                  if (correctCount === options.length) {
+                    feedback.textContent = 'Excellent! Every match is correct.';
+                    feedback.className = 'feedback-msg success';
+                  } else {
+                    feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
+                    feedback.className = 'feedback-msg error';
+                  }
                 }
               });
             } else if (btn.dataset.action === 'reset') {
@@ -1005,57 +1456,79 @@
                 options.forEach(option => {
                   const select = option.querySelector('select');
                   select.value = '';
-                  option.style.borderColor = 'rgba(122,132,113,0.16)';
-                  option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
+                  option.style.borderColor = '';
+                  option.style.background = '';
                 });
-                feedback.textContent = '';
-                feedback.className = 'feedback-msg';
+                if (feedback) {
+                  feedback.textContent = '';
+                  feedback.className = 'feedback-msg';
+                }
               });
             }
           });
         }
 
-        document.querySelectorAll('[data-activity="matching-vocab"]').forEach(handleMatching);
-        document.querySelectorAll('[data-activity="matching-stress"]').forEach(handleMatching);
+        function setupSelectActivity(activitySelector, itemSelector) {
+          document.querySelectorAll(activitySelector).forEach(activity => {
+            const items = Array.from(activity.querySelectorAll(itemSelector));
+            if (!items.length) return;
+            const container = activity.closest('.interactive-card') || activity.parentElement;
+            const feedback = container ? container.querySelector('.feedback-msg') : null;
+            const buttons = container ? container.querySelectorAll('.activity-actions button') : [];
 
-        document.querySelectorAll('[data-activity="mc-past"]').forEach(activity => {
-          const cards = Array.from(activity.querySelectorAll('.mc-card'));
-          const feedback = activity.parentElement.querySelector('.feedback-msg');
-          const buttons = activity.parentElement.querySelectorAll('.activity-actions button');
-
-          buttons.forEach(btn => {
-            if (btn.dataset.action === 'check') {
-              btn.addEventListener('click', () => {
-                let correctCount = 0;
-                cards.forEach(card => {
-                  const select = card.querySelector('select');
-                  const isCorrect = select.value === card.dataset.correct;
-                  card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                  card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                  if (isCorrect) correctCount += 1;
+            buttons.forEach(btn => {
+              if (btn.dataset.action === 'check') {
+                btn.addEventListener('click', () => {
+                  let correctCount = 0;
+                  items.forEach(item => {
+                    const select = item.querySelector('select');
+                    if (!select) return;
+                    const isCorrect = select.value === item.dataset.correct;
+                    if (isCorrect) correctCount += 1;
+                    item.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+                    item.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
+                    select.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
+                    select.style.backgroundColor = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
+                  });
+                  if (feedback) {
+                    if (correctCount === items.length) {
+                      feedback.textContent = 'Great job! All answers are correct.';
+                      feedback.className = 'feedback-msg success';
+                    } else {
+                      feedback.textContent = `You have ${correctCount} / ${items.length} correct.`;
+                      feedback.className = 'feedback-msg error';
+                    }
+                  }
                 });
-                if (correctCount === cards.length) {
-                  feedback.textContent = 'Great job! All answers are correct.';
-                  feedback.className = 'feedback-msg success';
-                } else {
-                  feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
-                  feedback.className = 'feedback-msg error';
-                }
-              });
-            } else if (btn.dataset.action === 'reset') {
-              btn.addEventListener('click', () => {
-                cards.forEach(card => {
-                  const select = card.querySelector('select');
-                  select.value = '';
-                  card.style.borderColor = 'rgba(122,132,113,0.18)';
-                  card.style.background = 'var(--soft-white)';
+              } else if (btn.dataset.action === 'reset') {
+                btn.addEventListener('click', () => {
+                  items.forEach(item => {
+                    const select = item.querySelector('select');
+                    if (select) {
+                      select.value = '';
+                      select.style.borderColor = '';
+                      select.style.backgroundColor = '';
+                    }
+                    item.style.borderColor = '';
+                    item.style.background = '';
+                  });
+                  if (feedback) {
+                    feedback.textContent = '';
+                    feedback.className = 'feedback-msg';
+                  }
                 });
-                feedback.textContent = '';
-                feedback.className = 'feedback-msg';
-              });
-            }
+              }
+            });
           });
-        });
+        }
+
+        document.querySelectorAll('[data-activity="matching-vocab"]').forEach(handleMatching);
+
+        setupSelectActivity('[data-activity="table-completion"]', '.table-cell');
+        setupSelectActivity('[data-activity="mc-quiz"]', '.mc-card');
+        setupSelectActivity('[data-activity="mc-select"]', '.mc-card');
+        setupSelectActivity('[data-activity="audio-choice"]', '.audio-choice-card');
+        setupSelectActivity('[data-activity="preposition-select"]', '.preposition-item');
       });
     </script>
 </body>
