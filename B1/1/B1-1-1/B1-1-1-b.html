@@ -3,1987 +3,108 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slides: Making Professional Connections</title>
+    <title>Building Professional Networks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Questrial&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+    <link rel="stylesheet" href="../../../CSS-slides.css" />
     <style>
-:root {
-        --primary-sage: #7a8471;
-        --secondary-sage: #9caf88;
-        --tertiary-sage: #b8c5a6;
-        --warm-cream: #f8f6f0;
-        --soft-white: #fefcf7;
-        --forest-shadow: #5a6b52;
-        --primary-forest: #3f4d39;
-        --ink: #2f3a2b;
-        --ink-muted: #5a6b52;
-        --border-sage: rgba(122, 132, 113, 0.2);
-        --hover-sage: rgba(156, 175, 136, 0.15);
-        --deep-forest: #3e4a3a;
-        --font-display: "Questrial", system-ui, sans-serif;
-        --font-body: "Nunito", system-ui, sans-serif;
-        --font-size-adjustment: 0pt;
-        --step--1: calc(
-          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
-        );
-        --step-0: calc(
-          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
-        );
-        --step-1: calc(
-          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
-            var(--font-size-adjustment)
-        );
-        --step-2: calc(
-          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
-        );
-        --step-3: calc(
-          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
-        );
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-7: 2rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1:
-          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
-        --shadow-2:
-          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
-        --shadow-glow: 0 0 45px 10px
-          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: auto;
-      }
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: var(--space-4);
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
-        backdrop-filter: blur(8px) saturate(1.1);
-      }
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + var(--font-size-adjustment));
-        color: var(--forest-shadow);
-      }
-      .toolbar-brand span {
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-      .slide-counter {
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        justify-self: center;
-      }
-      .toolbar-actions {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .toolbar-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.15rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .toolbar-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .toolbar-btn.secondary {
-        background: var(--primary-forest);
-      }
-      .toolbar-btn.ghost {
-        background: var(--soft-white);
-        color: var(--primary-forest);
-        border: 1px solid var(--border-sage);
-        box-shadow: none;
-      }
-      .toolbar-btn.ghost:hover {
-        box-shadow: var(--shadow-1);
-      }
-      .toolbar-select {
-        border-radius: 999px;
-        border: 1px solid var(--border-sage);
-        background: #fff;
-        padding: 0.45rem 1rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        color: var(--primary-forest);
-        cursor: pointer;
-      }
-      .toolbar-select:focus {
-        outline: 2px solid var(--primary-sage);
-        outline-offset: 2px;
-      }
-      .highlight-controls {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.65);
-        box-shadow: var(--shadow-1);
-      }
-      .highlight-controls i {
-        color: var(--primary-forest);
-      }
-      .text-highlight {
-        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
-        padding: 0.05em 0.15em;
-        border-radius: 0.35em;
-        box-decoration-break: clone;
-        -webkit-box-decoration-break: clone;
-        transition: background-color 200ms ease;
-      }
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background:
-          radial-gradient(
-            900px 600px at 20% 0%,
-            rgba(156, 175, 136, 0.08) 0%,
-            transparent 70%
-          ),
-          radial-gradient(
-            800px 700px at 80% 100%,
-            rgba(90, 107, 82, 0.06) 0%,
-            transparent 70%
-          );
-      }
-      .stage-viewport {
-        position: relative;
-        display: grid;
-        place-items: center;
-      }
-      .slide-stage {
-        position: relative;
-        border-radius: var(--stage-radius);
-        background-color: var(--soft-white);
-        box-shadow:
-          var(--shadow-glow),
-          0 24px 60px rgba(34, 41, 32, 0.1);
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(
-          calc(
-            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
-              (var(--slide-aspect-w) / var(--slide-aspect-h))
-          ),
-          calc(100vw - (var(--workspace-pad) * 2))
-        );
-        max-width: 100%;
-        overflow: hidden auto;
-        outline: 1px solid var(--border-sage);
-        transition: opacity 300ms ease-in-out;
-      }
-      .slide-stage.hidden {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .slide-stage.full-width-bg {
-        background: transparent;
-        outline: none;
-        box-shadow: none;
-      }
-      .bg-media {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-      }
-      .bg-media img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        filter: brightness(0.92);
-        display: block;
-      }
-      .bg-media.remote-image-fallback {
-        background: linear-gradient(
-          135deg,
-          rgba(16, 28, 21, 0.85) 0%,
-          rgba(16, 28, 21, 0.6) 65%,
-          rgba(16, 28, 21, 0.45) 100%
-        );
-      }
-      .bg-media.remote-image-fallback img {
-        display: none;
-      }
-      .img-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          120deg,
-          rgba(14, 30, 20, 0.72) 0%,
-          rgba(14, 30, 20, 0.4) 45%,
-          rgba(14, 30, 20, 0.2) 70%,
-          transparent 100%
-        );
-        z-index: 1;
-      }
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1.25rem;
-        overflow-y: auto;
-        scrollbar-gutter: stable both-edges;
-      }
-      .bg-content {
-        position: relative;
-        z-index: 2;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        align-items: flex-start;
-      }
-      .bg-content.centered {
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-      }
-      .context-image {
-        position: relative;
-        display: grid;
-        place-items: center;
-        border-radius: var(--radius);
-        overflow: hidden;
-        min-height: 220px;
-        box-shadow: var(--shadow-1);
-        background: rgba(248, 246, 240, 0.65);
-      }
-      .context-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .context-image.remote-image-fallback {
-        background: linear-gradient(
-            135deg,
-            rgba(156, 175, 136, 0.45) 0%,
-            rgba(90, 107, 82, 0.75) 100%
-          ),
-          rgba(28, 45, 33, 0.85);
-        color: rgba(255, 255, 255, 0.82);
-        text-align: center;
-        padding: 1.5rem;
-      }
-      .context-image.remote-image-fallback::after {
-        content: "Image preview unavailable";
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .context-image.remote-image-fallback img {
-        display: none;
-      }
-      .overlay-card {
-        background: color-mix(
-          in srgb,
-          rgba(16, 28, 21, 0.72) 65%,
-          rgba(248, 246, 240, 0.35) 35%
-        );
-        border: 1px solid rgba(253, 251, 245, 0.35);
-        border-radius: calc(var(--radius-lg) + 8px);
-        padding: clamp(28px, 5vw, 48px);
-        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
-        backdrop-filter: blur(14px) saturate(125%);
-        color: #fdfbf5;
-        max-width: min(600px, 80%);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .overlay-card.centered {
-        margin: 0 auto;
-        text-align: center;
-        align-items: center;
-      }
-      .overlay-card h1,
-      .overlay-card h2,
-      .overlay-card p,
-      .overlay-card .pill,
-      .overlay-card .deck-subtitle {
-        color: #fdfbf5;
-      }
-      .overlay-card .deck-subtitle {
-        font-size: var(--step-1);
-        margin: 0;
-        color: rgba(253, 251, 245, 0.85);
-      }
-      .overlay-pill {
-        background: rgba(253, 251, 245, 0.22) !important;
-        color: #fdfbf5 !important;
-        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
-      }
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.85rem;
-        border-radius: 999px;
-        background: rgba(122, 132, 113, 0.16);
-        font-size: calc(0.85rem + var(--font-size-adjustment));
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--deep-forest);
-        width: fit-content;
-      }
-      h1,
-      h2,
-      h3 {
-        font-family: var(--font-display);
-        margin: 0;
-        color: var(--ink);
-      }
-      h1 {
-        font-size: var(--step-3);
-      }
-      h2 {
-        font-size: var(--step-2);
-      }
-      h3 {
-        font-size: var(--step-1);
-      }
-      p {
-        margin: 0;
-      }
-      ul,
-      ol {
-        margin: 0;
-        padding-left: 1.25rem;
-      }
-      .card {
-        background: var(--soft-white);
-        padding: clamp(1.35rem, 3vw, 2rem);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-      .card.dense {
-        gap: 0.65rem;
-        padding: clamp(1.1rem, 2.5vw, 1.65rem);
-      }
-      .two-column-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.2rem;
-        width: 100%;
-      }
-      .column-card {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1.1rem 1.3rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .instruction-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.7rem;
-      }
-      .instruction-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-      }
-      .instruction-list i {
-        color: var(--primary-sage);
-        margin-top: 0.2em;
-      }
-      .activity-actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-top: 0.5rem;
-      }
-      .activity-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-      }
-      .activity-btn.secondary {
-        background: rgba(122, 132, 113, 0.16);
-        color: var(--deep-forest);
-      }
-      .activity-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .feedback-msg {
-        min-height: 1.5rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-      }
-      .feedback-msg.success {
-        color: #2e7d32;
-      }
-      .feedback-msg.error {
-        color: #c62828;
-      }
-      .unscramble-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding-left: 0;
-        list-style: none;
-      }
-      .unscramble-list li {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-      }
-      .unscramble-input {
-        width: 100%;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        font-weight: 600;
-        background: var(--soft-white);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .unscramble-input.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .unscramble-input.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .matching-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      .matching-option {
-        display: grid;
-        grid-template-columns: 1fr minmax(180px, 250px);
-        gap: 0.9rem;
-        align-items: center;
-        padding: 0.75rem 0.85rem;
-        border-radius: 14px;
-        border: 1px solid rgba(122, 132, 113, 0.16);
-        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .matching-option select {
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-weight: 600;
-        font-size: var(--step--1);
-        background: var(--soft-white);
-        color: var(--forest-shadow);
-      }
-      .quiz-card {
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        padding: 1rem 1.1rem;
-        background: rgba(254, 252, 247, 0.95);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .quiz-options {
-        display: grid;
-        gap: 0.45rem;
-      }
-      .quiz-option {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        padding: 0.45rem 0.6rem;
-        border-radius: 12px;
-        background: rgba(250, 250, 248, 0.9);
-        border: 1px solid transparent;
-        cursor: pointer;
-      }
-      .quiz-option input[type="radio"] {
-        margin-top: 0.25em;
-      }
-      .quiz-option.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .quiz-option.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .drop-categorization {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-      .token-bank {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
-        padding: 1rem 1.1rem;
-        border-radius: var(--radius-lg);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        border: 1px dashed rgba(122, 132, 113, 0.28);
-        margin-bottom: 1rem;
-      }
-      .click-token {
-        padding: 0.55rem 1rem;
-        border-radius: 999px;
-        background: var(--soft-white);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: var(--step--1);
-        user-select: none;
-        transition: all 0.2s ease;
-      }
-      .click-token.used {
-        opacity: 0.4;
-        pointer-events: none;
-      }
-      .click-token.selected {
-        background: var(--secondary-sage);
-        color: white;
-        transform: scale(1.05);
-      }
-      .category-column {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-      }
-      .drop-zone {
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 12px;
-        border: 2px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.75);
-        transition: all 0.2s ease;
-      }
-      .drop-zone.active {
-        border-color: var(--primary-sage);
-        background: rgba(156, 175, 136, 0.22);
-      }
-      .drop-zone .click-token {
-        cursor: grab;
-      }
-      .category-column.correct {
-        border-color: #2e7d32;
-      }
-      .category-column.incorrect {
-        border-color: #c62828;
-      }
-      .stress-sentence {
-        font-size: var(--step-1);
-        font-weight: 500;
-        line-height: 1.8;
-        margin-bottom: 0.5rem;
-      }
-      .stress-word {
-        padding: 0.2rem 0.4rem;
-        border-radius: 8px;
-        margin: 0 0.1rem;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        border: 1px solid transparent;
-        display: inline-block;
-      }
-      .stress-word:hover {
-        background: var(--hover-sage);
-      }
-      .stress-word.marked {
-        background: var(--tertiary-sage);
-        color: var(--ink);
-        border-color: var(--primary-sage);
-      }
-      .stress-word.correct {
-        background: rgba(46, 125, 50, 0.2);
-        border-color: #2e7d32;
-      }
-      .stress-word.incorrect {
-        background: rgba(198, 40, 40, 0.2);
-        border-color: #c62828;
-      }
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        border: none;
-        background: rgba(254, 252, 247, 0.85);
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        box-shadow: var(--shadow-2);
-        cursor: pointer;
-        z-index: 10;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-      .slide-nav:hover {
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
-      }
-      .slide-nav-prev {
-        left: -24px;
-      }
-      .slide-nav-next {
-        right: -24px;
-      }
-      .blank-slide {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        height: 100%;
-      }
-      .blank-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-      }
-      .blank-canvas {
-        flex: 1;
-        border-radius: var(--radius-lg);
-        border: 1px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.8);
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        min-height: 320px;
-      }
-      .blank-hint {
-        font-size: var(--step--1);
-        color: var(--ink-muted);
-      }
-      .textbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        background: var(--soft-white);
-        width: clamp(240px, 35%, 420px);
-        min-height: 140px;
-        display: flex;
-        flex-direction: column;
-        cursor: move;
-        touch-action: none;
-      }
-      .textbox-handle {
-        padding: 0.5rem 0.75rem;
-        background: rgba(122, 132, 113, 0.16);
-        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        cursor: grab;
-        border-top-left-radius: var(--radius);
-        border-top-right-radius: var(--radius);
-      }
-      .textbox-body {
-        flex: 1;
-        padding: 0.75rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        outline: none;
-        cursor: text;
-        overflow: auto;
-      }
-      .textbox-body:focus {
-        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
-      }
-      .textbox-remove {
-        position: absolute;
-        top: 0.35rem;
-        right: 0.35rem;
-        border: none;
-        background: rgba(254, 252, 247, 0.8);
-        color: var(--forest-shadow);
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        box-shadow: var(--shadow-1);
-      }
-      .textbox-remove:hover {
-        color: #c62828;
-      }
-      .mindmap {
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        box-shadow: var(--shadow-1);
-        padding: clamp(1.2rem, 3vw, 1.8rem);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .mindmap-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
-      .mindmap-title {
-        font-family: var(--font-display);
-        font-size: var(--step-1);
-        margin: 0;
-        color: var(--deep-forest);
-      }
-      .mindmap-remove {
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-      .mindmap-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-center {
-        align-self: center;
-        min-width: 180px;
-        padding: 0.9rem 1.1rem;
-        border-radius: 999px;
-        background: var(--primary-sage);
-        color: #fff;
-        font-weight: 700;
-        text-align: center;
-        font-family: var(--font-display);
-        letter-spacing: 0.03em;
-        outline: none;
-      }
-      .mindmap-center:focus {
-        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
-      }
-      .mindmap-branches {
-        display: grid;
-        gap: 0.75rem;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-      .mindmap-branch {
-        position: relative;
-        padding: 0.75rem 0.85rem;
-        border-radius: var(--radius);
-        background: rgba(254, 252, 247, 0.95);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      .mindmap-branch textarea {
-        width: 100%;
-        border: none;
-        background: transparent;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        resize: vertical;
-        min-height: 64px;
-      }
-      .branch-remove {
-        align-self: flex-end;
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-      .branch-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        align-items: center;
-      }
-      .mindmap-form input {
-        flex: 1 1 220px;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-      }
-      .mindmap-form button {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        background: var(--secondary-sage);
-        color: var(--deep-forest);
-        box-shadow: var(--shadow-1);
-      }
-      .mindmap-form button:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
-:root {
-        --primary-sage: #7a8471;
-        --secondary-sage: #9caf88;
-        --tertiary-sage: #b8c5a6;
-        --warm-cream: #f8f6f0;
-        --soft-white: #fefcf7;
-        --forest-shadow: #5a6b52;
-        --ink: #2f3a2b;
-        --ink-muted: #5a6b52;
-        --border-sage: rgba(122, 132, 113, 0.2);
-        --hover-sage: rgba(156, 175, 136, 0.15);
-        --deep-forest: #3e4a3a;
-        --font-display: "Questrial", system-ui, sans-serif;
-        --font-body: "Nunito", system-ui, sans-serif;
-        --font-size-adjustment: 0pt;
-        --step--1: calc(
-          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
-        );
-        --step-0: calc(
-          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
-        );
-        --step-1: calc(
-          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
-            var(--font-size-adjustment)
-        );
-        --step-2: calc(
-          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
-        );
-        --step-3: calc(
-          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
-        );
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-7: 2rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1:
-          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
-        --shadow-2:
-          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
-        --shadow-glow: 0 0 45px 10px
-          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: auto;
-      }
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: var(--space-4);
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
-        backdrop-filter: blur(8px) saturate(1.1);
-      }
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + var(--font-size-adjustment));
-        color: var(--forest-shadow);
-      }
-      .toolbar-brand span {
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-      .slide-counter {
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        justify-self: center;
-      }
-      .toolbar-actions {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .toolbar-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.15rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .toolbar-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .toolbar-btn.secondary {
-        background: var(--primary-forest);
-      }
-      .toolbar-btn.ghost {
-        background: var(--soft-white);
-        color: var(--primary-forest);
-        border: 1px solid var(--border-sage);
-        box-shadow: none;
-      }
-      .toolbar-btn.ghost:hover {
-        box-shadow: var(--shadow-1);
-      }
-      .toolbar-select {
-        border-radius: 999px;
-        border: 1px solid var(--border-sage);
-        background: #fff;
-        padding: 0.45rem 1rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        color: var(--primary-forest);
-        cursor: pointer;
-      }
-      .toolbar-select:focus {
-        outline: 2px solid var(--primary-sage);
-        outline-offset: 2px;
-      }
-      .highlight-controls {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.65);
-        box-shadow: var(--shadow-1);
-      }
-      .highlight-controls i {
-        color: var(--primary-forest);
-      }
-      .text-highlight {
-        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
-        padding: 0.05em 0.15em;
-        border-radius: 0.35em;
-        box-decoration-break: clone;
-        -webkit-box-decoration-break: clone;
-        transition: background-color 200ms ease;
-      }
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background:
-          radial-gradient(
-            900px 600px at 20% 0%,
-            rgba(156, 175, 136, 0.08) 0%,
-            transparent 70%
-          ),
-          radial-gradient(
-            800px 700px at 80% 100%,
-            rgba(90, 107, 82, 0.06) 0%,
-            transparent 70%
-          );
-      }
-      .stage-viewport {
-        position: relative;
-        display: grid;
-        place-items: center;
-      }
-      .slide-stage {
-        position: relative;
-        border-radius: var(--stage-radius);
-        background-color: var(--soft-white);
-        box-shadow:
-          var(--shadow-glow),
-          0 24px 60px rgba(34, 41, 32, 0.1);
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(
-          calc(
-            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
-              (var(--slide-aspect-w) / var(--slide-aspect-h))
-          ),
-          calc(100vw - (var(--workspace-pad) * 2))
-        );
-        max-width: 100%;
-        overflow: hidden auto;
-        outline: 1px solid var(--border-sage);
-        transition: opacity 300ms ease-in-out;
-      }
-      .slide-stage.hidden {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .slide-stage.full-width-bg {
-        background: transparent;
-        outline: none;
-        box-shadow: none;
-      }
-      .bg-media {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-      }
-      .bg-media img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        filter: brightness(0.92);
-        display: block;
-      }
-      .bg-media.remote-image-fallback {
-        background: linear-gradient(
-          135deg,
-          rgba(16, 28, 21, 0.85) 0%,
-          rgba(16, 28, 21, 0.6) 65%,
-          rgba(16, 28, 21, 0.45) 100%
-        );
-      }
-      .bg-media.remote-image-fallback img {
-        display: none;
-      }
-      .img-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          120deg,
-          rgba(14, 30, 20, 0.72) 0%,
-          rgba(14, 30, 20, 0.4) 45%,
-          rgba(14, 30, 20, 0.2) 70%,
-          transparent 100%
-        );
-        z-index: 1;
-      }
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1.25rem;
-        overflow-y: auto;
-        scrollbar-gutter: stable both-edges;
-      }
-      .bg-content {
-        position: relative;
-        z-index: 2;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        align-items: flex-start;
-      }
-      .bg-content.centered {
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-      }
-      .context-image {
-        position: relative;
-        display: grid;
-        place-items: center;
-        border-radius: var(--radius);
-        overflow: hidden;
-        min-height: 220px;
-        box-shadow: var(--shadow-1);
-        background: rgba(248, 246, 240, 0.65);
-      }
-      .context-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .context-image.remote-image-fallback {
-        background: linear-gradient(
-            135deg,
-            rgba(156, 175, 136, 0.45) 0%,
-            rgba(90, 107, 82, 0.75) 100%
-          ),
-          rgba(28, 45, 33, 0.85);
-        color: rgba(255, 255, 255, 0.82);
-        text-align: center;
-        padding: 1.5rem;
-      }
-      .context-image.remote-image-fallback::after {
-        content: "Image preview unavailable";
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .context-image.remote-image-fallback img {
-        display: none;
-      }
-      .overlay-card {
-        background: color-mix(
-          in srgb,
-          rgba(16, 28, 21, 0.72) 65%,
-          rgba(248, 246, 240, 0.35) 35%
-        );
-        border: 1px solid rgba(253, 251, 245, 0.35);
-        border-radius: calc(var(--radius-lg) + 8px);
-        padding: clamp(28px, 5vw, 48px);
-        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
-        backdrop-filter: blur(14px) saturate(125%);
-        color: #fdfbf5;
-        max-width: min(600px, 80%);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .overlay-card.centered {
-        margin: 0 auto;
-        text-align: center;
-        align-items: center;
-      }
-      .overlay-card h1,
-      .overlay-card h2,
-      .overlay-card p,
-      .overlay-card .pill,
-      .overlay-card .deck-subtitle {
-        color: #fdfbf5;
-      }
-      .overlay-card .deck-subtitle {
-        font-size: var(--step-1);
-        margin: 0;
-        color: rgba(253, 251, 245, 0.85);
-      }
-      .overlay-pill {
-        background: rgba(253, 251, 245, 0.22) !important;
-        color: #fdfbf5 !important;
-        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
-      }
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.85rem;
-        border-radius: 999px;
-        background: rgba(122, 132, 113, 0.16);
-        font-size: calc(0.85rem + var(--font-size-adjustment));
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--deep-forest);
-        width: fit-content;
-      }
-      h1,
-      h2,
-      h3 {
-        font-family: var(--font-display);
-        margin: 0;
-        color: var(--ink);
-      }
-      h1 {
-        font-size: var(--step-3);
-      }
-      h2 {
-        font-size: var(--step-2);
-      }
-      h3 {
-        font-size: var(--step-1);
-      }
-      p {
-        margin: 0;
-      }
-      ul,
-      ol {
-        margin: 0;
-        padding-left: 1.25rem;
-      }
-      .card {
-        background: var(--soft-white);
-        padding: clamp(1.35rem, 3vw, 2rem);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-      .card.dense {
-        gap: 0.65rem;
-        padding: clamp(1.1rem, 2.5vw, 1.65rem);
-      }
-      .two-column-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.2rem;
-        width: 100%;
-      }
-      .column-card {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1.1rem 1.3rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .instruction-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.7rem;
-      }
-      .instruction-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-      }
-      .instruction-list i {
-        color: var(--primary-sage);
-        margin-top: 0.2em;
-      }
-      .activity-actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-top: 0.5rem;
-      }
-      .activity-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-      }
-      .activity-btn.secondary {
-        background: rgba(122, 132, 113, 0.16);
-        color: var(--deep-forest);
-      }
-      .activity-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .feedback-msg {
-        min-height: 1.5rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-      }
-      .feedback-msg.success {
-        color: #2e7d32;
-      }
-      .feedback-msg.error {
-        color: #c62828;
-      }
-      .unscramble-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding-left: 0;
-        list-style: none;
-      }
-      .unscramble-list li {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-      }
-      .unscramble-input {
-        width: 100%;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        font-weight: 600;
-        background: var(--soft-white);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .unscramble-input.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .unscramble-input.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .matching-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      .matching-option {
-        display: grid;
-        grid-template-columns: 1fr minmax(180px, 250px);
-        gap: 0.9rem;
-        align-items: center;
-        padding: 0.75rem 0.85rem;
-        border-radius: 14px;
-        border: 1px solid rgba(122, 132, 113, 0.16);
-        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .matching-option select {
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-weight: 600;
-        font-size: var(--step--1);
-        background: var(--soft-white);
-        color: var(--forest-shadow);
-      }
-      .quiz-card {
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        padding: 1rem 1.1rem;
-        background: rgba(254, 252, 247, 0.95);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .quiz-options {
-        display: grid;
-        gap: 0.45rem;
-      }
-      .quiz-option {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        padding: 0.45rem 0.6rem;
-        border-radius: 12px;
-        background: rgba(250, 250, 248, 0.9);
-        border: 1px solid transparent;
-        cursor: pointer;
-      }
-      .quiz-option input[type="radio"] {
-        margin-top: 0.25em;
-      }
-      .quiz-option.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .quiz-option.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .drop-categorization {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-      .token-bank {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
-        padding: 1rem 1.1rem;
-        border-radius: var(--radius-lg);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        border: 1px dashed rgba(122, 132, 113, 0.28);
-        margin-bottom: 1rem;
-      }
-      .click-token {
-        padding: 0.55rem 1rem;
-        border-radius: 999px;
-        background: var(--soft-white);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: var(--step--1);
-        user-select: none;
-        transition: all 0.2s ease;
-      }
-      .click-token.used {
-        opacity: 0.4;
-        pointer-events: none;
-      }
-      .click-token.selected {
-        background: var(--secondary-sage);
-        color: white;
-        transform: scale(1.05);
-      }
-      .category-column {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-      }
-      .drop-zone {
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 12px;
-        border: 2px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.75);
-        transition: all 0.2s ease;
-      }
-      .drop-zone.active {
-        border-color: var(--primary-sage);
-        background: rgba(156, 175, 136, 0.22);
-      }
-      .drop-zone .click-token {
-        cursor: grab;
-      }
-      .category-column.correct {
-        border-color: #2e7d32;
-      }
-      .category-column.incorrect {
-        border-color: #c62828;
-      }
-      .stress-sentence {
-        font-size: var(--step-1);
-        font-weight: 500;
-        line-height: 1.8;
-        margin-bottom: 0.5rem;
-      }
-      .stress-word {
-        padding: 0.2rem 0.4rem;
-        border-radius: 8px;
-        margin: 0 0.1rem;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        border: 1px solid transparent;
-        display: inline-block;
-      }
-      .stress-word:hover {
-        background: var(--hover-sage);
-      }
-      .stress-word.marked {
-        background: var(--tertiary-sage);
-        color: var(--ink);
-        border-color: var(--primary-sage);
-      }
-      .stress-word.correct {
-        background: rgba(46, 125, 50, 0.2);
-        border-color: #2e7d32;
-      }
-      .stress-word.incorrect {
-        background: rgba(198, 40, 40, 0.2);
-        border-color: #c62828;
-      }
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        border: none;
-        background: rgba(254, 252, 247, 0.85);
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        box-shadow: var(--shadow-2);
-        cursor: pointer;
-        z-index: 10;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-      .slide-nav:hover {
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
-      }
-      .slide-nav-prev {
-        left: -24px;
-      }
-      .slide-nav-next {
-        right: -24px;
-      }
-      .blank-slide {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        height: 100%;
-      }
-      .blank-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-      }
-      .blank-canvas {
-        flex: 1;
-        border-radius: var(--radius-lg);
-        border: 1px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.8);
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        min-height: 320px;
-      }
-      .blank-hint {
-        font-size: var(--step--1);
-        color: var(--ink-muted);
-      }
-      .textbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        background: var(--soft-white);
-        width: clamp(240px, 35%, 420px);
-        min-height: 140px;
-        display: flex;
-        flex-direction: column;
-        cursor: move;
-        touch-action: none;
-      }
-      .textbox-handle {
-        padding: 0.5rem 0.75rem;
-        background: rgba(122, 132, 113, 0.16);
-        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        cursor: grab;
-        border-top-left-radius: var(--radius);
-        border-top-right-radius: var(--radius);
-      }
-      .textbox-body {
-        flex: 1;
-        padding: 0.75rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        outline: none;
-        cursor: text;
-        overflow: auto;
-      }
-      .textbox-body:focus {
-        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
-      }
-      .textbox-remove {
-        position: absolute;
-        top: 0.35rem;
-        right: 0.35rem;
-        border: none;
-        background: rgba(254, 252, 247, 0.8);
-        color: var(--forest-shadow);
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        box-shadow: var(--shadow-1);
-      }
-      .textbox-remove:hover {
-        color: #c62828;
-      }
-      .mindmap {
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        box-shadow: var(--shadow-1);
-        padding: clamp(1.2rem, 3vw, 1.8rem);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .mindmap-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
-      .mindmap-title {
-        font-family: var(--font-display);
-        font-size: var(--step-1);
-        margin: 0;
-        color: var(--deep-forest);
-      }
-      .mindmap-remove {
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-      .mindmap-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-center {
-        align-self: center;
-        min-width: 180px;
-        padding: 0.9rem 1.1rem;
-        border-radius: 999px;
-        background: var(--primary-sage);
-        color: #fff;
-        font-weight: 700;
-        text-align: center;
-        font-family: var(--font-display);
-        letter-spacing: 0.03em;
-        outline: none;
-      }
-      .mindmap-center:focus {
-        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
-      }
-      .mindmap-branches {
-        display: grid;
-        gap: 0.75rem;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-      .mindmap-branch {
-        position: relative;
-        padding: 0.75rem 0.85rem;
-        border-radius: var(--radius);
-        background: rgba(254, 252, 247, 0.95);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      .mindmap-branch textarea {
-        width: 100%;
-        border: none;
-        background: transparent;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        resize: vertical;
-        min-height: 64px;
-      }
-      .branch-remove {
-        align-self: flex-end;
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-      .branch-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        align-items: center;
-      }
-      .mindmap-form input {
-        flex: 1 1 220px;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-      }
-      .mindmap-form button {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        background: var(--secondary-sage);
-        color: var(--deep-forest);
-        box-shadow: var(--shadow-1);
-      }
-      .mindmap-form button:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
-/* =====================================================================
-         Organic Sage UI — V3 Redraft
-         ===================================================================== */
       :root {
-        --primary-sage: #7A8471;
-        --secondary-sage: #9CAF88;
-        --tertiary-sage: #B8C5A6;
-        --warm-cream: #F8F6F0;
-        --soft-white: #FEFCF7;
-        --forest-shadow: #5A6B52;
-        --border-sage: rgba(122,132,113,0.20);
-        --hover-sage: rgba(156,175,136,0.15);
-        --deep-forest: #3E4A3A;
-        --ink: #2F3A2B;
-        --ink-muted: #5A6B52;
-        --font-display: 'Questrial', system-ui, sans-serif;
-        --font-body: 'Nunito', system-ui, sans-serif;
-        --step--1: clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem);
-        --step-0:  clamp(1rem,  0.95rem + 0.2vw, 1.1rem);
-        --step-1:  clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
-        --step-2:  clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
-        --step-3:  clamp(1.8rem, 1.5rem + 1vw, 2.3rem);
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
-        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
-        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
+        --network-gradient: linear-gradient(135deg, rgba(41, 171, 164, 0.95), rgba(56, 97, 140, 0.95));
+        --network-glow: 0 18px 45px rgba(41, 171, 164, 0.18);
+        --accent-gold: #f6d365;
       }
-      html, body { margin: 0; padding: 0; min-height: 100dvh; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow: hidden; }
-      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; min-height: 100dvh; }
-      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
-      .toolbar-brand { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
-      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); }
-      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: hidden; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
-      .stage-viewport { position: relative; display: grid; place-items: center; }
-      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2))); max-width: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transition: opacity 300ms ease-in-out; }
-      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
-      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
-      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
-      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
-      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
-      .slide-nav-prev { left: 24px; }
-      .slide-nav-next { right: 24px; }
-      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
-      .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-12 { grid-column: span 12 / span 12; }
-      .col-start-7 { grid-column-start: 7; }
-      .align-self-start { align-self: flex-start; } .align-self-center { align-self: center; }
-      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); }
-      .card.card-full-height { height: 100%; display: flex; flex-direction: column; justify-content: center; }
-      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: 0.75rem; }
-      .card h3 { margin: 0 0 0.5rem 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--step-1); }
-      .card p { margin: 0; font-size: var(--step--1); }
-      .card p + p { margin-top: 0.5rem; }
-      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-      .img-overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
-      .full-width-bg .slide-inner { padding: 0; }
-      .full-width-bg .bg-content { padding: var(--stage-pad); position: relative; z-index: 2; }
-      blockquote { margin: 1em 0 0 0; padding: 0.8em 1em; border-left: 4px solid var(--secondary-sage); background: color-mix(in srgb, var(--warm-cream) 60%, transparent); border-radius: 0 10px 10px 0; font-style: italic; font-size: var(--step--1); }
-      .dialogue-box { background: #fff; border-radius: 12px; padding: var(--space-6); border: 1px solid var(--border-sage); box-shadow: var(--shadow-1); font-size: var(--step-0); }
-      .text-highlight { color: var(--primary-sage); font-weight: 700; }
-      hr.divider { border: 0; border-top: 1px solid var(--border-sage); margin: 0.75rem 0; }
-      ol { list-style: none; counter-reset: item; padding-left: 0; }
-      ol li { counter-increment: item; margin-bottom: 0.5em; position: relative; padding-left: 2.5em; }
-      ol li::before { content: counter(item); position: absolute; left: 0; top: 0; width: 1.8em; height: 1.8em; border-radius: 50%; background-color: var(--secondary-sage); color: var(--soft-white); font-weight: 700; display: grid; place-items: center; font-size: 0.8em; line-height: 1; }
-      .slide-stage h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
-      .slide-stage h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); line-height: 1.2; color: var(--deep-forest); margin: 0 0 0.5em 0; }
-      .slide-stage h2.subtitle { color: var(--primary-sage); }
-      .slide-stage p, .slide-stage li { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); color: var(--forest-shadow); margin: 0.4em 0; }
-      .slide-stage ul { padding-left: 0; margin: 1em 0; list-style: none; }
-      .slide-stage ul li { position: relative; padding-left: 1.5em; margin-bottom: 0.6em; }
-      .slide-stage ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--secondary-sage); position: absolute; left: 0; top: 0.2em; font-size: 0.9em; }
-      .centered-text { text-align: center; }
-      @media (prefers-color-scheme: dark) {
-        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 50px 10px rgba(184, 197, 166, 0.1); }
-        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
-        .slide-stage { background: #141713; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
-        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
-        .dialogue-box { background: var(--warm-cream); border-color: rgba(184,197,166,0.25); }
-        ol li::before { background-color: var(--primary-sage); }
+
+      .deck-app h1,
+      .deck-app h2,
+      .deck-app h3 {
+        font-family: "Playfair Display", "Nunito", "Questrial", sans-serif;
+        letter-spacing: 0.02em;
+      }
+
+      .deck-app .overlay-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 32px;
+        box-shadow: var(--network-glow);
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(4px);
+      }
+
+      .deck-app .overlay-card h1 {
+        text-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      }
+
+      .deck-app .pill,
+      .deck-app .overlay-pill {
+        background: var(--network-gradient);
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(56, 97, 140, 0.25);
+        border: none;
+      }
+
+      .deck-app .card {
+        box-shadow: var(--network-glow);
+        border-radius: 24px;
+      }
+
+      .deck-app .deck-subtitle {
+        font-family: "Nunito", sans-serif;
+        font-weight: 600;
+        line-height: 1.55;
+      }
+
+      .deck-app .mantra-lead {
+        font-size: var(--step-2);
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .deck-app .mantra-line {
+        display: block;
+        margin-top: 0.25rem;
+      }
+
+      .deck-app .icon-heading {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .deck-app .icon-heading i {
+        color: var(--primary-sage);
+      }
+
+      .deck-app .aura-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .deck-app .aura-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(246, 211, 101, 0.45), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(41, 171, 164, 0.35), transparent 60%);
+        z-index: -1;
+      }
+
+      .deck-app .grounding-slide .img-overlay {
+        background: linear-gradient(135deg, rgba(12, 29, 43, 0.68), rgba(16, 54, 73, 0.52));
+      }
+
+      .deck-app .mantra-paragraph {
+        max-width: 60ch;
+        margin-inline: auto;
       }
     </style>
   </head>
@@ -1994,7 +115,7 @@
           <i class="fa-solid fa-seedling" style="color: var(--primary-sage)"></i>
           <span>Noor Community</span>
         </div>
-        <div id="slide-counter" class="slide-counter">1 / 16</div>
+        <div id="slide-counter" class="slide-counter">1 / 19</div>
         <div class="toolbar-actions">
           <button id="save-state-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-floppy-disk"></i>
@@ -2004,7 +125,12 @@
             <i class="fa-solid fa-file-import"></i>
             Load Deck
           </button>
-          <input id="load-state-input" class="sr-only" type="file" accept="application/json" />
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
           <div class="highlight-controls" role="group" aria-label="Highlight text">
             <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
             <label class="sr-only" for="highlight-color">Highlight colour</label>
@@ -2016,7 +142,11 @@
             <button id="highlight-btn" class="toolbar-btn ghost" type="button">
               Apply
             </button>
-            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
               Clear
             </button>
           </div>
@@ -2028,1439 +158,774 @@
       </header>
       <main class="deck-workspace">
         <div class="stage-viewport">
-          <!-- SLIDE 1: Title -->
-                          <div class="slide-stage">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                       <div class="col-span-7">
-                                          <p class="subtitle" style="color: var(--primary-sage);">B1 English Lesson</p>
-                                          <h1>Making Professional Connections</h1>
-                                          <p style="font-size: var(--step-2); color: var(--ink-muted);">From simple introductions to meaningful conversations.</p>
-                                      </div>
-                                      <div class="col-span-5 centered-text">
-                                          <i class="fa-solid fa-handshake-simple" style="font-size: 9rem; color: var(--tertiary-sage); opacity: 0.8;"></i>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 1: Title Slide (Full Bleed) -->
+          <div class="slide-stage full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Professionals networking and smiling"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay"></div>
+            <div class="slide-inner">
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <h1>Building Professional Networks</h1>
+                  <p class="deck-subtitle">
+                    Introducing Yourself and Your Professional Role
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 2: Objectives -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                      <div class="col-span-12 centered-text">
-                                          <h2 class="subtitle">Today's Goals</h2>
-                                      </div>
-                                      <div class="col-span-4">
-                                          <div class="card card-full-height"><i class="fa-solid fa-id-card icon"></i><h3>Introduce Yourself</h3><p>Clearly state your job and what you are responsible for.</p></div>
-                                      </div>
-                                      <div class="col-span-4">
-                                          <div class="card card-full-height"><i class="fa-solid fa-magnifying-glass icon"></i><h3>Ask Good Questions</h3><p>Learn about others' professional background and experience.</p></div>
-                                      </div>
-                                      <div class="col-span-4">
-                                          <div class="card card-full-height"><i class="fa-solid fa-lightbulb icon"></i><h3>Find Collaborations</h3><p>Use your conversation skills to discover ways to work together.</p></div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 2: Grounding Activity -->
+          <div class="slide-stage hidden full-width-bg grounding-slide">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/1487010/pexels-photo-1487010.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Person centering themselves with eyes closed"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay"></div>
+            <div class="slide-inner" style="justify-content: center">
+              <div class="bg-content centered">
+                <div class="overlay-card centered aura-card">
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-spa"></i> Grounding Activity</span
+                  >
+                  <h2 class="icon-heading">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Arrival Breathwork Ritual
+                  </h2>
+                  <p
+                    class="deck-subtitle mantra-paragraph"
+                    style="font-size: var(--step-1)"
+                  >
+                    <span class="mantra-lead">Breathe In Possibility</span>
+                    <span class="mantra-line">
+                      <i class="fa-solid fa-person-through-window"></i> Take a deep
+                      breath. Imagine you are about to enter a room full of new
+                      opportunities.
+                    </span>
+                    <span class="mantra-line">
+                      <i class="fa-solid fa-feather-pointed"></i> Exhale any nervousness.
+                      Let your posture, breath, and focus prepare you to make a
+                      remarkable first impression.
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 3: Warm-Up / Lead-in -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                      <div class="col-span-5 centered-text">
-                                         <i class="fa-solid fa-mug-hot" style="font-size: 5rem; color: var(--tertiary-sage);"></i>
-                                         <h2 style="margin-top: 1rem;">Let's Talk!</h2>
-                                      </div>
-                                      <div class="col-span-7">
-                                          <p><strong>1.</strong> After you introduce your name and job, what is the very next thing you say or ask?</p>
-                                          <hr class="divider">
-                                          <p><strong>2.</strong> Why is it important to ask good questions at a networking event?</p>
-                                          <hr class="divider">
-                                          <p><strong>3.</strong> What's the difference between a simple introduction and making a real professional connection?</p>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 3: Lesson Aims -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-bullseye"></i> Today's Aims</span
+              >
+              <h2>By the end of this lesson, you will be able to...</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-user-tie"></i>Confidently introduce your
+                    professional role in a networking context.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-file-lines"></i>Accurately describe your
+                    responsibilities using the Present Simple.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-comments"></i>Ask and answer common
+                    networking questions.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-wave-square"></i>Pronounce job titles
+                    clearly and correctly.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 4: Activity 1 Intro -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                   <div class="grid-container">
-                                      <div class="col-span-5">
-                                          <h2 class="subtitle">Activity 1</h2>
-                                          <h2>Connecting Ideas</h2>
-                                          <p>Let's combine vocabulary about job roles with words for professional background.</p>
-                                      </div>
-                                       <div class="col-span-7">
-                                          <div class="dialogue-box">
-                                              <h3>For example:</h3>
-                                              <p>To be a successful <span class="text-highlight">project manager</span>, you need a strong <span class="text-highlight">background</span> in communication.</p>
-                                              <hr class="divider">
-                                              <p>A good <span class="text-highlight">developer</span> often has <span class="text-highlight">expertise</span> in a specific coding language.</p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 4: Pre-task A -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-comments"></i> Pre-task A · Activating
+                Schemata · 5 minutes</span
+              >
+              <h2>The Art of Connection</h2>
+              <div class="two-column-grid">
+                <div class="card">
+                  <p>
+                    <strong>Instructions:</strong> In pairs, discuss the
+                    questions. Make quick notes so you can share highlights with
+                    the class.
+                  </p>
+                  <ol>
+                    <li>What makes a professional introduction successful?</li>
+                    <li>
+                      What challenges or opportunities exist when networking with
+                      professionals from different cultures (e.g., between
+                      Ramallah and Dublin)?
+                    </li>
+                  </ol>
+                </div>
+                <div class="context-image">
+                  <img
+                    data-remote-src="https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1200&h=900"
+                    alt="Colleagues speaking in a modern office"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 5: Activity 1 Task -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                      <div class="col-span-5 centered-text">
-                                          <i class="fa-solid fa-file-signature" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                      </div>
-                                      <div class="col-span-7">
-                                          <h2 class="subtitle">Activity 1: Your Ideal Job</h2>
-                                          <p>With a partner, create a short job description for your ideal job.</p>
-                                          <div class="card" style="margin-top: 1rem;">
-                                              <h3>Your description should include:</h3>
-                                              <ul>
-                                                  <li>The role and responsibilities (e.g., <em>in charge of, handle...</em>).</li>
-                                                  <li>The required qualifications (e.g., <em>experience, expertise, background</em>).</li>
-                                              </ul>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 5: Pre-task B Restrictive Practice (Matching) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-shuffle"></i> Pre-task B · Restrictive
+                Practice · 7 minutes</span
+              >
+              <h2>Who's Who in Tech?</h2>
+              <div class="card" data-activity="matching-vocab">
+                <p>Match the job role to its main responsibility.</p>
+                <div class="matching-card">
+                  <div class="matching-stack">
+                    <div
+                      class="matching-option"
+                      data-correct="is in charge of planning and executing projects."
+                    >
+                      <span>Project Manager</span>
+                      <select>
+                        <option value="">Select responsibility...</option>
+                        <option>is in charge of planning and executing projects.</option>
+                        <option>writes and tests code for software applications.</option>
+                        <option>handles the promotion of products to customers.</option>
+                        <option>is responsible for the look and feel of a product.</option>
+                        <option>analyzes data to find business insights.</option>
+                      </select>
+                    </div>
+                    <div
+                      class="matching-option"
+                      data-correct="writes and tests code for software applications."
+                    >
+                      <span>Developer</span>
+                      <select>
+                        <option value="">Select responsibility...</option>
+                        <option>is in charge of planning and executing projects.</option>
+                        <option>writes and tests code for software applications.</option>
+                        <option>handles the promotion of products to customers.</option>
+                        <option>is responsible for the look and feel of a product.</option>
+                        <option>analyzes data to find business insights.</option>
+                      </select>
+                    </div>
+                    <div
+                      class="matching-option"
+                      data-correct="handles the promotion of products to customers."
+                    >
+                      <span>Marketing Specialist</span>
+                      <select>
+                        <option value="">Select responsibility...</option>
+                        <option>is in charge of planning and executing projects.</option>
+                        <option>writes and tests code for software applications.</option>
+                        <option>handles the promotion of products to customers.</option>
+                        <option>is responsible for the look and feel of a product.</option>
+                        <option>analyzes data to find business insights.</option>
+                      </select>
+                    </div>
+                    <div
+                      class="matching-option"
+                      data-correct="is responsible for the look and feel of a product."
+                    >
+                      <span>UX/UI Designer</span>
+                      <select>
+                        <option value="">Select responsibility...</option>
+                        <option>is in charge of planning and executing projects.</option>
+                        <option>writes and tests code for software applications.</option>
+                        <option>handles the promotion of products to customers.</option>
+                        <option>is responsible for the look and feel of a product.</option>
+                        <option>analyzes data to find business insights.</option>
+                      </select>
+                    </div>
+                    <div
+                      class="matching-option"
+                      data-correct="analyzes data to find business insights."
+                    >
+                      <span>Data Analyst</span>
+                      <select>
+                        <option value="">Select responsibility...</option>
+                        <option>is in charge of planning and executing projects.</option>
+                        <option>writes and tests code for software applications.</option>
+                        <option>handles the promotion of products to customers.</option>
+                        <option>is responsible for the look and feel of a product.</option>
+                        <option>analyzes data to find business insights.</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">
+                    Check Answers
+                  </button>
+                  <button class="activity-btn secondary" data-action="reset">
+                    Reset
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 6: Activity 2 Intro -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                   <div class="grid-container">
-                                      <div class="col-span-12 centered-text">
-                                          <h2 class="subtitle">Activity 2</h2>
-                                          <h2>Finding a Partner</h2>
-                                          <p>Use the Present Simple to describe what you do and what you need.</p>
-                                      </div>
-                                      <div class="col-span-12">
-                                          <div class="card">
-                                              <h3>Example</h3>
-                                              <p>"My team <span class="text-highlight">develops</span> mobile apps. We often <span class="text-highlight">look for</span> partners who <span class="text-highlight">specialize in</span> marketing."</p>
-                                              <hr class="divider">
-                                              <p>"I <span class="text-highlight">handle</span> the finances, so I <span class="text-highlight">connect</span> with people who <span class="text-highlight">have expertise</span> in investment."</p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 6: Pre-task B Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-right-left"></i> Pre-task B · Semi-controlled
+                Practice · 7 minutes</span
+              >
+              <h2>The Introduction Models</h2>
+              <div class="two-column-grid">
+                <div class="card">
+                  <h3>Model 1: Project-Focused</h3>
+                  <p><strong>Aysha:</strong> Hi, I'm Aysha. Great to connect. What do you do?</p>
+                  <p><strong>Brian:</strong> Hi Aysha, I'm Brian. I'm a Project Manager at "Connective Core" in Dublin. I'm in charge of our new mobile platform launch. And you?</p>
+                  <p><strong>Aysha:</strong> I'm a Developer for "Gaza Sky Geeks" in Ramallah. My team develops educational software for young people.</p>
+                </div>
+                <div class="card">
+                  <h3>Model 2: Responsibility-Focused</h3>
+                  <p><strong>Fatima:</strong> Hello, my name is Fatima. It’s a pleasure to meet you.</p>
+                  <p><strong>Liam:</strong> You too, Fatima. I'm Liam. What brings you to the summit?</p>
+                  <p><strong>Fatima:</strong> I'm a Data Analyst with a fintech company in Ramallah. I handle all our market performance metrics. I'm here to learn about new data visualization tools. How about you?</p>
+                  <p><strong>Liam:</strong> I'm a Marketing Specialist. I am responsible for user acquisition strategy at my firm in Dublin.</p>
+                </div>
+              </div>
+              <div class="card" style="margin-top: var(--space-5)">
+                <p>
+                  <strong>Instructions:</strong> Read both introductions. What is different about their focus? Be ready to share one observation.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 7: Activity 2 Task -->
-                           <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                       <div class="col-span-5 centered-text">
-                                           <i class="fa-solid fa-puzzle-piece" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                           <h2 style="margin-top: 1rem;">What do you need?</h2>
-                                      </div>
-                                       <div class="col-span-7">
-                                          <h2 class="subtitle">Activity 2: Your Turn!</h2>
-                                          <p>In your group, discuss this question:</p>
-                                          <div class="card">
-                                          <h3>Discussion Prompt</h3>
-                                          <p>Think about your company or your field of study. What kind of work <span class="text-highlight">do</span> you <span class="text-highlight">do</span>?</p>
-                                          <p>Based on that, what kind of professional partner <span class="text-highlight">do</span> you often <span class="text-highlight">look for</span>?</p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 7: Pre-task B Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-mug-saucer"></i> Pre-task B · Freer Practice · 6 minutes</span
+              >
+              <h2>The Virtual Coffee Stand</h2>
+              <div class="card">
+                <p>
+                  <strong>Instructions:</strong> Imagine you are at our virtual tech summit, grabbing a coffee between sessions. Introduce yourself to two other people. Find out their name, role, and one key responsibility. Be ready to introduce one person you met to the class.
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>
+                    <i class="fa-solid fa-user-group"></i>Circulate between classmates and keep introductions short and focused.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-pen-to-square"></i>Take quick notes so you remember who you want to reconnect with later.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 8: Activity 3 Intro -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                   <div class="grid-container">
-                                      <div class="col-span-5">
-                                          <h2 class="subtitle">Activity 3</h2>
-                                          <h2>Asking Good Questions</h2>
-                                          <p>Use Wh- questions to learn more after an introduction.</p>
-                                      </div>
-                                       <div class="col-span-7">
-                                          <div class="dialogue-box">
-                                              <h3>Example:</h3>
-                                              <p><strong>A:</strong> Hi, I'm a marketing specialist.</p>
-                                              <p><strong>B:</strong> That's interesting. <span class="text-highlight">What exactly do you do</span> day-to-day?</p>
-                                              <p><strong>A:</strong> I handle social media.</p>
-                                              <p><strong>B:</strong> Great. <span class="text-highlight">Where did you get</span> your experience in that field?</p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 8: Pre-task C Restrictive Practice (MC Grammar) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-list-check"></i> Pre-task C · Restrictive Practice · 7 minutes</span
+              >
+              <h2>Grammar Focus: Subject-Verb Agreement</h2>
+              <div class="card" data-activity="mc-grammar-radio">
+                <p>Choose the correct verb form for each sentence.</p>
+                <div class="quiz-card" data-answer="develops">
+                  <p>1. My team <strong>develop / develops</strong> mobile applications for international clients.</p>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="g1" value="develop" /> develop</label>
+                    <label class="quiz-option"><input type="radio" name="g1" value="develops" /> develops</label>
+                  </div>
+                </div>
+                <div class="quiz-card" data-answer="handle">
+                  <p>2. As a project manager, I <strong>handle / handles</strong> the budget and the timeline.</p>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="g2" value="handle" /> handle</label>
+                    <label class="quiz-option"><input type="radio" name="g2" value="handles" /> handles</label>
+                  </div>
+                </div>
+                <div class="quiz-card" data-answer="works">
+                  <p>3. She <strong>work / works</strong> for a tech startup based in Ramallah.</p>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="g3" value="work" /> work</label>
+                    <label class="quiz-option"><input type="radio" name="g3" value="works" /> works</label>
+                  </div>
+                </div>
+                <div class="quiz-card" data-answer="write">
+                  <p>4. The developers <strong>write / writes</strong> clean, efficient code.</p>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="g4" value="write" /> write</label>
+                    <label class="quiz-option"><input type="radio" name="g4" value="writes" /> writes</label>
+                  </div>
+                </div>
+                <div class="quiz-card" data-answer="report">
+                  <p>5. Our marketing specialists <strong>report / reports</strong> directly to the CEO.</p>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="g5" value="report" /> report</label>
+                    <label class="quiz-option"><input type="radio" name="g5" value="reports" /> reports</label>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" data-action="check">Check Answers</button>
+                  <button class="activity-btn secondary" data-action="reset">Reset</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 9: Activity 3 Task -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                      <div class="col-span-5 centered-text">
-                                          <i class="fa-solid fa-comments" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                          <h2 style="margin-top: 1rem;">The Curious Colleague</h2>
-                                      </div>
-                                      <div class="col-span-7">
-                                          <h2 class="subtitle">Activity 3: Your Turn!</h2>
-                                          <p>Practice with a partner in a mini role-play.</p>
-                                          <ol>
-                                              <li><strong>Student A:</strong> Introduce your job title and one responsibility.</li>
-                                              <li><strong>Student B:</strong> Ask at least four follow-up Wh- questions to learn more.</li>
-                                              <li>Switch roles!</li>
-                                          </ol>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 9: Pre-task C Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-pen"></i> Pre-task C · Semi-controlled Practice · 7 minutes</span
+              >
+              <h2>My Professional Role</h2>
+              <div class="card">
+                <p>
+                  Complete at least two of the sentence stems to describe your professional responsibilities (real or imagined).
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>I work for...</li>
+                  <li>My team manages...</li>
+                  <li>I am responsible for...</li>
+                  <li>In my role, I handle...</li>
+                </ul>
+                <p style="margin-top: var(--space-4)">
+                  <i class="fa-solid fa-lightbulb"></i> Focus on accurate Present Simple forms and clear descriptions.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                           <!-- SLIDE 10: Activity 4 Intro -->
-                           <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                      <div class="col-span-12 centered-text">
-                                          <h2 class="subtitle">Activity 4</h2>
-                                          <h2>The 3-Minute Strategy</h2>
-                                          <p>Let's prepare for a very short, important conversation.</p>
-                                      </div>
-                                      <div class="col-span-12">
-                                         <div class="card centered-text">
-                                           <h3>The Scenario:</h3>
-                                           <p>You are at a networking event and you meet someone very important, but you only have three minutes to talk.</p>
-                                           <p><strong>Your Goal:</strong> Make a great impression and decide if you should connect later.</p>
-                                         </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 10: Pre-task C Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-people-arrows"></i> Pre-task C · Freer Practice · 6 minutes</span
+              >
+              <h2>A Day in the Life</h2>
+              <div class="card">
+                <p>
+                  In pairs, describe your typical workday. What are your main tasks? Who do you work with? Listen to your partner and ask one follow-up question about their routine.
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>
+                    <i class="fa-solid fa-headset"></i>Practice active listening—note one detail to mention when you report back.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-question"></i>Use Present Simple follow-up questions such as "Who do you collaborate with regularly?"
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 11: Activity 4 Task -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                   <div class="grid-container">
-                                       <div class="col-span-5 centered-text">
-                                           <i class="fa-solid fa-stopwatch" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                           <h2 style="margin-top: 1rem;">Create Your Strategy</h2>
-                                      </div>
-                                       <div class="col-span-7">
-                                          <h2 class="subtitle">Activity 4: Your Turn!</h2>
-                                          <p>In your group, create a "3-Minute Networking Strategy."</p>
-                                          <div class="card">
-                                          <h3>Your strategy must include:</h3>
-                                          <p><strong>1. Introduction (2-3 sentences):</strong> What will you say to introduce yourself and your work?</p>
-                                          <p><strong>2. Essential Questions (2-3 questions):</strong> What will you ask to learn about them?</p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 11: Pre-task D Restrictive Practice (Click & Drop) -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-volume-high"></i> Pre-task D · Restrictive Practice · 7 minutes</span
+              >
+              <h2>Pronunciation: Word Stress</h2>
+              <div class="card" data-activity="table-completion">
+                <p>
+                  Listen to each job title. Drag the word to the matching stress pattern. (Stressed syllable is in <strong>BOLD CAPS</strong>.)
+                </p>
+                <div class="table-responsive" style="margin-top: var(--space-4)">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>O o o<br /><span style="display:block;font-size:var(--step--2);color:var(--secondary-sage);margin-top:var(--space-2);">e.g., A-na-lyst</span></th>
+                        <th>o O o<br /><span style="display:block;font-size:var(--step--2);color:var(--secondary-sage);margin-top:var(--space-2);">e.g., de-VEL-o-per</span></th>
+                        <th>O o O o o<br /><span style="display:block;font-size:var(--step--2);color:var(--secondary-sage);margin-top:var(--space-2);">e.g., PRO-ject MAN-a-ger</span></th>
+                        <th>O o o O o o<br /><span style="display:block;font-size:var(--step--2);color:var(--secondary-sage);margin-top:var(--space-2);">e.g., MAR-ket-ing SPE-cial-ist</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Analyst" data-placeholder="Select" aria-label="Drop zone for O o o pattern"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Developer" data-placeholder="Select" aria-label="Drop zone for o O o pattern 1"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Project Manager" data-placeholder="Select" aria-label="Drop zone for O o O o o pattern"></button>
+                        </td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Marketing Specialist" data-placeholder="Select" aria-label="Drop zone for O o o O o o pattern 1"></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Designer" data-placeholder="Select" aria-label="Drop zone for o O o pattern 2"></button>
+                        </td>
+                        <td></td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Data Analyst" data-placeholder="Select" aria-label="Drop zone for O o o O o o pattern 2"></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>
+                          <button type="button" class="drop-zone placeholder" data-answer="Consultant" data-placeholder="Select" aria-label="Drop zone for o O o pattern 3"></button>
+                        </td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="token-bank" aria-label="Job title options">
+                  <button type="button" class="click-token" data-value="Analyst">Analyst</button>
+                  <button type="button" class="click-token" data-value="Developer">Developer</button>
+                  <button type="button" class="click-token" data-value="Designer">Designer</button>
+                  <button type="button" class="click-token" data-value="Consultant">Consultant</button>
+                  <button type="button" class="click-token" data-value="Project Manager">Project Manager</button>
+                  <button type="button" class="click-token" data-value="Marketing Specialist">Marketing Specialist</button>
+                  <button type="button" class="click-token" data-value="Data Analyst">Data Analyst</button>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 12: Main Task Intro -->
-                          <div class="slide-stage hidden centered-text">
-                              <div class="slide-inner">
-                                  <i class="fa-solid fa-star" style="font-size: 4rem; color: var(--primary-sage);"></i>
-                                  <h1>Main Task: The Networking Event</h1>
-                                  <h2 class="subtitle">Time to find a new partner for a project!</h2>
-                              </div>
-                          </div>
+          <!-- Slide 12: Pre-task D Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-wave-square"></i> Pre-task D · Semi-controlled Practice · 7 minutes</span
+              >
+              <h2>Say it Right</h2>
+              <div class="card">
+                <p>
+                  Practice reading these sentences aloud. Focus on the stress in the bolded job titles.
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>Our <strong>PRO-ject MAN-a-ger</strong> is based in Dublin.</li>
+                  <li>She works as a senior software <strong>de-VEL-o-per</strong>.</li>
+                  <li>We need to hire a <strong>MAR-ket-ing SPE-cial-ist</strong>.</li>
+                  <li>The lead <strong>de-SIGN-er</strong> presented the new interface.</li>
+                  <li>Our <strong>DA-ta AN-a-lyst</strong> found a key trend.</li>
+                </ul>
+                <p style="margin-top: var(--space-4)">
+                  <i class="fa-solid fa-microphone"></i> Record yourselves in pairs and give feedback on clarity and stress.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 13: Main Task Part 1 -->
-                          <div class="slide-stage hidden full-width-bg">
-                              <img src="https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A diverse group of professionals talking at an event." class="img-bg" style="opacity: 0.12;">
-                              <div class="img-overlay" style="background: linear-gradient(180deg, var(--soft-white) 10%, transparent 100%);"></div>
-                              <div class="slide-inner">
-                                  <div class="bg-content grid-container align-self-start">
-                                      <div class="col-span-12 centered-text">
-                                          <h2>Part 1: The Role-Play</h2>
-                                          <p>You are at an online conference for Palestinian professionals. Your company has a problem, and you need to find someone who can help.</p>
-                                      </div>
-                                      <div class="col-span-12">
-                                          <div class="card">
-                                               <h3>Your Task:</h3>
-                                               <ol>
-                                                  <li>Introduce yourself (your role, responsibilities, background).</li>
-                                                  <li>Ask your partner questions to discover their expertise.</li>
-                                                  <li>Explain your problem and see if they can help.</li>
-                                                  <li>Decide if you should schedule a follow-up call.</li>
-                                              </ol>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 13: Pre-task D Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-people-group"></i> Pre-task D · Freer Practice · 6 minutes</span
+              >
+              <h2>Roleplay: Building a Team</h2>
+              <div class="card">
+                <p>
+                  In pairs, create a short conversation (4-6 lines).
+                </p>
+                <div class="two-column-grid" style="margin-top: var(--space-4)">
+                  <div class="column-card">
+                    <h3>Scenario</h3>
+                    <p>
+                      You are two managers discussing who you need to hire for a new project. Include at least three of these job titles: Developer, Project Manager, Designer, Data Analyst, Marketing Specialist.
+                    </p>
+                  </div>
+                  <div class="column-card">
+                    <h3>Example Start</h3>
+                    <p>
+                      <em>"Okay, for the new app, the first person we need is a..."</em>
+                    </p>
+                    <p>
+                      Ask follow-up questions and agree on the top priority roles.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 14: Main Task Part 2 -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                   <div class="grid-container">
-                                      <div class="col-span-12 centered-text">
-                                          <h2 class="subtitle">Main Task</h2>
-                                          <h2>Part 2: Report & Discuss</h2>
-                                      </div>
-                                      <div class="col-span-5 centered-text">
-                                          <i class="fa-solid fa-people-group" style="font-size: 6rem; color: var(--tertiary-sage);"></i>
-                                          <p style="margin-top: 1rem;">Join another pair to make a group of four.</p>
-                                      </div>
-                                      <div class="col-span-7">
-                                          <div class="card card-full-height">
-                                              <i class="fa-solid fa-bullhorn icon"></i>
-                                              <h3>Report and Decide</h3>
-                                              <p>Summarize your partner's professional role and background to the group. Explain <span class="text-highlight">why</span> you decided to schedule (or not schedule) a follow-up call.</p>
-                                              <hr class="divider">
-                                              <p>As a group, discuss: <strong>Which of the two potential collaborations sounds more promising?</strong></p>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 14: Task Introduction -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/5676744/pexels-photo-5676744.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="People participating in an online meeting"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(0, 0, 0, 0.25)"></div>
+            <div class="slide-inner" style="justify-content: center">
+              <div class="bg-content centered">
+                <div class="overlay-card centered">
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-briefcase"></i> Task</span
+                  >
+                  <h2>Speed Networking Session</h2>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 15: Reflection -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner">
-                                  <div class="grid-container">
-                                       <div class="col-span-12 centered-text">
-                                          <h2 class="subtitle">Let's Reflect!</h2>
-                                          <p>Think about your learning today.</p>
-                                      </div>
-                                      <div class="col-span-4"><div class="card card-full-height"><p>What part of today's class was most useful for you? Why?</p></div></div>
-                                      <div class="col-span-4"><div class="card card-full-height"><p>Which vocabulary word or grammar point do you feel more confident with now?</p></div></div>
-                                      <div class="col-span-4"><div class="card card-full-height"><p>What was the most challenging part of the main task?</p></div></div>
-                                  </div>
-                              </div>
-                          </div>
+          <!-- Slide 15: Task Preparation -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-user-tie"></i> Task Preparation · 3 minutes</span
+              >
+              <h2>Prepare for the Networking Event</h2>
+              <div class="card">
+                <p>
+                  <strong>Context:</strong> You are an attendee at the "Global Connect: Ramallah-Dublin Tech Summit," a virtual event for Palestinian professionals and their global colleagues. Your goal is to make three valuable new connections.
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>Your name and job title.</li>
+                  <li>Two key responsibilities you have.</li>
+                  <li>One question you want to ask everyone you meet.</li>
+                </ul>
+                <p style="margin-top: var(--space-4)">
+                  Use your real job, or choose one of the roles on the next slide. Plan concise sentences using the Present Simple.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                          <!-- SLIDE 16: End -->
-                          <div class="slide-stage hidden">
-                              <div class="slide-inner centered-text">
-                                  <i class="fa-solid fa-hands-clapping" style="font-size: 4rem; color: var(--primary-sage);"></i>
-                                  <h1>Great work today!</h1>
-                                  <h2 class="subtitle">See you next time!</h2>
-                              </div>
-                          </div>
+          <!-- Slide 16: Task -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-people-line"></i> Task · 5 minutes per round</span
+              >
+              <h2>Speed Networking Session</h2>
+              <div class="card">
+                <p>
+                  <strong>Instructions:</strong>
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-3)">
+                  <li>
+                    <i class="fa-solid fa-video"></i>You will be moved into a series of breakout rooms for 5 minutes each.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-id-badge"></i>In each room, introduce yourself to your partner(s) and learn about their roles and responsibilities.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-lightbulb"></i>Share something interesting about your work and note who you want to reconnect with.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-star"></i>Remember your goal: find three people you want to connect with again.
+                  </li>
+                </ul>
+              </div>
+              <div class="two-column-grid" style="margin-top: var(--space-5)">
+                <div class="column-card">
+                  <h3>Role Card A</h3>
+                  <p><strong>Company:</strong> "Jaffa Creative Labs" (Ramallah)</p>
+                  <p><strong>Title:</strong> UX/UI Designer</p>
+                  <p>
+                    <strong>Details:</strong> You create user-friendly interfaces for a new language-learning app. You are looking for developers who have experience with gamification.
+                  </p>
+                </div>
+                <div class="column-card">
+                  <h3>Role Card B</h3>
+                  <p><strong>Company:</strong> "Emerald Innovations" (Dublin)</p>
+                  <p><strong>Title:</strong> Marketing Specialist</p>
+                  <p>
+                    <strong>Details:</strong> You handle the European marketing strategy for your company's software. You are looking for project managers who understand market entry in the MENA region.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
-                              <i class="fa-solid fa-chevron-left"></i>
-                          </button>
-                          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
-                              <i class="fa-solid fa-chevron-right"></i>
-                          </button>
+          <!-- Slide 17: Reporting -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-clipboard-user"></i> Reporting</span
+              >
+              <h2>Post-Event Debrief</h2>
+              <div class="card">
+                <p>
+                  Imagine you are debriefing with the event organizer. Be prepared to share with the group:
+                </p>
+                <ul class="instruction-list" style="margin-top: var(--space-4)">
+                  <li>The name and role of the most interesting person you met.</li>
+                  <li>Why you believe they are a valuable professional connection for the future.</li>
+                </ul>
+                <p style="margin-top: var(--space-4)">
+                  <i class="fa-solid fa-comment-dots"></i> Use Present Simple verbs to summarize your partner's responsibilities clearly.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 18: Practice Activities -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-house-laptop"></i> Practice Activities</span
+              >
+              <h2>Synchronous Skill Reinforcement</h2>
+              <p class="deck-subtitle" style="margin-bottom: var(--space-6)">
+                Immediate, controlled practice to consolidate today's grammar and vocabulary targets.
+              </p>
+              <div class="two-column-grid">
+                <div class="column-card">
+                  <h3><i class="fa-solid fa-cogs"></i> Activity 1: Grammar &amp; Vocabulary Quickfire</h3>
+                  <p><strong>Type:</strong> Multiple-choice grammar</p>
+                  <p><strong>Instructions:</strong> Choose the correct word or phrase to complete each sentence.</p>
+                  <ol class="instruction-list" style="gap: var(--space-3)">
+                    <li>
+                      A project manager often ______ with many different teams.
+                      <div class="option-pair">
+                        <span>a) liaise</span>
+                        <span class="correct">b) liaises</span>
+                      </div>
+                    </li>
+                    <li>
+                      In my current role, I ______ the entire marketing budget.
+                      <div class="option-pair">
+                        <span class="correct">a) handle</span>
+                        <span>b) handles</span>
+                      </div>
+                    </li>
+                    <li>
+                      Our developers in Ramallah ______ on the back-end systems.
+                      <div class="option-pair">
+                        <span class="correct">a) focus</span>
+                        <span>b) focuses</span>
+                      </div>
+                    </li>
+                    <li>
+                      She is ______ for the user interface design.
+                      <div class="option-pair">
+                        <span>a) in charge</span>
+                        <span class="correct">b) responsible</span>
+                      </div>
+                    </li>
+                    <li>
+                      The data analyst ______ detailed reports for the leadership team.
+                      <div class="option-pair">
+                        <span>a) prepare</span>
+                        <span class="correct">b) prepares</span>
+                      </div>
+                    </li>
+                  </ol>
+                  <p style="margin-top: var(--space-4)"><strong>Rubric:</strong> 1 point per correct response (5 points total).</p>
+                </div>
+                <div class="column-card">
+                  <h3><i class="fa-solid fa-sitemap"></i> Activity 2: Role &amp; Responsibility Match</h3>
+                  <p><strong>Type:</strong> Table completion</p>
+                  <p><strong>Instructions:</strong> For each job role, select its main responsibility from the dropdown list.</p>
+                  <div class="card" style="background: var(--warm-cream); margin-top: var(--space-4)">
+                    <p style="font-weight: 600; margin-bottom: var(--space-3)">Dropdown Options</p>
+                    <ul class="instruction-list" style="gap: var(--space-2)">
+                      <li>is in charge of project timelines and resources</li>
+                      <li>analyzes data to find business insights</li>
+                      <li>is responsible for the look and feel of a product</li>
+                      <li>writes and tests code for applications</li>
+                      <li>handles the promotion of products</li>
+                    </ul>
+                  </div>
+                  <table class="data-table" style="margin-top: var(--space-5)">
+                    <thead>
+                      <tr>
+                        <th>Job Role</th>
+                        <th>Main Responsibility</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Developer</td>
+                        <td>writes and tests code for applications</td>
+                      </tr>
+                      <tr>
+                        <td>Marketing Specialist</td>
+                        <td>handles the promotion of products</td>
+                      </tr>
+                      <tr>
+                        <td>Project Manager</td>
+                        <td>is in charge of project timelines and resources</td>
+                      </tr>
+                      <tr>
+                        <td>UX/UI Designer</td>
+                        <td>is responsible for the look and feel of a product</td>
+                      </tr>
+                      <tr>
+                        <td>Data Analyst</td>
+                        <td>analyzes data to find business insights</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p style="margin-top: var(--space-4)"><strong>Rubric:</strong> 1 point per accurate match (5 points total).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 19: Reflection -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-lightbulb"></i> Reflection</span
+              >
+              <h2>Reflection: 3, 2, 1</h2>
+              <div class="card">
+                <p>
+                  Take a moment to reflect on your learning. Share your ideas in the chat when prompted.
+                </p>
+                <div class="column-card" style="background: var(--warm-cream)">
+                  <p><strong>3</strong> things you learned today about introducing yourself professionally.</p>
+                  <p><strong>2</strong> phrases or job titles you will use in the future.</p>
+                  <p><strong>1</strong> question you still have about professional networking.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
         </div>
       </main>
     </div>
-    <script>
-const stageViewport = document.querySelector(".stage-viewport");
-      const nextBtn = stageViewport?.querySelector(".slide-nav-next");
-      const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
-      const counter = document.getElementById("slide-counter");
-      const addSlideBtn = document.getElementById("add-slide-btn");
-      const saveStateBtn = document.getElementById("save-state-btn");
-      const loadStateBtn = document.getElementById("load-state-btn");
-      const loadStateInput = document.getElementById("load-state-input");
-      const highlightBtn = document.getElementById("highlight-btn");
-      const highlightColorSelect = document.getElementById("highlight-color");
-      const removeHighlightBtn = document.getElementById("remove-highlight-btn");
 
-      const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
-      const remoteImageHydrations = new WeakMap();
-
-      function getRemoteImageContainer(img) {
-        if (!(img instanceof HTMLElement)) {
-          return null;
-        }
-        return (
-          img.closest(".bg-media") ??
-          img.closest(".context-image") ??
-          img.parentElement
-        );
-      }
-
-      function applyRemoteImageFallback(img, error) {
-        if (error) {
-          console.warn(
-            `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? "unknown"}`,
-            error,
-          );
-        }
-        const container = getRemoteImageContainer(img);
-        if (container) {
-          container.classList.add("remote-image-fallback");
-        }
-        img.dataset.remoteHydrated = "failed";
-      }
-
-      async function hydrateRemoteImage(img) {
-        if (!(img instanceof HTMLImageElement)) {
-          return;
-        }
-
-        const remoteSrc = img.dataset.remoteSrc;
-        if (!remoteSrc) {
-          return;
-        }
-
-        if (typeof fetch !== "function") {
-          applyRemoteImageFallback(img, new Error("Fetch API is unavailable"));
-          return;
-        }
-
-        const hydrationState = img.dataset.remoteHydrated;
-        if (hydrationState === "success" || hydrationState === "failed") {
-          return;
-        }
-
-        if (remoteImageHydrations.has(img)) {
-          return remoteImageHydrations.get(img);
-        }
-
-        const hydrationPromise = (async () => {
-          try {
-            await new Promise((resolve, reject) => {
-              function cleanup() {
-                img.removeEventListener("load", handleLoad);
-                img.removeEventListener("error", handleError);
-              }
-
-              function handleLoad() {
-                cleanup();
-                resolve();
-              }
-
-              function handleError(err) {
-                cleanup();
-                reject(new Error("Image failed to load from src", { cause: err }));
-              }
-
-              img.addEventListener("load", handleLoad, { once: true });
-              img.addEventListener("error", handleError, { once: true });
-              img.removeAttribute("loading");
-              img.src = remoteSrc; // The key change is here
-            });
-
-            img.dataset.remoteHydrated = "success";
-          } catch (error) {
-            applyRemoteImageFallback(img, error);
-          } finally {
-            remoteImageHydrations.delete(img);
-          }
-        })();
-
-        remoteImageHydrations.set(img, hydrationPromise);
-        return hydrationPromise;
-      }
-
-      async function hydrateRemoteImages(root = document) {
-        if (!root) {
-          return;
-        }
-
-        const scope =
-          root instanceof Element || root instanceof Document ? root : document;
-        const queryFn =
-          typeof scope.querySelectorAll === "function"
-            ? scope.querySelectorAll.bind(scope)
-            : null;
-        const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
-
-        if (!remoteImages.length) {
-          return;
-        }
-
-        await Promise.all(
-          remoteImages.map((img) => {
-            const hydration = hydrateRemoteImage(img);
-            if (hydration && typeof hydration.then === "function") {
-              return hydration.catch((error) => {
-                console.warn("Remote image hydration failed", error);
-              });
-            }
-            return undefined;
-          }),
-        );
-      }
-
-      let slides = [];
-      let currentSlideIndex = 0;
-      let mindMapId = 0;
-
-      function refreshSlides() {
-        slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
-      }
-
-      function updateCounter() {
-        if (!counter) return;
-        const total = slides.length;
-        const current = total ? currentSlideIndex + 1 : 0;
-        counter.textContent = `${current} / ${total}`;
-      }
-
-      function showSlide(index) {
-        if (!slides.length) return;
-        currentSlideIndex = (index + slides.length) % slides.length;
-        slides.forEach((slide, slideIndex) => {
-          slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
-        });
-        updateCounter();
-      }
-
-      function navigate(direction) {
-        showSlide(currentSlideIndex + direction);
-      }
-
-      function setupNavigation() {
-        nextBtn?.addEventListener("click", () => navigate(1));
-        prevBtn?.addEventListener("click", () => navigate(-1));
-
-        document.addEventListener("keydown", (event) => {
-          const target = event.target;
-          if (target instanceof HTMLElement) {
-            if (
-              target.tagName === "INPUT" ||
-              target.tagName === "TEXTAREA" ||
-              target.isContentEditable
-            ) {
-              return;
-            }
-          }
-          if (event.key === "ArrowRight") {
-            event.preventDefault();
-            navigate(1);
-          }
-          if (event.key === "ArrowLeft") {
-            event.preventDefault();
-            navigate(-1);
-          }
-        });
-      }
-
-      function addBlankSlide() {
-        if (!stageViewport) return;
-        const newSlide = createBlankSlide();
-        const insertionPoint = prevBtn ?? nextBtn ?? null;
-        stageViewport.insertBefore(newSlide, insertionPoint);
-        attachBlankSlideEvents(newSlide);
-        refreshSlides();
-        showSlide(slides.length - 1);
-      }
-
-      function createBlankSlide() {
-        const slide = document.createElement("div");
-        slide.className = "slide-stage hidden";
-        slide.dataset.type = "blank";
-        slide.innerHTML = `
-    <div class="slide-inner">
-      <div class="blank-slide">
-        <div class="blank-controls">
-          <button class="activity-btn" type="button" data-action="add-textbox">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Add Textbox
-          </button>
-          <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-            <i class="fa-solid fa-diagram-project"></i>
-            Add Mind Map
-          </button>
-        </div>
-        <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
-        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
-      </div>
-    </div>
-  `;
-        return slide;
-      }
-
-      function attachBlankSlideEvents(slide) {
-        const canvas = slide.querySelector(".blank-canvas");
-        const hint = slide.querySelector('[data-role="hint"]');
-        const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
-        const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
-
-        if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
-          return;
-        }
-
-        const DEFAULT_HINT =
-          "Add textboxes for free typing or build a mind map to capture relationships.";
-        const TEXTBOX_HINT =
-          "Drag your textboxes into place and double-click to edit the content.";
-        const MINDMAP_HINT =
-          "Mind map ready. Add branches to capture ideas and connections.";
-
-        function updateHintForCanvas() {
-          if (!(hint instanceof HTMLElement)) return;
-          if (canvas.querySelector(".mindmap")) {
-            hint.textContent = MINDMAP_HINT;
-          } else if (canvas.querySelector(".textbox")) {
-            hint.textContent = TEXTBOX_HINT;
-          } else {
-            hint.textContent = DEFAULT_HINT;
-          }
-        }
-
-        addTextboxBtn?.addEventListener("click", () => {
-          const textbox = createTextbox({ onRemove: updateHintForCanvas });
-          canvas.appendChild(textbox);
-          positionTextbox(textbox, canvas);
-          updateHintForCanvas();
-        });
-
-        addMindmapBtn?.addEventListener("click", () => {
-          if (canvas.querySelector(".mindmap")) {
-            const existing = canvas.querySelector(".mindmap");
-            existing?.scrollIntoView({ behavior: "smooth", block: "center" });
-            return;
-          }
-          const mindmap = createMindMap(() => {
-            updateHintForCanvas();
-          });
-          initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
-          canvas.appendChild(mindmap);
-          updateHintForCanvas();
-        });
-
-        canvas
-          .querySelectorAll(".textbox")
-          .forEach((textbox) =>
-            initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
-          );
-
-        canvas
-          .querySelectorAll(".mindmap")
-          .forEach((mindmap) =>
-            initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
-          );
-
-        updateHintForCanvas();
-      }
-
-      function positionTextbox(textbox, canvas) {
-        const count = canvas.querySelectorAll(".textbox").length - 1;
-        const offset = 24 * count;
-        textbox.style.left = `${offset}px`;
-        textbox.style.top = `${offset}px`;
-      }
-
-      function createTextbox({ onRemove } = {}) {
-        const textbox = document.createElement("div");
-        textbox.className = "textbox";
-        textbox.innerHTML = `
-    <button type="button" class="textbox-remove" aria-label="Remove textbox">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="textbox-handle">Textbox</div>
-    <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
-  `;
-        initialiseTextbox(textbox, { onRemove });
-        return textbox;
-      }
-
-      function initialiseTextbox(textbox, { onRemove } = {}) {
-        if (!(textbox instanceof HTMLElement)) {
-          return textbox;
-        }
-
-        textbox.__deckTextboxOnRemove = onRemove;
-        if (textbox.__deckTextboxInitialised) {
-          return textbox;
-        }
-        textbox.__deckTextboxInitialised = true;
-
-        const removeBtn = textbox.querySelector(".textbox-remove");
-        removeBtn?.addEventListener("click", () => {
-          textbox.remove();
-          if (typeof textbox.__deckTextboxOnRemove === "function") {
-            textbox.__deckTextboxOnRemove();
-          }
-        });
-
-        const body = textbox.querySelector(".textbox-body");
-        body?.addEventListener("dblclick", () => {
-          if (body instanceof HTMLElement) {
-            body.focus();
-          }
-        });
-
-        makeDraggable(textbox);
-        return textbox;
-      }
-
-      function makeDraggable(element) {
-        if (!(element instanceof HTMLElement)) return;
-        if (element.__deckDraggableInitialised) {
-          return;
-        }
-        element.__deckDraggableInitialised = true;
-
-        const handle = element.querySelector(".textbox-handle") ?? element;
-        let pointerId = null;
-        let offsetX = 0;
-        let offsetY = 0;
-
-        handle.addEventListener("pointerdown", (event) => {
-          const canvas = element.parentElement;
-          if (!(canvas instanceof HTMLElement)) return;
-          pointerId = event.pointerId;
-          try {
-            element.setPointerCapture(pointerId);
-          } catch (error) {
-            // ignore when pointer capture is not supported
-          }
-          const elementRect = element.getBoundingClientRect();
-          offsetX = event.clientX - elementRect.left;
-          offsetY = event.clientY - elementRect.top;
-          element.dataset.dragging = "true";
-          event.preventDefault();
-        });
-
-        element.addEventListener("pointermove", (event) => {
-          if (element.dataset.dragging !== "true" || event.pointerId !== pointerId)
-            return;
-          const canvas = element.parentElement;
-          if (!(canvas instanceof HTMLElement)) return;
-          const canvasRect = canvas.getBoundingClientRect();
-          const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
-          const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
-          const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
-          const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
-          const clampedX = Math.min(Math.max(0, rawX), maxX);
-          const clampedY = Math.min(Math.max(0, rawY), maxY);
-          element.style.left = `${clampedX}px`;
-          element.style.top = `${clampedY}px`;
-        });
-
-        function clearPointerState(event) {
-          if (event.pointerId !== pointerId) return;
-          delete element.dataset.dragging;
-          if (pointerId !== null) {
-            try {
-              element.releasePointerCapture(pointerId);
-            } catch (error) {
-              // ignore release errors when pointer capture is not active
-            }
-          }
-          pointerId = null;
-        }
-
-        element.addEventListener("pointerup", clearPointerState);
-        element.addEventListener("pointercancel", clearPointerState);
-      }
-
-      function createMindMap(onRemove) {
-        const container = document.createElement("section");
-        container.className = "mindmap";
-        const branchInputId = `mindmap-branch-${++mindMapId}`;
-        container.innerHTML = `
-    <div class="mindmap-header">
-      <h3 class="mindmap-title">Mind Map</h3>
-      <button type="button" class="mindmap-remove">
-        <i class="fa-solid fa-trash-can"></i>
-        Remove
-      </button>
-    </div>
-    <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
-    <div class="mindmap-branches" aria-live="polite"></div>
-    <form class="mindmap-form">
-      <label class="sr-only" for="${branchInputId}">New branch label</label>
-      <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
-      <button type="submit">
-        <i class="fa-solid fa-plus"></i>
-        Add Branch
-      </button>
-    </form>
-  `;
-        const branches = container.querySelector(".mindmap-branches");
-        if (branches && !branches.querySelector(".mindmap-branch")) {
-          const defaultBranch = createMindMapBranch("Add supporting detail...");
-          branches.appendChild(defaultBranch);
-        }
-
-        initialiseMindMap(container, { onRemove });
-        return container;
-      }
-
-      function initialiseMindMap(container, { onRemove } = {}) {
-        if (!(container instanceof HTMLElement)) {
-          return container;
-        }
-
-        container.__deckMindmapOnRemove = onRemove;
-        if (!container.__deckMindmapInitialised) {
-          container.__deckMindmapInitialised = true;
-          const removeBtn = container.querySelector(".mindmap-remove");
-          removeBtn?.addEventListener("click", () => {
-            container.remove();
-            if (typeof container.__deckMindmapOnRemove === "function") {
-              container.__deckMindmapOnRemove();
-            }
-          });
-        }
-
-        const form = container.querySelector(".mindmap-form");
-        const input = container.querySelector(".mindmap-form input");
-        const branches = container.querySelector(".mindmap-branches");
-
-        if (form && !form.__deckSubmitInitialised) {
-          form.__deckSubmitInitialised = true;
-          form.addEventListener("submit", (event) => {
-            event.preventDefault();
-            if (!branches || !input) return;
-            const value = input.value.trim();
-            if (!value) return;
-            const newBranch = createMindMapBranch(value);
-            branches.appendChild(newBranch);
-            initialiseMindMapBranch(newBranch);
-            input.value = "";
-            input.focus();
-          });
-        }
-
-        container
-          .querySelectorAll(".mindmap-branch")
-          .forEach((branch) => initialiseMindMapBranch(branch));
-
-        return container;
-      }
-
-      function createMindMapBranch(text) {
-        const branch = document.createElement("div");
-        branch.className = "mindmap-branch";
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        textarea.setAttribute("aria-label", "Mind map branch");
-        const removeBtn = document.createElement("button");
-        removeBtn.type = "button";
-        removeBtn.className = "branch-remove";
-        removeBtn.textContent = "Remove";
-        branch.append(textarea, removeBtn);
-        initialiseMindMapBranch(branch);
-        return branch;
-      }
-
-      function initialiseMindMapBranch(branch) {
-        if (!(branch instanceof HTMLElement)) {
-          return branch;
-        }
-
-        if (branch.__deckMindmapBranchInitialised) {
-          return branch;
-        }
-        branch.__deckMindmapBranchInitialised = true;
-        const removeBtn = branch.querySelector(".branch-remove");
-        removeBtn?.addEventListener("click", () => {
-          branch.remove();
-        });
-        return branch;
-      }
-
-      function recalibrateMindMapCounter() {
-        if (!stageViewport) return;
-        const inputs = stageViewport.querySelectorAll(
-          '.mindmap-form input[id^="mindmap-branch-"]',
-        );
-        inputs.forEach((input) => {
-          if (!(input instanceof HTMLInputElement)) return;
-          const match = input.id.match(/mindmap-branch-(\d+)/);
-          if (match) {
-            const value = Number.parseInt(match[1], 10);
-            if (!Number.isNaN(value)) {
-              mindMapId = Math.max(mindMapId, value);
-            }
-          }
-        });
-      }
-
-      function getDeckState() {
-        refreshSlides();
-        return {
-          version: 1,
-          currentSlideIndex,
-          slides: slides.map((slide) => slide.outerHTML),
-        };
-      }
-
-      function downloadDeckState() {
-        try {
-          const state = getDeckState();
-          const blob = new Blob([JSON.stringify(state, null, 2)], {
-            type: "application/json",
-          });
-          const url = URL.createObjectURL(blob);
-          const anchor = document.createElement("a");
-          anchor.href = url;
-          anchor.download = "deck-state.json";
-          anchor.click();
-          URL.revokeObjectURL(url);
-        } catch (error) {
-          console.error("Failed to save deck state", error);
-          window.alert(
-            "Sorry, we couldn't save the deck right now. Please try again.",
-          );
-        }
-      }
-
-      function parseDeckState(raw) {
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.slides)) {
-          throw new Error("Invalid deck state structure");
-        }
-        return parsed;
-      }
-
-      function applyDeckState(state) {
-        if (!stageViewport || !state || !Array.isArray(state.slides)) {
-          throw new Error("Deck state does not include slides");
-        }
-
-        const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
-        const fragment = document.createDocumentFragment();
-
-        state.slides.forEach((slideHTML) => {
-          if (typeof slideHTML !== "string") {
-            return;
-          }
-          const template = document.createElement("template");
-          template.innerHTML = slideHTML.trim();
-          const slide = template.content.firstElementChild;
-          if (slide instanceof HTMLElement && slide.classList.contains("slide-stage")) {
-            fragment.appendChild(slide);
-          }
-        });
-
-        stageViewport.innerHTML = "";
-        stageViewport.appendChild(fragment);
-        navButtons.forEach((button) => stageViewport.appendChild(button));
-
-        refreshSlides();
-        slides
-          .filter((slide) => slide.dataset.type === "blank")
-          .forEach((slide) => attachBlankSlideEvents(slide));
-
-        initialiseActivities();
-        recalibrateMindMapCounter();
-
-        if (slides.length) {
-          const requestedIndex =
-            typeof state.currentSlideIndex === "number"
-              ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
-              : 0;
-          showSlide(requestedIndex);
-        } else {
-          updateCounter();
-        }
-
-        hydrateRemoteImages(stageViewport).catch((error) => {
-          console.warn("Remote image hydration failed after loading state", error);
-        });
-      }
-
-      function handleStateFileSelection(event) {
-        const input = event.target;
-        if (!(input instanceof HTMLInputElement) || !input.files?.length) {
-          return;
-        }
-
-        const [file] = input.files;
-        const reader = new FileReader();
-
-        reader.addEventListener("load", () => {
-          try {
-            const text = typeof reader.result === "string" ? reader.result : "";
-            const state = parseDeckState(text);
-            applyDeckState(state);
-          } catch (error) {
-            console.error("Failed to load deck state", error);
-            window.alert(
-              "The selected file couldn't be loaded. Please choose a valid deck state JSON file.",
-            );
-          } finally {
-            input.value = "";
-          }
-        });
-
-        reader.addEventListener("error", () => {
-          console.error("Failed to read deck state file", reader.error);
-          window.alert(
-            "We couldn't read that file. Please try again with a different JSON file.",
-          );
-          input.value = "";
-        });
-
-        reader.readAsText(file);
-      }
-
-      function findSlideForNode(node) {
-        if (!node) return null;
-        if (node instanceof HTMLElement) {
-          return node.closest(".slide-stage");
-        }
-        if (node instanceof Text) {
-          return node.parentElement?.closest(".slide-stage") ?? null;
-        }
-        return null;
-      }
-
-      function applyHighlight(color) {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-          window.alert("Select some text in a slide before applying a highlight.");
-          return;
-        }
-
-        const range = selection.getRangeAt(0);
-        const startSlide = findSlideForNode(range.startContainer);
-        const endSlide = findSlideForNode(range.endContainer);
-
-        if (!startSlide || !endSlide || startSlide !== endSlide) {
-          window.alert("Highlights must stay within a single slide.");
-          return;
-        }
-
-        if (!stageViewport?.contains(startSlide)) {
-          window.alert("Please highlight text within the slide area.");
-          return;
-        }
-
-        try {
-          const contents = range.extractContents();
-          const textSample = contents.textContent?.trim();
-          if (!textSample) {
-            window.alert("Select some text to highlight first.");
-            range.insertNode(contents);
-            return;
-          }
-
-          const highlight = document.createElement("mark");
-          highlight.className = "text-highlight";
-          highlight.dataset.color = color;
-          highlight.style.setProperty("--highlight-color", color);
-          highlight.appendChild(contents);
-          range.insertNode(highlight);
-
-          selection.removeAllRanges();
-          const newRange = document.createRange();
-          newRange.selectNodeContents(highlight);
-          selection.addRange(newRange);
-        } catch (error) {
-          console.error("Failed to apply highlight", error);
-          window.alert(
-            "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
-          );
-        }
-      }
-
-      function removeHighlight() {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0) {
-          window.alert("Place your cursor inside a highlight to clear it.");
-          return;
-        }
-
-        let container = selection.anchorNode;
-        if (container instanceof Text) {
-          container = container.parentElement;
-        }
-
-        const highlight =
-          container instanceof HTMLElement ? container.closest(".text-highlight") : null;
-
-        if (!highlight || !stageViewport?.contains(highlight)) {
-          window.alert("Place your cursor inside a highlight to clear it.");
-          return;
-        }
-
-        const parent = highlight.parentNode;
-        if (!parent) {
-          return;
-        }
-
-        while (highlight.firstChild) {
-          parent.insertBefore(highlight.firstChild, highlight);
-        }
-        highlight.remove();
-        if (parent instanceof HTMLElement) {
-          parent.normalize();
-        }
-        selection.removeAllRanges();
-      }
-
-      function setupUnscramble(activityEl) {
-        const inputs = activityEl.querySelectorAll(".unscramble-input");
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          inputs.forEach((input) => {
-            const answer = input.dataset.answer
-              ?.trim()
-              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
-              .replace(/\s+/g, " ")
-              .toLowerCase();
-            const value = input.value
-              .trim()
-              .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
-              .replace(/\s+/g, " ")
-              .toLowerCase();
-            if (answer && answer === value) {
-              input.classList.add("correct");
-              input.classList.remove("incorrect");
-              correctCount++;
-            } else {
-              input.classList.add("incorrect");
-              input.classList.remove("correct");
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You have ${correctCount} of ${inputs.length} correct.`;
-            feedback.className =
-              correctCount === inputs.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          inputs.forEach((input) => {
-            input.value = "";
-            input.classList.remove("correct", "incorrect");
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupMatching(activityEl) {
-        const options = activityEl.querySelectorAll(".matching-option");
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          options.forEach((option) => {
-            const select = option.querySelector("select");
-            if (select && select.value === option.dataset.correct) {
-              option.style.borderColor = "#2E7D32";
-              correctCount++;
-            } else {
-              option.style.borderColor = "#C62828";
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You have ${correctCount} of ${options.length} correct.`;
-            feedback.className =
-              correctCount === options.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          options.forEach((option) => {
-            const select = option.querySelector("select");
-            if (select) {
-              select.selectedIndex = 0;
-            }
-            option.style.borderColor = "rgba(122,132,113,0.16)";
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupMcGrammar(activityEl) {
-        const cards = activityEl.querySelectorAll(".quiz-card");
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          cards.forEach((card) => {
-            const select = card.querySelector("select");
-            if (select && select.value === card.dataset.answer) {
-              card.classList.add("correct");
-              card.classList.remove("incorrect");
-              correctCount++;
-            } else {
-              card.classList.add("incorrect");
-              card.classList.remove("correct");
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You have ${correctCount} of ${cards.length} correct.`;
-            feedback.className =
-              correctCount === cards.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          cards.forEach((card) => {
-            const select = card.querySelector("select");
-            if (select) {
-              select.selectedIndex = 0;
-            }
-            card.classList.remove("correct", "incorrect");
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupMcGrammarRadio(container) {
-        const questions = container.querySelectorAll(".quiz-card");
-        const checkBtn = container.querySelector('[data-action="check"]');
-        const resetBtn = container.querySelector('[data-action="reset"]');
-        const feedback = container.querySelector(".feedback-msg");
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          questions.forEach((question) => {
-            const selected = question.querySelector("input:checked");
-            const options = question.querySelectorAll(".quiz-option");
-            options.forEach((option) =>
-              option.classList.remove("correct", "incorrect"),
-            );
-            if (selected) {
-              const label = selected.closest(".quiz-option");
-              const value = label?.textContent?.trim();
-              if (value === question.dataset.answer) {
-                label?.classList.add("correct");
-                correctCount++;
-              } else {
-                label?.classList.add("incorrect");
-              }
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You scored ${correctCount} out of ${questions.length}.`;
-            feedback.className =
-              correctCount === questions.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          questions.forEach((question) => {
-            question.querySelectorAll("input").forEach((radio) => {
-              radio.checked = false;
-            });
-            question
-              .querySelectorAll(".quiz-option")
-              .forEach((option) => option.classList.remove("correct", "incorrect"));
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupCategorization(activityEl) {
-        const tokenBank = activityEl.querySelector(".token-bank");
-        const tokens = Array.from(activityEl.querySelectorAll(".click-token"));
-        const dropZones = Array.from(activityEl.querySelectorAll(".drop-zone"));
-        const columns = Array.from(activityEl.querySelectorAll(".category-column"));
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-        let selectedToken = null;
-
-        tokens.forEach((token) => {
-          token.addEventListener("click", () => {
-            if (selectedToken) selectedToken.classList.remove("selected");
-            if (selectedToken === token) {
-              selectedToken = null;
-            } else {
-              selectedToken = token;
-              selectedToken.classList.add("selected");
-            }
-          });
-        });
-
-        dropZones.forEach((zone) => {
-          zone.addEventListener("click", () => {
-            if (selectedToken) {
-              zone.appendChild(selectedToken);
-              selectedToken.classList.remove("selected");
-              selectedToken = null;
-            }
-          });
-        });
-
-        checkBtn?.addEventListener("click", () => {
-          columns.forEach((col) => col.classList.remove("correct", "incorrect"));
-          let correctTotal = 0;
-          tokens.forEach((token) => {
-            const parentColumn = token.closest(".category-column");
-            if (
-              parentColumn &&
-              token.dataset.category === parentColumn.dataset.category
-            ) {
-              correctTotal++;
-            }
-          });
-          columns.forEach((column) => {
-            const zone = column.querySelector(".drop-zone");
-            const hasTokens = zone?.querySelector(".click-token");
-            if (hasTokens && column.dataset.category) {
-              const allMatch = Array.from(
-                zone?.querySelectorAll(".click-token") ?? [],
-              ).every(
-                (token) => token.dataset.category === column.dataset.category,
-              );
-              column.classList.add(allMatch ? "correct" : "incorrect");
-            } else {
-              column.classList.add("incorrect");
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You correctly placed ${correctTotal} out of ${tokens.length} items.`;
-            feedback.className =
-              correctTotal === tokens.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          tokens.forEach((token) => {
-            tokenBank?.appendChild(token);
-            token.classList.remove("selected");
-          });
-          columns.forEach((column) =>
-            column.classList.remove("correct", "incorrect"),
-          );
-          selectedToken = null;
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupStressMark(activityEl) {
-        const sentences = activityEl.querySelectorAll(".stress-sentence");
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-
-        sentences.forEach((sentence) => {
-          const words = sentence.querySelectorAll(".stress-word");
-          words.forEach((word) => {
-            word.addEventListener("click", () => {
-              words.forEach((w) => w.classList.remove("marked"));
-              word.classList.add("marked");
-            });
-          });
-        });
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          sentences.forEach((sentence) => {
-            const markedWord = sentence.querySelector(".stress-word.marked");
-            const correctWordText = sentence.dataset.correct?.trim().toLowerCase();
-            sentence
-              .querySelectorAll(".stress-word")
-              .forEach((word) => word.classList.remove("correct", "incorrect"));
-            if (markedWord) {
-              const markedText = markedWord.textContent
-                ?.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
-                .trim()
-                .toLowerCase();
-              if (markedText && markedText === correctWordText) {
-                markedWord.classList.add("correct");
-                correctCount++;
-              } else {
-                markedWord.classList.add("incorrect");
-              }
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You have ${correctCount} of ${sentences.length} correct.`;
-            feedback.className =
-              correctCount === sentences.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          sentences.forEach((sentence) => {
-            sentence.querySelectorAll(".stress-word").forEach((word) => {
-              word.classList.remove("marked", "correct", "incorrect");
-            });
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function initialiseActivities() {
-        document
-          .querySelectorAll('[data-activity="unscramble"]')
-          .forEach((el) => setupUnscramble(el));
-        document
-          .querySelectorAll('[data-activity="matching"]')
-          .forEach((el) => setupMatching(el));
-        document
-          .querySelectorAll('[data-activity="mc-grammar"]')
-          .forEach((el) => setupMcGrammar(el));
-        document
-          .querySelectorAll('[data-activity="mc-grammar-radio"]')
-          .forEach((el) => setupMcGrammarRadio(el));
-        document
-          .querySelectorAll('[data-activity="categorization"]')
-          .forEach((el) => setupCategorization(el));
-        document
-          .querySelectorAll('[data-activity="stress-mark"]')
-          .forEach((el) => setupStressMark(el));
-      }
-
-      async function initialiseDeck() {
-        await hydrateRemoteImages().catch((error) => {
-          console.warn(
-            "Remote imagery could not be hydrated during initialisation",
-            error,
-          );
-        });
-
-        refreshSlides();
-        if (slides.length) {
-          showSlide(0);
-        }
-        setupNavigation();
-        updateCounter();
-        initialiseActivities();
-        document
-          .querySelectorAll('.slide-stage[data-type="blank"]')
-          .forEach((slide) => attachBlankSlideEvents(slide));
-        addSlideBtn?.addEventListener("click", addBlankSlide);
-        saveStateBtn?.addEventListener("click", downloadDeckState);
-        loadStateBtn?.addEventListener("click", () => {
-          loadStateInput?.click();
-        });
-        loadStateInput?.addEventListener("change", handleStateFileSelection);
-        highlightBtn?.addEventListener("click", () => {
-          const selectedColor = highlightColorSelect?.value || "#F9E27D";
-          applyHighlight(selectedColor);
-        });
-        removeHighlightBtn?.addEventListener("click", () => {
-          removeHighlight();
-        });
-        recalibrateMindMapCounter();
-      }
-
-      initialiseDeck().catch((error) => {
-        console.error("Deck initialisation failed", error);
-      });
+    <script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+    <script type="module">
+      import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+      setupInteractiveDeck();
     </script>
   </body>
 </html>
