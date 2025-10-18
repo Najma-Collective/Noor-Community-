@@ -14,948 +14,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
-    <style>
-      :root {
-        --primary-sage: #7a8471;
-        --secondary-sage: #9caf88;
-        --tertiary-sage: #b8c5a6;
-        --warm-cream: #f8f6f0;
-        --soft-white: #fefcf7;
-        --forest-shadow: #5a6b52;
-        --ink: #2f3a2b;
-        --ink-muted: #5a6b52;
-        --border-sage: rgba(122, 132, 113, 0.2);
-        --hover-sage: rgba(156, 175, 136, 0.15);
-        --deep-forest: #3e4a3a;
-        --font-display: "Questrial", system-ui, sans-serif;
-        --font-body: "Nunito", system-ui, sans-serif;
-        --font-size-adjustment: 0pt;
-        --step--1: calc(
-          clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
-        );
-        --step-0: calc(
-          clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
-        );
-        --step-1: calc(
-          clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) +
-            var(--font-size-adjustment)
-        );
-        --step-2: calc(
-          clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
-        );
-        --step-3: calc(
-          clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
-        );
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-7: 2rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1:
-          0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
-        --shadow-2:
-          0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
-        --shadow-glow: 0 0 45px 10px
-          color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: auto;
-      }
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: var(--space-4);
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
-        backdrop-filter: blur(8px) saturate(1.1);
-      }
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + var(--font-size-adjustment));
-        color: var(--forest-shadow);
-      }
-      .toolbar-brand span {
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-      .slide-counter {
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        justify-self: center;
-      }
-      .toolbar-actions {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .toolbar-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.15rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .toolbar-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .toolbar-btn.secondary {
-        background: var(--primary-forest);
-      }
-      .toolbar-btn.ghost {
-        background: var(--soft-white);
-        color: var(--primary-forest);
-        border: 1px solid var(--border-sage);
-        box-shadow: none;
-      }
-      .toolbar-btn.ghost:hover {
-        box-shadow: var(--shadow-1);
-      }
-      .toolbar-select {
-        border-radius: 999px;
-        border: 1px solid var(--border-sage);
-        background: #fff;
-        padding: 0.45rem 1rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        color: var(--primary-forest);
-        cursor: pointer;
-      }
-      .toolbar-select:focus {
-        outline: 2px solid var(--primary-sage);
-        outline-offset: 2px;
-      }
-      .highlight-controls {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.65);
-        box-shadow: var(--shadow-1);
-      }
-      .highlight-controls i {
-        color: var(--primary-forest);
-      }
-      .text-highlight {
-        background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
-        padding: 0.05em 0.15em;
-        border-radius: 0.35em;
-        box-decoration-break: clone;
-        -webkit-box-decoration-break: clone;
-        transition: background-color 200ms ease;
-      }
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background:
-          radial-gradient(
-            900px 600px at 20% 0%,
-            rgba(156, 175, 136, 0.08) 0%,
-            transparent 70%
-          ),
-          radial-gradient(
-            800px 700px at 80% 100%,
-            rgba(90, 107, 82, 0.06) 0%,
-            transparent 70%
-          );
-      }
-      .stage-viewport {
-        position: relative;
-        display: grid;
-        place-items: center;
-      }
-      .slide-stage {
-        position: relative;
-        border-radius: var(--stage-radius);
-        background-color: var(--soft-white);
-        box-shadow:
-          var(--shadow-glow),
-          0 24px 60px rgba(34, 41, 32, 0.1);
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(
-          calc(
-            (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
-              (var(--slide-aspect-w) / var(--slide-aspect-h))
-          ),
-          calc(100vw - (var(--workspace-pad) * 2))
-        );
-        max-width: 100%;
-        overflow: hidden auto;
-        outline: 1px solid var(--border-sage);
-        transition: opacity 300ms ease-in-out;
-      }
-      .slide-stage.hidden {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .slide-stage.full-width-bg {
-        background: transparent;
-        outline: none;
-        box-shadow: none;
-      }
-      .bg-media {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-      }
-      .bg-media img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        filter: brightness(0.92);
-        display: block;
-      }
-      .bg-media.remote-image-fallback {
-        background: linear-gradient(
-          135deg,
-          rgba(16, 28, 21, 0.85) 0%,
-          rgba(16, 28, 21, 0.6) 65%,
-          rgba(16, 28, 21, 0.45) 100%
-        );
-      }
-      .bg-media.remote-image-fallback img {
-        display: none;
-      }
-      .img-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          120deg,
-          rgba(14, 30, 20, 0.72) 0%,
-          rgba(14, 30, 20, 0.4) 45%,
-          rgba(14, 30, 20, 0.2) 70%,
-          transparent 100%
-        );
-        z-index: 1;
-      }
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1.25rem;
-        overflow-y: auto;
-        scrollbar-gutter: stable both-edges;
-      }
-      .bg-content {
-        position: relative;
-        z-index: 2;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        align-items: flex-start;
-      }
-      .bg-content.centered {
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-      }
-      .context-image {
-        position: relative;
-        display: grid;
-        place-items: center;
-        border-radius: var(--radius);
-        overflow: hidden;
-        min-height: 220px;
-        box-shadow: var(--shadow-1);
-        background: rgba(248, 246, 240, 0.65);
-      }
-      .context-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .context-image.remote-image-fallback {
-        background: linear-gradient(
-            135deg,
-            rgba(156, 175, 136, 0.45) 0%,
-            rgba(90, 107, 82, 0.75) 100%
-          ),
-          rgba(28, 45, 33, 0.85);
-        color: rgba(255, 255, 255, 0.82);
-        text-align: center;
-        padding: 1.5rem;
-      }
-      .context-image.remote-image-fallback::after {
-        content: "Image preview unavailable";
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .context-image.remote-image-fallback img {
-        display: none;
-      }
-      .overlay-card {
-        background: color-mix(
-          in srgb,
-          rgba(16, 28, 21, 0.72) 65%,
-          rgba(248, 246, 240, 0.35) 35%
-        );
-        border: 1px solid rgba(253, 251, 245, 0.35);
-        border-radius: calc(var(--radius-lg) + 8px);
-        padding: clamp(28px, 5vw, 48px);
-        box-shadow: 0 24px 60px rgba(8, 16, 12, 0.4);
-        backdrop-filter: blur(14px) saturate(125%);
-        color: #fdfbf5;
-        max-width: min(600px, 80%);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .overlay-card.centered {
-        margin: 0 auto;
-        text-align: center;
-        align-items: center;
-      }
-      .overlay-card h1,
-      .overlay-card h2,
-      .overlay-card p,
-      .overlay-card .pill,
-      .overlay-card .deck-subtitle {
-        color: #fdfbf5;
-      }
-      .overlay-card .deck-subtitle {
-        font-size: var(--step-1);
-        margin: 0;
-        color: rgba(253, 251, 245, 0.85);
-      }
-      .overlay-pill {
-        background: rgba(253, 251, 245, 0.22) !important;
-        color: #fdfbf5 !important;
-        box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
-      }
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.85rem;
-        border-radius: 999px;
-        background: rgba(122, 132, 113, 0.16);
-        font-size: calc(0.85rem + var(--font-size-adjustment));
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--deep-forest);
-        width: fit-content;
-      }
-      h1,
-      h2,
-      h3 {
-        font-family: var(--font-display);
-        margin: 0;
-        color: var(--ink);
-      }
-      h1 {
-        font-size: var(--step-3);
-      }
-      h2 {
-        font-size: var(--step-2);
-      }
-      h3 {
-        font-size: var(--step-1);
-      }
-      p {
-        margin: 0;
-      }
-      ul,
-      ol {
-        margin: 0;
-        padding-left: 1.25rem;
-      }
-      .card {
-        background: var(--soft-white);
-        padding: clamp(1.35rem, 3vw, 2rem);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-      .card.dense {
-        gap: 0.65rem;
-        padding: clamp(1.1rem, 2.5vw, 1.65rem);
-      }
-      .two-column-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.2rem;
-        width: 100%;
-      }
-      .column-card {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1.1rem 1.3rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .instruction-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.7rem;
-      }
-      .instruction-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-      }
-      .instruction-list i {
-        color: var(--primary-sage);
-        margin-top: 0.2em;
-      }
-      .activity-actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-top: 0.5rem;
-      }
-      .activity-btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        background: var(--primary-sage);
-        color: #fff;
-        box-shadow: var(--shadow-1);
-      }
-      .activity-btn.secondary {
-        background: rgba(122, 132, 113, 0.16);
-        color: var(--deep-forest);
-      }
-      .activity-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .feedback-msg {
-        min-height: 1.5rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-      }
-      .feedback-msg.success {
-        color: #2e7d32;
-      }
-      .feedback-msg.error {
-        color: #c62828;
-      }
-      .unscramble-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding-left: 0;
-        list-style: none;
-      }
-      .unscramble-list li {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-      }
-      .unscramble-input {
-        width: 100%;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        font-weight: 600;
-        background: var(--soft-white);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .unscramble-input.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .unscramble-input.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .matching-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      .matching-option {
-        display: grid;
-        grid-template-columns: 1fr minmax(180px, 250px);
-        gap: 0.9rem;
-        align-items: center;
-        padding: 0.75rem 0.85rem;
-        border-radius: 14px;
-        border: 1px solid rgba(122, 132, 113, 0.16);
-        background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
-        transition:
-          border 0.2s ease,
-          background 0.2s ease;
-      }
-      .matching-option select {
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-weight: 600;
-        font-size: var(--step--1);
-        background: var(--soft-white);
-        color: var(--forest-shadow);
-      }
-      .quiz-card {
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        padding: 1rem 1.1rem;
-        background: rgba(254, 252, 247, 0.95);
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-      .quiz-options {
-        display: grid;
-        gap: 0.45rem;
-      }
-      .quiz-option {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        padding: 0.45rem 0.6rem;
-        border-radius: 12px;
-        background: rgba(250, 250, 248, 0.9);
-        border: 1px solid transparent;
-        cursor: pointer;
-      }
-      .quiz-option input[type="radio"] {
-        margin-top: 0.25em;
-      }
-      .quiz-option.correct {
-        border-color: #2e7d32;
-        background: rgba(46, 125, 50, 0.12);
-      }
-      .quiz-option.incorrect {
-        border-color: #c62828;
-        background: rgba(198, 40, 40, 0.12);
-      }
-      .drop-categorization {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-      .token-bank {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
-        padding: 1rem 1.1rem;
-        border-radius: var(--radius-lg);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        border: 1px dashed rgba(122, 132, 113, 0.28);
-        margin-bottom: 1rem;
-      }
-      .click-token {
-        padding: 0.55rem 1rem;
-        border-radius: 999px;
-        background: var(--soft-white);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: var(--step--1);
-        user-select: none;
-        transition: all 0.2s ease;
-      }
-      .click-token.used {
-        opacity: 0.4;
-        pointer-events: none;
-      }
-      .click-token.selected {
-        background: var(--secondary-sage);
-        color: white;
-        transform: scale(1.05);
-      }
-      .category-column {
-        background: rgba(248, 246, 240, 0.85);
-        border-radius: var(--radius);
-        padding: 1rem;
-        border: 1px solid rgba(122, 132, 113, 0.18);
-      }
-      .drop-zone {
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 12px;
-        border: 2px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.75);
-        transition: all 0.2s ease;
-      }
-      .drop-zone.active {
-        border-color: var(--primary-sage);
-        background: rgba(156, 175, 136, 0.22);
-      }
-      .drop-zone .click-token {
-        cursor: grab;
-      }
-      .category-column.correct {
-        border-color: #2e7d32;
-      }
-      .category-column.incorrect {
-        border-color: #c62828;
-      }
-      .stress-sentence {
-        font-size: var(--step-1);
-        font-weight: 500;
-        line-height: 1.8;
-        margin-bottom: 0.5rem;
-      }
-      .stress-word {
-        padding: 0.2rem 0.4rem;
-        border-radius: 8px;
-        margin: 0 0.1rem;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        border: 1px solid transparent;
-        display: inline-block;
-      }
-      .stress-word:hover {
-        background: var(--hover-sage);
-      }
-      .stress-word.marked {
-        background: var(--tertiary-sage);
-        color: var(--ink);
-        border-color: var(--primary-sage);
-      }
-      .stress-word.correct {
-        background: rgba(46, 125, 50, 0.2);
-        border-color: #2e7d32;
-      }
-      .stress-word.incorrect {
-        background: rgba(198, 40, 40, 0.2);
-        border-color: #c62828;
-      }
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        border: none;
-        background: rgba(254, 252, 247, 0.85);
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        box-shadow: var(--shadow-2);
-        cursor: pointer;
-        z-index: 10;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-      .slide-nav:hover {
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
-      }
-      .slide-nav-prev {
-        left: -24px;
-      }
-      .slide-nav-next {
-        right: -24px;
-      }
-      .blank-slide {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        height: 100%;
-      }
-      .blank-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-      }
-      .blank-canvas {
-        flex: 1;
-        border-radius: var(--radius-lg);
-        border: 1px dashed rgba(122, 132, 113, 0.35);
-        background: rgba(254, 252, 247, 0.8);
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        min-height: 320px;
-      }
-      .blank-hint {
-        font-size: var(--step--1);
-        color: var(--ink-muted);
-      }
-      .textbox {
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: var(--radius);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        background: var(--soft-white);
-        width: clamp(240px, 35%, 420px);
-        min-height: 140px;
-        display: flex;
-        flex-direction: column;
-        cursor: move;
-        touch-action: none;
-      }
-      .textbox-handle {
-        padding: 0.5rem 0.75rem;
-        background: rgba(122, 132, 113, 0.16);
-        border-bottom: 1px solid rgba(122, 132, 113, 0.2);
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        cursor: grab;
-        border-top-left-radius: var(--radius);
-        border-top-right-radius: var(--radius);
-      }
-      .textbox-body {
-        flex: 1;
-        padding: 0.75rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        outline: none;
-        cursor: text;
-        overflow: auto;
-      }
-      .textbox-body:focus {
-        box-shadow: inset 0 0 0 2px rgba(122, 132, 113, 0.35);
-      }
-      .textbox-remove {
-        position: absolute;
-        top: 0.35rem;
-        right: 0.35rem;
-        border: none;
-        background: rgba(254, 252, 247, 0.8);
-        color: var(--forest-shadow);
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        box-shadow: var(--shadow-1);
-      }
-      .textbox-remove:hover {
-        color: #c62828;
-      }
-      .mindmap {
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        background: linear-gradient(
-          135deg,
-          rgba(248, 246, 240, 0.92),
-          rgba(236, 231, 220, 0.75)
-        );
-        box-shadow: var(--shadow-1);
-        padding: clamp(1.2rem, 3vw, 1.8rem);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .mindmap-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
-      .mindmap-title {
-        font-family: var(--font-display);
-        font-size: var(--step-1);
-        margin: 0;
-        color: var(--deep-forest);
-      }
-      .mindmap-remove {
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-      .mindmap-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-center {
-        align-self: center;
-        min-width: 180px;
-        padding: 0.9rem 1.1rem;
-        border-radius: 999px;
-        background: var(--primary-sage);
-        color: #fff;
-        font-weight: 700;
-        text-align: center;
-        font-family: var(--font-display);
-        letter-spacing: 0.03em;
-        outline: none;
-      }
-      .mindmap-center:focus {
-        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.35);
-      }
-      .mindmap-branches {
-        display: grid;
-        gap: 0.75rem;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-      .mindmap-branch {
-        position: relative;
-        padding: 0.75rem 0.85rem;
-        border-radius: var(--radius);
-        background: rgba(254, 252, 247, 0.95);
-        border: 1px solid rgba(122, 132, 113, 0.2);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      .mindmap-branch textarea {
-        width: 100%;
-        border: none;
-        background: transparent;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-        line-height: 1.5;
-        resize: vertical;
-        min-height: 64px;
-      }
-      .branch-remove {
-        align-self: flex-end;
-        border: none;
-        background: transparent;
-        color: var(--forest-shadow);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-      .branch-remove:hover {
-        color: #c62828;
-      }
-      .mindmap-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        align-items: center;
-      }
-      .mindmap-form input {
-        flex: 1 1 220px;
-        border-radius: 999px;
-        border: 1px solid rgba(122, 132, 113, 0.35);
-        padding: 0.45rem 0.85rem;
-        font-family: var(--font-body);
-        font-size: var(--step--1);
-      }
-      .mindmap-form button {
-        border: none;
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        background: var(--secondary-sage);
-        color: var(--deep-forest);
-        box-shadow: var(--shadow-1);
-      }
-      .mindmap-form button:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-2);
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
-    </style>
+    <link rel="stylesheet" href="../../../CSS-slides.css" />
   </head>
   <body>
     <div class="deck-app">
@@ -2371,6 +1430,23 @@
       const highlightColorSelect = document.getElementById("highlight-color");
       const removeHighlightBtn = document.getElementById("remove-highlight-btn");
 
+      const TEXTBOX_COLOR_OPTIONS = [
+        { value: "sage", label: "Sage" },
+        { value: "wheat", label: "Wheat" },
+        { value: "sky", label: "Sky" },
+        { value: "rose", label: "Rose" },
+        { value: "slate", label: "Slate" },
+      ];
+      const DEFAULT_TEXTBOX_COLOR = TEXTBOX_COLOR_OPTIONS[0].value;
+
+      const MINDMAP_BRANCH_CATEGORIES = [
+        { value: "idea", label: "Idea" },
+        { value: "opportunity", label: "Opportunity" },
+        { value: "challenge", label: "Challenge" },
+        { value: "evidence", label: "Evidence" },
+        { value: "question", label: "Question" },
+      ];
+
       const REMOTE_IMAGE_SELECTOR = "img[data-remote-src]";
       const remoteImageHydrations = new WeakMap();
 
@@ -2591,9 +1667,9 @@
         const DEFAULT_HINT =
           "Add textboxes for free typing or build a mind map to capture relationships.";
         const TEXTBOX_HINT =
-          "Drag your textboxes into place and double-click to edit the content.";
+          "Drag your textboxes into place, double-click to edit, and use the colour dots to organise ideas.";
         const MINDMAP_HINT =
-          "Mind map ready. Add branches to capture ideas and connections.";
+          "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
 
         function updateHintForCanvas() {
           if (!(hint instanceof HTMLElement)) return;
@@ -2652,11 +1728,32 @@
       function createTextbox({ onRemove } = {}) {
         const textbox = document.createElement("div");
         textbox.className = "textbox";
+        const colorControls = TEXTBOX_COLOR_OPTIONS.map(
+          ({ value, label }) => `
+      <button
+        type="button"
+        class="textbox-color-swatch"
+        data-color="${value}"
+        aria-pressed="false"
+      >
+        <span class="sr-only">${label}</span>
+      </button>
+    `,
+        ).join("");
+        textbox.dataset.color = DEFAULT_TEXTBOX_COLOR;
         textbox.innerHTML = `
     <button type="button" class="textbox-remove" aria-label="Remove textbox">
-      <i class="fa-solid fa-xmark"></i>
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle">Textbox</div>
+    <div class="textbox-handle">
+      <span class="textbox-title">
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+        Textbox
+      </span>
+      <div class="textbox-color-options" role="group" aria-label="Textbox colours">
+${colorControls}
+      </div>
+    </div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
         initialiseTextbox(textbox, { onRemove });
@@ -2670,9 +1767,20 @@
 
         textbox.__deckTextboxOnRemove = onRemove;
         if (textbox.__deckTextboxInitialised) {
+          if (typeof textbox.__deckTextboxSyncColor === "function") {
+            try {
+              textbox.__deckTextboxSyncColor();
+            } catch (error) {
+              console.warn("Failed to resync textbox colour state", error);
+            }
+          }
           return textbox;
         }
         textbox.__deckTextboxInitialised = true;
+
+        if (!textbox.dataset.color) {
+          textbox.dataset.color = DEFAULT_TEXTBOX_COLOR;
+        }
 
         const removeBtn = textbox.querySelector(".textbox-remove");
         removeBtn?.addEventListener("click", () => {
@@ -2688,6 +1796,39 @@
             body.focus();
           }
         });
+
+        body?.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            body.blur();
+          }
+        });
+
+        const colorButtons = Array.from(
+          textbox.querySelectorAll(".textbox-color-swatch"),
+        );
+
+        const syncTextboxColourState = (target = textbox.dataset.color) => {
+          const chosen = target && target.trim() ? target : DEFAULT_TEXTBOX_COLOR;
+          textbox.dataset.color = chosen;
+          colorButtons.forEach((button) => {
+            const isActive = button.dataset.color === chosen;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+        };
+
+        colorButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            if (!button.dataset.color) return;
+            syncTextboxColourState(button.dataset.color);
+          });
+          button.addEventListener("pointerdown", (event) => {
+            event.stopPropagation();
+          });
+        });
+
+        syncTextboxColourState();
+        textbox.__deckTextboxSyncColor = () => syncTextboxColourState();
 
         makeDraggable(textbox);
         return textbox;
@@ -2757,6 +1898,7 @@
       function createMindMap(onRemove) {
         const container = document.createElement("section");
         container.className = "mindmap";
+        container.dataset.empty = "true";
         const branchInputId = `mindmap-branch-${++mindMapId}`;
         container.innerHTML = `
     <div class="mindmap-header">
@@ -2767,7 +1909,25 @@
       </button>
     </div>
     <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
+    <div class="mindmap-meta">
+      <span class="mindmap-count">
+        <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
+        <strong data-role="branch-count">0</strong>
+        branches
+      </span>
+      <div class="mindmap-actions">
+        <button type="button" class="mindmap-action" data-action="sort-branches">
+          <i class="fa-solid fa-arrow-down-a-z" aria-hidden="true"></i>
+          Sort A–Z
+        </button>
+        <button type="button" class="mindmap-action" data-action="copy-mindmap">
+          <i class="fa-solid fa-copy" aria-hidden="true"></i>
+          Copy summary
+        </button>
+      </div>
+    </div>
     <div class="mindmap-branches" aria-live="polite"></div>
+    <p class="mindmap-status" data-role="mindmap-status" role="status" aria-live="polite"></p>
     <form class="mindmap-form">
       <label class="sr-only" for="${branchInputId}">New branch label</label>
       <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
@@ -2792,6 +1952,15 @@
           return container;
         }
 
+        const form = container.querySelector(".mindmap-form");
+        const input = container.querySelector(".mindmap-form input");
+        const branches = container.querySelector(".mindmap-branches");
+        const statusEl = container.querySelector('[data-role="mindmap-status"]');
+        const countEl = container.querySelector('[data-role="branch-count"]');
+        const sortBtn = container.querySelector('[data-action="sort-branches"]');
+        const copyBtn = container.querySelector('[data-action="copy-mindmap"]');
+        const center = container.querySelector(".mindmap-center");
+
         container.__deckMindmapOnRemove = onRemove;
         if (!container.__deckMindmapInitialised) {
           container.__deckMindmapInitialised = true;
@@ -2804,60 +1973,354 @@
           });
         }
 
-        const form = container.querySelector(".mindmap-form");
-        const input = container.querySelector(".mindmap-form input");
-        const branches = container.querySelector(".mindmap-branches");
+        let statusTimeoutId = null;
+        const showStatus = (message, { persist = false } = {}) => {
+          if (!(statusEl instanceof HTMLElement)) {
+            return;
+          }
+          if (!message) {
+            statusEl.textContent = "";
+            statusEl.removeAttribute("data-active");
+            if (statusTimeoutId) {
+              window.clearTimeout(statusTimeoutId);
+              statusTimeoutId = null;
+            }
+            return;
+          }
+          statusEl.textContent = message;
+          statusEl.dataset.active = "true";
+          if (!persist) {
+            if (statusTimeoutId) {
+              window.clearTimeout(statusTimeoutId);
+            }
+            statusTimeoutId = window.setTimeout(() => {
+              statusEl.textContent = "";
+              statusEl.removeAttribute("data-active");
+              statusTimeoutId = null;
+            }, 4000);
+          }
+        };
+
+        const getCategoryLabel = (value) => {
+          const match = MINDMAP_BRANCH_CATEGORIES.find(
+            (category) => category.value === value,
+          );
+          return match?.label ?? (value ? value : "Idea");
+        };
+
+        const updateBranchMetrics = () => {
+          const branchList = Array.from(
+            branches?.querySelectorAll(".mindmap-branch") ?? [],
+          );
+          const total = branchList.length;
+          if (countEl instanceof HTMLElement) {
+            countEl.textContent = String(total);
+          }
+          container.dataset.empty = total === 0 ? "true" : "false";
+          branchList.forEach((branch, index) => {
+            const indexEl = branch.querySelector(".mindmap-branch-index");
+            if (indexEl instanceof HTMLElement) {
+              indexEl.textContent = String(index + 1);
+            }
+            const select = branch.querySelector(".mindmap-branch-select");
+            if (select instanceof HTMLSelectElement) {
+              if (branch.dataset.category) {
+                select.value = branch.dataset.category;
+              } else {
+                branch.dataset.category = select.value || "idea";
+              }
+            }
+            const textarea = branch.querySelector("textarea");
+            if (textarea instanceof HTMLTextAreaElement) {
+              branch.dataset.empty = textarea.value.trim() ? "false" : "true";
+            }
+          });
+        };
+
+        const buildMindmapSummary = () => {
+          const central = center?.textContent?.trim() ?? "";
+          const branchList = Array.from(
+            branches?.querySelectorAll(".mindmap-branch") ?? [],
+          );
+          const branchLines = branchList
+            .map((branch, index) => {
+              const text = branch.querySelector("textarea")?.value.trim();
+              if (!text) {
+                return null;
+              }
+              const category = branch.dataset.category ?? "idea";
+              const label = getCategoryLabel(category);
+              return `${index + 1}. [${label}] ${text}`;
+            })
+            .filter(Boolean);
+          return [central, ...branchLines].join("\n").trim();
+        };
+
+        const handleBranchUpdate = ({ type, value } = {}) => {
+          updateBranchMetrics();
+          switch (type) {
+            case "category":
+              showStatus(`Branch labelled as ${getCategoryLabel(value)}.`);
+              break;
+            case "text":
+              showStatus("Branch text updated.");
+              break;
+            case "removed":
+              showStatus("Branch removed.");
+              break;
+            case "added":
+              showStatus("Branch added.");
+              break;
+            default:
+              showStatus("Branch updated.");
+          }
+        };
+
+        const branchCallbacks = {
+          onRemove: () => handleBranchUpdate({ type: "removed" }),
+          onChange: handleBranchUpdate,
+        };
 
         if (form && !form.__deckSubmitInitialised) {
           form.__deckSubmitInitialised = true;
           form.addEventListener("submit", (event) => {
             event.preventDefault();
-            if (!branches || !input) return;
+            if (!(branches instanceof HTMLElement) || !(input instanceof HTMLInputElement)) {
+              return;
+            }
             const value = input.value.trim();
-            if (!value) return;
+            if (!value) {
+              showStatus("Enter a branch idea before adding it.");
+              return;
+            }
             const newBranch = createMindMapBranch(value);
             branches.appendChild(newBranch);
-            initialiseMindMapBranch(newBranch);
+            initialiseMindMapBranch(newBranch, branchCallbacks);
+            handleBranchUpdate({ type: "added" });
             input.value = "";
-            input.focus();
+            const textarea = newBranch.querySelector("textarea");
+            textarea?.focus();
+          });
+        }
+
+        if (center instanceof HTMLElement && !center.__deckMindmapCenterInitialised) {
+          center.__deckMindmapCenterInitialised = true;
+          let centerDebounceId = null;
+          center.addEventListener("input", () => {
+            if (centerDebounceId) {
+              window.clearTimeout(centerDebounceId);
+            }
+            centerDebounceId = window.setTimeout(() => {
+              updateBranchMetrics();
+              showStatus("Central idea updated.");
+            }, 400);
+          });
+        }
+
+        if (sortBtn && !sortBtn.__deckMindmapSortInitialised) {
+          sortBtn.__deckMindmapSortInitialised = true;
+          sortBtn.addEventListener("click", () => {
+            if (!(branches instanceof HTMLElement)) {
+              return;
+            }
+            const branchList = Array.from(
+              branches.querySelectorAll(".mindmap-branch"),
+            );
+            if (branchList.length <= 1) {
+              showStatus("Add at least two branches to sort them.");
+              return;
+            }
+            branchList
+              .sort((a, b) => {
+                const textA =
+                  a.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
+                const textB =
+                  b.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
+                return textA.localeCompare(textB, undefined, {
+                  sensitivity: "base",
+                });
+              })
+              .forEach((branch) => branches.appendChild(branch));
+            updateBranchMetrics();
+            showStatus("Branches sorted A to Z.");
+          });
+        }
+
+        if (copyBtn && !copyBtn.__deckMindmapCopyInitialised) {
+          copyBtn.__deckMindmapCopyInitialised = true;
+          copyBtn.addEventListener("click", async () => {
+            if (!(branches instanceof HTMLElement)) {
+              return;
+            }
+            updateBranchMetrics();
+            const summary = buildMindmapSummary();
+            if (!summary) {
+              showStatus(
+                "Add at least one branch or some text before copying a summary.",
+                { persist: true },
+              );
+              return;
+            }
+            const successMessage = "Mind map summary copied to clipboard.";
+            try {
+              if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(summary);
+                showStatus(successMessage);
+                return;
+              }
+              throw new Error("Clipboard API unavailable");
+            } catch (error) {
+              try {
+                const helper = document.createElement("textarea");
+                helper.value = summary;
+                helper.setAttribute("readonly", "");
+                helper.style.position = "absolute";
+                helper.style.left = "-9999px";
+                document.body.appendChild(helper);
+                helper.select();
+                document.execCommand("copy");
+                document.body.removeChild(helper);
+                showStatus(successMessage);
+              } catch (fallbackError) {
+                console.error("Failed to copy mind map summary", fallbackError);
+                showStatus(
+                  "Unable to copy automatically. Select the text manually to copy.",
+                  { persist: true },
+                );
+              }
+            }
           });
         }
 
         container
           .querySelectorAll(".mindmap-branch")
-          .forEach((branch) => initialiseMindMapBranch(branch));
+          .forEach((branch) => initialiseMindMapBranch(branch, branchCallbacks));
+
+        updateBranchMetrics();
 
         return container;
       }
 
-      function createMindMapBranch(text) {
+      function createMindMapBranch(text, category = "idea") {
         const branch = document.createElement("div");
         branch.className = "mindmap-branch";
+        branch.dataset.category = category;
+
+        const header = document.createElement("div");
+        header.className = "mindmap-branch-header";
+
+        const indexBadge = document.createElement("span");
+        indexBadge.className = "mindmap-branch-index";
+        indexBadge.setAttribute("aria-hidden", "true");
+
+        const select = document.createElement("select");
+        select.className = "mindmap-branch-select";
+        select.setAttribute("aria-label", "Branch category");
+        MINDMAP_BRANCH_CATEGORIES.forEach(({ value, label }) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          select.append(option);
+        });
+        select.value = category;
+
         const textarea = document.createElement("textarea");
         textarea.value = text;
-        textarea.setAttribute("aria-label", "Mind map branch");
+        textarea.placeholder = "Add supporting detail...";
+        textarea.setAttribute("aria-label", "Mind map branch text");
+
+        const actions = document.createElement("div");
+        actions.className = "mindmap-branch-actions";
+
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.className = "branch-remove";
-        removeBtn.textContent = "Remove";
-        branch.append(textarea, removeBtn);
-        initialiseMindMapBranch(branch);
+        const removeIcon = document.createElement("i");
+        removeIcon.className = "fa-solid fa-circle-xmark";
+        removeIcon.setAttribute("aria-hidden", "true");
+        const removeLabel = document.createElement("span");
+        removeLabel.textContent = "Remove";
+        removeBtn.append(removeIcon, removeLabel);
+        actions.append(removeBtn);
+
+        header.append(indexBadge, select);
+        branch.append(header, textarea, actions);
+
         return branch;
       }
 
-      function initialiseMindMapBranch(branch) {
+      function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
         if (!(branch instanceof HTMLElement)) {
           return branch;
         }
 
+        branch.__deckMindmapBranchOnRemove = onRemove;
+        branch.__deckMindmapBranchOnChange = onChange;
         if (branch.__deckMindmapBranchInitialised) {
+          if (typeof branch.__deckMindmapBranchSync === "function") {
+            try {
+              branch.__deckMindmapBranchSync();
+            } catch (error) {
+              console.warn("Failed to resync mind map branch state", error);
+            }
+          }
           return branch;
         }
         branch.__deckMindmapBranchInitialised = true;
+
+        if (!branch.dataset.category) {
+          const preset = branch.querySelector(".mindmap-branch-select");
+          branch.dataset.category =
+            preset instanceof HTMLSelectElement ? preset.value || "idea" : "idea";
+        }
+
+        const textarea = branch.querySelector("textarea");
+        const select = branch.querySelector(".mindmap-branch-select");
         const removeBtn = branch.querySelector(".branch-remove");
+
+        const syncBranchState = () => {
+          if (select instanceof HTMLSelectElement) {
+            if (branch.dataset.category) {
+              select.value = branch.dataset.category;
+            } else {
+              branch.dataset.category = select.value || "idea";
+            }
+          }
+          if (textarea instanceof HTMLTextAreaElement) {
+            branch.dataset.empty = textarea.value.trim() ? "false" : "true";
+          }
+        };
+
+        branch.__deckMindmapBranchSync = syncBranchState;
+        syncBranchState();
+
+        select?.addEventListener("change", () => {
+          if (!(select instanceof HTMLSelectElement)) return;
+          const value = select.value || "idea";
+          branch.dataset.category = value;
+          syncBranchState();
+          if (typeof branch.__deckMindmapBranchOnChange === "function") {
+            branch.__deckMindmapBranchOnChange({ type: "category", value });
+          }
+        });
+
+        textarea?.addEventListener("input", () => {
+          syncBranchState();
+        });
+
+        textarea?.addEventListener("blur", () => {
+          if (typeof branch.__deckMindmapBranchOnChange === "function") {
+            branch.__deckMindmapBranchOnChange({ type: "text" });
+          }
+        });
+
         removeBtn?.addEventListener("click", () => {
           branch.remove();
+          if (typeof branch.__deckMindmapBranchOnRemove === "function") {
+            branch.__deckMindmapBranchOnRemove();
+          }
         });
+
         return branch;
       }
 
