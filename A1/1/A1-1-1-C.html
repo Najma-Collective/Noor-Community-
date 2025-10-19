@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Identity &amp; Introductions | Making a Professional Introduction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://najma-collective.github.io/Noor-Community-/CSS-slides.css"
+    />
+    <style>
+      .icon-heading {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: var(--deep-forest);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .icon-heading i {
+        color: var(--primary-sage);
+      }
+
+      .title-card {
+        display: grid;
+        gap: 1.25rem;
+        padding: 1.75rem;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.92),
+          rgba(214, 225, 207, 0.75)
+        );
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        box-shadow: var(--shadow-2);
+      }
+
+      .title-card h1 {
+        margin: 0;
+        font-size: clamp(2.2rem, 4vw, 2.75rem);
+        color: var(--deep-forest);
+      }
+
+      .title-card .deck-subtitle {
+        font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+        color: rgba(53, 79, 52, 0.85);
+        margin-bottom: 0.25rem;
+      }
+
+      .title-objectives {
+        display: grid;
+        gap: 0.65rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .title-objectives li {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        color: rgba(53, 79, 52, 0.9);
+      }
+
+      .title-objectives i {
+        color: var(--primary-sage);
+        font-size: 1.1em;
+      }
+
+      .grounding-card {
+        display: grid;
+        gap: 1rem;
+        padding: clamp(1.5rem, 3vw, 2.25rem);
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-3);
+        text-align: left;
+        color: var(--deep-forest);
+      }
+
+      .grounding-card p {
+        margin: 0;
+        font-size: clamp(1.1rem, 2.3vw, 1.35rem);
+        line-height: 1.4;
+      }
+
+      .image-duo {
+        display: grid;
+        gap: 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .image-duo figure {
+        margin: 0;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow-2);
+        display: grid;
+      }
+
+      .image-duo img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+      }
+
+      .image-duo figcaption {
+        padding: 0.9rem 1.1rem;
+        font-weight: 700;
+        color: var(--deep-forest);
+        background: rgba(255, 255, 255, 0.8);
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .dialogue-order {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .order-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.9rem 1.1rem;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: var(--radius);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+      }
+
+      .order-badge {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        font-weight: 700;
+        background: rgba(156, 175, 136, 0.25);
+        color: var(--deep-forest);
+        font-size: 1.05rem;
+      }
+
+      .order-drop-zone {
+        width: 100%;
+        min-height: 52px;
+        justify-content: flex-start;
+        padding-inline: 1rem;
+        text-align: left;
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .order-drop-zone:empty::after {
+        content: attr(data-placeholder);
+        color: rgba(53, 79, 52, 0.55);
+        font-weight: 500;
+      }
+
+      .mini-case-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      .mini-case-grid figure {
+        margin: 0;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-2);
+      }
+
+      .mini-case-grid img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+      }
+
+      .inline-input {
+        display: inline-block;
+        min-width: 3.5rem;
+        border: 0;
+        border-bottom: 2px solid rgba(122, 132, 113, 0.45);
+        background: transparent;
+        text-align: center;
+        font-weight: 600;
+        color: var(--deep-forest);
+        padding: 0.15rem 0.35rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .inline-input::placeholder {
+        color: rgba(53, 79, 52, 0.45);
+        font-weight: 500;
+      }
+
+      .inline-input:focus {
+        outline: none;
+        border-color: var(--primary-sage);
+        box-shadow: 0 2px 0 0 rgba(156, 175, 136, 0.45);
+      }
+
+      .text-field {
+        width: 100%;
+        border: 1px solid rgba(122, 132, 113, 0.4);
+        border-radius: var(--radius-sm);
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--deep-forest);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .text-field::placeholder {
+        color: rgba(53, 79, 52, 0.5);
+      }
+
+      .text-field:focus {
+        outline: none;
+        border-color: var(--primary-sage);
+        box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.25);
+      }
+
+      .introduction-sort {
+        display: grid;
+        gap: 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .intro-column {
+        display: grid;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        border-radius: var(--radius);
+        padding: 1rem;
+        box-shadow: var(--shadow-1);
+      }
+
+      .intro-column h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--deep-forest);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .drop-column {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .drop-chip {
+        justify-content: flex-start;
+        padding: 0.65rem 0.85rem;
+        min-height: 48px;
+        border-radius: var(--radius-sm);
+      }
+
+      .drop-chip:empty::after {
+        content: attr(data-placeholder);
+        color: rgba(53, 79, 52, 0.5);
+        font-weight: 500;
+      }
+
+      .response-list {
+        display: grid;
+        gap: 0.9rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .response-item {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .response-item label {
+        font-weight: 600;
+        color: rgba(53, 79, 52, 0.85);
+      }
+
+      .teacher-note {
+        display: flex;
+        gap: 0.65rem;
+        align-items: flex-start;
+        font-size: 0.95rem;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+      }
+
+      .teacher-note i {
+        margin-top: 0.2rem;
+      }
+
+      .role-card-grid {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .role-card {
+        display: grid;
+        gap: 0.6rem;
+        padding: 1.1rem 1.25rem;
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-1);
+      }
+
+      .role-card h3 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.05rem;
+        color: var(--deep-forest);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .scenario-card {
+        display: grid;
+        gap: 0.85rem;
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(122, 132, 113, 0.2);
+        box-shadow: var(--shadow-2);
+      }
+
+      .homework-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .reflection-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (max-width: 720px) {
+        .order-card {
+          grid-template-columns: 1fr;
+          text-align: left;
+        }
+
+        .order-badge {
+          justify-self: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling" style="color: var(--primary-sage)" aria-hidden="true"></i>
+          <span>Noor Community · A1 Lesson</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 20</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import" aria-hidden="true"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">Apply</button>
+            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">Clear</button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <!-- Slide 1: Title Slide (Full Bleed) -->
+          <div class="slide-stage">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/8938287/pexels-photo-8938287.jpeg"
+                alt="Professionals greeting each other in a bright office"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(32, 52, 43, 0.35)"></div>
+            <div class="slide-inner">
+              <div class="bg-content">
+                <div class="overlay-card">
+                  <span class="pill overlay-pill"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Future Forward Tech</span>
+                  <h1>Personal Identity &amp; Introductions</h1>
+                  <p class="deck-subtitle">Making a Professional Introduction</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Grounding Activity -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/12383581/pexels-photo-12383581.jpeg"
+                alt="Glass office building reflecting a calm blue sky"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(12, 28, 22, 0.45)"></div>
+            <div class="slide-inner" style="justify-content: center">
+              <div class="bg-content centered">
+                <div class="grounding-card">
+                  <span class="pill"><i class="fa-solid fa-wind" aria-hidden="true"></i> Grounding Activity</span>
+                  <p>Breathe in slowly through your nose for a count of four.</p>
+                  <p>Hold your breath for a count of four.</p>
+                  <p>Breathe out slowly through your mouth for a count of six.</p>
+                  <p>Arrive in the space ready for a productive session.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Lesson Aims -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Today's Aims</span>
+              <h2>By the end of this lesson, you will be able to...</h2>
+              <div class="card">
+                <ul class="instruction-list">
+                  <li>
+                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    <div>Use common greetings and introductions.</div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    <div>State your name and professional role.</div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    <div>Use sentence stress to highlight key information.</div>
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-flag" aria-hidden="true"></i>
+                    <div>Introduce yourself confidently to a new colleague at a company event.</div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Pre-task A Activating Schemata -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/3184298/pexels-photo-3184298.jpeg"
+                alt="Business professionals greeting each other with a handshake"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(12, 28, 22, 0.45)"></div>
+            <div class="slide-inner">
+              <div class="bg-content">
+                <div class="overlay-card" style="display: grid; gap: 1.25rem;">
+                  <span class="pill overlay-pill"><i class="fa-solid fa-comments" aria-hidden="true"></i> Pre-task A · 5 minutes</span>
+                  <h2>Welcome to Future Forward Tech!</h2>
+                  <p>Look at the picture of the professional event. Discuss with a partner:</p>
+                  <ul class="instruction-list" style="color: #fdfbf5;">
+                    <li><i class="fa-solid fa-user-group" aria-hidden="true"></i><div>What are the people doing?</div></li>
+                    <li><i class="fa-solid fa-language" aria-hidden="true"></i><div>What English words might they say when they first meet?</div></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Pre-task B Restrictive Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Pre-task B · Restrictive Practice · 7 minutes</span>
+              <h2>The Model Introduction</h2>
+              <div class="card" data-activity="token-drop" style="display: grid; gap: 1.5rem;">
+                <p>
+                  <i class="fa-solid fa-arrow-pointer" aria-hidden="true"></i>
+                  <span>Click and drop the sentences into the correct order to rebuild the dialogue between two new colleagues.</span>
+                </p>
+                <div class="dialogue-order" role="group" aria-label="Dialogue order drop zones">
+                  <div class="order-card">
+                    <span class="order-badge">1</span>
+                    <button
+                      type="button"
+                      class="drop-zone order-drop-zone placeholder"
+                      data-answer="Hello. I'm Ahmed, a new software developer. What's your name?"
+                      data-placeholder="Select the first sentence"
+                      aria-label="Drop zone for sentence 1"
+                    ></button>
+                  </div>
+                  <div class="order-card">
+                    <span class="order-badge">2</span>
+                    <button
+                      type="button"
+                      class="drop-zone order-drop-zone placeholder"
+                      data-answer="Hi Ahmed. My name is Fatima. I'm in the marketing team. Nice to meet you."
+                      data-placeholder="Select the second sentence"
+                      aria-label="Drop zone for sentence 2"
+                    ></button>
+                  </div>
+                  <div class="order-card">
+                    <span class="order-badge">3</span>
+                    <button
+                      type="button"
+                      class="drop-zone order-drop-zone placeholder"
+                      data-answer="Nice to meet you, too."
+                      data-placeholder="Select the final sentence"
+                      aria-label="Drop zone for sentence 3"
+                    ></button>
+                  </div>
+                </div>
+                <div class="token-bank" aria-label="Sentence bank for dialogue order">
+                  <button type="button" class="click-token" data-value="Hi Ahmed. My name is Fatima. I'm in the marketing team. Nice to meet you.">
+                    Hi Ahmed. My name is Fatima. I'm in the marketing team. Nice to meet you.
+                  </button>
+                  <button type="button" class="click-token" data-value="Nice to meet you, too.">
+                    Nice to meet you, too.
+                  </button>
+                  <button type="button" class="click-token" data-value="Hello. I'm Ahmed, a new software developer. What's your name?">
+                    Hello. I'm Ahmed, a new software developer. What's your name?
+                  </button>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">
+                    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                    Reset
+                  </button>
+                  <button class="activity-btn" type="button" data-action="check">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    Check
+                  </button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Pre-task B Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Pre-task B · Semi-controlled Practice · 7 minutes</span>
+              <h2>Practice the Model</h2>
+              <div class="card">
+                <p>Complete the dialogue with a partner. Then read the completed dialogue aloud together.</p>
+                <div class="card" style="background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(122, 132, 113, 0.18); display: grid; gap: 0.75rem;">
+                  <p>
+                    <strong>A:</strong>
+                    Hi.
+                    <input
+                      id="dialogue-blank-1"
+                      class="inline-input"
+                      type="text"
+                      inputmode="text"
+                      placeholder="Type"
+                      aria-label="Blank 1"
+                    />
+                    name is Yousef. What's
+                    <input
+                      id="dialogue-blank-2"
+                      class="inline-input"
+                      type="text"
+                      inputmode="text"
+                      placeholder="Type"
+                      aria-label="Blank 2"
+                    />
+                    name?
+                  </p>
+                  <p>
+                    <strong>B:</strong>
+                    Hello Yousef.
+                    <input
+                      id="dialogue-blank-3"
+                      class="inline-input"
+                      type="text"
+                      inputmode="text"
+                      placeholder="Type"
+                      aria-label="Blank 3"
+                    />
+                    Sara. Nice to
+                    <input
+                      id="dialogue-blank-4"
+                      class="inline-input"
+                      type="text"
+                      inputmode="text"
+                      placeholder="Type"
+                      aria-label="Blank 4"
+                    />
+                    you.
+                  </p>
+                  <p class="answer-key"><i class="fa-solid fa-key" aria-hidden="true"></i> Key: my, your, I'm, meet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Pre-task B Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-user-group" aria-hidden="true"></i> Pre-task B · Freer Practice · 6 minutes</span>
+              <h2>Mini Case Study</h2>
+              <div class="card">
+                <div class="mini-case-grid">
+                  <figure>
+                    <img
+                      data-remote-src="https://images.pexels.com/photos/8938285/pexels-photo-8938285.jpeg"
+                      alt="Two professionals smiling and talking at a modern office event"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>
+                      Imagine these are two new employees at Future Forward Tech.
+                    </figcaption>
+                  </figure>
+                  <div style="display: grid; gap: 1rem; align-content: start;">
+                    <p>
+                      <i class="fa-solid fa-user-pen" aria-hidden="true"></i>
+                      Work in pairs. One person is in Sales, the other is in HR.
+                    </p>
+                    <p>
+                      <i class="fa-solid fa-message" aria-hidden="true"></i>
+                      Create a short two-line dialogue for their first meeting.
+                    </p>
+                    <p>
+                      <i class="fa-solid fa-bullhorn" aria-hidden="true"></i>
+                      Be ready to share your dialogue with the class.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Pre-task C Restrictive Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-table-cells" aria-hidden="true"></i> Pre-task C · Restrictive Practice · 7 minutes</span>
+              <h2>Building a Professional Introduction</h2>
+              <div class="card" data-activity="token-drop">
+                <p>Click each phrase and drop it into the correct part of the professional introduction.</p>
+                <div class="introduction-sort" role="group" aria-label="Introduction structure categories">
+                  <div class="intro-column">
+                    <h3><i class="fa-solid fa-hand-wave" aria-hidden="true"></i> Greeting</h3>
+                    <div class="drop-column">
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="Hello"
+                        data-placeholder="Add a greeting"
+                        aria-label="Greeting slot 1"
+                      ></button>
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="Hi"
+                        data-placeholder="Add another greeting"
+                        aria-label="Greeting slot 2"
+                      ></button>
+                    </div>
+                  </div>
+                  <div class="intro-column">
+                    <h3><i class="fa-solid fa-id-badge" aria-hidden="true"></i> Giving Your Name</h3>
+                    <div class="drop-column">
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="My name is Fatima"
+                        data-placeholder="Add a name phrase"
+                        aria-label="Name slot 1"
+                      ></button>
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="I'm Ahmed"
+                        data-placeholder="Add another name phrase"
+                        aria-label="Name slot 2"
+                      ></button>
+                    </div>
+                  </div>
+                  <div class="intro-column">
+                    <h3><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Stating Your Role</h3>
+                    <div class="drop-column">
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="I'm in the marketing team"
+                        data-placeholder="Add a role phrase"
+                        aria-label="Role slot 1"
+                      ></button>
+                      <button
+                        type="button"
+                        class="drop-zone drop-chip placeholder"
+                        data-answer="I'm a new software developer"
+                        data-placeholder="Add another role phrase"
+                        aria-label="Role slot 2"
+                      ></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="token-bank" aria-label="Phrase bank for introductions">
+                  <button type="button" class="click-token" data-value="I'm a new software developer">I'm a new software developer</button>
+                  <button type="button" class="click-token" data-value="Hello">Hello</button>
+                  <button type="button" class="click-token" data-value="My name is Fatima">My name is Fatima</button>
+                  <button type="button" class="click-token" data-value="I'm Ahmed">I'm Ahmed</button>
+                  <button type="button" class="click-token" data-value="I'm in the marketing team">I'm in the marketing team</button>
+                  <button type="button" class="click-token" data-value="Hi">Hi</button>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 9: Pre-task C Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-person-chalkboard" aria-hidden="true"></i> Pre-task C · Semi-controlled Practice · 7 minutes</span>
+              <h2>Build Your Introduction</h2>
+              <div class="card">
+                <p>Prepare your own professional introduction. Complete these sentences and invent your role if needed.</p>
+                <ul class="response-list">
+                  <li class="response-item">
+                    <label for="introduction-name">Hello, my name is...</label>
+                    <input
+                      id="introduction-name"
+                      class="text-field"
+                      type="text"
+                      inputmode="text"
+                      placeholder="Hello, my name is Lina."
+                      aria-label="Complete the sentence: Hello, my name is"
+                    />
+                  </li>
+                  <li class="response-item">
+                    <label for="introduction-role">I'm a new...</label>
+                    <input
+                      id="introduction-role"
+                      class="text-field"
+                      type="text"
+                      inputmode="text"
+                      placeholder="I'm a new UX designer."
+                      aria-label="Complete the sentence: I'm a new"
+                    />
+                  </li>
+                  <li class="response-item">
+                    <label for="introduction-team">I'm in the... team.</label>
+                    <input
+                      id="introduction-team"
+                      class="text-field"
+                      type="text"
+                      inputmode="text"
+                      placeholder="I'm in the product team."
+                      aria-label="Complete the sentence: I'm in the team"
+                    />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 10: Pre-task C Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-users" aria-hidden="true"></i> Pre-task C · Freer Practice · 6 minutes</span>
+              <h2>Speed Networking Practice</h2>
+              <div class="card">
+                <p>Let's practice introducing ourselves. When the teacher calls your name, give your full introduction using the structure we learned.</p>
+                <div class="card" style="display: grid; gap: 0.75rem; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(122, 132, 113, 0.18);">
+                  <p><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Teacher prompt: "Hi everyone. My name is [Teacher's Name]. Who would like to start?"</p>
+                  <p><strong>Example reply:</strong> "Hi everyone. My name is Lina, and I'm a new project manager."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 11: Pre-task D Restrictive Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> Pre-task D · Restrictive Practice · 7 minutes</span>
+              <h2>Pronunciation: Sentence Stress</h2>
+              <div class="card" data-activity="matching">
+                <p>The teacher will read each sentence aloud. Match every sentence to its stress pattern. O = stressed syllable, o = unstressed syllable.</p>
+                <div class="matching-card" style="display: grid; gap: 1rem;">
+                  <div class="matching-option" data-correct="o O o O o">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+                      <strong>My name is Ahmed.</strong>
+                    </div>
+                    <label class="sr-only" for="pattern-select-1">Stress pattern for "My name is Ahmed"</label>
+                    <select id="pattern-select-1">
+                      <option value="">Select pattern...</option>
+                      <option>o O o o O o o o o O o o o</option>
+                      <option>o O o O o</option>
+                      <option>o O O</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-correct="o O o o O o o o o O o o o">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+                      <strong>I'm a new software developer.</strong>
+                    </div>
+                    <label class="sr-only" for="pattern-select-2">Stress pattern for "I'm a new software developer"</label>
+                    <select id="pattern-select-2">
+                      <option value="">Select pattern...</option>
+                      <option>o O o o O o o o o O o o o</option>
+                      <option>o O o O o</option>
+                      <option>o O O</option>
+                    </select>
+                  </div>
+                  <div class="matching-option" data-correct="o O O">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+                      <strong>What's your name?</strong>
+                    </div>
+                    <label class="sr-only" for="pattern-select-3">Stress pattern for "What's your name?"</label>
+                    <select id="pattern-select-3">
+                      <option value="">Select pattern...</option>
+                      <option>o O O</option>
+                      <option>o O o o O o o o o O o o o</option>
+                      <option>o O o O o</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button class="activity-btn" type="button" data-action="check">Check</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 12: Pre-task D Semi-controlled Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-ear-listen" aria-hidden="true"></i> Pre-task D · Semi-controlled Practice · 7 minutes</span>
+              <h2>Listen and Repeat Drill</h2>
+              <div class="card">
+                <p>Listen to the teacher and repeat each line. Focus on stressing the words in bold.</p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-volume-high" aria-hidden="true"></i><div><strong>My</strong> name is Yousef.</div></li>
+                  <li><i class="fa-solid fa-volume-high" aria-hidden="true"></i><div>I'm in the <strong>marketing</strong> team.</div></li>
+                  <li><i class="fa-solid fa-volume-high" aria-hidden="true"></i><div><strong>What's</strong> your name?</div></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 13: Pre-task D Freer Practice -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i> Pre-task D · Freer Practice · 6 minutes</span>
+              <h2>Ask and Answer with Stress</h2>
+              <div class="card">
+                <p>The teacher will ask 3-4 students, "Hello! What's your name?" When you answer, use the correct stress pattern.</p>
+                <p><strong>Student reply structure:</strong> "My name is [Student's Name]." Add your role if you can!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 14: Task Introduction -->
+          <div class="slide-stage hidden full-width-bg">
+            <div class="bg-media">
+              <img
+                data-remote-src="https://images.pexels.com/photos/8938293/pexels-photo-8938293.jpeg"
+                alt="Colleagues collaborating in a modern office meeting"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="img-overlay" style="background: rgba(18, 39, 31, 0.45)"></div>
+            <div class="slide-inner" style="justify-content: center;">
+              <div class="bg-content centered">
+                <div class="overlay-card centered" style="padding: 2.5rem 3rem;">
+                  <span class="pill overlay-pill"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Main Task</span>
+                  <h1 style="text-align: center;">Task</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 15: Task Preparation -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-brain" aria-hidden="true"></i> Task Preparation</span>
+              <h2>Prepare for the Networking Event</h2>
+              <div class="scenario-card">
+                <p>You are a new employee at <strong>Future Forward Tech</strong>, a leading technology company in Ramallah.</p>
+                <p>Today is the company-wide welcome event for all new hires. Your goal is to network and meet your new colleagues.</p>
+                <p>You see someone you don't know. Go and introduce yourself.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 16: Task -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Task</span>
+              <h2>Role-Play: Company Welcome Event</h2>
+              <div class="card">
+                <p>You will be moved into breakout rooms. Use the role cards to have a conversation. Find out your partner's name and role. Remember to use the correct greetings, introductions, and sentence stress.</p>
+                <div class="role-card-grid">
+                  <div class="role-card">
+                    <h3><i class="fa-solid fa-id-badge" aria-hidden="true"></i> Role Card A</h3>
+                    <p><strong>Role:</strong> New Software Developer</p>
+                    <p><strong>Task:</strong> It's your first day. Introduce yourself (name and role), and find out your colleague's name and role. Say, "Nice to meet you."</p>
+                  </div>
+                  <div class="role-card">
+                    <h3><i class="fa-solid fa-address-card" aria-hidden="true"></i> Role Card B</h3>
+                    <p><strong>Role:</strong> New Marketing Specialist</p>
+                    <p><strong>Task:</strong> It's your first day. Respond with your name and role, and say, "Nice to meet you, too."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 17: Reporting -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-people-group" aria-hidden="true"></i> Reporting</span>
+              <h2>Debrief with Your Team Lead</h2>
+              <div class="card">
+                <p>Sara, your team lead, couldn't attend the event. She asks: <em>"So, who did you meet?"</em></p>
+                <p>Take turns introducing the colleague you met in the breakout room.</p>
+                <p><strong>Sentence frame:</strong> "I met [Partner's Name]. They are a new [Partner's Role]."</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 18: Homework Practice · Grammar -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-house-laptop" aria-hidden="true"></i> Homework Practice</span>
+              <h2>Homework Practice · Grammar Check</h2>
+              <div class="card" data-activity="mc-grammar">
+                <h3 class="icon-heading"><i class="fa-solid fa-spell-check" aria-hidden="true"></i><span>Choose the correct word</span></h3>
+                <p>Pick the correct option to complete each sentence.</p>
+                <div class="quiz-card" data-answer="am">
+                  <p>1. I ___ a new engineer.</p>
+                  <select>
+                    <option value="">Select answer...</option>
+                    <option>are</option>
+                    <option>am</option>
+                    <option>is</option>
+                  </select>
+                </div>
+                <div class="quiz-card" data-answer="are">
+                  <p>2. Where ___ you from?</p>
+                  <select>
+                    <option value="">Select answer...</option>
+                    <option>is</option>
+                    <option>are</option>
+                    <option>am</option>
+                  </select>
+                </div>
+                <div class="quiz-card" data-answer="is">
+                  <p>3. She ___ in the HR team.</p>
+                  <select>
+                    <option value="">Select answer...</option>
+                    <option>are</option>
+                    <option>is</option>
+                    <option>am</option>
+                  </select>
+                </div>
+                <div class="quiz-card" data-answer="are">
+                  <p>4. You ___ the new designer, right?</p>
+                  <select>
+                    <option value="">Select answer...</option>
+                    <option>are</option>
+                    <option>is</option>
+                    <option>am</option>
+                  </select>
+                </div>
+                <div class="quiz-card" data-answer="am">
+                  <p>5. I ___ happy to join the team.</p>
+                  <select>
+                    <option value="">Select answer...</option>
+                    <option>am</option>
+                    <option>are</option>
+                    <option>is</option>
+                  </select>
+                </div>
+                <div class="activity-actions">
+                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                </div>
+                <div class="feedback-msg" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 19: Homework Practice · Build the Introduction -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Homework Practice</span>
+              <h2>Homework Practice · Build the Introduction</h2>
+              <div class="card" style="display: grid; gap: 1.25rem;">
+                <p>Use the prompts to write a confident professional introduction.</p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-hand-wave" aria-hidden="true"></i><div>Start with a greeting.</div></li>
+                  <li><i class="fa-solid fa-id-card" aria-hidden="true"></i><div>Share your name and your new role.</div></li>
+                  <li><i class="fa-solid fa-people-arrows" aria-hidden="true"></i><div>Mention the team or department you will join.</div></li>
+                </ul>
+                <div style="display: grid; gap: 0.5rem;">
+                  <label for="homework-introduction" class="sr-only">Write your professional introduction</label>
+                  <textarea
+                    id="homework-introduction"
+                    class="text-field"
+                    rows="4"
+                    placeholder="Hi, my name is Omar. I'm a new software developer in the product team. It's great to meet you."
+                    aria-label="Type your professional introduction"
+                  ></textarea>
+                </div>
+                <p style="margin: 0; font-size: 0.95rem; color: rgba(53, 79, 52, 0.75);">
+                  <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                  Practise saying it aloud to build your confidence for the next class.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 20: Reflection -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Reflection</span>
+              <h2>What? So What? Now What?</h2>
+              <div class="card reflection-grid">
+                <p><strong>What?</strong> What was the main skill we practiced today?</p>
+                <p><strong>So What?</strong> Why is this skill important for your professional life?</p>
+                <p><strong>Now What?</strong> How will you use this skill outside of class?</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+    <script type="module">
+      import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+      setupInteractiveDeck();
+    </script>
+  </body>
+</html>
