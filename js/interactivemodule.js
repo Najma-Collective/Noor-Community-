@@ -1848,6 +1848,69 @@ function setupMcGrammar(activityEl) {
   });
 }
 
+function setupSingleSelectQuiz(root = document) {
+  const quizGroups = Array.from(
+    root?.querySelectorAll?.(".quiz-options[data-quiz-id]") ?? [],
+  );
+
+  quizGroups.forEach((group) => {
+    const options = Array.from(group.querySelectorAll(".quiz-option"));
+    if (!options.length) {
+      return;
+    }
+
+    const quizContainer = group.closest(".quiz-container");
+    const feedback = quizContainer?.querySelector(".quiz-feedback");
+
+    const setFeedbackVisible = (isVisible) => {
+      if (!feedback) {
+        return;
+      }
+      feedback.classList.toggle("visible", Boolean(isVisible));
+      if (isVisible) {
+        feedback.removeAttribute("aria-hidden");
+      } else {
+        feedback.setAttribute("aria-hidden", "true");
+      }
+    };
+
+    const handleSelect = (option) => {
+      options.forEach((opt) => {
+        opt.classList.remove("correct", "incorrect");
+        opt.setAttribute("aria-pressed", "false");
+      });
+
+      const isCorrect = option.dataset.correct === "true";
+      option.classList.add(isCorrect ? "correct" : "incorrect");
+      option.setAttribute("aria-pressed", "true");
+
+      setFeedbackVisible(isCorrect);
+    };
+
+    setFeedbackVisible(false);
+
+    options.forEach((option) => {
+      if (option.dataset.quizBound === "true") {
+        return;
+      }
+      option.dataset.quizBound = "true";
+      option.setAttribute("role", "button");
+      if (!option.hasAttribute("tabindex")) {
+        option.setAttribute("tabindex", "0");
+      }
+      option.setAttribute("aria-pressed", "false");
+
+      option.addEventListener("click", () => handleSelect(option));
+      option.addEventListener("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          handleSelect(option);
+        }
+      });
+    });
+  });
+}
+
 function setupMcGrammarRadio(container) {
   const questions = container.querySelectorAll(".quiz-card");
   const checkBtn = container.querySelector('[data-action="check"]');
@@ -2071,6 +2134,7 @@ function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="stress-mark"]')
     .forEach((el) => setupStressMark(el));
+  setupSingleSelectQuiz();
 }
 
 async function initialiseDeck() {
@@ -2108,7 +2172,46 @@ async function initialiseDeck() {
 }
 
 
-    
+function changeRound(targetId, direction = 1) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  let container = null;
+  if (targetId instanceof HTMLElement) {
+    container = targetId;
+  } else if (typeof targetId === "string" && targetId) {
+    container = document.getElementById(targetId);
+    if (!container && typeof CSS !== "undefined" && CSS.escape) {
+      container = document.querySelector(`#${CSS.escape(targetId)}`);
+    }
+  }
+
+  if (!container) {
+    return;
+  }
+
+  const rounds = Array.from(container.querySelectorAll(".round"));
+  if (!rounds.length) {
+    return;
+  }
+
+  const currentIndex = rounds.findIndex((round) =>
+    round.classList.contains("active"),
+  );
+  const step = Number.isFinite(Number(direction)) ? Number(direction) : 1;
+  const nextIndex =
+    currentIndex === -1
+      ? 0
+      : (currentIndex + step + rounds.length) % rounds.length;
+
+  rounds.forEach((round, index) => {
+    round.classList.toggle("active", index === nextIndex);
+  });
+}
+
+
+
 export async function setupInteractiveDeck({
   root = document,
   stageViewportSelector = ".stage-viewport",
@@ -2173,4 +2276,5 @@ export async function setupInteractiveDeck({
 
 if (typeof window !== "undefined") {
   window.setupInteractiveDeck = setupInteractiveDeck;
+  window.changeRound = changeRound;
 }
