@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Class Activity: Introductions</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* [COPIED CSS FROM PROMPT GOES HERE] */
+        :root {
+          --primary-sage: #7a8471;
+          --secondary-sage: #9caf88;
+          --tertiary-sage: #b8c5a6;
+          --warm-cream: #f8f6f0;
+          --soft-white: #fefcf7;
+          --forest-shadow: #5a6b52;
+          --ink: #2f3a2b;
+          --ink-muted: #5a6b52;
+          --border-sage: rgba(122, 132, 113, 0.2);
+          --hover-sage: rgba(156, 175, 136, 0.15);
+          --deep-forest: #3e4a3a;
+          --primary-forest: #3e4a3a;
+          --font-display: "Questrial", system-ui, sans-serif;
+          --font-body: "Nunito", system-ui, sans-serif;
+          --font-size-adjustment: 0pt;
+          --step--1: calc(
+            clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment)
+          );
+          --step-0: calc(
+            clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment)
+          );
+          --step-1: calc(
+            clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment)
+          );
+          --step-2: calc(
+            clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment)
+          );
+          --step-3: calc(
+            clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment)
+          );
+          --space-3: 0.75rem;
+          --space-4: 1rem;
+          --space-5: 1.25rem;
+          --space-6: 1.5rem;
+          --space-7: 2rem;
+          --radius: 16px;
+          --radius-lg: 20px;
+          --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+          --shadow-2: 0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
+          --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
+          --toolbar-h: 72px;
+          --workspace-pad: 24px;
+          --stage-pad: clamp(32px, 5vw, 64px);
+          --stage-radius: 18px;
+          --slide-aspect-w: 16;
+          --slide-aspect-h: 9;
+        }
+
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+        }
+
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+          min-height: 100dvh;
+          color: var(--forest-shadow);
+          background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+          font-family: var(--font-body);
+          font-size: var(--step-0);
+          line-height: 1.6;
+          -webkit-font-smoothing: antialiased;
+          overflow: auto;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: var(--shadow-1) !important;
+        }
+
+        .deck-app {
+          display: grid;
+          grid-template-rows: var(--toolbar-h) 1fr;
+          min-height: 100dvh;
+        }
+
+        .deck-toolbar {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          height: var(--toolbar-h);
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          align-items: center;
+          gap: var(--space-4);
+          padding: 0 max(24px, 4vw);
+          background: color-mix(in srgb, var(--soft-white) 85%, transparent);
+          border-bottom: 1px solid var(--border-sage);
+          box-shadow: 0 8px 20px rgba(34, 41, 32, 0.05);
+          backdrop-filter: blur(8px) saturate(1.1);
+        }
+
+        .toolbar-brand {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-family: var(--font-display);
+          font-size: calc(1.05rem + var(--font-size-adjustment));
+          color: var(--forest-shadow);
+        }
+
+        .toolbar-brand span {
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+
+        .slide-counter {
+          font-family: var(--font-display);
+          color: var(--ink-muted);
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          justify-self: center;
+        }
+
+        .deck-workspace {
+          height: calc(100dvh - var(--toolbar-h));
+          padding: var(--workspace-pad);
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          background:
+            radial-gradient(
+              900px 600px at 20% 0%,
+              rgba(156, 175, 136, 0.08) 0%,
+              transparent 70%
+            ),
+            radial-gradient(
+              800px 700px at 80% 100%,
+              rgba(90, 107, 82, 0.06) 0%,
+              transparent 70%
+            );
+        }
+
+        .stage-viewport {
+          position: relative;
+          display: grid;
+          place-items: center;
+        }
+
+        .slide-stage {
+          position: relative;
+          border-radius: var(--stage-radius);
+          background-color: var(--soft-white);
+          box-shadow: var(--shadow-glow), 0 24px 60px rgba(34, 41, 32, 0.1);
+          aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
+          width: min(
+            calc(
+              (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+                (var(--slide-aspect-w) / var(--slide-aspect-h))
+            ),
+            calc(100vw - (var(--workspace-pad) * 2))
+          );
+          max-width: 100%;
+          overflow: hidden auto;
+          outline: 1px solid var(--border-sage);
+          transition: opacity 300ms ease-in-out;
+        }
+
+        .slide-stage.hidden {
+          position: absolute;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .slide-inner {
+          position: absolute;
+          inset: 0;
+          padding: var(--stage-pad);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: stretch;
+          gap: 1.25rem;
+          overflow-y: auto;
+          scrollbar-gutter: stable both-edges;
+        }
+        
+        .slide-inner.center-content {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.35rem 0.85rem;
+          border-radius: 999px;
+          background: rgba(122, 132, 113, 0.16);
+          font-size: calc(0.85rem + var(--font-size-adjustment));
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: var(--deep-forest);
+          width: fit-content;
+        }
+        
+        .dialogue-box {
+            background: var(--warm-cream);
+            padding: var(--space-5);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--secondary-sage);
+            text-align: left;
+        }
+        
+        .dialogue-box p {
+            margin: 0;
+            padding: 0;
+        }
+        .dialogue-box p + p {
+            margin-top: 0.5rem;
+        }
+        
+        .dialogue-box strong {
+            color: var(--primary-sage);
+        }
+
+        h1, h2, h3 {
+          font-family: var(--font-display);
+          margin: 0;
+          color: var(--ink);
+        }
+
+        h1 { font-size: var(--step-3); }
+        h2 { font-size: var(--step-2); }
+        h3 { font-size: var(--step-1); }
+        p { margin: 0; }
+
+        .card {
+          background: var(--soft-white);
+          padding: clamp(1.35rem, 3vw, 2rem);
+          border-radius: var(--radius);
+          border: 1px solid rgba(122, 132, 113, 0.2);
+          box-shadow: var(--shadow-1);
+          display: flex;
+          flex-direction: column;
+          gap: 0.9rem;
+        }
+
+        .deck-subtitle {
+          font-size: var(--step-1);
+          color: var(--ink-muted);
+        }
+
+        .split-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 1.5rem;
+          align-items: start;
+          width: 100%;
+        }
+
+        .activity-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .activity-btn {
+          border: none;
+          border-radius: 999px;
+          padding: 0.65rem 1.35rem;
+          font-weight: 700;
+          font-family: var(--font-body);
+          letter-spacing: 0.04em;
+          cursor: pointer;
+          background: var(--primary-sage);
+          color: #fff;
+          box-shadow: var(--shadow-1);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .activity-btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: var(--shadow-2);
+        }
+
+        .activity-btn.secondary {
+          background: var(--deep-forest);
+        }
+        
+        .activity-btn.hidden {
+            display: none;
+        }
+
+        .feedback-msg {
+          font-weight: 700;
+          letter-spacing: 0.03em;
+          min-height: 1.4em;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .feedback-msg.success { color: #2e7d32; }
+        .feedback-msg.error { color: #c62828; }
+        .feedback-msg i { font-size: 1.1em; }
+
+
+        .quiz-card {
+          border-radius: var(--radius);
+          border: 1px solid rgba(122, 132, 113, 0.2);
+          padding: 1.25rem 1.5rem;
+          background: rgba(254, 252, 247, 0.95);
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .quiz-options {
+          display: grid;
+          gap: 0.65rem;
+        }
+
+        .quiz-option {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.7rem 0.9rem;
+          border-radius: 12px;
+          background: rgba(250, 250, 248, 0.9);
+          border: 1px solid var(--border-sage);
+          cursor: pointer;
+          transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        
+        .quiz-option:has(input:checked) {
+            border-color: var(--primary-sage);
+            background-color: var(--hover-sage);
+        }
+        
+        .quiz-option.correct {
+          border-color: #2e7d32;
+          background: rgba(46, 125, 50, 0.12);
+        }
+
+        .quiz-option.incorrect {
+          border-color: #c62828;
+          background: rgba(198, 40, 40, 0.12);
+        }
+        
+        .quiz-option input[type="radio"] {
+            flex-shrink: 0;
+            width: 1.2em;
+            height: 1.2em;
+        }
+        
+        .quiz-option label {
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .matching-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .matching-option {
+          display: grid;
+          grid-template-columns: 1fr minmax(200px, 280px);
+          gap: 1rem;
+          align-items: center;
+          padding: 0.75rem 1rem;
+          border-radius: 14px;
+          border: 1px solid rgba(122, 132, 113, 0.2);
+          background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+          transition: border 0.2s ease, background 0.2s ease;
+        }
+        
+        .matching-option p {
+            font-weight: 600;
+        }
+
+        .matching-option select {
+          border-radius: 999px;
+          border: 1px solid rgba(122, 132, 113, 0.35);
+          padding: 0.55rem 1rem;
+          font-family: var(--font-body);
+          font-weight: 600;
+          font-size: var(--step--1);
+          background: var(--soft-white);
+          color: var(--forest-shadow);
+          cursor: pointer;
+        }
+        
+        .matching-option select.correct {
+          border-color: #2e7d32;
+          background: rgba(46, 125, 50, 0.12);
+        }
+
+        .matching-option select.incorrect {
+          border-color: #c62828;
+          background: rgba(198, 40, 40, 0.12);
+        }
+        
+        .gap-fill-sentence {
+            font-size: var(--step-1);
+            line-height: 2;
+        }
+        
+        .gap-fill-sentence select {
+            font-family: var(--font-body);
+            font-size: var(--step-0);
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--primary-sage);
+            background: var(--hover-sage);
+            color: var(--deep-forest);
+            margin: 0 0.2rem;
+            cursor: pointer;
+        }
+        
+        .gap-fill-sentence select.correct {
+          border-color: #2e7d32;
+          background: rgba(46, 125, 50, 0.2);
+        }
+
+        .gap-fill-sentence select.incorrect {
+          border-color: #c62828;
+          background: rgba(198, 40, 40, 0.2);
+        }
+
+
+        .slide-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          border: none;
+          background: rgba(254, 252, 247, 0.85);
+          border-radius: 50%;
+          width: 48px;
+          height: 48px;
+          display: grid;
+          place-items: center;
+          box-shadow: var(--shadow-2);
+          cursor: pointer;
+          z-index: 10;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .slide-nav:hover {
+          transform: translateY(-50%) scale(1.05);
+          box-shadow: 0 12px 32px rgba(34, 41, 32, 0.15);
+        }
+
+        .slide-nav-prev { left: -24px; }
+        .slide-nav-next { right: -24px; }
+    </style>
+</head>
+<body>
+
+    <div class="deck-app">
+        <header class="deck-toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>ELT Pre-Class</span>
+            </div>
+            <div id="slide-counter" class="slide-counter"></div>
+        </header>
+
+        <main class="deck-workspace">
+            <div class="stage-viewport">
+                
+                <!-- SLIDE 0: Welcome -->
+                <div class="slide-stage" data-slide-name="Welcome">
+                    <div class="slide-inner center-content">
+                        <div class="pill"><i class="fa-solid fa-rocket"></i> Get Ready for Your Lesson</div>
+                        <h1>Introducing Yourself</h1>
+                        <p class="deck-subtitle">This 30-minute activity will prepare you for our next class.</p>
+                        <div class="card" style="margin-top: 1rem; max-width: 700px; text-align: left;">
+                            <h3><i class="fa-solid fa-volume-high"></i> Listen to or Read the Conversation</h3>
+                            <div class="dialogue-box">
+                                <p><strong>Ahmed:</strong> Hello. I'm Ahmed. What's your name?</p>
+                                <p><strong>Fatima:</strong> Hi Ahmed. My name is Fatima. Nice to meet you.</p>
+                                <p><strong>Ahmed:</strong> Nice to meet you, too.</p>
+                            </div>
+                        </div>
+                         <div class="activity-actions">
+                            <button class="activity-btn" onclick="nextSlide()">
+                                Start Activity <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 1: Activity 1 (Multiple Choice) -->
+                <div class="slide-stage hidden" data-slide-name="Comprehension">
+                    <div class="slide-inner">
+                        <div class="split-grid">
+                            <div>
+                                <div class="pill"><i class="fa-solid fa-magnifying-glass"></i> Activity 1 of 4</div>
+                                <h2>Check Your Understanding</h2>
+                                <p class="deck-subtitle">Read the dialogue and choose the correct answer.</p>
+                                <div class="dialogue-box" style="margin-top: 1rem;">
+                                    <p><strong>Ahmed:</strong> Hello. I'm Ahmed. What's your name?</p>
+                                    <p><strong>Fatima:</strong> Hi Ahmed. My name is Fatima. Nice to meet you.</p>
+                                    <p><strong>Ahmed:</strong> Nice to meet you, too.</p>
+                                </div>
+                            </div>
+                            <div>
+                               <div class="quiz-card">
+                                   <h3>What are Ahmed and Fatima doing?</h3>
+                                   <div class="quiz-options" id="q1-options">
+                                       <div class="quiz-option">
+                                           <input type="radio" id="q1a" name="q1" value="a">
+                                           <label for="q1a">Saying goodbye</label>
+                                       </div>
+                                       <div class="quiz-option">
+                                           <input type="radio" id="q1b" name="q1" value="b">
+                                           <label for="q1b">Introducing themselves</label>
+                                       </div>
+                                       <div class="quiz-option">
+                                           <input type="radio" id="q1c" name="q1" value="c">
+                                           <label for="q1c">Planning a meeting</label>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="activity-actions">
+                                   <button class="activity-btn" onclick="checkAnswer(1)">
+                                       <i class="fa-solid fa-check"></i> Check Answer
+                                   </button>
+                                   <div id="feedback-1" class="feedback-msg"></div>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Activity 2 (Matching) -->
+                <div class="slide-stage hidden" data-slide-name="Vocabulary">
+                     <div class="slide-inner">
+                        <div class="pill"><i class="fa-solid fa-book-open"></i> Activity 2 of 4</div>
+                        <h2>Match the Phrases</h2>
+                        <p class="deck-subtitle">Match the phrases from the dialogue with their meaning.</p>
+
+                        <div class="matching-stack" id="q2-options">
+                            <div class="matching-option">
+                                <p>1. Hello. / Hi.</p>
+                                <select data-correct="c">
+                                    <option value="">Choose a meaning...</option>
+                                    <option value="a">A question to ask for a name.</option>
+                                    <option value="b">A polite phrase for meeting someone.</option>
+                                    <option value="c">A way to greet someone.</option>
+                                    <option value="d">A way to give your name.</option>
+                                </select>
+                            </div>
+                             <div class="matching-option">
+                                <p>2. What's your name?</p>
+                                <select data-correct="a">
+                                    <option value="">Choose a meaning...</option>
+                                    <option value="a">A question to ask for a name.</option>
+                                    <option value="b">A polite phrase for meeting someone.</option>
+                                    <option value="c">A way to greet someone.</option>
+                                    <option value="d">A way to give your name.</option>
+                                </select>
+                            </div>
+                             <div class="matching-option">
+                                <p>3. My name is Fatima.</p>
+                                <select data-correct="d">
+                                    <option value="">Choose a meaning...</option>
+                                    <option value="a">A question to ask for a name.</option>
+                                    <option value="b">A polite phrase for meeting someone.</option>
+                                    <option value="c">A way to greet someone.</option>
+                                    <option value="d">A way to give your name.</option>
+                                </select>
+                            </div>
+                             <div class="matching-option">
+                                <p>4. Nice to meet you.</p>
+                                <select data-correct="b">
+                                    <option value="">Choose a meaning...</option>
+                                    <option value="a">A question to ask for a name.</option>
+                                    <option value="b">A polite phrase for meeting someone.</option>
+                                    <option value="c">A way to greet someone.</option>
+                                    <option value="d">A way to give your name.</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="activity-actions">
+                           <button class="activity-btn" onclick="checkAnswer(2)">
+                               <i class="fa-solid fa-check"></i> Check Answer
+                           </button>
+                           <div id="feedback-2" class="feedback-msg"></div>
+                       </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 3: Activity 3 (Grammar Dropdown) -->
+                <div class="slide-stage hidden" data-slide-name="Grammar">
+                    <div class="slide-inner">
+                        <div class="pill"><i class="fa-solid fa-puzzle-piece"></i> Activity 3 of 4</div>
+                        <h2>Choose the Correct Word</h2>
+                        <p class="deck-subtitle">Complete the sentences from the dialogue.</p>
+                        
+                        <div class="card" id="q3-options">
+                            <p class="gap-fill-sentence">
+                                1. 
+                                <select data-correct="I'm">
+                                    <option value="">...</option>
+                                    <option value="I'm">I'm</option>
+                                    <option value="You're">You're</option>
+                                </select> 
+                                Ahmed.
+                            </p>
+                            <p class="gap-fill-sentence">
+                                2. What's 
+                                <select data-correct="your">
+                                    <option value="">...</option>
+                                    <option value="my">my</option>
+                                    <option value="your">your</option>
+                                </select> 
+                                name?
+                            </p>
+                            <p class="gap-fill-sentence">
+                                3. 
+                                <select data-correct="My">
+                                    <option value="">...</option>
+                                    <option value="My">My</option>
+                                    <option value="Your">Your</option>
+                                </select> 
+                                name is Fatima.
+                            </p>
+                        </div>
+                        
+                         <div class="activity-actions">
+                           <button class="activity-btn" onclick="checkAnswer(3)">
+                               <i class="fa-solid fa-check"></i> Check Answer
+                           </button>
+                           <div id="feedback-3" class="feedback-msg"></div>
+                       </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 4: Activity 4 (Ordering) -->
+                <div class="slide-stage hidden" data-slide-name="Practice">
+                   <div class="slide-inner">
+                        <div class="pill"><i class="fa-solid fa-bars-staggered"></i> Activity 4 of 4</div>
+                        <h2>Order the Conversation</h2>
+                        <p class="deck-subtitle">Choose the option that shows the conversation in the correct order.</p>
+                        
+                        <div class="quiz-card">
+                           <div class="quiz-options" id="q4-options">
+                               <div class="quiz-option">
+                                   <input type="radio" id="q4a" name="q4" value="a">
+                                   <label for="q4a">1. Hi Ahmed. My name is Fatima. Nice to meet you.<br>2. Nice to meet you, too.<br>3. Hello. I'm Ahmed. What's your name?</label>
+                               </div>
+                               <div class="quiz-option">
+                                   <input type="radio" id="q4b" name="q4" value="b">
+                                   <label for="q4b">1. Hello. I'm Ahmed. What's your name?<br>2. Hi Ahmed. My name is Fatima. Nice to meet you.<br>3. Nice to meet you, too.</label>
+                               </div>
+                               <div class="quiz-option">
+                                   <input type="radio" id="q4c" name="q4" value="c">
+                                   <label for="q4c">1. Nice to meet you, too.<br>2. Hello. I'm Ahmed. What's your name?<br>3. Hi Ahmed. My name is Fatima. Nice to meet you.</label>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="activity-actions">
+                           <button class="activity-btn" onclick="checkAnswer(4)">
+                               <i class="fa-solid fa-check"></i> Check Answer
+                           </button>
+                           <div id="feedback-4" class="feedback-msg"></div>
+                       </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 5: Finish -->
+                <div class="slide-stage hidden" data-slide-name="Complete">
+                    <div class="slide-inner center-content">
+                        <div class="pill"><i class="fa-solid fa-star"></i> Activity Complete</div>
+                        <h1 style="color: var(--primary-sage);"><i class="fa-solid fa-square-check"></i> Well Done!</h1>
+                        <p class="deck-subtitle" style="font-size: var(--step-2);">You are ready for the lesson.</p>
+                         <div class="activity-actions">
+                            <button class="activity-btn secondary" onclick="restartActivity()">
+                                <i class="fa-solid fa-rotate-right"></i> Practice Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="slide-nav slide-nav-prev" onclick="prevSlide()" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slide-nav slide-nav-next" onclick="nextSlide()" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide-stage');
+        const slideCounter = document.getElementById('slide-counter');
+        const nextButton = document.querySelector('.slide-nav-next');
+        const prevButton = document.querySelector('.slide-nav-prev');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('hidden', i !== index);
+            });
+            
+            const slideName = slides[index].dataset.slideName || `Slide ${index + 1}`;
+            slideCounter.textContent = `${index + 1} / ${totalSlides} - ${slideName}`;
+            
+            prevButton.style.display = index === 0 ? 'none' : 'grid';
+            nextButton.style.display = 'none'; // Hide by default
+            
+            // Show next button if slide is welcome, complete, or already answered correctly
+            const isAnswered = slides[index].dataset.answered === 'true';
+            if (index === 0 || index === totalSlides - 1 || isAnswered) {
+                nextButton.style.display = index === totalSlides - 1 ? 'none' : 'grid';
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function restartActivity() {
+            location.reload();
+        }
+
+        function checkAnswer(questionNum) {
+            const feedbackEl = document.getElementById(`feedback-${questionNum}`);
+            let isCorrect = false;
+            
+            // Disable check button after one attempt
+            const checkButton = feedbackEl.previousElementSibling;
+            checkButton.disabled = true;
+
+            switch (questionNum) {
+                case 1:
+                    const selectedQ1 = document.querySelector('input[name="q1"]:checked');
+                    if (selectedQ1) {
+                        const q1Options = document.querySelectorAll('#q1-options .quiz-option');
+                        q1Options.forEach(opt => {
+                             const radio = opt.querySelector('input');
+                             if(radio.value === 'b') opt.classList.add('correct');
+                        });
+                        if (selectedQ1.value === 'b') {
+                            isCorrect = true;
+                        } else {
+                            selectedQ1.parentElement.classList.add('incorrect');
+                        }
+                    }
+                    break;
+                
+                case 2:
+                    const selectsQ2 = document.querySelectorAll('#q2-options select');
+                    let allCorrectQ2 = true;
+                    selectsQ2.forEach(select => {
+                        if (select.value === select.dataset.correct) {
+                            select.classList.add('correct');
+                        } else {
+                            select.classList.add('incorrect');
+                            allCorrectQ2 = false;
+                        }
+                    });
+                    isCorrect = allCorrectQ2;
+                    break;
+
+                case 3:
+                    const selectsQ3 = document.querySelectorAll('#q3-options select');
+                    let allCorrectQ3 = true;
+                    selectsQ3.forEach(select => {
+                        if (select.value === select.dataset.correct) {
+                            select.classList.add('correct');
+                        } else {
+                            select.classList.add('incorrect');
+                            allCorrectQ3 = false;
+                        }
+                    });
+                    isCorrect = allCorrectQ3;
+                    break;
+                    
+                case 4:
+                    const selectedQ4 = document.querySelector('input[name="q4"]:checked');
+                     if (selectedQ4) {
+                        const q4Options = document.querySelectorAll('#q4-options .quiz-option');
+                        q4Options.forEach(opt => {
+                             const radio = opt.querySelector('input');
+                             if(radio.value === 'b') opt.classList.add('correct');
+                        });
+                        if (selectedQ4.value === 'b') {
+                            isCorrect = true;
+                        } else {
+                            selectedQ4.parentElement.classList.add('incorrect');
+                        }
+                    }
+                    break;
+            }
+
+            if (isCorrect) {
+                feedbackEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Correct! Well done.';
+                feedbackEl.className = 'feedback-msg success';
+                slides[currentSlide].dataset.answered = 'true';
+                nextButton.style.display = 'grid';
+            } else {
+                feedbackEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Not quite. Look at the correct answers and try to understand.';
+                feedbackEl.className = 'feedback-msg error';
+                // Even if wrong, let them proceed
+                slides[currentSlide].dataset.answered = 'true';
+                nextButton.style.display = 'grid';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide);
+        });
+    </script>
+</body>
+</html>
