@@ -8,615 +8,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-      :root {
-        --primary-sage: #7A8471;
-        --secondary-sage: #9CAF88;
-        --tertiary-sage: #B8C5A6;
-        --warm-cream: #F8F6F0;
-        --soft-white: #FEFCF7;
-        --forest-shadow: #5A6B52;
-        --ink: #2F3A2B;
-        --ink-muted: #5A6B52;
-        --border-sage: rgba(122,132,113,0.20);
-        --hover-sage: rgba(156,175,136,0.15);
-        --deep-forest: #3E4A3A;
-        --font-display: 'Questrial', system-ui, sans-serif;
-        --font-body: 'Nunito', system-ui, sans-serif;
-        --font-size-adjustment: 0pt;
-        --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
-        --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
-        --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
-        --step-2: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment));
-        --step-3: calc(clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment));
-        --step-4: calc(clamp(2.5rem, 1.4rem + 3.2vw, 4.2rem) + var(--font-size-adjustment));
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-7: 2rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
-        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
-        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-
-      *, *::before, *::after { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: auto;
-      }
-
-      h1, h2, h3, h4 {
-        font-family: var(--font-display);
-        color: var(--deep-forest);
-        margin: 0;
-      }
-
-      h1 { font-size: var(--step-4); line-height: 1.08; }
-      h2 { font-size: var(--step-3); line-height: 1.18; }
-      h3 { font-size: var(--step-1); }
-      p, li { font-size: var(--step-0); color: var(--forest-shadow); margin: 0; }
-
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: var(--space-4);
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 8px 20px rgba(34,41,32,0.05);
-        backdrop-filter: blur(8px) saturate(1.1);
-      }
-
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + var(--font-size-adjustment));
-        color: var(--forest-shadow);
-      }
-
-      .slide-counter {
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-      }
-
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
-                    radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
-      }
-
-      .stage-viewport {
-        position: relative;
-        display: grid;
-        place-items: center;
-      }
-
-      .slide-stage {
-        position: relative;
-        border-radius: var(--stage-radius);
-        background-color: var(--soft-white);
-        box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2)));
-        max-width: 100%;
-        overflow: hidden auto;
-        outline: 1px solid var(--border-sage);
-        transition: opacity 300ms ease-in-out;
-      }
-
-      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
-
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1.25rem;
-        overflow-y: auto;
-        scrollbar-gutter: stable both-edges;
-      }
-
-      .full-width-bg .slide-inner { padding: 0; }
-      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-      .img-overlay { position: absolute; inset: 0; z-index: 0; }
-      .bg-content { position: relative; z-index: 1; padding: var(--stage-pad); }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: var(--step--1);
-        padding: 0.35rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(156,175,136,0.15);
-        color: var(--deep-forest);
-        font-weight: 600;
-      }
-
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 24px;
-        width: 100%;
-        align-items: flex-start;
-      }
-
-      .col-span-12 { grid-column: span 12 / span 12; }
-      .col-span-6 { grid-column: span 6 / span 6; }
-      .col-span-5 { grid-column: span 5 / span 5; }
-      .col-span-7 { grid-column: span 7 / span 7; }
-      .col-span-4 { grid-column: span 4 / span 4; }
-
-      .card {
-        background: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%);
-        border: 1px solid var(--border-sage);
-        border-radius: var(--radius);
-        padding: var(--space-6);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .card h3, .card h4 { margin: 0; font-family: var(--font-display); color: var(--deep-forest); }
-      .card p { margin: 0; font-size: var(--step--1); }
-      .card ul { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: var(--step--1); }
-
-      .centered-text { text-align: center; }
-
-      .discussion-table {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-      }
-
-      .discussion-table .card { height: 100%; }
-
-      .split-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-      }
-
-      .prompt-card {
-        background: color-mix(in srgb, var(--soft-white) 85%, rgba(156,175,136,0.2) 15%);
-        border: 1px solid rgba(122,132,113,0.18);
-        border-radius: var(--radius-lg);
-        padding: clamp(28px, 4vw, 48px);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-        text-align: center;
-      }
-
-      .prompt-card p { font-size: var(--step-1); max-width: 70%; }
-
-      .mc-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-      }
-
-      .mc-card {
-        background: var(--soft-white);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.18);
-        box-shadow: var(--shadow-1);
-        padding: 1.2rem 1.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-
-      .mc-card label { font-size: var(--step-1); font-weight: 600; color: var(--deep-forest); }
-      .mc-card select {
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        border-radius: 12px;
-        border: 2px solid rgba(122,132,113,0.25);
-        padding: 0.45rem 0.75rem;
-        color: var(--primary-sage);
-        font-weight: 600;
-      }
-
-      .activity-actions {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-      }
-
-      .activity-btn {
-        padding: 0.65rem 1.4rem;
-        border-radius: 999px;
-        border: 1px solid var(--primary-sage);
-        background: var(--primary-sage);
-        color: white;
-        font-family: var(--font-body);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .activity-btn.secondary {
-        background: transparent;
-        color: var(--primary-sage);
-        border-color: rgba(122,132,113,0.3);
-      }
-
-      .icon-heading {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.65rem;
-        font-size: var(--step-1);
-        margin-bottom: 0.35rem;
-      }
-
-      .icon-heading i {
-        width: 2.25rem;
-        height: 2.25rem;
-        display: grid;
-        place-items: center;
-        background: rgba(156,175,136,0.2);
-        border-radius: 50%;
-        color: var(--deep-forest);
-        font-size: 1.1rem;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-      }
-
-      .activity-btn:hover { box-shadow: var(--shadow-2); transform: translateY(-1px); }
-
-      .feedback-msg {
-        font-size: calc(0.95rem + var(--font-size-adjustment));
-        font-weight: 600;
-        margin-top: 0.4rem;
-      }
-
-      .feedback-msg.success { color: #2E7D32; }
-      .feedback-msg.error { color: #C62828; }
-
-      .gapfill-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-      }
-
-      .gapfill-card {
-        background: var(--soft-white);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.18);
-        padding: 1.2rem 1.4rem;
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-
-      .gapfill-card p { font-size: var(--step-0); }
-      .gapfill-card input {
-        width: 100%;
-        padding: 0.55rem 0.75rem;
-        border-radius: 12px;
-        border: 1px solid rgba(122,132,113,0.35);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-      }
-
-      .drag-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.5rem;
-        align-items: stretch;
-      }
-
-      .drag-pool, .drag-drop {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1.25rem;
-        background: var(--soft-white);
-        border: 2px dashed rgba(122,132,113,0.35);
-        border-radius: var(--radius);
-        min-height: 240px;
-        box-shadow: var(--shadow-1);
-        transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
-        position: relative;
-        cursor: pointer;
-      }
-
-      .drag-pool:hover,
-      .drag-drop:hover {
-        border-color: rgba(122,132,113,0.55);
-        background: rgba(248,246,240,0.9);
-      }
-
-      .drag-drop::after,
-      .drag-pool::after {
-        content: attr(data-hint);
-        position: absolute;
-        inset: auto 1rem 1rem 1rem;
-        font-size: var(--step--1);
-        color: rgba(47,58,43,0.6);
-        font-style: italic;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 200ms ease;
-      }
-
-      .drag-drop[data-empty="true"]::after,
-      .drag-pool[data-empty="true"]::after {
-        opacity: 1;
-      }
-
-      .drag-item {
-        padding: 0.75rem 1rem;
-        background: linear-gradient(135deg, rgba(122,132,113,0.08), rgba(122,132,113,0.18));
-        border-radius: 999px;
-        font-weight: 600;
-        color: var(--deep-forest);
-        text-align: center;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-        cursor: pointer;
-        user-select: none;
-        border: 2px solid transparent;
-        transition: border-color 200ms ease, box-shadow 200ms ease, transform 150ms ease;
-      }
-
-      .drag-item:hover {
-        box-shadow: 0 10px 20px rgba(34,41,32,0.12);
-        transform: translateY(-2px);
-      }
-
-      .drag-item.is-selected {
-        border-color: rgba(156,175,136,0.9);
-        box-shadow: 0 0 0 3px rgba(156,175,136,0.28);
-        background: linear-gradient(135deg, rgba(156,175,136,0.18), rgba(122,132,113,0.22));
-      }
-
-      .drag-drop h4, .drag-pool h4 {
-        font-size: var(--step-0);
-        color: var(--ink);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .drag-drop h4 i, .drag-pool h4 i { color: var(--secondary-sage); }
-
-      .drag-drop[data-target="calm"] {
-        background: linear-gradient(160deg, rgba(156,175,136,0.12), rgba(248,246,240,0.9));
-      }
-
-      .drag-drop[data-target="exciting"] {
-        background: linear-gradient(200deg, rgba(122,132,113,0.1), rgba(255,221,173,0.18));
-      }
-
-      .media-card {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 1rem;
-        background: linear-gradient(145deg, rgba(248,246,240,0.94), rgba(232,238,224,0.9));
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-2);
-        overflow: hidden;
-      }
-
-      .media-card figure {
-        margin: 0;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .media-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .media-card figcaption {
-        position: absolute;
-        inset: auto 1rem 1rem 1rem;
-        background: rgba(47,58,43,0.55);
-        color: var(--soft-white);
-        padding: 0.5rem 0.75rem;
-        border-radius: 999px;
-        font-size: var(--step--1);
-      }
-
-      .media-card .media-body {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .media-card .media-body p {
-        margin: 0;
-      }
-
-      .venn-layout { gap: var(--space-7); }
-
-      .venn-guides {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 24px;
-      }
-
-      .visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      .venn-table-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .venn-table-intro {
-        font-weight: 600;
-        color: var(--deep-forest);
-      }
-
-      .venn-table-container {
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: inset 0 0 0 1px var(--border-sage), var(--shadow-2);
-        background: color-mix(in srgb, var(--soft-white) 88%, var(--warm-cream) 12%);
-      }
-
-      .venn-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-      }
-
-      .venn-table thead th {
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: var(--step--1);
-        font-weight: 700;
-        color: var(--deep-forest);
-        padding: 1rem 1.25rem;
-        background: rgba(122,132,113,0.12);
-        border-right: 1px solid rgba(122,132,113,0.25);
-      }
-
-      .venn-table thead th:last-child { border-right: none; }
-
-      .venn-table tbody td {
-        padding: 1.25rem;
-        border-right: 1px solid rgba(122,132,113,0.15);
-        border-top: 1px solid rgba(122,132,113,0.15);
-        vertical-align: top;
-        background: rgba(255,255,255,0.92);
-      }
-
-      .venn-table tbody td:last-child { border-right: none; }
-
-      .venn-table textarea {
-        width: 100%;
-        min-height: clamp(160px, 28vh, 220px);
-        resize: vertical;
-        border-radius: 12px;
-        border: 1px solid rgba(122,132,113,0.35);
-        padding: 0.9rem;
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        background: rgba(255,255,255,0.96);
-        line-height: 1.55;
-        box-shadow: inset 0 1px 4px rgba(47,58,43,0.08);
-      }
-
-      .venn-table textarea:focus {
-        outline: none;
-        border-color: rgba(156,175,136,0.85);
-        box-shadow: 0 0 0 3px rgba(156,175,136,0.25);
-      }
-
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: 1px solid rgba(122,132,113,0.35);
-        background: color-mix(in srgb, var(--soft-white) 90%, transparent);
-        display: grid;
-        place-items: center;
-        color: var(--primary-sage);
-        box-shadow: var(--shadow-1);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .stage-viewport:hover .slide-nav { opacity: 1; pointer-events: auto; }
-      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
-      .slide-nav-prev { left: 24px; }
-      .slide-nav-next { right: 24px; }
-
-      @media (min-width: 900px) {
-        .media-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-      }
-
-      @media (max-width: 1100px) {
-        .discussion-table { grid-template-columns: repeat(2, 1fr); }
-        .drag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      }
-
-      @media (max-width: 900px) {
-        .grid-container { grid-template-columns: repeat(6, 1fr); }
-        .col-span-12 { grid-column: span 6 / span 6; }
-        .col-span-7, .col-span-5, .col-span-6, .col-span-4 { grid-column: span 6 / span 6; }
-          .discussion-table, .split-grid, .gapfill-grid, .mc-grid { grid-template-columns: 1fr; }
-          .prompt-card p { max-width: 100%; }
-          .drag-grid { grid-template-columns: 1fr; }
-          .venn-table-container { overflow-x: auto; }
-          .venn-table { min-width: 540px; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://najma-collective.github.io/Noor-Community-/CSS-slides.css">
 </head>
 <body>
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <i
-            class="fa-solid fa-seedling"
-            style="color: var(--primary-sage)"
-          ></i>
+          <i class="fa-solid fa-seedling" aria-hidden="true"></i>
           <span>Noor Community · C1 Lesson</span>
         </div>
-        <div id="slide-counter" class="slide-counter">1 / 20</div>
+        <div id="slide-counter" class="slide-counter"></div>
         <div class="toolbar-actions">
           <button id="save-state-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-floppy-disk"></i>
@@ -664,12 +65,12 @@
                 <!-- Slide 1 -->
                 <div class="slide-stage full-width-bg">
                     <img class="img-bg" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A diverse group of colleagues sitting around a table and talking in a bright, modern office.">
-                    <div class="img-overlay" style="background: linear-gradient(110deg, rgba(254,252,247,0.92) 35%, rgba(254,252,247,0.55) 60%, transparent 90%);"></div>
+                    <div class="img-overlay"></div>
                     <div class="slide-inner">
-                        <div class="bg-content" style="max-width: 60%; display: flex; flex-direction: column; gap: 1.2rem;">
-                            <span class="pill"><i class="fa-solid fa-seedling"></i> B1 English Lesson</span>
+                        <div class="overlay-card">
+                            <span class="pill overlay-pill"><i class="fa-solid fa-seedling"></i> B1 English Lesson</span>
                             <h1>Shared Passions: Discovering Common Ground</h1>
-                            <p style="font-size: var(--step-1); color: var(--ink-muted);">Discuss hobbies and personality, express preferences with nuance, and collaborate to find surprising connections.</p>
+                            <p class="deck-subtitle">Discuss hobbies and personality, express preferences with nuance, and collaborate to find surprising connections.</p>
                         </div>
                     </div>
                 </div>
@@ -677,22 +78,16 @@
                 <!-- Slide 2 -->
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12">
-                                <span class="pill"><i class="fa-solid fa-compass"></i> Today's Goals</span>
-                                <h2>By the end of this lesson, you will be able to...</h2>
-                            </div>
-                            <div class="col-span-12">
-                                <div class="card" style="gap: 1.1rem;">
-                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                                        <li><i class="fa-solid fa-comments"></i> Use a variety of phrases to express preferences (e.g., <em>I'm keen on, I'd rather, I can't stand</em>).</li>
-                                        <li><i class="fa-solid fa-lightbulb"></i> Use a wider range of vocabulary to describe hobbies and personality traits.</li>
-                                        <li><i class="fa-solid fa-code-compare"></i> Make comparisons and justify opinions using more complex sentences.</li>
-                                        <li><i class="fa-solid fa-question-circle"></i> Ask follow-up questions to gain a deeper understanding of your classmates' interests.</li>
-                                        <li><i class="fa-solid fa-people-group"></i> Collaborate in a group to discover common interests and present your findings.</li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="card transparent">
+                            <span class="pill"><i class="fa-solid fa-compass"></i> Today's Goals</span>
+                            <h2>By the end of this lesson, you will be able to...</h2>
+                            <ul class="instruction-list">
+                                <li><i class="fa-solid fa-comments"></i> Use a variety of phrases to express preferences (e.g., <em>I'm keen on, I'd rather, I can't stand</em>).</li>
+                                <li><i class="fa-solid fa-lightbulb"></i> Use a wider range of vocabulary to describe hobbies and personality traits.</li>
+                                <li><i class="fa-solid fa-code-compare"></i> Make comparisons and justify opinions using more complex sentences.</li>
+                                <li><i class="fa-solid fa-question-circle"></i> Ask follow-up questions to gain a deeper understanding of your classmates' interests.</li>
+                                <li><i class="fa-solid fa-people-group"></i> Collaborate in a group to discover common interests and present your findings.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -702,17 +97,20 @@
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-mug-hot"></i> Warm-Up Discussion</span>
                         <h2>Let's get started!</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-calendar-week"></i><span>Weekend Evolution</span></h3>
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-calendar-week"></i></span>
+                                <h3>Weekend Evolution</h3>
                                 <p>How has your idea of a perfect weekend changed over the last five years?</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-brain"></i><span>Hobby vs. Chore</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-brain"></i></span>
+                                <h3>Hobby vs. Chore</h3>
                                 <p>Think of an activity some people consider a chore (e.g., cooking, gardening). Why might others see it as a hobby?</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-book-open-reader"></i><span>A New Skill</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-book-open-reader"></i></span>
+                                <h3>A New Skill</h3>
                                 <p>If you had one month to learn a new skill, what would you choose and why?</p>
                             </div>
                         </div>
@@ -721,9 +119,9 @@
 
                 <!-- Slide 4 -->
                 <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-link"></i> Language Focus</span>
-                        <div class="prompt-card">
+                    <div class="slide-inner">
+                        <div class="card transparent centered-text">
+                            <span class="pill"><i class="fa-solid fa-link"></i> Language Focus</span>
                             <h2>Beyond "Like": Expressing Preferences</h2>
                             <p>Let's upgrade our language. Instead of just "I like" or "I don't like," we can express our feelings with more detail and nuance.</p>
                         </div>
@@ -737,7 +135,8 @@
                         <h2>How much do you enjoy it?</h2>
                         <div class="split-grid">
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-thumbs-up"></i><span>Positive Feelings</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-thumbs-up"></i></span>
+                                <h3>Positive Feelings</h3>
                                 <ul>
                                     <li>I'm passionate about... (+ ing)</li>
                                     <li>I'm keen on... (+ ing)</li>
@@ -746,7 +145,8 @@
                                 </ul>
                             </div>
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-thumbs-down"></i><span>Negative Feelings</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-thumbs-down"></i></span>
+                                <h3>Negative Feelings</h3>
                                 <ul>
                                     <li>I can't stand... (+ ing)</li>
                                     <li>I'm not a big fan of... (+ ing)</li>
@@ -765,11 +165,13 @@
                         <h2>Let's practice the new vocabulary</h2>
                         <div class="split-grid">
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-reply-all"></i><span>How it works</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-reply-all"></i></span>
+                                <h3>How it works</h3>
                                 <p>Read the simple sentence. Then, rewrite it or say it aloud using one of the new phrases from the spectrum.</p>
                             </div>
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Example</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-comments"></i></span>
+                                <h3>Example</h3>
                                 <p><strong>Simple:</strong> “I don't like running.”</p>
                                 <p><strong>B1 Level:</strong> “I'm not a big fan of running.” or “Running isn't really my thing.” or "I can't stand running."</p>
                                 <hr>
@@ -783,17 +185,16 @@
                 <div class="slide-stage hidden">
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-lightbulb"></i> Grammar Focus</span>
-                        <div class="media-card">
-                            <figure>
+                        <div class="split-grid">
+                            <div class="context-image">
                                 <img src="https://images.pexels.com/photos/4050291/pexels-photo-4050291.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2" alt="Teacher guiding adult students during a collaborative grammar activity.">
-                                <figcaption>Making Comparisons</figcaption>
-                            </figure>
-                            <div class="media-body">
+                            </div>
+                            <div class="card">
                                 <h2>Comparing Activities</h2>
                                 <p>To compare two activities, we can use <strong>prefer...to...</strong> or <strong>would rather...than...</strong></p>
-                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                                    <li><i class="fa-solid fa-mug-saucer" style="margin-right: 0.5rem; color: var(--secondary-sage);"></i><em>I <strong>prefer drinking</strong> tea <strong>to drinking</strong> coffee.</em> (verb-ing)</li>
-                                    <li><i class="fa-solid fa-headphones" style="margin-right: 0.5rem; color: var(--secondary-sage);"></i><em>I'<strong>d rather listen</strong> to a podcast <strong>than read</strong> a book.</em> (infinitive without 'to')</li>
+                                <ul class="instruction-list">
+                                    <li><i class="fa-solid fa-mug-saucer"></i><em>I <strong>prefer drinking</strong> tea <strong>to drinking</strong> coffee.</em> (verb-ing)</li>
+                                    <li><i class="fa-solid fa-headphones"></i><em>I'<strong>d rather listen</strong> to a podcast <strong>than read</strong> a book.</em> (infinitive without 'to')</li>
                                 </ul>
                             </div>
                         </div>
@@ -807,7 +208,7 @@
                         <h2>Choose the correct sentence</h2>
                         <p>Use the dropdown to choose the grammatically correct sentence.</p>
                         <div class="card" data-activity="mc-grammar">
-                            <div class="quiz-grid single-column">
+                            <div class="tips-grid">
                                 <div class="quiz-card" data-answer="2">
                                     <p>1. Outdoor activities</p>
                                     <label class="sr-only" for="c1-pref-q1">Select the correct sentence for question 1</label>
@@ -863,17 +264,20 @@
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-people-arrows"></i> Activity 2 · Find Someone Who...</span>
                         <h2>How to play</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-list-check"></i><span>Step 1 · Get Your Card</span></h3>
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-list-check"></i></span>
+                                <h3>Step 1 · Get Your Card</h3>
                                 <p>Receive a list of characteristics (e.g., "Find someone who has recently taken up a new hobby").</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-person-walking"></i><span>Step 2 · Mingle & Ask</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-person-walking"></i></span>
+                                <h3>Step 2 · Mingle & Ask</h3>
                                 <p>Walk around the room and ask your classmates questions to find people who match the descriptions.</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-pen-to-square"></i><span>Step 3 · Take Notes</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-pen-to-square"></i></span>
+                                <h3>Step 3 · Take Notes</h3>
                                 <p>When you find a match, write down their name and one extra piece of information.</p>
                             </div>
                         </div>
@@ -886,22 +290,22 @@
                         <span class="pill"><i class="fa-solid fa-list"></i> Activity 2 · Prompts</span>
                         <h2>Find someone who...</h2>
                         <div class="card">
-                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; font-size: var(--step-1);">
-                                <li><i class="fa-solid fa-star" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>...has recently taken up a new hobby. (<em>What is it?</em>)</li>
-                                <li><i class="fa-solid fa-couch" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>...prefers indoor activities to outdoor ones. (<em>Why?</em>)</li>
-                                <li><i class="fa-solid fa-trophy" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>...thinks watching sports is more exciting than playing them. (<em>Which sport?</em>)</li>
-                                <li><i class="fa-solid fa-hand-holding-heart" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>...has given up a hobby they used to love. (<em>What happened?</em>)</li>
+                            <ul class="instruction-list">
+                                <li><i class="fa-solid fa-star"></i> ...has recently taken up a new hobby. (<em>What is it?</em>)</li>
+                                <li><i class="fa-solid fa-couch"></i> ...prefers indoor activities to outdoor ones. (<em>Why?</em>)</li>
+                                <li><i class="fa-solid fa-trophy"></i> ...thinks watching sports is more exciting than playing them. (<em>Which sport?</em>)</li>
+                                <li><i class="fa-solid fa-hand-holding-heart"></i> ...has given up a hobby they used to love. (<em>What happened?</em>)</li>
                             </ul>
-                            <p style="font-size: var(--step--1); color: var(--ink-muted);">Remember to use Present Perfect for experiences (<em>Have you ever...?</em>) and ask follow-up questions!</p>
+                            <p class="deck-subtitle">Remember to use Present Perfect for experiences (<em>Have you ever...?</em>) and ask follow-up questions!</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Slide 11 -->
                 <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-comments"></i> Activity 3</span>
-                        <div class="prompt-card">
+                    <div class="slide-inner">
+                        <div class="card transparent centered-text">
+                            <span class="pill"><i class="fa-solid fa-comments"></i> Activity 3</span>
                             <h2>Discussion Time</h2>
                             <p>In small groups, discuss the following statements. Do you agree or disagree? Make sure to justify your opinions.</p>
                         </div>
@@ -913,20 +317,20 @@
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-pen"></i> Discussion Prompts</span>
                         <h2>What's your opinion?</h2>
-                        <div class="gapfill-grid">
-                            <div class="card">
+                        <div class="tips-grid">
+                            <div class="tip-card">
                                 <h3><strong>Quantity vs. Quality</strong></h3>
                                 <p>Is it better to have many different hobbies, or to dedicate yourself to mastering just one? Why?</p>
                             </div>
-                            <div class="card">
+                            <div class="tip-card">
                                 <h3><strong>Hobby vs. Job</strong></h3>
                                 <p>Some people say that turning a hobby into a job ruins the enjoyment. Do you agree? Why or why not?</p>
                             </div>
-                            <div class="card">
+                            <div class="tip-card">
                                 <h3><strong>Social vs. Solitary</strong></h3>
                                 <p>Do you think the best hobbies are ones you can do with other people, or ones you can enjoy alone? Explain your reasoning.</p>
                             </div>
-                            <div class="card">
+                            <div class="tip-card">
                                 <h3><strong>The Dream Hobby</strong></h3>
                                 <p>Describe a hobby you would love to try if you had unlimited time and money. What makes it so appealing?</p>
                             </div>
@@ -941,7 +345,8 @@
                         <h2>Adjectives for Hobbies & Personalities</h2>
                         <div class="split-grid">
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-circle-info"></i><span>Describing Activities</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-circle-info"></i></span>
+                                <h3>Describing Activities</h3>
                                 <ul>
                                     <li>Therapeutic / Relaxing</li>
                                     <li>Stimulating / Challenging</li>
@@ -951,7 +356,8 @@
                                 </ul>
                             </div>
                             <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-share-nodes"></i><span>Connecting to Personality</span></h3>
+                                <span class="icon-circle"><i class="fa-solid fa-share-nodes"></i></span>
+                                <h3>Connecting to Personality</h3>
                                 <p>"I'm quite an introverted person, so I enjoy solitary hobbies like reading because I find it therapeutic."</p>
                                 <p>"As an extrovert, I prefer team sports. I find the competition stimulating and I enjoy the social aspect."</p>
                             </div>
@@ -961,9 +367,9 @@
 
                 <!-- Slide 14 -->
                 <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Activity 4</span>
-                        <div class="prompt-card">
+                    <div class="slide-inner">
+                        <div class="card transparent centered-text">
+                            <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Activity 4</span>
                             <h2>Problem Solving: The Hobby Advisor</h2>
                             <p>Your colleague, Alex, has just moved to the city. Alex is introverted but wants to meet a few people. They work long hours, so they need a hobby that is flexible. They find team sports too competitive. What should they try?</p>
                         </div>
@@ -975,17 +381,20 @@
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-people-group"></i> Activity 4 · Brainstorm</span>
                         <h2>Share your advice for Alex</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-list-check"></i><span>Your Task</span></h3>
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-list-check"></i></span>
+                                <h3>Your Task</h3>
                                 <p>In groups, brainstorm and recommend two hobbies for Alex. Be prepared to explain your choices.</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-lightbulb"></i><span>Useful Phrases</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-lightbulb"></i></span>
+                                <h3>Useful Phrases</h3>
                                 <p>“I think Alex should try... because it's...”<br>“Although... can be solitary, it's also a great way to...”<br>"Compared to team sports, ... is much less competitive."</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Discuss & Justify</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-comments"></i></span>
+                                <h3>Discuss & Justify</h3>
                                 <p>Consider the pros and cons of each suggestion. Why is your recommendation the best fit for Alex's personality and schedule?</p>
                             </div>
                         </div>
@@ -1008,7 +417,7 @@
                                 <button type="button" class="click-token" data-category="adventurous">Geocaching</button>
                                 <button type="button" class="click-token" data-category="creative">Building model kits</button>
                             </div>
-                            <div class="category-columns">
+                            <div class="drop-categorization">
                                 <div class="category-column" data-category="creative">
                                     <h4><i class="fa-solid fa-palette"></i> For Creative People</h4>
                                     <div class="drop-zone" aria-label="Place creative hobbies"></div>
@@ -1028,26 +437,29 @@
                 </div>
 
                 <!-- Slide 17 -->
-                <div class="slide-stage hidden" data-venn>
-                    <div class="slide-inner venn-layout">
+                <div class="slide-stage hidden">
+                    <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-people-line"></i> Main Task · Part 1</span>
                         <h2>Group Profile Interview</h2>
-                        <div class="venn-guides">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-bullseye"></i><span>Goal</span></h3>
+                        <div class="tips-grid">
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-bullseye"></i></span>
+                                <h3>Goal</h3>
                                 <p>In groups of 3-4, find out what you have in common and what makes each of you unique.</p>
                                 <p>Use the full range of language from today's lesson.</p>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-person-chalkboard"></i><span>How it works</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-person-chalkboard"></i></span>
+                                <h3>How it works</h3>
                                 <ul>
                                     <li>Interview each other about your pastimes, routines, and preferences.</li>
                                     <li>Ask follow-up questions to understand the reasons *why*.</li>
                                     <li>Use the next slide as a template to take notes on your group's profile.</li>
                                 </ul>
                             </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-ear-listen"></i><span>Interview tips</span></h3>
+                            <div class="tip-card">
+                                <span class="icon-circle"><i class="fa-solid fa-ear-listen"></i></span>
+                                <h3>Interview tips</h3>
                                 <ul>
                                     <li>"What do you usually do to unwind after a long day?"</li>
                                     <li>"Have you ever tried a hobby that was completely out of your comfort zone?"</li>
@@ -1059,39 +471,25 @@
                 </div>
 
                 <!-- Slide 18 -->
-                <div class="slide-stage hidden" data-venn-table>
+                <div class="slide-stage hidden">
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-table-cells-large"></i> Main Task · Part 2</span>
                         <h2>Building Your Group Profile</h2>
-                        <div class="venn-table-wrapper">
-                            <p class="venn-table-intro">As a group, complete the following profile based on your interviews.</p>
-                            <div class="venn-table-container" role="group" aria-labelledby="venn-table-title">
-                                <h3 id="venn-table-title" class="visually-hidden">Group Profile Table</h3>
-                                <table class="venn-table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"><i class="fa-solid fa-handshake-angle"></i> We all enjoy...</th>
-                                            <th scope="col"><i class="fa-solid fa-thumbs-down"></i> None of us like...</th>
-                                            <th scope="col"><i class="fa-solid fa-star"></i> A surprising hobby...</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-teacher">An activity everyone enjoys</label>
-                                                <textarea id="venn-table-teacher" placeholder="Find one activity that everyone in your group is keen on. Why is it so popular?"></textarea>
-                                            </td>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-both">An activity no one likes</label>
-                                                <textarea id="venn-table-both" placeholder="Discover one activity that no one in the group is a fan of. What are the reasons?"></textarea>
-                                            </td>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-us">A unique hobby</label>
-                                                <textarea id="venn-table-us" placeholder="Find the most unusual or surprising hobby that only one person in your group has. Describe it."></textarea>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="split-grid">
+                            <div class="note-card">
+                                <h3><i class="fa-solid fa-handshake-angle"></i> We all enjoy...</h3>
+                                <label class="sr-only" for="group-profile-all">An activity everyone enjoys</label>
+                                <textarea id="group-profile-all" placeholder="Find one activity that everyone in your group is keen on. Why is it so popular?"></textarea>
+                            </div>
+                            <div class="note-card">
+                                <h3><i class="fa-solid fa-thumbs-down"></i> None of us like...</h3>
+                                <label class="sr-only" for="group-profile-none">An activity no one likes</label>
+                                <textarea id="group-profile-none" placeholder="Discover one activity that no one in the group is a fan of. What are the reasons?"></textarea>
+                            </div>
+                            <div class="note-card">
+                                <h3><i class="fa-solid fa-star"></i> A surprising hobby...</h3>
+                                <label class="sr-only" for="group-profile-surprise">A unique hobby</label>
+                                <textarea id="group-profile-surprise" placeholder="Find the most unusual or surprising hobby that only one person in your group has. Describe it."></textarea>
                             </div>
                         </div>
                     </div>
@@ -1127,11 +525,11 @@
                         <span class="pill"><i class="fa-solid fa-leaf"></i> Reflection</span>
                         <h2>Let's reflect on the lesson</h2>
                         <div class="card">
-                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                                <li>What was the most surprising connection you found with a classmate today?</li>
-                                <li>Which new phrase for expressing preferences (e.g., 'I'm keen on', 'I'd rather') will you try to use this week?</li>
-                                <li>How did your group decide on your shared interests? Was it easy to reach an agreement?</li>
-                                <li>Did learning about your classmates' hobbies change your perception of them at all?</li>
+                            <ul class="instruction-list">
+                                <li><i class="fa-solid fa-circle-question"></i> What was the most surprising connection you found with a classmate today?</li>
+                                <li><i class="fa-solid fa-language"></i> Which new phrase for expressing preferences (e.g., 'I'm keen on', 'I'd rather') will you try to use this week?</li>
+                                <li><i class="fa-solid fa-people-group"></i> How did your group decide on your shared interests? Was it easy to reach an agreement?</li>
+                                <li><i class="fa-solid fa-face-smile"></i> Did learning about your classmates' hobbies change your perception of them at all?</li>
                             </ul>
                         </div>
                     </div>
@@ -1147,6 +545,5 @@
   import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
   setupInteractiveDeck();
 </script>
-
 </body>
 </html>
