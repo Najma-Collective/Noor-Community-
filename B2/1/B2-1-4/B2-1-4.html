@@ -841,10 +841,13 @@
   </head>
   <body>
     <div class="deck-app">
-      <header class="deck-toolbar">
+        <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
-          <span>Organic Sage System</span>
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · B2 Lesson</span>
         </div>
         <div id="slide-counter" class="slide-counter">1 / 13</div>
         <div class="toolbar-actions">
@@ -856,7 +859,12 @@
             <i class="fa-solid fa-file-import"></i>
             Load Deck
           </button>
-          <input id="load-state-input" class="sr-only" type="file" accept="application/json" />
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
           <div class="highlight-controls" role="group" aria-label="Highlight text">
             <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
             <label class="sr-only" for="highlight-color">Highlight colour</label>
@@ -865,9 +873,21 @@
               <option value="#A5D6A7">Meadow</option>
               <option value="#FFCCBC">Coral</option>
             </select>
-            <button id="highlight-btn" class="toolbar-btn ghost" type="button">Apply</button>
-            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">Clear</button>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
           </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
         </div>
       </header>
 
@@ -1039,7 +1059,7 @@
               <h2>Analyzing the Proposal: Verb Choices</h2>
               <div class="card" style="gap: 1.25rem;">
                 <p>Click a verb from the token bank, then click the correct empty slot in the table to place it.</p>
-                <div class="interactive-block" data-activity="click-drop">
+                <div class="interactive-block" data-activity="token-drop">
                   <div class="table-responsive">
                     <table class="verb-table">
                       <thead>
@@ -1284,372 +1304,11 @@
         </div>
       </main>
     </div>
-    <script>
-      const stageViewport = document.querySelector(".stage-viewport");
-      const counter = document.getElementById("slide-counter");
-      const nextBtn = stageViewport?.querySelector(".slide-nav-next");
-      const prevBtn = stageViewport?.querySelector(".slide-nav-prev");
-      const highlightBtn = document.getElementById("highlight-btn");
-      const removeHighlightBtn = document.getElementById("remove-highlight-btn");
-      const highlightColorSelect = document.getElementById("highlight-color");
-      const saveStateBtn = document.getElementById("save-state-btn");
-      const loadStateBtn = document.getElementById("load-state-btn");
-      const loadStateInput = document.getElementById("load-state-input");
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-      let slides = [];
-      let currentSlideIndex = 0;
-
-      function refreshSlides() {
-        slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
-      }
-
-      function updateCounter() {
-        if (!counter) return;
-        const total = slides.length;
-        const current = total ? currentSlideIndex + 1 : 0;
-        counter.textContent = `${current} / ${total}`;
-      }
-
-      function showSlide(index) {
-        if (!slides.length) return;
-        currentSlideIndex = (index + slides.length) % slides.length;
-        slides.forEach((slide, slideIndex) => {
-          slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
-        });
-        updateCounter();
-      }
-
-      function navigate(direction) {
-        showSlide(currentSlideIndex + direction);
-      }
-
-      function setupNavigation() {
-        nextBtn?.addEventListener("click", () => navigate(1));
-        prevBtn?.addEventListener("click", () => navigate(-1));
-
-        document.addEventListener("keydown", (event) => {
-          const target = event.target;
-          if (target instanceof HTMLElement) {
-            if (
-              target.tagName === "INPUT" ||
-              target.tagName === "TEXTAREA" ||
-              target.isContentEditable
-            ) {
-              return;
-            }
-          }
-          if (event.key === "ArrowRight") {
-            event.preventDefault();
-            navigate(1);
-          }
-          if (event.key === "ArrowLeft") {
-            event.preventDefault();
-            navigate(-1);
-          }
-        });
-      }
-
-      function applyHighlight(color) {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0) return;
-        const range = selection.getRangeAt(0);
-        if (range.collapsed) return;
-        const span = document.createElement("span");
-        span.style.backgroundColor = color;
-        span.style.padding = "0.05em 0.15em";
-        span.style.borderRadius = "0.35em";
-        span.className = "text-highlight";
-        range.surroundContents(span);
-        selection.removeAllRanges();
-      }
-
-      function removeHighlight() {
-        const highlights = document.querySelectorAll(".text-highlight");
-        highlights.forEach((highlight) => {
-          const parent = highlight.parentNode;
-          while (highlight.firstChild) {
-            parent.insertBefore(highlight.firstChild, highlight);
-          }
-          parent.removeChild(highlight);
-        });
-      }
-
-      function downloadDeckState() {
-        const state = {
-          currentSlideIndex,
-        };
-        const blob = new Blob([JSON.stringify(state, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "organic-sage-lesson.json";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }
-
-      function handleStateFileSelection(event) {
-        const file = event.target?.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          try {
-            const data = JSON.parse(reader.result);
-            if (typeof data.currentSlideIndex === "number") {
-              showSlide(data.currentSlideIndex);
-            }
-          } catch (error) {
-            console.error("Unable to load deck state", error);
-          }
-        });
-        reader.readAsText(file);
-      }
-
-      function setupMcGrammar(activityEl) {
-        const cards = activityEl.querySelectorAll(".quiz-card");
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const checkBtn = activityEl.querySelector('[data-action="check"]');
-        const resetBtn = activityEl.querySelector('[data-action="reset"]');
-
-        checkBtn?.addEventListener("click", () => {
-          let correctCount = 0;
-          cards.forEach((card) => {
-            const select = card.querySelector("select");
-            if (select && select.value === card.dataset.answer) {
-              card.classList.add("correct");
-              card.classList.remove("incorrect");
-              correctCount++;
-            } else {
-              card.classList.add("incorrect");
-              card.classList.remove("correct");
-            }
-          });
-          if (feedback) {
-            feedback.textContent = `You have ${correctCount} of ${cards.length} correct.`;
-            feedback.className =
-              correctCount === cards.length
-                ? "feedback-msg success"
-                : "feedback-msg error";
-          }
-        });
-
-        resetBtn?.addEventListener("click", () => {
-          cards.forEach((card) => {
-            const select = card.querySelector("select");
-            if (select) {
-              select.selectedIndex = 0;
-            }
-            card.classList.remove("correct", "incorrect");
-          });
-          if (feedback) {
-            feedback.textContent = "";
-            feedback.className = "feedback-msg";
-          }
-        });
-      }
-
-      function setupClickPlacement(activityEl) {
-        const tokens = Array.from(activityEl.querySelectorAll(".click-token"));
-        const dropZones = Array.from(activityEl.querySelectorAll(".drop-zone"));
-        const feedback = activityEl.querySelector(".feedback-msg");
-        const buttons = Array.from(activityEl.querySelectorAll(".activity-actions button"));
-        let activeToken = null;
-
-        dropZones.forEach((zone, index) => {
-          if (!zone.dataset.zoneId) {
-            zone.dataset.zoneId = `${activityEl.dataset.activity || "zone"}-${index + 1}-${Math.random()
-              .toString(16)
-              .slice(2, 6)}`;
-          }
-          if (!zone.dataset.placeholder) {
-            zone.dataset.placeholder = "Select";
-          }
-          zone.innerHTML = zone.dataset.placeholder;
-          zone.classList.add("placeholder");
-          zone.classList.remove("filled");
-
-          zone.addEventListener("click", () => {
-            if (activeToken) {
-              const previousTokenId = zone.dataset.current;
-              if (previousTokenId) {
-                const previousToken = tokens.find((token) => token.dataset.tokenId === previousTokenId);
-                if (previousToken) {
-                  previousToken.dataset.assigned = "false";
-                  previousToken.dataset.zoneId = "";
-                  previousToken.classList.remove("used");
-                }
-              }
-
-              zone.dataset.current = activeToken.dataset.tokenId;
-              zone.innerHTML = activeToken.textContent?.trim() ?? "";
-              zone.classList.remove("placeholder", "correct", "incorrect", "selected");
-              zone.classList.add("filled");
-
-              activeToken.dataset.assigned = "true";
-              activeToken.dataset.zoneId = zone.dataset.zoneId;
-              activeToken.classList.remove("selected");
-              activeToken.classList.add("used");
-              activeToken = null;
-            } else if (zone.dataset.current) {
-              const assignedToken = tokens.find((token) => token.dataset.tokenId === zone.dataset.current);
-              if (assignedToken) {
-                assignedToken.dataset.assigned = "false";
-                assignedToken.dataset.zoneId = "";
-                assignedToken.classList.remove("used");
-              }
-              zone.dataset.current = "";
-              zone.innerHTML = zone.dataset.placeholder;
-              zone.classList.remove("filled", "correct", "incorrect", "selected");
-              zone.classList.add("placeholder");
-            } else {
-              zone.classList.add("selected");
-              window.setTimeout(() => zone.classList.remove("selected"), 200);
-            }
-          });
-        });
-
-        tokens.forEach((token, index) => {
-          if (!token.dataset.tokenId) {
-            token.dataset.tokenId = `token-${index}-${Math.random().toString(16).slice(2, 6)}`;
-          }
-
-          token.addEventListener("click", () => {
-            if (token.dataset.assigned === "true" && token.dataset.zoneId) {
-              const zone = dropZones.find((item) => item.dataset.zoneId === token.dataset.zoneId);
-              if (zone) {
-                zone.dataset.current = "";
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove("filled", "correct", "incorrect", "selected");
-                zone.classList.add("placeholder");
-              }
-              token.dataset.assigned = "false";
-              token.dataset.zoneId = "";
-              token.classList.remove("used");
-            }
-
-            if (activeToken === token) {
-              token.classList.remove("selected");
-              activeToken = null;
-            } else {
-              tokens.forEach((item) => item.classList.remove("selected"));
-              token.classList.add("selected");
-              activeToken = token;
-            }
-          });
-        });
-
-        buttons.forEach((btn) => {
-          if (btn.dataset.action === "check") {
-            btn.addEventListener("click", () => {
-              let correctCount = 0;
-              dropZones.forEach((zone) => {
-                const tokenId = zone.dataset.current;
-                const assignedToken = tokens.find((token) => token.dataset.tokenId === tokenId);
-                const selectedValue = assignedToken ? assignedToken.dataset.value || assignedToken.textContent?.trim() || "" : "";
-                const isCorrect = !!tokenId && selectedValue === zone.dataset.answer;
-
-                zone.classList.toggle("correct", isCorrect);
-                zone.classList.toggle("incorrect", !!tokenId && !isCorrect);
-
-                if (!tokenId) {
-                  zone.classList.remove("correct", "incorrect");
-                }
-
-                if (isCorrect) {
-                  correctCount += 1;
-                }
-              });
-
-              if (feedback) {
-                if (correctCount === dropZones.length) {
-                  feedback.textContent = "Perfect! Every response is accurate.";
-                  feedback.className = "feedback-msg success";
-                } else {
-                  feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
-                  feedback.className = "feedback-msg error";
-                }
-              }
-            });
-          } else if (btn.dataset.action === "reset") {
-            btn.addEventListener("click", () => {
-              dropZones.forEach((zone) => {
-                zone.dataset.current = "";
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove("filled", "correct", "incorrect", "selected");
-                zone.classList.add("placeholder");
-              });
-
-              tokens.forEach((token) => {
-                token.dataset.assigned = "false";
-                token.dataset.zoneId = "";
-                token.classList.remove("selected", "used");
-              });
-
-              activeToken = null;
-
-              if (feedback) {
-                feedback.textContent = "";
-                feedback.className = "feedback-msg";
-              }
-            });
-          }
-        });
-      }
-
-      function initialiseActivities() {
-        document
-          .querySelectorAll('[data-activity="mc-grammar"]')
-          .forEach((el) => setupMcGrammar(el));
-        document
-          .querySelectorAll('[data-activity="click-drop"]')
-          .forEach((el) => setupClickPlacement(el));
-      }
-
-      function hydrateRemoteImages() {
-        const images = Array.from(document.querySelectorAll(".bg-media"));
-        return Promise.all(
-          images.map((image) =>
-            new Promise((resolve) => {
-              const url = image.style.backgroundImage
-                .replace(/^url\(['\"]?/, "")
-                .replace(/['\"]?\)$/, "");
-              const img = new Image();
-              img.addEventListener("load", resolve, { once: true });
-              img.addEventListener("error", resolve, { once: true });
-              img.src = url;
-            }),
-          ),
-        );
-      }
-
-      async function initialiseDeck() {
-        await hydrateRemoteImages().catch((error) => {
-          console.warn("Remote imagery could not be hydrated during initialisation", error);
-        });
-
-        refreshSlides();
-        if (slides.length) {
-          showSlide(0);
-        }
-        setupNavigation();
-        updateCounter();
-        initialiseActivities();
-        saveStateBtn?.addEventListener("click", downloadDeckState);
-        loadStateBtn?.addEventListener("click", () => loadStateInput?.click());
-        loadStateInput?.addEventListener("change", handleStateFileSelection);
-        highlightBtn?.addEventListener("click", () => {
-          const selectedColor = highlightColorSelect?.value || "#F9E27D";
-          applyHighlight(selectedColor);
-        });
-        removeHighlightBtn?.addEventListener("click", removeHighlight);
-      }
-
-      initialiseDeck().catch((error) => {
-        console.error("Deck initialisation failed", error);
-      });
-    </script>
-  </body>
+</body>
 </html>

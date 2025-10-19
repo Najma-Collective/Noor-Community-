@@ -110,10 +110,13 @@
   </head>
   <body>
     <div class="deck-app">
-      <header class="deck-toolbar">
+        <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <i class="fa-solid fa-seedling" style="color: var(--primary-sage)"></i>
-          <span>Noor Community</span>
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · B1 Lesson</span>
         </div>
         <div id="slide-counter" class="slide-counter">1 / 19</div>
         <div class="toolbar-actions">
@@ -298,7 +301,7 @@
                 Practice · 7 minutes</span
               >
               <h2>Who's Who in Tech?</h2>
-              <div class="card" data-activity="matching-vocab">
+              <div class="card" data-activity="matching">
                 <p>Match the job role to its main responsibility.</p>
                 <div class="matching-card">
                   <div class="matching-stack">
@@ -921,11 +924,11 @@
         </div>
       </main>
     </div>
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-    <script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
-    <script type="module">
-      import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
-      setupInteractiveDeck();
-    </script>
-  </body>
+</body>
 </html>

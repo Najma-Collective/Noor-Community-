@@ -761,13 +761,55 @@
 </head>
 <body>
   <div class="deck-app">
-    <header class="deck-toolbar">
-      <div class="toolbar-brand">
-        <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
-        <span>Organic Sage System · B2 Lesson</span>
-      </div>
-      <div id="slide-counter" class="slide-counter">1 / 19</div>
-    </header>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · B2 Lesson</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 19</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
 
     <main class="deck-workspace">
       <div class="stage-viewport">
@@ -932,7 +974,7 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-magnifying-glass-dollar"></i> Pre-task C · Restrictive Practice · 7 minutes</span>
             <h2>Fundraising Vocabulary Match</h2>
-            <div class="card" data-activity="matching-vocab">
+            <div class="card" data-activity="matching">
               <div class="matching-card">
                 <h3><i class="fa-solid fa-language" style="margin-right: 8px;"></i>Match each term with its definition.</h3>
                 <p class="hint" style="font-style: italic; color: var(--ink-muted);">Use the dropdown menus to pair each definition with the correct fundraising term.</p>
@@ -998,9 +1040,31 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-link"></i> Pre-task D · Restrictive Practice · 7 minutes</span>
             <h2>Pronunciation: Connected Speech</h2>
-            <div class="card" data-activity="highlight">
-              <p><strong>Instructions:</strong> Click and drag to highlight each place where a final consonant sound links to the following vowel sound. Double-click a highlight to remove it.</p>
-              <p class="highlight-text" data-correct-phrases="based on|an outcome|In addition|an important">Our decision is based on the donor's email. We need to think about an outcome that benefits everyone. In addition, we should consider all the risks. It's an important choice for us.</p>
+            <div class="card" data-activity="stress-mark">
+              <p>
+                <strong>Instructions:</strong> Click the part of each sentence where a
+                final consonant links to the next vowel sound. When you're ready,
+                choose “Check”.
+              </p>
+              <div class="stress-sentence" data-correct="based on">
+                <span class="stress-word">Our decision is</span>
+                <span class="stress-word">based on</span>
+                <span class="stress-word">the donor's email.</span>
+              </div>
+              <div class="stress-sentence" data-correct="an outcome">
+                <span class="stress-word">We need to think about</span>
+                <span class="stress-word">an outcome</span>
+                <span class="stress-word">that benefits everyone.</span>
+              </div>
+              <div class="stress-sentence" data-correct="In addition">
+                <span class="stress-word">In addition</span>
+                <span class="stress-word">we should consider all the risks.</span>
+              </div>
+              <div class="stress-sentence" data-correct="an important">
+                <span class="stress-word">It's</span>
+                <span class="stress-word">an important</span>
+                <span class="stress-word">choice for us.</span>
+              </div>
               <div class="activity-actions">
                 <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
                 <button class="activity-btn" type="button" data-action="check">Check</button>
@@ -1262,507 +1326,11 @@
       </div>
     </main>
   </div>
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const counter = document.getElementById('slide-counter');
-      let currentSlideIndex = 0;
-      const totalSlides = slides.length;
-
-      function showSlide(index) {
-        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
-        counter.textContent = `${index + 1} / ${totalSlides}`;
-      }
-
-      function navigate(direction) {
-        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
-        showSlide(currentSlideIndex);
-      }
-
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          navigate(1);
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          navigate(-1);
-        }
-      });
-
-      showSlide(currentSlideIndex);
-
-      function setupMatching(activityEl) {
-        const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                const isCorrect = select.value === option.dataset.correct;
-                option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === options.length) {
-                feedback.textContent = 'Excellent! Every match is correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              options.forEach(option => {
-                const select = option.querySelector('select');
-                select.value = '';
-                option.style.borderColor = 'rgba(122,132,113,0.16)';
-                option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      function setupMcGrammar(activityEl) {
-        const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                const isCorrect = select.value === card.dataset.correct;
-                card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === cards.length) {
-                feedback.textContent = 'Great job! All answers are correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              cards.forEach(card => {
-                const select = card.querySelector('select');
-                select.value = '';
-                card.style.borderColor = 'rgba(122,132,113,0.2)';
-                card.style.background = 'var(--soft-white)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      function setupHighlight(activityEl) {
-        const textEl = activityEl.querySelector('.highlight-text');
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!textEl || !feedback) return;
-
-        const originalHTML = textEl.innerHTML;
-        const correctPhrases = (textEl.dataset.correctPhrases || '')
-          .split('|')
-          .map(str => str.trim())
-          .filter(Boolean);
-
-        const normalize = (value) => value
-          .toLowerCase()
-          .replace(/[^a-z\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-
-        const clearSelection = () => {
-          const selection = window.getSelection();
-          if (selection) {
-            selection.removeAllRanges();
-          }
-        };
-
-        const removeMark = (mark) => {
-          if (!mark || !mark.parentNode) return;
-          const parent = mark.parentNode;
-          while (mark.firstChild) {
-            parent.insertBefore(mark.firstChild, mark);
-          }
-          parent.removeChild(mark);
-          parent.normalize();
-        };
-
-        const attachMarkHandlers = (mark) => {
-          mark.addEventListener('dblclick', () => {
-            removeMark(mark);
-          });
-        };
-
-        const getContainingMark = (node) => {
-          if (!node) return null;
-          let current = node;
-          if (current.nodeType === 3) {
-            current = current.parentNode;
-          }
-          while (current && current.nodeType === 1) {
-            if (current.classList && current.classList.contains('highlight-mark')) {
-              return current;
-            }
-            current = current.parentNode;
-          }
-          return null;
-        };
-
-        textEl.addEventListener('pointerup', () => {
-          const selection = window.getSelection();
-          if (!selection || selection.rangeCount === 0) return;
-          const range = selection.getRangeAt(0);
-          if (!textEl.contains(range.commonAncestorContainer)) {
-            clearSelection();
-            return;
-          }
-
-          const selectedText = selection.toString();
-          const normalized = normalize(selectedText);
-          if (!normalized) {
-            clearSelection();
-            return;
-          }
-
-          const startMark = getContainingMark(range.startContainer);
-          const endMark = getContainingMark(range.endContainer);
-          if (startMark || endMark) {
-            clearSelection();
-            return;
-          }
-
-          const mark = document.createElement('span');
-          mark.className = 'highlight-mark';
-          mark.dataset.highlightValue = normalized;
-
-          try {
-            range.surroundContents(mark);
-          } catch (error) {
-            const contents = range.extractContents();
-            mark.appendChild(contents);
-            range.insertNode(mark);
-          }
-
-          mark.normalize();
-          attachMarkHandlers(mark);
-          clearSelection();
-          textEl.normalize();
-        });
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              const marks = Array.from(textEl.querySelectorAll('.highlight-mark'));
-              const expected = new Set(correctPhrases.map(normalize));
-              let allCorrect = true;
-
-              marks.forEach(mark => {
-                const value = normalize(mark.textContent || '');
-                mark.classList.remove('correct', 'incorrect');
-                if (!value) {
-                  mark.classList.add('incorrect');
-                  allCorrect = false;
-                  return;
-                }
-                if (expected.has(value)) {
-                  mark.classList.add('correct');
-                  expected.delete(value);
-                } else {
-                  mark.classList.add('incorrect');
-                  allCorrect = false;
-                }
-              });
-
-              if (allCorrect && expected.size === 0 && marks.length === correctPhrases.length) {
-                feedback.textContent = 'Beautiful listening! All linked phrases identified.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = 'Review your highlights and try again.';
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              textEl.innerHTML = originalHTML;
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      function setupGapFill(activityEl) {
-        const inputs = Array.from(activityEl.querySelectorAll('.gap-input'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              inputs.forEach(input => {
-                const answer = (input.dataset.answer || '').trim().toLowerCase();
-                const value = input.value.trim().toLowerCase();
-                const isCorrect = answer === value;
-                input.classList.remove('correct', 'incorrect');
-                if (value.length === 0) {
-                  input.classList.remove('correct', 'incorrect');
-                } else if (isCorrect) {
-                  input.classList.add('correct');
-                  correctCount += 1;
-                } else {
-                  input.classList.add('incorrect');
-                }
-              });
-
-              if (correctCount === inputs.length) {
-                feedback.textContent = 'Spot on! Every gap is filled accurately.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${inputs.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('correct', 'incorrect');
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      function setupClickPlacement(activityEl) {
-        const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
-        const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = Array.from(activityEl.querySelectorAll('.activity-actions button'));
-        let activeToken = null;
-
-        dropZones.forEach((zone, index) => {
-          if (!zone.dataset.zoneId) {
-            zone.dataset.zoneId = `${activityEl.dataset.activity || 'zone'}-${index + 1}-${Math.random()
-              .toString(16)
-              .slice(2, 6)}`;
-          }
-          if (!zone.dataset.placeholder) {
-            zone.dataset.placeholder = 'Select';
-          }
-          zone.innerHTML = zone.dataset.placeholder;
-          zone.classList.add('placeholder');
-          zone.classList.remove('filled');
-
-          zone.addEventListener('click', () => {
-            if (activeToken) {
-              const previousTokenId = zone.dataset.current;
-              if (previousTokenId) {
-                const previousToken = tokens.find(token => token.dataset.tokenId === previousTokenId);
-                if (previousToken) {
-                  previousToken.dataset.assigned = 'false';
-                  previousToken.dataset.zoneId = '';
-                  previousToken.classList.remove('used');
-                }
-              }
-
-              zone.dataset.current = activeToken.dataset.tokenId;
-              zone.innerHTML = activeToken.innerHTML;
-              zone.classList.remove('placeholder', 'correct', 'incorrect', 'selected');
-              zone.classList.add('filled');
-
-              activeToken.dataset.assigned = 'true';
-              activeToken.dataset.zoneId = zone.dataset.zoneId;
-              activeToken.classList.remove('selected');
-              activeToken.classList.add('used');
-              activeToken = null;
-            } else if (zone.dataset.current) {
-              const assignedToken = tokens.find(token => token.dataset.tokenId === zone.dataset.current);
-              if (assignedToken) {
-                assignedToken.dataset.assigned = 'false';
-                assignedToken.dataset.zoneId = '';
-                assignedToken.classList.remove('used');
-              }
-              zone.dataset.current = '';
-              zone.innerHTML = zone.dataset.placeholder;
-              zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-              zone.classList.add('placeholder');
-            } else {
-              zone.classList.add('selected');
-              window.setTimeout(() => zone.classList.remove('selected'), 200);
-            }
-          });
-        });
-
-        tokens.forEach((token, index) => {
-          if (!token.dataset.tokenId) {
-            token.dataset.tokenId = `token-${index}-${Math.random().toString(16).slice(2, 6)}`;
-          }
-
-          token.addEventListener('click', () => {
-            if (token.dataset.assigned === 'true' && token.dataset.zoneId) {
-              const zone = dropZones.find(item => item.dataset.zoneId === token.dataset.zoneId);
-              if (zone) {
-                zone.dataset.current = '';
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-                zone.classList.add('placeholder');
-              }
-              token.dataset.assigned = 'false';
-              token.dataset.zoneId = '';
-              token.classList.remove('used');
-            }
-
-            if (activeToken === token) {
-              token.classList.remove('selected');
-              activeToken = null;
-            } else {
-              tokens.forEach(item => item.classList.remove('selected'));
-              token.classList.add('selected');
-              activeToken = token;
-            }
-          });
-        });
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              dropZones.forEach(zone => {
-                const tokenId = zone.dataset.current;
-                const assignedToken = tokens.find(token => token.dataset.tokenId === tokenId);
-                const selectedValue = assignedToken ? assignedToken.dataset.value || assignedToken.textContent.trim() : '';
-                const isCorrect = !!tokenId && selectedValue === zone.dataset.answer;
-
-                zone.classList.toggle('correct', isCorrect);
-                zone.classList.toggle('incorrect', !!tokenId && !isCorrect);
-
-                if (!tokenId) {
-                  zone.classList.remove('correct', 'incorrect');
-                }
-
-                if (isCorrect) {
-                  correctCount += 1;
-                }
-              });
-
-              if (feedback) {
-                if (correctCount === dropZones.length) {
-                  feedback.textContent = 'Perfect! Every response is accurate.';
-                  feedback.className = 'feedback-msg success';
-                } else {
-                  feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
-                  feedback.className = 'feedback-msg error';
-                }
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              dropZones.forEach(zone => {
-                zone.dataset.current = '';
-                zone.innerHTML = zone.dataset.placeholder;
-                zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-                zone.classList.add('placeholder');
-              });
-
-              tokens.forEach(token => {
-                token.dataset.assigned = 'false';
-                token.dataset.zoneId = '';
-                token.classList.remove('selected', 'used');
-              });
-
-              activeToken = null;
-
-              if (feedback) {
-                feedback.textContent = '';
-                feedback.className = 'feedback-msg';
-              }
-            });
-          }
-        });
-      }
-
-      function setupUnscramble(activityEl) {
-        const inputs = Array.from(activityEl.querySelectorAll('.unscramble-input'));
-        const feedback = activityEl.querySelector('.feedback-msg');
-        const buttons = activityEl.querySelectorAll('.activity-actions button');
-        if (!feedback) return;
-
-        buttons.forEach(btn => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              inputs.forEach(input => {
-                const answer = (input.dataset.answer || '').trim().toLowerCase();
-                const value = input.value.trim().toLowerCase();
-                const isCorrect = answer === value;
-                input.classList.remove('correct', 'incorrect');
-                if (value.length === 0) {
-                  input.classList.remove('correct', 'incorrect');
-                } else if (isCorrect) {
-                  input.classList.add('correct');
-                  correctCount += 1;
-                } else {
-                  input.classList.add('incorrect');
-                }
-              });
-
-              if (correctCount === inputs.length) {
-                feedback.textContent = 'Excellent! All sentences are in the correct order.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${inputs.length} accurate sentences. Keep refining!`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('correct', 'incorrect');
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
-          }
-        });
-      }
-
-      document.querySelectorAll('[data-activity="matching-vocab"]').forEach(setupMatching);
-      document.querySelectorAll('[data-activity="mc-grammar"]').forEach(setupMcGrammar);
-      document.querySelectorAll('[data-activity="highlight"]').forEach(setupHighlight);
-      document.querySelectorAll('[data-activity="gap-fill"]').forEach(setupGapFill);
-      document.querySelectorAll('[data-activity="table-completion"]').forEach(setupClickPlacement);
-      document.querySelectorAll('[data-activity="unscramble"]').forEach(setupUnscramble);
-    });
-  </script>
 </body>
 </html>
