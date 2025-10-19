@@ -12,6 +12,10 @@
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://najma-collective.github.io/Noor-Community-/CSS-slides.css"
+    >
 
     <style>
       /* =====================================================================
@@ -224,6 +228,52 @@
       .slide-stage:not(.hidden) .animated.delay-4 { animation-delay: 0.4s; }
 
 
+      .toolbar-icon {
+        color: var(--primary-sage);
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 1.4rem + 5.2vw, 6.5rem);
+      }
+
+      .content-body.is-block {
+        display: block;
+      }
+
+      .table-col-name {
+        width: 30%;
+      }
+
+      .icon-gold {
+        color: #FFD700;
+      }
+
+      .would-you-rather-icon {
+        font-size: 6rem;
+        padding: 1rem;
+      }
+
+      .stretch-self {
+        align-self: stretch;
+      }
+
+      .text-deep-forest {
+        color: var(--deep-forest);
+      }
+
+      .editable-list {
+        text-align: left;
+        font-size: var(--font-size-sm);
+        height: 80%;
+      }
+
+      .closing-icon {
+        font-size: 3em;
+        color: var(--secondary-sage);
+        margin-top: var(--space-4);
+      }
+
+
     </style>
 </head>
 <body>
@@ -231,10 +281,7 @@
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <i
-            class="fa-solid fa-seedling"
-            style="color: var(--primary-sage)"
-          ></i>
+          <i class="fa-solid fa-seedling toolbar-icon"></i>
           <span>Noor Community · C1 Lesson</span>
         </div>
         <div id="slide-counter" class="slide-counter">1 / 1</div>
@@ -289,7 +336,7 @@
                     <div class="slide-inner">
                         <div class="grid-container">
                             <div class="col-span-12 centered-text">
-                                <h1 class="animated" style="font-size: clamp(3rem, 1.4rem + 5.2vw, 6.5rem);">Getting to Know You</h1>
+                                <h1 class="animated hero-title">Getting to Know You</h1>
                                 <p class="subtitle animated delay-1">An Interactive Lesson for B1 Adults</p>
                             </div>
                         </div>
@@ -341,11 +388,11 @@
                                 <h2>Our Truths and Lies</h2>
                                 <p>Take turns sharing your three statements. The class will vote on the lie!</p>
                             </div>
-                            <div class="content-body animated delay-1" style="display: block;">
+                            <div class="content-body animated delay-1 is-block">
                                 <table class="aesthetic-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 30%;"><i class="fa-solid fa-user"></i> Student Name</th>
+                                            <th class="table-col-name"><i class="fa-solid fa-user"></i> Student Name</th>
                                             <th><i class="fa-solid fa-list-ol"></i> My Three Statements</th>
                                         </tr>
                                     </thead>
@@ -388,7 +435,7 @@
                 <!-- Slide 6: Pub Quiz - Title -->
                 <div id="slide-6" class="slide-stage">
                     <div class="slide-inner teacher-intro-slide">
-                        <i class="fa-solid fa-trophy icon animated" style="color: #FFD700;"></i>
+                        <i class="fa-solid fa-trophy icon animated icon-gold"></i>
                         <h2 class="animated delay-1">Let's Play a Game!</h2>
                         <p class="subtitle animated delay-2">A Quiz About the Arab World</p>
                     </div>
@@ -564,11 +611,11 @@
                                 <h2>Game: Would You Rather?</h2>
                             </div>
                              <div id="wouldYouRather" class="content-body dynamic-content-container animated delay-1">
-                                <div class="round active grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-robot" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Live in a SCI-FI universe</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-dragon" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Live in a FANTASY universe</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-person-arrow-up-from-line" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be really TALL</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-person-arrow-down-to-line" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be really SMALL</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-forward-fast" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Go FORWARD in time</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-backward-fast" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Go BACK in time</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-flask-vial" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be a great SCIENTIST</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-palette" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be a great ARTIST</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-water" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Breathe UNDERWATER</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-rocket" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Breathe in SPACE</div></div></div>
+                                <div class="round active grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-robot would-you-rather-icon"></i><div class="label">Live in a SCI-FI universe</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-dragon would-you-rather-icon"></i><div class="label">Live in a FANTASY universe</div></div></div>
+                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-person-arrow-up-from-line would-you-rather-icon"></i><div class="label">Be really TALL</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-person-arrow-down-to-line would-you-rather-icon"></i><div class="label">Be really SMALL</div></div></div>
+                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-forward-fast would-you-rather-icon"></i><div class="label">Go FORWARD in time</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-backward-fast would-you-rather-icon"></i><div class="label">Go BACK in time</div></div></div>
+                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-flask-vial would-you-rather-icon"></i><div class="label">Be a great SCIENTIST</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-palette would-you-rather-icon"></i><div class="label">Be a great ARTIST</div></div></div>
+                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-water would-you-rather-icon"></i><div class="label">Breathe UNDERWATER</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-rocket would-you-rather-icon"></i><div class="label">Breathe in SPACE</div></div></div>
                              </div>
                              <div class="content-footer centered-text animated delay-2">
                                 <button onclick="changeRound('wouldYouRather')" class="activity-nav-button">Next Round</button>
@@ -595,10 +642,10 @@
                                             <p>Discuss with your group and decide which three items you will bring and why.</p>
                                         </div>
                                     </div>
-                                    <div class="col-span-7" style="align-self: stretch;">
+                                    <div class="col-span-7 stretch-self">
                                         <div class="practice-area">
-                                            <h3 style="color: var(--deep-forest);">Our Group's Items & Reasons</h3>
-                                            <div contenteditable="true" style="text-align: left; font-size: var(--font-size-sm); height: 80%;">
+                                            <h3 class="text-deep-forest">Our Group's Items & Reasons</h3>
+                                            <div contenteditable="true" class="editable-list">
                                                 1. <br><br>
                                                 2. <br><br>
                                                 3. 
@@ -639,7 +686,7 @@
                             <div class="col-span-12 centered-text">
                                 <h1 class="animated">Thank You!</h1>
                                 <p class="subtitle animated delay-1">Great work today. See you next time!</p>
-                                <i class="fas fa-smile animated delay-2" style="font-size: 3em; color: var(--secondary-sage); margin-top: var(--space-4);"></i>
+                                <i class="fas fa-smile animated delay-2 closing-icon"></i>
                             </div>
                         </div>
                     </div>
@@ -650,7 +697,6 @@
             </div>
         </main>
     </div>
-<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
 <script type="module">
   import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
   setupInteractiveDeck();
@@ -658,4 +704,3 @@
 
 </body>
 </html>
-```
