@@ -1,693 +1,474 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noor Community | B1 Getting to Know You</title>
-    
-    <!-- Fonts from Google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-      /* =====================================================================
-         Organic Sage Slides — V10 Reusable CSS Template (Glow-Up Edition)
-         ===================================================================== */
-
-      /* -------------------------------
-         1. Design Tokens & Core Setup
-      ----------------------------------*/
-      :root {
-        /* Palette */
-        --primary-sage: #7A8471;
-        --secondary-sage: #9CAF88;
-        --tertiary-sage: #B8C5A6;
-        --warm-cream: #F8F6F0;
-        --soft-white: #FEFCF7;
-        --forest-shadow: #5A6B52;
-        --border-sage: rgba(122, 132, 113, 0.20);
-        --deep-forest: #3E4A3B;
-        --ink: #2F3A2B;
-        --ink-muted: #5A6B52;
-        --correct-green: #2ECC71;
-        --incorrect-red: #E74C3C;
-
-        /* Typography */
-        --font-display: 'Questrial', system-ui, -apple-system, sans-serif;
-        --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
-
-        /* Typographic Scale */
-        --font-size-sm: clamp(0.85rem, 0.8rem + 0.1vw, 0.9rem);
-        --font-size-base: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
-        --font-size-md: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
-        --font-size-lg: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
-        --font-size-xl: clamp(1.8rem, 1.1rem + 2vw, 3rem);
-        --font-size-xxl: clamp(2.5rem, 1.4rem + 3.2vw, 4.5rem);
-
-        /* Spacing */
-        --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
-        --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
-        --space-7: 2rem; --space-8: 2.5rem;
-
-        /* Radius & Elevation */
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1: 0 2px 4px rgba(47, 58, 43, 0.06), 0 4px 12px rgba(47, 58, 43, 0.08);
-        --shadow-2: 0 10px 20px rgba(47, 58, 43, 0.1), 0 15px 35px rgba(47, 58, 43, 0.12);
-        --shadow-glow: 0 0 60px 15px color-mix(in srgb, var(--secondary-sage) 20%, transparent);
-
-        /* App Dimensions */
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(24px, 3vw, 48px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-
-
-      /* -------------------------------
-         2. Global Styles & App Shell
-      ----------------------------------*/
-      *, *::before, *::after {
-        box-sizing: border-box;
-      }
-      
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
-        font-family: var(--font-body);
-        font-size: var(--font-size-base);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: hidden;
-      }
-
-      .deck-app { display: grid; grid-template-rows: var(--toolbar-h) 1fr; height: 100dvh; }
-      .deck-toolbar { position: sticky; top: 0; z-index: 50; height: var(--toolbar-h); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: 0 max(24px, 4vw); background: color-mix(in srgb, var(--soft-white) 85%, transparent); border-bottom: 1px solid var(--border-sage); box-shadow: 0 8px 20px rgba(34,41,32,0.05); backdrop-filter: blur(8px) saturate(1.1); }
-      .toolbar-brand { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-display); font-size: 1.05rem; color: var(--forest-shadow); }
-      .slide-counter { font-family: var(--font-display); color: var(--ink-muted); text-align: center; }
-      .deck-workspace { height: calc(100dvh - var(--toolbar-h)); padding: var(--workspace-pad); display: grid; place-items: center; overflow: auto; background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%), radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%); }
-      .stage-viewport { position: relative; display: grid; place-items: center; width: 100%; height: 100%; }
-
-      /* -------------------------------
-         3. Slide Structure & Navigation
-      ----------------------------------*/
-      .slide-stage { position: relative; border-radius: var(--stage-radius); background-color: var(--soft-white); box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10); aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h); width: min( calc((100vh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2)) ); max-width: 100%; max-height: 100%; overflow: hidden; outline: 1px solid var(--border-sage); transform: scale(1.0); transition: opacity 400ms cubic-bezier(0.25, 1, 0.5, 1), transform 400ms cubic-bezier(0.25, 1, 0.5, 1); }
-      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; visibility: hidden; transform: scale(0.96); }
-      .slide-inner { position: absolute; inset: 0; padding: var(--stage-pad); display: flex; flex-direction: column; justify-content: center; }
-      .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--soft-white) 80%, transparent); border: 1px solid var(--border-sage); color: var(--primary-sage); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); box-shadow: var(--shadow-1); opacity: 0; scale: 0.8; transition: all 200ms cubic-bezier(.2,.8,.2,1); }
-      .stage-viewport:hover .slide-nav { opacity: 1; scale: 1; }
-      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
-      .slide-nav-prev { left: 24px; }
-      .slide-nav-next { right: 24px; }
-
-      /* -------------------------------
-         4. Layout System
-      ----------------------------------*/
-       .content-wrapper { display: flex; flex-direction: column; height: 100%; width: 100%; gap: var(--space-4); }
-      .content-header { flex-shrink: 0; }
-      .content-body { flex-grow: 1; min-height: 0; display: grid; place-items: center; }
-      .content-footer { flex-shrink: 0; }
-      .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; width: 100%; height: 100%; align-items: center; }
-      .col-span-2 { grid-column: span 2 / span 2; } .col-span-3 { grid-column: span 3 / span 3; } .col-span-4 { grid-column: span 4 / span 4; } .col-span-5 { grid-column: span 5 / span 5; } .col-span-6 { grid-column: span 6 / span 6; } .col-span-7 { grid-column: span 7 / span 7; } .col-span-8 { grid-column: span 8 / span 8; } .col-span-10 { grid-column: span 10 / span 10; } .col-span-12 { grid-column: span 12 / span 12; }
-      .col-start-2 { grid-column-start: 2; } .col-start-3 { grid-column-start: 3; } .col-start-4 { grid-column-start: 4; }
-      .full-width-bg .slide-inner { padding: 0; } .full-width-bg .bg-content { position: relative; z-index: 1; padding: var(--stage-pad); height: 100%; display: flex; flex-direction: column; justify-content: center; } .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; } .img-overlay { position: absolute; inset: 0; z-index: 0; background: rgba(0,0,0,0.3); }
-
-      /* -------------------------------
-         5. Components
-      ----------------------------------*/
-      .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-1); height: 100%; display: flex; flex-direction: column; justify-content: center; transition: all 300ms ease; }
-      .card .icon { font-size: 1.8rem; color: var(--primary-sage); margin-bottom: var(--space-3); }
-      .instructions { text-align: center; color: var(--ink-muted); font-family: var(--font-display); padding: var(--space-2) 0; margin: 0; }
-
-
-      /* -------------------------------
-         6. Typography & Text Elements
-      ----------------------------------*/
-      .slide-stage h1, .slide-stage h2 { text-shadow: 0 1px 3px rgba(47, 58, 43, 0.1); }
-      .slide-stage h1 { font-family: var(--font-display); font-size: var(--font-size-xxl); line-height: 1.1; color: var(--deep-forest); margin: 0 0 0.2em 0; }
-      .slide-stage h2 { font-family: var(--font-display); font-size: var(--font-size-xl); line-height: 1.2; color: var(--deep-forest); margin: 0; }
-      .slide-stage h3 { margin: 0 0 0.5em 0; font-family: var(--font-display); color: var(--deep-forest); font-size: var(--font-size-md); }
-      .slide-stage p, .slide-stage li { font-size: var(--font-size-base); color: var(--forest-shadow); margin: 0.4em 0; }
-      .subtitle { color: var(--primary-sage); font-size: var(--font-size-lg); font-family: var(--font-display); margin-bottom: var(--space-4); }
-      .centered-text { text-align: center; }
-      .teacher-intro-slide { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-5); text-align: center; }
-      .teacher-intro-slide .icon { font-size: 6rem; color: var(--secondary-sage); }
-
-
-      /* -------------------------------
-         7. Dark Mode
-      ----------------------------------*/
-      @media (prefers-color-scheme: dark) {
-        :root { --soft-white: #1E211C; --warm-cream: #23261F; --forest-shadow: #DDE6D4; --ink: #E9EFE5; --ink-muted: #AEB9AA; --border-sage: rgba(184,197,166,0.25); --deep-forest: #E9EFE5; --primary-sage: #9CAF88; --shadow-glow: 0 0 65px 15px rgba(184, 197, 166, 0.15); }
-        body { background: linear-gradient(135deg, #191D18 0%, #1B1E19 100%); }
-        .deck-toolbar { background: color-mix(in srgb, #23261F 92%, #1B1E19 8%); border-color: rgba(184,197,166,0.18); box-shadow: 0 12px 36px rgba(0,0,0,0.35); }
-        .slide-stage { background: #141313; outline-color: rgba(184,197,166,0.20); box-shadow: var(--shadow-glow), 0 24px 60px rgba(0,0,0,0.35); }
-        .card { background-color: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%); border-color: rgba(184,197,166,0.25); }
-        .aesthetic-table, .aesthetic-table td, .aesthetic-table th { border-color: var(--border-sage); }
-        .aesthetic-table th { background-color: var(--warm-cream); }
-        .aesthetic-table tbody tr:nth-child(even) { background-color: #23261F; }
-      }
-
-      /* -------------------------------
-         8. Custom Slide Components
-      ----------------------------------*/
-      .practice-area { border: 2px dashed var(--border-sage); border-radius: var(--radius); padding: var(--space-4); min-height: 100px; background: color-mix(in srgb, var(--warm-cream) 30%, transparent); flex-grow: 1; text-align: center; }
-      .aesthetic-table { width: 100%; height: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); font-size: var(--font-size-sm); }
-      .aesthetic-table th, .aesthetic-table td { border: 1px solid var(--border-sage); padding: var(--space-2) var(--space-3); text-align: left; vertical-align: top; }
-      .aesthetic-table th { background-color: color-mix(in srgb, var(--warm-cream) 50%, transparent); font-family: var(--font-display); color: var(--deep-forest); font-size: var(--font-size-md); }
-      .aesthetic-table th .fa-solid { margin-right: var(--space-3); }
-      .aesthetic-table tbody tr:nth-child(even) { background-color: color-mix(in srgb, var(--warm-cream) 30%, transparent); }
-      .aesthetic-table div[contenteditable="true"] { height: 100%; outline: none; }
-      .question-ideas { list-style: none; padding: 0; text-align: left; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; height: 100%;}
-      .question-ideas li { font-size: var(--font-size-md); font-family: var(--font-display); color: var(--deep-forest); margin-bottom: var(--space-4); display: flex; align-items: center; }
-      .question-ideas .fa-solid { margin-right: var(--space-4); color: var(--secondary-sage); font-size: 1.5em; width: 40px; text-align: center; }
-      .quiz-container { max-width: 80%; margin: auto; }
-      .quiz-question { font-size: var(--font-size-lg); font-family: var(--font-display); color: var(--deep-forest); margin-bottom: var(--space-5); text-align: center; }
-      .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-5); }
-      .quiz-option { border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-4); text-align: center; font-family: var(--font-display); font-size: var(--font-size-md); cursor: pointer; transition: all 0.2s ease; }
-      .quiz-option:hover { background: color-mix(in srgb, var(--warm-cream) 50%, transparent); transform: translateY(-2px); box-shadow: var(--shadow-1); }
-      .quiz-option.correct { background-color: var(--correct-green); color: white; border-color: var(--correct-green); }
-      .quiz-option.incorrect { background-color: var(--incorrect-red); color: white; border-color: var(--incorrect-red); }
-      .quiz-feedback { visibility: hidden; opacity: 0; transition: opacity 0.3s ease; background: color-mix(in srgb, var(--warm-cream) 50%, transparent); border-radius: var(--radius); padding: var(--space-4); text-align: center; font-size: var(--font-size-base); }
-      .quiz-feedback.visible { visibility: visible; opacity: 1; }
-      .dynamic-content-container .round { display: none; }
-      .dynamic-content-container .round.active { display: grid; }
-      .this-or-that-item { border: 1px solid var(--border-sage); border-radius: var(--radius-lg); overflow: hidden; text-align: center; height: 100%; display: flex; flex-direction: column; box-shadow: var(--shadow-1); background-color: var(--soft-white); transition: all 300ms ease; }
-      .this-or-that-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
-      .this-or-that-item .fa-solid { transition: transform 0.3s ease; }
-      .this-or-that-item:hover .fa-solid { transform: scale(1.1); }
-      .this-or-that-item .label { padding: var(--space-3); background: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); font-family: var(--font-display); color: var(--deep-forest); font-size: var(--font-size-md); }
-      .activity-nav-button { background: var(--primary-sage); color: var(--soft-white); border: none; border-radius: 50px; padding: var(--space-3) var(--space-5); font-family: var(--font-display); cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-1); }
-      .activity-nav-button:hover { background: var(--deep-forest); box-shadow: var(--shadow-2); }
-      .icon-choice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-6); width: 100%; max-width: 900px; }
-      .icon-choice-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); cursor: pointer; }
-      .icon-choice-item .fa-solid { font-size: 3rem; color: var(--secondary-sage); transition: transform 0.2s ease, color 0.2s ease; }
-      .icon-choice-item .number { font-family: var(--font-display); font-size: var(--font-size-md); color: var(--deep-forest); background-color: var(--warm-cream); border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--border-sage); transition: background-color 0.2s ease; }
-      .icon-choice-item:hover .fa-solid { transform: scale(1.25); color: var(--primary-sage); }
-      .icon-choice-item:hover .number { background-color: var(--tertiary-sage); }
-      
-      /* -------------------------------
-         9. Glow-Up Enhancements
-      ----------------------------------*/
-      @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-      }
-
-      .animated {
-        opacity: 0; /* Start hidden */
-      }
-
-      .slide-stage:not(.hidden) .animated {
-        animation: fadeInUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-      }
-      
-      /* Staggered animation delays */
-      .slide-stage:not(.hidden) .animated.delay-1 { animation-delay: 0.1s; }
-      .slide-stage:not(.hidden) .animated.delay-2 { animation-delay: 0.2s; }
-      .slide-stage:not(.hidden) .animated.delay-3 { animation-delay: 0.3s; }
-      .slide-stage:not(.hidden) .animated.delay-4 { animation-delay: 0.4s; }
-
-
-    </style>
-</head>
-<body>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../CSS-slides.css" />
+  </head>
+  <body>
     <div class="deck-app">
-        <header class="deck-toolbar">
-            <div class="toolbar-brand">
-                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
-                <span>English Class B1</span>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling"></i>
+          <span>English Class B1</span>
+        </div>
+        <div id="slide-counter" class="slide-counter"></div>
+        <div class="toolbar-actions" aria-hidden="true"></div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="slide-stage" id="slide-1">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill"><i class="fa-solid fa-people-group"></i> Week 1</span>
+                <h1>Getting to Know You</h1>
+                <p class="deck-subtitle">
+                  An interactive lesson to build rapport and fluency
+                </p>
+                <p>
+                  Today we will share fun facts, quiz each other, and discover the
+                  interests we have in common.
+                </p>
+              </div>
             </div>
-            <div class="slide-counter" id="slideCounter"></div>
-            <div><!-- Future controls can go here --></div>
-        </header>
-        
-        <main class="deck-workspace">
-            <div class="stage-viewport">
-                
-                <!-- SLIDES START HERE -->
+          </div>
 
-                <!-- Slide 1: Title Slide -->
-                <div id="slide-1" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h1 class="animated" style="font-size: clamp(3rem, 1.4rem + 5.2vw, 6.5rem);">Getting to Know You</h1>
-                                <p class="subtitle animated delay-1">An Interactive Lesson for B1 Adults</p>
-                            </div>
-                        </div>
-                    </div>
+          <div class="slide-stage hidden" id="slide-2">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Warm-up</span>
+                <h2>Which icon feels most like you today?</h2>
+                <p>
+                  Choose an icon that matches your mood or personality and be
+                  ready to explain why it fits you.
+                </p>
+                <div class="gallery-grid">
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-book-open fa-2x"></i> Curious reader</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-compass fa-2x"></i> Adventurer</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-heart fa-2x"></i> Caring friend</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-lightbulb fa-2x"></i> Idea maker</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-music fa-2x"></i> Music lover</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-tree fa-2x"></i> Nature fan</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-comments fa-2x"></i> Chatty connector</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-bed fa-2x"></i> Relaxed dreamer</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-rocket fa-2x"></i> Big dreamer</p>
+                  </div>
+                  <div class="gallery-card">
+                    <p><i class="fa-solid fa-gears fa-2x"></i> Problem solver</p>
+                  </div>
                 </div>
-
-                <!-- Slide 2: Warmer (REVISED) -->
-                <div id="slide-2" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="content-wrapper">
-                            <div class="content-header centered-text">
-                                <h2 class="animated">Warm-up: Which Icon is You?</h2>
-                            </div>
-                            <div class="content-body">
-                                <div class="icon-choice-grid animated delay-1">
-                                    <div class="icon-choice-item"><i class="fa-solid fa-book-open"></i><span class="number">1</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-compass"></i><span class="number">2</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-heart"></i><span class="number">3</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-lightbulb"></i><span class="number">4</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-music"></i><span class="number">5</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-tree"></i><span class="number">6</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-comments"></i><span class="number">7</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-bed"></i><span class="number">8</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-rocket"></i><span class="number">9</span></div>
-                                    <div class="icon-choice-item"><i class="fa-solid fa-gears"></i><span class="number">10</span></div>
-                                </div>
-                            </div>
-                            <div class="content-footer animated delay-2">
-                                <p class="instructions">Choose the icon that best reflects your personality. Share the number in the chat and explain why!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 3: Activity 1 - Two Truths and a Lie -->
-                <div id="slide-3" class="slide-stage">
-                    <div class="slide-inner teacher-intro-slide">
-                        <i class="fa-solid fa-masks-theater icon animated"></i>
-                        <h2 class="animated delay-1">Activity 1: Two Truths and a Lie</h2>
-                        <p class="animated delay-2">Think of three statements about yourself. Two must be true, and one must be a lie. Can your classmates guess which one is the lie?</p>
-                    </div>
-                </div>
-
-                <!-- Slide 4: Activity 1 - Workspace -->
-                <div id="slide-4" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="content-wrapper">
-                            <div class="content-header centered-text animated">
-                                <h2>Our Truths and Lies</h2>
-                                <p>Take turns sharing your three statements. The class will vote on the lie!</p>
-                            </div>
-                            <div class="content-body animated delay-1" style="display: block;">
-                                <table class="aesthetic-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 30%;"><i class="fa-solid fa-user"></i> Student Name</th>
-                                            <th><i class="fa-solid fa-list-ol"></i> My Three Statements</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true">1. <br>2. <br>3. </div></td></tr>
-                                        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true">1. <br>2. <br>3. </div></td></tr>
-                                        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true">1. <br>2. <br>3. </div></td></tr>
-                                        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true">1. <br>2. <br>3. </div></td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 5: Activity 2 - Speed Greeting (REVISED) -->
-                <div id="slide-5" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="content-wrapper">
-                            <div class="content-header centered-text animated">
-                                <h2>Activity 2: Speed Greeting in Breakout Rooms</h2>
-                                <p>You will be paired up in breakout rooms. Ask your partner these questions.</p>
-                            </div>
-                            <div class="content-body">
-                               <ul class="question-ideas animated delay-1">
-                                   <li><i class="fa-solid fa-film"></i>What is your favorite film or TV show?</li>
-                                   <li><i class="fa-solid fa-mask"></i>What superpower would you like to have?</li>
-                                   <li><i class="fa-solid fa-clock-rotate-left"></i>If you could travel to any time in history, when would it be?</li>
-                                   <li><i class="fa-solid fa-face-grin-stars"></i>Share one fun fact about yourself.</li>
-                                   <li><i class="fa-solid fa-quote-left"></i>What is your favorite quote or saying?</li>
-                               </ul>
-                            </div>
-                             <div class="content-footer animated delay-2">
-                                <p class="instructions">After a few minutes, we will switch partners!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 6: Pub Quiz - Title -->
-                <div id="slide-6" class="slide-stage">
-                    <div class="slide-inner teacher-intro-slide">
-                        <i class="fa-solid fa-trophy icon animated" style="color: #FFD700;"></i>
-                        <h2 class="animated delay-1">Let's Play a Game!</h2>
-                        <p class="subtitle animated delay-2">A Quiz About the Arab World</p>
-                    </div>
-                </div>
-
-                <!-- Slide 7: Pub Quiz - Q1 -->
-                <div id="slide-7" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">1. The ancient city of Petra is in which country?</p>
-                            <div class="quiz-options" data-quiz-id="q1">
-                                <div class="quiz-option">A) Egypt</div>
-                                <div class="quiz-option" data-correct="true">B) Jordan</div>
-                                <div class="quiz-option">C) Lebanon</div>
-                                <div class="quiz-option">D) Syria</div>
-                            </div>
-                            <div class="quiz-feedback" id="q1-feedback">
-                                <p><b>Correct!</b> Petra, known as the 'Rose City', is a famous historical and archaeological city in southern Jordan.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 8: Pub Quiz - Q2 -->
-                <div id="slide-8" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">2. What is the capital of Morocco?</p>
-                            <div class="quiz-options" data-quiz-id="q2">
-                                <div class="quiz-option">A) Casablanca</div>
-                                <div class="quiz-option">B) Marrakesh</div>
-                                <div class="quiz-option" data-correct="true">C) Rabat</div>
-                                <div class="quiz-option">D) Fes</div>
-                            </div>
-                            <div class="quiz-feedback" id="q2-feedback">
-                                <p><b>That's right!</b> While Casablanca is the largest city, Rabat is the capital of Morocco.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Slide 9: Pub Quiz - Q3 -->
-                <div id="slide-9" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">3. Which sea is famous for being so salty you can float easily?</p>
-                            <div class="quiz-options" data-quiz-id="q3">
-                                <div class="quiz-option">A) The Red Sea</div>
-                                <div class="quiz-option">B) The Mediterranean Sea</div>
-                                <div class="quiz-option" data-correct="true">C) The Dead Sea</div>
-                                <div class="quiz-option">D) The Arabian Sea</div>
-                            </div>
-                            <div class="quiz-feedback" id="q3-feedback">
-                                <p><b>Correct!</b> The Dead Sea is a salt lake bordered by Jordan and Palestine. Its high salt concentration makes the water very dense.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 10: Pub Quiz - Q4 -->
-                <div id="slide-10" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">4. The world's tallest building, the Burj Khalifa, is in which city?</p>
-                            <div class="quiz-options" data-quiz-id="q4">
-                                <div class="quiz-option">A) Doha</div>
-                                <div class="quiz-option" data-correct="true">B) Dubai</div>
-                                <div class="quiz-option">C) Riyadh</div>
-                                <div class="quiz-option">D) Abu Dhabi</div>
-                            </div>
-                            <div class="quiz-feedback" id="q4-feedback">
-                                <p><b>That's it!</b> The Burj Khalifa, the tallest building in the world since 2009, is located in Dubai, UAE.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 11: Pub Quiz - Q5 -->
-                <div id="slide-11" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">5. The 'Cedars of God' is a famous, ancient forest in which country?</p>
-                            <div class="quiz-options" data-quiz-id="q5">
-                                <div class="quiz-option" data-correct="true">A) Lebanon</div>
-                                <div class="quiz-option">B) Syria</div>
-                                <div class="quiz-option">C) Jordan</div>
-                                <div class="quiz-option">D) Palestine</div>
-                            </div>
-                            <div class="quiz-feedback" id="q5-feedback">
-                                <p><b>Yes!</b> The Cedars of God is a protected forest and a UNESCO World Heritage Site in Bsharre, Lebanon.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 12: Pub Quiz - Q6 -->
-                <div id="slide-12" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">6. What is the traditional art of beautiful handwriting called in the Arab world?</p>
-                            <div class="quiz-options" data-quiz-id="q6">
-                                <div class="quiz-option" data-correct="true">A) Calligraphy</div>
-                                <div class="quiz-option">B) Mosaic</div>
-                                <div class="quiz-option">C) Engraving</div>
-                                <div class="quiz-option">D) Illumination</div>
-                            </div>
-                            <div class="quiz-feedback" id="q6-feedback">
-                                <p><b>Perfect!</b> Arabic calligraphy is a major form of artistic expression in Islamic cultures.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 13: Pub Quiz - Q7 -->
-                <div id="slide-13" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">7. In which country can you visit the great Pyramids of Giza?</p>
-                            <div class="quiz-options" data-quiz-id="q7">
-                                <div class="quiz-option">A) Sudan</div>
-                                <div class="quiz-option" data-correct="true">B) Egypt</div>
-                                <div class="quiz-option">C) Algeria</div>
-                                <div class="quiz-option">D) Libya</div>
-                            </div>
-                            <div class="quiz-feedback" id="q7-feedback">
-                                <p><b>Exactly!</b> The Great Pyramid of Giza is located on the outskirts of Cairo, Egypt.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 14: Pub Quiz - Q8 -->
-                <div id="slide-14" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">8. The Rub' al Khali desert is also known as the...</p>
-                            <div class="quiz-options" data-quiz-id="q8">
-                                <div class="quiz-option">A) Great Sand Sea</div>
-                                <div class="quiz-option" data-correct="true">B) Empty Quarter</div>
-                                <div class="quiz-option">C) White Desert</div>
-                                <div class="quiz-option">D) Black Desert</div>
-                            </div>
-                            <div class="quiz-feedback" id="q8-feedback">
-                                <p><b>Correct!</b> The Rub' al Khali, which means "Empty Quarter" in Arabic, is the largest contiguous sand desert in the world.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 15: Pub Quiz - Q9 -->
-                <div id="slide-15" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="quiz-container animated">
-                            <p class="quiz-question">9. What is the currency of the United Arab Emirates?</p>
-                            <div class="quiz-options" data-quiz-id="q9">
-                                <div class="quiz-option">A) Riyal</div>
-                                <div class="quiz-option">B) Dinar</div>
-                                <div class="quiz-option" data-correct="true">C) Dirham</div>
-                                <div class="quiz-option">D) Pound</div>
-                            </div>
-                            <div class="quiz-feedback" id="q9-feedback">
-                                <p><b>Yes!</b> The currency of the UAE is the Emirati Dirham, often abbreviated as AED.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 16: "Would You Rather?" Game -->
-                <div id="slide-16" class="slide-stage">
-                    <div class="slide-inner">
-                         <div class="content-wrapper">
-                            <div class="content-header centered-text animated">
-                                <h2>Game: Would You Rather?</h2>
-                            </div>
-                             <div id="wouldYouRather" class="content-body dynamic-content-container animated delay-1">
-                                <div class="round active grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-robot" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Live in a SCI-FI universe</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-dragon" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Live in a FANTASY universe</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-person-arrow-up-from-line" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be really TALL</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-person-arrow-down-to-line" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be really SMALL</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-forward-fast" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Go FORWARD in time</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-backward-fast" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Go BACK in time</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-flask-vial" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be a great SCIENTIST</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-palette" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Be a great ARTIST</div></div></div>
-                                <div class="round grid-container"><div class="col-span-5 col-start-2 this-or-that-item"><i class="fa-solid fa-water" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Breathe UNDERWATER</div></div><div class="col-span-5 this-or-that-item"><i class="fa-solid fa-rocket" style="font-size: 6rem; padding: 1rem;"></i><div class="label">Breathe in SPACE</div></div></div>
-                             </div>
-                             <div class="content-footer centered-text animated delay-2">
-                                <button onclick="changeRound('wouldYouRather')" class="activity-nav-button">Next Round</button>
-                                 <p class="instructions">Which would you rather do? Why?</p>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 17: Activity 3 - Desert Island Dilemma -->
-                <div id="slide-17" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="content-wrapper">
-                            <div class="content-header centered-text animated">
-                                <h2>Activity 3: Desert Island Dilemma</h2>
-                            </div>
-                            <div class="content-body animated delay-1">
-                                <div class="grid-container">
-                                    <div class="col-span-5">
-                                        <div class="card">
-                                            <i class="fa-solid fa-person-shelter icon"></i>
-                                            <h3>The Scenario</h3>
-                                            <p>You are stranded on a deserted island with your group. You can only bring <strong>three items</strong>.</p>
-                                            <p>Discuss with your group and decide which three items you will bring and why.</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-7" style="align-self: stretch;">
-                                        <div class="practice-area">
-                                            <h3 style="color: var(--deep-forest);">Our Group's Items & Reasons</h3>
-                                            <div contenteditable="true" style="text-align: left; font-size: var(--font-size-sm); height: 80%;">
-                                                1. <br><br>
-                                                2. <br><br>
-                                                3. 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="content-footer animated delay-2">
-                                <p class="instructions">A spokesperson from each group will present your choices to the class.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 18: Cooler / Wrap-up -->
-                <div id="slide-18" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="content-wrapper">
-                            <div class="content-header centered-text animated">
-                                <h2>Let's Reflect: Class Commonalities</h2>
-                                <p>Let's share what we learned about each other today.</p>
-                            </div>
-                            <div class="content-body animated delay-1">
-                               <ul class="question-ideas">
-                                   <li><i class="fa-solid fa-lightbulb"></i>Share something new or surprising you learned about a classmate.</li>
-                                   <li><i class="fa-solid fa-handshake-simple"></i>What is one thing you have in common with someone in the class?</li>
-                               </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 19: End Slide -->
-                <div id="slide-19" class="slide-stage">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12 centered-text">
-                                <h1 class="animated">Thank You!</h1>
-                                <p class="subtitle animated delay-1">Great work today. See you next time!</p>
-                                <i class="fas fa-smile animated delay-2" style="font-size: 3em; color: var(--secondary-sage); margin-top: var(--space-4);"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-nav slide-nav-prev" onclick="navigateSlides(-1)"><i class="fas fa-chevron-left"></i></div>
-                <div class="slide-nav slide-nav-next" onclick="navigateSlides(1)"><i class="fas fa-chevron-right"></i></div>
+                <p class="feedback-msg">Share in pairs before telling the whole class.</p>
+              </div>
             </div>
-        </main>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-3">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Activity 1</span>
+                <h2>Two Truths and a Lie</h2>
+                <p>
+                  Think of three statements about yourself. Two should be true
+                  and one should be false. Can the class spot the lie?
+                </p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-lightbulb"></i> Write your three statements.</li>
+                  <li><i class="fa-solid fa-people-arrows"></i> Share them aloud.</li>
+                  <li><i class="fa-solid fa-check-double"></i> Classmates guess the lie.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-4">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h2>Our truths &amp; lies workspace</h2>
+                <p>Use the note cards to collect each learner's ideas.</p>
+                <div class="split-grid">
+                  <div class="note-card" contenteditable="true">
+                    <h3>Student 1</h3>
+                    <p>1.<br />2.<br />3.</p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Student 2</h3>
+                    <p>1.<br />2.<br />3.</p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Student 3</h3>
+                    <p>1.<br />2.<br />3.</p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Student 4</h3>
+                    <p>1.<br />2.<br />3.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-5">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Activity 2</span>
+                <h2>Speed greeting in breakout rooms</h2>
+                <p>
+                  Pair up and ask your partner a few of these questions. You will
+                  switch partners after a few minutes.
+                </p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-film"></i> What is your favourite film or show?</li>
+                  <li><i class="fa-solid fa-mask"></i> Which superpower would you like to have?</li>
+                  <li><i class="fa-solid fa-clock-rotate-left"></i> If you could time-travel, where would you go?</li>
+                  <li><i class="fa-solid fa-face-grin-stars"></i> Share one fun fact about yourself.</li>
+                  <li><i class="fa-solid fa-quote-left"></i> What is a quote or saying you love?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-6">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Game time</span>
+                <h2>Arab World Pub Quiz</h2>
+                <p>
+                  Work together to choose the best answer. After each question we
+                  will reveal the correct choice.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-7">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 1</p>
+                <h2>Where is the ancient city of Petra?</h2>
+                <div class="quiz-options" data-quiz-id="q1">
+                  <div class="quiz-option">A) Egypt</div>
+                  <div class="quiz-option" data-correct="true">B) Jordan</div>
+                  <div class="quiz-option">C) Lebanon</div>
+                  <div class="quiz-option">D) Syria</div>
+                </div>
+                <p class="feedback-msg success" id="q1-feedback" hidden>
+                  Petra, the "Rose City", is a historic site in southern Jordan.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-8">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 2</p>
+                <h2>What is the capital of Morocco?</h2>
+                <div class="quiz-options" data-quiz-id="q2">
+                  <div class="quiz-option">A) Casablanca</div>
+                  <div class="quiz-option">B) Marrakesh</div>
+                  <div class="quiz-option" data-correct="true">C) Rabat</div>
+                  <div class="quiz-option">D) Fes</div>
+                </div>
+                <p class="feedback-msg success" id="q2-feedback" hidden>
+                  While Casablanca is the largest city, Rabat is the capital.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-9">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 3</p>
+                <h2>Which sea is famous for letting you float easily?</h2>
+                <div class="quiz-options" data-quiz-id="q3">
+                  <div class="quiz-option">A) Red Sea</div>
+                  <div class="quiz-option">B) Mediterranean Sea</div>
+                  <div class="quiz-option" data-correct="true">C) Dead Sea</div>
+                  <div class="quiz-option">D) Arabian Sea</div>
+                </div>
+                <p class="feedback-msg success" id="q3-feedback" hidden>
+                  The Dead Sea's high salt concentration keeps swimmers afloat.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-10">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 4</p>
+                <h2>Where can you visit the Burj Khalifa?</h2>
+                <div class="quiz-options" data-quiz-id="q4">
+                  <div class="quiz-option">A) Doha</div>
+                  <div class="quiz-option" data-correct="true">B) Dubai</div>
+                  <div class="quiz-option">C) Riyadh</div>
+                  <div class="quiz-option">D) Abu Dhabi</div>
+                </div>
+                <p class="feedback-msg success" id="q4-feedback" hidden>
+                  Dubai in the UAE is home to the world's tallest building.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-11">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 5</p>
+                <h2>The "Cedars of God" forest is in which country?</h2>
+                <div class="quiz-options" data-quiz-id="q5">
+                  <div class="quiz-option" data-correct="true">A) Lebanon</div>
+                  <div class="quiz-option">B) Syria</div>
+                  <div class="quiz-option">C) Jordan</div>
+                  <div class="quiz-option">D) Palestine</div>
+                </div>
+                <p class="feedback-msg success" id="q5-feedback" hidden>
+                  The forest is a UNESCO World Heritage Site in northern Lebanon.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-12">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 6</p>
+                <h2>What is the art of beautiful writing called?</h2>
+                <div class="quiz-options" data-quiz-id="q6">
+                  <div class="quiz-option" data-correct="true">A) Calligraphy</div>
+                  <div class="quiz-option">B) Mosaic</div>
+                  <div class="quiz-option">C) Engraving</div>
+                  <div class="quiz-option">D) Illumination</div>
+                </div>
+                <p class="feedback-msg success" id="q6-feedback" hidden>
+                  Arabic calligraphy is a celebrated art form across the region.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-13">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 7</p>
+                <h2>In which country can you visit the pyramids of Giza?</h2>
+                <div class="quiz-options" data-quiz-id="q7">
+                  <div class="quiz-option">A) Sudan</div>
+                  <div class="quiz-option" data-correct="true">B) Egypt</div>
+                  <div class="quiz-option">C) Algeria</div>
+                  <div class="quiz-option">D) Libya</div>
+                </div>
+                <p class="feedback-msg success" id="q7-feedback" hidden>
+                  Egypt's Giza plateau is home to the Great Pyramid and Sphinx.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-14">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 8</p>
+                <h2>Which spice blend is famously used in Levantine cooking?</h2>
+                <div class="quiz-options" data-quiz-id="q8">
+                  <div class="quiz-option">A) Garam masala</div>
+                  <div class="quiz-option" data-correct="true">B) Za'atar</div>
+                  <div class="quiz-option">C) Ras el hanout</div>
+                  <div class="quiz-option">D) Herbes de Provence</div>
+                </div>
+                <p class="feedback-msg success" id="q8-feedback" hidden>
+                  Za'atar is a savoury mix of thyme, sesame, and sumac.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-15">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 9</p>
+                <h2>Which city is nicknamed the "Pearl of the Desert"?</h2>
+                <div class="quiz-options" data-quiz-id="q9">
+                  <div class="quiz-option" data-correct="true">A) Marrakech</div>
+                  <div class="quiz-option">B) Muscat</div>
+                  <div class="quiz-option">C) Riyadh</div>
+                  <div class="quiz-option">D) Tunis</div>
+                </div>
+                <p class="feedback-msg success" id="q9-feedback" hidden>
+                  Marrakech is known for its vibrant markets and desert setting.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-16">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Conversation game</span>
+                <h2>Would you rather?</h2>
+                <p>Discuss each pair and explain your choice.</p>
+                <div class="tips-grid">
+                  <div class="tip-card">
+                    <h3>Adventure</h3>
+                    <p>Live in a science fiction universe or a fantasy universe?</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Perspective</h3>
+                    <p>Be really tall or be really small?</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Time travel</h3>
+                    <p>Go forward in time or go back in time?</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Talent</h3>
+                    <p>Become a famous scientist or an inspiring artist?</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Superpower</h3>
+                    <p>Breathe underwater or breathe in space?</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-17">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Activity 3</span>
+                <h2>Desert Island Dilemma</h2>
+                <div class="split-grid">
+                  <div class="card">
+                    <h3>The scenario</h3>
+                    <p>You are stranded on a deserted island with your team.</p>
+                    <p>Discuss and choose <strong>three items</strong> to bring.</p>
+                    <p class="feedback-msg">Be ready to justify each choice.</p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Our group's list</h3>
+                    <p>1.<br />2.<br />3.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-18">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Reflection</span>
+                <h2>Class commonalities</h2>
+                <p>Share one insight from today.</p>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-lightbulb"></i> Something new you learned about a classmate.</li>
+                  <li><i class="fa-solid fa-handshake-simple"></i> One thing you have in common with someone.</li>
+                  <li><i class="fa-solid fa-bullseye"></i> A goal you set after hearing others' stories.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-19">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h1>Thank you!</h1>
+                <p class="deck-subtitle">Great work today. See you next time.</p>
+                <p><i class="fa-solid fa-face-smile fa-3x"></i></p>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" type="button" onclick="navigateSlides(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" onclick="navigateSlides(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- SLIDE NAVIGATION LOGIC ---
-            let currentSlide = 1;
-            const slides = document.querySelectorAll('.slide-stage');
-            const totalSlides = slides.length;
-            const slideCounter = document.getElementById('slideCounter');
-            
-            window.showSlide = function(index) {
-                slides.forEach((slide, i) => {
-                    slide.classList.toggle('hidden', i + 1 !== index);
-                });
-                slideCounter.textContent = `Slide ${index} of ${totalSlides}`;
+      document.addEventListener("DOMContentLoaded", () => {
+        let currentSlide = 1;
+        const slides = document.querySelectorAll(".slide-stage");
+        const totalSlides = slides.length;
+        const slideCounter = document.getElementById("slide-counter");
+
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle("hidden", i + 1 !== index);
+          });
+          if (slideCounter) {
+            slideCounter.textContent = `Slide ${index} of ${totalSlides}`;
+          }
+        }
+
+        window.navigateSlides = function (direction) {
+          currentSlide += direction;
+          if (currentSlide > totalSlides) currentSlide = 1;
+          if (currentSlide < 1) currentSlide = totalSlides;
+          showSlide(currentSlide);
+        };
+
+        document.querySelectorAll(".quiz-options").forEach((container) => {
+          container.addEventListener("click", (event) => {
+            const option = event.target.closest(".quiz-option");
+            if (!option || container.dataset.locked === "true") return;
+
+            container.dataset.locked = "true";
+            option.classList.add(
+              option.dataset.correct === "true" ? "correct" : "incorrect"
+            );
+
+            if (option.dataset.correct !== "true") {
+              const correct = container.querySelector(
+                '.quiz-option[data-correct="true"]'
+              );
+              if (correct) correct.classList.add("correct");
             }
 
-            window.navigateSlides = function(direction) {
-                currentSlide += direction;
-                if (currentSlide > totalSlides) { currentSlide = 1; }
-                if (currentSlide < 1) { currentSlide = totalSlides; }
-                showSlide(currentSlide);
+            const feedback = document.getElementById(
+              `${container.dataset.quizId}-feedback`
+            );
+            if (feedback) {
+              feedback.hidden = false;
             }
-
-            // --- DYNAMIC ACTIVITY (This or That, etc.) LOGIC ---
-            const activityStates = {};
-            window.changeRound = function(activityId) {
-                const container = document.getElementById(activityId);
-                if (!container) return;
-                const rounds = container.querySelectorAll('.round');
-                if (rounds.length === 0) return;
-                if (activityStates[activityId] === undefined) {
-                    activityStates[activityId] = 0;
-                }
-                let currentRoundIndex = activityStates[activityId];
-                rounds[currentRoundIndex].classList.remove('active');
-                currentRoundIndex = (currentRoundIndex + 1) % rounds.length;
-                rounds[currentRoundIndex].classList.add('active');
-                activityStates[activityId] = currentRoundIndex;
-            }
-
-            // --- QUIZ LOGIC ---
-            function initializeQuiz() {
-                const allOptionsContainers = document.querySelectorAll('.quiz-options');
-                
-                allOptionsContainers.forEach(container => {
-                    container.addEventListener('click', (e) => {
-                        // Ensure we clicked on an option, not the space between
-                        if (!e.target.classList.contains('quiz-option')) return;
-
-                        const selectedOption = e.target;
-                        const optionsContainer = selectedOption.parentElement;
-                        const quizId = optionsContainer.dataset.quizId;
-                        const feedback = document.getElementById(`${quizId}-feedback`);
-                        const allOptions = optionsContainer.querySelectorAll('.quiz-option');
-
-                        // Disable further clicks on this question
-                        allOptions.forEach(opt => opt.style.pointerEvents = 'none');
-                        
-                        // Check if the selected answer is correct
-                        if (selectedOption.dataset.correct === 'true') {
-                            selectedOption.classList.add('correct');
-                        } else {
-                            selectedOption.classList.add('incorrect');
-                            const correctOption = optionsContainer.querySelector('[data-correct="true"]');
-                            if (correctOption) correctOption.classList.add('correct');
-                        }
-                        
-                        // Show feedback
-                        if (feedback) feedback.classList.add('visible');
-                    });
-                });
-            }
-
-            // --- RUN INITIALIZATION ---
-            showSlide(currentSlide);
-            initializeQuiz();
+          });
         });
+
+        showSlide(currentSlide);
+      });
     </script>
-</body>
+  </body>
 </html>
-```

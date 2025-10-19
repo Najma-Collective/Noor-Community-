@@ -1,1501 +1,284 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Sage System | A1 Final Communicative Lesson</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-      :root {
-        --primary-sage: #7A8471;
-        --secondary-sage: #9CAF88;
-        --tertiary-sage: #B8C5A6;
-        --warm-cream: #F8F6F0;
-        --soft-white: #FEFCF7;
-        --forest-shadow: #5A6B52;
-        --ink: #2F3A2B;
-        --ink-muted: #5A6B52;
-        --deep-forest: #3E4A3A;
-        --border-sage: rgba(122,132,113,0.18);
-        --hover-sage: rgba(156,175,136,0.15);
-        --accent-peach: #EFC8A3;
-        --accent-berry: #B37B8D;
-        --stage-radius: 18px;
-        --radius: 16px;
-        --radius-lg: 22px;
-        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 4px 16px rgba(34,41,32,0.08);
-        --shadow-2: 0 14px 40px rgba(34,41,32,0.12);
-        --shadow-glow: 0 0 55px 12px color-mix(in srgb, var(--secondary-sage) 18%, transparent);
-        --font-display: 'Questrial', system-ui, sans-serif;
-        --font-body: 'Nunito', system-ui, sans-serif;
-        --step--1: clamp(0.85rem, 0.82rem + 0.12vw, 0.95rem);
-        --step-0: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
-        --step-1: clamp(1.15rem, 1.05rem + 0.35vw, 1.35rem);
-        --step-2: clamp(1.45rem, 1.2rem + 0.65vw, 1.75rem);
-        --step-3: clamp(1.9rem, 1.5rem + 1.1vw, 2.4rem);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(28px, 4vw, 56px);
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-
-      *, *::before, *::after { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        color: var(--forest-shadow);
-        background: linear-gradient(140deg, #F8F6F0 0%, #F2EFE7 100%);
-        -webkit-font-smoothing: antialiased;
-      }
-
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: 1rem;
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 88%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 10px 28px rgba(34,41,32,0.08);
-        backdrop-filter: blur(8px) saturate(1.05);
-      }
-
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + 0.1vw);
-        color: var(--deep-forest);
-      }
-
-      .toolbar-brand i {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, rgba(154,175,136,0.35), rgba(122,132,113,0.2));
-        color: var(--primary-sage);
-        font-size: 1.2rem;
-        box-shadow: inset 0 1px 3px rgba(255,255,255,0.65);
-      }
-
-      .slide-counter {
-        justify-self: center;
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-        font-size: 0.95rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background:
-          radial-gradient(860px 620px at 20% 0%, rgba(156,175,136,0.12) 0%, transparent 70%),
-          radial-gradient(780px 680px at 80% 100%, rgba(122,132,113,0.1) 0%, transparent 70%);
-      }
-
-      .stage-viewport {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        display: grid;
-        place-items: center;
-      }
-
-      .slide-stage {
-        position: relative;
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(
-          calc((100dvh - var(--toolbar-h) - var(--workspace-pad)*2) * (var(--slide-aspect-w) / var(--slide-aspect-h))),
-          calc(100vw - var(--workspace-pad)*2)
-        );
-        max-width: 100%;
-        background: var(--soft-white);
-        border-radius: var(--stage-radius);
-        box-shadow: var(--shadow-glow), var(--shadow-2);
-        outline: 1px solid var(--border-sage);
-        overflow: hidden auto;
-        transition: opacity 320ms ease, transform 320ms ease;
-      }
-
-      .slide-stage.hidden {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-        transform: scale(0.97);
-      }
-
-      .slide-stage.full-width-bg .slide-inner { padding: 0; }
-
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      .bg-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 1.1rem;
-        background: color-mix(in srgb, var(--soft-white) 78%, transparent);
-        padding: clamp(24px, 4vw, 48px);
-        border-radius: var(--radius-lg);
-        max-width: 60%;
-        box-shadow: 0 18px 36px rgba(46,58,43,0.14);
-      }
-
-      .img-bg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .img-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(115deg, rgba(254,252,247,0.92) 30%, rgba(254,252,247,0.7) 55%, transparent 82%);
-        z-index: 0;
-      }
-
-      h1, h2, h3 {
-        margin: 0;
-        font-family: var(--font-display);
-        color: var(--deep-forest);
-      }
-
-      h1 { font-size: var(--step-3); line-height: 1.08; }
-      h2 { font-size: var(--step-2); line-height: 1.15; }
-      h3 { font-size: var(--step-1); line-height: 1.2; }
-
-      p { margin: 0; color: var(--forest-shadow); }
-
-      .pill {
-        align-self: flex-start;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: var(--font-display);
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-size: 0.78rem;
-        padding: 0.5rem 1rem;
-        border-radius: 999px;
-        background: linear-gradient(135deg, rgba(154,175,136,0.18), rgba(122,132,113,0.08));
-        color: var(--primary-sage);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
-      }
-
-      .objective-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-      }
-
-      .objective-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.65rem;
-        padding: 0.75rem 1rem;
-        border-radius: var(--radius);
-        background: color-mix(in srgb, var(--warm-cream) 65%, transparent);
-        border: 1px solid var(--border-sage);
-        box-shadow: var(--shadow-1);
-      }
-
-      .objective-list li i { color: var(--secondary-sage); margin-top: 0.2rem; }
-
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 24px;
-        align-items: start;
-      }
-
-      .col-span-12 { grid-column: span 12 / span 12; }
-      .col-span-8 { grid-column: span 8 / span 8; }
-      .col-span-7 { grid-column: span 7 / span 7; }
-      .col-span-6 { grid-column: span 6 / span 6; }
-      .col-span-5 { grid-column: span 5 / span 5; }
-      .col-span-4 { grid-column: span 4 / span 4; }
-
-      @media (max-width: 1100px) {
-        .bg-content { max-width: 72%; }
-        .grid-container { grid-template-columns: repeat(6, 1fr); }
-        .col-span-8, .col-span-7, .col-span-6, .col-span-5, .col-span-4 { grid-column: span 6 / span 6; }
-      }
-
-      @media (max-width: 780px) {
-        .bg-content { max-width: 100%; }
-        .grid-container { grid-template-columns: repeat(1, 1fr); }
-        .col-span-12, .col-span-8, .col-span-7, .col-span-6, .col-span-5, .col-span-4 { grid-column: span 1 / span 1; }
-      }
-
-      .card {
-        background: color-mix(in srgb, var(--warm-cream) 55%, var(--soft-white) 45%);
-        border-radius: var(--radius);
-        border: 1px solid var(--border-sage);
-        box-shadow: var(--shadow-1);
-        padding: clamp(20px, 3vw, 32px);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .card h3 { color: var(--primary-sage); font-size: calc(var(--step-1) - 0.1rem); }
-
-      .image-matching-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 18px;
-      }
-
-      .image-card {
-        position: relative;
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.16);
-        background: var(--soft-white);
-        box-shadow: var(--shadow-1);
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        height: 100%;
-      }
-
-      .image-card figure {
-        margin: 0;
-        border-radius: var(--radius);
-        overflow: hidden;
-        aspect-ratio: 4 / 3;
-        background: var(--warm-cream);
-      }
-
-      .image-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .image-card figcaption {
-        margin-top: 0.5rem;
-        font-size: 0.95rem;
-        color: var(--ink-muted);
-        text-align: center;
-      }
-
-      .matching-wrapper {
-        display: grid;
-        grid-template-columns: minmax(180px, 260px) 1fr;
-        gap: 24px;
-      }
-
-      .matching-list {
-        background: color-mix(in srgb, var(--warm-cream) 70%, transparent);
-        border-radius: var(--radius);
-        border: 1px solid var(--border-sage);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-        padding: 20px;
-      }
-      .matching-list ol {
-        margin: 0;
-        padding-left: 1.25rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-        font-weight: 600;
-        color: var(--deep-forest);
-      }
-
-      .matching-options {
-        display: grid;
-        gap: 14px;
-      }
-
-      .matching-option {
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-        padding: 16px;
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.16);
-        background: color-mix(in srgb, var(--soft-white) 80%, transparent);
-        transition: border-color 180ms ease, background 180ms ease;
-      }
-
-      .matching-option select {
-        font-family: var(--font-body);
-        font-size: 1rem;
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(122,132,113,0.35);
-        background: var(--soft-white);
-        color: var(--forest-shadow);
-      }
-
-      .activity-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .activity-btn {
-        border: none;
-        border-radius: 12px;
-        padding: 12px 24px;
-        font-weight: 600;
-        font-family: var(--font-display);
-        letter-spacing: 0.02em;
-        cursor: pointer;
-        transition: transform 160ms ease, box-shadow 160ms ease;
-      }
-
-      .activity-btn[data-action="check"],
-      .activity-btn.primary {
-        background: var(--primary-sage);
-        color: white;
-        box-shadow: var(--shadow-1);
-      }
-
-      .activity-btn[data-action="check"]:hover,
-      .activity-btn.primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 26px rgba(90,107,82,0.25);
-      }
-
-      .activity-btn.secondary {
-        background: transparent;
-        color: var(--primary-sage);
-        border: 1px solid rgba(122,132,113,0.35);
-      }
-
-      .activity-btn.secondary:hover {
-        background: rgba(156,175,136,0.12);
-      }
-
-      .feedback-msg {
-        min-height: 1.4rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-      }
-
-      .feedback-msg.success { color: #2E7D32; }
-      .feedback-msg.error { color: #C62828; }
-
-      .mc-layout {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 24px;
-        align-items: center;
-      }
-
-      .mc-figure { grid-column: span 5 / span 5; }
-      .mc-content { grid-column: span 7 / span 7; display: flex; flex-direction: column; gap: 1.25rem; }
-
-      @media (max-width: 1080px) {
-        .mc-layout { grid-template-columns: repeat(6, 1fr); }
-        .mc-figure, .mc-content { grid-column: span 6 / span 6; }
-      }
-
-      .mc-figure figure {
-        margin: 0;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: var(--shadow-1);
-        border: 1px solid rgba(122,132,113,0.16);
-      }
-
-      .mc-figure img { width: 100%; height: 100%; object-fit: cover; }
-
-      .mc-quiz {
-        display: grid;
-        gap: 14px;
-      }
-
-      .mc-option {
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.22);
-        background: var(--soft-white);
-        transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
-      }
-
-      .mc-option button {
-        width: 100%;
-        background: transparent;
-        border: none;
-        padding: 14px 18px;
-        text-align: left;
-        font-family: var(--font-body);
-        font-size: 1.05rem;
-        color: var(--forest-shadow);
-        cursor: pointer;
-      }
-
-      .mc-option.selected {
-        border-color: var(--primary-sage);
-        background: rgba(156,175,136,0.18);
-        box-shadow: inset 0 0 0 2px rgba(122,132,113,0.25);
-      }
-
-      .mc-option.correct { border-color: #2E7D32; background: rgba(46,125,50,0.12); }
-      .mc-option.incorrect { border-color: #C62828; background: rgba(198,40,40,0.12); }
-
-      .gapfill-surface {
-        background: color-mix(in srgb, var(--warm-cream) 60%, var(--soft-white) 40%);
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--border-sage);
-        padding: clamp(20px, 3vw, 36px);
-        display: flex;
-        flex-direction: column;
-        gap: 1.1rem;
-      }
-
-      .gap-sentence {
-        font-size: 1.1rem;
-        line-height: 1.9;
-      }
-
-      .gap-wrapper {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0 4px;
-      }
-
-      .gap-wrapper input {
-        width: 120px;
-        font-size: 1rem;
-        font-weight: 600;
-        font-family: var(--font-body);
-        text-align: center;
-        padding: 8px 12px;
-        border-radius: 12px;
-        border: 2px solid rgba(122,132,113,0.35);
-        background: var(--soft-white);
-        color: var(--primary-sage);
-        transition: border-color 160ms ease, background 160ms ease;
-      }
-
-      .gap-wrapper.correct input { border-color: #2E7D32; background: rgba(46,125,50,0.12); color: #2E7D32; }
-      .gap-wrapper.incorrect input { border-color: #C62828; background: rgba(198,40,40,0.12); color: #C62828; }
-
-      .task-board {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
-      }
-
-      .task-column {
-        background: color-mix(in srgb, var(--soft-white) 90%, transparent);
-        border-radius: var(--radius);
-        border: 1px solid var(--border-sage);
-        box-shadow: var(--shadow-1);
-        padding: 22px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.85rem;
-      }
-
-      .task-column h3 {
-        font-size: 1.1rem;
-        color: var(--primary-sage);
-      }
-
-      .task-column ul {
-        margin: 0;
-        padding-left: 1.2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-
-      .reflection-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-
-      .reflection-list li {
-        padding: 1rem 1.1rem;
-        border-radius: var(--radius);
-        border: 1px dashed rgba(122,132,113,0.4);
-        background: color-mix(in srgb, var(--warm-cream) 55%, transparent);
-      }
-
-      .quote-card {
-        border-left: 5px solid var(--secondary-sage);
-        padding-left: 1rem;
-      }
-
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: 1px solid rgba(122,132,113,0.3);
-        background: color-mix(in srgb, var(--soft-white) 82%, transparent);
-        color: var(--primary-sage);
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        box-shadow: var(--shadow-1);
-        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
-      }
-
-      .slide-nav:hover {
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: var(--shadow-2);
-        background: var(--soft-white);
-        color: var(--deep-forest);
-      }
-
-      .slide-nav-prev { left: 24px; }
-      .slide-nav-next { right: 24px; }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --soft-white: #20231E;
-          --warm-cream: #2A2E26;
-          --forest-shadow: #E0E8D8;
-          --deep-forest: #F0F6E9;
-          --ink-muted: #B7C3B0;
-          --border-sage: rgba(184,197,166,0.24);
-          --shadow-glow: 0 0 55px 12px rgba(156,175,136,0.18);
-        }
-        body { background: linear-gradient(145deg, #1A1D18 0%, #20231E 100%); }
-        .slide-stage { box-shadow: var(--shadow-glow), 0 20px 60px rgba(0,0,0,0.45); }
-        .matching-list { background: rgba(42,46,38,0.85); }
-        .card, .task-column { background: rgba(32,35,30,0.9); }
-        .image-card { background: rgba(32,35,30,0.92); }
-        .activity-btn.secondary { color: var(--secondary-sage); border-color: rgba(184,197,166,0.25); }
-      }
-    </style>
-</head>
-<body>
-  <div class="deck-app">
-    <header class="deck-toolbar">
-      <div class="toolbar-brand">
-        <i class="fa-solid fa-leaf"></i>
-        <div>
-          <div>Organic Sage System</div>
-          <small style="display:block; font-size:0.85rem; color:var(--ink-muted);">A1 · Getting to Know You</small>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Community | A1 Friendly Introductions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../CSS-slides.css" />
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling"></i>
+          <span>A1 Friendly Introductions</span>
         </div>
-      </div>
-      <div></div>
-      <div id="slide-counter" class="slide-counter">1 / 22</div>
-    </header>
-
-    <main class="deck-workspace">
-      <div class="stage-viewport">
-        <!-- Slide 1 -->
-        <div class="slide-stage">
-          <img class="img-bg" src="https://images.pexels.com/photos/5668859/pexels-photo-5668859.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A diverse group of friends smiling and talking during an online video call.">
-          <div class="img-overlay"></div>
-          <div class="slide-inner">
-            <div class="bg-content">
-              <span class="pill"><i class="fa-solid fa-seedling"></i> Communicative Lesson</span>
-              <h1>Getting to Know You: Likes &amp; Routines</h1>
-              <p style="font-size: var(--step-1); color: var(--ink-muted); max-width: 90%;">Share what you love, talk about your daily life, and learn about your classmates using friendly Organic Sage visuals.</p>
-              <ul class="objective-list" style="margin-top: 0.5rem;">
-                <li><i class="fa-solid fa-comments"></i><span>Talk about what you like and don’t like with confident sentence patterns.</span></li>
-                <li><i class="fa-solid fa-clock"></i><span>Use <strong>always</strong>, <strong>sometimes</strong>, and <strong>never</strong> to describe routines.</span></li>
-                <li><i class="fa-solid fa-people-arrows"></i><span>Interview classmates and report back with clear English sentences.</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-map"></i> Lesson Path</span>
-            <h2>Our Plan for Today</h2>
-            <div class="card">
-              <ul class="objective-list">
-                <li><i class="fa-solid fa-book"></i><span>Learn new words for hobbies and daily routines.</span></li>
-                <li><i class="fa-solid fa-circle-check"></i><span>Take a 10-question likes &amp; dislikes quiz with instant feedback.</span></li>
-                <li><i class="fa-solid fa-hourglass-half"></i><span>Master the adverbs <em>always</em>, <em>sometimes</em>, and <em>never</em>.</span></li>
-                <li><i class="fa-solid fa-handshake-angle"></i><span>Interview classmates and share what you discover.</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-images"></i> Vocabulary Focus</span>
-            <h2>Match the Activity to the Picture</h2>
-            <p>Look at the pictures. Choose the correct activity name for each card.</p>
-            <div class="matching-wrapper" data-activity="matching-vocab" style="grid-template-columns: 1fr;">
-              <div class="matching-options image-matching-grid">
-                <div class="image-card matching-option" data-correct="Cooking">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A stack of pancakes.">
-                  </figure>
-                  <figcaption>Picture A</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Cooking">Cooking</option>
-                    <option value="Listening to music">Listening to music</option>
-                    <option value="Playing football">Playing football</option>
-                    <option value="Reading a book">Reading a book</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Listening to music">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A person wearing headphones.">
-                  </figure>
-                  <figcaption>Picture B</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Listening to music">Listening to music</option>
-                    <option value="Watching TV">Watching TV</option>
-                    <option value="Studying English">Studying English</option>
-                    <option value="Drinking coffee">Drinking coffee</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Reading a book">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="An open book.">
-                  </figure>
-                  <figcaption>Picture C</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Reading a book">Reading a book</option>
-                    <option value="Watching TV">Watching TV</option>
-                    <option value="Cooking">Cooking</option>
-                    <option value="Waking up">Waking up</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Playing football">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/47730/the-ball-stadion-football-the-pitch-47730.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A football on a green field.">
-                  </figure>
-                  <figcaption>Picture D</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Playing football">Playing football</option>
-                    <option value="Listening to music">Listening to music</option>
-                    <option value="Studying English">Studying English</option>
-                    <option value="Watching TV">Watching TV</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Waking up">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/5794713/pexels-photo-5794713.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A sleepy person in bed.">
-                  </figure>
-                  <figcaption>Picture E</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Waking up">Waking up</option>
-                    <option value="Drinking coffee">Drinking coffee</option>
-                    <option value="Studying English">Studying English</option>
-                    <option value="Watching TV">Watching TV</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Drinking coffee">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A cup of coffee.">
-                  </figure>
-                  <figcaption>Picture F</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Drinking coffee">Drinking coffee</option>
-                    <option value="Listening to music">Listening to music</option>
-                    <option value="Cooking">Cooking</option>
-                    <option value="Reading a book">Reading a book</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Studying English">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/4145190/pexels-photo-4145190.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A person writing in a notebook.">
-                  </figure>
-                  <figcaption>Picture G</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Studying English">Studying English</option>
-                    <option value="Playing football">Playing football</option>
-                    <option value="Cooking">Cooking</option>
-                    <option value="Watching TV">Watching TV</option>
-                  </select>
-                </div>
-                <div class="image-card matching-option" data-correct="Watching TV">
-                  <figure>
-                    <img src="https://images.pexels.com/photos/5721865/pexels-photo-5721865.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A family watching television on a sofa.">
-                  </figure>
-                  <figcaption>Picture H</figcaption>
-                  <select>
-                    <option value="">Choose the activity</option>
-                    <option value="Watching TV">Watching TV</option>
-                    <option value="Listening to music">Listening to music</option>
-                    <option value="Reading a book">Reading a book</option>
-                    <option value="Studying English">Studying English</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="activity-actions">
-              <button class="activity-btn secondary" data-action="reset">Reset</button>
-              <button class="activity-btn" data-action="check">Check Answers</button>
-            </div>
-            <div class="feedback-msg" aria-live="polite"></div>
-          </div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner" style="justify-content: center; align-items: center; text-align: center;">
-            <span class="pill"><i class="fa-solid fa-clipboard-question"></i> Quiz Time</span>
-            <h2>Likes &amp; Dislikes Challenge</h2>
-            <div class="card" style="max-width: 70%; align-items: center;">
-              <p style="font-size: 1.1rem;">For the next ten slides, look at the picture and choose the correct sentence. Ready to show what you know?</p>
-              <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                <span class="pill" style="background: rgba(154,175,136,0.22);"><i class="fa-solid fa-heart"></i> Likes</span>
-                <span class="pill" style="background: rgba(179,123,141,0.2); color: var(--accent-berry);"><i class="fa-solid fa-face-smile"></i> Feelings</span>
-                <span class="pill" style="background: rgba(239,200,163,0.2); color: var(--accent-peach);"><i class="fa-solid fa-bolt"></i> Fast Feedback</span>
+        <div id="slide-counter" class="slide-counter"></div>
+        <div class="toolbar-actions" aria-hidden="true"></div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="slide-stage" id="slide-1">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill"><i class="fa-solid fa-hand-peace"></i> Welcome</span>
+                <h1>Friendly Introductions</h1>
+                <p class="deck-subtitle">Learn simple phrases to meet new friends.</p>
               </div>
             </div>
           </div>
-        </div>
-        <!-- Slide 5 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 1 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A stack of pancakes.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">He likes cooking.</button></div>
-                  <div class="mc-option"><button type="button">He likes swimming.</button></div>
-                  <div class="mc-option"><button type="button">He likes listening to music.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 6 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 2 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/7031706/pexels-photo-7031706.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A man and woman walking down a street.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">They like walking in the city.</button></div>
-                  <div class="mc-option"><button type="button">They like playing video games.</button></div>
-                  <div class="mc-option"><button type="button">They like going to the cinema.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 7 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 3 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="An open book.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">She likes reading books.</button></div>
-                  <div class="mc-option"><button type="button">She likes painting pictures.</button></div>
-                  <div class="mc-option"><button type="button">She likes dancing.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 8 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 4 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/5794713/pexels-photo-5794713.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A sleepy person in bed.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">I don't like waking up early.</button></div>
-                  <div class="mc-option"><button type="button">I don't like cleaning my room.</button></div>
-                  <div class="mc-option"><button type="button">I don't like going to the dentist.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 9 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 5 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/47730/the-ball-stadion-football-the-pitch-47730.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A football on a green field.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">They like playing football.</button></div>
-                  <div class="mc-option"><button type="button">They like hiking in the mountains.</button></div>
-                  <div class="mc-option"><button type="button">They like visiting museums.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 10 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 6 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/4145190/pexels-photo-4145190.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A person writing in a notebook.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">She likes studying English.</button></div>
-                  <div class="mc-option"><button type="button">She likes listening to loud music.</button></div>
-                  <div class="mc-option"><button type="button">She likes spiders.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 11 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 7 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A person wearing headphones.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">I like listening to music.</button></div>
-                  <div class="mc-option"><button type="button">I like singing in the shower.</button></div>
-                  <div class="mc-option"><button type="button">I like taking photos of nature.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 12 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 8 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Team members high-fiving in an office.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">He likes his work at the office.</button></div>
-                  <div class="mc-option"><button type="button">He likes gardening on weekends.</button></div>
-                  <div class="mc-option"><button type="button">He likes fixing old cars.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 13 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 9 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/5721865/pexels-photo-5721865.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A family watching television on a sofa.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">They like watching TV together.</button></div>
-                  <div class="mc-option"><button type="button">They like having a picnic.</button></div>
-                  <div class="mc-option"><button type="button">They like building sandcastles.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 14 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-circle-question"></i> Quiz 10 / 10</span>
-            <h2>Look at the picture. Choose the correct sentence.</h2>
-            <div class="mc-layout">
-              <div class="mc-figure">
-                <figure>
-                  <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A cup of coffee.">
-                </figure>
-              </div>
-              <div class="mc-content">
-                <div class="mc-quiz" data-activity="mc-buttons">
-                  <div class="mc-option" data-correct="true"><button type="button">She likes coffee in the morning.</button></div>
-                  <div class="mc-option"><button type="button">She doesn't like spicy food.</button></div>
-                  <div class="mc-option"><button type="button">She doesn't like being late.</button></div>
-                </div>
-                <div class="activity-actions">
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
-                  <button class="activity-btn" data-action="check">Check Answer</button>
-                </div>
-                <div class="feedback-msg" aria-live="polite"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 15 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-hourglass"></i> Frequency Words</span>
-            <h2>How often? Match the word to its meaning.</h2>
-            <div class="matching-wrapper" data-activity="matching-frequency">
-              <div class="matching-list">
-                <h3>Adverbs</h3>
-                <ol>
-                  <li>Always</li>
-                  <li>Sometimes</li>
-                  <li>Never</li>
-                </ol>
-              </div>
-              <div class="matching-options">
-                <div class="matching-option" data-correct="1">
-                  <strong>100% — Every day</strong>
-                  <select>
-                    <option value="">Choose word #</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="2">
-                  <strong>50% — Some days</strong>
-                  <select>
-                    <option value="">Choose word #</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="3">
-                  <strong>0% — Not one day</strong>
-                  <select>
-                    <option value="">Choose word #</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="activity-actions">
-              <button class="activity-btn secondary" data-action="reset">Reset</button>
-              <button class="activity-btn" data-action="check">Check Answers</button>
-            </div>
-            <div class="feedback-msg" aria-live="polite"></div>
-          </div>
-        </div>
-        <!-- Slide 16 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-pen"></i> Gap-Fill Practice</span>
-            <h2>Use always, sometimes, or never.</h2>
-            <p>Type the best adverb in each sentence. Use lowercase letters.</p>
-            <div class="gapfill-surface" data-activity="gapfill">
-              <div class="gap-sentence">1. I <span class="gap-wrapper" data-correct="always"><input class="gap-input" type="text" aria-label="Gap 1"></span> drink coffee in the morning.</div>
-              <div class="gap-sentence">2. My brother <span class="gap-wrapper" data-correct="sometimes"><input class="gap-input" type="text" aria-label="Gap 2"></span> plays football after school.</div>
-              <div class="gap-sentence">3. We <span class="gap-wrapper" data-correct="never"><input class="gap-input" type="text" aria-label="Gap 3"></span> watch TV during breakfast.</div>
-              <div class="gap-sentence">4. Fatima <span class="gap-wrapper" data-correct="always"><input class="gap-input" type="text" aria-label="Gap 4"></span> listens to music when she studies.</div>
-            </div>
-            <div class="activity-actions">
-              <button class="activity-btn secondary" data-action="reset">Reset</button>
-              <button class="activity-btn" data-action="check">Check Answers</button>
-            </div>
-            <div class="feedback-msg" aria-live="polite"></div>
-          </div>
-        </div>
-        <!-- Slide 17 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-sitemap"></i> Grouping Challenge</span>
-            <h2>When do you do these activities?</h2>
-            <p>Choose the best time of day for each activity. Select from the menu.</p>
-            <div class="matching-wrapper" data-activity="matching-grouping" style="grid-template-columns: 1fr;">
-              <div class="matching-options">
-                <div class="matching-option" data-correct="Morning">
-                  <strong>Waking up and stretching</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="Morning">
-                  <strong>Drinking coffee</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="Afternoon">
-                  <strong>Walking to meet a friend</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="Afternoon">
-                  <strong>Studying English</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="Evening">
-                  <strong>Watching TV with family</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                <div class="matching-option" data-correct="Evening">
-                  <strong>Listening to music and relaxing</strong>
-                  <select>
-                    <option value="">Choose the time of day</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="activity-actions">
-              <button class="activity-btn secondary" data-action="reset">Reset</button>
-              <button class="activity-btn" data-action="check">Check Answers</button>
-            </div>
-            <div class="feedback-msg" aria-live="polite"></div>
-          </div>
-        </div>
-        <!-- Slide 18 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-lightbulb"></i> Make it Yours</span>
-            <h2>Let's Combine! Make a True Sentence</h2>
-            <div class="card">
-              <p style="font-size: 1.1rem;">Use one activity word and one frequency word to make a sentence that is true for you.</p>
-              <div class="quote-card">
-                <p><strong>Example:</strong> I <em>always</em> drink coffee.</p>
-                <p><strong>Example:</strong> I <em>sometimes</em> play football.</p>
-                <p><strong>Example:</strong> I <em>never</em> cook on Mondays.</p>
-              </div>
-              <p>Share your sentence with a partner. Ask a follow-up question!</p>
-            </div>
-          </div>
-        </div>
-        <!-- Slide 19 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-clipboard-list"></i> Task Preparation</span>
-            <h2>Your Question Menu</h2>
-            <div class="grid-container">
-              <div class="col-span-6">
-                <div class="card">
-                  <h3>Question Type 1</h3>
-                  <ul>
-                    <li>Do you like cooking?</li>
-                    <li>Do you like reading?</li>
-                    <li>Do you like walking?</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-span-6">
-                <div class="card">
-                  <h3>Question Type 2</h3>
-                  <ul>
-                    <li>How often do you study English?</li>
-                    <li>How often do you watch TV?</li>
-                    <li>How often do you drink coffee?</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <p style="max-width: 70%;">Choose the question that fits your partner. Listen carefully and note their answer.</p>
-          </div>
-        </div>
-        <!-- Slide 20 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-people-group"></i> Main Task</span>
-            <h2>Let's Interview!</h2>
-            <div class="task-board">
-              <div class="task-column">
-                <h3>Your Goal</h3>
-                <ul>
-                  <li>Ask 3 classmates a question.</li>
-                  <li>Learn one new fact about each person.</li>
-                </ul>
-              </div>
-              <div class="task-column">
-                <h3>How to Play</h3>
-                <ul>
-                  <li>The teacher will choose you to start.</li>
-                  <li>Pick a classmate and choose a question.</li>
-                  <li>Listen and note their answer.</li>
-                  <li>Say “Thank you!” and switch roles.</li>
-                </ul>
-              </div>
-              <div class="task-column">
-                <h3>Example</h3>
-                <ul>
-                  <li><strong>You:</strong> “Fatima, how often do you read?”</li>
-                  <li><strong>Fatima:</strong> “I sometimes read in the evening.”</li>
+
+          <div class="slide-stage hidden" id="slide-2">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Warm-up</span>
+                <h2>Greetings circle</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-hands-clapping"></i> Clap once and say "Hello".</li>
+                  <li><i class="fa-solid fa-user-plus"></i> Share your name.</li>
+                  <li><i class="fa-solid fa-face-smile"></i> Give a thumbs up to someone.</li>
                 </ul>
               </div>
             </div>
           </div>
-        </div>
-        <!-- Slide 21 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-megaphone"></i> Reporting Time</span>
-            <h2>Let's Share What We Learned!</h2>
-            <div class="card">
-              <p>Use these sentence starters to tell the class about one person you interviewed.</p>
-              <ul class="objective-list">
-                <li><i class="fa-solid fa-quote-left"></i><span>“I learned that [Classmate's Name] likes ...”</span></li>
-                <li><i class="fa-solid fa-quote-left"></i><span>“I learned that [Classmate's Name] sometimes ...”</span></li>
-                <li><i class="fa-solid fa-quote-left"></i><span>“I learned that [Classmate's Name] never ...”</span></li>
-              </ul>
+
+          <div class="slide-stage hidden" id="slide-3">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Vocabulary</span>
+                <h2>Useful words</h2>
+                <div class="tips-grid">
+                  <div class="tip-card">
+                    <h3>Hello!</h3>
+                    <p>"Hi, nice to meet you."</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Goodbye!</h3>
+                    <p>"See you later."</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Thank you!</h3>
+                    <p>"Thanks for helping."</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Slide 22 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-star"></i> Lesson Review</span>
-            <h2>Lesson Reflection</h2>
-            <ul class="reflection-list">
-              <li>Amazing work today! What was the most interesting new fact you learned about a classmate?</li>
-              <li>Which quiz felt easier for you: the picture sentences or the frequency words?</li>
-              <li>Say one sentence with <em>always</em>, <em>sometimes</em>, or <em>never</em> about your day.</li>
-              <li>Thank your classmates for sharing!</li>
-            </ul>
+
+          <div class="slide-stage hidden" id="slide-4">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Listen &amp; repeat</span>
+                <h2>Short conversations</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-comments"></i> A: Hi! I'm Layla. B: Hi Layla! I'm Omar.</li>
+                  <li><i class="fa-solid fa-comments"></i> A: Nice to meet you! B: Nice to meet you too.</li>
+                  <li><i class="fa-solid fa-comments"></i> A: Bye! See you! B: Bye!</li>
+                </ul>
+              </div>
+            </div>
           </div>
+
+          <div class="slide-stage hidden" id="slide-5">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Pair work</span>
+                <h2>Practice cards</h2>
+                <div class="tips-grid">
+                  <div class="tip-card">
+                    <h3>Card A</h3>
+                    <p>Ask: "What is your name?" Answer: "My name is ____."</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Card B</h3>
+                    <p>Ask: "Where do you live?" Answer: "I live in _____."</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Card C</h3>
+                    <p>Ask: "What do you like?" Answer: "I like _____."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-6">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Game</span>
+                <h2>Find someone who...</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-mug-hot"></i> Likes coffee</li>
+                  <li><i class="fa-solid fa-book-open"></i> Reads books</li>
+                  <li><i class="fa-solid fa-futbol"></i> Plays sport</li>
+                </ul>
+                <p class="feedback-msg">Say the sentence to the class.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-7">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Write</span>
+                <h2>My new friend</h2>
+                <div class="split-grid">
+                  <div class="note-card" contenteditable="true">
+                    <h3>Name</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Home</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Likes</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>One more fact</h3>
+                    <p></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-8">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Quiz</span>
+                <h2>Choose the answer</h2>
+                <div class="quiz-card">
+                  <h3>"Nice to ____ you."</h3>
+                  <div class="quiz-options" data-quiz-id="a1b1">
+                    <div class="quiz-option">A) drink</div>
+                    <div class="quiz-option" data-correct="true">B) meet</div>
+                    <div class="quiz-option">C) run</div>
+                    <div class="quiz-option">D) cook</div>
+                  </div>
+                  <p class="feedback-msg success" id="a1b1-feedback" hidden>
+                    We say "Nice to meet you" when we meet someone new.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-9">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 2</p>
+                <h2>Fill the blank.</h2>
+                <p>"I live ____ Beirut."</p>
+                <div class="quiz-options" data-quiz-id="a1b2">
+                  <div class="quiz-option">A) under</div>
+                  <div class="quiz-option">B) from</div>
+                  <div class="quiz-option" data-correct="true">C) in</div>
+                  <div class="quiz-option">D) over</div>
+                </div>
+                <p class="feedback-msg success" id="a1b2-feedback" hidden>
+                  Use "in" with cities and towns.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-10">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Reflect</span>
+                <h2>Share aloud</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-person-rays"></i> Today I met ____.</li>
+                  <li><i class="fa-solid fa-gift"></i> I learned ____.</li>
+                  <li><i class="fa-solid fa-bell"></i> Next time I want to ____.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-11">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h1>Great job!</h1>
+                <p class="deck-subtitle">Keep practising your greetings.</p>
+                <p><i class="fa-solid fa-handshake fa-3x"></i></p>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" type="button" onclick="navigateSlides(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" onclick="navigateSlides(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
-        <button class="slide-nav slide-nav-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="slide-nav slide-nav-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const counter = document.getElementById('slide-counter');
-      let currentSlideIndex = 0;
-      const totalSlides = slides.length;
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let currentSlide = 1;
+        const slides = document.querySelectorAll(".slide-stage");
+        const totalSlides = slides.length;
+        const slideCounter = document.getElementById("slide-counter");
 
-      function showSlide(index) {
-        slides.forEach((slide, i) => slide.classList.toggle('hidden', i !== index));
-        counter.textContent = `${index + 1} / ${totalSlides}`;
-      }
-
-      function navigate(direction) {
-        currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
-        showSlide(currentSlideIndex);
-      }
-
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          navigate(1);
-        } else if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          navigate(-1);
-        }
-      });
-
-      showSlide(currentSlideIndex);
-
-      function handleMatching(activityEl) {
-        const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-        const parent = activityEl.closest('.slide-inner');
-        const feedback = parent.querySelector('.feedback-msg');
-        const buttons = parent.querySelectorAll('.activity-actions button');
-
-        buttons.forEach((btn) => {
-          if (btn.dataset.action === 'check') {
-            btn.addEventListener('click', () => {
-              let correctCount = 0;
-              options.forEach((option) => {
-                const select = option.querySelector('select');
-                const isCorrect = select.value === option.dataset.correct;
-                option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-                option.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-                if (isCorrect) correctCount += 1;
-              });
-              if (correctCount === options.length) {
-                feedback.textContent = 'Excellent! Every match is correct.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            });
-          } else if (btn.dataset.action === 'reset') {
-            btn.addEventListener('click', () => {
-              options.forEach((option) => {
-                const select = option.querySelector('select');
-                select.value = '';
-                option.style.borderColor = 'rgba(122,132,113,0.16)';
-                option.style.background = 'color-mix(in srgb, var(--soft-white) 80%, transparent)';
-              });
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            });
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle("hidden", i + 1 !== index);
+          });
+          if (slideCounter) {
+            slideCounter.textContent = `Slide ${index} of ${totalSlides}`;
           }
-        });
-      }
+        }
 
-      document.querySelectorAll('[data-activity="matching-vocab"]').forEach(handleMatching);
-      document.querySelectorAll('[data-activity="matching-frequency"]').forEach(handleMatching);
-      document.querySelectorAll('[data-activity="matching-grouping"]').forEach(handleMatching);
+        window.navigateSlides = function (direction) {
+          currentSlide += direction;
+          if (currentSlide > totalSlides) currentSlide = 1;
+          if (currentSlide < 1) currentSlide = totalSlides;
+          showSlide(currentSlide);
+        };
 
-      document.querySelectorAll('[data-activity="mc-buttons"]').forEach((activity) => {
-        const options = Array.from(activity.querySelectorAll('.mc-option'));
-        const parent = activity.closest('.slide-inner');
-        const feedback = parent.querySelector('.feedback-msg');
-        const buttons = parent.querySelectorAll('.activity-actions button');
-        const checkBtn = Array.from(buttons).find((btn) => btn.dataset.action === 'check');
-        const resetBtn = Array.from(buttons).find((btn) => btn.dataset.action === 'reset');
+        document.querySelectorAll(".quiz-options").forEach((container) => {
+          container.addEventListener("click", (event) => {
+            const option = event.target.closest(".quiz-option");
+            if (!option || container.dataset.locked === "true") return;
 
-        options.forEach((option) => {
-          const button = option.querySelector('button');
-          button.addEventListener('click', () => {
-            options.forEach((opt) => opt.classList.remove('selected', 'correct', 'incorrect'));
-            option.classList.add('selected');
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-            if (checkBtn) checkBtn.disabled = false;
-          });
-        });
+            container.dataset.locked = "true";
+            option.classList.add(
+              option.dataset.correct === "true" ? "correct" : "incorrect"
+            );
 
-        if (checkBtn) {
-          checkBtn.addEventListener('click', () => {
-            const selected = options.find((opt) => opt.classList.contains('selected'));
-            if (!selected) {
-              feedback.textContent = 'Please choose an answer before checking.';
-              feedback.className = 'feedback-msg error';
-              return;
+            if (option.dataset.correct !== "true") {
+              const correct = container.querySelector(
+                '.quiz-option[data-correct="true"]'
+              );
+              if (correct) correct.classList.add("correct");
             }
-            const isCorrect = selected.dataset.correct === 'true';
-            selected.classList.toggle('correct', isCorrect);
-            selected.classList.toggle('incorrect', !isCorrect);
-            feedback.textContent = isCorrect ? 'Great job! That sentence matches the picture.' : 'Look again at the picture. Which sentence fits best?';
-            feedback.className = isCorrect ? 'feedback-msg success' : 'feedback-msg error';
-            checkBtn.disabled = true;
-          });
-        }
 
-        if (resetBtn) {
-          resetBtn.addEventListener('click', () => {
-            options.forEach((opt) => opt.classList.remove('selected', 'correct', 'incorrect'));
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-            if (checkBtn) checkBtn.disabled = false;
-          });
-        }
-      });
-
-      document.querySelectorAll('[data-activity="gapfill"]').forEach((activity) => {
-        const wrappers = Array.from(activity.querySelectorAll('.gap-wrapper'));
-        const parent = activity.closest('.slide-inner');
-        const feedback = parent.querySelector('.feedback-msg');
-        const buttons = parent.querySelectorAll('.activity-actions button');
-        const checkBtn = Array.from(buttons).find((btn) => btn.dataset.action === 'check');
-        const resetBtn = Array.from(buttons).find((btn) => btn.dataset.action === 'reset');
-
-        wrappers.forEach((wrapper) => {
-          const input = wrapper.querySelector('input');
-          input.addEventListener('input', () => {
-            wrapper.classList.remove('correct', 'incorrect');
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-            if (checkBtn) checkBtn.disabled = false;
+            const feedback = document.getElementById(
+              `${container.dataset.quizId}-feedback`
+            );
+            if (feedback) {
+              feedback.hidden = false;
+            }
           });
         });
 
-        if (checkBtn) {
-          checkBtn.addEventListener('click', () => {
-            let totalCorrect = 0;
-            let attempted = 0;
-            wrappers.forEach((wrapper) => {
-              const input = wrapper.querySelector('input');
-              const value = input.value.trim().toLowerCase();
-              if (!value) {
-                wrapper.classList.remove('correct', 'incorrect');
-                return;
-              }
-              attempted += 1;
-              const correctAnswers = wrapper.dataset.correct.split('|').map((ans) => ans.trim().toLowerCase());
-              const isCorrect = correctAnswers.includes(value);
-              wrapper.classList.toggle('correct', isCorrect);
-              wrapper.classList.toggle('incorrect', !isCorrect);
-              if (isCorrect) totalCorrect += 1;
-            });
-            if (!attempted) {
-              feedback.textContent = 'Type an answer in at least one gap to check.';
-              feedback.className = 'feedback-msg error';
-              return;
-            }
-            feedback.textContent = totalCorrect === wrappers.length ? 'Perfect! All the adverbs fit.' : `You have ${totalCorrect} / ${wrappers.length} correct. Adjust and try again.`;
-            feedback.className = totalCorrect === wrappers.length ? 'feedback-msg success' : 'feedback-msg error';
-            checkBtn.disabled = true;
-          });
-        }
-
-        if (resetBtn) {
-          resetBtn.addEventListener('click', () => {
-            wrappers.forEach((wrapper) => {
-              const input = wrapper.querySelector('input');
-              input.value = '';
-              wrapper.classList.remove('correct', 'incorrect');
-            });
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-            if (checkBtn) checkBtn.disabled = false;
-          });
-        }
+        showSlide(currentSlide);
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

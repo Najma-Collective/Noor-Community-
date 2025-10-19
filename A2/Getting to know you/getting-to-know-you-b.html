@@ -1,1325 +1,333 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noor Community | A2 Lesson Slides - Getting to Know You</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-      :root {
-        --primary-sage: #7A8471;
-        --secondary-sage: #9CAF88;
-        --tertiary-sage: #B8C5A6;
-        --warm-cream: #F8F6F0;
-        --soft-white: #FEFCF7;
-        --forest-shadow: #5A6B52;
-        --ink: #2F3A2B;
-        --ink-muted: #5A6B52;
-        --border-sage: rgba(122,132,113,0.20);
-        --hover-sage: rgba(156,175,136,0.15);
-        --deep-forest: #3E4A3A;
-        --font-display: 'Questrial', system-ui, sans-serif;
-        --font-body: 'Nunito', system-ui, sans-serif;
-        --font-size-adjustment: 0pt;
-        --step--1: calc(clamp(0.9rem, 0.85rem + 0.1vw, 0.95rem) + var(--font-size-adjustment));
-        --step-0: calc(clamp(1rem, 0.95rem + 0.2vw, 1.1rem) + var(--font-size-adjustment));
-        --step-1: calc(clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem) + var(--font-size-adjustment));
-        --step-2: calc(clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem) + var(--font-size-adjustment));
-        --step-3: calc(clamp(1.8rem, 1.5rem + 1vw, 2.3rem) + var(--font-size-adjustment));
-        --step-4: calc(clamp(2.5rem, 1.4rem + 3.2vw, 4.2rem) + var(--font-size-adjustment));
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-7: 2rem;
-        --radius: 16px;
-        --radius-lg: 20px;
-        --shadow-1: 0 1px 2px rgba(34,41,32,0.05), 0 2px 8px rgba(34,41,32,0.06);
-        --shadow-2: 0 6px 24px rgba(34,41,32,0.08), 0 16px 36px rgba(34,41,32,0.08);
-        --shadow-glow: 0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent);
-        --toolbar-h: 72px;
-        --workspace-pad: 24px;
-        --stage-pad: clamp(32px, 5vw, 64px);
-        --stage-radius: 18px;
-        --slide-aspect-w: 16;
-        --slide-aspect-h: 9;
-      }
-
-      *, *::before, *::after { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100dvh;
-        color: var(--forest-shadow);
-        background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        overflow: auto;
-      }
-
-      h1, h2, h3, h4 {
-        font-family: var(--font-display);
-        color: var(--deep-forest);
-        margin: 0;
-      }
-
-      h1 { font-size: var(--step-4); line-height: 1.08; }
-      h2 { font-size: var(--step-3); line-height: 1.18; }
-      h3 { font-size: var(--step-1); }
-      p, li { font-size: var(--step-0); color: var(--forest-shadow); margin: 0; }
-
-      .deck-app {
-        display: grid;
-        grid-template-rows: var(--toolbar-h) 1fr;
-        min-height: 100dvh;
-      }
-
-      .deck-toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        height: var(--toolbar-h);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: var(--space-4);
-        padding: 0 max(24px, 4vw);
-        background: color-mix(in srgb, var(--soft-white) 85%, transparent);
-        border-bottom: 1px solid var(--border-sage);
-        box-shadow: 0 8px 20px rgba(34,41,32,0.05);
-        backdrop-filter: blur(8px) saturate(1.1);
-      }
-
-      .toolbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-size: calc(1.05rem + var(--font-size-adjustment));
-        color: var(--forest-shadow);
-      }
-
-      .slide-counter {
-        font-family: var(--font-display);
-        color: var(--ink-muted);
-      }
-
-      .deck-workspace {
-        height: calc(100dvh - var(--toolbar-h));
-        padding: var(--workspace-pad);
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        background: radial-gradient(900px 600px at 20% 0%, rgba(156,175,136,0.08) 0%, transparent 70%),
-                    radial-gradient(800px 700px at 80% 100%, rgba(90,107,82,0.06) 0%, transparent 70%);
-      }
-
-      .stage-viewport {
-        position: relative;
-        display: grid;
-        place-items: center;
-      }
-
-      .slide-stage {
-        position: relative;
-        border-radius: var(--stage-radius);
-        background-color: var(--soft-white);
-        box-shadow: var(--shadow-glow), 0 24px 60px rgba(34,41,32,0.10);
-        aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
-        width: min(calc((100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) * (var(--slide-aspect-w) / var(--slide-aspect-h))), calc(100vw - (var(--workspace-pad) * 2)));
-        max-width: 100%;
-        overflow: hidden auto;
-        outline: 1px solid var(--border-sage);
-        transition: opacity 300ms ease-in-out;
-      }
-
-      .slide-stage.hidden { position: absolute; opacity: 0; pointer-events: none; }
-
-      .slide-inner {
-        position: absolute;
-        inset: 0;
-        padding: var(--stage-pad);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1.25rem;
-        overflow-y: auto;
-        scrollbar-gutter: stable both-edges;
-      }
-
-      .full-width-bg .slide-inner { padding: 0; }
-      .img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-      .img-overlay { position: absolute; inset: 0; z-index: 0; }
-      .bg-content { position: relative; z-index: 1; padding: var(--stage-pad); }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: var(--step--1);
-        padding: 0.35rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(156,175,136,0.15);
-        color: var(--deep-forest);
-        font-weight: 600;
-      }
-
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 24px;
-        width: 100%;
-        align-items: flex-start;
-      }
-
-      .col-span-12 { grid-column: span 12 / span 12; }
-      .col-span-6 { grid-column: span 6 / span 6; }
-      .col-span-5 { grid-column: span 5 / span 5; }
-      .col-span-7 { grid-column: span 7 / span 7; }
-      .col-span-4 { grid-column: span 4 / span 4; }
-
-      .card {
-        background: color-mix(in srgb, var(--warm-cream) 40%, var(--soft-white) 60%);
-        border: 1px solid var(--border-sage);
-        border-radius: var(--radius);
-        padding: var(--space-6);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .card h3, .card h4 { margin: 0; font-family: var(--font-display); color: var(--deep-forest); }
-      .card p { margin: 0; font-size: var(--step--1); }
-      .card ul { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: var(--step--1); }
-
-      .centered-text { text-align: center; }
-
-      .discussion-table {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-      }
-
-      .discussion-table .card { height: 100%; }
-
-      .split-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-      }
-
-      .prompt-card {
-        background: color-mix(in srgb, var(--soft-white) 85%, rgba(156,175,136,0.2) 15%);
-        border: 1px solid rgba(122,132,113,0.18);
-        border-radius: var(--radius-lg);
-        padding: clamp(28px, 4vw, 48px);
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-        text-align: center;
-      }
-
-      .prompt-card p { font-size: var(--step-1); max-width: 70%; }
-
-      .mc-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-      }
-
-      .mc-card {
-        background: var(--soft-white);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.18);
-        box-shadow: var(--shadow-1);
-        padding: 1.2rem 1.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-
-      .mc-card label { font-size: var(--step-1); font-weight: 600; color: var(--deep-forest); }
-      .mc-card select {
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        border-radius: 12px;
-        border: 2px solid rgba(122,132,113,0.25);
-        padding: 0.45rem 0.75rem;
-        color: var(--primary-sage);
-        font-weight: 600;
-      }
-
-      .activity-actions {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-      }
-
-      .activity-btn {
-        padding: 0.65rem 1.4rem;
-        border-radius: 999px;
-        border: 1px solid var(--primary-sage);
-        background: var(--primary-sage);
-        color: white;
-        font-family: var(--font-body);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .activity-btn.secondary {
-        background: transparent;
-        color: var(--primary-sage);
-        border-color: rgba(122,132,113,0.3);
-      }
-
-      .icon-heading {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.65rem;
-        font-size: var(--step-1);
-        margin-bottom: 0.35rem;
-      }
-
-      .icon-heading i {
-        width: 2.25rem;
-        height: 2.25rem;
-        display: grid;
-        place-items: center;
-        background: rgba(156,175,136,0.2);
-        border-radius: 50%;
-        color: var(--deep-forest);
-        font-size: 1.1rem;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-      }
-
-      .activity-btn:hover { box-shadow: var(--shadow-2); transform: translateY(-1px); }
-
-      .feedback-msg {
-        font-size: calc(0.95rem + var(--font-size-adjustment));
-        font-weight: 600;
-        margin-top: 0.4rem;
-      }
-
-      .feedback-msg.success { color: #2E7D32; }
-      .feedback-msg.error { color: #C62828; }
-
-      .gapfill-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-      }
-
-      .gapfill-card {
-        background: var(--soft-white);
-        border-radius: var(--radius);
-        border: 1px solid rgba(122,132,113,0.18);
-        padding: 1.2rem 1.4rem;
-        box-shadow: var(--shadow-1);
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-      }
-
-      .gapfill-card p { font-size: var(--step-0); }
-      .gapfill-card input {
-        width: 100%;
-        padding: 0.55rem 0.75rem;
-        border-radius: 12px;
-        border: 1px solid rgba(122,132,113,0.35);
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-      }
-
-      .drag-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.5rem;
-        align-items: stretch;
-      }
-
-      .drag-pool, .drag-drop {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1.25rem;
-        background: var(--soft-white);
-        border: 2px dashed rgba(122,132,113,0.35);
-        border-radius: var(--radius);
-        min-height: 240px;
-        box-shadow: var(--shadow-1);
-        transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
-        position: relative;
-        cursor: pointer;
-      }
-
-      .drag-pool:hover,
-      .drag-drop:hover {
-        border-color: rgba(122,132,113,0.55);
-        background: rgba(248,246,240,0.9);
-      }
-
-      .drag-drop::after,
-      .drag-pool::after {
-        content: attr(data-hint);
-        position: absolute;
-        inset: auto 1rem 1rem 1rem;
-        font-size: var(--step--1);
-        color: rgba(47,58,43,0.6);
-        font-style: italic;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 200ms ease;
-      }
-
-      .drag-drop[data-empty="true"]::after,
-      .drag-pool[data-empty="true"]::after {
-        opacity: 1;
-      }
-
-      .drag-item {
-        padding: 0.75rem 1rem;
-        background: linear-gradient(135deg, rgba(122,132,113,0.08), rgba(122,132,113,0.18));
-        border-radius: 999px;
-        font-weight: 600;
-        color: var(--deep-forest);
-        text-align: center;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-        cursor: pointer;
-        user-select: none;
-        border: 2px solid transparent;
-        transition: border-color 200ms ease, box-shadow 200ms ease, transform 150ms ease;
-      }
-
-      .drag-item:hover {
-        box-shadow: 0 10px 20px rgba(34,41,32,0.12);
-        transform: translateY(-2px);
-      }
-
-      .drag-item.is-selected {
-        border-color: rgba(156,175,136,0.9);
-        box-shadow: 0 0 0 3px rgba(156,175,136,0.28);
-        background: linear-gradient(135deg, rgba(156,175,136,0.18), rgba(122,132,113,0.22));
-      }
-
-      .drag-drop h4, .drag-pool h4 {
-        font-size: var(--step-0);
-        color: var(--ink);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .drag-drop h4 i, .drag-pool h4 i { color: var(--secondary-sage); }
-
-      .drag-drop[data-target="calm"] {
-        background: linear-gradient(160deg, rgba(156,175,136,0.12), rgba(248,246,240,0.9));
-      }
-
-      .drag-drop[data-target="exciting"] {
-        background: linear-gradient(200deg, rgba(122,132,113,0.1), rgba(255,221,173,0.18));
-      }
-
-      .media-card {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 1rem;
-        background: linear-gradient(145deg, rgba(248,246,240,0.94), rgba(232,238,224,0.9));
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-2);
-        overflow: hidden;
-      }
-
-      .media-card figure {
-        margin: 0;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .media-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .media-card figcaption {
-        position: absolute;
-        inset: auto 1rem 1rem 1rem;
-        background: rgba(47,58,43,0.55);
-        color: var(--soft-white);
-        padding: 0.5rem 0.75rem;
-        border-radius: 999px;
-        font-size: var(--step--1);
-      }
-
-      .media-card .media-body {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .media-card .media-body p {
-        margin: 0;
-      }
-
-      .venn-layout { gap: var(--space-7); }
-
-      .venn-guides {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 24px;
-      }
-
-      .visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      .venn-table-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .venn-table-intro {
-        font-weight: 600;
-        color: var(--deep-forest);
-      }
-
-      .venn-table-container {
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: inset 0 0 0 1px var(--border-sage), var(--shadow-2);
-        background: color-mix(in srgb, var(--soft-white) 88%, var(--warm-cream) 12%);
-      }
-
-      .venn-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-      }
-
-      .venn-table thead th {
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: var(--step--1);
-        font-weight: 700;
-        color: var(--deep-forest);
-        padding: 1rem 1.25rem;
-        background: rgba(122,132,113,0.12);
-        border-right: 1px solid rgba(122,132,113,0.25);
-      }
-
-      .venn-table thead th:last-child { border-right: none; }
-
-      .venn-table tbody td {
-        padding: 1.25rem;
-        border-right: 1px solid rgba(122,132,113,0.15);
-        border-top: 1px solid rgba(122,132,113,0.15);
-        vertical-align: top;
-        background: rgba(255,255,255,0.92);
-      }
-
-      .venn-table tbody td:last-child { border-right: none; }
-
-      .venn-table textarea {
-        width: 100%;
-        min-height: clamp(160px, 28vh, 220px);
-        resize: vertical;
-        border-radius: 12px;
-        border: 1px solid rgba(122,132,113,0.35);
-        padding: 0.9rem;
-        font-family: var(--font-body);
-        font-size: var(--step-0);
-        background: rgba(255,255,255,0.96);
-        line-height: 1.55;
-        box-shadow: inset 0 1px 4px rgba(47,58,43,0.08);
-      }
-
-      .venn-table textarea:focus {
-        outline: none;
-        border-color: rgba(156,175,136,0.85);
-        box-shadow: 0 0 0 3px rgba(156,175,136,0.25);
-      }
-
-      .slide-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: 1px solid rgba(122,132,113,0.35);
-        background: color-mix(in srgb, var(--soft-white) 90%, transparent);
-        display: grid;
-        place-items: center;
-        color: var(--primary-sage);
-        box-shadow: var(--shadow-1);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .stage-viewport:hover .slide-nav { opacity: 1; pointer-events: auto; }
-      .slide-nav:hover { box-shadow: var(--shadow-2); background: var(--soft-white); color: var(--deep-forest); }
-      .slide-nav-prev { left: 24px; }
-      .slide-nav-next { right: 24px; }
-
-      @media (min-width: 900px) {
-        .media-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-      }
-
-      @media (max-width: 1100px) {
-        .discussion-table { grid-template-columns: repeat(2, 1fr); }
-        .drag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      }
-
-      @media (max-width: 900px) {
-        .grid-container { grid-template-columns: repeat(6, 1fr); }
-        .col-span-12 { grid-column: span 6 / span 6; }
-        .col-span-7, .col-span-5, .col-span-6, .col-span-4 { grid-column: span 6 / span 6; }
-          .discussion-table, .split-grid, .gapfill-grid, .mc-grid { grid-template-columns: 1fr; }
-          .prompt-card p { max-width: 100%; }
-          .drag-grid { grid-template-columns: 1fr; }
-          .venn-table-container { overflow-x: auto; }
-          .venn-table { min-width: 540px; }
-        }
-    </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Community | A2 Shared Stories</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../CSS-slides.css" />
+  </head>
+  <body>
     <div class="deck-app">
-        <header class="deck-toolbar">
-            <div class="toolbar-brand">
-                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
-                <span>Noor Community | Getting to Know You</span>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-seedling"></i>
+          <span>A2 Shared Stories</span>
+        </div>
+        <div id="slide-counter" class="slide-counter"></div>
+        <div class="toolbar-actions" aria-hidden="true"></div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="slide-stage" id="slide-1">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill"><i class="fa-solid fa-globe"></i> Community</span>
+                <h1>Shared Stories</h1>
+                <p class="deck-subtitle">
+                  Learning English through personal experiences
+                </p>
+                <p>
+                  We'll talk about our routines, favourite memories, and future
+                  plans.
+                </p>
+              </div>
             </div>
-              <div id="slide-counter" class="slide-counter">1 / 20</div>
-        </header>
+          </div>
 
-        <main class="deck-workspace">
-            <div class="stage-viewport">
-
-                <!-- Slide 1 -->
-                <div class="slide-stage full-width-bg">
-                    <img class="img-bg" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="A diverse group of colleagues sitting around a table and talking in a bright, modern office.">
-                    <div class="img-overlay" style="background: linear-gradient(110deg, rgba(254,252,247,0.92) 35%, rgba(254,252,247,0.55) 60%, transparent 90%);"></div>
-                    <div class="slide-inner">
-                        <div class="bg-content" style="max-width: 60%; display: flex; flex-direction: column; gap: 1.2rem;">
-                            <span class="pill"><i class="fa-solid fa-seedling"></i> A2 English Lesson</span>
-                            <h1>Getting to Know You: What do we have in common?</h1>
-                            <p style="font-size: var(--step-1); color: var(--ink-muted);">Talk about routines, express likes and dislikes, and discover shared interests across the class.</p>
-                        </div>
-                    </div>
+          <div class="slide-stage hidden" id="slide-2">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Check-in</span>
+                <h2>Emoji feelings</h2>
+                <div class="gallery-grid">
+                  <div class="gallery-card"><p>😀 Excited</p></div>
+                  <div class="gallery-card"><p>😌 Calm</p></div>
+                  <div class="gallery-card"><p>🤔 Curious</p></div>
+                  <div class="gallery-card"><p>😴 Sleepy</p></div>
+                  <div class="gallery-card"><p>💪 Ready</p></div>
+                  <div class="gallery-card"><p>🎨 Creative</p></div>
                 </div>
-
-                <!-- Slide 2 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <div class="grid-container">
-                            <div class="col-span-12">
-                                <span class="pill"><i class="fa-solid fa-compass"></i> Today's Goals</span>
-                                <h2>By the end of this lesson, you will...</h2>
-                            </div>
-                            <div class="col-span-12">
-                                <div class="card" style="gap: 1.1rem;">
-                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                                        <li><i class="fa-solid fa-rotate"></i> Review present simple phrases for hobbies and routines.</li>
-                                        <li><i class="fa-solid fa-heart"></i> Express likes and dislikes using <strong>like / don't like + -ing</strong>.</li>
-                                        <li><i class="fa-solid fa-face-smile"></i> Use adjectives to describe feelings about activities.</li>
-                                        <li><i class="fa-solid fa-message"></i> Explain preferences with reasons using <strong>because</strong>.</li>
-                                        <li><i class="fa-solid fa-people-group"></i> Work together to find classmates with similar interests.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 3 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-mug-hot"></i> Warm-Up</span>
-                        <h2>Let's get started!</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-calendar-week"></i><span>Think about your weekend.</span></h3>
-                                <p>What is something you <em>always</em> do on the weekend?</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-face-smile"></i><span>Share how you feel.</span></h3>
-                                <p>Do you like doing that activity? Why or why not?</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-star"></i><span>Favourite hobby spotlight.</span></h3>
-                                <p>Choose one hobby you love. Why do you enjoy it?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 4 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-link"></i> Activity 1</span>
-                        <div class="prompt-card">
-                            <h2>Connecting words and feelings</h2>
-                            <p>Use hobbies from our last lesson with feelings from today: “I like <strong>reading</strong> because it is <strong>quiet</strong> and <strong>relaxing</strong>.”</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 5 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-comments"></i> Activity 1 · Practice</span>
-                        <h2>Try it together</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-person-chalkboard"></i><span>Teacher model</span></h3>
-                                <p>“I don't like playing football because it is too noisy.”</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-utensils"></i><span>Question 1</span></h3>
-                                <p>What is <strong>cooking</strong> like? Is it interesting? Relaxing? Difficult?</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-film"></i><span>Question 2</span></h3>
-                                <p>What about <strong>watching movies</strong>? Is it exciting? Boring?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 6 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-circle-nodes"></i> Activity 1 · Chain Reaction</span>
-                        <h2>Keep the conversation moving</h2>
-                        <div class="split-grid">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-reply-all"></i><span>How it works</span></h3>
-                                <ul>
-                                    <li>The teacher begins the chain.</li>
-                                    <li>Say what you like and why, then invite a classmate.</li>
-                                    <li>That student responds and asks someone new.</li>
-                                    <li>Keep the chain going around the room!</li>
-                                </ul>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Example</span></h3>
-                                <p><strong>Teacher:</strong> “I like walking because it's relaxing. Fatima, what about you?”</p>
-                                <p><strong>Fatima:</strong> “I don't like walking, it's boring. I like cooking because it's interesting. Ahmad, what do you like doing?”</p>
-                                <p><strong>Ahmad:</strong> “...” (and so on)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 7 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-lightbulb"></i> Activity 2</span>
-                        <div class="media-card">
-                            <figure>
-                                <img src="https://images.pexels.com/photos/4050291/pexels-photo-4050291.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&dpr=2" alt="Teacher guiding adult students during a collaborative grammar activity.">
-                                <figcaption>Grammar in action</figcaption>
-                            </figure>
-                            <div class="media-body">
-                                <h2>Grammar focus</h2>
-                                <p>After verbs like <strong>love</strong>, <strong>enjoy</strong>, <strong>like</strong>, and <strong>don't like</strong>, use the verb with <strong>-ing</strong>.</p>
-                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                                    <li><i class="fa-solid fa-mug-saucer" style="margin-right: 0.5rem; color: var(--secondary-sage);"></i><em>I love drinking coffee before class.</em></li>
-                                    <li><i class="fa-solid fa-headphones" style="margin-right: 0.5rem; color: var(--secondary-sage);"></i><em>I enjoy listening to music while I study.</em></li>
-                                    <li><i class="fa-solid fa-thumbs-down" style="margin-right: 0.5rem; color: var(--secondary-sage);"></i><em>I don't like waking up late on weekdays.</em></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 8 -->
-                <div class="slide-stage hidden" data-activity="mc-check">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-clipboard-check"></i> Quick Check</span>
-                        <h2>Choose the correct sentence</h2>
-                        <p>Use the dropdown to choose the sentence that uses the correct <strong>-ing</strong> form.</p>
-                        <div class="mc-grid">
-                            <div class="mc-card" data-answer="2">
-                                <label>1. Talking about movies</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">I like watch scary movies on Fridays.</option>
-                                    <option value="2">I like watching scary movies on Fridays.</option>
-                                    <option value="3">I like to watching scary movies on Fridays.</option>
-                                </select>
-                            </div>
-                            <div class="mc-card" data-answer="3">
-                                <label>2. Weekend routines</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">She enjoys to cook dinner for her family.</option>
-                                    <option value="2">She enjoy cooking dinner for her family.</option>
-                                    <option value="3">She enjoys cooking dinner for her family.</option>
-                                </select>
-                            </div>
-                            <div class="mc-card" data-answer="1">
-                                <label>3. Fitness habits</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">They don't like running very early in the morning.</option>
-                                    <option value="2">They doesn't like running very early in the morning.</option>
-                                    <option value="3">They don't like to running very early in the morning.</option>
-                                </select>
-                            </div>
-                            <div class="mc-card" data-answer="2">
-                                <label>4. Evening plans</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">We enjoy listen to jazz in the evening.</option>
-                                    <option value="2">We enjoy listening to jazz in the evening.</option>
-                                    <option value="3">We enjoying listening to jazz in the evening.</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="activity-actions">
-                            <button class="activity-btn secondary" data-action="reset">Reset</button>
-                            <button class="activity-btn" data-action="check">Check answers</button>
-                        </div>
-                        <div class="feedback-msg" aria-live="polite"></div>
-                    </div>
-                </div>
-
-                <!-- Slide 9 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-people-arrows"></i> Activity 2 · Class Survey</span>
-                        <h2>How to play</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-bullhorn"></i><span>Step 1 · Teacher asks</span></h3>
-                                <p>Listen to the question: “Who loves watching movies?”</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-hand-paper"></i><span>Step 2 · You answer</span></h3>
-                                <p>If you agree, raise your hand—real or virtual!</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-comment-dots"></i><span>Step 3 · Explain why</span></h3>
-                                <p>One student explains why they love it, another explains why they don't.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 10 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-list"></i> Activity 2 · Topics</span>
-                        <h2>Find your survey matches</h2>
-                        <div class="card">
-                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; font-size: var(--step-1);">
-                                <li><i class="fa-solid fa-clapperboard" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>Watching movies?</li>
-                                <li><i class="fa-solid fa-kitchen-set" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>Cooking?</li>
-                                <li><i class="fa-solid fa-gamepad" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>Playing video games?</li>
-                                <li><i class="fa-solid fa-newspaper" style="margin-right: 0.65rem; color: var(--secondary-sage);"></i>Reading the news?</li>
-                            </ul>
-                            <p style="font-size: var(--step--1); color: var(--ink-muted);">Use <strong>like + -ing</strong> and explain your reasons with <strong>because</strong>.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 11 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-clock"></i> Activity 3</span>
-                        <div class="prompt-card">
-                            <h2>Connect routines with reasons</h2>
-                            <p><em>I always drink tea in the morning because I love the taste.</em><br><em>I never watch horror movies because I don't like being scared.</em></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 12 -->
-                <div class="slide-stage hidden" data-activity="gapfill">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-pen"></i> Language Practice</span>
-                        <h2>Complete the sentences</h2>
-                        <p>Use the verbs in brackets with the correct form and add <strong>because</strong> + a reason.</p>
-                        <div class="gapfill-grid">
-                            <div class="gapfill-card" data-answer="reading" data-reason="because it is relaxing|because it's relaxing">
-                                <p>1. I always <strong>_____</strong> (read) in bed <strong>_____</strong>.</p>
-                                <input type="text" placeholder="verb + -ing">
-                                <input type="text" placeholder="reason">
-                            </div>
-                            <div class="gapfill-card" data-answer="listening" data-reason="because it helps her wake up|because it helps her to wake up">
-                                <p>2. She enjoys <strong>_____</strong> (listen) to podcasts in the morning <strong>_____</strong>.</p>
-                                <input type="text" placeholder="verb + -ing">
-                                <input type="text" placeholder="reason">
-                            </div>
-                            <div class="gapfill-card" data-answer="cooking" data-reason="because we like eating together|because we love eating together">
-                                <p>3. We love <strong>_____</strong> (cook) on Sundays <strong>_____</strong>.</p>
-                                <input type="text" placeholder="verb + -ing">
-                                <input type="text" placeholder="reason">
-                            </div>
-                            <div class="gapfill-card" data-answer="running" data-reason="because it is too tiring|because it's too tiring">
-                                <p>4. They don't like <strong>_____</strong> (run) late at night <strong>_____</strong>.</p>
-                                <input type="text" placeholder="verb + -ing">
-                                <input type="text" placeholder="reason">
-                            </div>
-                        </div>
-                        <div class="activity-actions">
-                            <button class="activity-btn secondary" data-action="reset">Reset</button>
-                            <button class="activity-btn" data-action="check">Check answers</button>
-                        </div>
-                        <div class="feedback-msg" aria-live="polite"></div>
-                    </div>
-                </div>
-
-                <!-- Slide 13 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-link"></i> Activity 3 · Find the Connection</span>
-                        <h2>Build a chain of routines</h2>
-                        <div class="split-grid">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-circle-info"></i><span>How it works</span></h3>
-                                <ul>
-                                    <li>The teacher shares a routine and a reason.</li>
-                                    <li>Ask a classmate if they agree or have a connection.</li>
-                                    <li>They answer and share a related routine.</li>
-                                    <li>Continue building the conversation with connections.</li>
-                                </ul>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-share-nodes"></i><span>Example chain</span></h3>
-                                <p><strong>Teacher:</strong> “I sometimes listen to classical music because it's relaxing. Yousef, do you agree?”</p>
-                                <p><strong>Yousef:</strong> “Yes, it helps me concentrate. I often listen to music when I study because it keeps me calm.”</p>
-                                <p><strong>Teacher:</strong> “Great! Sara, what do you do when you study?”</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 14 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner centered-text">
-                        <span class="pill"><i class="fa-solid fa-puzzle-piece"></i> Activity 4</span>
-                        <div class="prompt-card">
-                            <h2>Let's solve a problem</h2>
-                            <p>Your friend wants a new hobby but has little time. They like <strong>quiet</strong> activities and dislike <strong>noisy</strong> or <strong>exciting</strong> ones. What should they try?</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 15 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-people-group"></i> Activity 4 · Brainstorm</span>
-                        <h2>Share your advice</h2>
-                        <div class="discussion-table">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-list-check"></i><span>Your task</span></h3>
-                                <p>Give suggestions for your friend. Use the language from our lesson!</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-lightbulb"></i><span>Useful phrases</span></h3>
-                                <p>“I think they should try <strong>reading</strong>...”<br>“...because <strong>reading is quiet</strong>.”</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Discuss together</span></h3>
-                                <p>Agree or disagree with classmates. Explain your reasons clearly.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 16 -->
-                <div class="slide-stage hidden" data-activity="grouping">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-diagram-project"></i> Activity 4 · Grouping Challenge</span>
-                        <h2>Match the hobby to the feeling</h2>
-                        <p>Click a hobby tile to select it, then tap the category where it fits best. Click a placed tile again to move it somewhere else.</p>
-                        <div class="drag-grid">
-                            <div class="drag-pool" data-pool data-empty="false" data-hint="Tap a hobby tile to select it.">
-                                <h4><i class="fa-solid fa-basket-shopping"></i> Hobbies</h4>
-                                <div class="drag-item" data-item="reading">Reading at night</div>
-                                <div class="drag-item" data-item="yoga">Doing yoga</div>
-                                <div class="drag-item" data-item="gaming">Playing video games</div>
-                                <div class="drag-item" data-item="cooking">Cooking dinner</div>
-                                <div class="drag-item" data-item="hiking">Weekend hiking</div>
-                                <div class="drag-item" data-item="podcasts">Listening to podcasts</div>
-                            </div>
-                            <div class="drag-drop" data-target="calm" data-empty="true" data-hint="After selecting a hobby, tap here for calm choices.">
-                                <h4><i class="fa-solid fa-moon"></i> Calm &amp; quiet</h4>
-                            </div>
-                            <div class="drag-drop" data-target="exciting" data-empty="true" data-hint="Drop energetic hobbies in this space.">
-                                <h4><i class="fa-solid fa-bolt"></i> Exciting &amp; social</h4>
-                            </div>
-                        </div>
-                        <div class="activity-actions">
-                            <button class="activity-btn secondary" data-action="reset">Reset</button>
-                            <button class="activity-btn" data-action="check">Check groups</button>
-                        </div>
-                        <div class="feedback-msg" aria-live="polite"></div>
-                    </div>
-                </div>
-
-                <!-- Slide 17 -->
-                <div class="slide-stage hidden" data-venn>
-                    <div class="slide-inner venn-layout">
-                        <span class="pill"><i class="fa-solid fa-people-line"></i> Main Task · Part 1</span>
-                        <h2>The Venn diagram interview</h2>
-                        <div class="venn-guides">
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-bullseye"></i><span>Goal</span></h3>
-                                <p>We want to find what is the same, and what is different, between two classmates.</p>
-                                <p>Use <strong>like / love / don't like + -ing</strong> when you share ideas.</p>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-person-chalkboard"></i><span>How it works</span></h3>
-                                <ul>
-                                    <li>The teacher will choose one student to interview.</li>
-                                    <li>The class will ask that student questions about their likes, dislikes, and hobbies.</li>
-                                    <li>Shared likes go in the middle column (“Both”). Different ideas stay in their own column.</li>
-                                </ul>
-                            </div>
-                            <div class="card">
-                                <h3 class="icon-heading"><i class="fa-solid fa-ear-listen"></i><span>Listening tips</span></h3>
-                                <ul>
-                                    <li>Ask follow-up questions to discover shared interests.</li>
-                                    <li>Listen carefully for unique details to place in the Teacher or Us columns.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 18 -->
-                <div class="slide-stage hidden" data-venn-table>
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-table-cells-large"></i> Main Task · Part 1</span>
-                        <h2>Teacher &amp; class connections</h2>
-                        <div class="venn-table-wrapper">
-                            <p class="venn-table-intro">Capture the interview discoveries in this shared note space.</p>
-                            <div class="venn-table-container" role="group" aria-labelledby="venn-table-title">
-                                <h3 id="venn-table-title" class="visually-hidden">Interview comparison table</h3>
-                                <table class="venn-table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"><i class="fa-solid fa-chalkboard-user"></i> Teacher</th>
-                                            <th scope="col"><i class="fa-solid fa-heart"></i> Both</th>
-                                            <th scope="col"><i class="fa-solid fa-people-group"></i> Us</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-teacher">Teacher column notes</label>
-                                                <textarea id="venn-table-teacher" placeholder="Only the teacher enjoys..."></textarea>
-                                            </td>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-both">Both column notes</label>
-                                                <textarea id="venn-table-both" placeholder="We both love..."></textarea>
-                                            </td>
-                                            <td>
-                                                <label class="visually-hidden" for="venn-table-us">Us column notes</label>
-                                                <textarea id="venn-table-us" placeholder="Classmates or student only like..."></textarea>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 19 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> Main Task · Part 2</span>
-                        <h2>Find a shared passion</h2>
-                        <div class="split-grid">
-                            <div class="card">
-                                <h3>New goal</h3>
-                                <p>Discover one activity that at least three people in the class love.</p>
-                            </div>
-                            <div class="card">
-                                <h3>How to investigate</h3>
-                                <ul>
-                                    <li>Ask follow-up questions and listen for connections.</li>
-                                    <li>Raise your hand when you hear an activity you also love.</li>
-                                    <li>When a group forms, share why the activity is meaningful.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 20 -->
-                <div class="slide-stage hidden">
-                    <div class="slide-inner">
-                        <span class="pill"><i class="fa-solid fa-leaf"></i> Reflection</span>
-                        <h2>Let's reflect</h2>
-                        <div class="card">
-                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                                <li>What was the most interesting thing you learned about a classmate today?</li>
-                                <li>Which phrase feels easier now: “I like...” or “I sometimes...”?</li>
-                                <li>What was the most challenging part of our main task?</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="slide-nav slide-nav-prev" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="slide-nav slide-nav-next" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+                <p class="feedback-msg">Choose one and tell the group why.</p>
+              </div>
             </div>
-        </main>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-3">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Listening</span>
+                <h2>Teacher snapshots</h2>
+                <div class="tips-grid">
+                  <div class="tip-card">
+                    <h3>Morning routine</h3>
+                    <p>I start the day with stretching and strong Turkish coffee.</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Childhood memory</h3>
+                    <p>I learned to ride a bike with my cousins every summer.</p>
+                  </div>
+                  <div class="tip-card">
+                    <h3>Future plan</h3>
+                    <p>I want to visit Andalusia and learn about Moorish design.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-4">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Speaking</span>
+                <h2>In pairs, share...</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-sun"></i> One thing you do every morning</li>
+                  <li><i class="fa-solid fa-heart"></i> A favourite memory with family or friends</li>
+                  <li><i class="fa-solid fa-plane"></i> A place you want to visit this year</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-5">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h2>Story board</h2>
+                <div class="split-grid">
+                  <div class="note-card" contenteditable="true">
+                    <h3>Morning habits</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Best memories</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Dream trips</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>New skills</h3>
+                    <p></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-6">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Vocabulary</span>
+                <h2>Useful expressions</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-pen"></i> I'm really into...</li>
+                  <li><i class="fa-solid fa-pen"></i> I usually...</li>
+                  <li><i class="fa-solid fa-pen"></i> I'd love to...</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-7">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Mini quiz</span>
+                <h2>Culture moments</h2>
+                <p>Talk with a partner, then choose your answer.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-8">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 1</p>
+                <h2>Where is the city of Chefchaouen?</h2>
+                <div class="quiz-options" data-quiz-id="ss1">
+                  <div class="quiz-option">A) Jordan</div>
+                  <div class="quiz-option">B) Lebanon</div>
+                  <div class="quiz-option" data-correct="true">C) Morocco</div>
+                  <div class="quiz-option">D) Bahrain</div>
+                </div>
+                <p class="feedback-msg success" id="ss1-feedback" hidden>
+                  Chefchaouen is a blue-painted city in northern Morocco.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-9">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 2</p>
+                <h2>Which dish uses chickpeas and tahini?</h2>
+                <div class="quiz-options" data-quiz-id="ss2">
+                  <div class="quiz-option">A) Mansaf</div>
+                  <div class="quiz-option" data-correct="true">B) Hummus</div>
+                  <div class="quiz-option">C) Kabsa</div>
+                  <div class="quiz-option">D) Tagine</div>
+                </div>
+                <p class="feedback-msg success" id="ss2-feedback" hidden>
+                  Hummus is a creamy dip made with chickpeas, tahini, and lemon.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-10">
+            <div class="slide-inner">
+              <div class="quiz-card">
+                <p class="deck-subtitle">Question 3</p>
+                <h2>What does Ramadan celebrate?</h2>
+                <div class="quiz-options" data-quiz-id="ss3">
+                  <div class="quiz-option" data-correct="true">A) The month the Qur'an was revealed</div>
+                  <div class="quiz-option">B) The start of a new year</div>
+                  <div class="quiz-option">C) Harvest season</div>
+                  <div class="quiz-option">D) Winter festival</div>
+                </div>
+                <p class="feedback-msg success" id="ss3-feedback" hidden>
+                  Ramadan marks the month when the Qur'an was first revealed.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-11">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Project</span>
+                <h2>Plan a class storybook</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-book"></i> Title of your story</li>
+                  <li><i class="fa-solid fa-users"></i> Characters and setting</li>
+                  <li><i class="fa-solid fa-magic"></i> Problem and solution</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-12">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h2>Storyboard notes</h2>
+                <div class="split-grid">
+                  <div class="note-card" contenteditable="true">
+                    <h3>Title &amp; characters</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Beginning</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Middle</h3>
+                    <p></p>
+                  </div>
+                  <div class="note-card" contenteditable="true">
+                    <h3>Ending</h3>
+                    <p></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-13">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Reflection</span>
+                <h2>Exit ticket</h2>
+                <ul class="instruction-list">
+                  <li><i class="fa-solid fa-check"></i> One new word you used today</li>
+                  <li><i class="fa-solid fa-handshake-angle"></i> Someone who helped you</li>
+                  <li><i class="fa-solid fa-forward"></i> One question you still have</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-14">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h1>Great work!</h1>
+                <p class="deck-subtitle">Thanks for sharing your stories.</p>
+                <p><i class="fa-solid fa-book-open fa-3x"></i></p>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" type="button" onclick="navigateSlides(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" onclick="navigateSlides(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </main>
     </div>
 
     <script>
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const slideCounter = document.getElementById('slide-counter');
-      let currentSlide = 0;
+      document.addEventListener("DOMContentLoaded", () => {
+        let currentSlide = 1;
+        const slides = document.querySelectorAll(".slide-stage");
+        const totalSlides = slides.length;
+        const slideCounter = document.getElementById("slide-counter");
 
-      function updateSlideCounter() {
-        slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-      }
-
-      function showSlide(index) {
-        slides.forEach((slide, idx) => {
-          slide.classList.toggle('hidden', idx !== index);
-        });
-        currentSlide = index;
-        updateSlideCounter();
-      }
-
-      function navigate(direction) {
-        const nextIndex = currentSlide + direction;
-        if (nextIndex >= 0 && nextIndex < slides.length) {
-          showSlide(nextIndex);
-        }
-      }
-
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowRight') navigate(1);
-        if (event.key === 'ArrowLeft') navigate(-1);
-      });
-
-      updateSlideCounter();
-
-      // Multiple choice checker
-      const mcSlide = document.querySelector('[data-activity="mc-check"]');
-      if (mcSlide) {
-        const checkBtn = mcSlide.querySelector('[data-action="check"]');
-        const resetBtn = mcSlide.querySelector('[data-action="reset"]');
-        const feedback = mcSlide.querySelector('.feedback-msg');
-        const cards = mcSlide.querySelectorAll('.mc-card');
-
-        checkBtn.addEventListener('click', () => {
-          let correctCount = 0;
-          cards.forEach(card => {
-            const select = card.querySelector('select');
-            const expected = card.dataset.answer;
-            const isCorrect = select.value === expected;
-            card.style.borderColor = isCorrect ? 'rgba(76,175,80,0.55)' : 'rgba(214,69,69,0.65)';
-            card.style.boxShadow = isCorrect ? '0 0 0 3px rgba(76,175,80,0.18)' : '0 0 0 3px rgba(214,69,69,0.18)';
-            if (isCorrect) correctCount += 1;
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle("hidden", i + 1 !== index);
           });
-          if (correctCount === cards.length) {
-            feedback.textContent = 'Excellent! All of your answers are correct.';
-            feedback.className = 'feedback-msg success';
-          } else {
-            feedback.textContent = 'Keep trying! Check the verb forms with -ing and try again.';
-            feedback.className = 'feedback-msg error';
+          if (slideCounter) {
+            slideCounter.textContent = `Slide ${index} of ${totalSlides}`;
           }
-        });
-
-        resetBtn.addEventListener('click', () => {
-          cards.forEach(card => {
-            const select = card.querySelector('select');
-            select.value = '';
-            card.style.borderColor = 'rgba(122,132,113,0.18)';
-            card.style.boxShadow = 'var(--shadow-1)';
-          });
-          feedback.textContent = '';
-          feedback.className = 'feedback-msg';
-        });
-      }
-
-      // Gap-fill checker
-      const gapSlide = document.querySelector('[data-activity="gapfill"]');
-      if (gapSlide) {
-        const checkBtn = gapSlide.querySelector('[data-action="check"]');
-        const resetBtn = gapSlide.querySelector('[data-action="reset"]');
-        const feedback = gapSlide.querySelector('.feedback-msg');
-        const cards = gapSlide.querySelectorAll('.gapfill-card');
-
-        function normalise(text) {
-          return text.trim().toLowerCase();
         }
 
-        checkBtn.addEventListener('click', () => {
-          let correctCount = 0;
-          cards.forEach(card => {
-            const inputs = card.querySelectorAll('input');
-            const verbInput = normalise(inputs[0].value);
-            const reasonInput = normalise(inputs[1].value);
-            const expectedVerb = card.dataset.answer;
-            const expectedReason = card.dataset.reason.split('|').map(normalise);
-            const verbOk = verbInput === expectedVerb;
-            const reasonOk = expectedReason.includes(reasonInput);
-            const isCorrect = verbOk && reasonOk;
-            card.style.borderColor = isCorrect ? 'rgba(76,175,80,0.55)' : 'rgba(214,69,69,0.65)';
-            card.style.boxShadow = isCorrect ? '0 0 0 3px rgba(76,175,80,0.18)' : '0 0 0 3px rgba(214,69,69,0.18)';
-            if (isCorrect) correctCount += 1;
-          });
-          if (correctCount === cards.length) {
-            feedback.textContent = 'Great work! Your sentences link routines and reasons clearly.';
-            feedback.className = 'feedback-msg success';
-          } else {
-            feedback.textContent = 'Check the -ing forms and add a reason starting with "because".';
-            feedback.className = 'feedback-msg error';
-          }
-        });
-
-        resetBtn.addEventListener('click', () => {
-          cards.forEach(card => {
-            const inputs = card.querySelectorAll('input');
-            inputs.forEach(input => input.value = '');
-            card.style.borderColor = 'rgba(122,132,113,0.18)';
-            card.style.boxShadow = 'var(--shadow-1)';
-          });
-          feedback.textContent = '';
-          feedback.className = 'feedback-msg';
-        });
-      }
-
-      // Grouping activity
-      const groupingSlide = document.querySelector('[data-activity="grouping"]');
-      if (groupingSlide) {
-        const pool = groupingSlide.querySelector('[data-pool]');
-        const dropZones = groupingSlide.querySelectorAll('[data-target]');
-        const checkBtn = groupingSlide.querySelector('[data-action="check"]');
-        const resetBtn = groupingSlide.querySelector('[data-action="reset"]');
-        const feedback = groupingSlide.querySelector('.feedback-msg');
-
-        const answers = {
-          calm: ['reading', 'yoga', 'podcasts'],
-          exciting: ['gaming', 'cooking', 'hiking']
+        window.navigateSlides = function (direction) {
+          currentSlide += direction;
+          if (currentSlide > totalSlides) currentSlide = 1;
+          if (currentSlide < 1) currentSlide = totalSlides;
+          showSlide(currentSlide);
         };
 
-        let selectedItem = null;
+        document.querySelectorAll(".quiz-options").forEach((container) => {
+          container.addEventListener("click", (event) => {
+            const option = event.target.closest(".quiz-option");
+            if (!option || container.dataset.locked === "true") return;
 
-        function updateEmptyStates() {
-          const poolItems = pool.querySelectorAll('[data-item]').length;
-          pool.dataset.empty = poolItems === 0 ? 'true' : 'false';
-          dropZones.forEach(zone => {
-            const count = zone.querySelectorAll('[data-item]').length;
-            zone.dataset.empty = count === 0 ? 'true' : 'false';
-          });
-        }
+            container.dataset.locked = "true";
+            option.classList.add(
+              option.dataset.correct === "true" ? "correct" : "incorrect"
+            );
 
-        function clearSelection() {
-          if (selectedItem) {
-            selectedItem.classList.remove('is-selected');
-            selectedItem = null;
-          }
-        }
+            if (option.dataset.correct !== "true") {
+              const correct = container.querySelector(
+                '.quiz-option[data-correct="true"]'
+              );
+              if (correct) correct.classList.add("correct");
+            }
 
-        function handleItemClick(item) {
-          if (selectedItem === item) {
-            item.classList.remove('is-selected');
-            selectedItem = null;
-          } else {
-            if (selectedItem) selectedItem.classList.remove('is-selected');
-            selectedItem = item;
-            item.classList.add('is-selected');
-          }
-        }
-
-        function moveItem(container, item) {
-          container.appendChild(item);
-          item.classList.remove('is-selected');
-          selectedItem = null;
-          updateEmptyStates();
-        }
-
-        const containers = [pool, ...dropZones];
-        containers.forEach(container => {
-          container.addEventListener('click', event => {
-            const item = event.target.closest('[data-item]');
-            if (item && container.contains(item)) {
-              handleItemClick(item);
-              event.stopPropagation();
-            } else if (selectedItem) {
-              moveItem(container, selectedItem);
+            const feedback = document.getElementById(
+              `${container.dataset.quizId}-feedback`
+            );
+            if (feedback) {
+              feedback.hidden = false;
             }
           });
         });
 
-        updateEmptyStates();
-
-        checkBtn.addEventListener('click', () => {
-          clearSelection();
-          let allCorrect = true;
-          dropZones.forEach(zone => {
-            const target = zone.dataset.target;
-            const expected = answers[target];
-            const items = Array.from(zone.querySelectorAll('[data-item]')).map(el => el.dataset.item);
-            const isCorrect = items.every(item => expected.includes(item)) && expected.every(item => items.includes(item));
-            zone.style.borderColor = isCorrect ? 'rgba(76,175,80,0.55)' : 'rgba(214,69,69,0.65)';
-            zone.style.boxShadow = isCorrect ? '0 0 0 3px rgba(76,175,80,0.18)' : '0 0 0 3px rgba(214,69,69,0.18)';
-            if (!isCorrect) allCorrect = false;
-          });
-          if (allCorrect) {
-            feedback.textContent = 'Excellent sorting! You matched each hobby to the best feeling.';
-            feedback.className = 'feedback-msg success';
-          } else {
-            feedback.textContent = 'Not quite yet. Think about how calm or exciting each hobby feels.';
-            feedback.className = 'feedback-msg error';
-          }
-        });
-
-        resetBtn.addEventListener('click', () => {
-          clearSelection();
-          dropZones.forEach(zone => {
-            const items = Array.from(zone.querySelectorAll('[data-item]'));
-            items.forEach(item => pool.appendChild(item));
-            zone.style.borderColor = 'rgba(122,132,113,0.35)';
-            zone.style.boxShadow = 'var(--shadow-1)';
-          });
-          pool.style.borderColor = 'rgba(122,132,113,0.35)';
-          pool.style.boxShadow = 'var(--shadow-1)';
-          feedback.textContent = '';
-          feedback.className = 'feedback-msg';
-          updateEmptyStates();
-        });
-      }
+        showSlide(currentSlide);
+      });
     </script>
-</body>
+  </body>
 </html>
