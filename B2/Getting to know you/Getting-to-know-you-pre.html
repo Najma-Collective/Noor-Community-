@@ -78,6 +78,44 @@
             gap: 1.2rem;
         }
 
+        .icon-heading {
+            color: var(--secondary-sage);
+            text-shadow: 0 0 10px rgba(156, 175, 136, 0.35);
+        }
+
+        .instruction i {
+            color: var(--secondary-sage);
+            margin-right: 0.5rem;
+        }
+
+        .instruction strong {
+            font-family: var(--font-body);
+        }
+
+        .icon-inline {
+            color: var(--primary-sage);
+            margin-right: 0.5rem;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-sage);
+            background: rgba(250, 250, 248, 0.9);
+            cursor: pointer;
+            transition: border 0.2s ease, background 0.2s ease;
+        }
+
+        .quiz-option i {
+            color: var(--secondary-sage);
+            text-shadow: 0 0 6px rgba(122, 132, 113, 0.35);
+        }
+        .quiz-option span { flex: 1; }
+        .quiz-option input[type="radio"] { margin-top: 0; }
+
         .instruction {
             font-style: italic;
             color: var(--ink-muted);
@@ -92,21 +130,20 @@
         }
         .quiz-question p { font-weight: 700; color: var(--deep-forest); }
         .quiz-options { display: grid; gap: 0.45rem; padding-left: 0.5rem; }
-        .quiz-option {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-sage);
-            background: rgba(250, 250, 248, 0.9);
-            cursor: pointer;
-            transition: border 0.2s ease, background 0.2s ease;
-        }
         .quiz-option:hover { background: var(--hover-sage); }
         .quiz-option.correct { border-color: var(--correct-green); background: var(--correct-bg); }
         .quiz-option.incorrect { border-color: var(--incorrect-red); background: var(--incorrect-bg); }
         .quiz-option input[type="radio"] { margin-top: 0.1em; accent-color: var(--primary-sage); }
+
+        .matching-option i,
+        .dropdown-item i {
+            color: var(--secondary-sage);
+            margin-right: 0.6rem;
+        }
+
+        .dropdown-item span i {
+            margin-right: 0.35rem;
+        }
 
         /* Activity 2 & 4: Matching & Dropdown */
         .matching-stack { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -180,24 +217,26 @@
             background: var(--primary-sage); color: #fff; box-shadow: var(--shadow-1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .activity-btn i { margin-right: 0.5rem; }
         .activity-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
         .activity-btn#resetBtn { display: none; background: var(--deep-forest); margin-left: 1rem; }
         .feedback-msg { margin-top: 1rem; font-weight: 700; font-size: 1.1rem; min-height: 1.5rem; }
         .feedback-msg.success { color: var(--correct-green); }
+        .feedback-msg i { margin-right: 0.5rem; }
     </style>
 </head>
 <body>
 
     <div class="worksheet-container">
         <header>
-            <h1>Pre-Class Task: Planning Your Professional Future</h1>
-            <p class="instruction">Welcome! Please complete these activities before our next class. This will help you prepare for our lesson on discussing career goals.</p>
+            <h1><i class="fa-solid fa-compass-drafting icon-heading" aria-hidden="true"></i> Pre-Class Task: Planning Your Professional Future</h1>
+            <p class="instruction"><i class="fa-solid fa-sparkles" aria-hidden="true"></i>Welcome! Please complete these activities before our next class. This will help you prepare for our lesson on discussing career goals.</p>
         </header>
 
         <!-- Model Text -->
         <div class="card">
-            <h2>Model Text: My Professional Development Plan</h2>
-            <p class="instruction">Read the short professional development plan written by Layla, who works for a local NGO.</p>
+            <h2><i class="fa-solid fa-book-open icon-heading" aria-hidden="true"></i> Model Text: My Professional Development Plan</h2>
+            <p class="instruction"><i class="fa-solid fa-highlighter" aria-hidden="true"></i>Read the short professional development plan written by Layla, who works for a local NGO.</p>
             <p>For the coming year, I have identified a few key priorities for my professional growth.</p>
             <p>Firstly, <strong>it will be essential to enhance</strong> my project management skills. I am currently taking an advanced online course <strong>so that I can</strong> lead our new community health project in Nablus more effectively.</p>
             <p>Secondly, I <strong>plan to</strong> actively <strong>work on</strong> my public speaking. We often have to present our results to international donors, so I <strong>will need to</strong> communicate our impact with greater confidence and clarity.</p>
@@ -206,49 +245,49 @@
 
         <!-- Activity 1 -->
         <div class="card">
-            <h2>Activity 1: Check Your Understanding</h2>
-            <p class="instruction">Read Layla's plan again and choose the best answer for each question.</p>
+            <h2><i class="fa-solid fa-list-check icon-heading" aria-hidden="true"></i> Activity 1: Check Your Understanding</h2>
+            <p class="instruction"><i class="fa-solid fa-circle-question" aria-hidden="true"></i>Read Layla's plan again and choose the best answer for each question.</p>
             <div id="activity1">
                 <div class="quiz-card">
                     <div class="quiz-question" id="q1">
-                        <p>1. What is the main purpose of this text?</p>
+                        <p><i class="fa-solid fa-pen-to-square icon-inline" aria-hidden="true"></i>1. What is the main purpose of this text?</p>
                         <div class="quiz-options">
-                            <label class="quiz-option"><input type="radio" name="q1" value="a"> To describe a past project.</label>
-                            <label class="quiz-option"><input type="radio" name="q1" value="b"> To complain about a job.</label>
-                            <label class="quiz-option"><input type="radio" name="q1" value="c"> To outline future professional goals.</label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q1" value="a"><span>To describe a past project.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q1" value="b"><span>To complain about a job.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q1" value="c"><span>To outline future professional goals.</span></label>
                         </div>
                     </div>
                 </div>
                 <div class="quiz-card">
                     <div class="quiz-question" id="q2">
-                        <p>2. Why does Layla want to enhance her project management skills?</p>
+                        <p><i class="fa-solid fa-lightbulb icon-inline" aria-hidden="true"></i>2. Why does Layla want to enhance her project management skills?</p>
                         <div class="quiz-options">
-                            <label class="quiz-option"><input type="radio" name="q2" value="a"> To find a new job.</label>
-                            <label class="quiz-option"><input type="radio" name="q2" value="b"> To lead a new project in Nablus.</label>
-                            <label class="quiz-option"><input type="radio" name="q2" value="c"> To present to international donors.</label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q2" value="a"><span>To find a new job.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q2" value="b"><span>To lead a new project in Nablus.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q2" value="c"><span>To present to international donors.</span></label>
                         </div>
                     </div>
                 </div>
                 <div class="quiz-card">
                     <div class="quiz-question" id="q3">
-                        <p>3. Which skill is important for writing better funding proposals?</p>
+                        <p><i class="fa-solid fa-seedling icon-inline" aria-hidden="true"></i>3. Which skill is important for writing better funding proposals?</p>
                         <div class="quiz-options">
-                            <label class="quiz-option"><input type="radio" name="q3" value="a"> Public speaking.</label>
-                            <label class="quiz-option"><input type="radio" name="q3" value="b"> Data analysis.</label>
-                            <label class="quiz-option"><input type="radio" name="q3" value="c"> Community health.</label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q3" value="a"><span>Public speaking.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q3" value="b"><span>Data analysis.</span></label>
+                            <label class="quiz-option"><i class="fa-regular fa-circle" aria-hidden="true"></i><input type="radio" name="q3" value="c"><span>Community health.</span></label>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Activity 2 -->
         <div class="card">
-            <h2>Activity 2: Vocabulary Focus</h2>
-            <p class="instruction">Match the verbs and phrases from the text with their correct definitions.</p>
+            <h2><i class="fa-solid fa-language icon-heading" aria-hidden="true"></i> Activity 2: Vocabulary Focus</h2>
+            <p class="instruction"><i class="fa-solid fa-shuffle" aria-hidden="true"></i>Match the verbs and phrases from the text with their correct definitions.</p>
             <div class="matching-stack" id="activity2">
                 <div class="matching-option">
-                    <p><strong>1. enhance</strong></p>
+                    <p><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i><strong>1. enhance</strong></p>
                     <select data-correct="c">
                         <option value="">Choose a definition...</option>
                         <option value="a">To make something better or raise it to a higher standard.</option>
@@ -258,7 +297,7 @@
                     </select>
                 </div>
                 <div class="matching-option">
-                    <p><strong>2. work on</strong></p>
+                    <p><i class="fa-solid fa-hammer" aria-hidden="true"></i><strong>2. work on</strong></p>
                     <select data-correct="d">
                         <option value="">Choose a definition...</option>
                         <option value="a">To make something better or raise it to a higher standard.</option>
@@ -268,7 +307,7 @@
                     </select>
                 </div>
                 <div class="matching-option">
-                    <p><strong>3. improve</strong></p>
+                    <p><i class="fa-solid fa-star" aria-hidden="true"></i><strong>3. improve</strong></p>
                     <select data-correct="a">
                         <option value="">Choose a definition...</option>
                         <option value="a">To make something better or raise it to a higher standard.</option>
@@ -278,7 +317,7 @@
                     </select>
                 </div>
                 <div class="matching-option">
-                    <p><strong>4. stay competitive</strong></p>
+                    <p><i class="fa-solid fa-flag-checkered" aria-hidden="true"></i><strong>4. stay competitive</strong></p>
                     <select data-correct="b">
                         <option value="">Choose a definition...</option>
                         <option value="a">To make something better or raise it to a higher standard.</option>
@@ -317,45 +356,45 @@
 
         <!-- Activity 4 -->
         <div class="card">
-            <h2>Activity 4: Linking Goals and Reasons</h2>
-            <p class="instruction">Complete the sentences about Layla's plan by choosing the correct linker.</p>
+            <h2><i class="fa-solid fa-link icon-heading" aria-hidden="true"></i> Activity 4: Linking Goals and Reasons</h2>
+            <p class="instruction"><i class="fa-solid fa-bridge" aria-hidden="true"></i>Complete the sentences about Layla's plan by choosing the correct linker.</p>
             <div class="matching-stack" id="activity4">
                 <div class="dropdown-item">
-                    <span>1. She is taking an advanced online course</span>
+                    <span><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>1. She is taking an advanced online course</span>
                     <select data-correct="so that she can">
                         <option value="">...</option>
                         <option value="so that she can">so that she can</option>
                         <option value="in order to">in order to</option>
                         <option value="must">must</option>
                     </select>
-                    <span>lead the project effectively.</span>
+                    <span><i class="fa-solid fa-person-chalkboard" aria-hidden="true"></i>lead the project effectively.</span>
                 </div>
                 <div class="dropdown-item">
-                     <span>2. She must become more proficient with software</span>
+                     <span><i class="fa-solid fa-laptop-code" aria-hidden="true"></i>2. She must become more proficient with software</span>
                      <select data-correct="in order to">
                         <option value="">...</option>
                         <option value="in order to">in order to</option>
                         <option value="so that she can">so that she can</option>
                         <option value="I plan to">I plan to</option>
                     </select>
-                    <span>write more persuasive proposals.</span>
+                    <span><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i>write more persuasive proposals.</span>
                 </div>
                  <div class="dropdown-item">
-                    <span>3. She needs to communicate with greater confidence</span>
+                    <span><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>3. She needs to communicate with greater confidence</span>
                      <select data-correct="so that she can">
                         <option value="">...</option>
                         <option value="so that she can">so that she can</option>
                         <option value="in order to">in order to</option>
                         <option value="I hope to">I hope to</option>
                     </select>
-                    <span>present results to donors.</span>
+                    <span><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>present results to donors.</span>
                 </div>
             </div>
         </div>
 
         <div class="controls">
-            <button class="activity-btn" id="checkBtn">Check Answers</button>
-            <button class="activity-btn" id="resetBtn">Try Again</button>
+            <button class="activity-btn" id="checkBtn"><i class="fa-solid fa-wand-sparkles" aria-hidden="true"></i>Check Answers</button>
+            <button class="activity-btn" id="resetBtn"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i>Try Again</button>
             <p class="feedback-msg" id="feedback"></p>
         </div>
 
@@ -510,10 +549,10 @@
 
                 // --- Final Feedback ---
                 if (allCorrect) {
-                    feedbackEl.textContent = 'Excellent work! All answers are correct.';
+                    feedbackEl.innerHTML = '<i class="fa-solid fa-stars" aria-hidden="true"></i>Excellent work! All answers are correct.';
                     feedbackEl.className = 'feedback-msg success';
                 } else {
-                    feedbackEl.textContent = 'Good try! Check the highlighted answers and try again.';
+                    feedbackEl.innerHTML = '<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>Good try! Check the highlighted answers and try again.';
                     feedbackEl.className = 'feedback-msg';
                 }
 
@@ -556,7 +595,7 @@
                 setDropTargetsReady(false);
 
 
-                feedbackEl.textContent = '';
+                feedbackEl.innerHTML = '';
                 checkBtn.style.display = 'inline-block';
                 resetBtn.style.display = 'none';
             });
