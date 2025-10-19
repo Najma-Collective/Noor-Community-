@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
             --primary-sage: #7a8471;
@@ -145,13 +146,15 @@
             background: rgba(248, 246, 240, 0.85); margin-bottom: 1rem;
         }
         .token {
+            display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.55rem 1rem; border-radius: 999px; background: var(--soft-white);
             border: 1px solid var(--ink-muted); box-shadow: var(--shadow-1);
-            cursor: grab; font-weight: 600; font-size: 0.9rem; user-select: none;
-            transition: all 0.2s ease;
+            cursor: pointer; font-weight: 600; font-size: 0.9rem; user-select: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
         }
-        .token:active { cursor: grabbing; }
-        .token.dragging { opacity: 0.5; }
+        .token:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+        .token i { color: var(--primary-sage); }
+        .token.selected { border-color: var(--primary-sage); box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.25); }
         .drop-categorization { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .category-column {
             background: rgba(248, 246, 240, 0.85); border-radius: var(--radius); padding: 1rem;
@@ -163,7 +166,9 @@
             border: 2px dashed var(--border-sage); background: rgba(254, 252, 247, 0.75);
             transition: all 0.2s ease;
         }
-        .drop-zone.drag-over { border-color: var(--primary-sage); background: var(--hover-sage); }
+        .drop-zone.ready { border-color: var(--secondary-sage); box-shadow: inset 0 0 0 2px rgba(156, 175, 136, 0.25); }
+        .drop-zone.active { border-color: var(--primary-sage); background: var(--hover-sage); }
+        .token-bank.ready { box-shadow: inset 0 0 0 2px rgba(156, 175, 136, 0.25); }
         .token.correct { border-color: var(--correct-green); background: var(--correct-bg); }
         .token.incorrect { border-color: var(--incorrect-red); background: var(--incorrect-bg); }
 
@@ -287,23 +292,23 @@
 
         <!-- Activity 3 -->
         <div class="card">
-            <h2>Activity 3: Understanding Function</h2>
-            <p class="instruction">Drag and drop the phrases into the correct category based on their function in the text.</p>
+            <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Activity 3: Understanding Function</h2>
+            <p class="instruction"><i class="fa-solid fa-hand-pointer"></i> Click a phrase to select it, then click the correct category to place it. Click a placed phrase again to send it back to the bank.</p>
             <div id="activity3">
                 <div class="token-bank">
-                    <div class="token" draggable="true" data-category="priority">I will need to...</div>
-                    <div class="token" draggable="true" data-category="intention">I plan to...</div>
-                    <div class="token" draggable="true" data-category="priority">It will be essential to...</div>
-                    <div class="token" draggable="true" data-category="intention">I hope to...</div>
-                    <div class="token" draggable="true" data-category="priority">I must...</div>
+                    <div class="token" data-category="priority"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><span>I will need to...</span></div>
+                    <div class="token" data-category="intention"><i class="fa-solid fa-seedling" aria-hidden="true"></i><span>I plan to...</span></div>
+                    <div class="token" data-category="priority"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span>It will be essential to...</span></div>
+                    <div class="token" data-category="intention"><i class="fa-regular fa-star" aria-hidden="true"></i><span>I hope to...</span></div>
+                    <div class="token" data-category="priority"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>I must...</span></div>
                 </div>
                 <div class="drop-categorization">
                     <div class="category-column">
-                        <h3>High Priority / Necessity</h3>
+                        <h3><i class="fa-solid fa-mountain" aria-hidden="true"></i> High Priority / Necessity</h3>
                         <div class="drop-zone" data-category="priority"></div>
                     </div>
                     <div class="category-column">
-                        <h3>Future Intention / Hope</h3>
+                        <h3><i class="fa-solid fa-sun" aria-hidden="true"></i> Future Intention / Hope</h3>
                         <div class="drop-zone" data-category="intention"></div>
                     </div>
                 </div>
@@ -363,38 +368,67 @@
             const feedbackEl = document.getElementById('feedback');
             let isChecked = false;
         
-            // --- Activity 3: Drag and Drop Logic ---
+            // --- Activity 3: Click and Drop Logic ---
+            const tokenBank = document.querySelector('.token-bank');
             const tokens = document.querySelectorAll('.token');
             const dropZones = document.querySelectorAll('.drop-zone');
+            let selectedToken = null;
+
+            const setDropTargetsReady = ready => {
+                dropZones.forEach(zone => zone.classList.toggle('ready', ready));
+                tokenBank.classList.toggle('ready', ready);
+            };
 
             tokens.forEach(token => {
-                token.addEventListener('dragstart', () => {
+                token.addEventListener('click', () => {
                     if (isChecked) return;
-                    token.classList.add('dragging');
-                });
-                token.addEventListener('dragend', () => {
-                    token.classList.remove('dragging');
+
+                    if (selectedToken === token) {
+                        if (token.parentElement !== tokenBank) {
+                            tokenBank.appendChild(token);
+                        }
+                        token.classList.remove('selected');
+                        selectedToken = null;
+                        setDropTargetsReady(false);
+                        return;
+                    }
+
+                    if (selectedToken) {
+                        selectedToken.classList.remove('selected');
+                    }
+                    selectedToken = token;
+                    token.classList.add('selected');
+                    setDropTargetsReady(true);
                 });
             });
 
             dropZones.forEach(zone => {
-                zone.addEventListener('dragover', e => {
-                    if (isChecked) return;
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
-                zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('drag-over');
-                });
-                zone.addEventListener('drop', e => {
-                    if (isChecked) return;
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    const draggingToken = document.querySelector('.dragging');
-                    if (draggingToken) {
-                        zone.appendChild(draggingToken);
+                zone.addEventListener('mouseenter', () => {
+                    if (!isChecked && selectedToken) {
+                        zone.classList.add('active');
                     }
                 });
+                zone.addEventListener('mouseleave', () => {
+                    zone.classList.remove('active');
+                });
+                zone.addEventListener('click', () => {
+                    if (isChecked || !selectedToken) return;
+
+                    zone.appendChild(selectedToken);
+                    selectedToken.classList.remove('selected');
+                    selectedToken = null;
+                    zone.classList.remove('active');
+                    setDropTargetsReady(false);
+                });
+            });
+
+            tokenBank.addEventListener('click', event => {
+                if (isChecked || !selectedToken || event.target !== tokenBank) return;
+
+                tokenBank.appendChild(selectedToken);
+                selectedToken.classList.remove('selected');
+                selectedToken = null;
+                setDropTargetsReady(false);
             });
 
 
@@ -448,13 +482,18 @@
                             token.classList.add('incorrect');
                             allCorrect = false;
                         }
-                        token.draggable = false;
                     });
                 });
                  // Check if any tokens are left in the bank
                 if (document.querySelector('.token-bank .token')) {
                     allCorrect = false;
                 }
+
+                if (selectedToken) {
+                    selectedToken.classList.remove('selected');
+                    selectedToken = null;
+                }
+                setDropTargetsReady(false);
 
                 // Activity 4: Dropdowns
                 const selects4 = document.querySelectorAll('#activity4 select');
@@ -502,13 +541,19 @@
                 });
                 
                 // Reset Activity 3
-                const tokenBank = document.querySelector('.token-bank');
-                dropZones.forEach(zone => zone.innerHTML = '');
+                dropZones.forEach(zone => {
+                    zone.innerHTML = '';
+                    zone.classList.remove('active', 'ready');
+                });
                 tokens.forEach(token => {
                     token.classList.remove('correct', 'incorrect');
-                    token.draggable = true;
+                    token.classList.remove('selected');
                     tokenBank.appendChild(token);
                 });
+
+                tokenBank.classList.remove('ready');
+                selectedToken = null;
+                setDropTargetsReady(false);
 
 
                 feedbackEl.textContent = '';
