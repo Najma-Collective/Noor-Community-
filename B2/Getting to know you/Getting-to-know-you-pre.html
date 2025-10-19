@@ -3,521 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pre-Class Activity: Professional Development</title>
+    <title>Pre-Class Task: Planning Your Professional Future</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Questrial&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
     <style>
-        /* =====================================================================
-           Noor Community Activities — Slide-aligned UI System
-           Shares the Organic Sage visual language used in CSS-slides.
-           ===================================================================== */
-
-        /* -------------------------------
-           Design tokens
-        ----------------------------------*/
         :root {
-          /* Core palette */
-          --primary-sage: #7a8471;
-          --secondary-sage: #9caf88;
-          --tertiary-sage: #b8c5a6;
-          --warm-cream: #f8f6f0;
-          --soft-white: #fefcf7;
-          --forest-shadow: #5a6b52;
-          --ink: #2f3a2b;
-          --ink-muted: #5a6b52;
-          --border-sage: rgba(122, 132, 113, 0.2);
-          --hover-sage: rgba(156, 175, 136, 0.15);
-
-          /* Feedback Palette */
-          --correct-bg: #e8f5e9;
-          --correct-border: #66bb6a;
-          --correct-text: #2e7d32;
-          --incorrect-bg: #ffebee;
-          --incorrect-border: #ef5350;
-          --incorrect-text: #c62828;
-
-          /* Typography */
-          --font-display: "Questrial", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-          --font-body: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-          --font-size-adjustment: 0rem;
-          --step--1: calc(clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem) + var(--font-size-adjustment));
-          --step-0:  calc(clamp(1rem, 0.94rem + 0.28vw, 1.1rem) + var(--font-size-adjustment));
-          --step-1:  calc(clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem) + var(--font-size-adjustment));
-          --step-2:  calc(clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem) + var(--font-size-adjustment));
-          --step-3:  calc(clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem) + var(--font-size-adjustment));
-
-          /* Rhythm */
-          --space-3: 0.75rem;
-          --space-4: 1rem;
-          --space-5: 1.25rem;
-          --space-6: 1.5rem;
-          --space-7: 2rem;
-
-          /* Shape + elevation */
-          --radius-sm: 10px;
-          --radius: 16px;
-          --radius-lg: 20px;
-          --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
-          --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
-          --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
-                   0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #2f3a2b 15%);
-
-          /* Motion */
-          --ease-ambient: cubic-bezier(.2,.8,.2,1);
-          --dur-1: 120ms;
-          --dur-2: 200ms;
-          --dur-3: 320ms;
-
-          /* Layout */
-          --target-min: 44px;
-          --container-max: clamp(320px, 92vw, 940px);
+            --primary-sage: #7a8471;
+            --secondary-sage: #9caf88;
+            --tertiary-sage: #b8c5a6;
+            --warm-cream: #f8f6f0;
+            --soft-white: #fefcf7;
+            --forest-shadow: #5a6b52;
+            --ink: #2f3a2b;
+            --ink-muted: #5a6b52;
+            --border-sage: rgba(122, 132, 113, 0.2);
+            --hover-sage: rgba(156, 175, 136, 0.15);
+            --deep-forest: #3e4a3a;
+            --correct-green: #2e7d32;
+            --correct-bg: rgba(46, 125, 50, 0.12);
+            --incorrect-red: #c62828;
+            --incorrect-bg: rgba(198, 40, 40, 0.12);
+            --font-display: "Questrial", system-ui, sans-serif;
+            --font-body: "Nunito", system-ui, sans-serif;
+            --step-0: 1rem;
+            --step-1: 1.125rem;
+            --step-2: 1.35rem;
+            --step-3: 1.8rem;
+            --radius: 16px;
+            --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+            --shadow-2: 0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
         }
 
-        /* -------------------------------
-           Global reset
-        ----------------------------------*/
         *, *::before, *::after { box-sizing: border-box; }
-        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-        html, body { margin: 0; padding: 0; width: 100%; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); -webkit-font-smoothing: antialiased; }
-        @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-        :where(p, h1, h2, h3) { text-wrap: pretty; overflow-wrap: anywhere; }
 
-        /* -------------------------------
-           App shell
-        ----------------------------------*/
-        #app-wrapper { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: clamp(var(--space-5), 4vw, var(--space-7)); padding: clamp(24px, 6vw, 64px) clamp(18px, 6vw, 56px); width: 100%; min-height: 100dvh; }
-        #activity-container { width: 100%; max-width: var(--container-max); display: flex; flex-direction: column; gap: clamp(var(--space-5), 3vw, var(--space-7)); background: var(--soft-white); padding: clamp(24px, 5vw, 48px); border-radius: var(--radius-lg); border: 1px solid var(--border-sage); box-shadow: var(--shadow-2); }
-        .activity-section { margin-top: var(--space-6); border-top: 1px solid var(--border-sage); padding-top: var(--space-6); }
-        .activity-section:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: var(--font-body);
+            font-size: var(--step-0);
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+            color: var(--forest-shadow);
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* -------------------------------
-           Typography
-        ----------------------------------*/
-        h1 { font-family: var(--font-display); font-size: var(--step-3); letter-spacing: 0.04em; color: var(--ink); text-align: center; line-height: 1.1; margin: 0 0 var(--space-3) 0; }
-        h2.rubric { font-family: var(--font-body); font-size: var(--step-0); font-weight: 600; color: var(--secondary-sage); margin: 0 0 var(--space-6) 0; text-align: center; letter-spacing: 0.08em; text-transform: uppercase; }
-        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-4) 0; letter-spacing: 0.02em; }
-        .instruction-text { color: var(--ink-muted); margin-bottom: var(--space-5); }
-        .model-text p { margin-bottom: var(--space-4); }
+        .worksheet-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
 
-        /* -------------------------------
-           Buttons
-        ----------------------------------*/
-        .activity-btn { min-height: var(--target-min); padding: 0.75rem clamp(1.2rem, 4vw, 1.75rem); border-radius: 999px; border: 1px solid var(--primary-sage); background: var(--primary-sage); color: #fff; font-weight: 700; font-size: var(--step-0); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all var(--dur-2) var(--ease-ambient); box-shadow: var(--shadow-1); }
-        .activity-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); background: var(--forest-shadow); }
-        .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), var(--shadow-2); }
-        .activity-btn.secondary { background: var(--soft-white); color: var(--primary-sage); box-shadow: none; }
-        .activity-btn.secondary:hover { background: var(--hover-sage); color: var(--deep-forest); }
-        .controls { margin-top: var(--space-7); display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap; }
+        h1, h2, h3, strong {
+            font-family: var(--font-display);
+            margin: 0;
+            color: var(--ink);
+        }
+        h1 { font-size: var(--step-3); }
+        h2 { font-size: var(--step-2); margin-bottom: 0.5rem; }
+        h3 { font-size: var(--step-1); }
+        p { margin: 0; }
 
-        /* -------------------------------
-           Activity 1: Multiple Choice
-        ----------------------------------*/
-        .mc-question { padding: clamp(20px, 4vw, 28px); border-radius: var(--radius); border: 1px solid var(--border-sage); background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, #ffffff 90%, var(--warm-cream) 10%)); box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-5); }
-        .mc-question-text { font-weight: 800; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; }
-        .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
-        .mc-option-item input { position: absolute; opacity: 0; }
-        .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); transition: all var(--dur-2) var(--ease-ambient); background: var(--soft-white); }
-        .mc-option-label:hover { background: var(--hover-sage); }
-        .option-control { flex-shrink: 0; width: 24px; height: 24px; border: 2px solid var(--tertiary-sage); background-color: var(--soft-white); transition: all var(--dur-2) var(--ease-ambient); position: relative; border-radius: 50%; }
-        .mc-option-item input:checked + .mc-option-label { border-color: var(--primary-sage); background: var(--hover-sage); }
-        .mc-option-item input:checked + .mc-option-label .option-control { border-color: var(--primary-sage); }
-        .mc-option-item input:checked + .mc-option-label .option-control::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background-color: var(--primary-sage); }
-        .mc-option-item input:focus-visible + .mc-option-label { box-shadow: var(--ring); }
-        
-        /* -------------------------------
-           Activity 2: Matching
-        ----------------------------------*/
-        .matching-container { display: grid; gap: var(--space-6); }
-        .matching-columns { display: grid; grid-template-columns: 1fr; gap: var(--space-5); }
-        .matching-item { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-4); }
-        .matching-item-term { font-weight: 700; color: var(--ink); }
-        .matching-item select { width: 100%; min-height: var(--target-min); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); background: #fff; font-size: var(--step-0); font-family: var(--font-body); color: var(--ink); appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a8471'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1.5em; padding-right: 2.5rem; }
-        .definitions-list { list-style-type: lower-alpha; padding-left: 1.5rem; margin: 0; color: var(--ink-muted); }
-        @media(min-width: 600px) { .matching-columns { grid-template-columns: 1fr 1fr; } }
-        
-        /* -------------------------------
-           Activity 3: Classification
-        ----------------------------------*/
-        .classification-container { display: grid; grid-template-columns: 1fr; gap: var(--space-6); margin-top: var(--space-5); }
-        .source-items { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; padding: var(--space-4); border: 2px dashed var(--border-sage); border-radius: var(--radius); min-height: 80px; }
-        .drop-zones { display: grid; grid-template-columns: 1fr; gap: var(--space-5); }
-        .drop-zone { padding: var(--space-4); border: 2px dashed var(--tertiary-sage); border-radius: var(--radius); min-height: 120px; background-color: color-mix(in srgb, var(--warm-cream) 40%, transparent); transition: background-color var(--dur-2) ease; }
-        .drop-zone h4 { margin: 0 0 var(--space-3) 0; font-size: var(--step-0); color: var(--primary-sage); text-align: center; }
-        .draggable-item { padding: 0.5rem 1rem; background-color: #fff; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); cursor: grab; user-select: none; transition: all var(--dur-2) var(--ease-ambient); box-shadow: var(--shadow-1); color: var(--ink); }
-        .draggable-item:active { cursor: grabbing; opacity: 0.7; transform: scale(1.05); }
-        .drop-zone.over { background-color: var(--hover-sage); }
-        @media(min-width: 600px) { .classification-container { grid-template-columns: 1fr; } .drop-zones { grid-template-columns: 1fr 1fr; } }
-        
-        /* -------------------------------
-           Activity 4: Dropdown
-        ----------------------------------*/
-        .dropdown-sentence { margin-bottom: var(--space-4); line-height: 2; }
-        .dropdown-sentence select { font-size: var(--step-0); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--tertiary-sage); background-color: #fff; margin: 0 0.25rem; }
-        
-        /* -------------------------------
-           Feedback styles
-        ----------------------------------*/
-        .correct { border-color: var(--correct-border) !important; background-color: var(--correct-bg) !important; }
-        .correct-text { color: var(--correct-text) !important; font-weight: 700; }
-        .incorrect { border-color: var(--incorrect-border) !important; background-color: var(--incorrect-bg) !important; }
-        .incorrect-text { color: var(--incorrect-text) !important; }
-        .feedback-icon { font-size: 1.2em; vertical-align: middle; margin-left: 0.5rem; }
+        .card {
+            background: var(--soft-white);
+            padding: clamp(1.35rem, 3vw, 2rem);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-sage);
+            box-shadow: var(--shadow-1);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .instruction {
+            font-style: italic;
+            color: var(--ink-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Activity 1: Multiple Choice */
+        .quiz-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .quiz-question p { font-weight: 700; color: var(--deep-forest); }
+        .quiz-options { display: grid; gap: 0.45rem; padding-left: 0.5rem; }
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-sage);
+            background: rgba(250, 250, 248, 0.9);
+            cursor: pointer;
+            transition: border 0.2s ease, background 0.2s ease;
+        }
+        .quiz-option:hover { background: var(--hover-sage); }
+        .quiz-option.correct { border-color: var(--correct-green); background: var(--correct-bg); }
+        .quiz-option.incorrect { border-color: var(--incorrect-red); background: var(--incorrect-bg); }
+        .quiz-option input[type="radio"] { margin-top: 0.1em; accent-color: var(--primary-sage); }
+
+        /* Activity 2 & 4: Matching & Dropdown */
+        .matching-stack { display: flex; flex-direction: column; gap: 0.75rem; }
+        .matching-option, .dropdown-item {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-sage);
+            background: color-mix(in srgb, var(--warm-cream) 60%, transparent);
+        }
+         @media (min-width: 600px) {
+            .matching-option { grid-template-columns: 1fr minmax(180px, 250px); }
+            .dropdown-item { grid-template-columns: 1fr auto 1fr; }
+        }
+        .matching-option select, .dropdown-item select {
+            border-radius: 999px;
+            border: 1px solid var(--ink-muted);
+            padding: 0.55rem 1rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--soft-white);
+            color: var(--forest-shadow);
+            width: 100%;
+            cursor: pointer;
+        }
+        select.correct { border-color: var(--correct-green); background: var(--correct-bg); }
+        select.incorrect { border-color: var(--incorrect-red); background: var(--incorrect-bg); }
+
+        /* Activity 3: Classification */
+        .token-bank {
+            display: flex; flex-wrap: wrap; gap: 0.65rem; padding: 1rem 1.1rem;
+            border-radius: var(--radius); border: 1px dashed var(--border-sage);
+            background: rgba(248, 246, 240, 0.85); margin-bottom: 1rem;
+        }
+        .token {
+            padding: 0.55rem 1rem; border-radius: 999px; background: var(--soft-white);
+            border: 1px solid var(--ink-muted); box-shadow: var(--shadow-1);
+            cursor: grab; font-weight: 600; font-size: 0.9rem; user-select: none;
+            transition: all 0.2s ease;
+        }
+        .token:active { cursor: grabbing; }
+        .token.dragging { opacity: 0.5; }
+        .drop-categorization { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .category-column {
+            background: rgba(248, 246, 240, 0.85); border-radius: var(--radius); padding: 1rem;
+            border: 1px solid var(--border-sage);
+        }
+        .drop-zone {
+            min-height: 120px; display: flex; flex-direction: column; gap: 0.5rem;
+            padding: 0.5rem; border-radius: 12px;
+            border: 2px dashed var(--border-sage); background: rgba(254, 252, 247, 0.75);
+            transition: all 0.2s ease;
+        }
+        .drop-zone.drag-over { border-color: var(--primary-sage); background: var(--hover-sage); }
+        .token.correct { border-color: var(--correct-green); background: var(--correct-bg); }
+        .token.incorrect { border-color: var(--incorrect-red); background: var(--incorrect-bg); }
+
+        /* Controls */
+        .controls { text-align: center; margin-top: 1rem; }
+        .activity-btn {
+            border: none; border-radius: 999px; padding: 0.8rem 1.8rem;
+            font-weight: 700; letter-spacing: 0.04em; cursor: pointer;
+            background: var(--primary-sage); color: #fff; box-shadow: var(--shadow-1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .activity-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+        .activity-btn#resetBtn { display: none; background: var(--deep-forest); margin-left: 1rem; }
+        .feedback-msg { margin-top: 1rem; font-weight: 700; font-size: 1.1rem; min-height: 1.5rem; }
+        .feedback-msg.success { color: var(--correct-green); }
     </style>
 </head>
 <body>
-    <div id="app-wrapper">
-        <div id="activity-container">
-            <h1>Planning Your Professional Future</h1>
-            <h2 class="rubric">Pre-Class Preparation</h2>
 
-            <!-- Model Text -->
-            <section class="activity-section">
-                <h3>Model Text: My Professional Development Plan</h3>
-                <p class="instruction-text">Read the short professional development plan written by Layla, who works for a local NGO.</p>
-                <div class="model-text">
-                    <p>For the coming year, I have identified a few key priorities for my professional growth.</p>
-                    <p>Firstly, <strong>it will be essential to enhance</strong> my project management skills. I am currently taking an advanced online course <strong>so that I can</strong> lead our new community health project in Nablus more effectively.</p>
-                    <p>Secondly, I <strong>plan to</strong> actively <strong>work on</strong> my public speaking. We often have to present our results to international donors, so I <strong>will need to</strong> communicate our impact with greater confidence and clarity.</p>
-                    <p>Finally, I <strong>hope to improve</strong> my data analysis abilities. I <strong>must</strong> become more proficient with data visualization software <strong>in order to</strong> write more persuasive and evidence-based funding proposals. My long-term goal is to <strong>stay competitive</strong> in the job market and eventually move into a senior management role.</p>
-                </div>
-            </section>
+    <div class="worksheet-container">
+        <header>
+            <h1>Pre-Class Task: Planning Your Professional Future</h1>
+            <p class="instruction">Welcome! Please complete these activities before our next class. This will help you prepare for our lesson on discussing career goals.</p>
+        </header>
 
-            <!-- Activity 1: Check Your Understanding -->
-            <section class="activity-section">
-                <h3>Activity 1: Check Your Understanding</h3>
-                <p class="instruction-text">Read Layla's plan again and choose the best answer for each question.</p>
-                <div id="activity1">
-                    <div class="mc-question">
-                        <p class="mc-question-text">1. What is the main purpose of this text?</p>
-                        <div class="mc-options-container">
-                            <div class="mc-option-item">
-                                <input type="radio" id="q1a" name="q1" value="a">
-                                <label for="q1a" class="mc-option-label"><span class="option-control"></span>To describe a past project.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q1b" name="q1" value="b">
-                                <label for="q1b" class="mc-option-label"><span class="option-control"></span>To complain about a job.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q1c" name="q1" value="c" data-correct="true">
-                                <label for="q1c" class="mc-option-label"><span class="option-control"></span>To outline future professional goals.</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mc-question">
-                        <p class="mc-question-text">2. Why does Layla want to enhance her project management skills?</p>
-                        <div class="mc-options-container">
-                            <div class="mc-option-item">
-                                <input type="radio" id="q2a" name="q2" value="a">
-                                <label for="q2a" class="mc-option-label"><span class="option-control"></span>To find a new job.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q2b" name="q2" value="b" data-correct="true">
-                                <label for="q2b" class="mc-option-label"><span class="option-control"></span>To lead a new project in Nablus.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q2c" name="q2" value="c">
-                                <label for="q2c" class="mc-option-label"><span class="option-control"></span>To present to international donors.</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mc-question">
-                        <p class="mc-question-text">3. Which skill is important for writing better funding proposals?</p>
-                        <div class="mc-options-container">
-                             <div class="mc-option-item">
-                                <input type="radio" id="q3a" name="q3" value="a">
-                                <label for="q3a" class="mc-option-label"><span class="option-control"></span>Public speaking.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q3b" name="q3" value="b" data-correct="true">
-                                <label for="q3b" class="mc-option-label"><span class="option-control"></span>Data analysis.</label>
-                            </div>
-                            <div class="mc-option-item">
-                                <input type="radio" id="q3c" name="q3" value="c">
-                                <label for="q3c" class="mc-option-label"><span class="option-control"></span>Community health.</label>
-                            </div>
+        <!-- Model Text -->
+        <div class="card">
+            <h2>Model Text: My Professional Development Plan</h2>
+            <p class="instruction">Read the short professional development plan written by Layla, who works for a local NGO.</p>
+            <p>For the coming year, I have identified a few key priorities for my professional growth.</p>
+            <p>Firstly, <strong>it will be essential to enhance</strong> my project management skills. I am currently taking an advanced online course <strong>so that I can</strong> lead our new community health project in Nablus more effectively.</p>
+            <p>Secondly, I <strong>plan to</strong> actively <strong>work on</strong> my public speaking. We often have to present our results to international donors, so I <strong>will need to</strong> communicate our impact with greater confidence and clarity.</p>
+            <p>Finally, I <strong>hope to improve</strong> my data analysis abilities. I <strong>must</strong> become more proficient with data visualization software <strong>in order to</strong> write more persuasive and evidence-based funding proposals. My long-term goal is to <strong>stay competitive</strong> in the job market and eventually move into a senior management role.</p>
+        </div>
+
+        <!-- Activity 1 -->
+        <div class="card">
+            <h2>Activity 1: Check Your Understanding</h2>
+            <p class="instruction">Read Layla's plan again and choose the best answer for each question.</p>
+            <div id="activity1">
+                <div class="quiz-card">
+                    <div class="quiz-question" id="q1">
+                        <p>1. What is the main purpose of this text?</p>
+                        <div class="quiz-options">
+                            <label class="quiz-option"><input type="radio" name="q1" value="a"> To describe a past project.</label>
+                            <label class="quiz-option"><input type="radio" name="q1" value="b"> To complain about a job.</label>
+                            <label class="quiz-option"><input type="radio" name="q1" value="c"> To outline future professional goals.</label>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Activity 2: Vocabulary Focus -->
-            <section class="activity-section">
-                <h3>Activity 2: Vocabulary Focus</h3>
-                <p class="instruction-text">Match the verbs from the text with their correct definitions.</p>
-                <div id="activity2" class="matching-container">
-                    <div class="matching-columns">
-                        <div>
-                            <div class="matching-item">
-                                <span class="matching-item-term">1. enhance</span>
-                                <select data-correct="c">
-                                    <option value="">Select definition...</option>
-                                    <option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option>
-                                </select>
-                            </div>
-                             <div class="matching-item">
-                                <span class="matching-item-term">2. work on</span>
-                                <select data-correct="d">
-                                    <option value="">Select definition...</option>
-                                    <option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option>
-                                </select>
-                            </div>
-                             <div class="matching-item">
-                                <span class="matching-item-term">3. improve</span>
-                                <select data-correct="a">
-                                    <option value="">Select definition...</option>
-                                    <option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option>
-                                </select>
-                            </div>
-                             <div class="matching-item">
-                                <span class="matching-item-term">4. stay competitive</span>
-                                <select data-correct="b">
-                                    <option value="">Select definition...</option>
-                                    <option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <ol class="definitions-list">
-                                <li>To make something better or raise it to a higher standard.</li>
-                                <li>To maintain the skills and qualities needed to be as successful as others in your field.</li>
-                                <li>To intensify, increase, or further improve the quality or value of something.</li>
-                                <li>To spend time and effort trying to develop or make progress with a particular skill.</li>
-                            </ol>
+                <div class="quiz-card">
+                    <div class="quiz-question" id="q2">
+                        <p>2. Why does Layla want to enhance her project management skills?</p>
+                        <div class="quiz-options">
+                            <label class="quiz-option"><input type="radio" name="q2" value="a"> To find a new job.</label>
+                            <label class="quiz-option"><input type="radio" name="q2" value="b"> To lead a new project in Nablus.</label>
+                            <label class="quiz-option"><input type="radio" name="q2" value="c"> To present to international donors.</label>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Activity 3: Understanding Function -->
-            <section class="activity-section">
-                <h3>Activity 3: Understanding Function</h3>
-                <p class="instruction-text">Drag and drop the phrases from the box into the correct category below.</p>
-                <div id="activity3" class="classification-container">
-                    <div id="source-items-A3" class="source-items">
-                        <div class="draggable-item" draggable="true" data-category="hope">I plan to...</div>
-                        <div class="draggable-item" draggable="true" data-category="priority">It will be essential to...</div>
-                        <div class="draggable-item" draggable="true" data-category="hope">I hope to...</div>
-                        <div class="draggable-item" draggable="true" data-category="priority">I will need to...</div>
-                        <div class="draggable-item" draggable="true" data-category="priority">I must...</div>
-                    </div>
-                    <div class="drop-zones">
-                        <div id="priority-zone" class="drop-zone" data-category="priority">
-                            <h4>High Priority / Necessity</h4>
-                        </div>
-                        <div id="hope-zone" class="drop-zone" data-category="hope">
-                            <h4>Future Intention / Hope</h4>
+                <div class="quiz-card">
+                    <div class="quiz-question" id="q3">
+                        <p>3. Which skill is important for writing better funding proposals?</p>
+                        <div class="quiz-options">
+                            <label class="quiz-option"><input type="radio" name="q3" value="a"> Public speaking.</label>
+                            <label class="quiz-option"><input type="radio" name="q3" value="b"> Data analysis.</label>
+                            <label class="quiz-option"><input type="radio" name="q3" value="c"> Community health.</label>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Activity 4: Linking Goals and Reasons -->
-            <section class="activity-section">
-                <h3>Activity 4: Linking Goals and Reasons</h3>
-                <p class="instruction-text">Complete the sentences about Layla's plan by choosing the correct phrase from the dropdown menu.</p>
-                <div id="activity4">
-                    <p class="dropdown-sentence">
-                        1. She is taking an advanced online course
-                        <select data-correct="so that she can">
-                            <option value="">...</option>
-                            <option value="so that she can">so that she can</option>
-                            <option value="in order to">in order to</option>
-                            <option value="must">must</option>
-                        </select>
-                        lead the new community health project effectively.
-                        <span class="feedback-icon"></span>
-                    </p>
-                    <p class="dropdown-sentence">
-                        2. She must become more proficient with data visualization software
-                        <select data-correct="in order to">
-                             <option value="">...</option>
-                            <option value="in order to">in order to</option>
-                            <option value="so that she can">so that she can</option>
-                            <option value="I plan to">I plan to</option>
-                        </select>
-                        write more persuasive funding proposals.
-                        <span class="feedback-icon"></span>
-                    </p>
-                    <p class="dropdown-sentence">
-                        3. She needs to communicate with greater confidence
-                        <select data-correct="so that she can">
-                             <option value="">...</option>
-                            <option value="so that she can">so that she can</option>
-                            <option value="in order to">in order to</option>
-                            <option value="I hope to">I hope to</option>
-                        </select>
-                        present the NGO's results to international donors.
-                        <span class="feedback-icon"></span>
-                    </p>
-                </div>
-            </section>
-            
-            <div class="controls">
-                <button id="check-answers-btn" class="activity-btn">Check My Answers</button>
-                <button id="reset-btn" class="activity-btn secondary">Reset</button>
             </div>
         </div>
+        
+        <!-- Activity 2 -->
+        <div class="card">
+            <h2>Activity 2: Vocabulary Focus</h2>
+            <p class="instruction">Match the verbs and phrases from the text with their correct definitions.</p>
+            <div class="matching-stack" id="activity2">
+                <div class="matching-option">
+                    <p><strong>1. enhance</strong></p>
+                    <select data-correct="c">
+                        <option value="">Choose a definition...</option>
+                        <option value="a">To make something better or raise it to a higher standard.</option>
+                        <option value="b">To maintain skills to be as successful as others.</option>
+                        <option value="c">To intensify or further improve the quality of something.</option>
+                        <option value="d">To spend time and effort developing a skill.</option>
+                    </select>
+                </div>
+                <div class="matching-option">
+                    <p><strong>2. work on</strong></p>
+                    <select data-correct="d">
+                        <option value="">Choose a definition...</option>
+                        <option value="a">To make something better or raise it to a higher standard.</option>
+                        <option value="b">To maintain skills to be as successful as others.</option>
+                        <option value="c">To intensify or further improve the quality of something.</option>
+                        <option value="d">To spend time and effort developing a skill.</option>
+                    </select>
+                </div>
+                <div class="matching-option">
+                    <p><strong>3. improve</strong></p>
+                    <select data-correct="a">
+                        <option value="">Choose a definition...</option>
+                        <option value="a">To make something better or raise it to a higher standard.</option>
+                        <option value="b">To maintain skills to be as successful as others.</option>
+                        <option value="c">To intensify or further improve the quality of something.</option>
+                        <option value="d">To spend time and effort developing a skill.</option>
+                    </select>
+                </div>
+                <div class="matching-option">
+                    <p><strong>4. stay competitive</strong></p>
+                    <select data-correct="b">
+                        <option value="">Choose a definition...</option>
+                        <option value="a">To make something better or raise it to a higher standard.</option>
+                        <option value="b">To maintain skills to be as successful as others.</option>
+                        <option value="c">To intensify or further improve the quality of something.</option>
+                        <option value="d">To spend time and effort developing a skill.</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity 3 -->
+        <div class="card">
+            <h2>Activity 3: Understanding Function</h2>
+            <p class="instruction">Drag and drop the phrases into the correct category based on their function in the text.</p>
+            <div id="activity3">
+                <div class="token-bank">
+                    <div class="token" draggable="true" data-category="priority">I will need to...</div>
+                    <div class="token" draggable="true" data-category="intention">I plan to...</div>
+                    <div class="token" draggable="true" data-category="priority">It will be essential to...</div>
+                    <div class="token" draggable="true" data-category="intention">I hope to...</div>
+                    <div class="token" draggable="true" data-category="priority">I must...</div>
+                </div>
+                <div class="drop-categorization">
+                    <div class="category-column">
+                        <h3>High Priority / Necessity</h3>
+                        <div class="drop-zone" data-category="priority"></div>
+                    </div>
+                    <div class="category-column">
+                        <h3>Future Intention / Hope</h3>
+                        <div class="drop-zone" data-category="intention"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity 4 -->
+        <div class="card">
+            <h2>Activity 4: Linking Goals and Reasons</h2>
+            <p class="instruction">Complete the sentences about Layla's plan by choosing the correct linker.</p>
+            <div class="matching-stack" id="activity4">
+                <div class="dropdown-item">
+                    <span>1. She is taking an advanced online course</span>
+                    <select data-correct="so that she can">
+                        <option value="">...</option>
+                        <option value="so that she can">so that she can</option>
+                        <option value="in order to">in order to</option>
+                        <option value="must">must</option>
+                    </select>
+                    <span>lead the project effectively.</span>
+                </div>
+                <div class="dropdown-item">
+                     <span>2. She must become more proficient with software</span>
+                     <select data-correct="in order to">
+                        <option value="">...</option>
+                        <option value="in order to">in order to</option>
+                        <option value="so that she can">so that she can</option>
+                        <option value="I plan to">I plan to</option>
+                    </select>
+                    <span>write more persuasive proposals.</span>
+                </div>
+                 <div class="dropdown-item">
+                    <span>3. She needs to communicate with greater confidence</span>
+                     <select data-correct="so that she can">
+                        <option value="">...</option>
+                        <option value="so that she can">so that she can</option>
+                        <option value="in order to">in order to</option>
+                        <option value="I hope to">I hope to</option>
+                    </select>
+                    <span>present results to donors.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="activity-btn" id="checkBtn">Check Answers</button>
+            <button class="activity-btn" id="resetBtn">Try Again</button>
+            <p class="feedback-msg" id="feedback"></p>
+        </div>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
-            const checkAnswersBtn = document.getElementById('check-answers-btn');
-            const resetBtn = document.getElementById('reset-btn');
-
-            // --- Generic Reset Logic ---
-            function resetFeedback() {
-                const feedbackElements = document.querySelectorAll('.correct, .incorrect, .correct-text, .incorrect-text');
-                feedbackElements.forEach(el => {
-                    el.classList.remove('correct', 'incorrect', 'correct-text', 'incorrect-text');
-                });
-                document.querySelectorAll('.feedback-icon').forEach(icon => icon.textContent = '');
-            }
-
-            // --- Activity 1: Multiple Choice Logic ---
-            function checkActivity1() {
-                const questions = document.querySelectorAll('#activity1 .mc-question');
-                questions.forEach(question => {
-                    const selected = question.querySelector('input[type="radio"]:checked');
-                    const options = question.querySelectorAll('.mc-option-item input[type="radio"]');
-
-                    options.forEach(option => {
-                        const label = option.nextElementSibling;
-                        label.classList.remove('correct', 'incorrect');
-                    });
-
-                    if (selected) {
-                        const label = selected.nextElementSibling;
-                        if (selected.hasAttribute('data-correct')) {
-                            label.classList.add('correct');
-                        } else {
-                            label.classList.add('incorrect');
-                        }
-                    }
-                });
-            }
-            
-            function resetActivity1() {
-                 const radios = document.querySelectorAll('#activity1 input[type="radio"]');
-                 radios.forEach(radio => radio.checked = false);
-            }
-
-            // --- Activity 2: Matching Logic ---
-            function checkActivity2() {
-                const selects = document.querySelectorAll('#activity2 select');
-                selects.forEach(select => {
-                    select.classList.remove('correct', 'incorrect');
-                    if (select.value === select.dataset.correct) {
-                        select.classList.add('correct');
-                    } else if (select.value !== "") {
-                        select.classList.add('incorrect');
-                    }
-                });
-            }
-            
-            function resetActivity2() {
-                const selects = document.querySelectorAll('#activity2 select');
-                selects.forEach(select => select.selectedIndex = 0);
-            }
-
-            // --- Activity 3: Classification (Drag & Drop) Logic ---
-            const draggables = document.querySelectorAll('.draggable-item');
+            const checkBtn = document.getElementById('checkBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const feedbackEl = document.getElementById('feedback');
+            let isChecked = false;
+        
+            // --- Activity 3: Drag and Drop Logic ---
+            const tokens = document.querySelectorAll('.token');
             const dropZones = document.querySelectorAll('.drop-zone');
-            const sourceContainer = document.getElementById('source-items-A3');
 
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => {
-                    draggable.classList.add('dragging');
+            tokens.forEach(token => {
+                token.addEventListener('dragstart', () => {
+                    if (isChecked) return;
+                    token.classList.add('dragging');
                 });
-                draggable.addEventListener('dragend', () => {
-                    draggable.classList.remove('dragging');
+                token.addEventListener('dragend', () => {
+                    token.classList.remove('dragging');
                 });
             });
 
             dropZones.forEach(zone => {
                 zone.addEventListener('dragover', e => {
+                    if (isChecked) return;
                     e.preventDefault();
-                    zone.classList.add('over');
+                    zone.classList.add('drag-over');
                 });
                 zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('over');
+                    zone.classList.remove('drag-over');
                 });
                 zone.addEventListener('drop', e => {
+                    if (isChecked) return;
                     e.preventDefault();
-                    zone.classList.remove('over');
-                    const draggable = document.querySelector('.dragging');
-                    if (draggable) {
-                        zone.appendChild(draggable);
+                    zone.classList.remove('drag-over');
+                    const draggingToken = document.querySelector('.dragging');
+                    if (draggingToken) {
+                        zone.appendChild(draggingToken);
                     }
                 });
             });
 
-            function checkActivity3() {
-                dropZones.forEach(zone => {
-                    const items = zone.querySelectorAll('.draggable-item');
-                    items.forEach(item => {
-                        item.classList.remove('correct', 'incorrect');
-                        if (item.dataset.category === zone.dataset.category) {
-                            item.classList.add('correct');
+
+            // --- Check Answers Logic ---
+            checkBtn.addEventListener('click', () => {
+                if (isChecked) return;
+                
+                let allCorrect = true;
+
+                // Activity 1: Multiple Choice
+                const answers1 = { q1: 'c', q2: 'b', q3: 'b' };
+                for (const qId in answers1) {
+                    const selected = document.querySelector(`input[name="${qId}"]:checked`);
+                    const options = document.querySelectorAll(`input[name="${qId}"]`);
+                    options.forEach(opt => opt.disabled = true);
+                    if (selected) {
+                        const parentLabel = selected.parentElement;
+                        if (selected.value === answers1[qId]) {
+                            parentLabel.classList.add('correct');
                         } else {
-                            item.classList.add('incorrect');
+                            parentLabel.classList.add('incorrect');
+                            allCorrect = false;
                         }
-                    });
-                });
-            }
-            
-            function resetActivity3() {
-                draggables.forEach(item => {
-                    sourceContainer.appendChild(item);
-                    item.classList.remove('correct', 'incorrect');
-                });
-            }
+                    } else {
+                        allCorrect = false;
+                    }
+                }
 
-            // --- Activity 4: Dropdown Logic ---
-            function checkActivity4() {
-                const selects = document.querySelectorAll('#activity4 select');
-                selects.forEach(select => {
-                    const icon = select.nextElementSibling;
-                    select.classList.remove('correct', 'incorrect');
-                    icon.textContent = '';
-                    icon.classList.remove('correct-text', 'incorrect-text');
-
+                // Activity 2: Matching
+                const selects2 = document.querySelectorAll('#activity2 select');
+                selects2.forEach(select => {
                     if (select.value === select.dataset.correct) {
                         select.classList.add('correct');
-                        icon.textContent = '✔';
-                        icon.classList.add('correct-text');
-                    } else if (select.value !== "") {
+                    } else {
                         select.classList.add('incorrect');
-                        icon.textContent = '✖';
-                        icon.classList.add('incorrect-text');
+                        allCorrect = false;
                     }
+                    select.disabled = true;
                 });
-            }
-            
-            function resetActivity4() {
-                const selects = document.querySelectorAll('#activity4 select');
-                selects.forEach(select => select.selectedIndex = 0);
-            }
 
-            // --- Event Listeners ---
-            checkAnswersBtn.addEventListener('click', () => {
-                resetFeedback(); // Clear old feedback first
-                checkActivity1();
-                checkActivity2();
-                checkActivity3();
-                checkActivity4();
+                // Activity 3: Classification
+                dropZones.forEach(zone => {
+                    const zoneCategory = zone.dataset.category;
+                    const droppedTokens = zone.querySelectorAll('.token');
+                    if (droppedTokens.length === 0) allCorrect = false;
+                    droppedTokens.forEach(token => {
+                        const tokenCategory = token.dataset.category;
+                        if (tokenCategory === zoneCategory) {
+                            token.classList.add('correct');
+                        } else {
+                            token.classList.add('incorrect');
+                            allCorrect = false;
+                        }
+                        token.draggable = false;
+                    });
+                });
+                 // Check if any tokens are left in the bank
+                if (document.querySelector('.token-bank .token')) {
+                    allCorrect = false;
+                }
+
+                // Activity 4: Dropdowns
+                const selects4 = document.querySelectorAll('#activity4 select');
+                selects4.forEach(select => {
+                    if (select.value === select.dataset.correct) {
+                        select.classList.add('correct');
+                    } else {
+                        select.classList.add('incorrect');
+                        allCorrect = false;
+                    }
+                    select.disabled = true;
+                });
+
+
+                // --- Final Feedback ---
+                if (allCorrect) {
+                    feedbackEl.textContent = 'Excellent work! All answers are correct.';
+                    feedbackEl.className = 'feedback-msg success';
+                } else {
+                    feedbackEl.textContent = 'Good try! Check the highlighted answers and try again.';
+                    feedbackEl.className = 'feedback-msg';
+                }
+
+                isChecked = true;
+                checkBtn.style.display = 'none';
+                resetBtn.style.display = 'inline-block';
             });
 
+            // --- Reset Logic ---
             resetBtn.addEventListener('click', () => {
-                resetFeedback();
-                resetActivity1();
-                resetActivity2();
-                resetActivity3();
-                resetActivity4();
+                isChecked = false;
+
+                // Reset Activity 1
+                document.querySelectorAll('#activity1 input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                    radio.disabled = false;
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Reset Activity 2 & 4
+                document.querySelectorAll('select').forEach(select => {
+                    select.selectedIndex = 0;
+                    select.disabled = false;
+                    select.classList.remove('correct', 'incorrect');
+                });
+                
+                // Reset Activity 3
+                const tokenBank = document.querySelector('.token-bank');
+                dropZones.forEach(zone => zone.innerHTML = '');
+                tokens.forEach(token => {
+                    token.classList.remove('correct', 'incorrect');
+                    token.draggable = true;
+                    tokenBank.appendChild(token);
+                });
+
+
+                feedbackEl.textContent = '';
+                checkBtn.style.display = 'inline-block';
+                resetBtn.style.display = 'none';
             });
         });
     </script>
+
 </body>
 </html>
