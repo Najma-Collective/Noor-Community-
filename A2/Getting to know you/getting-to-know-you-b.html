@@ -18,13 +18,54 @@
   </head>
   <body>
     <div class="deck-app">
-      <header class="deck-toolbar">
+        <header class="deck-toolbar">
         <div class="toolbar-brand">
-          <i class="fa-solid fa-seedling"></i>
-          <span>A2 Shared Stories</span>
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · A2 Lesson</span>
         </div>
         <div id="slide-counter" class="slide-counter"></div>
-        <div class="toolbar-actions" aria-hidden="true"></div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
       </header>
       <main class="deck-workspace">
         <div class="stage-viewport">
@@ -276,58 +317,11 @@
         </div>
       </main>
     </div>
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        let currentSlide = 1;
-        const slides = document.querySelectorAll(".slide-stage");
-        const totalSlides = slides.length;
-        const slideCounter = document.getElementById("slide-counter");
-
-        function showSlide(index) {
-          slides.forEach((slide, i) => {
-            slide.classList.toggle("hidden", i + 1 !== index);
-          });
-          if (slideCounter) {
-            slideCounter.textContent = `Slide ${index} of ${totalSlides}`;
-          }
-        }
-
-        window.navigateSlides = function (direction) {
-          currentSlide += direction;
-          if (currentSlide > totalSlides) currentSlide = 1;
-          if (currentSlide < 1) currentSlide = totalSlides;
-          showSlide(currentSlide);
-        };
-
-        document.querySelectorAll(".quiz-options").forEach((container) => {
-          container.addEventListener("click", (event) => {
-            const option = event.target.closest(".quiz-option");
-            if (!option || container.dataset.locked === "true") return;
-
-            container.dataset.locked = "true";
-            option.classList.add(
-              option.dataset.correct === "true" ? "correct" : "incorrect"
-            );
-
-            if (option.dataset.correct !== "true") {
-              const correct = container.querySelector(
-                '.quiz-option[data-correct="true"]'
-              );
-              if (correct) correct.classList.add("correct");
-            }
-
-            const feedback = document.getElementById(
-              `${container.dataset.quizId}-feedback`
-            );
-            if (feedback) {
-              feedback.hidden = false;
-            }
-          });
-        });
-
-        showSlide(currentSlide);
-      });
-    </script>
-  </body>
+</body>
 </html>

@@ -608,13 +608,55 @@
 </head>
 <body>
     <div class="deck-app">
-        <header class="deck-toolbar">
-            <div class="toolbar-brand">
-                <i class="fa-solid fa-leaf" style="color: var(--primary-sage);"></i>
-                <span>Noor Community | Shared Passions</span>
-            </div>
-              <div id="slide-counter" class="slide-counter">1 / 20</div>
-        </header>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · C1 Lesson</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 20</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
 
         <main class="deck-workspace">
             <div class="stage-viewport">
@@ -759,54 +801,60 @@
                 </div>
 
                 <!-- Slide 8 -->
-                <div class="slide-stage hidden" data-activity="mc-check">
+                <div class="slide-stage hidden">
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-clipboard-check"></i> Quick Check</span>
                         <h2>Choose the correct sentence</h2>
                         <p>Use the dropdown to choose the grammatically correct sentence.</p>
-                        <div class="mc-grid">
-                            <div class="mc-card" data-answer="2">
-                                <label>1. Outdoor activities</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">I'd rather to walk than cycling.</option>
-                                    <option value="2">I'd rather walk than cycle.</option>
-                                    <option value="3">I'd rather walking than cycling.</option>
-                                </select>
+                        <div class="card" data-activity="mc-grammar">
+                            <div class="quiz-grid single-column">
+                                <div class="quiz-card" data-answer="2">
+                                    <p>1. Outdoor activities</p>
+                                    <label class="sr-only" for="c1-pref-q1">Select the correct sentence for question 1</label>
+                                    <select id="c1-pref-q1">
+                                        <option value="">Select an option</option>
+                                        <option value="1">I'd rather to walk than cycling.</option>
+                                        <option value="2">I'd rather walk than cycle.</option>
+                                        <option value="3">I'd rather walking than cycling.</option>
+                                    </select>
+                                </div>
+                                <div class="quiz-card" data-answer="3">
+                                    <p>2. Evening choices</p>
+                                    <label class="sr-only" for="c1-pref-q2">Select the correct sentence for question 2</label>
+                                    <select id="c1-pref-q2">
+                                        <option value="">Select an option</option>
+                                        <option value="1">She prefers watch a movie to reading a book.</option>
+                                        <option value="2">She prefers watching a movie than read a book.</option>
+                                        <option value="3">She prefers watching a movie to reading a book.</option>
+                                    </select>
+                                </div>
+                                <div class="quiz-card" data-answer="1">
+                                    <p>3. Social plans</p>
+                                    <label class="sr-only" for="c1-pref-q3">Select the correct sentence for question 3</label>
+                                    <select id="c1-pref-q3">
+                                        <option value="">Select an option</option>
+                                        <option value="1">They are not keen on going to parties.</option>
+                                        <option value="2">They are not keen on go to parties.</option>
+                                        <option value="3">They are not keen to going to parties.</option>
+                                    </select>
+                                </div>
+                                <div class="quiz-card" data-answer="2">
+                                    <p>4. Expressing dislike</p>
+                                    <label class="sr-only" for="c1-pref-q4">Select the correct sentence for question 4</label>
+                                    <select id="c1-pref-q4">
+                                        <option value="">Select an option</option>
+                                        <option value="1">He can't stand to listen to loud music.</option>
+                                        <option value="2">He can't stand listening to loud music.</option>
+                                        <option value="3">He can't stand listen to loud music.</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="mc-card" data-answer="3">
-                                <label>2. Evening choices</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">She prefers watch a movie to reading a book.</option>
-                                    <option value="2">She prefers watching a movie than read a book.</option>
-                                    <option value="3">She prefers watching a movie to reading a book.</option>
-                                </select>
+                            <div class="activity-actions">
+                                <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                <button class="activity-btn" data-action="check">Check answers</button>
                             </div>
-                            <div class="mc-card" data-answer="1">
-                                <label>3. Social plans</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">They are not keen on going to parties.</option>
-                                    <option value="2">They are not keen on go to parties.</option>
-                                    <option value="3">They are not keen to going to parties.</option>
-                                </select>
-                            </div>
-                            <div class="mc-card" data-answer="2">
-                                <label>4. Expressing dislike</label>
-                                <select>
-                                    <option value="">Select an option</option>
-                                    <option value="1">He can't stand to listen to loud music.</option>
-                                    <option value="2">He can't stand listening to loud music.</option>
-                                    <option value="3">He can't stand listen to loud music.</option>
-                                </select>
-                            </div>
+                            <div class="feedback-msg" aria-live="polite"></div>
                         </div>
-                        <div class="activity-actions">
-                            <button class="activity-btn secondary" data-action="reset">Reset</button>
-                            <button class="activity-btn" data-action="check">Check answers</button>
-                        </div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
@@ -945,33 +993,37 @@
                 </div>
 
                 <!-- Slide 16 -->
-                <div class="slide-stage hidden" data-activity="grouping">
+                <div class="slide-stage hidden">
                     <div class="slide-inner">
                         <span class="pill"><i class="fa-solid fa-diagram-project"></i> Challenge: Who does what?</span>
                         <h2>Match the hobby to the personality type</h2>
                         <p>Click a hobby to select it, then tap the category where it fits best. This is subjective, so be ready to justify your choices!</p>
-                        <div class="drag-grid">
-                            <div class="drag-pool" data-pool data-empty="false" data-hint="Tap a hobby tile to select it.">
+                        <div class="card" data-activity="categorization">
+                            <div class="token-bank">
                                 <h4><i class="fa-solid fa-basket-shopping"></i> Hobbies</h4>
-                                <div class="drag-item" data-item="writing">Creative writing</div>
-                                <div class="drag-item" data-item="chess">Playing competitive chess</div>
-                                <div class="drag-item" data-item="climbing">Rock climbing</div>
-                                <div class="drag-item" data-item="language">Learning a new language</div>
-                                <div class="drag-item" data-item="geocaching">Geocaching</div>
-                                <div class="drag-item" data-item="models">Building model kits</div>
+                                <button type="button" class="click-token" data-category="creative">Creative writing</button>
+                                <button type="button" class="click-token" data-category="adventurous">Playing competitive chess</button>
+                                <button type="button" class="click-token" data-category="adventurous">Rock climbing</button>
+                                <button type="button" class="click-token" data-category="creative">Learning a new language</button>
+                                <button type="button" class="click-token" data-category="adventurous">Geocaching</button>
+                                <button type="button" class="click-token" data-category="creative">Building model kits</button>
                             </div>
-                            <div class="drag-drop" data-target="creative" data-empty="true" data-hint="For expressive and artistic people.">
-                                <h4><i class="fa-solid fa-palette"></i> For Creative People</h4>
+                            <div class="category-columns">
+                                <div class="category-column" data-category="creative">
+                                    <h4><i class="fa-solid fa-palette"></i> For Creative People</h4>
+                                    <div class="drop-zone" aria-label="Place creative hobbies"></div>
+                                </div>
+                                <div class="category-column" data-category="adventurous">
+                                    <h4><i class="fa-solid fa-mountain-sun"></i> For Adventurous People</h4>
+                                    <div class="drop-zone" aria-label="Place adventurous hobbies"></div>
+                                </div>
                             </div>
-                            <div class="drag-drop" data-target="adventurous" data-empty="true" data-hint="For those who love a thrill.">
-                                <h4><i class="fa-solid fa-mountain-sun"></i> For Adventurous People</h4>
+                            <div class="activity-actions">
+                                <button class="activity-btn secondary" data-action="reset">Reset</button>
+                                <button class="activity-btn" data-action="check">Check Groups</button>
                             </div>
+                            <div class="feedback-msg" aria-live="polite"></div>
                         </div>
-                        <div class="activity-actions">
-                            <button class="activity-btn secondary" data-action="reset">Reset</button>
-                            <button class="activity-btn" data-action="check">Check Groups</button>
-                        </div>
-                        <div class="feedback-msg" aria-live="polite"></div>
                     </div>
                 </div>
 
@@ -1090,167 +1142,11 @@
             </div>
         </main>
     </div>
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-    <script>
-      const slides = Array.from(document.querySelectorAll('.slide-stage'));
-      const nextBtn = document.querySelector('.slide-nav-next');
-      const prevBtn = document.querySelector('.slide-nav-prev');
-      const slideCounter = document.getElementById('slide-counter');
-      let currentSlide = 0;
-
-      function updateSlideCounter() {
-        slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-      }
-
-      function showSlide(index) {
-        slides.forEach((slide, idx) => {
-          slide.classList.toggle('hidden', idx !== index);
-        });
-        currentSlide = index;
-        updateSlideCounter();
-      }
-
-      function navigate(direction) {
-        const nextIndex = currentSlide + direction;
-        if (nextIndex >= 0 && nextIndex < slides.length) {
-          showSlide(nextIndex);
-        }
-      }
-
-      nextBtn.addEventListener('click', () => navigate(1));
-      prevBtn.addEventListener('click', () => navigate(-1));
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowRight') navigate(1);
-        if (event.key === 'ArrowLeft') navigate(-1);
-      });
-
-      updateSlideCounter();
-
-      // Multiple choice checker
-      const mcSlide = document.querySelector('[data-activity="mc-check"]');
-      if (mcSlide) {
-        const checkBtn = mcSlide.querySelector('[data-action="check"]');
-        const resetBtn = mcSlide.querySelector('[data-action="reset"]');
-        const feedback = mcSlide.querySelector('.feedback-msg');
-        const cards = mcSlide.querySelectorAll('.mc-card');
-
-        checkBtn.addEventListener('click', () => {
-          let correctCount = 0;
-          cards.forEach(card => {
-            const select = card.querySelector('select');
-            const expected = card.dataset.answer;
-            const isCorrect = select.value === expected;
-            card.style.borderColor = isCorrect ? 'rgba(76,175,80,0.55)' : 'rgba(214,69,69,0.65)';
-            card.style.boxShadow = isCorrect ? '0 0 0 3px rgba(76,175,80,0.18)' : '0 0 0 3px rgba(214,69,69,0.18)';
-            if (isCorrect) correctCount += 1;
-          });
-          if (correctCount === cards.length) {
-            feedback.textContent = 'Excellent! All of your answers are correct.';
-            feedback.className = 'feedback-msg success';
-          } else {
-            feedback.textContent = 'Good try! Review the structures for prefer/rather and verb patterns.';
-            feedback.className = 'feedback-msg error';
-          }
-        });
-
-        resetBtn.addEventListener('click', () => {
-          cards.forEach(card => {
-            const select = card.querySelector('select');
-            select.value = '';
-            card.style.borderColor = 'rgba(122,132,113,0.18)';
-            card.style.boxShadow = 'var(--shadow-1)';
-          });
-          feedback.textContent = '';
-          feedback.className = 'feedback-msg';
-        });
-      }
-
-      // Grouping activity
-      const groupingSlide = document.querySelector('[data-activity="grouping"]');
-      if (groupingSlide) {
-        const pool = groupingSlide.querySelector('[data-pool]');
-        const dropZones = groupingSlide.querySelectorAll('[data-target]');
-        const checkBtn = groupingSlide.querySelector('[data-action="check"]');
-        const resetBtn = groupingSlide.querySelector('[data-action="reset"]');
-        const feedback = groupingSlide.querySelector('.feedback-msg');
-
-        // B1 answers are more subjective, so this check is more of a suggestion.
-        const answers = {
-          creative: ['writing', 'language', 'models'],
-          adventurous: ['climbing', 'geocaching', 'chess'] 
-        };
-
-        let selectedItem = null;
-
-        function updateEmptyStates() {
-          const poolItems = pool.querySelectorAll('[data-item]').length;
-          pool.dataset.empty = poolItems === 0 ? 'true' : 'false';
-          dropZones.forEach(zone => {
-            const count = zone.querySelectorAll('[data-item]').length;
-            zone.dataset.empty = count === 0 ? 'true' : 'false';
-          });
-        }
-
-        function clearSelection() {
-          if (selectedItem) {
-            selectedItem.classList.remove('is-selected');
-            selectedItem = null;
-          }
-        }
-
-        function handleItemClick(item) {
-          if (selectedItem === item) {
-            item.classList.remove('is-selected');
-            selectedItem = null;
-          } else {
-            if (selectedItem) selectedItem.classList.remove('is-selected');
-            selectedItem = item;
-            item.classList.add('is-selected');
-          }
-        }
-
-        function moveItem(container, item) {
-          container.appendChild(item);
-          item.classList.remove('is-selected');
-          selectedItem = null;
-          updateEmptyStates();
-        }
-
-        const containers = [pool, ...dropZones];
-        containers.forEach(container => {
-          container.addEventListener('click', event => {
-            const item = event.target.closest('[data-item]');
-            if (item && container.contains(item)) {
-              handleItemClick(item);
-              event.stopPropagation();
-            } else if (selectedItem) {
-              moveItem(container, selectedItem);
-            }
-          });
-        });
-
-        updateEmptyStates();
-
-        checkBtn.addEventListener('click', () => {
-          clearSelection();
-          feedback.textContent = 'Interesting choices! Be ready to explain why you grouped the hobbies this way.';
-          feedback.className = 'feedback-msg success';
-        });
-
-        resetBtn.addEventListener('click', () => {
-          clearSelection();
-          dropZones.forEach(zone => {
-            const items = Array.from(zone.querySelectorAll('[data-item]'));
-            items.forEach(item => pool.appendChild(item));
-            zone.style.borderColor = 'rgba(122,132,113,0.35)';
-            zone.style.boxShadow = 'var(--shadow-1)';
-          });
-          feedback.textContent = '';
-          feedback.className = 'feedback-msg';
-          updateEmptyStates();
-        });
-      }
-    </script>
 </body>
 </html>

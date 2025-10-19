@@ -1220,39 +1220,55 @@
 </head>
 <body>
   <div class="deck-app">
-    <header class="deck-toolbar">
-      <div class="toolbar-brand">
-        <i class="fa-solid fa-laptop" style="color: var(--primary-sage);"></i>
-        <span>Mosaic | Digital Literacy for Artisans</span>
-      </div>
-      <div id="slide-counter" class="slide-counter">1 / 19</div>
-      <div class="toolbar-actions">
-        <button id="save-state-btn" class="toolbar-btn" type="button">
-          <i class="fa-solid fa-floppy-disk"></i>
-          Save Deck
-        </button>
-        <button id="load-state-btn" class="toolbar-btn secondary" type="button">
-          <i class="fa-solid fa-file-import"></i>
-          Load Deck
-        </button>
-        <input id="load-state-input" class="sr-only" type="file" accept="application/json">
-        <div class="highlight-controls" role="group" aria-label="Highlight text">
-          <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
-          <label class="sr-only" for="highlight-color">Highlight colour</label>
-          <select id="highlight-color" class="toolbar-select">
-            <option value="#F9E27D">Sunbeam</option>
-            <option value="#A5D6A7">Meadow</option>
-            <option value="#FFCCBC">Coral</option>
-          </select>
-          <button id="highlight-btn" class="toolbar-btn ghost" type="button">Apply</button>
-          <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">Clear</button>
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i
+            class="fa-solid fa-seedling"
+            style="color: var(--primary-sage)"
+          ></i>
+          <span>Noor Community · B2 Lesson</span>
         </div>
-        <button id="add-slide-btn" class="toolbar-btn" type="button">
-          <i class="fa-solid fa-plus"></i>
-          Add Blank Slide
-        </button>
-      </div>
-    </header>
+        <div id="slide-counter" class="slide-counter">1 / 19</div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button
+              id="remove-highlight-btn"
+              class="toolbar-btn ghost"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
 
     <main class="deck-workspace">
       <div class="stage-viewport">
@@ -1405,7 +1421,7 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-headphones"></i> Pre-task C · Part 1</span>
             <h2>Model: Listening for Detail</h2>
-            <div class="card quiz-wrapper" data-activity="mc-quiz" aria-labelledby="mc-quiz-title" style="gap: 1.4rem;">
+            <div class="card quiz-wrapper" data-activity="mc-grammar-radio" aria-labelledby="mc-quiz-title" style="gap: 1.4rem;">
               <div class="audio-player">
                 <p>You will listen to a dialogue between two NGO workers, Fatima and Yousef, discussing how to set up a digital literacy pilot program in Nablus. Listen and answer the questions.</p>
                 <audio controls>
@@ -1415,7 +1431,7 @@
               </div>
               <h3 id="mc-quiz-title" style="font-size: calc(1.2rem + var(--font-size-adjustment)); margin: 0;">Check Your Understanding</h3>
               <div class="quiz-grid single-column">
-                  <div class="quiz-card" data-correct="c">
+                  <div class="quiz-card" data-answer="The core issue is a lack of digital skills.">
                     <p><strong>1.</strong> What key finding from the report does Fatima emphasize at the start?</p>
                     <div class="quiz-options">
                       <label class="quiz-option"><input type="radio" name="q1" value="a"> Sales fell by 20%.</label>
@@ -1423,7 +1439,7 @@
                       <label class="quiz-option"><input type="radio" name="q1" value="c"> The core issue is a lack of digital skills.</label>
                     </div>
                   </div>
-                  <div class="quiz-card" data-correct="c">
+                  <div class="quiz-card" data-answer="Digital Pioneers">
                     <p><strong>2.</strong> What is Yousef's proposed pilot program called?</p>
                     <div class="quiz-options">
                       <label class="quiz-option"><input type="radio" name="q2" value="a"> Artisan Online</label>
@@ -1431,7 +1447,7 @@
                       <label class="quiz-option"><input type="radio" name="q2" value="c"> Digital Pioneers</label>
                     </div>
                   </div>
-                  <div class="quiz-card" data-correct="b">
+                  <div class="quiz-card" data-answer="It might be too slow and indirect for the artisans.">
                     <p><strong>3.</strong> What is Fatima's main concern about focusing only on student mentors?</p>
                     <div class="quiz-options">
                       <label class="quiz-option"><input type="radio" name="q3" value="a"> It's too expensive.</label>
@@ -1439,7 +1455,7 @@
                       <label class="quiz-option"><input type="radio" name="q3" value="c"> The university is not interested.</label>
                     </div>
                   </div>
-                  <div class="quiz-card" data-correct="b">
+                  <div class="quiz-card" data-answer="Intensive, hands-on workshops for the artisans themselves.">
                     <p><strong>4.</strong> What is the core activity in Fatima's "Artisan Accelerate" proposal?</p>
                     <div class="quiz-options">
                       <label class="quiz-option"><input type="radio" name="q4" value="a"> Giving out free smartphones.</label>
@@ -1447,7 +1463,7 @@
                       <label class="quiz-option"><input type="radio" name="q4" value="c"> Building an e-commerce website.</label>
                     </div>
                   </div>
-                  <div class="quiz-card" data-correct="c">
+                  <div class="quiz-card" data-answer="To create a hybrid program combining workshops and mentorship.">
                     <p><strong>5.</strong> What is their final decision?</p>
                     <div class="quiz-options">
                       <label class="quiz-option"><input type="radio" name="q5" value="a"> To choose Yousef's idea.</label>
@@ -1716,7 +1732,7 @@
                 </div>
                 <div class="feedback-msg" aria-live="polite"></div>
               </div>
-              <div class="interactive-block" data-activity="matching-vocab">
+              <div class="interactive-block" data-activity="matching">
                 <div class="matching-card">
                   <h3><i class="fa-solid fa-language" style="margin-right: 8px;"></i>Vocabulary: Match the term to its meaning.</h3>
                   <p class="hint">Select the best term from the menu for each definition.</p>
@@ -1735,7 +1751,7 @@
                 <div class="feedback-msg" aria-live="polite"></div>
               </div>
 
-              <div class="card" style="gap: 1rem;" data-activity="click-drop">
+              <div class="card" style="gap: 1rem;" data-activity="token-drop">
                 <h3><i class="fa-solid fa-arrows-left-right"></i>Prepositions: Click a word and then the sentence slot where it belongs.</h3>
                 <ol class="click-drop-sentences">
                   <li>The report focused <button type="button" class="drop-zone placeholder" data-answer="on" data-placeholder="Select" aria-label="Sentence 1"></button> the challenges for artisans.</li>
@@ -1781,1045 +1797,11 @@
       </div>
     </main>
   </div>
+<script type="module" src="https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js"></script>
+<script type="module">
+  import { setupInteractiveDeck } from "https://najma-collective.github.io/Noor-Community-/js/interactivemodule.js";
+  setupInteractiveDeck();
+</script>
 
-  <script type="module">
-    const stageViewport = document.querySelector('.stage-viewport');
-    const nextBtn = stageViewport?.querySelector('.slide-nav-next');
-    const prevBtn = stageViewport?.querySelector('.slide-nav-prev');
-    const counter = document.getElementById('slide-counter');
-    const addSlideBtn = document.getElementById('add-slide-btn');
-    const saveStateBtn = document.getElementById('save-state-btn');
-    const loadStateBtn = document.getElementById('load-state-btn');
-    const loadStateInput = document.getElementById('load-state-input');
-    const highlightBtn = document.getElementById('highlight-btn');
-    const highlightColorSelect = document.getElementById('highlight-color');
-    const removeHighlightBtn = document.getElementById('remove-highlight-btn');
-
-    const REMOTE_IMAGE_SELECTOR = 'img[data-remote-src]';
-    const remoteImageHydrations = new WeakMap();
-
-    function getRemoteImageContainer(img) {
-      if (!(img instanceof HTMLElement)) {
-        return null;
-      }
-      return img.closest('.bg-media') ?? img.closest('.context-image') ?? img.parentElement;
-    }
-
-    function applyRemoteImageFallback(img, error) {
-      if (error) {
-        console.warn(
-          `Falling back to a gradient background for remote image: ${img?.dataset?.remoteSrc ?? 'unknown'}`,
-          error,
-        );
-      }
-      const container = getRemoteImageContainer(img);
-      if (container) {
-        container.classList.add('remote-image-fallback');
-      }
-      img.dataset.remoteHydrated = 'failed';
-    }
-
-    async function hydrateRemoteImage(img) {
-      if (!(img instanceof HTMLImageElement)) {
-        return;
-      }
-
-      const remoteSrc = img.dataset.remoteSrc;
-      if (!remoteSrc) {
-        return;
-      }
-
-      if (typeof fetch !== 'function') {
-        applyRemoteImageFallback(img, new Error('Fetch API is unavailable'));
-        return;
-      }
-
-      const hydrationState = img.dataset.remoteHydrated;
-      if (hydrationState === 'success' || hydrationState === 'failed') {
-        return;
-      }
-
-      if (remoteImageHydrations.has(img)) {
-        return remoteImageHydrations.get(img);
-      }
-
-      const hydrationPromise = (async () => {
-        try {
-          await new Promise((resolve, reject) => {
-            function cleanup() {
-              img.removeEventListener('load', handleLoad);
-              img.removeEventListener('error', handleError);
-            }
-
-            function handleLoad() {
-              cleanup();
-              resolve();
-            }
-
-            function handleError(err) {
-              cleanup();
-              reject(new Error('Image failed to load from src', { cause: err }));
-            }
-
-            img.addEventListener('load', handleLoad, { once: true });
-            img.addEventListener('error', handleError, { once: true });
-            img.removeAttribute('loading');
-            img.src = remoteSrc;
-          });
-
-          img.dataset.remoteHydrated = 'success';
-        } catch (error) {
-          applyRemoteImageFallback(img, error);
-        } finally {
-          remoteImageHydrations.delete(img);
-        }
-      })();
-
-      remoteImageHydrations.set(img, hydrationPromise);
-      return hydrationPromise;
-    }
-
-    async function hydrateRemoteImages(root = document) {
-      if (!root) {
-        return;
-      }
-
-      const scope = root instanceof Element || root instanceof Document ? root : document;
-      const queryFn = typeof scope.querySelectorAll === 'function' ? scope.querySelectorAll.bind(scope) : null;
-      const remoteImages = queryFn ? Array.from(queryFn(REMOTE_IMAGE_SELECTOR)) : [];
-
-      if (!remoteImages.length) {
-        return;
-      }
-
-      await Promise.all(
-        remoteImages.map((img) => {
-          const hydration = hydrateRemoteImage(img);
-          if (hydration && typeof hydration.then === 'function') {
-            return hydration.catch((error) => {
-              console.warn('Remote image hydration failed', error);
-            });
-          }
-          return undefined;
-        }),
-      );
-    }
-
-    let slides = [];
-    let currentSlideIndex = 0;
-    let mindMapId = 0;
-
-    function refreshSlides() {
-      slides = Array.from(stageViewport?.querySelectorAll('.slide-stage') ?? []);
-    }
-
-    function updateCounter() {
-      if (!counter) return;
-      const total = slides.length;
-      const current = total ? currentSlideIndex + 1 : 0;
-      counter.textContent = `${current} / ${total}`;
-    }
-
-    function showSlide(index) {
-      if (!slides.length) return;
-      currentSlideIndex = (index + slides.length) % slides.length;
-      slides.forEach((slide, slideIndex) => {
-        slide.classList.toggle('hidden', slideIndex !== currentSlideIndex);
-      });
-      updateCounter();
-    }
-
-    function navigate(direction) {
-      showSlide(currentSlideIndex + direction);
-    }
-
-    function setupNavigation() {
-      nextBtn?.addEventListener('click', () => navigate(1));
-      prevBtn?.addEventListener('click', () => navigate(-1));
-
-      document.addEventListener('keydown', (event) => {
-        const target = event.target;
-        if (target instanceof HTMLElement) {
-          if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-            return;
-          }
-        }
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          navigate(1);
-        }
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          navigate(-1);
-        }
-      });
-    }
-
-    function addBlankSlide() {
-      if (!stageViewport) return;
-      const newSlide = createBlankSlide();
-      const insertionPoint = prevBtn ?? nextBtn ?? null;
-      stageViewport.insertBefore(newSlide, insertionPoint);
-      attachBlankSlideEvents(newSlide);
-      refreshSlides();
-      showSlide(slides.length - 1);
-    }
-
-    function createBlankSlide() {
-      const slide = document.createElement('div');
-      slide.className = 'slide-stage hidden';
-      slide.dataset.type = 'blank';
-      slide.innerHTML = `
-    <div class="slide-inner">
-      <div class="blank-slide">
-        <div class="blank-controls">
-          <button class="activity-btn" type="button" data-action="add-textbox">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Add Textbox
-          </button>
-          <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-            <i class="fa-solid fa-diagram-project"></i>
-            Add Mind Map
-          </button>
-        </div>
-        <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
-        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
-      </div>
-    </div>
-  `;
-      return slide;
-    }
-
-    function attachBlankSlideEvents(slide) {
-      const canvas = slide.querySelector('.blank-canvas');
-      const hint = slide.querySelector('[data-role="hint"]');
-      const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
-      const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
-
-      if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
-        return;
-      }
-
-      const DEFAULT_HINT = 'Add textboxes for free typing or build a mind map to capture relationships.';
-      const TEXTBOX_HINT = 'Drag your textboxes into place and double-click to edit the content.';
-      const MINDMAP_HINT = 'Mind map ready. Add branches to capture ideas and connections.';
-
-      function updateHintForCanvas() {
-        if (!(hint instanceof HTMLElement)) return;
-        if (canvas.querySelector('.mindmap')) {
-          hint.textContent = MINDMAP_HINT;
-        } else if (canvas.querySelector('.textbox')) {
-          hint.textContent = TEXTBOX_HINT;
-        } else {
-          hint.textContent = DEFAULT_HINT;
-        }
-      }
-
-      addTextboxBtn?.addEventListener('click', () => {
-        const textbox = createTextbox({ onRemove: updateHintForCanvas });
-        canvas.appendChild(textbox);
-        positionTextbox(textbox, canvas);
-        updateHintForCanvas();
-      });
-
-      addMindmapBtn?.addEventListener('click', () => {
-        if (canvas.querySelector('.mindmap')) {
-          const existing = canvas.querySelector('.mindmap');
-          existing?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return;
-        }
-        const mindmap = createMindMap(() => {
-          updateHintForCanvas();
-        });
-        initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
-        canvas.appendChild(mindmap);
-        updateHintForCanvas();
-      });
-
-      canvas
-        .querySelectorAll('.textbox')
-        .forEach((textbox) => initialiseTextbox(textbox, { onRemove: updateHintForCanvas }));
-
-      canvas
-        .querySelectorAll('.mindmap')
-        .forEach((mindmap) => initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }));
-
-      updateHintForCanvas();
-    }
-
-    function positionTextbox(textbox, canvas) {
-      const count = canvas.querySelectorAll('.textbox').length - 1;
-      const offset = 24 * count;
-      textbox.style.left = `${offset}px`;
-      textbox.style.top = `${offset}px`;
-    }
-
-    function createTextbox({ onRemove } = {}) {
-      const textbox = document.createElement('div');
-      textbox.className = 'textbox';
-      textbox.innerHTML = `
-    <button type="button" class="textbox-remove" aria-label="Remove textbox">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="textbox-handle">Textbox</div>
-    <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
-  `;
-      initialiseTextbox(textbox, { onRemove });
-      return textbox;
-    }
-
-    function initialiseTextbox(textbox, { onRemove } = {}) {
-      if (!(textbox instanceof HTMLElement)) {
-        return textbox;
-      }
-
-      textbox.__deckTextboxOnRemove = onRemove;
-      if (textbox.__deckTextboxInitialised) {
-        return textbox;
-      }
-      textbox.__deckTextboxInitialised = true;
-
-      const removeBtn = textbox.querySelector('.textbox-remove');
-      removeBtn?.addEventListener('click', () => {
-        textbox.remove();
-        if (typeof textbox.__deckTextboxOnRemove === 'function') {
-          textbox.__deckTextboxOnRemove();
-        }
-      });
-
-      const body = textbox.querySelector('.textbox-body');
-      body?.addEventListener('dblclick', () => {
-        if (body instanceof HTMLElement) {
-          body.focus();
-        }
-      });
-
-      makeDraggable(textbox);
-      return textbox;
-    }
-
-    function makeDraggable(element) {
-      if (!(element instanceof HTMLElement)) return;
-      if (element.__deckDraggableInitialised) {
-        return;
-      }
-      element.__deckDraggableInitialised = true;
-
-      const handle = element.querySelector('.textbox-handle') ?? element;
-      let pointerId = null;
-      let offsetX = 0;
-      let offsetY = 0;
-
-      handle.addEventListener('pointerdown', (event) => {
-        const canvas = element.parentElement;
-        if (!(canvas instanceof HTMLElement)) return;
-        pointerId = event.pointerId;
-        try {
-          element.setPointerCapture(pointerId);
-        } catch (error) {
-          // ignore when pointer capture is not supported
-        }
-        const elementRect = element.getBoundingClientRect();
-        offsetX = event.clientX - elementRect.left;
-        offsetY = event.clientY - elementRect.top;
-        element.dataset.dragging = 'true';
-        event.preventDefault();
-      });
-
-      element.addEventListener('pointermove', (event) => {
-        if (element.dataset.dragging !== 'true' || event.pointerId !== pointerId) return;
-        const canvas = element.parentElement;
-        if (!(canvas instanceof HTMLElement)) return;
-        const canvasRect = canvas.getBoundingClientRect();
-        const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
-        const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
-        const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
-        const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
-        const clampedX = Math.min(Math.max(0, rawX), maxX);
-        const clampedY = Math.min(Math.max(0, rawY), maxY);
-        element.style.left = `${clampedX}px`;
-        element.style.top = `${clampedY}px`;
-      });
-
-      function clearPointerState(event) {
-        if (event.pointerId !== pointerId) return;
-        delete element.dataset.dragging;
-        if (pointerId !== null) {
-          try {
-            element.releasePointerCapture(pointerId);
-          } catch (error) {
-            // ignore release errors when pointer capture is not active
-          }
-        }
-        pointerId = null;
-      }
-
-      element.addEventListener('pointerup', clearPointerState);
-      element.addEventListener('pointercancel', clearPointerState);
-    }
-
-    function createMindMap(onRemove) {
-      const container = document.createElement('section');
-      container.className = 'mindmap';
-      const branchInputId = `mindmap-branch-${++mindMapId}`;
-      container.innerHTML = `
-    <div class="mindmap-header">
-      <h3 class="mindmap-title">Mind Map</h3>
-      <button type="button" class="mindmap-remove">
-        <i class="fa-solid fa-trash-can"></i>
-        Remove
-      </button>
-    </div>
-    <div class="mindmap-center" contenteditable="true" role="textbox" aria-label="Mind map central idea">Central idea</div>
-    <div class="mindmap-branches" aria-live="polite"></div>
-    <form class="mindmap-form">
-      <label class="sr-only" for="${branchInputId}">New branch label</label>
-      <input id="${branchInputId}" type="text" placeholder="Add branch idea" autocomplete="off">
-      <button type="submit">
-        <i class="fa-solid fa-plus"></i>
-        Add Branch
-      </button>
-    </form>
-  `;
-      const branches = container.querySelector('.mindmap-branches');
-      if (branches && !branches.querySelector('.mindmap-branch')) {
-        const defaultBranch = createMindMapBranch('Add supporting detail...');
-        branches.appendChild(defaultBranch);
-      }
-
-      initialiseMindMap(container, { onRemove });
-      return container;
-    }
-
-    function initialiseMindMap(container, { onRemove } = {}) {
-      if (!(container instanceof HTMLElement)) {
-        return container;
-      }
-
-      container.__deckMindmapOnRemove = onRemove;
-      if (!container.__deckMindmapInitialised) {
-        container.__deckMindmapInitialised = true;
-        const removeBtn = container.querySelector('.mindmap-remove');
-        removeBtn?.addEventListener('click', () => {
-          container.remove();
-          if (typeof container.__deckMindmapOnRemove === 'function') {
-            container.__deckMindmapOnRemove();
-          }
-        });
-      }
-
-      const form = container.querySelector('.mindmap-form');
-      const input = container.querySelector('.mindmap-form input');
-      const branches = container.querySelector('.mindmap-branches');
-
-      if (form && !form.__deckSubmitInitialised) {
-        form.__deckSubmitInitialised = true;
-        form.addEventListener('submit', (event) => {
-          event.preventDefault();
-          if (!branches || !input) return;
-          const value = input.value.trim();
-          if (!value) return;
-          const newBranch = createMindMapBranch(value);
-          branches.appendChild(newBranch);
-          initialiseMindMapBranch(newBranch);
-          input.value = '';
-          input.focus();
-        });
-      }
-
-      container
-        .querySelectorAll('.mindmap-branch')
-        .forEach((branch) => initialiseMindMapBranch(branch));
-
-      return container;
-    }
-
-    function createMindMapBranch(text) {
-      const branch = document.createElement('div');
-      branch.className = 'mindmap-branch';
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.setAttribute('aria-label', 'Mind map branch');
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'branch-remove';
-      removeBtn.textContent = 'Remove';
-      branch.append(textarea, removeBtn);
-      initialiseMindMapBranch(branch);
-      return branch;
-    }
-
-    function initialiseMindMapBranch(branch) {
-      if (!(branch instanceof HTMLElement)) {
-        return branch;
-      }
-
-      if (branch.__deckMindmapBranchInitialised) {
-        return branch;
-      }
-      branch.__deckMindmapBranchInitialised = true;
-      const removeBtn = branch.querySelector('.branch-remove');
-      removeBtn?.addEventListener('click', () => {
-        branch.remove();
-      });
-      return branch;
-    }
-
-    function recalibrateMindMapCounter() {
-      if (!stageViewport) return;
-      const inputs = stageViewport.querySelectorAll('.mindmap-form input[id^="mindmap-branch-"]');
-      inputs.forEach((input) => {
-        if (!(input instanceof HTMLInputElement)) return;
-        const match = input.id.match(/mindmap-branch-(\d+)/);
-        if (match) {
-          const value = Number.parseInt(match[1], 10);
-          if (!Number.isNaN(value)) {
-            mindMapId = Math.max(mindMapId, value);
-          }
-        }
-      });
-    }
-
-    function getDeckState() {
-      refreshSlides();
-      return {
-        version: 1,
-        currentSlideIndex,
-        slides: slides.map((slide) => slide.outerHTML),
-      };
-    }
-
-    function downloadDeckState() {
-      try {
-        const state = getDeckState();
-        const blob = new Blob([JSON.stringify(state, null, 2)], {
-          type: 'application/json',
-        });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = 'deck-state.json';
-        anchor.click();
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Failed to save deck state', error);
-        window.alert("Sorry, we couldn't save the deck right now. Please try again.");
-      }
-    }
-
-    function parseDeckState(raw) {
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.slides)) {
-        throw new Error('Invalid deck state structure');
-      }
-      return parsed;
-    }
-
-    function applyDeckState(state) {
-      if (!stageViewport || !state || !Array.isArray(state.slides)) {
-        throw new Error('Deck state does not include slides');
-      }
-
-      const navButtons = Array.from(stageViewport.querySelectorAll('.slide-nav'));
-      const fragment = document.createDocumentFragment();
-
-      state.slides.forEach((slideHTML) => {
-        if (typeof slideHTML !== 'string') {
-          return;
-        }
-        const template = document.createElement('template');
-        template.innerHTML = slideHTML.trim();
-        const slide = template.content.firstElementChild;
-        if (slide instanceof HTMLElement && slide.classList.contains('slide-stage')) {
-          fragment.appendChild(slide);
-        }
-      });
-
-      stageViewport.innerHTML = '';
-      stageViewport.appendChild(fragment);
-      navButtons.forEach((button) => stageViewport.appendChild(button));
-
-      refreshSlides();
-      slides
-        .filter((slide) => slide.dataset.type === 'blank')
-        .forEach((slide) => attachBlankSlideEvents(slide));
-
-      initialiseActivities();
-      recalibrateMindMapCounter();
-
-      if (slides.length) {
-        const requestedIndex =
-          typeof state.currentSlideIndex === 'number'
-            ? Math.min(Math.max(state.currentSlideIndex, 0), slides.length - 1)
-            : 0;
-        showSlide(requestedIndex);
-      } else {
-        updateCounter();
-      }
-
-      hydrateRemoteImages(stageViewport).catch((error) => {
-        console.warn('Remote image hydration failed after loading state', error);
-      });
-    }
-
-    function handleStateFileSelection(event) {
-      const input = event.target;
-      if (!(input instanceof HTMLInputElement) || !input.files?.length) {
-        return;
-      }
-
-      const [file] = input.files;
-      const reader = new FileReader();
-
-      reader.addEventListener('load', () => {
-        try {
-          const text = typeof reader.result === 'string' ? reader.result : '';
-          const state = parseDeckState(text);
-          applyDeckState(state);
-        } catch (error) {
-          console.error('Failed to load deck state', error);
-          window.alert('The selected file could not be loaded. Please choose a valid deck state JSON file.');
-        } finally {
-          input.value = '';
-        }
-      });
-
-      reader.addEventListener('error', () => {
-        console.error('Failed to read deck state file', reader.error);
-        window.alert('We could not read that file. Please try again with a different JSON file.');
-        input.value = '';
-      });
-
-      reader.readAsText(file);
-    }
-
-    function findSlideForNode(node) {
-      if (!node) return null;
-      if (node instanceof HTMLElement) {
-        return node.closest('.slide-stage');
-      }
-      if (node instanceof Text) {
-        return node.parentElement?.closest('.slide-stage') ?? null;
-      }
-      return null;
-    }
-
-    function applyHighlight(color) {
-      const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-        window.alert('Select some text in a slide before applying a highlight.');
-        return;
-      }
-
-      const range = selection.getRangeAt(0);
-      const startSlide = findSlideForNode(range.startContainer);
-      const endSlide = findSlideForNode(range.endContainer);
-
-      if (!startSlide || !endSlide || startSlide !== endSlide) {
-        window.alert('Highlights must stay within a single slide.');
-        return;
-      }
-
-      if (!stageViewport?.contains(startSlide)) {
-        window.alert('Please highlight text within the slide area.');
-        return;
-      }
-
-      try {
-        const contents = range.extractContents();
-        const textSample = contents.textContent?.trim();
-        if (!textSample) {
-          window.alert('Select some text to highlight first.');
-          range.insertNode(contents);
-          return;
-        }
-
-        const highlight = document.createElement('mark');
-        highlight.className = 'text-highlight';
-        highlight.dataset.color = color;
-        highlight.style.setProperty('--highlight-color', color);
-        highlight.appendChild(contents);
-        range.insertNode(highlight);
-
-        selection.removeAllRanges();
-        const newRange = document.createRange();
-        newRange.selectNodeContents(highlight);
-        selection.addRange(newRange);
-      } catch (error) {
-        console.error('Failed to apply highlight', error);
-        window.alert("Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.");
-      }
-    }
-
-    function removeHighlight() {
-      const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0) {
-        window.alert('Place your cursor inside a highlight to clear it.');
-        return;
-      }
-
-      let container = selection.anchorNode;
-      if (container instanceof Text) {
-        container = container.parentElement;
-      }
-
-      const highlight = container instanceof HTMLElement ? container.closest('.text-highlight') : null;
-
-      if (!highlight || !stageViewport?.contains(highlight)) {
-        window.alert('Place your cursor inside a highlight to clear it.');
-        return;
-      }
-
-      const parent = highlight.parentNode;
-      if (!parent) {
-        return;
-      }
-
-      while (highlight.firstChild) {
-        parent.insertBefore(highlight.firstChild, highlight);
-      }
-      highlight.remove();
-      if (parent instanceof HTMLElement) {
-        parent.normalize();
-      }
-      selection.removeAllRanges();
-    }
-
-    function setupMatching(activityEl) {
-      const options = Array.from(activityEl.querySelectorAll('.matching-option'));
-      const feedback = activityEl.querySelector('.feedback-msg');
-      const buttons = activityEl.querySelectorAll('.activity-actions button');
-      if (!feedback) return;
-
-      buttons.forEach((btn) => {
-        if (btn.dataset.action === 'check') {
-          btn.addEventListener('click', () => {
-            let correctCount = 0;
-            options.forEach((option) => {
-              const select = option.querySelector('select');
-              const isCorrect = select?.value === option.dataset.correct;
-              option.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-              option.style.background = isCorrect
-                ? 'rgba(46,125,50,0.12)'
-                : 'rgba(198,40,40,0.12)';
-              if (isCorrect) correctCount += 1;
-            });
-            if (correctCount === options.length) {
-              feedback.textContent = 'Excellent! Every match is correct.';
-              feedback.className = 'feedback-msg success';
-            } else {
-              feedback.textContent = `You have ${correctCount} / ${options.length} correct. Adjust and try again.`;
-              feedback.className = 'feedback-msg error';
-            }
-          });
-        } else if (btn.dataset.action === 'reset') {
-          btn.addEventListener('click', () => {
-            options.forEach((option) => {
-              const select = option.querySelector('select');
-              if (select) {
-                select.value = '';
-              }
-              option.style.borderColor = 'rgba(122,132,113,0.16)';
-              option.style.background = 'color-mix(in srgb, var(--warm-cream) 60%, transparent)';
-            });
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-          });
-        }
-      });
-    }
-
-    function setupMcGrammar(activityEl) {
-      const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-      const feedback = activityEl.querySelector('.feedback-msg');
-      const buttons = activityEl.querySelectorAll('.activity-actions button');
-      if (!feedback) return;
-
-      buttons.forEach((btn) => {
-        if (btn.dataset.action === 'check') {
-          btn.addEventListener('click', () => {
-            let correctCount = 0;
-            cards.forEach((card) => {
-              const select = card.querySelector('select');
-              const isCorrect = select?.value === card.dataset.correct;
-              card.style.borderColor = isCorrect ? '#2E7D32' : '#C62828';
-              card.style.background = isCorrect ? 'rgba(46,125,50,0.12)' : 'rgba(198,40,40,0.12)';
-              if (isCorrect) correctCount += 1;
-            });
-            if (correctCount === cards.length) {
-              feedback.textContent = 'Great job! All answers are correct.';
-              feedback.className = 'feedback-msg success';
-            } else {
-              feedback.textContent = `You have ${correctCount} / ${cards.length} correct answers.`;
-              feedback.className = 'feedback-msg error';
-            }
-          });
-        } else if (btn.dataset.action === 'reset') {
-          btn.addEventListener('click', () => {
-            cards.forEach((card) => {
-              const select = card.querySelector('select');
-              if (select) {
-                select.value = '';
-              }
-              card.style.borderColor = 'rgba(122,132,113,0.2)';
-              card.style.background = 'var(--soft-white)';
-            });
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-          });
-        }
-      });
-    }
-
-    function setupMcQuiz(activityEl) {
-      const cards = Array.from(activityEl.querySelectorAll('.quiz-card'));
-      const feedback = activityEl.querySelector('.feedback-msg');
-      const buttons = activityEl.querySelectorAll('.activity-actions button');
-      if (!feedback) return;
-
-      buttons.forEach((btn) => {
-        if (btn.dataset.action === 'check') {
-          btn.addEventListener('click', () => {
-            let correctCount = 0;
-            cards.forEach((card) => {
-              const options = Array.from(card.querySelectorAll('.quiz-option'));
-              const selected = options.find((option) => option.querySelector('input')?.checked);
-              options.forEach((option) => option.classList.remove('correct', 'incorrect'));
-              if (selected) {
-                const input = selected.querySelector('input');
-                const value = input?.value;
-                const isCorrect = value === card.dataset.correct;
-                selected.classList.add(isCorrect ? 'correct' : 'incorrect');
-                if (isCorrect) correctCount += 1;
-              }
-            });
-            if (correctCount === cards.length) {
-              feedback.textContent = 'Brilliant listening! All answers correct.';
-              feedback.className = 'feedback-msg success';
-            } else {
-              feedback.textContent = `You have ${correctCount} / ${cards.length} correct. Review the audio and try again.`;
-              feedback.className = 'feedback-msg error';
-            }
-          });
-        } else if (btn.dataset.action === 'reset') {
-          btn.addEventListener('click', () => {
-            cards.forEach((card) => {
-              const options = Array.from(card.querySelectorAll('.quiz-option'));
-              options.forEach((option) => {
-                const input = option.querySelector('input');
-                if (input) {
-                  input.checked = false;
-                }
-                option.classList.remove('correct', 'incorrect');
-              });
-            });
-            feedback.textContent = '';
-            feedback.className = 'feedback-msg';
-          });
-        }
-      });
-    }
-
-    function setupClickPlacement(activityEl) {
-      const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
-      const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
-      const feedback = activityEl.querySelector('.feedback-msg');
-      const buttons = Array.from(activityEl.querySelectorAll('.activity-actions button'));
-      let activeToken = null;
-
-      dropZones.forEach((zone, index) => {
-        if (!zone.dataset.zoneId) {
-          zone.dataset.zoneId = `${activityEl.dataset.activity || 'zone'}-${index + 1}-${Math.random()
-            .toString(16)
-            .slice(2, 6)}`;
-        }
-        if (!zone.dataset.placeholder) {
-          zone.dataset.placeholder = 'Select';
-        }
-        zone.innerHTML = zone.dataset.placeholder;
-        zone.classList.add('placeholder');
-        zone.classList.remove('filled');
-
-        zone.addEventListener('click', () => {
-          if (activeToken) {
-            const previousTokenId = zone.dataset.current;
-            if (previousTokenId) {
-              const previousToken = tokens.find((token) => token.dataset.tokenId === previousTokenId);
-              if (previousToken) {
-                previousToken.dataset.assigned = 'false';
-                previousToken.dataset.zoneId = '';
-                previousToken.classList.remove('used');
-              }
-            }
-
-            zone.dataset.current = activeToken.dataset.tokenId;
-            zone.innerHTML = activeToken.innerHTML;
-            zone.classList.remove('placeholder', 'correct', 'incorrect', 'selected');
-            zone.classList.add('filled');
-
-            activeToken.dataset.assigned = 'true';
-            activeToken.dataset.zoneId = zone.dataset.zoneId;
-            activeToken.classList.remove('selected');
-            activeToken.classList.add('used');
-            activeToken = null;
-          } else if (zone.dataset.current) {
-            const assignedToken = tokens.find((token) => token.dataset.tokenId === zone.dataset.current);
-            if (assignedToken) {
-              assignedToken.dataset.assigned = 'false';
-              assignedToken.dataset.zoneId = '';
-              assignedToken.classList.remove('used');
-            }
-            zone.dataset.current = '';
-            zone.innerHTML = zone.dataset.placeholder;
-            zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-            zone.classList.add('placeholder');
-          } else {
-            zone.classList.add('selected');
-            window.setTimeout(() => zone.classList.remove('selected'), 200);
-          }
-        });
-      });
-
-      tokens.forEach((token, index) => {
-        if (!token.dataset.tokenId) {
-          token.dataset.tokenId = `token-${index}-${Math.random().toString(16).slice(2, 6)}`;
-        }
-
-        token.addEventListener('click', () => {
-          if (token.dataset.assigned === 'true' && token.dataset.zoneId) {
-            const zone = dropZones.find((item) => item.dataset.zoneId === token.dataset.zoneId);
-            if (zone) {
-              zone.dataset.current = '';
-              zone.innerHTML = zone.dataset.placeholder;
-              zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-              zone.classList.add('placeholder');
-            }
-            token.dataset.assigned = 'false';
-            token.dataset.zoneId = '';
-            token.classList.remove('used');
-          }
-
-          if (activeToken === token) {
-            token.classList.remove('selected');
-            activeToken = null;
-          } else {
-            tokens.forEach((item) => item.classList.remove('selected'));
-            token.classList.add('selected');
-            activeToken = token;
-          }
-        });
-      });
-
-      buttons.forEach((btn) => {
-        if (btn.dataset.action === 'check') {
-          btn.addEventListener('click', () => {
-            let correctCount = 0;
-            dropZones.forEach((zone) => {
-              const tokenId = zone.dataset.current;
-              const assignedToken = tokens.find((token) => token.dataset.tokenId === tokenId);
-              const selectedValue = assignedToken ? assignedToken.dataset.value || assignedToken.textContent.trim() : '';
-              const isCorrect = !!tokenId && selectedValue === zone.dataset.answer;
-
-              zone.classList.toggle('correct', isCorrect);
-              zone.classList.toggle('incorrect', !!tokenId && !isCorrect);
-
-              if (!tokenId) {
-                zone.classList.remove('correct', 'incorrect');
-              }
-
-              if (isCorrect) {
-                correctCount += 1;
-              }
-            });
-
-            if (feedback) {
-              if (correctCount === dropZones.length) {
-                feedback.textContent = 'Perfect! Every response is accurate.';
-                feedback.className = 'feedback-msg success';
-              } else {
-                feedback.textContent = `You have ${correctCount} / ${dropZones.length} correct. Adjust your choices and try again.`;
-                feedback.className = 'feedback-msg error';
-              }
-            }
-          });
-        } else if (btn.dataset.action === 'reset') {
-          btn.addEventListener('click', () => {
-            dropZones.forEach((zone) => {
-              zone.dataset.current = '';
-              zone.innerHTML = zone.dataset.placeholder;
-              zone.classList.remove('filled', 'correct', 'incorrect', 'selected');
-              zone.classList.add('placeholder');
-            });
-
-            tokens.forEach((token) => {
-              token.dataset.assigned = 'false';
-              token.dataset.zoneId = '';
-              token.classList.remove('selected', 'used');
-            });
-
-            activeToken = null;
-
-            if (feedback) {
-              feedback.textContent = '';
-              feedback.className = 'feedback-msg';
-            }
-          });
-        }
-      });
-    }
-
-    function initialiseActivities() {
-      document
-        .querySelectorAll('[data-activity="matching-vocab"]')
-        .forEach((el) => setupMatching(el));
-      document
-        .querySelectorAll('[data-activity="mc-grammar"]')
-        .forEach((el) => setupMcGrammar(el));
-      document
-        .querySelectorAll('[data-activity="mc-quiz"]')
-        .forEach((el) => setupMcQuiz(el));
-      document
-        .querySelectorAll('[data-activity="table-completion"]')
-        .forEach((el) => setupClickPlacement(el));
-      document
-        .querySelectorAll('[data-activity="click-drop"]')
-        .forEach((el) => setupClickPlacement(el));
-    }
-
-    async function initialiseDeck() {
-      await hydrateRemoteImages().catch((error) => {
-        console.warn('Remote imagery could not be hydrated during initialisation', error);
-      });
-
-      refreshSlides();
-      if (slides.length) {
-        showSlide(0);
-      }
-      setupNavigation();
-      updateCounter();
-      initialiseActivities();
-      document
-        .querySelectorAll('.slide-stage[data-type="blank"]')
-        .forEach((slide) => attachBlankSlideEvents(slide));
-      addSlideBtn?.addEventListener('click', addBlankSlide);
-      saveStateBtn?.addEventListener('click', downloadDeckState);
-      loadStateBtn?.addEventListener('click', () => {
-        loadStateInput?.click();
-      });
-      loadStateInput?.addEventListener('change', handleStateFileSelection);
-      highlightBtn?.addEventListener('click', () => {
-        const selectedColor = highlightColorSelect?.value || '#F9E27D';
-        applyHighlight(selectedColor);
-      });
-      removeHighlightBtn?.addEventListener('click', () => {
-        removeHighlight();
-      });
-      recalibrateMindMapCounter();
-    }
-
-    initialiseDeck().catch((error) => {
-      console.error('Deck initialisation failed', error);
-    });
-  </script>
 </body>
 </html>
