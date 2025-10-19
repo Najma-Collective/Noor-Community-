@@ -1,3 +1,5 @@
+import { initSlideNavigator } from "./slideNavigator.js";
+
 // Shared interactive module for Noor Community decks
 
 export const TEXTBOX_COLOR_OPTIONS = [
@@ -37,6 +39,7 @@ let loadStateInput;
 let highlightBtn;
 let highlightColorSelect;
 let removeHighlightBtn;
+let slideNavigatorController;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -208,8 +211,52 @@ let slides = [];
 let currentSlideIndex = 0;
 let mindMapId = 0;
 
+const normaliseWhitespace = (text) =>
+  typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
+
+const normaliseResponseValue = (value) =>
+  typeof value === "string" ? value.trim().replace(/\s+/g, " ").toLowerCase() : "";
+
+function getSlideStageLabel(slide, index) {
+  const pillText = normaliseWhitespace(slide?.querySelector?.(".pill")?.textContent);
+  if (pillText) {
+    const [stage] = pillText.split("·");
+    const label = normaliseWhitespace(stage);
+    if (label) {
+      return label;
+    }
+  }
+  if (slide?.dataset?.type === "blank") {
+    return "Blank slide";
+  }
+  return `Slide ${index + 1}`;
+}
+
+function getSlideTitle(slide, index) {
+  const heading =
+    slide?.querySelector?.("h2") ||
+    slide?.querySelector?.("h1") ||
+    slide?.querySelector?.("h3");
+  const headingText = normaliseWhitespace(heading?.textContent);
+  if (headingText) {
+    return headingText;
+  }
+  if (slide?.dataset?.type === "blank") {
+    return "Blank workspace";
+  }
+  return `Slide ${index + 1}`;
+}
+
+function buildSlideNavigatorMeta() {
+  return slides.map((slide, index) => ({
+    stage: getSlideStageLabel(slide, index),
+    title: getSlideTitle(slide, index),
+  }));
+}
+
 function refreshSlides() {
   slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
+  slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
 }
 
 function updateCounter() {
@@ -226,6 +273,7 @@ function showSlide(index) {
     slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
   });
   updateCounter();
+  slideNavigatorController?.setActive(currentSlideIndex);
 }
 
 function navigate(direction) {
@@ -285,7 +333,7 @@ export function createBlankSlide() {
       Add Mind Map
     </button>
   </div>
-  <p class="blank-hint" data-role="hint">Add textboxes for free typing or build a mind map to capture relationships.</p>
+  <p class="blank-hint" data-role="hint">Add textboxes, paste images, or build a mind map to capture relationships.</p>
   <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
 </div>
     </div>
@@ -304,18 +352,34 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const DEFAULT_HINT =
-    "Add textboxes for free typing or build a mind map to capture relationships.";
+    "Add textboxes, paste images, or build a mind map to capture relationships.";
   const TEXTBOX_HINT =
     "Drag your textboxes into place, double-click to edit, and use the colour dots to organise ideas.";
+  const IMAGE_HINT =
+    "Paste images to bring ideas to life. Drag to move them and use the corner handle to resize.";
+  const MIXED_HINT =
+    "Combine textboxes and images to map your ideas visually.";
   const MINDMAP_HINT =
     "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
 
+  if (!canvas.hasAttribute("tabindex")) {
+    canvas.setAttribute("tabindex", "0");
+  }
+
   function updateHintForCanvas() {
     if (!(hint instanceof HTMLElement)) return;
-    if (canvas.querySelector(".mindmap")) {
+    const hasMindmap = Boolean(canvas.querySelector(".mindmap"));
+    const hasTextbox = Boolean(canvas.querySelector(".textbox"));
+    const hasImage = Boolean(canvas.querySelector(".pasted-image"));
+
+    if (hasMindmap) {
       hint.textContent = MINDMAP_HINT;
-    } else if (canvas.querySelector(".textbox")) {
+    } else if (hasTextbox && hasImage) {
+      hint.textContent = MIXED_HINT;
+    } else if (hasTextbox) {
       hint.textContent = TEXTBOX_HINT;
+    } else if (hasImage) {
+      hint.textContent = IMAGE_HINT;
     } else {
       hint.textContent = DEFAULT_HINT;
     }
@@ -353,6 +417,82 @@ export function attachBlankSlideEvents(slide) {
     .forEach((mindmap) =>
       initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
     );
+
+  canvas
+    .querySelectorAll(".pasted-image")
+    .forEach((image) => initialisePastedImage(image, { onRemove: updateHintForCanvas }));
+
+  const readFileAsDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      if (!(file instanceof Blob)) {
+        reject(new Error("Invalid clipboard data"));
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        resolve(typeof reader.result === "string" ? reader.result : "");
+      });
+      reader.addEventListener("error", () => {
+        reject(reader.error ?? new Error("Failed to read clipboard image"));
+      });
+      reader.readAsDataURL(file);
+    });
+
+  async function handleCanvasPaste(event) {
+    const clipboardData = event.clipboardData;
+    if (!clipboardData) {
+      return;
+    }
+    const items = Array.from(clipboardData.items ?? []).filter((item) =>
+      typeof item.type === "string" && item.type.startsWith("image/"),
+    );
+    if (!items.length) {
+      return;
+    }
+
+    event.preventDefault();
+
+    for (const item of items) {
+      const file = item.getAsFile();
+      if (!file) {
+        continue;
+      }
+      let dataUrl;
+      try {
+        dataUrl = await readFileAsDataUrl(file);
+      } catch (error) {
+        console.warn("Unable to read clipboard image", error);
+        continue;
+      }
+      if (typeof dataUrl !== "string" || !dataUrl) {
+        continue;
+      }
+
+      const pastedImage = createPastedImage({
+        src: dataUrl,
+        label: file.name,
+        onRemove: updateHintForCanvas,
+      });
+      canvas.appendChild(pastedImage);
+      positionPastedImage(pastedImage, canvas);
+      pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    updateHintForCanvas();
+    canvas.focus({ preventScroll: true });
+  }
+
+  canvas.addEventListener("paste", (event) => {
+    handleCanvasPaste(event).catch((error) => {
+      console.warn("Image paste failed", error);
+    });
+  });
+
+  canvas.addEventListener("pointerdown", (event) => {
+    if (event.target === canvas) {
+      canvas.focus({ preventScroll: true });
+    }
+  });
 
   updateHintForCanvas();
 }
@@ -459,6 +599,193 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
 
   makeDraggable(textbox);
   return textbox;
+}
+
+function makeResizable(element, { handleSelector = ".resize-handle", minWidth = 96, minHeight = 96 } = {}) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  if (element.__deckResizableInitialised) {
+    return;
+  }
+
+  const handle = element.querySelector(handleSelector);
+  if (!(handle instanceof HTMLElement)) {
+    return;
+  }
+
+  element.__deckResizableInitialised = true;
+
+  let pointerId = null;
+  let startWidth = 0;
+  let startHeight = 0;
+  let startX = 0;
+  let startY = 0;
+  let resizeCanvas = null;
+
+  const finishResize = (event) => {
+    if (event.pointerId !== pointerId) {
+      return;
+    }
+    try {
+      handle.releasePointerCapture(pointerId);
+    } catch (error) {
+      // ignore release errors when pointer capture is not active
+    }
+    pointerId = null;
+    resizeCanvas = null;
+  };
+
+  handle.addEventListener("pointerdown", (event) => {
+    const parent = element.parentElement;
+    if (!(parent instanceof HTMLElement)) {
+      return;
+    }
+    resizeCanvas = parent;
+    pointerId = event.pointerId;
+    startWidth = element.offsetWidth;
+    startHeight = element.offsetHeight;
+    startX = event.clientX;
+    startY = event.clientY;
+    try {
+      handle.setPointerCapture(pointerId);
+    } catch (error) {
+      // ignore pointer capture errors
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  handle.addEventListener("pointermove", (event) => {
+    if (pointerId === null || event.pointerId !== pointerId) {
+      return;
+    }
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    let nextWidth = startWidth + deltaX;
+    let nextHeight = startHeight + deltaY;
+
+    if (resizeCanvas instanceof HTMLElement) {
+      const maxWidth = resizeCanvas.scrollWidth - element.offsetLeft;
+      const maxHeight = resizeCanvas.scrollHeight - element.offsetTop;
+      nextWidth = Math.min(maxWidth, Math.max(minWidth, nextWidth));
+      nextHeight = Math.min(maxHeight, Math.max(minHeight, nextHeight));
+    } else {
+      nextWidth = Math.max(minWidth, nextWidth);
+      nextHeight = Math.max(minHeight, nextHeight);
+    }
+
+    element.style.width = `${Math.round(nextWidth)}px`;
+    element.style.height = `${Math.round(nextHeight)}px`;
+  });
+
+  handle.addEventListener("pointerup", finishResize);
+  handle.addEventListener("pointercancel", finishResize);
+}
+
+export function createPastedImage({ src, label, onRemove } = {}) {
+  const image = document.createElement("div");
+  image.className = "pasted-image";
+  image.innerHTML = `
+    <button type="button" class="textbox-remove pasted-image-remove" aria-label="Remove image">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+    <div class="textbox-handle pasted-image-handle">
+      <span class="textbox-title">
+        <i class="fa-solid fa-image" aria-hidden="true"></i>
+        Image
+      </span>
+    </div>
+    <div class="pasted-image-body">
+      <img loading="lazy" decoding="async" alt="" />
+    </div>
+    <button type="button" class="pasted-image-resizer" aria-label="Resize image">
+      <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>
+    </button>
+  `;
+
+  const img = image.querySelector("img");
+  if (img instanceof HTMLImageElement) {
+    if (typeof src === "string" && src) {
+      img.src = src;
+    }
+    if (typeof label === "string" && label.trim()) {
+      img.alt = `Pasted image (${label.trim()})`;
+    } else {
+      img.alt = "Pasted image";
+    }
+    img.draggable = false;
+  }
+
+  initialisePastedImage(image, { onRemove });
+  return image;
+}
+
+export function initialisePastedImage(image, { onRemove } = {}) {
+  if (!(image instanceof HTMLElement)) {
+    return image;
+  }
+  image.__deckImageOnRemove = onRemove;
+  if (image.__deckImageInitialised) {
+    return image;
+  }
+  image.__deckImageInitialised = true;
+
+  const removeBtn = image.querySelector(".pasted-image-remove");
+  removeBtn?.addEventListener("click", () => {
+    image.remove();
+    if (typeof image.__deckImageOnRemove === "function") {
+      image.__deckImageOnRemove();
+    }
+  });
+
+  const resizer = image.querySelector(".pasted-image-resizer");
+  resizer?.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
+  });
+
+  makeDraggable(image);
+  makeResizable(image, {
+    handleSelector: ".pasted-image-resizer",
+    minWidth: 160,
+    minHeight: 120,
+  });
+
+  const img = image.querySelector("img");
+  if (img instanceof HTMLImageElement) {
+    if (!img.alt || !img.alt.trim()) {
+      img.alt = "Pasted image";
+    }
+    img.draggable = false;
+  }
+  return image;
+}
+
+export function positionPastedImage(image, canvas) {
+  if (!(image instanceof HTMLElement) || !(canvas instanceof HTMLElement)) {
+    return;
+  }
+  const siblings = Array.from(canvas.querySelectorAll(".pasted-image"));
+  const index = Math.max(0, siblings.indexOf(image));
+  const offset = 28 * index;
+  if (!image.style.left) {
+    image.style.left = `${offset}px`;
+  }
+  if (!image.style.top) {
+    image.style.top = `${offset}px`;
+  }
+  if (!image.style.width) {
+    const canvasWidth = canvas.clientWidth || 480;
+    const baseWidth = Math.min(480, Math.max(220, canvasWidth * 0.45));
+    image.style.width = `${Math.round(baseWidth)}px`;
+  }
+  if (!image.style.height) {
+    const numericWidth = parseFloat(image.style.width);
+    const baseHeight = Number.isFinite(numericWidth)
+      ? Math.max(180, Math.round(numericWidth * 0.66))
+      : 220;
+    image.style.height = `${baseHeight}px`;
+  }
 }
 
 export function makeDraggable(element) {
@@ -1560,17 +1887,37 @@ function setupUnscramble(activityEl) {
   });
 }
 
+function syncGapInputWidth(input) {
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+  const answerLength = normaliseWhitespace(input.dataset.answer ?? "").length;
+  const valueLength = normaliseWhitespace(input.value ?? "").length;
+  const charUnits = Math.max(3, answerLength, valueLength);
+  input.style.width = `calc(${Math.min(charUnits, 32)}ch + 1.5rem)`;
+}
+
 function setupGapFill(activityEl) {
   const inputs = activityEl.querySelectorAll(".gap-input");
   const feedback = activityEl.querySelector(".feedback-msg");
   const checkBtn = activityEl.querySelector('[data-action="check"]');
   const resetBtn = activityEl.querySelector('[data-action="reset"]');
 
+  inputs.forEach((input) => {
+    syncGapInputWidth(input);
+    input.addEventListener("input", () => {
+      syncGapInputWidth(input);
+    });
+    input.addEventListener("change", () => {
+      syncGapInputWidth(input);
+    });
+  });
+
   checkBtn?.addEventListener("click", () => {
     let correctCount = 0;
     inputs.forEach((input) => {
-      const answer = input.dataset.answer?.trim().toLowerCase();
-      const value = input.value.trim().toLowerCase();
+      const answer = normaliseResponseValue(input.dataset.answer);
+      const value = normaliseResponseValue(input.value);
       if (answer && value && answer === value) {
         input.classList.add("correct");
         input.classList.remove("incorrect");
@@ -1593,6 +1940,7 @@ function setupGapFill(activityEl) {
     inputs.forEach((input) => {
       input.value = "";
       input.classList.remove("correct", "incorrect");
+      syncGapInputWidth(input);
     });
     if (feedback) {
       feedback.textContent = "";
@@ -2163,6 +2511,30 @@ export async function setupInteractiveDeck({
   slides = [];
   currentSlideIndex = 0;
   mindMapId = 0;
+
+  stageViewport
+    ?.querySelectorAll(".slide-jump-trigger, .slide-jump-panel")
+    .forEach((el) => {
+      if (el instanceof HTMLElement && el.classList.contains("slide-jump-panel")) {
+        const panel = el;
+        const outsideListener = panel.__deckOutsideListener;
+        const keyListener = panel.__deckKeyListener;
+        if (outsideListener) {
+          window.removeEventListener("pointerdown", outsideListener);
+          delete panel.__deckOutsideListener;
+        }
+        if (keyListener) {
+          window.removeEventListener("keydown", keyListener);
+          delete panel.__deckKeyListener;
+        }
+      }
+      el.remove();
+    });
+  slideNavigatorController =
+    initSlideNavigator({
+      stageViewport,
+      onSelectSlide: (index) => showSlide(index),
+    }) ?? null;
 
   try {
     await initialiseDeck();

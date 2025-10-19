@@ -505,7 +505,10 @@
                   <h3 class="icon-heading"><i class="fa-solid fa-headphones"></i><span>Listen first</span></h3>
                   <p>Play the clip to hear Maria and Ben greeting each other. Then rebuild each line of their conversation with the correct word tiles.</p>
                   <audio controls preload="none" aria-label="Coffee Corner conversation audio">
-                    <source src="/audio/coffee-corner-chat.mp3" type="audio/mpeg" />
+                    <source
+                      src="../../../A1/1/A1-1-1/download%20(8).wav"
+                      type="audio/wav"
+                    />
                     Your browser does not support the audio element.
                   </audio>
                 </div>
@@ -678,16 +681,34 @@
                     <p><strong>Ben:</strong> Yes, I did. I went with two friends. We walked for hours!</p>
                   </div>
                 </div>
-                <div class="card" style="display: grid; gap: 1rem;">
+                <div class="card" data-activity="gap-fill" style="display: grid; gap: 1rem;">
                   <h3 class="icon-heading"><i class="fa-solid fa-circle-question"></i><span>Comprehension</span></h3>
+                  <p style="margin: 0;">Type the missing words to check your understanding of the dialogue.</p>
                   <ol class="list-grid" style="padding-left: 1.5rem;">
-                    <li>When did Ben go to the park?</li>
-                    <li>What did he do there?</li>
-                    <li>Did he go alone?</li>
+                    <li>
+                      Ben went to the park on
+                      <input type="text" class="gap-input" data-answer="Saturday" aria-label="Gap 1" />
+                      .
+                    </li>
+                    <li>
+                      At the park, he
+                      <input type="text" class="gap-input" data-answer="walked for hours" aria-label="Gap 2" />
+                      .
+                    </li>
+                    <li>
+                      He went with
+                      <input type="text" class="gap-input" data-answer="two friends" aria-label="Gap 3" />
+                      .
+                    </li>
                   </ol>
                   <p style="margin: 0;">
                     Highlight the different question forms in the dialogue. Which ones ask for information and which ones confirm details?
                   </p>
+                  <div class="activity-actions">
+                    <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                    <button class="activity-btn" type="button" data-action="check">Check Answers</button>
+                  </div>
+                  <div class="feedback-msg" aria-live="polite"></div>
                 </div>
               </div>
             </div>
