@@ -834,6 +834,550 @@ function notifyCanvasContentChanged(canvas) {
   }
 }
 
+let moduleEditorModal = null;
+let moduleEditorFieldIdCounter = 0;
+let activityEditorListenerAttached = false;
+
+function getActivityTypeLabel(type) {
+  const labels = {
+    "gap-fill": "Gap Fill",
+    "matching-connect": "Matching Connections",
+  };
+  return labels[type] ?? "Activity";
+}
+
+function getNextModuleEditorFieldId() {
+  moduleEditorFieldIdCounter += 1;
+  return `module-editor-field-${moduleEditorFieldIdCounter}`;
+}
+
+function ensureModuleEditorModal() {
+  if (moduleEditorModal) {
+    return moduleEditorModal;
+  }
+
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "module-editor-overlay";
+  Object.assign(overlay.style, {
+    position: "fixed",
+    inset: "0",
+    background: "rgba(15, 23, 42, 0.62)",
+    display: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "2rem",
+    zIndex: "2147483647",
+  });
+
+  const dialog = document.createElement("div");
+  dialog.className = "module-editor-dialog";
+  dialog.setAttribute("role", "dialog");
+  dialog.setAttribute("aria-modal", "true");
+  dialog.tabIndex = -1;
+  Object.assign(dialog.style, {
+    background: "#FFFFFF",
+    borderRadius: "16px",
+    boxShadow: "0 24px 48px rgba(15, 23, 42, 0.2)",
+    width: "min(680px, 100%)",
+    maxHeight: "90vh",
+    display: "flex",
+    flexDirection: "column",
+    padding: "1.5rem",
+    gap: "1rem",
+  });
+
+  const header = document.createElement("div");
+  Object.assign(header.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "1rem",
+  });
+
+  const title = document.createElement("h2");
+  title.className = "module-editor-title";
+  Object.assign(title.style, {
+    fontSize: "1.25rem",
+    margin: 0,
+    fontWeight: "600",
+    color: "#1F2937",
+  });
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label", "Close editor");
+  closeBtn.innerHTML = "&times;";
+  Object.assign(closeBtn.style, {
+    border: "none",
+    background: "none",
+    color: "#6B7280",
+    fontSize: "1.75rem",
+    lineHeight: "1",
+    cursor: "pointer",
+  });
+
+  header.append(title, closeBtn);
+
+  const form = document.createElement("form");
+  form.noValidate = true;
+  Object.assign(form.style, {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1.5rem",
+    overflow: "hidden",
+    flexGrow: "1",
+  });
+
+  const body = document.createElement("div");
+  body.className = "module-editor-body";
+  Object.assign(body.style, {
+    display: "grid",
+    gap: "1rem",
+    overflowY: "auto",
+  });
+
+  const footer = document.createElement("div");
+  Object.assign(footer.style, {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "0.75rem",
+    paddingTop: "0.5rem",
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "activity-btn secondary";
+  cancelBtn.textContent = "Cancel";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "submit";
+  saveBtn.className = "activity-btn";
+  saveBtn.textContent = "Save";
+
+  footer.append(cancelBtn, saveBtn);
+  form.append(body, footer);
+  dialog.append(header, form);
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+
+  const state = {
+    overlay,
+    dialog,
+    form,
+    body,
+    title,
+    saveBtn,
+    cancelBtn,
+    closeBtn,
+    isOpen: false,
+    currentSubmitHandler: null,
+    close() {
+      if (!state.isOpen) {
+        return;
+      }
+      state.isOpen = false;
+      overlay.style.display = "none";
+      overlay.setAttribute("aria-hidden", "true");
+      state.body.innerHTML = "";
+      if (state.currentSubmitHandler) {
+        state.form.removeEventListener("submit", state.currentSubmitHandler);
+        state.currentSubmitHandler = null;
+      }
+      state.form.reset();
+      state.activeActivity = null;
+    },
+  };
+
+  function handleOverlayClick(event) {
+    if (event.target === overlay) {
+      state.close();
+    }
+  }
+
+  overlay.addEventListener("click", handleOverlayClick);
+  cancelBtn.addEventListener("click", () => state.close());
+  closeBtn.addEventListener("click", () => state.close());
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      state.close();
+    }
+  });
+
+  moduleEditorModal = state;
+  return moduleEditorModal;
+}
+
+function createModuleEditorField({
+  label,
+  name,
+  value = "",
+  multiline = false,
+  description = "",
+  rows = 3,
+}) {
+  if (!name) {
+    return null;
+  }
+  const wrapper = document.createElement("div");
+  Object.assign(wrapper.style, {
+    display: "grid",
+    gap: "0.35rem",
+  });
+
+  const fieldId = getNextModuleEditorFieldId();
+  const labelEl = document.createElement("label");
+  labelEl.setAttribute("for", fieldId);
+  labelEl.textContent = label ?? name;
+  Object.assign(labelEl.style, {
+    fontWeight: "600",
+    fontSize: "0.95rem",
+    color: "#111827",
+  });
+
+  let input;
+  if (multiline) {
+    input = document.createElement("textarea");
+    input.rows = rows;
+  } else {
+    input = document.createElement("input");
+    input.type = "text";
+  }
+  input.id = fieldId;
+  input.name = name;
+  input.value = typeof value === "string" ? value : "";
+  Object.assign(input.style, {
+    width: "100%",
+    padding: "0.6rem 0.75rem",
+    borderRadius: "0.5rem",
+    border: "1px solid rgba(100, 116, 139, 0.4)",
+    fontSize: "0.95rem",
+    lineHeight: "1.4",
+    resize: multiline ? "vertical" : "none",
+  });
+
+  wrapper.append(labelEl, input);
+
+  if (description) {
+    const hint = document.createElement("p");
+    hint.textContent = description;
+    Object.assign(hint.style, {
+      margin: 0,
+      fontSize: "0.85rem",
+      color: "#4B5563",
+    });
+    wrapper.appendChild(hint);
+  }
+
+  return wrapper;
+}
+
+function updateDataAttribute(element, attribute, value) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  const trimmed = typeof value === "string" ? value.trim() : "";
+  if (trimmed) {
+    element.setAttribute(attribute, trimmed);
+  } else {
+    element.removeAttribute(attribute);
+  }
+}
+
+function buildGapFillEditorFields(activityEl) {
+  const fields = [];
+  const inputs = Array.from(activityEl.querySelectorAll(".gap-input"));
+  inputs.forEach((input, index) => {
+    const label = `Gap ${index + 1} answer`;
+    fields.push({
+      label,
+      name: `gap-${index}-answer`,
+      value: input.dataset.answer ?? "",
+      multiline: false,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".gap-input"));
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-answer", newValue);
+        }
+      },
+    });
+  });
+  return { fields, type: "gap-fill" };
+}
+
+function buildMatchingConnectEditorFields(activityEl) {
+  const fields = [];
+  const questions = Array.from(
+    activityEl.querySelectorAll(".match-question"),
+  );
+  const answers = Array.from(activityEl.querySelectorAll(".match-answer"));
+
+  questions.forEach((question, index) => {
+    const text = question.querySelector(".match-text")?.textContent?.trim() ?? "";
+    const idValue = question.dataset.questionId ?? "";
+    const expected = question.dataset.answer ?? "";
+
+    fields.push({
+      label: `Question ${index + 1} text`,
+      name: `question-${index}-text`,
+      value: text,
+      multiline: true,
+      rows: 2,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        const textEl = target?.querySelector?.(".match-text");
+        if (textEl) {
+          textEl.textContent = typeof newValue === "string" ? newValue : "";
+        }
+      },
+    });
+
+    fields.push({
+      label: `Question ${index + 1} expected answer`,
+      name: `question-${index}-answer`,
+      value: expected,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-answer", newValue);
+        }
+      },
+    });
+
+    fields.push({
+      label: `Question ${index + 1} ID`,
+      name: `question-${index}-id`,
+      value: idValue,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-question-id", newValue);
+        }
+      },
+    });
+  });
+
+  answers.forEach((answer, index) => {
+    const text = answer.querySelector(".match-text")?.textContent?.trim() ?? "";
+    const value = answer.dataset.value ?? "";
+
+    fields.push({
+      label: `Answer ${index + 1} text`,
+      name: `answer-${index}-text`,
+      value: text,
+      multiline: true,
+      rows: 2,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".match-answer"));
+        const target = clones[index];
+        const textEl = target?.querySelector?.(".match-text");
+        if (textEl) {
+          textEl.textContent = typeof newValue === "string" ? newValue : "";
+        }
+      },
+    });
+
+    fields.push({
+      label: `Answer ${index + 1} value`,
+      name: `answer-${index}-value`,
+      value,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".match-answer"));
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-value", newValue);
+        }
+      },
+    });
+  });
+
+  return { fields, type: "matching-connect" };
+}
+
+function buildActivityEditorSchema(activityEl) {
+  const type = activityEl?.dataset?.activity ?? "";
+  if (type === "gap-fill") {
+    return buildGapFillEditorFields(activityEl);
+  }
+  if (type === "matching-connect") {
+    return buildMatchingConnectEditorFields(activityEl);
+  }
+  if (activityEl?.querySelector?.(".gap-input")) {
+    return buildGapFillEditorFields(activityEl);
+  }
+  if (activityEl?.querySelector?.(".match-question")) {
+    return buildMatchingConnectEditorFields(activityEl);
+  }
+  return { fields: [], type };
+}
+
+function resetActivityRuntimeState(activityEl, type) {
+  if (!(activityEl instanceof HTMLElement)) {
+    return;
+  }
+  const effectiveType = type || activityEl.dataset.activity;
+  if (effectiveType === "gap-fill") {
+    activityEl.querySelectorAll(".gap-input").forEach((input) => {
+      if (input instanceof HTMLInputElement) {
+        input.value = "";
+        input.classList.remove("correct", "incorrect");
+      }
+    });
+    const feedback = activityEl.querySelector(".feedback-msg");
+    if (feedback instanceof HTMLElement) {
+      feedback.textContent = "";
+      feedback.className = "feedback-msg";
+    }
+    return;
+  }
+  if (effectiveType === "matching-connect") {
+    activityEl.querySelectorAll(".match-question").forEach((question) => {
+      if (question instanceof HTMLElement) {
+        question.classList.remove("paired", "incorrect", "active");
+        question.dataset.selected = "";
+        const label = question.querySelector(".match-assignment");
+        if (label) {
+          label.textContent = "";
+        }
+      }
+    });
+    activityEl.querySelectorAll(".match-answer").forEach((answer) => {
+      if (answer instanceof HTMLElement) {
+        answer.classList.remove("paired", "incorrect", "active");
+        answer.dataset.selected = "";
+      }
+    });
+    const feedback = activityEl.querySelector(".feedback-msg");
+    if (feedback instanceof HTMLElement) {
+      feedback.textContent = "";
+      feedback.className = "feedback-msg";
+    }
+  }
+}
+
+function openModuleEditor(activityElement) {
+  if (!(activityElement instanceof HTMLElement)) {
+    return;
+  }
+  const modal = ensureModuleEditorModal();
+  if (!modal) {
+    return;
+  }
+
+  const { fields, type: detectedType } = buildActivityEditorSchema(activityElement);
+  const typeLabel = getActivityTypeLabel(detectedType || activityElement.dataset.activity || "");
+
+  modal.title.textContent = `Edit ${typeLabel}`;
+  modal.body.innerHTML = "";
+  modal.activeActivity = activityElement;
+
+  const hasFields = Array.isArray(fields) && fields.length > 0;
+  modal.saveBtn.disabled = !hasFields;
+
+  if (hasFields) {
+    fields.forEach((fieldDef) => {
+      const field = createModuleEditorField(fieldDef);
+      if (field) {
+        modal.body.appendChild(field);
+      }
+    });
+  } else {
+    const message = document.createElement("p");
+    message.textContent =
+      "Editing isn't available for this activity yet. Try selecting a gap-fill or matching connect activity.";
+    Object.assign(message.style, {
+      margin: 0,
+      fontSize: "0.95rem",
+      color: "#4B5563",
+    });
+    modal.body.appendChild(message);
+  }
+
+  if (modal.currentSubmitHandler) {
+    modal.form.removeEventListener("submit", modal.currentSubmitHandler);
+    modal.currentSubmitHandler = null;
+  }
+
+  if (hasFields) {
+    const submitHandler = (event) => {
+      event.preventDefault();
+      const formData = new FormData(modal.form);
+      const clone = activityElement.cloneNode(true);
+
+      fields.forEach((field) => {
+        if (typeof field.apply !== "function") {
+          return;
+        }
+        const rawValue = formData.get(field.name);
+        const value = typeof rawValue === "string" ? rawValue : "";
+        try {
+          field.apply(clone, value);
+        } catch (error) {
+          console.warn("Failed to apply editor field update", error);
+        }
+      });
+
+      resetActivityRuntimeState(clone, detectedType);
+      activityElement.replaceWith(clone);
+      applyActivitySetup(clone);
+      const canvas = clone.closest?.(".blank-canvas");
+      if (canvas instanceof HTMLElement) {
+        notifyCanvasContentChanged(canvas);
+      }
+      modal.close();
+    };
+
+    modal.currentSubmitHandler = submitHandler;
+    modal.form.addEventListener("submit", submitHandler);
+  }
+
+  modal.overlay.style.display = "flex";
+  modal.overlay.setAttribute("aria-hidden", "false");
+  modal.isOpen = true;
+  requestAnimationFrame(() => {
+    modal.dialog.focus();
+  });
+}
+
+function ensureActivityEditorListener() {
+  if (activityEditorListenerAttached || typeof document === "undefined") {
+    return;
+  }
+  const handler = (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+    const modal = moduleEditorModal;
+    if (modal?.isOpen && modal.overlay.contains(event.target)) {
+      return;
+    }
+    const element =
+      event.target instanceof Element
+        ? event.target.closest("[data-activity]")
+        : null;
+    if (!element) {
+      return;
+    }
+    openModuleEditor(element);
+  };
+  document.addEventListener("dblclick", handler);
+  activityEditorListenerAttached = true;
+}
+
 function positionDeckActivity(activity, canvas) {
   if (!(activity instanceof HTMLElement) || !(canvas instanceof HTMLElement)) {
     return;
@@ -2900,6 +3444,8 @@ function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="stress-mark"]')
     .forEach((el) => setupStressMark(el));
+
+  ensureActivityEditorListener();
 }
 
 async function initialiseDeck() {
