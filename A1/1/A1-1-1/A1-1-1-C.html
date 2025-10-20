@@ -407,6 +407,29 @@
             <button id="highlight-btn" class="toolbar-btn ghost" type="button">Apply</button>
             <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">Clear</button>
           </div>
+          <div class="deck-editor-controls" role="group" aria-label="Add content">
+            <button id="add-textbox-btn" class="toolbar-btn ghost" type="button">
+              <i class="fa-solid fa-pen-to-square"></i>
+              Add Textbox
+            </button>
+            <button id="add-image-btn" class="toolbar-btn ghost" type="button">
+              <i class="fa-solid fa-image"></i>
+              Add Image
+            </button>
+            <label class="sr-only" for="add-activity-select">Add activity template</label>
+            <select id="add-activity-select" class="toolbar-select">
+              <option value="">Add Activity...</option>
+              <option value="Linking">Linking</option>
+              <option value="dropdown.html">dropdown.html</option>
+              <option value="gapfill">gapfill</option>
+              <option value="grouping">grouping</option>
+              <option value="multiple-choice-grid.html">multiple-choice-grid.html</option>
+              <option value="multiple-choice.html">multiple-choice.html</option>
+              <option value="pelmanism.html">pelmanism.html</option>
+              <option value="ranking.html">ranking.html</option>
+            </select>
+            <input id="add-image-input" class="sr-only" type="file" accept="image/*" />
+          </div>
           <button id="add-slide-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-plus" aria-hidden="true"></i>
             Add Blank Slide

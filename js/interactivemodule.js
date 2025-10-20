@@ -40,6 +40,12 @@ let highlightBtn;
 let highlightColorSelect;
 let removeHighlightBtn;
 let slideNavigatorController;
+let addTextboxBtn;
+let addImageBtn;
+let addImageInput;
+let addActivitySelect;
+
+const TEMPLATE_BASE_URL = "https://najma-collective.github.io/Noor-Community-/Templates/";
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -206,6 +212,22 @@ export async function hydrateRemoteImages(root = document) {
     }),
   );
 }
+
+const readFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    if (!(file instanceof Blob)) {
+      reject(new Error("Invalid image data"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      resolve(typeof reader.result === "string" ? reader.result : "");
+    });
+    reader.addEventListener("error", () => {
+      reject(reader.error ?? new Error("Failed to read image data"));
+    });
+    reader.readAsDataURL(file);
+  });
 
 let slides = [];
 let currentSlideIndex = 0;
@@ -422,22 +444,6 @@ export function attachBlankSlideEvents(slide) {
     .querySelectorAll(".pasted-image")
     .forEach((image) => initialisePastedImage(image, { onRemove: updateHintForCanvas }));
 
-  const readFileAsDataUrl = (file) =>
-    new Promise((resolve, reject) => {
-      if (!(file instanceof Blob)) {
-        reject(new Error("Invalid clipboard data"));
-        return;
-      }
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        resolve(typeof reader.result === "string" ? reader.result : "");
-      });
-      reader.addEventListener("error", () => {
-        reject(reader.error ?? new Error("Failed to read clipboard image"));
-      });
-      reader.readAsDataURL(file);
-    });
-
   async function handleCanvasPaste(event) {
     const clipboardData = event.clipboardData;
     if (!clipboardData) {
@@ -494,6 +500,7 @@ export function attachBlankSlideEvents(slide) {
     }
   });
 
+  canvas.__deckUpdateHintForCanvas = updateHintForCanvas;
   updateHintForCanvas();
 }
 
@@ -786,6 +793,151 @@ export function positionPastedImage(image, canvas) {
       : 220;
     image.style.height = `${baseHeight}px`;
   }
+}
+
+function getActiveSlideElement() {
+  if (!Array.isArray(slides) || !slides.length) {
+    return null;
+  }
+  const index = Math.min(Math.max(0, currentSlideIndex), slides.length - 1);
+  const slide = slides[index];
+  return slide instanceof HTMLElement ? slide : null;
+}
+
+function getActiveSlideCanvas(slide = getActiveSlideElement()) {
+  if (!(slide instanceof HTMLElement)) {
+    return null;
+  }
+  const blankCanvas = slide.querySelector(".blank-canvas");
+  if (blankCanvas instanceof HTMLElement) {
+    return blankCanvas;
+  }
+  const inner = slide.querySelector(".slide-inner");
+  return inner instanceof HTMLElement ? inner : null;
+}
+
+function getCanvasHintUpdater(canvas) {
+  if (canvas && typeof canvas.__deckUpdateHintForCanvas === "function") {
+    return canvas.__deckUpdateHintForCanvas;
+  }
+  return null;
+}
+
+function notifyCanvasContentChanged(canvas) {
+  const updateHint = getCanvasHintUpdater(canvas);
+  if (typeof updateHint === "function") {
+    try {
+      updateHint();
+    } catch (error) {
+      console.warn("Failed to refresh blank slide hint", error);
+    }
+  }
+}
+
+function positionDeckActivity(activity, canvas) {
+  if (!(activity instanceof HTMLElement) || !(canvas instanceof HTMLElement)) {
+    return;
+  }
+  const siblings = Array.from(canvas.querySelectorAll(".deck-activity"));
+  const index = Math.max(0, siblings.indexOf(activity));
+  const offset = 28 * index;
+  if (!activity.style.left) {
+    activity.style.left = `${offset}px`;
+  }
+  if (!activity.style.top) {
+    activity.style.top = `${offset}px`;
+  }
+  if (!activity.style.width) {
+    const canvasWidth = canvas.clientWidth || 640;
+    const baseWidth = Math.min(Math.max(320, Math.round(canvasWidth * 0.65)), canvasWidth);
+    activity.style.width = `${baseWidth}px`;
+  }
+  if (!activity.style.height) {
+    const numericWidth = parseFloat(activity.style.width);
+    const baseHeight = Number.isFinite(numericWidth)
+      ? Math.max(260, Math.round(numericWidth * 0.62))
+      : 320;
+    activity.style.height = `${baseHeight}px`;
+  }
+}
+
+function createDeckActivityWrapper({
+  content,
+  label,
+  onRemove,
+  templateValue,
+  icon = "fa-puzzle-piece",
+} = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "deck-activity";
+  if (typeof templateValue === "string" && templateValue) {
+    wrapper.dataset.template = templateValue;
+  }
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "textbox-remove deck-activity-remove";
+  removeBtn.setAttribute("aria-label", "Remove activity");
+  removeBtn.innerHTML =
+    '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+
+  const handle = document.createElement("div");
+  handle.className = "textbox-handle";
+  handle.dataset.dragHandle = "";
+
+  const title = document.createElement("span");
+  title.className = "textbox-title";
+  const iconEl = document.createElement("i");
+  iconEl.className = `fa-solid ${icon}`;
+  iconEl.setAttribute("aria-hidden", "true");
+  const textNode = document.createElement("span");
+  textNode.textContent = ` ${
+    typeof label === "string" && label.trim() ? label.trim() : "Activity"
+  }`;
+  title.append(iconEl, textNode);
+  handle.appendChild(title);
+
+  const body = document.createElement("div");
+  body.className = "deck-activity-body";
+  if (content instanceof HTMLElement || content instanceof DocumentFragment) {
+    body.appendChild(content);
+  } else if (content) {
+    body.append(content);
+  }
+
+  const resizer = document.createElement("button");
+  resizer.type = "button";
+  resizer.className = "deck-activity-resizer resize-handle";
+  resizer.setAttribute("aria-label", "Resize activity");
+  resizer.innerHTML =
+    '<i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>';
+
+  wrapper.append(removeBtn, handle, body, resizer);
+
+  const activityRoot = body.querySelector("[data-activity]");
+  if (activityRoot instanceof HTMLElement && activityRoot.dataset.activity) {
+    wrapper.dataset.activity = activityRoot.dataset.activity;
+  }
+
+  removeBtn.addEventListener("click", () => {
+    wrapper.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
+  });
+
+  resizer.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
+  });
+
+  makeDraggable(wrapper);
+  makeResizable(wrapper, {
+    handleSelector: ".deck-activity-resizer",
+    minWidth: 280,
+    minHeight: 220,
+  });
+
+  return wrapper;
 }
 
 export function makeDraggable(element) {
@@ -2518,6 +2670,205 @@ function setupStressMark(activityEl) {
   });
 }
 
+const ACTIVITY_SETUP_HANDLERS = {
+  unscramble: setupUnscramble,
+  "gap-fill": setupGapFill,
+  "table-completion": setupClickPlacement,
+  "token-drop": setupClickPlacement,
+  matching: setupMatching,
+  "matching-connect": setupMatchingConnect,
+  "mc-grammar": setupMcGrammar,
+  "mc-grammar-radio": setupMcGrammarRadio,
+  categorization: setupCategorization,
+  "stress-mark": setupStressMark,
+};
+
+function getActivitySetupHandler(type) {
+  if (typeof type !== "string" || !type) {
+    return null;
+  }
+  return ACTIVITY_SETUP_HANDLERS[type] ?? null;
+}
+
+function applyActivitySetup(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+  const targets = new Set();
+  if (root.dataset.activity) {
+    targets.add(root);
+  }
+  const nestedActivities =
+    typeof root.querySelectorAll === "function"
+      ? Array.from(root.querySelectorAll("[data-activity]"))
+      : [];
+  nestedActivities.forEach((el) => {
+    if (el instanceof HTMLElement) {
+      targets.add(el);
+    }
+  });
+
+  targets.forEach((target) => {
+    const handler = getActivitySetupHandler(target.dataset.activity);
+    if (typeof handler === "function") {
+      handler(target);
+    }
+  });
+}
+
+async function fetchActivityTemplateContent(templateValue) {
+  const value = typeof templateValue === "string" ? templateValue.trim() : "";
+  if (!value) {
+    throw new Error("Template value is required");
+  }
+  if (typeof fetch !== "function") {
+    throw new Error("Fetch API is unavailable");
+  }
+  let templateUrl;
+  try {
+    templateUrl = new URL(value, TEMPLATE_BASE_URL).toString();
+  } catch (error) {
+    throw new Error(`Invalid template path: ${value}`, { cause: error });
+  }
+
+  const response = await fetch(templateUrl);
+  if (!response.ok) {
+    throw new Error(`Template request failed with status ${response.status}`);
+  }
+  const html = await response.text();
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+  let activityRoot =
+    temp.querySelector("[data-activity]") ??
+    temp.querySelector("main") ??
+    temp.querySelector("body") ??
+    temp.querySelector("section") ??
+    temp.firstElementChild;
+
+  if (activityRoot instanceof HTMLHtmlElement) {
+    const bodyCandidate = activityRoot.querySelector("body");
+    activityRoot = bodyCandidate || activityRoot.firstElementChild;
+  }
+  if (activityRoot instanceof HTMLBodyElement && activityRoot.children.length === 1) {
+    activityRoot = activityRoot.firstElementChild;
+  }
+
+  if (!(activityRoot instanceof HTMLElement)) {
+    throw new Error("Template does not include an activity element");
+  }
+
+  const clone = activityRoot.cloneNode(true);
+  clone.querySelectorAll("script").forEach((script) => script.remove());
+  return clone;
+}
+
+function handleAddTextboxClick() {
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add a textbox.");
+    return;
+  }
+  const textbox = createTextbox({
+    onRemove: () => notifyCanvasContentChanged(canvas),
+  });
+  canvas.appendChild(textbox);
+  positionTextbox(textbox, canvas);
+  notifyCanvasContentChanged(canvas);
+  textbox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function handleAddImageClick() {
+  addImageInput?.click();
+}
+
+async function handleImageInputChange(event) {
+  const input = event.currentTarget;
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+  const files = Array.from(input.files ?? []);
+  if (!files.length) {
+    return;
+  }
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add images.");
+    input.value = "";
+    return;
+  }
+
+  for (const file of files) {
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      if (!dataUrl) {
+        continue;
+      }
+      const pastedImage = createPastedImage({
+        src: dataUrl,
+        label: file?.name,
+        onRemove: () => notifyCanvasContentChanged(canvas),
+      });
+      canvas.appendChild(pastedImage);
+      positionPastedImage(pastedImage, canvas);
+      pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (error) {
+      console.warn("Unable to read selected image", error);
+    }
+  }
+
+  notifyCanvasContentChanged(canvas);
+  input.value = "";
+}
+
+async function handleAddActivityChange(event) {
+  const select = event.currentTarget;
+  if (!(select instanceof HTMLSelectElement)) {
+    return;
+  }
+  const value = select.value;
+  if (!value) {
+    return;
+  }
+
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add an activity.");
+    select.value = "";
+    return;
+  }
+
+  const selectedOption = select.options[select.selectedIndex];
+  const label = selectedOption?.textContent?.trim() || value;
+
+  select.disabled = true;
+  try {
+    const activityContent = await fetchActivityTemplateContent(value);
+    const activityWrapper = createDeckActivityWrapper({
+      content: activityContent,
+      label,
+      templateValue: value,
+      onRemove: () => notifyCanvasContentChanged(canvas),
+    });
+    canvas.appendChild(activityWrapper);
+    positionDeckActivity(activityWrapper, canvas);
+    applyActivitySetup(activityWrapper);
+    await hydrateRemoteImages(activityWrapper).catch((error) => {
+      console.warn("Activity image hydration failed", error);
+    });
+    notifyCanvasContentChanged(canvas);
+    activityWrapper.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    console.error(`Unable to add activity template "${value}"`, error);
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+      window.alert("Sorry, we couldn't add that activity. Please try again.");
+    }
+  } finally {
+    select.disabled = false;
+    select.value = "";
+  }
+}
+
 function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="unscramble"]')
@@ -2582,6 +2933,30 @@ async function initialiseDeck() {
   removeHighlightBtn?.addEventListener("click", () => {
     removeHighlight();
   });
+  if (addTextboxBtn && !addTextboxBtn.__deckControlInitialised) {
+    addTextboxBtn.addEventListener("click", handleAddTextboxClick);
+    addTextboxBtn.__deckControlInitialised = true;
+  }
+  if (addImageBtn && !addImageBtn.__deckControlInitialised) {
+    addImageBtn.addEventListener("click", handleAddImageClick);
+    addImageBtn.__deckControlInitialised = true;
+  }
+  if (addImageInput && !addImageInput.__deckControlInitialised) {
+    addImageInput.addEventListener("change", (event) => {
+      handleImageInputChange(event).catch((error) => {
+        console.warn("Image upload failed", error);
+      });
+    });
+    addImageInput.__deckControlInitialised = true;
+  }
+  if (addActivitySelect && !addActivitySelect.__deckControlInitialised) {
+    addActivitySelect.addEventListener("change", (event) => {
+      handleAddActivityChange(event).catch((error) => {
+        console.error("Activity insertion failed", error);
+      });
+    });
+    addActivitySelect.__deckControlInitialised = true;
+  }
   document
     .querySelectorAll('.slide-stage:not([data-type="blank"])')
     .forEach((slide) => makeSlideEditable(slide));
@@ -2603,6 +2978,10 @@ export async function setupInteractiveDeck({
   highlightButtonSelector = "#highlight-btn",
   highlightColorSelectSelector = "#highlight-color",
   removeHighlightButtonSelector = "#remove-highlight-btn",
+  addTextboxButtonSelector = "#add-textbox-btn",
+  addImageButtonSelector = "#add-image-btn",
+  addImageInputSelector = "#add-image-input",
+  addActivitySelectSelector = "#add-activity-select",
 } = {}) {
   const rootElement =
     typeof root === "string" ? document.querySelector(root) : root ?? document;
@@ -2640,6 +3019,18 @@ export async function setupInteractiveDeck({
   removeHighlightBtn =
     rootElement?.querySelector(removeHighlightButtonSelector) ??
     document.querySelector(removeHighlightButtonSelector);
+  addTextboxBtn =
+    rootElement?.querySelector(addTextboxButtonSelector) ??
+    document.querySelector(addTextboxButtonSelector);
+  addImageBtn =
+    rootElement?.querySelector(addImageButtonSelector) ??
+    document.querySelector(addImageButtonSelector);
+  addImageInput =
+    rootElement?.querySelector(addImageInputSelector) ??
+    document.querySelector(addImageInputSelector);
+  addActivitySelect =
+    rootElement?.querySelector(addActivitySelectSelector) ??
+    document.querySelector(addActivitySelectSelector);
 
   slides = [];
   currentSlideIndex = 0;
