@@ -512,7 +512,7 @@ export function createTextbox({ onRemove } = {}) {
     <button type="button" class="textbox-remove" aria-label="Remove textbox">
 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle">
+    <div class="textbox-handle" data-drag-handle>
 <span class="textbox-title">
   <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
   Textbox
@@ -690,7 +690,7 @@ export function createPastedImage({ src, label, onRemove } = {}) {
     <button type="button" class="textbox-remove pasted-image-remove" aria-label="Remove image">
       <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle pasted-image-handle">
+    <div class="textbox-handle pasted-image-handle" data-drag-handle>
       <span class="textbox-title">
         <i class="fa-solid fa-image" aria-hidden="true"></i>
         Image
@@ -795,7 +795,9 @@ export function makeDraggable(element) {
   }
   element.__deckDraggableInitialised = true;
 
-  const handle = element.querySelector(".textbox-handle") ?? element;
+  const dragHandleCandidate = element.querySelector("[data-drag-handle]");
+  const handle =
+    dragHandleCandidate instanceof HTMLElement ? dragHandleCandidate : element;
   let pointerId = null;
   let offsetX = 0;
   let offsetY = 0;
@@ -917,6 +919,9 @@ function ensureEditableControls(wrapper, target) {
     } else {
       wrapper.insertBefore(dragHandle, wrapper.firstChild);
     }
+  }
+  if (dragHandle instanceof HTMLElement) {
+    dragHandle.dataset.dragHandle = "";
   }
 
   let resizeHandle = wrapper.querySelector(":scope > .resize-handle");
