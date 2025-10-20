@@ -849,6 +849,131 @@ export function makeDraggable(element) {
   element.addEventListener("pointercancel", clearPointerState);
 }
 
+function createDragHandle() {
+  const handle = document.createElement("div");
+  handle.className = "textbox-handle";
+  handle.dataset.dragHandle = "";
+  handle.innerHTML = `
+    <i class="fa-solid fa-up-down-left-right" aria-hidden="true"></i>
+    <span class="sr-only">Move text</span>
+  `;
+  handle.setAttribute("contenteditable", "false");
+  return handle;
+}
+
+function createResizeHandle() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "pasted-image-resizer resize-handle";
+  button.innerHTML = `
+    <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>
+    <span class="sr-only">Resize text</span>
+  `;
+  button.setAttribute("contenteditable", "false");
+  return button;
+}
+
+function ensureEditableWrapper(element) {
+  if (!(element instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (element.closest(".editable-wrapper")) {
+    const wrapper = element.closest(".editable-wrapper");
+    if (wrapper instanceof HTMLElement) {
+      return wrapper;
+    }
+  }
+
+  const parent = element.parentElement;
+  if (!parent) {
+    return null;
+  }
+
+  if (/^(UL|OL)$/i.test(parent.tagName)) {
+    element.classList.add("editable-wrapper");
+    return element;
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "editable-wrapper";
+  parent.insertBefore(wrapper, element);
+  wrapper.appendChild(element);
+  return wrapper;
+}
+
+function ensureEditableControls(wrapper, target) {
+  if (!(wrapper instanceof HTMLElement)) {
+    return;
+  }
+
+  wrapper.classList.add("editable-wrapper");
+
+  let dragHandle = wrapper.querySelector(":scope > .textbox-handle");
+  if (!(dragHandle instanceof HTMLElement)) {
+    dragHandle = createDragHandle();
+    if (target instanceof HTMLElement && target.parentElement === wrapper) {
+      wrapper.insertBefore(dragHandle, target);
+    } else {
+      wrapper.insertBefore(dragHandle, wrapper.firstChild);
+    }
+  }
+
+  let resizeHandle = wrapper.querySelector(":scope > .resize-handle");
+  if (!(resizeHandle instanceof HTMLElement)) {
+    resizeHandle = createResizeHandle();
+    wrapper.appendChild(resizeHandle);
+  }
+
+  makeDraggable(wrapper);
+  makeResizable(wrapper);
+}
+
+function makeSlideEditable(slideElement) {
+  if (!(slideElement instanceof HTMLElement)) {
+    return;
+  }
+
+  const textSelectors = [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "li",
+    ".deck-subtitle",
+  ].join(", ");
+
+  const textNodes = Array.from(slideElement.querySelectorAll(textSelectors));
+  textNodes.forEach((node) => {
+    if (!(node instanceof HTMLElement)) {
+      return;
+    }
+    if (node.dataset.deckEditableInitialised === "true") {
+      return;
+    }
+    node.dataset.deckEditableInitialised = "true";
+    node.contentEditable = "true";
+    node.classList.add("editable-text");
+    const wrapper = ensureEditableWrapper(node);
+    ensureEditableControls(wrapper, node);
+  });
+
+  const activityNodes = Array.from(
+    slideElement.querySelectorAll("[data-activity]"),
+  );
+
+  activityNodes.forEach((activity) => {
+    if (!(activity instanceof HTMLElement)) {
+      return;
+    }
+    const wrapper = ensureEditableWrapper(activity);
+    ensureEditableControls(wrapper ?? activity, activity);
+  });
+}
+
 export function createMindMap(onRemove) {
   const container = document.createElement("section");
   container.className = "mindmap";
@@ -2452,6 +2577,9 @@ async function initialiseDeck() {
   removeHighlightBtn?.addEventListener("click", () => {
     removeHighlight();
   });
+  document
+    .querySelectorAll('.slide-stage:not([data-type="blank"])')
+    .forEach((slide) => makeSlideEditable(slide));
   recalibrateMindMapCounter();
 }
 
