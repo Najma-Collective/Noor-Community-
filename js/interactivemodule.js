@@ -177,7 +177,7 @@ async function hydrateRemoteImage(img) {
   return hydrationPromise;
 }
 
-async function hydrateRemoteImages(root = document) {
+export async function hydrateRemoteImages(root = document) {
   if (!root) {
     return;
   }
