@@ -306,6 +306,16 @@ function setupNavigation() {
   });
 }
 
+function ensureLegacyNavigationBridge() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (typeof window.navigateSlides !== "function") {
+    window.navigateSlides = () => {};
+  }
+}
+
 export function addBlankSlide() {
   if (!stageViewport) return;
   const newSlide = createBlankSlide();
@@ -2434,6 +2444,7 @@ async function initialiseDeck() {
     showSlide(0);
   }
   setupNavigation();
+  ensureLegacyNavigationBridge();
   updateCounter();
   initialiseActivities();
   document
