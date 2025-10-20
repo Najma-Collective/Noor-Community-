@@ -39,6 +39,24 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       align-items: start;
     }
+    .demo-layout {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      align-items: stretch;
+    }
+    .embedded-demo {
+      width: 100%;
+      min-height: clamp(240px, 40vw, 460px);
+      border: 0;
+      border-radius: 1rem;
+      box-shadow: var(--shadow-lg, 0 1rem 2rem rgba(22, 34, 27, 0.12));
+      background: var(--surface-100, #ffffff);
+    }
+    .demo-note {
+      font-size: var(--step--1);
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -147,22 +165,22 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-pencil-ruler"></i> Interactive Editor</span>
             <h2>Design slides with a drag-and-drop playground</h2>
-            <div class="feature-grid">
+            <div class="demo-layout">
+              <iframe
+                class="embedded-demo"
+                src="../interactive-editor/index.html"
+                title="Interactive editor live demo"
+                loading="lazy"
+              ></iframe>
               <div class="card">
-                <h3><i class="fa-solid fa-font"></i> Text, image, module blocks</h3>
-                <p>Add rich text, remote imagery, or prebuilt module shells straight from the editor toolbar.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-arrows-up-down-left-right"></i> Resizable canvas blocks</h3>
-                <p>Drag to move, stretch from handles to resize, or double-click the canvas to insert a fresh text card.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-floppy-disk"></i> Autosave and restore</h3>
-                <p>Every interaction is persisted to browser storage so your layout returns exactly as you left it.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Contextual block actions</h3>
-                <p>Rename, duplicate, or remove blocks with inline controls that surface when you hover each component.</p>
+                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> What to try</h3>
+                <ul>
+                  <li>Add text, image, and module blocks from the live toolbar.</li>
+                  <li>Drag blocks around the canvas and resize them with grab handles.</li>
+                  <li>Watch autosave restore your layout after refreshing the iframe.</li>
+                  <li>Hover blocks to reveal contextual actions for duplicating or deleting content.</li>
+                </ul>
+                <p class="demo-note">The embedded editor mirrors <code>interactive-editor/index.html</code>, giving facilitators a hands-on feel for the authoring playground.</p>
               </div>
             </div>
           </div>
@@ -191,22 +209,22 @@
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-sitemap"></i> Authoring Workspace</span>
             <h2>Build production-ready decks with guided workflows</h2>
-            <div class="feature-grid">
+            <div class="demo-layout">
+              <iframe
+                class="embedded-demo"
+                src="../authoring-workspace/index.html"
+                title="Authoring workspace live demo"
+                loading="lazy"
+              ></iframe>
               <div class="card">
-                <h3><i class="fa-solid fa-layer-group"></i> Multi-slide stage manager</h3>
-                <p>Preview live slides, step through with arrow controls, and watch the counter update automatically.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-database"></i> Save, load, import, export</h3>
-                <p>Store drafts in local storage, rehydrate JSON snapshots, or share exports with collaborators.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-sheet-plastic"></i> Template library</h3>
-                <p>Drop pre-authored activity templates into the current slide to kick-start facilitation moments.</p>
-              </div>
-              <div class="card">
-                <h3><i class="fa-solid fa-camera"></i> Integrated media sourcing</h3>
-                <p>Use the bundled Pexels API key to curate imagery; remote URLs hydrate automatically when added.</p>
+                <h3><i class="fa-solid fa-route"></i> Workflow highlights</h3>
+                <ul>
+                  <li>Step through live slides with the stage manager and navigation arrows.</li>
+                  <li>Save to browser storage, export/import JSON, and reload full decks instantly.</li>
+                  <li>Inject activity templates and drop new blocks straight into the current slide.</li>
+                  <li>Access the shared Pexels API key directly in the workspace sidebar for instant media sourcing.</li>
+                </ul>
+                <p class="demo-note">This iframe loads <code>authoring-workspace/index.html</code>, showcasing the full authoring workflow inside the deck environment.</p>
               </div>
             </div>
           </div>
