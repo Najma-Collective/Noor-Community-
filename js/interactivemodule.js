@@ -3499,7 +3499,8 @@ function transformGroupingTemplate(source, { activityType } = {}) {
     token.className = "click-token";
     const categoryKey = item.dataset.correctCategory ?? "";
     const categoryLabel =
-      categoryLabels.get(categoryKey) ?? normaliseWhitespace(categoryKey) || `Category ${index + 1}`;
+      (categoryLabels.get(categoryKey) ?? normaliseWhitespace(categoryKey)) ||
+      `Category ${index + 1}`;
     token.dataset.category = categoryLabel;
     const tokenText = extractTemplateText(item) || `Item ${index + 1}`;
     token.dataset.value = tokenText;
