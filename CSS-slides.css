@@ -186,6 +186,24 @@ body {
   color: var(--primary-forest);
 }
 
+.deck-editor-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-1);
+}
+
+.deck-editor-controls .toolbar-btn {
+  white-space: nowrap;
+}
+
+.deck-editor-controls select {
+  min-width: 180px;
+}
+
 .text-highlight {
   background-color: var(--highlight-color, rgba(249, 226, 125, 0.85));
   padding: 0.05em 0.15em;
@@ -1379,6 +1397,78 @@ ol {
 
 .pasted-image .textbox-title i {
   color: var(--primary-sage);
+}
+
+.deck-activity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 280px;
+  min-height: 220px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.28);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  touch-action: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.deck-activity:focus-within {
+  box-shadow: var(--shadow-2);
+}
+
+.deck-activity .textbox-handle {
+  background: rgba(122, 132, 113, 0.16);
+  color: var(--deep-forest);
+}
+
+.deck-activity .textbox-title i {
+  color: var(--primary-sage);
+}
+
+.deck-activity-body {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background: rgba(248, 252, 246, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.deck-activity-body > * {
+  flex: 0 0 auto;
+}
+
+.deck-activity-resizer {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--deep-forest);
+  box-shadow: var(--shadow-1);
+  display: grid;
+  place-items: center;
+  cursor: nwse-resize;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deck-activity-resizer:hover,
+.deck-activity-resizer:focus-visible {
+  outline: none;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-2);
+}
+
+.deck-activity-resizer i {
+  pointer-events: none;
 }
 
 .pasted-image-body {
