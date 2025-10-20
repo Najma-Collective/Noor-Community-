@@ -39,24 +39,6 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       align-items: start;
     }
-    .demo-layout {
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      align-items: stretch;
-    }
-    .embedded-demo {
-      width: 100%;
-      min-height: clamp(240px, 40vw, 460px);
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: var(--shadow-lg, 0 1rem 2rem rgba(22, 34, 27, 0.12));
-      background: var(--surface-100, #ffffff);
-    }
-    .demo-note {
-      font-size: var(--step--1);
-      margin: 0;
-    }
   </style>
 </head>
 <body>
@@ -66,7 +48,7 @@
         <i class="fa-solid fa-seedling" style="color: var(--primary-sage);"></i>
         <span>Noor Deck System · Showcase</span>
       </div>
-      <div id="slide-counter" class="slide-counter">1 / 11</div>
+      <div id="slide-counter" class="slide-counter">1 / 8</div>
       <div class="toolbar-actions">
         <button id="save-state-btn" class="toolbar-btn" type="button">
           <i class="fa-solid fa-floppy-disk"></i>
@@ -163,76 +145,6 @@
         <!-- Slide 3 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-pencil-ruler"></i> Interactive Editor</span>
-            <h2>Design slides with a drag-and-drop playground</h2>
-            <div class="demo-layout">
-              <iframe
-                class="embedded-demo"
-                src="../interactive-editor/index.html"
-                title="Interactive editor live demo"
-                loading="lazy"
-              ></iframe>
-              <div class="card">
-                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> What to try</h3>
-                <ul>
-                  <li>Add text, image, and module blocks from the live toolbar.</li>
-                  <li>Drag blocks around the canvas and resize them with grab handles.</li>
-                  <li>Watch autosave restore your layout after refreshing the iframe.</li>
-                  <li>Hover blocks to reveal contextual actions for duplicating or deleting content.</li>
-                </ul>
-                <p class="demo-note">The embedded editor mirrors <code>interactive-editor/index.html</code>, giving facilitators a hands-on feel for the authoring playground.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-code-branch"></i> Shared JS Engine</span>
-            <h2>One script powers navigation, highlights, and activities</h2>
-            <div class="card" style="gap: 1.25rem;">
-              <ul class="checklist">
-                <li><i class="fa-solid fa-images"></i> Lazy hydration swaps <code>data-remote-src</code> images in with graceful fallbacks.</li>
-                <li><i class="fa-solid fa-highlighter"></i> Highlight picker applies Sunbeam, Meadow, or Coral accents to any selected text.</li>
-                <li><i class="fa-solid fa-diagram-project"></i> Blank canvas tools spawn draggable textboxes and colour-coded mind maps.</li>
-                <li><i class="fa-solid fa-puzzle-piece"></i> Activity handlers grade quizzes, gap-fills, matching cards, and drag-to-categorise games.</li>
-                <li><i class="fa-solid fa-compass"></i> Keyboard-aware navigation and the slide navigator keep facilitators oriented.</li>
-              </ul>
-              <p class="hint" style="margin: 0;">All behaviours live in <code>js/interactivemodule.js</code> for consistent experiences across decks.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 5 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
-            <span class="pill"><i class="fa-solid fa-sitemap"></i> Authoring Workspace</span>
-            <h2>Build production-ready decks with guided workflows</h2>
-            <div class="demo-layout">
-              <iframe
-                class="embedded-demo"
-                src="../authoring-workspace/index.html"
-                title="Authoring workspace live demo"
-                loading="lazy"
-              ></iframe>
-              <div class="card">
-                <h3><i class="fa-solid fa-route"></i> Workflow highlights</h3>
-                <ul>
-                  <li>Step through live slides with the stage manager and navigation arrows.</li>
-                  <li>Save to browser storage, export/import JSON, and reload full decks instantly.</li>
-                  <li>Inject activity templates and drop new blocks straight into the current slide.</li>
-                  <li>Access the shared Pexels API key directly in the workspace sidebar for instant media sourcing.</li>
-                </ul>
-                <p class="demo-note">This iframe loads <code>authoring-workspace/index.html</code>, showcasing the full authoring workflow inside the deck environment.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 6 -->
-        <div class="slide-stage hidden">
-          <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-compass"></i> Navigation Patterns</span>
             <h2>Glide through lessons with layered navigation</h2>
             <div class="split-grid">
@@ -267,7 +179,7 @@
           </div>
         </div>
 
-        <!-- Slide 7 -->
+        <!-- Slide 4 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-clipboard-check"></i> Interactive Sampler · Quick Checks</span>
@@ -329,7 +241,7 @@
           </div>
         </div>
 
-        <!-- Slide 8 -->
+        <!-- Slide 5 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-shapes"></i> Interactive Sampler · Matching & Tables</span>
@@ -451,7 +363,7 @@
           </div>
         </div>
 
-        <!-- Slide 9 -->
+        <!-- Slide 6 -->
         <div class="slide-stage hidden">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-layer-group"></i> Interactive Sampler · Drag, Drop & Prosody</span>
@@ -529,7 +441,7 @@
           </div>
         </div>
 
-        <!-- Slide 10 -->
+        <!-- Slide 7 -->
         <div class="slide-stage hidden" data-type="blank">
           <div class="slide-inner">
             <span class="pill"><i class="fa-solid fa-lightbulb"></i> Blank Canvas Lab</span>
@@ -554,7 +466,7 @@
           </div>
         </div>
 
-        <!-- Slide 11 -->
+        <!-- Slide 8 -->
         <div class="slide-stage hidden">
           <div class="slide-inner centered-text">
             <span class="pill"><i class="fa-solid fa-circle-check"></i> Ready to deploy</span>
