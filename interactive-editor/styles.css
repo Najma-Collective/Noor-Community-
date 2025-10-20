@@ -1,0 +1,234 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  --toolbar-bg: rgba(24, 24, 27, 0.9);
+  --toolbar-color: #f4f4f5;
+  --canvas-bg: #f8fafc;
+  --canvas-grid: rgba(148, 163, 184, 0.25);
+  --block-bg: #ffffff;
+  --block-border: rgba(59, 130, 246, 0.65);
+  --block-shadow: 0 15px 35px rgba(15, 23, 42, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(circle at top, #e2e8f0 0%, #cbd5f5 100%);
+}
+
+body {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  color: #111827;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: min(1200px, 100%);
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.75rem;
+  background: var(--toolbar-bg);
+  color: var(--toolbar-color);
+}
+
+.toolbar__group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.toolbar__button {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--toolbar-bg);
+  background: var(--toolbar-color);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toolbar__button:hover,
+.toolbar__button:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.3);
+  outline: none;
+}
+
+.toolbar__button:active {
+  transform: translateY(0);
+}
+
+.toolbar__hint {
+  font-size: 0.85rem;
+  max-width: 320px;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+.canvas-container {
+  flex: 1;
+  overflow: auto;
+  padding: 2rem;
+  background: linear-gradient(180deg, rgba(226, 232, 240, 0.6) 0%, rgba(226, 232, 240, 0.9) 100%);
+}
+
+.canvas {
+  position: relative;
+  min-height: 1200px;
+  width: min(100%, 900px);
+  margin: 0 auto;
+  background:
+    linear-gradient(90deg, transparent 59px, var(--canvas-grid) 60px),
+    linear-gradient(180deg, transparent 59px, var(--canvas-grid) 60px),
+    var(--canvas-bg);
+  background-size: 60px 60px;
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+}
+
+.canvas__placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(30, 41, 59, 0.5);
+  font-size: 1.2rem;
+  text-align: center;
+  max-width: 80%;
+  pointer-events: none;
+}
+
+.block {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 200px;
+  min-height: 100px;
+  padding: 1rem;
+  border-radius: 16px;
+  background: var(--block-bg);
+  border: 2px solid transparent;
+  box-shadow: var(--block-shadow);
+  color: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.block:focus-within,
+.block.is-active {
+  border-color: var(--block-border);
+  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.35);
+}
+
+.block--text [contenteditable] {
+  min-height: 80px;
+  outline: none;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.block--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.block--module {
+  padding: 0;
+  overflow: hidden;
+}
+
+.block--module header {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  background: linear-gradient(120deg, #2563eb, #6366f1);
+  color: #fff;
+}
+
+.block--module .module-content {
+  padding: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.resize-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #2563eb;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.35);
+}
+
+.resize-handle[data-direction="top-left"] {
+  top: -10px;
+  left: -10px;
+  cursor: nwse-resize;
+}
+
+.resize-handle[data-direction="top-right"] {
+  top: -10px;
+  right: -10px;
+  cursor: nesw-resize;
+}
+
+.resize-handle[data-direction="bottom-left"] {
+  bottom: -10px;
+  left: -10px;
+  cursor: nesw-resize;
+}
+
+.resize-handle[data-direction="bottom-right"] {
+  bottom: -10px;
+  right: -10px;
+  cursor: nwse-resize;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toolbar__group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .toolbar__button {
+    flex: 1;
+  }
+
+  .canvas-container {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .canvas {
+    width: 100%;
+    min-height: 900px;
+  }
+}

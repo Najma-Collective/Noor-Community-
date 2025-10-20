@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Editor</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="toolbar" aria-label="Editor toolbar">
+        <div class="toolbar__group" role="group" aria-label="Insert blocks">
+          <button type="button" class="toolbar__button" data-action="add-text">
+            Add Text
+          </button>
+          <button type="button" class="toolbar__button" data-action="add-image">
+            Add Image
+          </button>
+          <button type="button" class="toolbar__button" data-action="add-module">
+            Add Module
+          </button>
+        </div>
+        <div class="toolbar__hint">
+          Drag blocks to reposition them. Use the grab handles on each side to resize.
+        </div>
+      </header>
+      <main class="canvas-container">
+        <section
+          id="editor-canvas"
+          class="canvas"
+          aria-label="Interactive canvas"
+        >
+          <p class="canvas__placeholder">Use the toolbar to add your first block.</p>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
