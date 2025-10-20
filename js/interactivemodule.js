@@ -1927,7 +1927,7 @@ export function initialiseMindMap(container, { onRemove } = {}) {
     );
     const branchLines = branchList
       .map((branch, index) => {
-        const text = (branch.querySelector("textarea")?.value ?? "").trim();
+        const text = branch.querySelector("textarea")?.value.trim();
         if (!text) {
           return null;
         }
@@ -2031,12 +2031,10 @@ export function initialiseMindMap(container, { onRemove } = {}) {
       }
       branchList
         .sort((a, b) => {
-          const textA = (a.querySelector("textarea")?.value ?? "")
-            .trim()
-            .toLowerCase();
-          const textB = (b.querySelector("textarea")?.value ?? "")
-            .trim()
-            .toLowerCase();
+          const textA =
+            a.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
+          const textB =
+            b.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
           return textA.localeCompare(textB, undefined, {
             sensitivity: "base",
           });
@@ -2764,8 +2762,8 @@ function setupUnscramble(activityEl) {
   checkBtn?.addEventListener("click", () => {
     let correctCount = 0;
     inputs.forEach((input) => {
-      const answer = (input.dataset.answer ?? "")
-        .trim()
+      const answer = input.dataset.answer
+        ?.trim()
         .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         .replace(/\s+/g, " ")
         .toLowerCase();
@@ -3266,9 +3264,7 @@ function setupStressMark(activityEl) {
     let correctCount = 0;
     sentences.forEach((sentence) => {
       const markedWord = sentence.querySelector(".stress-word.marked");
-      const correctWordText = (sentence.dataset.correct ?? "")
-        .trim()
-        .toLowerCase();
+      const correctWordText = sentence.dataset.correct?.trim().toLowerCase();
       sentence
         .querySelectorAll(".stress-word")
         .forEach((word) => word.classList.remove("correct", "incorrect"));
