@@ -1,0 +1,144 @@
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #e2e8f0 0%, #cbd5f5 100%);
+  color: #0f172a;
+}
+
+.authoring-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(6px);
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.toolbar__group {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar__label {
+  font-weight: 600;
+  align-self: center;
+}
+
+.toolbar__select {
+  appearance: none;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  color: var(--toolbar-bg);
+  background: var(--toolbar-color);
+  cursor: pointer;
+  min-width: 12rem;
+}
+
+.toolbar__select:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
+}
+
+.authoring-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem;
+}
+
+.stage-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stage-viewport {
+  position: relative;
+}
+
+.authoring-overlay {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: none;
+  border-radius: inherit;
+  box-shadow: none;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.authoring-overlay .canvas__placeholder {
+  color: rgba(30, 41, 59, 0.65);
+  backdrop-filter: blur(2px);
+}
+
+.authoring-overlay .block,
+.authoring-overlay .resize-handle {
+  pointer-events: auto;
+}
+
+.stage-counter {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: right;
+}
+
+.authoring-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: min(1280px, 100%);
+}
+
+.workspace-status {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  margin: 0 1.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.65);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.workspace-status[data-tone="success"] {
+  border-color: rgba(22, 163, 74, 0.35);
+  color: #166534;
+}
+
+.workspace-status[data-tone="error"] {
+  border-color: rgba(220, 38, 38, 0.4);
+  color: #991b1b;
+}
+
+.authoring-note {
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.authoring-note code {
+  background: rgba(15, 23, 42, 0.08);
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+}
+
+.authoring-note a {
+  color: #2563eb;
+}
+
+.slide-stage.is-active {
+  outline: 2px solid rgba(59, 130, 246, 0.35);
+}
