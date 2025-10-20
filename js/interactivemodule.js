@@ -1522,8 +1522,8 @@ export function makeDraggable(element) {
     const canvasRect = canvas.getBoundingClientRect();
     const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
     const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
-    const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
-    const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
+    const maxX = Math.max(0, canvas.clientWidth - element.offsetWidth);
+    const maxY = Math.max(0, canvas.clientHeight - element.offsetHeight);
     const clampedX = Math.min(Math.max(0, rawX), maxX);
     const clampedY = Math.min(Math.max(0, rawY), maxY);
     element.style.left = `${clampedX}px`;
@@ -1588,11 +1588,6 @@ function ensureEditableWrapper(element) {
     return null;
   }
 
-  if (/^(UL|OL)$/i.test(parent.tagName)) {
-    element.classList.add("editable-wrapper");
-    return element;
-  }
-
   const wrapper = document.createElement("div");
   wrapper.className = "editable-wrapper";
   parent.insertBefore(wrapper, element);
@@ -1600,44 +1595,91 @@ function ensureEditableWrapper(element) {
   return wrapper;
 }
 
-function ensureEditableControls(wrapper, target) {
+function getRelativeRect(element) {
+  if (!(element instanceof HTMLElement)) {
+    return null;
+  }
+
+  const parent = element.parentElement;
+  if (!(parent instanceof HTMLElement)) {
+    return null;
+  }
+
+  const elementRect = element.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+  const parentStyle = window.getComputedStyle(parent);
+  const parse = (value) => Number.parseFloat(value) || 0;
+
+  const borderLeft = parse(parentStyle.borderLeftWidth);
+  const borderTop = parse(parentStyle.borderTopWidth);
+  const paddingLeft = parse(parentStyle.paddingLeft);
+  const paddingTop = parse(parentStyle.paddingTop);
+
+  return {
+    left:
+      elementRect.left -
+      parentRect.left -
+      borderLeft -
+      paddingLeft +
+      parent.scrollLeft,
+    top:
+      elementRect.top -
+      parentRect.top -
+      borderTop -
+      paddingTop +
+      parent.scrollTop,
+    width: elementRect.width,
+    height: elementRect.height,
+  };
+}
+
+function ensureEditableControls(wrapper, target, initialRect) {
   if (!(wrapper instanceof HTMLElement)) {
     return;
   }
 
-  const preComputedStyle = window.getComputedStyle(wrapper);
+  const hasInitialised = wrapper.dataset.deckEditableControls === "true";
+
   wrapper.classList.add("editable-wrapper");
 
-  if (!wrapper.style.position) {
-    if (preComputedStyle.position === "static") {
-      wrapper.style.position = "absolute";
-    } else {
-      wrapper.style.position = preComputedStyle.position;
+  const parent = wrapper.parentElement;
+  if (parent instanceof HTMLElement) {
+    const parentStyle = window.getComputedStyle(parent);
+    if (parentStyle.position === "static") {
+      parent.dataset.deckEditableParentPosition = parentStyle.position;
+      parent.style.position = "relative";
     }
   }
-  const computedStyle = window.getComputedStyle(wrapper);
-  const finalPosition = wrapper.style.position || computedStyle.position;
-  if (finalPosition === "absolute") {
-    if (!wrapper.style.top && computedStyle.top === "auto") {
-      wrapper.style.top = "0px";
-    }
-    if (!wrapper.style.left && computedStyle.left === "auto") {
-      wrapper.style.left = "0px";
-    }
-    delete wrapper.dataset.editablePosition;
-  } else if (finalPosition === "relative") {
-    wrapper.dataset.editablePosition = "relative";
-  } else {
-    delete wrapper.dataset.editablePosition;
+
+  if (!wrapper.style.position || wrapper.style.position === "static") {
+    wrapper.style.position = "absolute";
   }
-  if (!wrapper.style.margin) {
-    wrapper.style.margin = "0";
-  }
-  if (!wrapper.style.padding) {
-    wrapper.style.padding = "0";
-  }
+
   if (!wrapper.style.zIndex) {
     wrapper.style.zIndex = "5";
+  }
+
+  const geometry = initialRect ?? null;
+  if (geometry) {
+    if (Number.isFinite(geometry.left)) {
+      wrapper.style.left = `${Math.max(0, geometry.left)}px`;
+    }
+    if (Number.isFinite(geometry.top)) {
+      wrapper.style.top = `${Math.max(0, geometry.top)}px`;
+    }
+    if (Number.isFinite(geometry.width) && geometry.width > 0) {
+      wrapper.style.width = `${geometry.width}px`;
+    }
+    if (Number.isFinite(geometry.height) && geometry.height > 0) {
+      wrapper.style.minHeight = `${geometry.height}px`;
+    }
+  } else if (!hasInitialised) {
+    if (!wrapper.style.left) {
+      wrapper.style.left = "0px";
+    }
+    if (!wrapper.style.top) {
+      wrapper.style.top = "0px";
+    }
   }
 
   let dragHandle = wrapper.querySelector(":scope > .textbox-handle");
@@ -1659,8 +1701,12 @@ function ensureEditableControls(wrapper, target) {
     wrapper.appendChild(resizeHandle);
   }
 
-  makeDraggable(wrapper);
-  makeResizable(wrapper);
+  if (!hasInitialised) {
+    makeDraggable(wrapper);
+    makeResizable(wrapper);
+  }
+
+  wrapper.dataset.deckEditableControls = "true";
 }
 
 function makeSlideEditable(slideElement) {
@@ -1676,7 +1722,8 @@ function makeSlideEditable(slideElement) {
     "h5",
     "h6",
     "p",
-    "li",
+    "ul",
+    "ol",
     ".deck-subtitle",
   ].join(", ");
 
@@ -1688,11 +1735,12 @@ function makeSlideEditable(slideElement) {
     if (node.dataset.deckEditableInitialised === "true") {
       return;
     }
+    const rect = getRelativeRect(node);
     node.dataset.deckEditableInitialised = "true";
     node.contentEditable = "true";
     node.classList.add("editable-text");
     const wrapper = ensureEditableWrapper(node);
-    ensureEditableControls(wrapper, node);
+    ensureEditableControls(wrapper, node, rect);
   });
 
   const activityNodes = Array.from(
@@ -1703,8 +1751,16 @@ function makeSlideEditable(slideElement) {
     if (!(activity instanceof HTMLElement)) {
       return;
     }
+    const existingWrapper = activity.closest(
+      ".deck-activity, .editable-wrapper, .pasted-image",
+    );
+    if (existingWrapper instanceof HTMLElement) {
+      ensureEditableControls(existingWrapper, activity);
+      return;
+    }
+    const rect = getRelativeRect(activity);
     const wrapper = ensureEditableWrapper(activity);
-    ensureEditableControls(wrapper ?? activity, activity);
+    ensureEditableControls(wrapper ?? activity, activity, rect);
   });
 }
 
