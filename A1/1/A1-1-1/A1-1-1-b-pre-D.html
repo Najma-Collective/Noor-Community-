@@ -26,7 +26,7 @@
         <div class="slide-counter">Worksheet</div>
         <div class="toolbar-actions">
           <span class="pill"
-            ><i class="fa-regular fa-clock"></i> 25 minutes</span
+            ><i class="fa-regular fa-clock"></i> 30 minutes</span
           >
         </div>
       </header>
@@ -274,7 +274,7 @@
                     </select>
                   </div>
                   <div>
-                    <label>3. They ____ at an orientation.</label>
+                    <label>3. You ____ a new volunteer.</label>
                     <select data-answer="are">
                       <option value="">Select...</option>
                       <option value="am">am</option>
@@ -327,7 +327,10 @@
                     data-answer='["I\'m","from","Bethlehem."]'
                   >
                     <h3>1. Sami's location</h3>
-                    <div class="token-bank" aria-label="Word bank for sentence 1">
+                    <div
+                      class="token-bank"
+                      aria-label="Word bank for sentence 1"
+                    >
                       <button
                         type="button"
                         class="click-token"
@@ -446,40 +449,116 @@
                 <div class="feedback-msg" role="status" aria-live="polite"></div>
               </div>
 
-              <div class="card" aria-labelledby="production-heading">
-                <h2 id="production-heading">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                  Now You Try!
-                </h2>
-                <p>
-                  Write two sentences to introduce yourself. Use the model
-                  dialogue to help you.
-                </p>
-                <div class="production-task">
-                  <p>1. My name is...</p>
-                  <input
-                    type="text"
-                    class="production-input"
-                    placeholder="Type your name..."
-                  />
-                  <p>2. I'm from...</p>
-                  <input
-                    type="text"
-                    class="production-input"
-                    placeholder="Type your city or country..."
-                  />
-                  <p>3. I'm a...</p>
-                  <input
-                    type="text"
-                    class="production-input"
-                    placeholder="Type your job or say 'student'..."
-                  />
+              <!-- New Summative Activity -->
+              <div
+                class="card activity-card"
+                id="activity-5"
+                data-activity="dialogue-completion"
+                aria-labelledby="activity-5-heading"
+              >
+                <div class="card-header">
+                  <span class="pill">
+                    <i class="fa-solid fa-comments"></i>
+                    Final Task
+                  </span>
+                  <h2 id="activity-5-heading">
+                    Activity 5: Complete the Conversation
+                  </h2>
+                  <p>
+                    <i class="fa-solid fa-arrow-pointer"></i>
+                    Click the phrases from the box to complete the dialogue.
+                  </p>
+                </div>
+                <div class="dialogue-completion-container">
+                  <div class="dialogue-script">
+                    <p>
+                      <strong>Omar:</strong> Hi,
+                      <button
+                        type="button"
+                        class="click-token drop-slot"
+                        data-answer="I'm Omar."
+                        data-index="0"
+                      ></button>
+                      Nice to meet you.
+                    </p>
+                    <p>
+                      <strong>Fatima:</strong> Nice to meet you too, Omar.
+                      <button
+                        type="button"
+                        class="click-token drop-slot"
+                        data-answer="I'm Fatima."
+                        data-index="1"
+                      ></button>
+                      I'm a student.
+                    </p>
+                    <p>
+                      <strong>Omar:</strong> Welcome, Fatima.
+                      <button
+                        type="button"
+                        class="click-token drop-slot"
+                        data-answer="Are you a new volunteer?"
+                        data-index="2"
+                      ></button>
+                    </p>
+                    <p>
+                      <strong>Fatima:</strong>
+                      <button
+                        type="button"
+                        class="click-token drop-slot"
+                        data-answer="Yes, I am."
+                        data-index="3"
+                      ></button>
+                      I'm excited to help.
+                    </p>
+                  </div>
+                  <div class="token-bank" aria-label="Phrase bank">
+                    <button
+                      type="button"
+                      class="click-token"
+                      data-token="I'm Omar."
+                    >
+                      I'm Omar.
+                    </button>
+                    <button
+                      type="button"
+                      class="click-token"
+                      data-token="Yes, I am."
+                    >
+                      Yes, I am.
+                    </button>
+                    <button
+                      type="button"
+                      class="click-token"
+                      data-token="Are you a new volunteer?"
+                    >
+                      Are you a new volunteer?
+                    </button>
+                    <button
+                      type="button"
+                      class="click-token"
+                      data-token="I'm Fatima."
+                    >
+                      I'm Fatima.
+                    </button>
+                  </div>
                 </div>
                 <div class="blank-actions">
-                  <button type="button" class="activity-btn" disabled>
-                    Ready for Class!
+                  <button
+                    type="button"
+                    class="activity-btn"
+                    data-action="check"
+                  >
+                    Check Dialogue
+                  </button>
+                  <button
+                    type="button"
+                    class="activity-btn secondary"
+                    data-action="reset"
+                  >
+                    Reset
                   </button>
                 </div>
+                <div class="feedback-msg" role="status" aria-live="polite"></div>
               </div>
             </div>
           </div>
@@ -532,7 +611,8 @@
           case "word-order":
             checkWordOrder(container);
             break;
-          default:
+          case "dialogue-completion":
+            checkDialogueCompletion(container);
             break;
         }
       }
@@ -556,7 +636,8 @@
           case "word-order":
             resetWordOrder(container);
             break;
-          default:
+          case "dialogue-completion":
+            resetDialogueCompletion(container);
             break;
         }
         resetFeedback(container);
@@ -572,28 +653,18 @@
           const selected = container.querySelector(
             `input[name="${key}"]:checked`
           );
-          if (!selected) {
-            allAnswered = false;
-            return;
-          }
-          if (selected.value === answers[key]) {
-            correctCount += 1;
-          }
+          if (!selected) allAnswered = false;
+          else if (selected.value === answers[key]) correctCount++;
         });
 
         if (!allAnswered) {
-          showFeedback(
-            container,
-            "Please answer every question before checking.",
-            false
-          );
+          showFeedback(container, "Answer every question before checking.", false);
           return;
         }
-
         const message =
           correctCount === keys.length
             ? "Great! You understand the main idea."
-            : "Please review the dialogue and try again.";
+            : "Review the dialogue and try again.";
         showFeedback(container, message, correctCount === keys.length);
       }
 
@@ -602,10 +673,9 @@
           container.querySelectorAll("select[data-answer]")
         );
         if (selects.some((select) => !select.value)) {
-          showFeedback(container, "Please choose an option for each job.", false);
+          showFeedback(container, "Choose an option for each job.", false);
           return;
         }
-
         const allCorrect = selects.every(
           (select) => select.value === select.dataset.answer
         );
@@ -620,14 +690,9 @@
           container.querySelectorAll("select[data-answer]")
         );
         if (selects.some((select) => !select.value)) {
-          showFeedback(
-            container,
-            "Please complete every sentence before checking.",
-            false
-          );
+          showFeedback(container, "Complete every sentence before checking.", false);
           return;
         }
-
         const allCorrect = selects.every(
           (select) => select.value === select.dataset.answer
         );
@@ -639,93 +704,104 @@
 
       function checkWordOrder(container) {
         const items = Array.from(container.querySelectorAll(".arrange-item"));
-        let allAnswered = true;
-        const results = items.map((item) => {
+        let allCorrect = true;
+        items.forEach((item) => {
           const correctOrder = JSON.parse(item.dataset.answer);
           const dropSlots = Array.from(item.querySelectorAll(".drop-slot"));
-          const userOrder = dropSlots
-            .filter((slot) => slot.dataset.token)
-            .map((slot) => slot.dataset.token);
-
-          if (userOrder.length !== correctOrder.length) {
-            allAnswered = false;
+          const userOrder = dropSlots.map((slot) => slot.dataset.token || "");
+          if (
+            userOrder.length !== correctOrder.length ||
+            !correctOrder.every((val, i) => val === userOrder[i])
+          ) {
+            allCorrect = false;
           }
-
-          return correctOrder.every((value, index) => userOrder[index] === value);
         });
-
-        if (!allAnswered) {
-          showFeedback(
-            container,
-            "Please complete every sentence before checking.",
-            false
-          );
-          return;
-        }
-
-        const allCorrect = results.every(Boolean);
         const message = allCorrect
           ? "Fantastic! Your sentences are correct."
           : "Check the word order and try again.";
         showFeedback(container, message, allCorrect);
       }
-
+      
       function resetWordOrder(container) {
-        container.querySelectorAll(".arrange-item").forEach((item) => {
-          item.querySelectorAll(".drop-slot").forEach((slot) => {
-            slot.textContent = "";
-            slot.classList.remove("filled");
+        container.querySelectorAll('.arrange-item').forEach(item => {
+          item.querySelectorAll('.drop-slot').forEach(slot => {
+            slot.textContent = '';
             delete slot.dataset.token;
+            slot.classList.remove('filled');
           });
-          item.querySelectorAll(".click-token[data-token]").forEach((token) => {
+          item.querySelectorAll('.token-bank .click-token').forEach(token => {
             token.disabled = false;
           });
         });
         resetFeedback(container);
       }
 
-      document
-        .querySelectorAll('[data-activity="word-order"] .click-token[data-token]')
-        .forEach((button) => {
-          button.addEventListener("click", () => {
-            if (button.disabled) return;
-            const arrangeItem = button.closest(".arrange-item");
-            const dropSlots = Array.from(
-              arrangeItem.querySelectorAll(".drop-slot")
-            );
-            const availableSlot = dropSlots.find((slot) => !slot.dataset.token);
-            if (!availableSlot) {
-              return;
-            }
-            availableSlot.textContent = button.dataset.token;
-            availableSlot.dataset.token = button.dataset.token;
-            availableSlot.classList.add("filled");
-            button.disabled = true;
-            resetFeedback(arrangeItem.closest("[data-activity]"));
+      function checkDialogueCompletion(container) {
+        const slots = container.querySelectorAll(".drop-slot");
+        if (Array.from(slots).some(slot => !slot.dataset.token)) {
+            showFeedback(container, "Please complete the entire dialogue.", false);
+            return;
+        }
+        const allCorrect = Array.from(slots).every(slot => slot.dataset.token === slot.dataset.answer);
+        const message = allCorrect
+          ? "Well done! The conversation is correct. You are ready for class!"
+          : "Not quite. Check the dialogue flow and try again.";
+        showFeedback(container, message, allCorrect);
+      }
+      
+      function resetDialogueCompletion(container) {
+          container.querySelectorAll(".drop-slot").forEach(slot => {
+              slot.textContent = "";
+              delete slot.dataset.token;
+              slot.classList.remove('filled');
           });
-        });
+          container.querySelectorAll(".token-bank .click-token").forEach(token => {
+              token.disabled = false;
+          });
+          resetFeedback(container);
+      }
 
-      document
-        .querySelectorAll('[data-activity="word-order"] .drop-slot')
-        .forEach((slot) => {
-          slot.addEventListener("click", () => {
-            if (!slot.dataset.token) return;
-            const arrangeItem = slot.closest(".arrange-item");
-            const wordButton = Array.from(
-              arrangeItem.querySelectorAll(".click-token[data-token]")
-            ).find(
-              (button) =>
-                button.dataset.token === slot.dataset.token && button.disabled
-            );
-            if (wordButton) {
-              wordButton.disabled = false;
-            }
-            slot.textContent = "";
-            delete slot.dataset.token;
-            slot.classList.remove("filled");
-            resetFeedback(arrangeItem.closest("[data-activity]"));
-          });
-        });
+
+      // Generic Click-and-Drop Logic for Word Order & Dialogue Completion
+      document.querySelectorAll('.activity-card').forEach(activityCard => {
+          if (activityCard.dataset.activity === 'word-order' || activityCard.dataset.activity === 'dialogue-completion') {
+              const tokenBank = activityCard.querySelector('.token-bank');
+              if (!tokenBank) return;
+
+              tokenBank.addEventListener('click', (e) => {
+                  if (!e.target.matches('.click-token[data-token]')) return;
+                  const tokenButton = e.target;
+                  if (tokenButton.disabled) return;
+
+                  const container = tokenButton.closest('.activity-card');
+                  const availableSlot = container.querySelector('.drop-slot:not(.filled)');
+                  
+                  if (availableSlot) {
+                      availableSlot.textContent = tokenButton.dataset.token;
+                      availableSlot.dataset.token = tokenButton.dataset.token;
+                      availableSlot.classList.add('filled');
+                      tokenButton.disabled = true;
+                      resetFeedback(container);
+                  }
+              });
+
+              activityCard.addEventListener('click', (e) => {
+                  if (!e.target.matches('.drop-slot.filled')) return;
+                  const slot = e.target;
+                  const tokenValue = slot.dataset.token;
+
+                  const correspondingToken = tokenBank.querySelector(`.click-token[data-token="${tokenValue}"]`);
+                  if (correspondingToken) {
+                      correspondingToken.disabled = false;
+                  }
+
+                  slot.textContent = '';
+                  delete slot.dataset.token;
+                  slot.classList.remove('filled');
+                  resetFeedback(activityCard);
+              });
+          }
+      });
     </script>
   </body>
 </html>
