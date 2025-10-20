@@ -1605,7 +1605,40 @@ function ensureEditableControls(wrapper, target) {
     return;
   }
 
+  const preComputedStyle = window.getComputedStyle(wrapper);
   wrapper.classList.add("editable-wrapper");
+
+  if (!wrapper.style.position) {
+    if (preComputedStyle.position === "static") {
+      wrapper.style.position = "absolute";
+    } else {
+      wrapper.style.position = preComputedStyle.position;
+    }
+  }
+  const computedStyle = window.getComputedStyle(wrapper);
+  const finalPosition = wrapper.style.position || computedStyle.position;
+  if (finalPosition === "absolute") {
+    if (!wrapper.style.top && computedStyle.top === "auto") {
+      wrapper.style.top = "0px";
+    }
+    if (!wrapper.style.left && computedStyle.left === "auto") {
+      wrapper.style.left = "0px";
+    }
+    delete wrapper.dataset.editablePosition;
+  } else if (finalPosition === "relative") {
+    wrapper.dataset.editablePosition = "relative";
+  } else {
+    delete wrapper.dataset.editablePosition;
+  }
+  if (!wrapper.style.margin) {
+    wrapper.style.margin = "0";
+  }
+  if (!wrapper.style.padding) {
+    wrapper.style.padding = "0";
+  }
+  if (!wrapper.style.zIndex) {
+    wrapper.style.zIndex = "5";
+  }
 
   let dragHandle = wrapper.querySelector(":scope > .textbox-handle");
   if (!(dragHandle instanceof HTMLElement)) {
