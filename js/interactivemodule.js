@@ -3267,6 +3267,416 @@ function getActivitySetupHandler(type) {
   return ACTIVITY_SETUP_HANDLERS[type] ?? null;
 }
 
+function normaliseTemplateKey(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function extractTemplateText(node) {
+  if (!(node instanceof Node)) {
+    return "";
+  }
+  return normaliseWhitespace(node.textContent ?? "");
+}
+
+function appendTemplateInstructions(container, source) {
+  if (!(container instanceof HTMLElement) || !(source instanceof HTMLElement)) {
+    return;
+  }
+
+  const heading = source.querySelector("#activity-titles h1, h1, h2");
+  if (heading instanceof HTMLElement) {
+    const clone = heading.cloneNode(true);
+    clone.removeAttribute("id");
+    container.appendChild(clone);
+  }
+
+  const rubric = source.querySelector(".rubric");
+  const rubricText = extractTemplateText(rubric);
+  if (rubricText) {
+    const instructions = document.createElement("p");
+    instructions.textContent = rubricText;
+    container.appendChild(instructions);
+  }
+}
+
+function createActivityActions({
+  checkLabel = "Check Answers",
+  resetLabel = "Reset",
+  includeReset = true,
+} = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "activity-actions";
+
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = checkLabel;
+  wrapper.appendChild(checkBtn);
+
+  if (includeReset) {
+    const resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.className = "activity-btn secondary";
+    resetBtn.dataset.action = "reset";
+    resetBtn.textContent = resetLabel;
+    wrapper.appendChild(resetBtn);
+  }
+
+  return wrapper;
+}
+
+function createFeedbackElement() {
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  return feedback;
+}
+
+function transformGapFillTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "gap-fill";
+  appendTemplateInstructions(activity, source);
+
+  const gapSource =
+    source.querySelector(".gapfill-container") ??
+    source.querySelector("main") ??
+    source.querySelector("section") ??
+    source;
+
+  const content = gapSource.cloneNode(true);
+  content.querySelectorAll("script").forEach((node) => node.remove());
+  content.querySelectorAll(".activity-controls").forEach((node) => node.remove());
+
+  let gapIndex = 0;
+  content.querySelectorAll(".gap-wrapper").forEach((wrapper) => {
+    if (!(wrapper instanceof HTMLElement)) {
+      return;
+    }
+    gapIndex += 1;
+    const answers = (wrapper.dataset.correctAnswer || wrapper.dataset.correctAnswers || "")
+      .split("|")
+      .map((answer) => normaliseWhitespace(answer))
+      .filter(Boolean);
+    const placeholderSource =
+      wrapper.querySelector("input[placeholder]") ?? wrapper.querySelector("select");
+    const placeholder = placeholderSource?.getAttribute("placeholder");
+    const ariaLabel =
+      wrapper.getAttribute("aria-label") ?? placeholderSource?.getAttribute("aria-label");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "gap-input";
+    input.dataset.answer = answers[0] ?? "";
+    if (answers.length > 1) {
+      input.dataset.altAnswers = JSON.stringify(answers.slice(1));
+    }
+    if (wrapper.dataset.feedbackTitle) {
+      input.dataset.feedbackTitle = wrapper.dataset.feedbackTitle;
+    }
+    if (wrapper.dataset.explanation) {
+      input.dataset.explanation = wrapper.dataset.explanation;
+    }
+    input.setAttribute("aria-label", ariaLabel || `Gap ${gapIndex}`);
+    input.placeholder = placeholder || "Type answer";
+
+    const optionValues = Array.from(
+      wrapper.querySelectorAll("option"),
+      (option) => normaliseWhitespace(option.textContent || option.value || ""),
+    ).filter(Boolean);
+    if (optionValues.length) {
+      try {
+        input.dataset.options = JSON.stringify(optionValues);
+      } catch (error) {
+        // Ignore JSON issues and fall back to joined string
+        input.dataset.options = optionValues.join("|");
+      }
+    }
+
+    wrapper.replaceWith(input);
+  });
+
+  activity.appendChild(content);
+  activity.appendChild(createActivityActions());
+  activity.appendChild(createFeedbackElement());
+  return activity;
+}
+
+function transformGroupingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "categorization";
+  appendTemplateInstructions(activity, source);
+
+  const description = source.querySelector(".dnd-main-container > p");
+  if (description instanceof HTMLElement) {
+    activity.appendChild(description.cloneNode(true));
+  }
+
+  const items = Array.from(source.querySelectorAll(".dnd-item"));
+  const categoryZones = Array.from(source.querySelectorAll(".dnd-category-zone"));
+  const categoryLabels = new Map(
+    categoryZones.map((zone) => [
+      zone.id,
+      extractTemplateText(zone.querySelector("h3")) || normaliseWhitespace(zone.id),
+    ]),
+  );
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+
+  items.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const token = document.createElement("button");
+    token.type = "button";
+    token.className = "click-token";
+    const categoryKey = item.dataset.correctCategory ?? "";
+    const categoryLabel =
+      categoryLabels.get(categoryKey) ?? normaliseWhitespace(categoryKey) || `Category ${index + 1}`;
+    token.dataset.category = categoryLabel;
+    const tokenText = extractTemplateText(item) || `Item ${index + 1}`;
+    token.dataset.value = tokenText;
+    token.textContent = tokenText;
+    if (item.dataset.explanation) {
+      token.dataset.explanation = item.dataset.explanation;
+    }
+    tokenBank.appendChild(token);
+  });
+
+  const dropWrapper = document.createElement("div");
+  dropWrapper.className = "drop-categorization";
+
+  categoryZones.forEach((zone, index) => {
+    if (!(zone instanceof HTMLElement)) {
+      return;
+    }
+    const column = document.createElement("div");
+    column.className = "category-column";
+    const label = categoryLabels.get(zone.id) ?? `Category ${index + 1}`;
+    column.dataset.category = label;
+
+    const heading = document.createElement("h3");
+    heading.textContent = label;
+
+    const dropZone = document.createElement("div");
+    dropZone.className = "drop-zone";
+
+    column.append(heading, dropZone);
+    dropWrapper.appendChild(column);
+  });
+
+  activity.append(tokenBank, dropWrapper, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+function transformLinkingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "matching-connect";
+  appendTemplateInstructions(activity, source);
+
+  const leftItems = Array.from(source.querySelectorAll(".link-column.left .linking-item"));
+  const rightItems = Array.from(source.querySelectorAll(".link-column.right .linking-item"));
+  const rightTextMap = new Map();
+  rightItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const id = item.dataset.linkId || `R${index + 1}`;
+    const text = extractTemplateText(item.querySelector(".linking-item-text") ?? item);
+    rightTextMap.set(id, text || `Answer ${index + 1}`);
+  });
+
+  const answerKeyAttr = source.querySelector("#activity-container")?.dataset.answerKey;
+  let pairs = [];
+  if (answerKeyAttr) {
+    try {
+      const parsed = JSON.parse(answerKeyAttr);
+      if (Array.isArray(parsed)) {
+        pairs = parsed
+          .map((entry) => ({
+            start: typeof entry?.start === "string" ? entry.start : null,
+            end: typeof entry?.end === "string" ? entry.end : null,
+          }))
+          .filter((entry) => entry.start && entry.end);
+      }
+    } catch (error) {
+      console.warn("Unable to parse linking answer key", error);
+    }
+  }
+  if (!pairs.length) {
+    pairs = leftItems.map((item, index) => ({
+      start: item?.dataset?.linkId || `L${index + 1}`,
+      end: rightItems[index]?.dataset?.linkId || null,
+    }));
+  }
+
+  const grid = document.createElement("div");
+  grid.className = "matching-connect-grid";
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Connect the related items");
+
+  const questionColumn = document.createElement("div");
+  questionColumn.className = "match-column";
+  questionColumn.setAttribute("aria-label", "Column A");
+
+  const answerColumn = document.createElement("div");
+  answerColumn.className = "match-column";
+  answerColumn.setAttribute("aria-label", "Column B");
+
+  leftItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const questionId = item.dataset.linkId || `L${index + 1}`;
+    const questionText =
+      extractTemplateText(item.querySelector(".linking-item-text") ?? item) || `Prompt ${index + 1}`;
+    const pair = pairs.find((entry) => entry.start === questionId);
+    const expectedAnswerId = pair?.end ?? null;
+    const expectedText = expectedAnswerId ? rightTextMap.get(expectedAnswerId) : null;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "match-item match-question";
+    button.dataset.questionId = questionId;
+    if (expectedText) {
+      button.dataset.answer = expectedText;
+    }
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "match-text";
+    textSpan.textContent = questionText;
+
+    const assignment = document.createElement("span");
+    assignment.className = "match-assignment";
+    assignment.setAttribute("aria-live", "polite");
+
+    button.append(textSpan, assignment);
+    questionColumn.appendChild(button);
+  });
+
+  rightItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const answerId = item.dataset.linkId || `R${index + 1}`;
+    const answerText = rightTextMap.get(answerId) ?? `Answer ${index + 1}`;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "match-item match-answer";
+    button.dataset.value = answerText;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "match-text";
+    textSpan.textContent = answerText;
+
+    button.appendChild(textSpan);
+    answerColumn.appendChild(button);
+  });
+
+  grid.append(questionColumn, answerColumn);
+  activity.append(grid, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+function transformRankingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "token-drop";
+  appendTemplateInstructions(activity, source);
+
+  const description = source.querySelector(".dnd-main-container > p");
+  if (description instanceof HTMLElement) {
+    activity.appendChild(description.cloneNode(true));
+  }
+
+  const items = Array.from(source.querySelectorAll("#items-pool .dnd-item"));
+  if (!items.length) {
+    activity.appendChild(createActivityActions());
+    activity.appendChild(createFeedbackElement());
+    return activity;
+  }
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+  items.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const tokenText = extractTemplateText(item) || `Item ${index + 1}`;
+    const token = document.createElement("button");
+    token.type = "button";
+    token.className = "click-token";
+    token.dataset.value = tokenText;
+    token.textContent = tokenText;
+    if (item.dataset.explanation) {
+      token.dataset.explanation = item.dataset.explanation;
+    }
+    tokenBank.appendChild(token);
+  });
+
+  const orderedItems = items
+    .map((item, index) => ({
+      rank: Number.parseInt(item.dataset.correctRank ?? "", 10) || index + 1,
+      text: extractTemplateText(item) || `Item ${index + 1}`,
+    }))
+    .filter((entry) => entry.text)
+    .sort((a, b) => a.rank - b.rank || a.text.localeCompare(b.text));
+
+  const list = document.createElement("ol");
+  list.className = "ranking-drop-zones";
+
+  orderedItems.forEach((entry, index) => {
+    const listItem = document.createElement("li");
+    listItem.className = "ranking-slot";
+
+    const label = document.createElement("span");
+    label.className = "ranking-label";
+    label.textContent = `${index + 1}.`;
+
+    const dropZone = document.createElement("button");
+    dropZone.type = "button";
+    dropZone.className = "drop-zone placeholder";
+    dropZone.dataset.answer = entry.text;
+    dropZone.dataset.placeholder = "Select";
+    dropZone.setAttribute("aria-label", `Rank ${index + 1}`);
+
+    listItem.append(label, dropZone);
+    list.appendChild(listItem);
+  });
+
+  activity.append(tokenBank, list, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+const TEMPLATE_ACTIVITY_MAP = {
+  gapfill: { activity: "gap-fill", transform: transformGapFillTemplate },
+  "dropdown.html": { activity: "gap-fill", transform: transformGapFillTemplate },
+  grouping: { activity: "categorization", transform: transformGroupingTemplate },
+  linking: { activity: "matching-connect", transform: transformLinkingTemplate },
+  "ranking.html": { activity: "token-drop", transform: transformRankingTemplate },
+};
+
 function applyActivitySetup(root) {
   if (!(root instanceof HTMLElement)) {
     return;
@@ -3286,6 +3696,18 @@ function applyActivitySetup(root) {
   });
 
   targets.forEach((target) => {
+    if (!target.dataset.activity) {
+      const templateSource =
+        target.dataset.templateSource ??
+        target.dataset.template ??
+        target.closest?.(".deck-activity")?.dataset?.template;
+      const fallbackType = TEMPLATE_ACTIVITY_MAP[
+        normaliseTemplateKey(templateSource)
+      ]?.activity;
+      if (fallbackType) {
+        target.dataset.activity = fallbackType;
+      }
+    }
     const handler = getActivitySetupHandler(target.dataset.activity);
     if (typeof handler === "function") {
       handler(target);
@@ -3337,7 +3759,46 @@ async function fetchActivityTemplateContent(templateValue) {
 
   const clone = activityRoot.cloneNode(true);
   clone.querySelectorAll("script").forEach((script) => script.remove());
-  return clone;
+
+  const templateKey = normaliseTemplateKey(value);
+  const templateConfig = TEMPLATE_ACTIVITY_MAP[templateKey] ?? null;
+  const context = {
+    activityType: templateConfig?.activity,
+    templateKey,
+    templateValue: value,
+  };
+
+  let transformed = clone;
+  if (typeof templateConfig?.transform === "function") {
+    try {
+      const result = templateConfig.transform(clone, context);
+      if (result instanceof HTMLElement || result instanceof DocumentFragment) {
+        transformed = result;
+      }
+    } catch (error) {
+      console.warn(`Template transform failed for "${value}"`, error);
+      transformed = clone;
+    }
+  }
+
+  let resolved;
+  if (transformed instanceof DocumentFragment) {
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(transformed);
+    resolved = wrapper;
+  } else if (transformed instanceof HTMLElement) {
+    resolved = transformed;
+  }
+
+  if (!(resolved instanceof HTMLElement)) {
+    resolved = clone;
+  }
+
+  if (templateConfig?.activity && !resolved.dataset.activity) {
+    resolved.dataset.activity = templateConfig.activity;
+  }
+  resolved.dataset.templateSource = value;
+  return resolved;
 }
 
 function handleAddTextboxClick() {
