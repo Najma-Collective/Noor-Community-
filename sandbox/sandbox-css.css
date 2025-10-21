@@ -1980,6 +1980,237 @@ ol {
   pointer-events: none;
 }
 
+.canvas-table {
+  --table-bg: rgba(254, 252, 247, 0.97);
+  --table-border: rgba(122, 132, 113, 0.35);
+  --table-handle-bg: rgba(122, 132, 113, 0.18);
+  --table-handle-fg: var(--deep-forest);
+  --table-remove-bg: rgba(254, 252, 247, 0.94);
+  --table-remove-fg: var(--forest-shadow);
+  --table-accent: #6b7d5e;
+  --table-cell-bg: rgba(255, 255, 255, 0.98);
+  --table-cell-border: rgba(122, 132, 113, 0.28);
+  --table-header-bg: rgba(122, 132, 113, 0.2);
+  --table-header-fg: var(--deep-forest);
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--table-border);
+  background: var(--table-bg);
+  box-shadow: var(--shadow-1);
+  width: clamp(320px, 48%, 560px);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  touch-action: none;
+  transition: box-shadow 0.2s ease;
+  --textbox-handle-bg: var(--table-handle-bg);
+  --textbox-handle-fg: var(--table-handle-fg);
+  --textbox-remove-bg: var(--table-remove-bg);
+  --textbox-remove-fg: var(--table-remove-fg);
+}
+
+.canvas-table:focus-within {
+  box-shadow: var(--shadow-2);
+}
+
+.canvas-table .textbox-title i {
+  color: var(--table-accent);
+}
+
+.canvas-table .textbox-color-options {
+  align-items: center;
+}
+
+.canvas-table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.canvas-table-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.canvas-table-action {
+  border: 1px solid color-mix(in srgb, var(--table-cell-border) 70%, transparent);
+  background: color-mix(in srgb, var(--table-cell-bg) 85%, white 15%);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--table-handle-fg);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.canvas-table-action:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.canvas-table-action:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--table-accent) 60%, transparent);
+  outline-offset: 2px;
+}
+
+.canvas-table-action i {
+  font-size: 0.75rem;
+}
+
+.canvas-table-body {
+  flex: 1;
+  padding: 0.75rem 0.75rem 2.5rem;
+  overflow: auto;
+}
+
+.canvas-table-body table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.canvas-table-body th,
+.canvas-table-body td {
+  border: 1px solid var(--table-cell-border);
+  background: var(--table-cell-bg);
+  padding: 0.65rem 0.75rem;
+  min-width: 120px;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  vertical-align: top;
+  white-space: pre-wrap;
+  position: relative;
+  outline: none;
+}
+
+.canvas-table-body th {
+  background: var(--table-header-bg);
+  color: var(--table-header-fg);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.canvas-table-body th:empty::before,
+.canvas-table-body td:empty::before,
+.canvas-table-body th[data-empty="true"]::before,
+.canvas-table-body td[data-empty="true"]::before {
+  content: attr(data-placeholder);
+  color: color-mix(in srgb, var(--table-handle-fg) 45%, #fff);
+  opacity: 0.7;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.canvas-table-body th:focus,
+.canvas-table-body td:focus {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--table-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--table-cell-bg) 85%, white 15%);
+}
+
+.canvas-table-resizer {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.6rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--table-accent);
+  box-shadow: var(--shadow-1);
+  display: grid;
+  place-items: center;
+  cursor: nwse-resize;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvas-table-resizer:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-2);
+}
+
+.canvas-table[data-color="sage"] {
+  --table-bg: rgba(254, 252, 247, 0.97);
+  --table-border: rgba(122, 132, 113, 0.35);
+  --table-handle-bg: rgba(122, 132, 113, 0.2);
+  --table-handle-fg: var(--deep-forest);
+  --table-remove-bg: rgba(254, 252, 247, 0.94);
+  --table-remove-fg: var(--forest-shadow);
+  --table-cell-bg: rgba(255, 255, 255, 0.98);
+  --table-cell-border: rgba(122, 132, 113, 0.3);
+  --table-header-bg: rgba(122, 132, 113, 0.22);
+  --table-header-fg: var(--deep-forest);
+  --table-accent: #5f775b;
+}
+
+.canvas-table[data-color="wheat"] {
+  --table-bg: rgba(255, 249, 236, 0.98);
+  --table-border: rgba(199, 147, 79, 0.5);
+  --table-handle-bg: rgba(199, 147, 79, 0.92);
+  --table-handle-fg: #3d2a12;
+  --table-remove-bg: rgba(255, 247, 228, 0.94);
+  --table-remove-fg: #3d2a12;
+  --table-cell-bg: rgba(255, 252, 242, 0.96);
+  --table-cell-border: rgba(199, 147, 79, 0.4);
+  --table-header-bg: rgba(199, 147, 79, 0.2);
+  --table-header-fg: #3d2a12;
+  --table-accent: #c17a2d;
+}
+
+.canvas-table[data-color="sky"] {
+  --table-bg: rgba(239, 247, 255, 0.97);
+  --table-border: rgba(79, 130, 196, 0.45);
+  --table-handle-bg: rgba(79, 130, 196, 0.92);
+  --table-handle-fg: #f5f8ff;
+  --table-remove-bg: rgba(232, 242, 255, 0.94);
+  --table-remove-fg: #234974;
+  --table-cell-bg: rgba(244, 249, 255, 0.96);
+  --table-cell-border: rgba(79, 130, 196, 0.35);
+  --table-header-bg: rgba(79, 130, 196, 0.18);
+  --table-header-fg: #1f3558;
+  --table-accent: #3f6ab3;
+}
+
+.canvas-table[data-color="rose"] {
+  --table-bg: rgba(255, 241, 245, 0.97);
+  --table-border: rgba(191, 106, 130, 0.45);
+  --table-handle-bg: rgba(191, 106, 130, 0.9);
+  --table-handle-fg: #fff6f8;
+  --table-remove-bg: rgba(255, 236, 243, 0.94);
+  --table-remove-fg: #622b3b;
+  --table-cell-bg: rgba(255, 246, 249, 0.96);
+  --table-cell-border: rgba(191, 106, 130, 0.32);
+  --table-header-bg: rgba(191, 106, 130, 0.18);
+  --table-header-fg: #5a2332;
+  --table-accent: #a34d67;
+}
+
+.canvas-table[data-color="slate"] {
+  --table-bg: rgba(245, 248, 251, 0.97);
+  --table-border: rgba(92, 111, 130, 0.45);
+  --table-handle-bg: rgba(92, 111, 130, 0.88);
+  --table-handle-fg: #f8fbff;
+  --table-remove-bg: rgba(238, 243, 248, 0.94);
+  --table-remove-fg: #1f2d3a;
+  --table-cell-bg: rgba(248, 250, 253, 0.96);
+  --table-cell-border: rgba(92, 111, 130, 0.35);
+  --table-header-bg: rgba(92, 111, 130, 0.2);
+  --table-header-fg: #1f2d3a;
+  --table-accent: #4f6072;
+}
+
 .pasted-image {
   position: absolute;
   top: 0;

@@ -57,6 +57,11 @@ export const TEXTBOX_COLOR_OPTIONS = [
 
 export const DEFAULT_TEXTBOX_COLOR = TEXTBOX_COLOR_OPTIONS[0].value;
 
+const DEFAULT_TABLE_ROWS = 2;
+const DEFAULT_TABLE_COLUMNS = 3;
+const TABLE_HEADER_PLACEHOLDER = "Add heading";
+const TABLE_CELL_PLACEHOLDER = "Add detail";
+
 export const renderColorSwatchButtons = (options = TEXTBOX_COLOR_OPTIONS) =>
   options
     .map(
@@ -598,6 +603,10 @@ export function createBlankSlide() {
       <i class="fa-solid fa-pen-to-square"></i>
       Add Textbox
     </button>
+    <button class="activity-btn" type="button" data-action="add-table">
+      <i class="fa-solid fa-table"></i>
+      Create Table
+    </button>
     <button class="activity-btn secondary" type="button" data-action="add-mindmap">
       <i class="fa-solid fa-diagram-project"></i>
       Add Mind Map
@@ -619,6 +628,7 @@ export function attachBlankSlideEvents(slide) {
   const canvas = slide.querySelector(".blank-canvas");
   const hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
+  const addTableBtn = slide.querySelector('[data-action="add-table"]');
   const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
   const addModuleBtn = slide.querySelector('[data-action="add-module"]');
 
@@ -634,6 +644,10 @@ export function attachBlankSlideEvents(slide) {
     "Paste images to bring ideas to life. Drag to move them and use the corner handle to resize.";
   const MIXED_HINT =
     "Combine textboxes and images to map your ideas visually.";
+  const TABLE_HINT =
+    "Table ready. Add rows, columns, and colour-code cells to organise information.";
+  const TABLE_COMBINATION_HINT =
+    "Tables pair well with your notes, visuals, or maps to compare ideas.";
   const MINDMAP_HINT =
     "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
   const MODULE_HINT =
@@ -650,15 +664,20 @@ export function attachBlankSlideEvents(slide) {
     const hasMindmap = Boolean(canvas.querySelector(".mindmap"));
     const hasTextbox = Boolean(canvas.querySelector(".textbox"));
     const hasImage = Boolean(canvas.querySelector(".pasted-image"));
+    const hasTable = Boolean(canvas.querySelector(".canvas-table"));
 
     const hasModule = Boolean(canvas.querySelector(".module-embed"));
 
-    if (hasModule && (hasTextbox || hasImage || hasMindmap)) {
+    if (hasModule && (hasTextbox || hasImage || hasMindmap || hasTable)) {
       hint.textContent = MODULE_COMBINATION_HINT;
     } else if (hasModule) {
       hint.textContent = MODULE_HINT;
+    } else if (hasTable && (hasTextbox || hasImage || hasMindmap)) {
+      hint.textContent = TABLE_COMBINATION_HINT;
     } else if (hasMindmap) {
       hint.textContent = MINDMAP_HINT;
+    } else if (hasTable) {
+      hint.textContent = TABLE_HINT;
     } else if (hasTextbox && hasImage) {
       hint.textContent = MIXED_HINT;
     } else if (hasTextbox) {
@@ -675,6 +694,18 @@ export function attachBlankSlideEvents(slide) {
     canvas.appendChild(textbox);
     positionTextbox(textbox, canvas);
     updateHintForCanvas();
+  });
+
+  addTableBtn?.addEventListener("click", () => {
+    const table = createCanvasTable({ onRemove: updateHintForCanvas });
+    canvas.appendChild(table);
+    positionCanvasTable(table, canvas);
+    updateHintForCanvas();
+    table.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const firstEditableCell = table.querySelector("thead th, tbody td");
+    if (firstEditableCell instanceof HTMLElement) {
+      firstEditableCell.focus({ preventScroll: true });
+    }
   });
 
   addMindmapBtn?.addEventListener("click", () => {
@@ -705,6 +736,12 @@ export function attachBlankSlideEvents(slide) {
     .querySelectorAll(".textbox")
     .forEach((textbox) =>
       initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
+    );
+
+  canvas
+    .querySelectorAll(".canvas-table")
+    .forEach((table) =>
+      initialiseCanvasTable(table, { onRemove: updateHintForCanvas }),
     );
 
   canvas
@@ -898,6 +935,344 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
 
   makeDraggable(textbox);
   return textbox;
+}
+
+function createEditableTableCell({ type = "data" } = {}) {
+  const tagName = type === "header" ? "th" : "td";
+  const cell = document.createElement(tagName);
+  const placeholder =
+    type === "header" ? TABLE_HEADER_PLACEHOLDER : TABLE_CELL_PLACEHOLDER;
+  cell.dataset.placeholder = placeholder;
+  if (!cell.hasAttribute("contenteditable")) {
+    cell.setAttribute("contenteditable", "true");
+  }
+  cell.setAttribute("spellcheck", "true");
+  if (tagName === "th") {
+    cell.setAttribute("scope", "col");
+  }
+  cell.dataset.empty = "true";
+  return cell;
+}
+
+function buildTableHeaderRow(columns = DEFAULT_TABLE_COLUMNS) {
+  const row = document.createElement("tr");
+  for (let index = 0; index < columns; index += 1) {
+    row.appendChild(createEditableTableCell({ type: "header" }));
+  }
+  return row;
+}
+
+function buildTableBodyRow(columns = DEFAULT_TABLE_COLUMNS) {
+  const row = document.createElement("tr");
+  for (let index = 0; index < columns; index += 1) {
+    row.appendChild(createEditableTableCell({ type: "data" }));
+  }
+  return row;
+}
+
+function ensureHeaderRow(thead) {
+  if (!(thead instanceof HTMLTableSectionElement)) {
+    return null;
+  }
+  let headerRow = thead.querySelector("tr");
+  if (!(headerRow instanceof HTMLTableRowElement)) {
+    headerRow = document.createElement("tr");
+    thead.appendChild(headerRow);
+  }
+  return headerRow;
+}
+
+function getTableColumnCount(tableElement) {
+  if (!(tableElement instanceof HTMLTableElement)) {
+    return 0;
+  }
+  const headerRow = tableElement.tHead?.querySelector("tr");
+  if (headerRow instanceof HTMLTableRowElement && headerRow.children.length) {
+    return headerRow.children.length;
+  }
+  const firstBodyRow = tableElement.tBodies?.[0]?.querySelector("tr");
+  if (firstBodyRow instanceof HTMLTableRowElement) {
+    return firstBodyRow.children.length;
+  }
+  return 0;
+}
+
+function initialiseTableCell(cell) {
+  if (!(cell instanceof HTMLElement)) {
+    return;
+  }
+  if (cell.__deckTableCellInitialised) {
+    if (!cell.textContent.trim()) {
+      cell.textContent = "";
+      cell.dataset.empty = "true";
+    }
+    return;
+  }
+  cell.__deckTableCellInitialised = true;
+
+  const placeholder =
+    cell.dataset.placeholder ||
+    (cell.tagName === "TH" ? TABLE_HEADER_PLACEHOLDER : TABLE_CELL_PLACEHOLDER);
+  cell.dataset.placeholder = placeholder;
+  if (!cell.hasAttribute("contenteditable")) {
+    cell.setAttribute("contenteditable", "true");
+  }
+  cell.setAttribute("spellcheck", "true");
+
+  const syncEmptyState = () => {
+    if (cell.textContent.trim()) {
+      delete cell.dataset.empty;
+    } else {
+      cell.textContent = "";
+      cell.dataset.empty = "true";
+    }
+  };
+
+  syncEmptyState();
+
+  cell.addEventListener("input", syncEmptyState);
+  cell.addEventListener("blur", syncEmptyState);
+  cell.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      cell.blur();
+    }
+  });
+}
+
+function prepareTableCells(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+  const cells = root.querySelectorAll?.("th, td");
+  if (!cells || !cells.length) {
+    return;
+  }
+  cells.forEach((cell) => initialiseTableCell(cell));
+}
+
+export function positionCanvasTable(table, canvas) {
+  if (!(table instanceof HTMLElement) || !(canvas instanceof HTMLElement)) {
+    return;
+  }
+  const tables = Array.from(canvas.querySelectorAll(".canvas-table"));
+  const index = Math.max(0, tables.indexOf(table));
+  const offset = 32 * index;
+  if (!table.style.left) {
+    table.style.left = `${offset}px`;
+  }
+  if (!table.style.top) {
+    table.style.top = `${offset}px`;
+  }
+  if (!table.style.width) {
+    const canvasWidth = canvas.clientWidth || 640;
+    const baseWidth = Math.min(640, Math.max(280, canvasWidth * 0.6));
+    table.style.width = `${Math.round(baseWidth)}px`;
+  }
+  if (!table.style.height) {
+    const canvasHeight = canvas.clientHeight || 480;
+    const baseHeight = Math.min(560, Math.max(220, canvasHeight * 0.55));
+    table.style.height = `${Math.round(baseHeight)}px`;
+  }
+}
+
+export function createCanvasTable({
+  columns = DEFAULT_TABLE_COLUMNS,
+  rows = DEFAULT_TABLE_ROWS,
+  onRemove,
+} = {}) {
+  const container = document.createElement("div");
+  container.className = "canvas-table";
+  container.dataset.color = DEFAULT_TEXTBOX_COLOR;
+  container.innerHTML = `
+    <button type="button" class="textbox-remove canvas-table-remove" aria-label="Remove table">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+    <div class="textbox-handle canvas-table-handle">
+      <span class="textbox-title">
+        <i class="fa-solid fa-table" aria-hidden="true"></i>
+        Table
+      </span>
+      <div class="canvas-table-toolbar">
+        <div class="textbox-color-options canvas-table-colors" role="group" aria-label="Table colours">
+          ${renderColorSwatchButtons()}
+        </div>
+        <div class="canvas-table-actions" role="group" aria-label="Table controls">
+          <button type="button" class="canvas-table-action" data-action="add-column">
+            <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+            Column
+          </button>
+          <button type="button" class="canvas-table-action" data-action="add-row">
+            <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
+            Row
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="canvas-table-body" role="region" aria-label="Editable table workspace">
+      <table>
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button type="button" class="canvas-table-resizer" aria-label="Resize table">
+      <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>
+    </button>
+  `;
+
+  const tableElement = container.querySelector("table");
+  const tableHead = tableElement?.querySelector("thead");
+  const tableBody = tableElement?.querySelector("tbody");
+
+  if (tableHead instanceof HTMLTableSectionElement) {
+    tableHead.appendChild(buildTableHeaderRow(Math.max(1, columns)));
+  }
+
+  if (tableBody instanceof HTMLTableSectionElement) {
+    const rowCount = Math.max(1, rows);
+    const columnCount = Math.max(1, columns);
+    for (let index = 0; index < rowCount; index += 1) {
+      tableBody.appendChild(buildTableBodyRow(columnCount));
+    }
+  }
+
+  initialiseCanvasTable(container, { onRemove });
+  return container;
+}
+
+export function initialiseCanvasTable(table, { onRemove } = {}) {
+  if (!(table instanceof HTMLElement)) {
+    return table;
+  }
+
+  table.__deckTableOnRemove = onRemove;
+  if (table.__deckTableInitialised) {
+    if (typeof table.__deckTableSyncColor === "function") {
+      try {
+        table.__deckTableSyncColor();
+      } catch (error) {
+        console.warn("Failed to resync table colour state", error);
+      }
+    }
+    prepareTableCells(table);
+    return table;
+  }
+  table.__deckTableInitialised = true;
+
+  if (!table.dataset.color) {
+    table.dataset.color = DEFAULT_TEXTBOX_COLOR;
+  }
+
+  const removeBtn = table.querySelector(".canvas-table-remove");
+  removeBtn?.addEventListener("click", () => {
+    table.remove();
+    if (typeof table.__deckTableOnRemove === "function") {
+      table.__deckTableOnRemove();
+    }
+  });
+
+  const colorButtons = Array.from(
+    table.querySelectorAll(".textbox-color-swatch"),
+  );
+
+  const syncColorState = (next = table.dataset.color) => {
+    const chosen = next && next.trim() ? next : DEFAULT_TEXTBOX_COLOR;
+    table.dataset.color = chosen;
+    colorButtons.forEach((button) => {
+      const isActive = button.dataset.color === chosen;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  };
+
+  colorButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!button.dataset.color) {
+        return;
+      }
+      syncColorState(button.dataset.color);
+    });
+    button.addEventListener("pointerdown", (event) => {
+      event.stopPropagation();
+    });
+  });
+
+  syncColorState();
+  table.__deckTableSyncColor = () => syncColorState();
+
+  const addColumnBtn = table.querySelector('[data-action="add-column"]');
+  const addRowBtn = table.querySelector('[data-action="add-row"]');
+  const tableElement = table.querySelector("table");
+  const tableHead = tableElement?.querySelector("thead");
+  const tableBody = tableElement?.querySelector("tbody");
+  const bodyWrapper = table.querySelector(".canvas-table-body");
+
+  const addColumn = () => {
+    if (!(tableElement instanceof HTMLTableElement)) {
+      return;
+    }
+    const headerRow = ensureHeaderRow(tableHead);
+    if (!(headerRow instanceof HTMLTableRowElement)) {
+      return;
+    }
+    headerRow.appendChild(createEditableTableCell({ type: "header" }));
+    const columnCount = headerRow.children.length;
+    const bodyRows = Array.from(tableBody?.querySelectorAll("tr") ?? []);
+    if (!bodyRows.length) {
+      if (tableBody instanceof HTMLTableSectionElement) {
+        tableBody.appendChild(buildTableBodyRow(columnCount));
+      }
+    } else {
+      bodyRows.forEach((row) => {
+        row.appendChild(createEditableTableCell({ type: "data" }));
+      });
+    }
+    prepareTableCells(table);
+  };
+
+  const addRow = () => {
+    if (!(tableElement instanceof HTMLTableElement)) {
+      return;
+    }
+    const currentColumns = Math.max(1, getTableColumnCount(tableElement));
+    if (!(tableBody instanceof HTMLTableSectionElement)) {
+      return;
+    }
+    const newRow = buildTableBodyRow(currentColumns);
+    tableBody.appendChild(newRow);
+    prepareTableCells(newRow);
+    if (bodyWrapper instanceof HTMLElement) {
+      bodyWrapper.scrollTo({ top: bodyWrapper.scrollHeight, behavior: "smooth" });
+    }
+  };
+
+  addColumnBtn?.addEventListener("click", () => {
+    addColumn();
+    if (bodyWrapper instanceof HTMLElement) {
+      bodyWrapper.scrollTo({ left: bodyWrapper.scrollWidth, behavior: "smooth" });
+    }
+  });
+  addRowBtn?.addEventListener("click", addRow);
+
+  [addColumnBtn, addRowBtn].forEach((button) => {
+    button?.addEventListener("pointerdown", (event) => event.stopPropagation());
+  });
+
+  const resizer = table.querySelector(".canvas-table-resizer");
+  resizer?.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
+  });
+
+  prepareTableCells(table);
+
+  makeDraggable(table);
+  makeResizable(table, {
+    handleSelector: ".canvas-table-resizer",
+    minWidth: 240,
+    minHeight: 200,
+  });
+
+  return table;
 }
 
 function makeResizable(element, { handleSelector = ".resize-handle", minWidth = 96, minHeight = 96 } = {}) {
