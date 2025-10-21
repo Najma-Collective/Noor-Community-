@@ -1,4 +1,4 @@
-@import url("../../CSS-slides.css");
+@import url("./deck-tokens.css");
 
 body {
   background: linear-gradient(135deg, #f8f6f0 0%, #f3f1ea 100%);
