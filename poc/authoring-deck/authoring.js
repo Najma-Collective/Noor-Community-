@@ -3029,18 +3029,19 @@ window.authoringDeck = {
         deckAuthoringState.slides[slideIndex] = { activities: [], canvas: { elements: [], drawing: { strokes: [] } } };
       }
       const activities = Array.isArray(slideState.activities)
-        ? slideState.activities.map((activity) => ({
-            if (!activity || !activity.type || !ACTIVITY_CONFIG[activity.type]) {
-              return null;
-            }
-            return {
-              id: activity.id || getUniqueId(activity.type ?? "activity"),
-              type: activity.type,
-              data: activity.data,
-              layout: activity.layout,
-              position: activity.position,
-            };
-          })
+        ? slideState.activities
+            .map((activity) => {
+              if (!activity || !activity.type || !ACTIVITY_CONFIG[activity.type]) {
+                return null;
+              }
+              return {
+                id: activity.id || getUniqueId(activity.type ?? "activity"),
+                type: activity.type,
+                data: activity.data,
+                layout: activity.layout,
+                position: activity.position,
+              };
+            })
             .filter(Boolean)
         : [];
       deckAuthoringState.slides[slideIndex].activities = activities;
