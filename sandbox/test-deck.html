@@ -15,6 +15,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="../../../CSS-slides.css" />
+    <link rel="stylesheet" href="./sandbox-css.css" />
   </head>
   <body>
     <div class="deck-app">
@@ -61,6 +62,14 @@
               Clear
             </button>
           </div>
+          <button
+            id="open-activity-builder-btn"
+            class="toolbar-btn ghost"
+            type="button"
+          >
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Build Activity
+          </button>
           <button id="add-slide-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
@@ -1415,6 +1424,102 @@
           </button>
         </div>
       </main>
+    </div>
+
+
+    <div id="activity-builder" class="activity-builder" aria-hidden="true">
+      <div class="activity-builder-backdrop" data-action="close-builder"></div>
+      <div
+        class="activity-builder-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="activity-builder-title"
+      >
+        <form id="activity-builder-form" class="activity-builder-form">
+          <header class="activity-builder-header">
+            <div class="builder-intro">
+              <span class="pill">
+                <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                Activity Module Builder
+              </span>
+              <h2 id="activity-builder-title">Create an Activity Module</h2>
+              <p>
+                Define your rubric questions, answers, and feedback. We'll convert
+                everything to JSON and generate a dedicated slide for each
+                activity.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="builder-close-btn"
+              aria-label="Close builder"
+              data-action="close-builder"
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </header>
+          <section class="builder-section grid">
+            <div class="builder-field">
+              <label for="activity-module-label">Module type</label>
+              <input
+                id="activity-module-label"
+                name="activity-module-label"
+                type="text"
+                value="Rubric Check"
+                required
+              />
+            </div>
+            <div class="builder-field">
+              <label for="activity-question-count">Number of questions</label>
+              <input
+                id="activity-question-count"
+                name="activity-question-count"
+                type="number"
+                min="1"
+                max="10"
+                value="1"
+                required
+              />
+            </div>
+          </section>
+          <section class="builder-section">
+            <h3>Questions</h3>
+            <p class="builder-hint">
+              Enter each question prompt, the model answer, and the feedback that
+              should guide learners.
+            </p>
+            <div class="builder-question-list" data-role="question-list"></div>
+          </section>
+          <section class="builder-section">
+            <h3>JSON preview</h3>
+            <p class="builder-hint">
+              This preview updates automatically so you can reuse the activity
+              data elsewhere if needed.
+            </p>
+            <pre class="builder-json-preview" data-role="json-preview">{
+  "version": 1,
+  "kind": "rubric-check",
+  "label": "Rubric Check",
+  "slug": "rubric-check",
+  "totalQuestions": 0,
+  "questions": []
+}</pre>
+          </section>
+          <footer class="builder-actions">
+            <button
+              type="button"
+              class="activity-btn secondary"
+              data-action="close-builder"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="activity-btn">
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              Generate slides
+            </button>
+          </footer>
+        </form>
+      </div>
     </div>
 
 

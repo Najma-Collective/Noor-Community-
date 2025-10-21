@@ -2054,3 +2054,311 @@ ol {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+body.activity-builder-open {
+  overflow: hidden;
+}
+
+.activity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.activity-actions .activity-btn {
+  flex: 0 0 auto;
+}
+
+.activity-builder {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.activity-builder.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.activity-builder-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(47, 58, 43, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.activity-builder-panel {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: 90dvh;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--soft-white);
+  border: 1px solid rgba(122, 132, 113, 0.35);
+  box-shadow: var(--shadow-2), var(--shadow-glow);
+  display: grid;
+}
+
+.activity-builder-form {
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  overflow-y: auto;
+}
+
+.activity-builder-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.activity-builder-header h2 {
+  margin: 0;
+  font-size: var(--step-2);
+}
+
+.activity-builder-header p {
+  margin: 0.35rem 0 0;
+  color: var(--ink-muted);
+  font-size: var(--step--1);
+}
+
+.builder-close-btn {
+  border: none;
+  background: rgba(122, 132, 113, 0.12);
+  color: var(--deep-forest);
+  border-radius: 999px;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.builder-close-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.builder-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.builder-section.grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.builder-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.builder-field label {
+  font-weight: 700;
+  color: var(--deep-forest);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.builder-field input,
+.builder-field textarea {
+  border-radius: var(--radius);
+  border: 1px solid var(--border-sage);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  background: rgba(255, 255, 255, 0.95);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+  min-height: 3rem;
+}
+
+.builder-field textarea {
+  min-height: 130px;
+}
+
+.builder-field input:focus,
+.builder-field textarea:focus {
+  outline: none;
+  border-color: rgba(122, 132, 113, 0.75);
+  box-shadow: 0 0 0 3px rgba(122, 132, 113, 0.18);
+}
+
+.builder-hint {
+  color: var(--ink-muted);
+  font-size: var(--step--1);
+}
+
+.builder-question-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.builder-question {
+  display: grid;
+  gap: 1rem;
+}
+
+.builder-question.card {
+  background: rgba(248, 246, 240, 0.85);
+}
+
+.builder-question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.builder-question-header h3 {
+  margin: 0;
+  font-size: var(--step-1);
+  color: var(--deep-forest);
+}
+
+.builder-remove-btn {
+  border: none;
+  background: rgba(122, 132, 113, 0.16);
+  color: var(--deep-forest);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.builder-remove-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.builder-json-preview {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(122, 132, 113, 0.25);
+  border-radius: var(--radius);
+  padding: 1rem;
+  font-family: "Source Code Pro", "Fira Code", monospace;
+  font-size: 0.85rem;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.builder-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rubric-activity-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.rubric-activity-card .activity-question {
+  font-size: var(--step-1);
+  color: var(--deep-forest);
+  margin: 0;
+}
+
+.rubric-activity-card .activity-instruction {
+  color: var(--ink-muted);
+  font-size: var(--step--1);
+}
+
+.activity-response-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.activity-response-field textarea {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-sage);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  background: rgba(254, 252, 247, 0.95);
+  min-height: 150px;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-response-field textarea:focus {
+  outline: none;
+  border-color: rgba(122, 132, 113, 0.75);
+  box-shadow: 0 0 0 3px rgba(122, 132, 113, 0.18);
+}
+
+.activity-answer-panel {
+  border-radius: var(--radius);
+  border: 1px solid rgba(122, 132, 113, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.activity-answer-panel strong {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--deep-forest);
+}
+
+.activity-answer-panel p {
+  margin: 0;
+  color: var(--forest-shadow);
+  font-size: var(--step--1);
+}
+
+.activity-answer-panel[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .activity-builder-panel {
+    width: 100%;
+  }
+
+  .activity-builder-form {
+    padding: clamp(1.25rem, 6vw, 2rem);
+  }
+
+  .builder-section.grid {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-actions {
+    justify-content: stretch;
+  }
+
+  .builder-actions .activity-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.activity-builder-header .pill {
+  margin-bottom: 0.75rem;
+}
