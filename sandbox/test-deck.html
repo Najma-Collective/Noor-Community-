@@ -1467,6 +1467,16 @@
               />
             </label>
             <label class="builder-field">
+              <span class="builder-field-label">Activity type</span>
+              <select name="activityType" required>
+                <option value="">Select an activity</option>
+                <option value="multipleChoice">Multiple choice</option>
+                <option value="gapFill">Gap fill</option>
+                <option value="tableCompletion">Table completion</option>
+                <option value="categorization">Grouping</option>
+              </select>
+            </label>
+            <label class="builder-field">
               <span class="builder-field-label">Duration</span>
               <input
                 type="text"
@@ -1504,6 +1514,19 @@ Cold call teams to share the most compelling improvement idea.</textarea>
               />
             </label>
           </div>
+
+          <section class="builder-section">
+            <header class="builder-section-header">
+              <div>
+                <h3>Activity content</h3>
+                <p>
+                  Configure the interactive elements that learners will use.
+                  Options adapt based on the activity type you select.
+                </p>
+              </div>
+            </header>
+            <div id="builder-activity-config" class="builder-activity-config"></div>
+          </section>
 
           <section class="builder-section">
             <header class="builder-section-header">
