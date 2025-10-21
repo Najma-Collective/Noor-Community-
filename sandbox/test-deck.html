@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="./sandbox-css.css" />
   </head>
   <body>
+    <a class="skip-link" href="#lesson-stage">Skip to lesson workspace</a>
+    <div id="deck-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="deck-toast-root" class="deck-toast-container" aria-live="polite" aria-atomic="true"></div>
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand">
@@ -76,7 +79,7 @@
           </button>
         </div>
       </header>
-      <main class="deck-workspace">
+      <main id="lesson-stage" class="deck-workspace">
         <div class="stage-viewport">
           <!-- Slide 1: Title Slide (Full Bleed) -->
           <div class="slide-stage full-width-bg">

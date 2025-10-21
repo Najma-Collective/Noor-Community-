@@ -83,6 +83,14 @@ const TYPE_META = {
   },
 };
 
+const STORAGE_KEY = 'noor-activity-builder-state-v2';
+const deepClone = (value) => {
+  if (value === undefined) {
+    return value;
+  }
+  return JSON.parse(JSON.stringify(value));
+};
+
 const escapeHtml = (unsafe = '') =>
   unsafe
     .replace(/&/g, '&amp;')
@@ -106,7 +114,18 @@ class ActivityBuilder {
     this.refreshBtn = document.getElementById('refresh-preview');
     this.sendToDeckBtn = document.getElementById('send-to-deck');
     this.alertTemplate = document.getElementById('alert-template');
+    this.statusEl = document.getElementById('builder-status');
     this.isEmbedded = window.parent && window.parent !== window;
+
+    this.canUseStorage = typeof window !== 'undefined' && 'localStorage' in window;
+    this.savedStates = this.loadSavedStates();
+    const storedState = this.savedStates?.[this.state.type];
+    if (storedState) {
+      this.state.data = deepClone(storedState);
+    }
+
+    this.pendingConfig = null;
+    this.updateFrame = null;
 
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleFormInput = this.handleFormInput.bind(this);
@@ -115,13 +134,111 @@ class ActivityBuilder {
     this.sendToDeck = this.sendToDeck.bind(this);
   }
 
+  loadSavedStates() {
+    if (!this.canUseStorage) {
+      return {};
+    }
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return {};
+      }
+      const parsed = JSON.parse(raw);
+      return typeof parsed === 'object' && parsed !== null ? parsed : {};
+    } catch (error) {
+      console.warn('Unable to parse saved builder state', error);
+      return {};
+    }
+  }
+
+  persistStateFromConfig(config) {
+    if (!config || !config.type) {
+      return;
+    }
+    this.savedStates[config.type] = deepClone(config.data);
+    if (!this.canUseStorage) {
+      return;
+    }
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedStates));
+    } catch (error) {
+      console.warn('Unable to persist builder state', error);
+    }
+  }
+
+  announceStatus(message) {
+    if (!this.statusEl) {
+      return;
+    }
+    this.statusEl.textContent = message;
+  }
+
+  scheduleRender(config) {
+    this.pendingConfig = config;
+    if (this.updateFrame) {
+      return;
+    }
+    this.updateFrame = window.requestAnimationFrame(() => {
+      this.updateFrame = null;
+      const nextConfig = this.pendingConfig ?? this.getCurrentConfig();
+      this.pendingConfig = null;
+      this.renderOutputs(nextConfig);
+    });
+  }
+
+  flushUpdateQueue() {
+    const config = this.pendingConfig ?? this.getCurrentConfig();
+    if (this.updateFrame) {
+      window.cancelAnimationFrame(this.updateFrame);
+      this.updateFrame = null;
+      this.pendingConfig = null;
+    }
+    this.renderOutputs(config);
+  }
+
+  renderOutputs(config) {
+    if (!config || !config.type) {
+      return;
+    }
+    const generator = Generators[config.type];
+    if (!generator) {
+      return;
+    }
+
+    const html = generator(config.data);
+    if (this.outputArea) {
+      this.outputArea.value = html;
+    }
+
+    if (this.previewFrame instanceof HTMLIFrameElement) {
+      try {
+        const iframeDoc = this.previewFrame.contentDocument;
+        iframeDoc.open();
+        iframeDoc.write(html);
+        iframeDoc.close();
+      } catch (error) {
+        console.error('Unable to refresh activity preview', error);
+        this.announceStatus('Unable to refresh the preview.');
+      }
+    }
+
+    this.persistStateFromConfig(config);
+  }
+
+  forceUpdate() {
+    this.flushUpdateQueue();
+  }
+
   init() {
     this.typeSelect.addEventListener('change', this.handleTypeChange);
     this.formContainer.addEventListener('input', this.handleFormInput);
     this.formContainer.addEventListener('change', this.handleFormInput);
     this.formContainer.addEventListener('click', this.handleFormClick);
     this.copyBtn.addEventListener('click', () => this.copyHtml());
-    this.refreshBtn.addEventListener('click', () => this.updateOutputs());
+    this.refreshBtn.addEventListener('click', () => {
+      this.forceUpdate();
+      this.showAlert('Preview refreshed.');
+    });
     if (this.sendToDeckBtn) {
       if (!this.isEmbedded) {
         this.sendToDeckBtn.hidden = true;
@@ -132,16 +249,20 @@ class ActivityBuilder {
 
     this.renderForm();
     this.updateOutputs();
+    this.flushUpdateQueue();
   }
 
   handleTypeChange(event) {
     const nextType = event.target.value;
     this.state = {
       type: nextType,
-      data: DEFAULT_STATES[nextType]()
+      data: deepClone(this.savedStates?.[nextType]) || DEFAULT_STATES[nextType]()
     };
     this.renderForm();
     this.updateOutputs();
+    this.flushUpdateQueue();
+    const meta = TYPE_META[nextType] || TYPE_META.default;
+    this.announceStatus(`${meta.label} preset ready to customise.`);
   }
 
   handleFormInput(event) {
@@ -617,26 +738,20 @@ class ActivityBuilder {
 
   getCurrentConfig() {
     const { type, data } = this.state;
-    return JSON.parse(JSON.stringify({ type, data }));
+    return {
+      type,
+      data: deepClone(data)
+    };
   }
 
   updateOutputs() {
     const config = this.getCurrentConfig();
-    const generator = Generators[config.type];
-    if (!generator) return;
-
-    const html = generator(config.data);
-
-    this.outputArea.value = html;
-
-    const iframeDoc = this.previewFrame.contentDocument;
-    iframeDoc.open();
-    iframeDoc.write(html);
-    iframeDoc.close();
+    this.scheduleRender(config);
   }
 
   async copyHtml() {
     try {
+      this.forceUpdate();
       await navigator.clipboard.writeText(this.outputArea.value);
       this.showAlert('HTML copied to clipboard.');
     } catch (error) {
@@ -650,7 +765,7 @@ class ActivityBuilder {
       this.showAlert('Open this builder inside the deck to send modules directly.');
       return;
     }
-    this.updateOutputs();
+    this.forceUpdate();
     const html = this.outputArea.value;
     if (!html.trim()) {
       this.showAlert('Build an activity before sending it to the deck.');
@@ -677,6 +792,7 @@ class ActivityBuilder {
     const alertNode = this.alertTemplate.content.firstElementChild.cloneNode(true);
     alertNode.textContent = message;
     document.body.appendChild(alertNode);
+    this.announceStatus(message);
     requestAnimationFrame(() => alertNode.classList.add('show'));
     setTimeout(() => {
       alertNode.classList.remove('show');

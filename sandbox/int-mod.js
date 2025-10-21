@@ -105,6 +105,8 @@ let moduleCloseBtn;
 let moduleLastFocus;
 let moduleTargetCanvas;
 let moduleInsertCallback;
+let deckToastRoot;
+let deckStatusEl;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -131,6 +133,8 @@ const MODULE_TYPE_LABELS = {
   grouping: 'Grouping',
   'table-completion': 'Table completion',
 };
+
+const DECK_TOAST_TIMEOUT = 3600;
 
 const DEFAULT_BUILDER_PROMPTS = [
   {
@@ -297,6 +301,61 @@ async function hydrateRemoteImages(root = document) {
       return undefined;
     }),
   );
+}
+
+function getDeckStatusElement() {
+  if (!deckStatusEl || !(deckStatusEl instanceof HTMLElement)) {
+    deckStatusEl = document.getElementById('deck-status');
+  }
+  return deckStatusEl instanceof HTMLElement ? deckStatusEl : null;
+}
+
+function announceDeckStatus(message) {
+  const statusNode = getDeckStatusElement();
+  if (statusNode) {
+    statusNode.textContent = message;
+  }
+}
+
+function getDeckToastRoot() {
+  if (!deckToastRoot || !(deckToastRoot instanceof HTMLElement)) {
+    deckToastRoot = document.getElementById('deck-toast-root');
+  }
+  return deckToastRoot instanceof HTMLElement ? deckToastRoot : null;
+}
+
+function showDeckToast(message, { icon = 'fa-circle-info', timeout = DECK_TOAST_TIMEOUT } = {}) {
+  const root = getDeckToastRoot();
+  announceDeckStatus(message);
+  if (!root) {
+    return null;
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'deck-toast';
+  toast.setAttribute('role', 'status');
+  toast.innerHTML = `
+    <i class="fa-solid ${icon}" aria-hidden="true"></i>
+    <span>${message}</span>
+  `;
+  root.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('is-visible');
+  });
+
+  window.setTimeout(() => {
+    toast.classList.remove('is-visible');
+    toast.addEventListener(
+      'transitionend',
+      () => {
+        toast.remove();
+      },
+      { once: true }
+    );
+  }, Math.max(2000, timeout));
+
+  return toast;
 }
 
 let slides = [];
@@ -1776,10 +1835,14 @@ function downloadDeckState() {
     anchor.download = "deck-state.json";
     anchor.click();
     URL.revokeObjectURL(url);
+    showDeckToast("Deck state saved to your device.", {
+      icon: "fa-floppy-disk",
+    });
   } catch (error) {
     console.error("Failed to save deck state", error);
-    window.alert(
+    showDeckToast(
       "Sorry, we couldn't save the deck right now. Please try again.",
+      { icon: "fa-triangle-exclamation" },
     );
   }
 }
@@ -1837,6 +1900,10 @@ function applyDeckState(state) {
   hydrateRemoteImages(stageViewport).catch((error) => {
     console.warn("Remote image hydration failed after loading state", error);
   });
+
+  showDeckToast("Deck state loaded successfully.", {
+    icon: "fa-file-import",
+  });
 }
 
 function handleStateFileSelection(event) {
@@ -1855,8 +1922,9 @@ function handleStateFileSelection(event) {
       applyDeckState(state);
     } catch (error) {
       console.error("Failed to load deck state", error);
-      window.alert(
+      showDeckToast(
         "The selected file couldn't be loaded. Please choose a valid deck state JSON file.",
+        { icon: "fa-triangle-exclamation" },
       );
     } finally {
       input.value = "";
@@ -1865,8 +1933,9 @@ function handleStateFileSelection(event) {
 
   reader.addEventListener("error", () => {
     console.error("Failed to read deck state file", reader.error);
-    window.alert(
+    showDeckToast(
       "We couldn't read that file. Please try again with a different JSON file.",
+      { icon: "fa-triangle-exclamation" },
     );
     input.value = "";
   });
@@ -1888,7 +1957,9 @@ function findSlideForNode(node) {
 function applyHighlight(color) {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-    window.alert("Select some text in a slide before applying a highlight.");
+    showDeckToast("Select some text in a slide before applying a highlight.", {
+      icon: "fa-highlighter",
+    });
     return;
   }
 
@@ -1897,12 +1968,16 @@ function applyHighlight(color) {
   const endSlide = findSlideForNode(range.endContainer);
 
   if (!startSlide || !endSlide || startSlide !== endSlide) {
-    window.alert("Highlights must stay within a single slide.");
+    showDeckToast("Highlights must stay within a single slide.", {
+      icon: "fa-highlighter",
+    });
     return;
   }
 
   if (!stageViewport?.contains(startSlide)) {
-    window.alert("Please highlight text within the slide area.");
+    showDeckToast("Please highlight text within the slide area.", {
+      icon: "fa-highlighter",
+    });
     return;
   }
 
@@ -1910,7 +1985,9 @@ function applyHighlight(color) {
     const contents = range.extractContents();
     const textSample = contents.textContent?.trim();
     if (!textSample) {
-      window.alert("Select some text to highlight first.");
+      showDeckToast("Select some text to highlight first.", {
+        icon: "fa-highlighter",
+      });
       range.insertNode(contents);
       return;
     }
@@ -1928,8 +2005,9 @@ function applyHighlight(color) {
     selection.addRange(newRange);
   } catch (error) {
     console.error("Failed to apply highlight", error);
-    window.alert(
+    showDeckToast(
       "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
+      { icon: "fa-triangle-exclamation" },
     );
   }
 }
@@ -1937,7 +2015,9 @@ function applyHighlight(color) {
 function removeHighlight() {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) {
-    window.alert("Place your cursor inside a highlight to clear it.");
+    showDeckToast("Place your cursor inside a highlight to clear it.", {
+      icon: "fa-highlighter",
+    });
     return;
   }
 
@@ -1950,7 +2030,9 @@ function removeHighlight() {
     container instanceof HTMLElement ? container.closest(".text-highlight") : null;
 
   if (!highlight || !stageViewport?.contains(highlight)) {
-    window.alert("Place your cursor inside a highlight to clear it.");
+    showDeckToast("Place your cursor inside a highlight to clear it.", {
+      icon: "fa-highlighter",
+    });
     return;
   }
 
@@ -3815,6 +3897,10 @@ async function initialiseDeck() {
     removeHighlight();
   });
   recalibrateMindMapCounter();
+  showDeckToast("Deck ready to explore.", {
+    icon: "fa-seedling",
+    timeout: 2600,
+  });
 }
 
 

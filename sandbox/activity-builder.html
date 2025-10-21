@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="./activity-builder.css">
 </head>
 <body>
+  <a class="skip-link" href="#builder-main">Skip to activity builder</a>
   <header class="builder-header">
     <div class="brand">
       <h1>Activity Builder</h1>
@@ -37,7 +38,7 @@
     </div>
   </header>
 
-  <main class="builder-main">
+  <main id="builder-main" class="builder-main">
     <section class="builder-panel" aria-label="Configuration">
       <div id="builder-form"></div>
     </section>
@@ -46,7 +47,9 @@
         <h2>Live Preview</h2>
         <button id="refresh-preview" class="ghost-btn" type="button">Refresh Preview</button>
       </div>
-      <iframe id="activity-preview" title="Activity preview"></iframe>
+      <div class="preview-shell">
+        <iframe id="activity-preview" title="Activity preview" loading="lazy"></iframe>
+      </div>
       <div class="export-area">
         <div class="export-header">
           <h2>Generated HTML</h2>
@@ -62,6 +65,8 @@
       </div>
     </section>
   </main>
+
+  <div id="builder-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <template id="alert-template">
     <div class="alert" role="status"></div>
