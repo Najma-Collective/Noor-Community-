@@ -40,6 +40,14 @@ let highlightBtn;
 let highlightColorSelect;
 let removeHighlightBtn;
 let slideNavigatorController;
+let activityBuilderBtn;
+let activityBuilderContainer;
+let activityBuilderForm;
+let activityBuilderQuestionCountInput;
+let activityBuilderQuestionsContainer;
+let activityBuilderLabelInput;
+let activityBuilderJsonPreview;
+let activityBuilderKeyListener;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -57,6 +65,8 @@ const MINDMAP_CATEGORY_COLOR_MAP = {
   evidence: "sky",
   question: "slate",
 };
+
+const MAX_ACTIVITY_MODULE_QUESTIONS = 10;
 
 const isValidMindmapColor = (color) =>
   typeof color === "string" &&
@@ -2398,6 +2408,125 @@ function setupStressMark(activityEl) {
   });
 }
 
+function setupRubricCheck(activityEl) {
+  if (!(activityEl instanceof HTMLElement)) {
+    return;
+  }
+
+  if (activityEl.__deckRubricInitialised) {
+    return;
+  }
+  activityEl.__deckRubricInitialised = true;
+
+  const responseInput = activityEl.querySelector('[data-role="response"]');
+  const feedbackEl = activityEl.querySelector('[data-role="feedback"]');
+  const answerPanel = activityEl.querySelector('[data-role="answer-panel"]');
+  const answerTextEl = activityEl.querySelector('[data-role="answer-text"]');
+  const checkBtn = activityEl.querySelector('[data-action="check"]');
+  const revealBtn = activityEl.querySelector('[data-action="reveal"]');
+  const resetBtn = activityEl.querySelector('[data-action="reset"]');
+
+  const config = parseActivityConfigString(activityEl.dataset.activityConfig);
+  const expectedAnswer =
+    typeof config?.answer === "string"
+      ? config.answer
+      : answerTextEl?.textContent ?? "";
+  const normalisedAnswer = normaliseResponseValue(expectedAnswer);
+  const trimmedFeedback =
+    typeof config?.feedback === "string" ? config.feedback.trim() : "";
+
+  if (answerTextEl instanceof HTMLElement) {
+    answerTextEl.textContent = expectedAnswer;
+  }
+
+  const successMessage = trimmedFeedback
+    ? `Great work! ${trimmedFeedback}`
+    : "Great work! Your response matches the model answer.";
+  const retryMessage = trimmedFeedback
+    ? `Not yet. ${trimmedFeedback}`
+    : "Not yet. Review the model answer and refine your response.";
+  const revealMessage = trimmedFeedback
+    ? `Here's the model answer. ${trimmedFeedback}`
+    : "Here's the model answer. Compare it to your response.";
+
+  function setFeedback(status, message) {
+    if (!(feedbackEl instanceof HTMLElement)) {
+      return;
+    }
+    feedbackEl.textContent = message ?? "";
+    feedbackEl.classList.remove("success", "error");
+    if (status === "success") {
+      feedbackEl.classList.add("success");
+    } else if (status === "error") {
+      feedbackEl.classList.add("error");
+    }
+  }
+
+  function hideAnswerPanel() {
+    if (answerPanel instanceof HTMLElement) {
+      answerPanel.hidden = true;
+    }
+    if (revealBtn instanceof HTMLElement) {
+      revealBtn.dataset.state = "hidden";
+      revealBtn.innerHTML =
+        '<i class="fa-solid fa-eye" aria-hidden="true"></i> Show answer';
+    }
+  }
+
+  hideAnswerPanel();
+  setFeedback(null, "");
+
+  checkBtn?.addEventListener("click", () => {
+    const responseValue =
+      responseInput instanceof HTMLInputElement ||
+      responseInput instanceof HTMLTextAreaElement
+        ? normaliseResponseValue(responseInput.value)
+        : "";
+
+    if (!responseValue) {
+      setFeedback("error", "Please enter your response before checking.");
+      return;
+    }
+
+    if (normalisedAnswer && responseValue === normalisedAnswer) {
+      setFeedback("success", successMessage);
+    } else {
+      setFeedback("error", retryMessage);
+    }
+  });
+
+  revealBtn?.addEventListener("click", () => {
+    if (!(answerPanel instanceof HTMLElement)) {
+      return;
+    }
+    const isHidden = answerPanel.hidden;
+    if (isHidden) {
+      answerPanel.hidden = false;
+      if (revealBtn instanceof HTMLElement) {
+        revealBtn.dataset.state = "visible";
+        revealBtn.innerHTML =
+          '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Hide answer';
+      }
+      setFeedback("success", revealMessage);
+    } else {
+      hideAnswerPanel();
+      setFeedback(null, "");
+    }
+  });
+
+  resetBtn?.addEventListener("click", () => {
+    if (
+      responseInput instanceof HTMLInputElement ||
+      responseInput instanceof HTMLTextAreaElement
+    ) {
+      responseInput.value = "";
+      responseInput.focus({ preventScroll: true });
+    }
+    hideAnswerPanel();
+    setFeedback(null, "");
+  });
+}
+
 function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="unscramble"]')
@@ -2427,8 +2556,605 @@ function initialiseActivities() {
     .querySelectorAll('[data-activity="categorization"]')
     .forEach((el) => setupCategorization(el));
   document
+    .querySelectorAll('[data-activity="rubric-check"]')
+    .forEach((el) => setupRubricCheck(el));
+  document
     .querySelectorAll('[data-activity="stress-mark"]')
     .forEach((el) => setupStressMark(el));
+}
+
+function parseActivityConfigString(raw) {
+  if (typeof raw !== "string" || !raw.trim()) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      return parsed;
+    }
+  } catch (error) {
+    console.warn("Failed to parse activity config", error);
+  }
+  return null;
+}
+
+function clampActivityQuestionCount(value) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return 1;
+  }
+  return Math.min(parsed, MAX_ACTIVITY_MODULE_QUESTIONS);
+}
+
+function buildActivitySlug(label) {
+  if (typeof label !== "string") {
+    return "rubric-check";
+  }
+  const trimmed = label.trim().toLowerCase();
+  if (!trimmed) {
+    return "rubric-check";
+  }
+  const normalised = trimmed.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+  const slug = normalised.replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return slug || "rubric-check";
+}
+
+function collectBuilderQuestions() {
+  if (!(activityBuilderQuestionsContainer instanceof HTMLElement)) {
+    return [];
+  }
+  return Array.from(
+    activityBuilderQuestionsContainer.querySelectorAll('[data-question-index]'),
+  ).map((section) => ({
+    prompt:
+      section.querySelector('[data-role="prompt"]')?.value ?? "",
+    answer:
+      section.querySelector('[data-role="answer"]')?.value ?? "",
+    feedback:
+      section.querySelector('[data-role="feedback"]')?.value ?? "",
+  }));
+}
+
+function renderActivityBuilderQuestions(count, preset) {
+  if (!(activityBuilderQuestionsContainer instanceof HTMLElement)) {
+    return;
+  }
+  const sanitisedCount = clampActivityQuestionCount(count ?? 1);
+  const existing = Array.isArray(preset) ? preset : collectBuilderQuestions();
+
+  activityBuilderQuestionsContainer.innerHTML = "";
+
+  for (let index = 0; index < sanitisedCount; index += 1) {
+    const data = existing[index] || { prompt: "", answer: "", feedback: "" };
+    const section = document.createElement("section");
+    section.className = "builder-question card";
+    section.dataset.questionIndex = String(index);
+
+    const header = document.createElement("div");
+    header.className = "builder-question-header";
+    const title = document.createElement("h3");
+    title.textContent = `Question ${index + 1}`;
+    header.appendChild(title);
+
+    if (sanitisedCount > 1) {
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "builder-remove-btn";
+      removeBtn.dataset.action = "remove-question";
+      const removeIcon = document.createElement("i");
+      removeIcon.className = "fa-solid fa-trash-can";
+      removeIcon.setAttribute("aria-hidden", "true");
+      const removeLabel = document.createElement("span");
+      removeLabel.className = "sr-only";
+      removeLabel.textContent = `Remove question ${index + 1}`;
+      removeBtn.append(removeIcon, removeLabel);
+      header.appendChild(removeBtn);
+    }
+
+    section.appendChild(header);
+
+    const promptId = `activity-question-${index + 1}-prompt`;
+    const promptField = document.createElement("div");
+    promptField.className = "builder-field";
+    const promptLabel = document.createElement("label");
+    promptLabel.htmlFor = promptId;
+    promptLabel.textContent = "Question prompt";
+    const promptInput = document.createElement("textarea");
+    promptInput.id = promptId;
+    promptInput.name = `question-${index + 1}-prompt`;
+    promptInput.rows = 3;
+    promptInput.required = true;
+    promptInput.dataset.role = "prompt";
+    promptInput.placeholder = "What should learners respond to?";
+    promptInput.autocomplete = "off";
+    promptInput.value = data.prompt ?? "";
+    promptInput.addEventListener("input", updateActivityBuilderPreview);
+    promptField.append(promptLabel, promptInput);
+    section.appendChild(promptField);
+
+    const answerId = `activity-question-${index + 1}-answer`;
+    const answerField = document.createElement("div");
+    answerField.className = "builder-field";
+    const answerLabel = document.createElement("label");
+    answerLabel.htmlFor = answerId;
+    answerLabel.textContent = "Model answer";
+    const answerInput = document.createElement("textarea");
+    answerInput.id = answerId;
+    answerInput.name = `question-${index + 1}-answer`;
+    answerInput.rows = 3;
+    answerInput.required = true;
+    answerInput.dataset.role = "answer";
+    answerInput.placeholder = "Provide the model answer learners should compare against.";
+    answerInput.autocomplete = "off";
+    answerInput.value = data.answer ?? "";
+    answerInput.addEventListener("input", updateActivityBuilderPreview);
+    answerField.append(answerLabel, answerInput);
+    section.appendChild(answerField);
+
+    const feedbackId = `activity-question-${index + 1}-feedback`;
+    const feedbackField = document.createElement("div");
+    feedbackField.className = "builder-field";
+    const feedbackLabel = document.createElement("label");
+    feedbackLabel.htmlFor = feedbackId;
+    feedbackLabel.textContent = "Feedback";
+    const feedbackInput = document.createElement("textarea");
+    feedbackInput.id = feedbackId;
+    feedbackInput.name = `question-${index + 1}-feedback`;
+    feedbackInput.rows = 3;
+    feedbackInput.dataset.role = "feedback";
+    feedbackInput.placeholder = "Encouraging feedback or next steps for learners.";
+    feedbackInput.autocomplete = "off";
+    feedbackInput.value = data.feedback ?? "";
+    feedbackInput.addEventListener("input", updateActivityBuilderPreview);
+    feedbackField.append(feedbackLabel, feedbackInput);
+    section.appendChild(feedbackField);
+
+    activityBuilderQuestionsContainer.appendChild(section);
+  }
+
+  if (activityBuilderQuestionCountInput instanceof HTMLInputElement) {
+    activityBuilderQuestionCountInput.value = String(sanitisedCount);
+  }
+}
+
+function collectActivityBuilderData({ includeTimestamp = false } = {}) {
+  const labelValue = activityBuilderLabelInput?.value?.trim() ?? "";
+  const label = labelValue || "Rubric Check";
+  const slug = buildActivitySlug(label);
+  const questions = collectBuilderQuestions().map((item, index) => ({
+    id: `${slug}-q${index + 1}`,
+    prompt: typeof item.prompt === "string" ? item.prompt.trim() : "",
+    answer: typeof item.answer === "string" ? item.answer.trim() : "",
+    feedback: typeof item.feedback === "string" ? item.feedback.trim() : "",
+  }));
+
+  const data = {
+    version: 1,
+    kind: "rubric-check",
+    label,
+    slug,
+    totalQuestions: questions.length,
+    questions,
+  };
+
+  if (includeTimestamp) {
+    data.generatedAt = new Date().toISOString();
+  }
+
+  return data;
+}
+
+function updateActivityBuilderPreview() {
+  if (!(activityBuilderJsonPreview instanceof HTMLElement)) {
+    return;
+  }
+  const data = collectActivityBuilderData();
+  const previewSource = data.questions.length
+    ? data
+    : {
+        version: data.version,
+        kind: data.kind,
+        label: data.label,
+        slug: data.slug,
+        totalQuestions: 0,
+        questions: [],
+      };
+  activityBuilderJsonPreview.textContent = JSON.stringify(
+    previewSource,
+    null,
+    2,
+  );
+}
+
+function handleActivityBuilderCountChange() {
+  const count = clampActivityQuestionCount(
+    activityBuilderQuestionCountInput?.value ?? 1,
+  );
+  renderActivityBuilderQuestions(count);
+  updateActivityBuilderPreview();
+}
+
+function resetActivityBuilderForm() {
+  if (activityBuilderForm instanceof HTMLFormElement) {
+    activityBuilderForm.reset();
+  }
+  const count = clampActivityQuestionCount(
+    activityBuilderQuestionCountInput?.value ?? 1,
+  );
+  renderActivityBuilderQuestions(count);
+  updateActivityBuilderPreview();
+}
+
+function handleActivityBuilderSubmit(event) {
+  event.preventDefault();
+  if (!(activityBuilderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  if (!activityBuilderForm.reportValidity()) {
+    return;
+  }
+  const config = collectActivityBuilderData({ includeTimestamp: true });
+  const invalid = config.questions.find(
+    (question) => !question.prompt || !question.answer,
+  );
+  if (invalid) {
+    window.alert(
+      "Each question needs both a prompt and a model answer before generating slides.",
+    );
+    return;
+  }
+
+  const created = createRubricActivitySlidesFromConfig(config);
+  if (!created.length) {
+    window.alert(
+      "We couldn't create the activity slides. Please review your inputs and try again.",
+    );
+    return;
+  }
+
+  closeActivityBuilder();
+  resetActivityBuilderForm();
+}
+
+function createRubricActivitySlide(config, question, index) {
+  if (!config || !question) {
+    return null;
+  }
+  const promptText =
+    typeof question.prompt === "string" ? question.prompt.trim() : "";
+  const answerText =
+    typeof question.answer === "string" ? question.answer.trim() : "";
+  if (!promptText || !answerText) {
+    return null;
+  }
+  const feedbackText =
+    typeof question.feedback === "string" ? question.feedback.trim() : "";
+  const totalQuestions = Number.isInteger(config.totalQuestions)
+    ? config.totalQuestions
+    : Array.isArray(config.questions)
+    ? config.questions.length
+    : 1;
+  const moduleLabel =
+    typeof config.label === "string" && config.label.trim()
+      ? config.label.trim()
+      : "Activity";
+  const providedSlug =
+    typeof config.slug === "string" && config.slug.trim()
+      ? config.slug.trim()
+      : moduleLabel;
+  const moduleSlug = buildActivitySlug(providedSlug);
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden";
+  slide.dataset.type = "activity";
+  slide.dataset.activityModule = "rubric-check";
+  slide.dataset.activityModuleConfig = JSON.stringify({
+    kind: config.kind ?? "rubric-check",
+    label: moduleLabel,
+    slug: moduleSlug,
+    totalQuestions,
+    questionIndex: index + 1,
+    generatedAt: config.generatedAt ?? new Date().toISOString(),
+  });
+
+  const slideInner = document.createElement("div");
+  slideInner.className = "slide-inner";
+  slide.appendChild(slideInner);
+
+  const pill = document.createElement("span");
+  pill.className = "pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-list-check";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.append(pillIcon, document.createTextNode(` ${moduleLabel} · Question ${index + 1} of ${totalQuestions}`));
+  slideInner.appendChild(pill);
+
+  const card = document.createElement("div");
+  card.className = "card rubric-activity-card";
+  card.dataset.activity = "rubric-check";
+  card.dataset.activityConfig = JSON.stringify({
+    kind: config.kind ?? "rubric-check",
+    label: moduleLabel,
+    slug: moduleSlug,
+    questionIndex: index + 1,
+    totalQuestions,
+    prompt: promptText,
+    answer: answerText,
+    feedback: feedbackText,
+  });
+  slideInner.appendChild(card);
+
+  const questionHeading = document.createElement("h2");
+  questionHeading.className = "activity-question";
+  questionHeading.textContent = promptText;
+  card.appendChild(questionHeading);
+
+  const instructions = document.createElement("p");
+  instructions.className = "activity-instruction";
+  instructions.textContent =
+    "Use the rubric to craft your response. When you're ready, check your answer or reveal the model answer.";
+  card.appendChild(instructions);
+
+  const responseField = document.createElement("div");
+  responseField.className = "activity-response-field";
+  const responseId = `${moduleSlug}-response-${index + 1}`;
+  const responseLabel = document.createElement("label");
+  responseLabel.className = "sr-only";
+  responseLabel.htmlFor = responseId;
+  responseLabel.textContent = "Your response";
+  const responseInput = document.createElement("textarea");
+  responseInput.id = responseId;
+  responseInput.rows = 5;
+  responseInput.dataset.role = "response";
+  responseInput.placeholder = "Type your response here...";
+  responseInput.setAttribute("aria-label", "Your response");
+  responseField.append(responseLabel, responseInput);
+  card.appendChild(responseField);
+
+  const actions = document.createElement("div");
+  actions.className = "activity-actions";
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.innerHTML =
+    '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Check answer';
+  const revealBtn = document.createElement("button");
+  revealBtn.type = "button";
+  revealBtn.className = "activity-btn secondary";
+  revealBtn.dataset.action = "reveal";
+  revealBtn.innerHTML =
+    '<i class="fa-solid fa-eye" aria-hidden="true"></i> Show answer';
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "activity-btn secondary";
+  resetBtn.dataset.action = "reset";
+  resetBtn.innerHTML =
+    '<i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset';
+  actions.append(checkBtn, revealBtn, resetBtn);
+  card.appendChild(actions);
+
+  const feedbackMsg = document.createElement("div");
+  feedbackMsg.className = "feedback-msg";
+  feedbackMsg.dataset.role = "feedback";
+  feedbackMsg.setAttribute("role", "status");
+  feedbackMsg.setAttribute("aria-live", "polite");
+  card.appendChild(feedbackMsg);
+
+  const answerPanel = document.createElement("div");
+  answerPanel.className = "activity-answer-panel";
+  answerPanel.dataset.role = "answer-panel";
+  answerPanel.hidden = true;
+  const answerTitle = document.createElement("strong");
+  answerTitle.textContent = "Model answer";
+  const answerBody = document.createElement("p");
+  answerBody.dataset.role = "answer-text";
+  answerBody.textContent = answerText;
+  answerPanel.append(answerTitle, answerBody);
+  card.appendChild(answerPanel);
+
+  return slide;
+}
+
+function createRubricActivitySlidesFromConfig(config) {
+  if (!(stageViewport instanceof HTMLElement)) {
+    console.warn("Stage viewport is unavailable; cannot create activity slides.");
+    return [];
+  }
+  if (!config || !Array.isArray(config.questions)) {
+    return [];
+  }
+  const insertionPoint = prevBtn ?? nextBtn ?? null;
+  const createdSlides = [];
+
+  config.questions.forEach((question, index) => {
+    const slide = createRubricActivitySlide(config, question, index);
+    if (slide) {
+      createdSlides.push(slide);
+      stageViewport.insertBefore(slide, insertionPoint);
+    }
+  });
+
+  if (!createdSlides.length) {
+    return [];
+  }
+
+  refreshSlides();
+  initialiseActivities();
+  const firstNewIndex = slides.length - createdSlides.length;
+  if (firstNewIndex >= 0) {
+    showSlide(firstNewIndex);
+  }
+  return createdSlides;
+}
+
+function openActivityBuilder() {
+  if (!(activityBuilderContainer instanceof HTMLElement)) {
+    return;
+  }
+  activityBuilderContainer.classList.add("is-open");
+  activityBuilderContainer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("activity-builder-open");
+
+  if (activityBuilderKeyListener) {
+    window.removeEventListener("keydown", activityBuilderKeyListener);
+  }
+  activityBuilderKeyListener = (event) => {
+    if (event.key === "Escape") {
+      closeActivityBuilder();
+    }
+  };
+  window.addEventListener("keydown", activityBuilderKeyListener);
+
+  const focusTarget =
+    activityBuilderLabelInput instanceof HTMLElement
+      ? activityBuilderLabelInput
+      : activityBuilderContainer.querySelector("input, textarea, select, button");
+  focusTarget?.focus({ preventScroll: true });
+
+  const count = clampActivityQuestionCount(
+    activityBuilderQuestionCountInput?.value ?? 1,
+  );
+  renderActivityBuilderQuestions(count);
+  updateActivityBuilderPreview();
+}
+
+function closeActivityBuilder() {
+  if (!(activityBuilderContainer instanceof HTMLElement)) {
+    return;
+  }
+  activityBuilderContainer.classList.remove("is-open");
+  activityBuilderContainer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("activity-builder-open");
+  if (activityBuilderKeyListener) {
+    window.removeEventListener("keydown", activityBuilderKeyListener);
+    activityBuilderKeyListener = null;
+  }
+  activityBuilderBtn?.focus?.({ preventScroll: true });
+}
+
+function initialiseActivityBuilder() {
+  if (activityBuilderContainer instanceof HTMLElement) {
+    return;
+  }
+
+  const container =
+    document.querySelector("#activity-builder") ??
+    document.querySelector('[data-role="activity-builder"]');
+
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  if (container.__deckActivityBuilderReady) {
+    activityBuilderContainer = container;
+    activityBuilderBtn =
+      document.querySelector("#open-activity-builder-btn") ?? null;
+    activityBuilderForm =
+      container.querySelector("#activity-builder-form") ?? null;
+    activityBuilderQuestionsContainer =
+      container.querySelector('[data-role="question-list"]') ?? null;
+    activityBuilderQuestionCountInput =
+      container.querySelector("#activity-question-count") ?? null;
+    activityBuilderLabelInput =
+      container.querySelector("#activity-module-label") ?? null;
+    activityBuilderJsonPreview =
+      container.querySelector('[data-role="json-preview"]') ?? null;
+    return;
+  }
+
+  container.__deckActivityBuilderReady = true;
+
+  activityBuilderContainer = container;
+  activityBuilderForm =
+    container.querySelector("#activity-builder-form") ?? null;
+  activityBuilderQuestionsContainer =
+    container.querySelector('[data-role="question-list"]') ?? null;
+  activityBuilderQuestionCountInput =
+    container.querySelector("#activity-question-count") ?? null;
+  activityBuilderLabelInput =
+    container.querySelector("#activity-module-label") ?? null;
+  activityBuilderJsonPreview =
+    container.querySelector('[data-role="json-preview"]') ?? null;
+  activityBuilderBtn =
+    document.querySelector("#open-activity-builder-btn") ?? null;
+
+  if (activityBuilderForm instanceof HTMLFormElement) {
+    activityBuilderForm.addEventListener("submit", handleActivityBuilderSubmit);
+  }
+
+  activityBuilderQuestionCountInput?.addEventListener(
+    "input",
+    handleActivityBuilderCountChange,
+  );
+
+  activityBuilderQuestionsContainer?.addEventListener("input", (event) => {
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement
+    ) {
+      updateActivityBuilderPreview();
+    }
+  });
+
+  activityBuilderQuestionsContainer?.addEventListener("click", (event) => {
+    const trigger =
+      event.target instanceof HTMLElement
+        ? event.target.closest('[data-action="remove-question"]')
+        : null;
+    if (!trigger) {
+      return;
+    }
+    event.preventDefault();
+    const current = collectBuilderQuestions();
+    if (current.length <= 1) {
+      return;
+    }
+    const section = trigger.closest('[data-question-index]');
+    if (section instanceof HTMLElement) {
+      const index = Number.parseInt(section.dataset.questionIndex ?? "", 10);
+      if (!Number.isNaN(index)) {
+        current.splice(index, 1);
+      }
+    }
+    renderActivityBuilderQuestions(current.length, current);
+    updateActivityBuilderPreview();
+  });
+
+  activityBuilderLabelInput?.addEventListener(
+    "input",
+    updateActivityBuilderPreview,
+  );
+
+  const closeButtons = container.querySelectorAll('[data-action="close-builder"]');
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      closeActivityBuilder();
+    });
+  });
+
+  container.addEventListener("click", (event) => {
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
+    if (event.target.dataset.action === "close-builder") {
+      closeActivityBuilder();
+      return;
+    }
+    if (event.target === container) {
+      closeActivityBuilder();
+    }
+  });
+
+  activityBuilderBtn?.addEventListener("click", () => {
+    openActivityBuilder();
+  });
+
+  const initialCount = clampActivityQuestionCount(
+    activityBuilderQuestionCountInput?.value ?? 1,
+  );
+  renderActivityBuilderQuestions(initialCount);
+  updateActivityBuilderPreview();
 }
 
 async function initialiseDeck() {
@@ -2464,6 +3190,7 @@ async function initialiseDeck() {
     removeHighlight();
   });
   recalibrateMindMapCounter();
+  initialiseActivityBuilder();
 }
 
 
@@ -2518,6 +3245,18 @@ export async function setupInteractiveDeck({
   removeHighlightBtn =
     rootElement?.querySelector(removeHighlightButtonSelector) ??
     document.querySelector(removeHighlightButtonSelector);
+
+  if (activityBuilderKeyListener) {
+    window.removeEventListener("keydown", activityBuilderKeyListener);
+    activityBuilderKeyListener = null;
+  }
+  activityBuilderBtn = null;
+  activityBuilderContainer = null;
+  activityBuilderForm = null;
+  activityBuilderQuestionCountInput = null;
+  activityBuilderQuestionsContainer = null;
+  activityBuilderLabelInput = null;
+  activityBuilderJsonPreview = null;
 
   slides = [];
   currentSlideIndex = 0;
