@@ -65,6 +65,14 @@
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
           </button>
+          <button
+            id="open-activity-builder"
+            class="toolbar-btn ghost"
+            type="button"
+          >
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Build Activity
+          </button>
         </div>
       </header>
       <main class="deck-workspace">
@@ -1415,6 +1423,107 @@
           </button>
         </div>
       </main>
+      <div
+        id="activity-builder"
+        class="activity-builder-overlay"
+        aria-hidden="true"
+      >
+        <div
+          class="activity-builder-panel"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="activity-builder-title"
+        >
+          <div class="builder-header">
+            <h2 id="activity-builder-title">
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              Activity Builder
+            </h2>
+            <button
+              type="button"
+              class="builder-close"
+              data-action="close-builder"
+            >
+              <span class="sr-only">Close builder</span>
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+          <form id="activity-builder-form" class="builder-form">
+            <p class="builder-intro">
+              Capture your rubric prompts, answers, and feedback to instantly
+              generate an interactive activity slide for your learners.
+            </p>
+            <div class="builder-grid">
+              <div class="builder-field">
+                <label for="builder-title">Activity title</label>
+                <input
+                  id="builder-title"
+                  name="title"
+                  type="text"
+                  placeholder="e.g. Project Evaluation Check"
+                />
+              </div>
+              <div class="builder-field">
+                <label for="builder-type">Activity module type</label>
+                <select id="builder-type" name="type">
+                  <option value="Short Response">Short Response</option>
+                  <option value="Peer Feedback">Peer Feedback</option>
+                  <option value="Exit Ticket">Exit Ticket</option>
+                </select>
+              </div>
+              <div class="builder-field">
+                <label for="builder-count">Number of questions</label>
+                <input
+                  id="builder-count"
+                  name="questionCount"
+                  type="number"
+                  min="1"
+                  max="6"
+                  value="3"
+                  required
+                />
+              </div>
+            </div>
+            <div
+              class="builder-questions"
+              data-role="question-container"
+            ></div>
+            <div
+              class="builder-status"
+              data-role="builder-status"
+              aria-live="polite"
+            ></div>
+            <div class="builder-actions">
+              <button class="activity-btn" type="submit">
+                <i class="fa-solid fa-star"></i>
+                Generate Activity
+              </button>
+              <button
+                class="activity-btn secondary"
+                type="button"
+                data-action="clear-builder"
+              >
+                <i class="fa-solid fa-eraser"></i>
+                Clear Form
+              </button>
+            </div>
+            <div class="builder-json">
+              <div class="builder-json-header">
+                <i class="fa-solid fa-code" aria-hidden="true"></i>
+                <span>Generated JSON</span>
+              </div>
+              <label class="sr-only" for="builder-json-output"
+                >Generated JSON</label
+              >
+              <textarea
+                id="builder-json-output"
+                class="builder-json-output"
+                readonly
+              ></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
 
@@ -1422,6 +1531,7 @@
       import { setupInteractiveDeck } from "../../../js/interactivemodule.js";
       setupInteractiveDeck();
     </script>
+    <script type="module" src="./activity-builder.js"></script>
 
   </body>
 </html>
