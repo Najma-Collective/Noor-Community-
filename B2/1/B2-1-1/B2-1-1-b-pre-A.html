@@ -15,6 +15,42 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="../../../CSS-slides.css" />
+    <style>
+      .categorize-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .categorize-bank,
+      .categorize-dropzone {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 1rem;
+        min-height: 150px;
+        flex: 1;
+      }
+      .categorize-bank h3, .categorize-dropzone h3 {
+        margin-top: 0;
+        font-size: 1rem;
+        color: #555;
+      }
+      .categorize-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+        cursor: grab;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+       .categorize-item:active {
+        cursor: grabbing;
+      }
+      .categorize-dropzone.over {
+        background-color: #e8f4ff;
+        border-color: #007bff;
+      }
+    </style>
   </head>
   <body>
     <div class="deck-app">
@@ -52,13 +88,48 @@
                 </p>
               </div>
 
-              <div class="card" aria-labelledby="rubric-heading">
-                <h2 id="rubric-heading">
-                  <i class="fa-solid fa-book-open-reader"></i>
-                  Rubric
-                </h2>
-                <p>Read the model dialogue carefully and answer each activity.</p>
+              <div class="card activity-card" id="activity-1" data-activity="categorize" aria-labelledby="activity-1-heading">
+                <div class="card-header">
+                  <span class="pill">
+                    <i class="fa-solid fa-brain"></i>
+                    Warm-up
+                  </span>
+                  <h2 id="activity-1-heading">Activity 1. Planning Priorities</h2>
+                  <p>
+                    <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                    Drag and drop the tasks into the correct project phase.
+                  </p>
+                  <p class="module-tag">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <strong>[Activity_Module: Drag_and_Drop]</strong>
+                  </p>
+                </div>
+                <div class="categorize-container">
+                  <div class="categorize-bank">
+                    <h3>Tasks to Categorize</h3>
+                    <div id="item-1" class="categorize-item" draggable="true" data-category="early">Confirm the budget</div>
+                    <div id="item-2" class="categorize-item" draggable="true" data-category="ongoing">Monitor milestones</div>
+                    <div id="item-3" class="categorize-item" draggable="true" data-category="early">Create stakeholder map</div>
+                    <div id="item-4" class="categorize-item" draggable="true" data-category="ongoing">Flag new risks</div>
+                    <div id="item-5" class="categorize-item" draggable="true" data-category="early">Brief the team</div>
+                    <div id="item-6" class="categorize-item" draggable="true" data-category="ongoing">Notify finance of changes</div>
+                  </div>
+                  <div class="categorize-dropzone-wrapper" style="display: flex; flex: 2; gap: 1rem;">
+                    <div id="early" class="categorize-dropzone">
+                      <h3>Early Stage Actions</h3>
+                    </div>
+                    <div id="ongoing" class="categorize-dropzone">
+                      <h3>Ongoing Actions</h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="blank-actions">
+                  <button type="button" class="activity-btn" data-action="check">Check Categories</button>
+                  <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+                </div>
+                <div class="feedback-msg" role="status" aria-live="polite"></div>
               </div>
+
 
               <div class="card" aria-labelledby="model-heading">
                 <h2 id="model-heading">
@@ -102,19 +173,19 @@
 
               <div
                 class="card activity-card"
-                id="activity-1"
+                id="activity-2"
                 data-activity="multiple-choice"
-                aria-labelledby="activity-1-heading"
+                aria-labelledby="activity-2-heading"
               >
                 <div class="card-header">
                   <span class="pill">
                     <i class="fa-solid fa-circle-question"></i>
                     Gist Check
                   </span>
-                  <h2 id="activity-1-heading">Activity 1. Planning Overview</h2>
+                  <h2 id="activity-2-heading">Activity 2. Planning Overview</h2>
                   <p>
                     <i class="fa-solid fa-eye"></i>
-                    Choose the correct answer.
+                    Read the dialogue and choose the correct answer.
                   </p>
                   <p class="module-tag">
                     <i class="fa-solid fa-sitemap"></i>
@@ -123,36 +194,53 @@
                 </div>
                 <form>
                   <div class="quiz-card">
-                    <p class="question-text">1. What is the main concern?</p>
+                    <p class="question-text">1. What is the main purpose of the call?</p>
                     <div class="quiz-options">
                       <label class="quiz-option">
                         <input type="radio" name="q1" value="a" />
-                        <span>Designing the project logo.</span>
+                        <span>To cancel the project launch.</span>
                       </label>
                       <label class="quiz-option">
                         <input type="radio" name="q1" value="b" />
-                        <span>Confirming stakeholders and budget limits.</span>
+                        <span>To align on key details before a formal meeting.</span>
                       </label>
                       <label class="quiz-option">
                         <input type="radio" name="q1" value="c" />
-                        <span>Booking flights to Jerusalem.</span>
+                        <span>To interview a new field coordinator.</span>
                       </label>
                     </div>
                   </div>
                   <div class="quiz-card">
-                    <p class="question-text">2. What action will Farid take?</p>
+                    <p class="question-text">2. What is the primary budget constraint?</p>
                     <div class="quiz-options">
                       <label class="quiz-option">
                         <input type="radio" name="q2" value="a" />
-                        <span>Buy all equipment immediately.</span>
+                        <span>They have unlimited funds.</span>
                       </label>
                       <label class="quiz-option">
                         <input type="radio" name="q2" value="b" />
-                        <span>Delay the tracker update until next week.</span>
+                        <span>The finance department can only release 40,000 shekels this quarter.</span>
                       </label>
                       <label class="quiz-option">
                         <input type="radio" name="q2" value="c" />
-                        <span>Phase purchases and update the shared tracker.</span>
+                        <span>They need to buy weaving looms immediately.</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="quiz-card">
+                    <p class="question-text">3. What are Farid's immediate next steps?</p>
+                    <div class="quiz-options">
+                      <label class="quiz-option">
+                        <input type="radio" name="q3" value="a" />
+                        <span>Contact the women's cooperative.</span>
+                      </label>
+                      <label class="quiz-option">
+                        <input type="radio" name="q3" value="b" />
+                        <span>Schedule the call with the municipal council.</span>
+                      </label>
+                      <label class="quiz-option">
+                        <input type="radio" name="q3" value="c" />
+                        <span>Update the tracker and notify the finance officer.</span>
                       </label>
                     </div>
                   </div>
@@ -174,19 +262,19 @@
 
               <div
                 class="card activity-card"
-                id="activity-2"
+                id="activity-3"
                 data-activity="matching"
-                aria-labelledby="activity-2-heading"
+                aria-labelledby="activity-3-heading"
               >
                 <div class="card-header">
                   <span class="pill">
                     <i class="fa-solid fa-language"></i>
                     Vocabulary Focus
                   </span>
-                  <h2 id="activity-2-heading">Activity 2. Planning Vocabulary</h2>
+                  <h2 id="activity-3-heading">Activity 3. Planning Vocabulary</h2>
                   <p>
                     <i class="fa-solid fa-puzzle-piece"></i>
-                    Match each phrase with its meaning in the planning context.
+                    Match each phrase from the dialogue with its meaning.
                   </p>
                   <p class="module-tag">
                     <i class="fa-solid fa-sitemap"></i>
@@ -198,40 +286,72 @@
                     <span>1. stakeholder map</span>
                     <select data-answer="d">
                       <option value="">Choose...</option>
-                      <option value="a">Record potential risks in a table.</option>
-                      <option value="b">Limit on how much money we can spend.</option>
-                      <option value="c">Timeline checkpoints for the project.</option>
-                      <option value="d">List of people and groups we must involve.</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
                     </select>
                   </div>
                   <div class="matching-option">
-                    <span>2. budget ceiling</span>
-                    <select data-answer="b">
-                      <option value="">Choose...</option>
-                      <option value="a">Record potential risks in a table.</option>
-                      <option value="b">Limit on how much money we can spend.</option>
-                      <option value="c">Timeline checkpoints for the project.</option>
-                      <option value="d">List of people and groups we must involve.</option>
-                    </select>
-                  </div>
-                  <div class="matching-option">
-                    <span>3. phase the equipment purchases</span>
+                    <span>2. brief the municipal council</span>
                     <select data-answer="a">
                       <option value="">Choose...</option>
-                      <option value="a">Buy items in stages rather than at once.</option>
-                      <option value="b">Limit on how much money we can spend.</option>
-                      <option value="c">Timeline checkpoints for the project.</option>
-                      <option value="d">List of people and groups we must involve.</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
                     </select>
                   </div>
                   <div class="matching-option">
-                    <span>4. capture milestones</span>
+                    <span>3. budget ceiling</span>
+                    <select data-answer="b">
+                      <option value="">Choose...</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
+                    </select>
+                  </div>
+                  <div class="matching-option">
+                    <span>4. phase the equipment purchases</span>
+                    <select data-answer="e">
+                      <option value="">Choose...</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
+                    </select>
+                  </div>
+                  <div class="matching-option">
+                    <span>5. capture those milestones</span>
+                    <select data-answer="f">
+                     <option value="">Choose...</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
+                    </select>
+                  </div>
+                   <div class="matching-option">
+                    <span>6. flag any risks</span>
                     <select data-answer="c">
                       <option value="">Choose...</option>
-                      <option value="a">Buy items in stages rather than at once.</option>
-                      <option value="b">Limit on how much money we can spend.</option>
-                      <option value="c">Timeline checkpoints for the project.</option>
-                      <option value="d">List of people and groups we must involve.</option>
+                      <option value="a">To formally inform a group about plans.</option>
+                      <option value="b">Limit on how much money can be spent.</option>
+                      <option value="c">To identify and highlight potential problems.</option>
+                      <option value="d">A list of people and groups involved in a project.</option>
+                      <option value="e">To buy necessary items in stages over time.</option>
+                      <option value="f">To record key project deadlines or achievements.</option>
                     </select>
                   </div>
                 </div>
@@ -252,19 +372,19 @@
 
               <div
                 class="card activity-card"
-                id="activity-3"
+                id="activity-4"
                 data-activity="dropdown"
-                aria-labelledby="activity-3-heading"
+                aria-labelledby="activity-4-heading"
               >
                 <div class="card-header">
                   <span class="pill">
                     <i class="fa-solid fa-spell-check"></i>
                     Grammar Focus
                   </span>
-                  <h2 id="activity-3-heading">Activity 3. Planning Modals</h2>
+                  <h2 id="activity-4-heading">Activity 4. Planning Modals</h2>
                   <p>
                     <i class="fa-solid fa-lightbulb"></i>
-                    Choose the modal or verb phrase that matches the dialogue.
+                    Choose the modal or verb phrase that best matches the dialogue's meaning.
                   </p>
                   <p class="module-tag">
                     <i class="fa-solid fa-sitemap"></i>
@@ -282,25 +402,34 @@
                     </select>
                   </div>
                   <div>
-                    <label>2. Finance ____ release more than 40,000 shekels now.</label>
-                    <select data-answer="can't">
+                    <label>2. We still ____ brief the municipal council.</label>
+                    <select data-answer="have to">
                       <option value="">Select...</option>
-                      <option value="can't">can't</option>
-                      <option value="must">must</option>
+                      <option value="could">could</option>
+                      <option value="have to">have to</option>
                       <option value="might">might</option>
                     </select>
                   </div>
                   <div>
-                    <label>3. We ____ phase the purchases to stay on budget.</label>
-                    <select data-answer="have to">
+                    <label>3. Finance ____ only release 40,000 shekels this quarter.</label>
+                    <select data-answer="can">
                       <option value="">Select...</option>
-                      <option value="have to">have to</option>
+                      <option value="can">can</option>
+                      <option value="must">must</option>
+                      <option value="may">may</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>4. We ____ phase the purchases to stay on budget.</label>
+                    <select data-answer="must">
+                      <option value="">Select...</option>
+                      <option value="must">must</option>
                       <option value="could">could</option>
                       <option value="like to">like to</option>
                     </select>
                   </div>
-                  <div>
-                    <label>4. Please ____ any risks before Thursday.</label>
+                   <div>
+                    <label>5. Please ____ any risks before Thursday.</label>
                     <select data-answer="flag">
                       <option value="">Select...</option>
                       <option value="flag">flag</option>
@@ -326,19 +455,19 @@
 
               <div
                 class="card activity-card"
-                id="activity-4"
+                id="activity-5"
                 data-activity="word-order"
-                aria-labelledby="activity-4-heading"
+                aria-labelledby="activity-5-heading"
               >
                 <div class="card-header">
                   <span class="pill">
                     <i class="fa-solid fa-layer-group"></i>
                     Controlled Practice
                   </span>
-                  <h2 id="activity-4-heading">Activity 4. Strategic Statements</h2>
+                  <h2 id="activity-5-heading">Activity 5. Strategic Statements</h2>
                   <p>
                     <i class="fa-solid fa-grip-lines"></i>
-                    Rebuild the two key planning statements from the call.
+                    Rebuild the key planning statements from the call. The tiles are shuffled.
                   </p>
                   <p class="module-tag">
                     <i class="fa-solid fa-sitemap"></i>
@@ -352,8 +481,6 @@
                   >
                     <h3>1. Budget reminder</h3>
                     <div class="token-bank" aria-label="Word bank for sentence 1">
-                      <button type="button" class="click-token" data-token="We">We</button>
-                      <button type="button" class="click-token" data-token="should">should</button>
                       <button type="button" class="click-token" data-token="align">align</button>
                       <button
                         type="button"
@@ -362,6 +489,8 @@
                       >
                         on the budget ceiling.
                       </button>
+                       <button type="button" class="click-token" data-token="We">We</button>
+                      <button type="button" class="click-token" data-token="should">should</button>
                     </div>
                     <div class="drop-zone" role="list" aria-label="Arrange sentence 1">
                       <button type="button" class="click-token drop-slot" data-index="0"></button>
@@ -373,28 +502,41 @@
 
                   <div
                     class="card transparent arrange-item"
-                    data-answer='["I'll","update","the tracker","tonight and notify finance."]'
+                    data-answer='["I","can prioritise","the pottery kilns","and delay the weaving looms."]'
                   >
-                    <h3>2. Follow-up commitment</h3>
-                    <div class="token-bank" aria-label="Word bank for sentence 2">
-                      <button type="button" class="click-token" data-token="I'll">I'll</button>
-                      <button type="button" class="click-token" data-token="update">update</button>
-                      <button
+                    <h3>2. Phasing plan</h3>
+                     <div class="token-bank" aria-label="Word bank for sentence 2">
+                       <button
                         type="button"
                         class="click-token"
-                        data-token="the tracker"
+                        data-token="and delay the weaving looms."
                       >
-                        the tracker
+                        and delay the weaving looms.
                       </button>
-                      <button
-                        type="button"
-                        class="click-token"
-                        data-token="tonight and notify finance."
-                      >
-                        tonight and notify finance.
-                      </button>
+                      <button type="button" class="click-token" data-token="I">I</button>
+                      <button type="button" class="click-token" data-token="the pottery kilns">the pottery kilns</button>
+                      <button type="button" class="click-token" data-token="can prioritise">can prioritise</button>
                     </div>
                     <div class="drop-zone" role="list" aria-label="Arrange sentence 2">
+                      <button type="button" class="click-token drop-slot" data-index="0"></button>
+                      <button type="button" class="click-token drop-slot" data-index="1"></button>
+                      <button type="button" class="click-token drop-slot" data-index="2"></button>
+                      <button type="button" class="click-token drop-slot" data-index="3"></button>
+                    </div>
+                  </div>
+
+                  <div
+                    class="card transparent arrange-item"
+                    data-answer='["I'll","update the tracker","and notify","the finance officer."]'
+                  >
+                    <h3>3. Follow-up commitment</h3>
+                    <div class="token-bank" aria-label="Word bank for sentence 3">
+                      <button type="button" class="click-token" data-token="the finance officer.">the finance officer.</button>
+                      <button type="button" class="click-token" data-token="update the tracker">update the tracker</button>
+                      <button type="button" class="click-token" data-token="I'll">I'll</button>
+                      <button type="button" class="click-token" data-token="and notify">and notify</button>
+                    </div>
+                    <div class="drop-zone" role="list" aria-label="Arrange sentence 3">
                       <button type="button" class="click-token drop-slot" data-index="0"></button>
                       <button type="button" class="click-token drop-slot" data-index="1"></button>
                       <button type="button" class="click-token drop-slot" data-index="2"></button>
@@ -416,6 +558,71 @@
                 </div>
                 <div class="feedback-msg" role="status" aria-live="polite"></div>
               </div>
+              
+              <div class="card activity-card" id="activity-6" data-activity="dropdown" aria-labelledby="activity-6-heading">
+                <div class="card-header">
+                  <span class="pill">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                    Consolidation
+                  </span>
+                  <h2 id="activity-6-heading">Activity 6. Follow-up Email</h2>
+                  <p>
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Complete Farid's follow-up email to Leen using the best word or phrase.
+                  </p>
+                  <p class="module-tag">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <strong>[Activity_Module: Dropdown]</strong>
+                  </p>
+                </div>
+                <div class="card transparent" style="border: 1px solid #ccc; padding: 1rem;">
+                    <p><strong>To:</strong> Leen</p>
+                    <p><strong>Subject:</strong> Nablus Artisans Pilot - Quick Update</p>
+                    <p>Hi Leen,</p>
+                    <p>
+                        Following our call, I've updated the shared tracker to
+                        <select data-answer="capture">
+                            <option value="">Select...</option>
+                            <option value="capture">capture</option>
+                            <option value="phase">phase</option>
+                            <option value="brief">brief</option>
+                        </select>
+                        the new milestones for the equipment purchases. I've also spoken with the finance officer to
+                        <select data-answer="notify">
+                            <option value="">Select...</option>
+                            <option value="align">align</option>
+                            <option value="notify">notify</option>
+                            <option value="flag">flag</option>
+                        </select>
+                        her about the budget phasing.
+                    </p>
+                    <p>
+                        Regarding the stakeholders, I've scheduled the call to
+                        <select data-answer="brief">
+                            <option value="">Select...</option>
+                            <option value="confirm">confirm</option>
+                            <option value="prioritise">prioritise</option>
+                            <option value="brief">brief</option>
+                        </select>
+                        the municipal council for next Tuesday. I don't see any major issues, but I will
+                        <select data-answer="flag">
+                            <option value="">Select...</option>
+                            <option value="flag">flag</option>
+                            <option value="release">release</option>
+                            <option value="contact">contact</option>
+                        </select>
+                        any risks if they arise.
+                    </p>
+                    <p>Best,<br>Farid</p>
+                </div>
+                <div class="blank-actions">
+                  <button type="button" class="activity-btn" data-action="check">Check Email</button>
+                  <button type="button" class="activity-btn secondary" data-action="reset">Reset</button>
+                </div>
+                <div class="feedback-msg" role="status" aria-live="polite"></div>
+              </div>
+
+
             </div>
           </div>
         </div>
@@ -429,6 +636,7 @@
         feedback.textContent = message;
         feedback.classList.toggle('success', isSuccess);
         feedback.classList.toggle('error', !isSuccess);
+        feedback.style.display = 'block';
       }
 
       function resetFeedback(container) {
@@ -436,6 +644,7 @@
         if (feedback) {
           feedback.textContent = '';
           feedback.classList.remove('success', 'error');
+          feedback.style.display = 'none';
         }
       }
 
@@ -455,20 +664,11 @@
       function handleCheck(container) {
         const type = container.dataset.activity;
         switch (type) {
-          case 'multiple-choice':
-            checkMultipleChoice(container);
-            break;
-          case 'matching':
-            checkMatching(container);
-            break;
-          case 'dropdown':
-            checkDropdown(container);
-            break;
-          case 'word-order':
-            checkWordOrder(container);
-            break;
-          default:
-            break;
+          case 'multiple-choice': checkMultipleChoice(container); break;
+          case 'matching': checkMatching(container); break;
+          case 'dropdown': checkDropdown(container); break;
+          case 'word-order': checkWordOrder(container); break;
+          case 'categorize': checkCategorize(container); break;
         }
       }
 
@@ -486,41 +686,29 @@
               select.selectedIndex = 0;
             });
             break;
-          case 'word-order':
-            resetWordOrder(container);
-            break;
-          default:
-            break;
+          case 'word-order': resetWordOrder(container); break;
+          case 'categorize': resetCategorize(container); break;
         }
         resetFeedback(container);
       }
 
       function checkMultipleChoice(container) {
-        const answers = { q1: 'b', q2: 'c' };
+        const answers = { q1: 'b', q2: 'b', q3: 'c' };
         const keys = Object.keys(answers);
         let allAnswered = true;
         let correctCount = 0;
 
         keys.forEach((key) => {
           const selected = container.querySelector(`input[name="${key}"]:checked`);
-          if (!selected) {
-            allAnswered = false;
-            return;
-          }
-          if (selected.value === answers[key]) {
-            correctCount += 1;
-          }
+          if (!selected) { allAnswered = false; return; }
+          if (selected.value === answers[key]) { correctCount += 1; }
         });
 
         if (!allAnswered) {
           showFeedback(container, 'Answer every question before checking.', false);
           return;
         }
-
-        const message =
-          correctCount === keys.length
-            ? 'Excellent! You have the briefing priorities clear.'
-            : 'Review the dialogue again and adjust your answers.';
+        const message = correctCount === keys.length ? 'Excellent! You have the briefing priorities clear.' : 'Review the dialogue again and adjust your answers.';
         showFeedback(container, message, correctCount === keys.length);
       }
 
@@ -530,11 +718,8 @@
           showFeedback(container, 'Choose an option for each phrase.', false);
           return;
         }
-
         const allCorrect = selects.every((select) => select.value === select.dataset.answer);
-        const message = allCorrect
-          ? 'Great! Your planning vocabulary is accurate.'
-          : 'Revisit the model dialogue and try again.';
+        const message = allCorrect ? 'Great! Your planning vocabulary is accurate.' : 'Revisit the model dialogue and try again.';
         showFeedback(container, message, allCorrect);
       }
 
@@ -544,11 +729,8 @@
           showFeedback(container, 'Complete every sentence before checking.', false);
           return;
         }
-
         const allCorrect = selects.every((select) => select.value === select.dataset.answer);
-        const message = allCorrect
-          ? 'Nice work! Your planning language matches the model.'
-          : 'Adjust the modal verbs to match the dialogue.';
+        const message = allCorrect ? 'Nice work! Your language use is accurate.' : 'Adjust your selections to match the context.';
         showFeedback(container, message, allCorrect);
       }
 
@@ -558,14 +740,8 @@
         const results = items.map((item) => {
           const correctOrder = JSON.parse(item.dataset.answer);
           const dropSlots = Array.from(item.querySelectorAll('.drop-slot'));
-          const userOrder = dropSlots
-            .filter((slot) => slot.dataset.token)
-            .map((slot) => slot.dataset.token);
-
-          if (userOrder.length !== correctOrder.length) {
-            allAnswered = false;
-          }
-
+          const userOrder = dropSlots.filter((slot) => slot.dataset.token).map((slot) => slot.dataset.token);
+          if (userOrder.length !== correctOrder.length) { allAnswered = false; }
           return correctOrder.every((value, index) => userOrder[index] === value);
         });
 
@@ -573,48 +749,29 @@
           showFeedback(container, 'Fill every slot before checking your sentences.', false);
           return;
         }
-
         const allCorrect = results.every(Boolean);
-        const message = allCorrect
-          ? 'Fantastic! Your strategic statements are ready for the meeting.'
-          : 'Reorder the phrases to mirror the model statements.';
+        const message = allCorrect ? 'Fantastic! Your strategic statements are ready for the meeting.' : 'Reorder the phrases to mirror the model statements.';
         showFeedback(container, message, allCorrect);
       }
-
+      
       function resetWordOrder(container) {
-        container.querySelectorAll('.drop-slot').forEach((slot) => {
-          if (slot.dataset.token) {
-            const tokenButton = container.querySelector(
-              `.click-token[data-token="${slot.dataset.token}"]`
-            );
-            if (tokenButton) {
-              tokenButton.disabled = false;
-              tokenButton.classList.remove('selected');
-            }
-          }
-          slot.textContent = '';
-          slot.classList.remove('filled');
-          delete slot.dataset.token;
+        container.querySelectorAll('.arrange-item').forEach(item => {
+            item.querySelectorAll('.token-bank .click-token').forEach(token => { token.disabled = false; });
+            item.querySelectorAll('.drop-zone .drop-slot').forEach(slot => {
+                slot.textContent = '';
+                slot.classList.remove('filled');
+                delete slot.dataset.token;
+            });
         });
-        container
-          .querySelectorAll('.click-token[data-token]')
-          .forEach((token) => {
-            token.disabled = false;
-            token.classList.remove('selected');
-          });
+        resetFeedback(container);
       }
 
-      document
-        .querySelectorAll('[data-activity="word-order"] .click-token[data-token]')
-        .forEach((button) => {
+      document.querySelectorAll('[data-activity="word-order"] .token-bank .click-token').forEach((button) => {
           button.addEventListener('click', () => {
             if (button.disabled) return;
             const arrangeItem = button.closest('.arrange-item');
-            const dropSlots = Array.from(arrangeItem.querySelectorAll('.drop-slot'));
-            const availableSlot = dropSlots.find((slot) => !slot.dataset.token);
-            if (!availableSlot) {
-              return;
-            }
+            const availableSlot = Array.from(arrangeItem.querySelectorAll('.drop-slot')).find((slot) => !slot.dataset.token);
+            if (!availableSlot) return;
             availableSlot.textContent = button.dataset.token;
             availableSlot.dataset.token = button.dataset.token;
             availableSlot.classList.add('filled');
@@ -622,25 +779,85 @@
             resetFeedback(arrangeItem.closest('[data-activity]'));
           });
         });
-
-      document
-        .querySelectorAll('[data-activity="word-order"] .drop-slot')
-        .forEach((slot) => {
+      
+      document.querySelectorAll('[data-activity="word-order"] .drop-slot').forEach((slot) => {
           slot.addEventListener('click', () => {
             if (!slot.dataset.token) return;
             const arrangeItem = slot.closest('.arrange-item');
-            const wordButton = Array.from(
-              arrangeItem.querySelectorAll('.click-token[data-token]')
-            ).find((button) => button.dataset.token === slot.dataset.token && button.disabled);
-            if (wordButton) {
-              wordButton.disabled = false;
-            }
+            const tokenToEnable = arrangeItem.querySelector(`.token-bank .click-token[data-token="${slot.dataset.token}"]`);
+            if (tokenToEnable) { tokenToEnable.disabled = false; }
             slot.textContent = '';
             delete slot.dataset.token;
             slot.classList.remove('filled');
             resetFeedback(arrangeItem.closest('[data-activity]'));
           });
         });
+
+      // --- DRAG AND DROP LOGIC ---
+      let draggedItem = null;
+      document.querySelectorAll('.categorize-item').forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          draggedItem = e.target;
+          setTimeout(() => e.target.style.display = 'none', 0);
+        });
+        item.addEventListener('dragend', (e) => {
+          setTimeout(() => {
+            draggedItem.style.display = 'block';
+            draggedItem = null;
+          }, 0);
+        });
+      });
+      document.querySelectorAll('.categorize-dropzone').forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('over');
+        });
+        zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('over');
+          if (draggedItem) {
+            zone.appendChild(draggedItem);
+          }
+        });
+      });
+      
+      function checkCategorize(container) {
+        const dropzones = container.querySelectorAll('.categorize-dropzone');
+        let allCorrect = true;
+        let allCategorized = true;
+
+        if (container.querySelector('.categorize-bank').children.length > 1) { // h3 is a child
+            allCategorized = false;
+        }
+
+        if(!allCategorized) {
+            showFeedback(container, 'Drag every task into a category before checking.', false);
+            return;
+        }
+
+        dropzones.forEach(zone => {
+            const items = zone.querySelectorAll('.categorize-item');
+            items.forEach(item => {
+                if (item.dataset.category !== zone.id) {
+                    allCorrect = false;
+                }
+            });
+        });
+
+        const message = allCorrect ? 'Perfect! You correctly identified the project phases.' : 'Not quite. Some tasks are in the wrong phase. Try again.';
+        showFeedback(container, message, allCorrect);
+      }
+
+      function resetCategorize(container) {
+        const bank = container.querySelector('.categorize-bank');
+        const items = container.querySelectorAll('.categorize-item');
+        items.forEach(item => {
+            bank.appendChild(item);
+        });
+        resetFeedback(container);
+      }
+
     </script>
   </body>
 </html>

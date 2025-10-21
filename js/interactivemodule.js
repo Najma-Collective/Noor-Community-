@@ -40,6 +40,12 @@ let highlightBtn;
 let highlightColorSelect;
 let removeHighlightBtn;
 let slideNavigatorController;
+let addTextboxBtn;
+let addImageBtn;
+let addImageInput;
+let addActivitySelect;
+
+const TEMPLATE_BASE_URL = "https://najma-collective.github.io/Noor-Community-/Templates/";
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -177,7 +183,7 @@ async function hydrateRemoteImage(img) {
   return hydrationPromise;
 }
 
-async function hydrateRemoteImages(root = document) {
+export async function hydrateRemoteImages(root = document) {
   if (!root) {
     return;
   }
@@ -206,6 +212,22 @@ async function hydrateRemoteImages(root = document) {
     }),
   );
 }
+
+const readFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    if (!(file instanceof Blob)) {
+      reject(new Error("Invalid image data"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      resolve(typeof reader.result === "string" ? reader.result : "");
+    });
+    reader.addEventListener("error", () => {
+      reject(reader.error ?? new Error("Failed to read image data"));
+    });
+    reader.readAsDataURL(file);
+  });
 
 let slides = [];
 let currentSlideIndex = 0;
@@ -432,22 +454,6 @@ export function attachBlankSlideEvents(slide) {
     .querySelectorAll(".pasted-image")
     .forEach((image) => initialisePastedImage(image, { onRemove: updateHintForCanvas }));
 
-  const readFileAsDataUrl = (file) =>
-    new Promise((resolve, reject) => {
-      if (!(file instanceof Blob)) {
-        reject(new Error("Invalid clipboard data"));
-        return;
-      }
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        resolve(typeof reader.result === "string" ? reader.result : "");
-      });
-      reader.addEventListener("error", () => {
-        reject(reader.error ?? new Error("Failed to read clipboard image"));
-      });
-      reader.readAsDataURL(file);
-    });
-
   async function handleCanvasPaste(event) {
     const clipboardData = event.clipboardData;
     if (!clipboardData) {
@@ -504,6 +510,7 @@ export function attachBlankSlideEvents(slide) {
     }
   });
 
+  canvas.__deckUpdateHintForCanvas = updateHintForCanvas;
   updateHintForCanvas();
 }
 
@@ -522,7 +529,7 @@ export function createTextbox({ onRemove } = {}) {
     <button type="button" class="textbox-remove" aria-label="Remove textbox">
 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle">
+    <div class="textbox-handle" data-drag-handle>
 <span class="textbox-title">
   <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
   Textbox
@@ -700,7 +707,7 @@ export function createPastedImage({ src, label, onRemove } = {}) {
     <button type="button" class="textbox-remove pasted-image-remove" aria-label="Remove image">
       <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle pasted-image-handle">
+    <div class="textbox-handle pasted-image-handle" data-drag-handle>
       <span class="textbox-title">
         <i class="fa-solid fa-image" aria-hidden="true"></i>
         Image
@@ -798,6 +805,695 @@ export function positionPastedImage(image, canvas) {
   }
 }
 
+function getActiveSlideElement() {
+  if (!Array.isArray(slides) || !slides.length) {
+    return null;
+  }
+  const index = Math.min(Math.max(0, currentSlideIndex), slides.length - 1);
+  const slide = slides[index];
+  return slide instanceof HTMLElement ? slide : null;
+}
+
+function getActiveSlideCanvas(slide = getActiveSlideElement()) {
+  if (!(slide instanceof HTMLElement)) {
+    return null;
+  }
+  const blankCanvas = slide.querySelector(".blank-canvas");
+  if (blankCanvas instanceof HTMLElement) {
+    return blankCanvas;
+  }
+  const inner = slide.querySelector(".slide-inner");
+  return inner instanceof HTMLElement ? inner : null;
+}
+
+function getCanvasHintUpdater(canvas) {
+  if (canvas && typeof canvas.__deckUpdateHintForCanvas === "function") {
+    return canvas.__deckUpdateHintForCanvas;
+  }
+  return null;
+}
+
+function notifyCanvasContentChanged(canvas) {
+  const updateHint = getCanvasHintUpdater(canvas);
+  if (typeof updateHint === "function") {
+    try {
+      updateHint();
+    } catch (error) {
+      console.warn("Failed to refresh blank slide hint", error);
+    }
+  }
+}
+
+let moduleEditorModal = null;
+let moduleEditorFieldIdCounter = 0;
+let activityEditorListenerAttached = false;
+
+function getActivityTypeLabel(type) {
+  const labels = {
+    "gap-fill": "Gap Fill",
+    "matching-connect": "Matching Connections",
+  };
+  return labels[type] ?? "Activity";
+}
+
+function getNextModuleEditorFieldId() {
+  moduleEditorFieldIdCounter += 1;
+  return `module-editor-field-${moduleEditorFieldIdCounter}`;
+}
+
+function ensureModuleEditorModal() {
+  if (moduleEditorModal) {
+    return moduleEditorModal;
+  }
+
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "module-editor-overlay";
+  Object.assign(overlay.style, {
+    position: "fixed",
+    inset: "0",
+    background: "rgba(15, 23, 42, 0.62)",
+    display: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "2rem",
+    zIndex: "2147483647",
+  });
+
+  const dialog = document.createElement("div");
+  dialog.className = "module-editor-dialog";
+  dialog.setAttribute("role", "dialog");
+  dialog.setAttribute("aria-modal", "true");
+  dialog.tabIndex = -1;
+  Object.assign(dialog.style, {
+    background: "#FFFFFF",
+    borderRadius: "16px",
+    boxShadow: "0 24px 48px rgba(15, 23, 42, 0.2)",
+    width: "min(680px, 100%)",
+    maxHeight: "90vh",
+    display: "flex",
+    flexDirection: "column",
+    padding: "1.5rem",
+    gap: "1rem",
+  });
+
+  const header = document.createElement("div");
+  Object.assign(header.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "1rem",
+  });
+
+  const title = document.createElement("h2");
+  title.className = "module-editor-title";
+  Object.assign(title.style, {
+    fontSize: "1.25rem",
+    margin: 0,
+    fontWeight: "600",
+    color: "#1F2937",
+  });
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label", "Close editor");
+  closeBtn.innerHTML = "&times;";
+  Object.assign(closeBtn.style, {
+    border: "none",
+    background: "none",
+    color: "#6B7280",
+    fontSize: "1.75rem",
+    lineHeight: "1",
+    cursor: "pointer",
+  });
+
+  header.append(title, closeBtn);
+
+  const form = document.createElement("form");
+  form.noValidate = true;
+  Object.assign(form.style, {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1.5rem",
+    overflow: "hidden",
+    flexGrow: "1",
+  });
+
+  const body = document.createElement("div");
+  body.className = "module-editor-body";
+  Object.assign(body.style, {
+    display: "grid",
+    gap: "1rem",
+    overflowY: "auto",
+  });
+
+  const footer = document.createElement("div");
+  Object.assign(footer.style, {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "0.75rem",
+    paddingTop: "0.5rem",
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "activity-btn secondary";
+  cancelBtn.textContent = "Cancel";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "submit";
+  saveBtn.className = "activity-btn";
+  saveBtn.textContent = "Save";
+
+  footer.append(cancelBtn, saveBtn);
+  form.append(body, footer);
+  dialog.append(header, form);
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+
+  const state = {
+    overlay,
+    dialog,
+    form,
+    body,
+    title,
+    saveBtn,
+    cancelBtn,
+    closeBtn,
+    isOpen: false,
+    currentSubmitHandler: null,
+    close() {
+      if (!state.isOpen) {
+        return;
+      }
+      state.isOpen = false;
+      overlay.style.display = "none";
+      overlay.setAttribute("aria-hidden", "true");
+      state.body.innerHTML = "";
+      if (state.currentSubmitHandler) {
+        state.form.removeEventListener("submit", state.currentSubmitHandler);
+        state.currentSubmitHandler = null;
+      }
+      state.form.reset();
+      state.activeActivity = null;
+    },
+  };
+
+  function handleOverlayClick(event) {
+    if (event.target === overlay) {
+      state.close();
+    }
+  }
+
+  overlay.addEventListener("click", handleOverlayClick);
+  cancelBtn.addEventListener("click", () => state.close());
+  closeBtn.addEventListener("click", () => state.close());
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      state.close();
+    }
+  });
+
+  moduleEditorModal = state;
+  return moduleEditorModal;
+}
+
+function createModuleEditorField({
+  label,
+  name,
+  value = "",
+  multiline = false,
+  description = "",
+  rows = 3,
+}) {
+  if (!name) {
+    return null;
+  }
+  const wrapper = document.createElement("div");
+  Object.assign(wrapper.style, {
+    display: "grid",
+    gap: "0.35rem",
+  });
+
+  const fieldId = getNextModuleEditorFieldId();
+  const labelEl = document.createElement("label");
+  labelEl.setAttribute("for", fieldId);
+  labelEl.textContent = label ?? name;
+  Object.assign(labelEl.style, {
+    fontWeight: "600",
+    fontSize: "0.95rem",
+    color: "#111827",
+  });
+
+  let input;
+  if (multiline) {
+    input = document.createElement("textarea");
+    input.rows = rows;
+  } else {
+    input = document.createElement("input");
+    input.type = "text";
+  }
+  input.id = fieldId;
+  input.name = name;
+  input.value = typeof value === "string" ? value : "";
+  Object.assign(input.style, {
+    width: "100%",
+    padding: "0.6rem 0.75rem",
+    borderRadius: "0.5rem",
+    border: "1px solid rgba(100, 116, 139, 0.4)",
+    fontSize: "0.95rem",
+    lineHeight: "1.4",
+    resize: multiline ? "vertical" : "none",
+  });
+
+  wrapper.append(labelEl, input);
+
+  if (description) {
+    const hint = document.createElement("p");
+    hint.textContent = description;
+    Object.assign(hint.style, {
+      margin: 0,
+      fontSize: "0.85rem",
+      color: "#4B5563",
+    });
+    wrapper.appendChild(hint);
+  }
+
+  return wrapper;
+}
+
+function updateDataAttribute(element, attribute, value) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  const trimmed = typeof value === "string" ? value.trim() : "";
+  if (trimmed) {
+    element.setAttribute(attribute, trimmed);
+  } else {
+    element.removeAttribute(attribute);
+  }
+}
+
+function buildGapFillEditorFields(activityEl) {
+  const fields = [];
+  const inputs = Array.from(activityEl.querySelectorAll(".gap-input"));
+  inputs.forEach((input, index) => {
+    const label = `Gap ${index + 1} answer`;
+    fields.push({
+      label,
+      name: `gap-${index}-answer`,
+      value: input.dataset.answer ?? "",
+      multiline: false,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".gap-input"));
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-answer", newValue);
+        }
+      },
+    });
+  });
+  return { fields, type: "gap-fill" };
+}
+
+function buildMatchingConnectEditorFields(activityEl) {
+  const fields = [];
+  const questions = Array.from(
+    activityEl.querySelectorAll(".match-question"),
+  );
+  const answers = Array.from(activityEl.querySelectorAll(".match-answer"));
+
+  questions.forEach((question, index) => {
+    const text = question.querySelector(".match-text")?.textContent?.trim() ?? "";
+    const idValue = question.dataset.questionId ?? "";
+    const expected = question.dataset.answer ?? "";
+
+    fields.push({
+      label: `Question ${index + 1} text`,
+      name: `question-${index}-text`,
+      value: text,
+      multiline: true,
+      rows: 2,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        const textEl = target?.querySelector?.(".match-text");
+        if (textEl) {
+          textEl.textContent = typeof newValue === "string" ? newValue : "";
+        }
+      },
+    });
+
+    fields.push({
+      label: `Question ${index + 1} expected answer`,
+      name: `question-${index}-answer`,
+      value: expected,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-answer", newValue);
+        }
+      },
+    });
+
+    fields.push({
+      label: `Question ${index + 1} ID`,
+      name: `question-${index}-id`,
+      value: idValue,
+      apply(root, newValue) {
+        const clones = Array.from(
+          root.querySelectorAll(".match-question"),
+        );
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-question-id", newValue);
+        }
+      },
+    });
+  });
+
+  answers.forEach((answer, index) => {
+    const text = answer.querySelector(".match-text")?.textContent?.trim() ?? "";
+    const value = answer.dataset.value ?? "";
+
+    fields.push({
+      label: `Answer ${index + 1} text`,
+      name: `answer-${index}-text`,
+      value: text,
+      multiline: true,
+      rows: 2,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".match-answer"));
+        const target = clones[index];
+        const textEl = target?.querySelector?.(".match-text");
+        if (textEl) {
+          textEl.textContent = typeof newValue === "string" ? newValue : "";
+        }
+      },
+    });
+
+    fields.push({
+      label: `Answer ${index + 1} value`,
+      name: `answer-${index}-value`,
+      value,
+      apply(root, newValue) {
+        const clones = Array.from(root.querySelectorAll(".match-answer"));
+        const target = clones[index];
+        if (target instanceof HTMLElement) {
+          updateDataAttribute(target, "data-value", newValue);
+        }
+      },
+    });
+  });
+
+  return { fields, type: "matching-connect" };
+}
+
+function buildActivityEditorSchema(activityEl) {
+  const type = activityEl?.dataset?.activity ?? "";
+  if (type === "gap-fill") {
+    return buildGapFillEditorFields(activityEl);
+  }
+  if (type === "matching-connect") {
+    return buildMatchingConnectEditorFields(activityEl);
+  }
+  if (activityEl?.querySelector?.(".gap-input")) {
+    return buildGapFillEditorFields(activityEl);
+  }
+  if (activityEl?.querySelector?.(".match-question")) {
+    return buildMatchingConnectEditorFields(activityEl);
+  }
+  return { fields: [], type };
+}
+
+function resetActivityRuntimeState(activityEl, type) {
+  if (!(activityEl instanceof HTMLElement)) {
+    return;
+  }
+  const effectiveType = type || activityEl.dataset.activity;
+  if (effectiveType === "gap-fill") {
+    activityEl.querySelectorAll(".gap-input").forEach((input) => {
+      if (input instanceof HTMLInputElement) {
+        input.value = "";
+        input.classList.remove("correct", "incorrect");
+      }
+    });
+    const feedback = activityEl.querySelector(".feedback-msg");
+    if (feedback instanceof HTMLElement) {
+      feedback.textContent = "";
+      feedback.className = "feedback-msg";
+    }
+    return;
+  }
+  if (effectiveType === "matching-connect") {
+    activityEl.querySelectorAll(".match-question").forEach((question) => {
+      if (question instanceof HTMLElement) {
+        question.classList.remove("paired", "incorrect", "active");
+        question.dataset.selected = "";
+        const label = question.querySelector(".match-assignment");
+        if (label) {
+          label.textContent = "";
+        }
+      }
+    });
+    activityEl.querySelectorAll(".match-answer").forEach((answer) => {
+      if (answer instanceof HTMLElement) {
+        answer.classList.remove("paired", "incorrect", "active");
+        answer.dataset.selected = "";
+      }
+    });
+    const feedback = activityEl.querySelector(".feedback-msg");
+    if (feedback instanceof HTMLElement) {
+      feedback.textContent = "";
+      feedback.className = "feedback-msg";
+    }
+  }
+}
+
+function openModuleEditor(activityElement) {
+  if (!(activityElement instanceof HTMLElement)) {
+    return;
+  }
+  const modal = ensureModuleEditorModal();
+  if (!modal) {
+    return;
+  }
+
+  const { fields, type: detectedType } = buildActivityEditorSchema(activityElement);
+  const typeLabel = getActivityTypeLabel(detectedType || activityElement.dataset.activity || "");
+
+  modal.title.textContent = `Edit ${typeLabel}`;
+  modal.body.innerHTML = "";
+  modal.activeActivity = activityElement;
+
+  const hasFields = Array.isArray(fields) && fields.length > 0;
+  modal.saveBtn.disabled = !hasFields;
+
+  if (hasFields) {
+    fields.forEach((fieldDef) => {
+      const field = createModuleEditorField(fieldDef);
+      if (field) {
+        modal.body.appendChild(field);
+      }
+    });
+  } else {
+    const message = document.createElement("p");
+    message.textContent =
+      "Editing isn't available for this activity yet. Try selecting a gap-fill or matching connect activity.";
+    Object.assign(message.style, {
+      margin: 0,
+      fontSize: "0.95rem",
+      color: "#4B5563",
+    });
+    modal.body.appendChild(message);
+  }
+
+  if (modal.currentSubmitHandler) {
+    modal.form.removeEventListener("submit", modal.currentSubmitHandler);
+    modal.currentSubmitHandler = null;
+  }
+
+  if (hasFields) {
+    const submitHandler = (event) => {
+      event.preventDefault();
+      const formData = new FormData(modal.form);
+      const clone = activityElement.cloneNode(true);
+
+      fields.forEach((field) => {
+        if (typeof field.apply !== "function") {
+          return;
+        }
+        const rawValue = formData.get(field.name);
+        const value = typeof rawValue === "string" ? rawValue : "";
+        try {
+          field.apply(clone, value);
+        } catch (error) {
+          console.warn("Failed to apply editor field update", error);
+        }
+      });
+
+      resetActivityRuntimeState(clone, detectedType);
+      activityElement.replaceWith(clone);
+      applyActivitySetup(clone);
+      const canvas = clone.closest?.(".blank-canvas");
+      if (canvas instanceof HTMLElement) {
+        notifyCanvasContentChanged(canvas);
+      }
+      modal.close();
+    };
+
+    modal.currentSubmitHandler = submitHandler;
+    modal.form.addEventListener("submit", submitHandler);
+  }
+
+  modal.overlay.style.display = "flex";
+  modal.overlay.setAttribute("aria-hidden", "false");
+  modal.isOpen = true;
+  requestAnimationFrame(() => {
+    modal.dialog.focus();
+  });
+}
+
+function ensureActivityEditorListener() {
+  if (activityEditorListenerAttached || typeof document === "undefined") {
+    return;
+  }
+  const handler = (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+    const modal = moduleEditorModal;
+    if (modal?.isOpen && modal.overlay.contains(event.target)) {
+      return;
+    }
+    const element =
+      event.target instanceof Element
+        ? event.target.closest("[data-activity]")
+        : null;
+    if (!element) {
+      return;
+    }
+    openModuleEditor(element);
+  };
+  document.addEventListener("dblclick", handler);
+  activityEditorListenerAttached = true;
+}
+
+function positionDeckActivity(activity, canvas) {
+  if (!(activity instanceof HTMLElement) || !(canvas instanceof HTMLElement)) {
+    return;
+  }
+  const siblings = Array.from(canvas.querySelectorAll(".deck-activity"));
+  const index = Math.max(0, siblings.indexOf(activity));
+  const offset = 28 * index;
+  if (!activity.style.left) {
+    activity.style.left = `${offset}px`;
+  }
+  if (!activity.style.top) {
+    activity.style.top = `${offset}px`;
+  }
+  if (!activity.style.width) {
+    const canvasWidth = canvas.clientWidth || 640;
+    const baseWidth = Math.min(Math.max(320, Math.round(canvasWidth * 0.65)), canvasWidth);
+    activity.style.width = `${baseWidth}px`;
+  }
+  if (!activity.style.height) {
+    const numericWidth = parseFloat(activity.style.width);
+    const baseHeight = Number.isFinite(numericWidth)
+      ? Math.max(260, Math.round(numericWidth * 0.62))
+      : 320;
+    activity.style.height = `${baseHeight}px`;
+  }
+}
+
+function createDeckActivityWrapper({
+  content,
+  label,
+  onRemove,
+  templateValue,
+  icon = "fa-puzzle-piece",
+} = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "deck-activity";
+  if (typeof templateValue === "string" && templateValue) {
+    wrapper.dataset.template = templateValue;
+  }
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "textbox-remove deck-activity-remove";
+  removeBtn.setAttribute("aria-label", "Remove activity");
+  removeBtn.innerHTML =
+    '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+
+  const handle = document.createElement("div");
+  handle.className = "textbox-handle";
+  handle.dataset.dragHandle = "";
+
+  const title = document.createElement("span");
+  title.className = "textbox-title";
+  const iconEl = document.createElement("i");
+  iconEl.className = `fa-solid ${icon}`;
+  iconEl.setAttribute("aria-hidden", "true");
+  const textNode = document.createElement("span");
+  textNode.textContent = ` ${
+    typeof label === "string" && label.trim() ? label.trim() : "Activity"
+  }`;
+  title.append(iconEl, textNode);
+  handle.appendChild(title);
+
+  const body = document.createElement("div");
+  body.className = "deck-activity-body";
+  if (content instanceof HTMLElement || content instanceof DocumentFragment) {
+    body.appendChild(content);
+  } else if (content) {
+    body.append(content);
+  }
+
+  const resizer = document.createElement("button");
+  resizer.type = "button";
+  resizer.className = "deck-activity-resizer resize-handle";
+  resizer.setAttribute("aria-label", "Resize activity");
+  resizer.innerHTML =
+    '<i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>';
+
+  wrapper.append(removeBtn, handle, body, resizer);
+
+  const activityRoot = body.querySelector("[data-activity]");
+  if (activityRoot instanceof HTMLElement && activityRoot.dataset.activity) {
+    wrapper.dataset.activity = activityRoot.dataset.activity;
+  }
+
+  removeBtn.addEventListener("click", () => {
+    wrapper.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
+  });
+
+  resizer.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
+  });
+
+  makeDraggable(wrapper);
+  makeResizable(wrapper, {
+    handleSelector: ".deck-activity-resizer",
+    minWidth: 280,
+    minHeight: 220,
+  });
+
+  return wrapper;
+}
+
 export function makeDraggable(element) {
   if (!(element instanceof HTMLElement)) return;
   if (element.__deckDraggableInitialised) {
@@ -805,7 +1501,9 @@ export function makeDraggable(element) {
   }
   element.__deckDraggableInitialised = true;
 
-  const handle = element.querySelector(".textbox-handle") ?? element;
+  const dragHandleCandidate = element.querySelector("[data-drag-handle]");
+  const handle =
+    dragHandleCandidate instanceof HTMLElement ? dragHandleCandidate : element;
   let pointerId = null;
   let offsetX = 0;
   let offsetY = 0;
@@ -834,8 +1532,8 @@ export function makeDraggable(element) {
     const canvasRect = canvas.getBoundingClientRect();
     const rawX = event.clientX - canvasRect.left + canvas.scrollLeft - offsetX;
     const rawY = event.clientY - canvasRect.top + canvas.scrollTop - offsetY;
-    const maxX = Math.max(0, canvas.scrollWidth - element.offsetWidth);
-    const maxY = Math.max(0, canvas.scrollHeight - element.offsetHeight);
+    const maxX = Math.max(0, canvas.clientWidth - element.offsetWidth);
+    const maxY = Math.max(0, canvas.clientHeight - element.offsetHeight);
     const clampedX = Math.min(Math.max(0, rawX), maxX);
     const clampedY = Math.min(Math.max(0, rawY), maxY);
     element.style.left = `${clampedX}px`;
@@ -857,6 +1555,223 @@ export function makeDraggable(element) {
 
   element.addEventListener("pointerup", clearPointerState);
   element.addEventListener("pointercancel", clearPointerState);
+}
+
+function createDragHandle() {
+  const handle = document.createElement("div");
+  handle.className = "textbox-handle";
+  handle.dataset.dragHandle = "";
+  handle.innerHTML = `
+    <i class="fa-solid fa-up-down-left-right" aria-hidden="true"></i>
+    <span class="sr-only">Move text</span>
+  `;
+  handle.setAttribute("contenteditable", "false");
+  return handle;
+}
+
+function createResizeHandle() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "pasted-image-resizer resize-handle";
+  button.innerHTML = `
+    <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i>
+    <span class="sr-only">Resize text</span>
+  `;
+  button.setAttribute("contenteditable", "false");
+  return button;
+}
+
+function ensureEditableWrapper(element) {
+  if (!(element instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (element.closest(".editable-wrapper")) {
+    const wrapper = element.closest(".editable-wrapper");
+    if (wrapper instanceof HTMLElement) {
+      return wrapper;
+    }
+  }
+
+  const parent = element.parentElement;
+  if (!parent) {
+    return null;
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "editable-wrapper";
+  parent.insertBefore(wrapper, element);
+  wrapper.appendChild(element);
+  return wrapper;
+}
+
+function getRelativeRect(element) {
+  if (!(element instanceof HTMLElement)) {
+    return null;
+  }
+
+  const parent = element.parentElement;
+  if (!(parent instanceof HTMLElement)) {
+    return null;
+  }
+
+  const elementRect = element.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+  const parentStyle = window.getComputedStyle(parent);
+  const parse = (value) => Number.parseFloat(value) || 0;
+
+  const borderLeft = parse(parentStyle.borderLeftWidth);
+  const borderTop = parse(parentStyle.borderTopWidth);
+  const paddingLeft = parse(parentStyle.paddingLeft);
+  const paddingTop = parse(parentStyle.paddingTop);
+
+  return {
+    left:
+      elementRect.left -
+      parentRect.left -
+      borderLeft -
+      paddingLeft +
+      parent.scrollLeft,
+    top:
+      elementRect.top -
+      parentRect.top -
+      borderTop -
+      paddingTop +
+      parent.scrollTop,
+    width: elementRect.width,
+    height: elementRect.height,
+  };
+}
+
+function ensureEditableControls(wrapper, target, initialRect) {
+  if (!(wrapper instanceof HTMLElement)) {
+    return;
+  }
+
+  const hasInitialised = wrapper.dataset.deckEditableControls === "true";
+
+  wrapper.classList.add("editable-wrapper");
+
+  const parent = wrapper.parentElement;
+  if (parent instanceof HTMLElement) {
+    const parentStyle = window.getComputedStyle(parent);
+    if (parentStyle.position === "static") {
+      parent.dataset.deckEditableParentPosition = parentStyle.position;
+      parent.style.position = "relative";
+    }
+  }
+
+  if (!wrapper.style.position || wrapper.style.position === "static") {
+    wrapper.style.position = "absolute";
+  }
+
+  if (!wrapper.style.zIndex) {
+    wrapper.style.zIndex = "5";
+  }
+
+  const geometry = initialRect ?? null;
+  if (geometry) {
+    if (Number.isFinite(geometry.left)) {
+      wrapper.style.left = `${Math.max(0, geometry.left)}px`;
+    }
+    if (Number.isFinite(geometry.top)) {
+      wrapper.style.top = `${Math.max(0, geometry.top)}px`;
+    }
+    if (Number.isFinite(geometry.width) && geometry.width > 0) {
+      wrapper.style.width = `${geometry.width}px`;
+    }
+    if (Number.isFinite(geometry.height) && geometry.height > 0) {
+      wrapper.style.minHeight = `${geometry.height}px`;
+    }
+  } else if (!hasInitialised) {
+    if (!wrapper.style.left) {
+      wrapper.style.left = "0px";
+    }
+    if (!wrapper.style.top) {
+      wrapper.style.top = "0px";
+    }
+  }
+
+  let dragHandle = wrapper.querySelector(":scope > .textbox-handle");
+  if (!(dragHandle instanceof HTMLElement)) {
+    dragHandle = createDragHandle();
+    if (target instanceof HTMLElement && target.parentElement === wrapper) {
+      wrapper.insertBefore(dragHandle, target);
+    } else {
+      wrapper.insertBefore(dragHandle, wrapper.firstChild);
+    }
+  }
+  if (dragHandle instanceof HTMLElement) {
+    dragHandle.dataset.dragHandle = "";
+  }
+
+  let resizeHandle = wrapper.querySelector(":scope > .resize-handle");
+  if (!(resizeHandle instanceof HTMLElement)) {
+    resizeHandle = createResizeHandle();
+    wrapper.appendChild(resizeHandle);
+  }
+
+  if (!hasInitialised) {
+    makeDraggable(wrapper);
+    makeResizable(wrapper);
+  }
+
+  wrapper.dataset.deckEditableControls = "true";
+}
+
+function makeSlideEditable(slideElement) {
+  if (!(slideElement instanceof HTMLElement)) {
+    return;
+  }
+
+  const textSelectors = [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "ul",
+    "ol",
+    ".deck-subtitle",
+  ].join(", ");
+
+  const textNodes = Array.from(slideElement.querySelectorAll(textSelectors));
+  textNodes.forEach((node) => {
+    if (!(node instanceof HTMLElement)) {
+      return;
+    }
+    if (node.dataset.deckEditableInitialised === "true") {
+      return;
+    }
+    const rect = getRelativeRect(node);
+    node.dataset.deckEditableInitialised = "true";
+    node.contentEditable = "true";
+    node.classList.add("editable-text");
+    const wrapper = ensureEditableWrapper(node);
+    ensureEditableControls(wrapper, node, rect);
+  });
+
+  const activityNodes = Array.from(
+    slideElement.querySelectorAll("[data-activity]"),
+  );
+
+  activityNodes.forEach((activity) => {
+    if (!(activity instanceof HTMLElement)) {
+      return;
+    }
+    const existingWrapper = activity.closest(
+      ".deck-activity, .editable-wrapper, .pasted-image",
+    );
+    if (existingWrapper instanceof HTMLElement) {
+      ensureEditableControls(existingWrapper, activity);
+      return;
+    }
+    const rect = getRelativeRect(activity);
+    const wrapper = ensureEditableWrapper(activity);
+    ensureEditableControls(wrapper ?? activity, activity, rect);
+  });
 }
 
 export function createMindMap(onRemove) {
@@ -2398,6 +3313,667 @@ function setupStressMark(activityEl) {
   });
 }
 
+const ACTIVITY_SETUP_HANDLERS = {
+  unscramble: setupUnscramble,
+  "gap-fill": setupGapFill,
+  "table-completion": setupClickPlacement,
+  "token-drop": setupClickPlacement,
+  matching: setupMatching,
+  "matching-connect": setupMatchingConnect,
+  "mc-grammar": setupMcGrammar,
+  "mc-grammar-radio": setupMcGrammarRadio,
+  categorization: setupCategorization,
+  "stress-mark": setupStressMark,
+};
+
+function getActivitySetupHandler(type) {
+  if (typeof type !== "string" || !type) {
+    return null;
+  }
+  return ACTIVITY_SETUP_HANDLERS[type] ?? null;
+}
+
+function normaliseTemplateKey(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function extractTemplateText(node) {
+  if (!(node instanceof Node)) {
+    return "";
+  }
+  return normaliseWhitespace(node.textContent ?? "");
+}
+
+function appendTemplateInstructions(container, source) {
+  if (!(container instanceof HTMLElement) || !(source instanceof HTMLElement)) {
+    return;
+  }
+
+  const heading = source.querySelector("#activity-titles h1, h1, h2");
+  if (heading instanceof HTMLElement) {
+    const clone = heading.cloneNode(true);
+    clone.removeAttribute("id");
+    container.appendChild(clone);
+  }
+
+  const rubric = source.querySelector(".rubric");
+  const rubricText = extractTemplateText(rubric);
+  if (rubricText) {
+    const instructions = document.createElement("p");
+    instructions.textContent = rubricText;
+    container.appendChild(instructions);
+  }
+}
+
+function createActivityActions({
+  checkLabel = "Check Answers",
+  resetLabel = "Reset",
+  includeReset = true,
+} = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "activity-actions";
+
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = checkLabel;
+  wrapper.appendChild(checkBtn);
+
+  if (includeReset) {
+    const resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.className = "activity-btn secondary";
+    resetBtn.dataset.action = "reset";
+    resetBtn.textContent = resetLabel;
+    wrapper.appendChild(resetBtn);
+  }
+
+  return wrapper;
+}
+
+function createFeedbackElement() {
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  return feedback;
+}
+
+function transformGapFillTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "gap-fill";
+  appendTemplateInstructions(activity, source);
+
+  const gapSource =
+    source.querySelector(".gapfill-container") ??
+    source.querySelector("main") ??
+    source.querySelector("section") ??
+    source;
+
+  const content = gapSource.cloneNode(true);
+  content.querySelectorAll("script").forEach((node) => node.remove());
+  content.querySelectorAll(".activity-controls").forEach((node) => node.remove());
+
+  let gapIndex = 0;
+  content.querySelectorAll(".gap-wrapper").forEach((wrapper) => {
+    if (!(wrapper instanceof HTMLElement)) {
+      return;
+    }
+    gapIndex += 1;
+    const answers = (wrapper.dataset.correctAnswer || wrapper.dataset.correctAnswers || "")
+      .split("|")
+      .map((answer) => normaliseWhitespace(answer))
+      .filter(Boolean);
+    const placeholderSource =
+      wrapper.querySelector("input[placeholder]") ?? wrapper.querySelector("select");
+    const placeholder = placeholderSource?.getAttribute("placeholder");
+    const ariaLabel =
+      wrapper.getAttribute("aria-label") ?? placeholderSource?.getAttribute("aria-label");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "gap-input";
+    input.dataset.answer = answers[0] ?? "";
+    if (answers.length > 1) {
+      input.dataset.altAnswers = JSON.stringify(answers.slice(1));
+    }
+    if (wrapper.dataset.feedbackTitle) {
+      input.dataset.feedbackTitle = wrapper.dataset.feedbackTitle;
+    }
+    if (wrapper.dataset.explanation) {
+      input.dataset.explanation = wrapper.dataset.explanation;
+    }
+    input.setAttribute("aria-label", ariaLabel || `Gap ${gapIndex}`);
+    input.placeholder = placeholder || "Type answer";
+
+    const optionValues = Array.from(
+      wrapper.querySelectorAll("option"),
+      (option) => normaliseWhitespace(option.textContent || option.value || ""),
+    ).filter(Boolean);
+    if (optionValues.length) {
+      try {
+        input.dataset.options = JSON.stringify(optionValues);
+      } catch (error) {
+        // Ignore JSON issues and fall back to joined string
+        input.dataset.options = optionValues.join("|");
+      }
+    }
+
+    wrapper.replaceWith(input);
+  });
+
+  activity.appendChild(content);
+  activity.appendChild(createActivityActions());
+  activity.appendChild(createFeedbackElement());
+  return activity;
+}
+
+function transformGroupingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "categorization";
+  appendTemplateInstructions(activity, source);
+
+  const description = source.querySelector(".dnd-main-container > p");
+  if (description instanceof HTMLElement) {
+    activity.appendChild(description.cloneNode(true));
+  }
+
+  const items = Array.from(source.querySelectorAll(".dnd-item"));
+  const categoryZones = Array.from(source.querySelectorAll(".dnd-category-zone"));
+  const categoryLabels = new Map(
+    categoryZones.map((zone) => [
+      zone.id,
+      extractTemplateText(zone.querySelector("h3")) || normaliseWhitespace(zone.id),
+    ]),
+  );
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+
+  items.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const token = document.createElement("button");
+    token.type = "button";
+    token.className = "click-token";
+    const categoryKey = item.dataset.correctCategory ?? "";
+    const categoryLabel =
+      (categoryLabels.get(categoryKey) ?? normaliseWhitespace(categoryKey)) ||
+      `Category ${index + 1}`;
+    token.dataset.category = categoryLabel;
+    const tokenText = extractTemplateText(item) || `Item ${index + 1}`;
+    token.dataset.value = tokenText;
+    token.textContent = tokenText;
+    if (item.dataset.explanation) {
+      token.dataset.explanation = item.dataset.explanation;
+    }
+    tokenBank.appendChild(token);
+  });
+
+  const dropWrapper = document.createElement("div");
+  dropWrapper.className = "drop-categorization";
+
+  categoryZones.forEach((zone, index) => {
+    if (!(zone instanceof HTMLElement)) {
+      return;
+    }
+    const column = document.createElement("div");
+    column.className = "category-column";
+    const label = categoryLabels.get(zone.id) ?? `Category ${index + 1}`;
+    column.dataset.category = label;
+
+    const heading = document.createElement("h3");
+    heading.textContent = label;
+
+    const dropZone = document.createElement("div");
+    dropZone.className = "drop-zone";
+
+    column.append(heading, dropZone);
+    dropWrapper.appendChild(column);
+  });
+
+  activity.append(tokenBank, dropWrapper, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+function transformLinkingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "matching-connect";
+  appendTemplateInstructions(activity, source);
+
+  const leftItems = Array.from(source.querySelectorAll(".link-column.left .linking-item"));
+  const rightItems = Array.from(source.querySelectorAll(".link-column.right .linking-item"));
+  const rightTextMap = new Map();
+  rightItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const id = item.dataset.linkId || `R${index + 1}`;
+    const text = extractTemplateText(item.querySelector(".linking-item-text") ?? item);
+    rightTextMap.set(id, text || `Answer ${index + 1}`);
+  });
+
+  const answerKeyAttr = source.querySelector("#activity-container")?.dataset.answerKey;
+  let pairs = [];
+  if (answerKeyAttr) {
+    try {
+      const parsed = JSON.parse(answerKeyAttr);
+      if (Array.isArray(parsed)) {
+        pairs = parsed
+          .map((entry) => ({
+            start: typeof entry?.start === "string" ? entry.start : null,
+            end: typeof entry?.end === "string" ? entry.end : null,
+          }))
+          .filter((entry) => entry.start && entry.end);
+      }
+    } catch (error) {
+      console.warn("Unable to parse linking answer key", error);
+    }
+  }
+  if (!pairs.length) {
+    pairs = leftItems.map((item, index) => ({
+      start: item?.dataset?.linkId || `L${index + 1}`,
+      end: rightItems[index]?.dataset?.linkId || null,
+    }));
+  }
+
+  const grid = document.createElement("div");
+  grid.className = "matching-connect-grid";
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Connect the related items");
+
+  const questionColumn = document.createElement("div");
+  questionColumn.className = "match-column";
+  questionColumn.setAttribute("aria-label", "Column A");
+
+  const answerColumn = document.createElement("div");
+  answerColumn.className = "match-column";
+  answerColumn.setAttribute("aria-label", "Column B");
+
+  leftItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const questionId = item.dataset.linkId || `L${index + 1}`;
+    const questionText =
+      extractTemplateText(item.querySelector(".linking-item-text") ?? item) || `Prompt ${index + 1}`;
+    const pair = pairs.find((entry) => entry.start === questionId);
+    const expectedAnswerId = pair?.end ?? null;
+    const expectedText = expectedAnswerId ? rightTextMap.get(expectedAnswerId) : null;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "match-item match-question";
+    button.dataset.questionId = questionId;
+    if (expectedText) {
+      button.dataset.answer = expectedText;
+    }
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "match-text";
+    textSpan.textContent = questionText;
+
+    const assignment = document.createElement("span");
+    assignment.className = "match-assignment";
+    assignment.setAttribute("aria-live", "polite");
+
+    button.append(textSpan, assignment);
+    questionColumn.appendChild(button);
+  });
+
+  rightItems.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const answerId = item.dataset.linkId || `R${index + 1}`;
+    const answerText = rightTextMap.get(answerId) ?? `Answer ${index + 1}`;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "match-item match-answer";
+    button.dataset.value = answerText;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "match-text";
+    textSpan.textContent = answerText;
+
+    button.appendChild(textSpan);
+    answerColumn.appendChild(button);
+  });
+
+  grid.append(questionColumn, answerColumn);
+  activity.append(grid, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+function transformRankingTemplate(source, { activityType } = {}) {
+  if (!(source instanceof HTMLElement)) {
+    return null;
+  }
+
+  const activity = document.createElement("div");
+  activity.className = "card";
+  activity.dataset.activity = activityType ?? "token-drop";
+  appendTemplateInstructions(activity, source);
+
+  const description = source.querySelector(".dnd-main-container > p");
+  if (description instanceof HTMLElement) {
+    activity.appendChild(description.cloneNode(true));
+  }
+
+  const items = Array.from(source.querySelectorAll("#items-pool .dnd-item"));
+  if (!items.length) {
+    activity.appendChild(createActivityActions());
+    activity.appendChild(createFeedbackElement());
+    return activity;
+  }
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+  items.forEach((item, index) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    const tokenText = extractTemplateText(item) || `Item ${index + 1}`;
+    const token = document.createElement("button");
+    token.type = "button";
+    token.className = "click-token";
+    token.dataset.value = tokenText;
+    token.textContent = tokenText;
+    if (item.dataset.explanation) {
+      token.dataset.explanation = item.dataset.explanation;
+    }
+    tokenBank.appendChild(token);
+  });
+
+  const orderedItems = items
+    .map((item, index) => ({
+      rank: Number.parseInt(item.dataset.correctRank ?? "", 10) || index + 1,
+      text: extractTemplateText(item) || `Item ${index + 1}`,
+    }))
+    .filter((entry) => entry.text)
+    .sort((a, b) => a.rank - b.rank || a.text.localeCompare(b.text));
+
+  const list = document.createElement("ol");
+  list.className = "ranking-drop-zones";
+
+  orderedItems.forEach((entry, index) => {
+    const listItem = document.createElement("li");
+    listItem.className = "ranking-slot";
+
+    const label = document.createElement("span");
+    label.className = "ranking-label";
+    label.textContent = `${index + 1}.`;
+
+    const dropZone = document.createElement("button");
+    dropZone.type = "button";
+    dropZone.className = "drop-zone placeholder";
+    dropZone.dataset.answer = entry.text;
+    dropZone.dataset.placeholder = "Select";
+    dropZone.setAttribute("aria-label", `Rank ${index + 1}`);
+
+    listItem.append(label, dropZone);
+    list.appendChild(listItem);
+  });
+
+  activity.append(tokenBank, list, createActivityActions(), createFeedbackElement());
+  return activity;
+}
+
+const TEMPLATE_ACTIVITY_MAP = {
+  gapfill: { activity: "gap-fill", transform: transformGapFillTemplate },
+  "dropdown.html": { activity: "gap-fill", transform: transformGapFillTemplate },
+  grouping: { activity: "categorization", transform: transformGroupingTemplate },
+  linking: { activity: "matching-connect", transform: transformLinkingTemplate },
+  "ranking.html": { activity: "token-drop", transform: transformRankingTemplate },
+};
+
+function applyActivitySetup(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+  const targets = new Set();
+  if (root.dataset.activity) {
+    targets.add(root);
+  }
+  const nestedActivities =
+    typeof root.querySelectorAll === "function"
+      ? Array.from(root.querySelectorAll("[data-activity]"))
+      : [];
+  nestedActivities.forEach((el) => {
+    if (el instanceof HTMLElement) {
+      targets.add(el);
+    }
+  });
+
+  targets.forEach((target) => {
+    if (!target.dataset.activity) {
+      const templateSource =
+        target.dataset.templateSource ??
+        target.dataset.template ??
+        target.closest?.(".deck-activity")?.dataset?.template;
+      const fallbackType = TEMPLATE_ACTIVITY_MAP[
+        normaliseTemplateKey(templateSource)
+      ]?.activity;
+      if (fallbackType) {
+        target.dataset.activity = fallbackType;
+      }
+    }
+    const handler = getActivitySetupHandler(target.dataset.activity);
+    if (typeof handler === "function") {
+      handler(target);
+    }
+  });
+}
+
+async function fetchActivityTemplateContent(templateValue) {
+  const value = typeof templateValue === "string" ? templateValue.trim() : "";
+  if (!value) {
+    throw new Error("Template value is required");
+  }
+  if (typeof fetch !== "function") {
+    throw new Error("Fetch API is unavailable");
+  }
+  let templateUrl;
+  try {
+    templateUrl = new URL(value, TEMPLATE_BASE_URL).toString();
+  } catch (error) {
+    throw new Error(`Invalid template path: ${value}`, { cause: error });
+  }
+
+  const response = await fetch(templateUrl);
+  if (!response.ok) {
+    throw new Error(`Template request failed with status ${response.status}`);
+  }
+  const html = await response.text();
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+  let activityRoot =
+    temp.querySelector("[data-activity]") ??
+    temp.querySelector("main") ??
+    temp.querySelector("body") ??
+    temp.querySelector("section") ??
+    temp.firstElementChild;
+
+  if (activityRoot instanceof HTMLHtmlElement) {
+    const bodyCandidate = activityRoot.querySelector("body");
+    activityRoot = bodyCandidate || activityRoot.firstElementChild;
+  }
+  if (activityRoot instanceof HTMLBodyElement && activityRoot.children.length === 1) {
+    activityRoot = activityRoot.firstElementChild;
+  }
+
+  if (!(activityRoot instanceof HTMLElement)) {
+    throw new Error("Template does not include an activity element");
+  }
+
+  const clone = activityRoot.cloneNode(true);
+  clone.querySelectorAll("script").forEach((script) => script.remove());
+
+  const templateKey = normaliseTemplateKey(value);
+  const templateConfig = TEMPLATE_ACTIVITY_MAP[templateKey] ?? null;
+  const context = {
+    activityType: templateConfig?.activity,
+    templateKey,
+    templateValue: value,
+  };
+
+  let transformed = clone;
+  if (typeof templateConfig?.transform === "function") {
+    try {
+      const result = templateConfig.transform(clone, context);
+      if (result instanceof HTMLElement || result instanceof DocumentFragment) {
+        transformed = result;
+      }
+    } catch (error) {
+      console.warn(`Template transform failed for "${value}"`, error);
+      transformed = clone;
+    }
+  }
+
+  let resolved;
+  if (transformed instanceof DocumentFragment) {
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(transformed);
+    resolved = wrapper;
+  } else if (transformed instanceof HTMLElement) {
+    resolved = transformed;
+  }
+
+  if (!(resolved instanceof HTMLElement)) {
+    resolved = clone;
+  }
+
+  if (templateConfig?.activity && !resolved.dataset.activity) {
+    resolved.dataset.activity = templateConfig.activity;
+  }
+  resolved.dataset.templateSource = value;
+  return resolved;
+}
+
+function handleAddTextboxClick() {
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add a textbox.");
+    return;
+  }
+  const textbox = createTextbox({
+    onRemove: () => notifyCanvasContentChanged(canvas),
+  });
+  canvas.appendChild(textbox);
+  positionTextbox(textbox, canvas);
+  notifyCanvasContentChanged(canvas);
+  textbox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function handleAddImageClick() {
+  addImageInput?.click();
+}
+
+async function handleImageInputChange(event) {
+  const input = event.currentTarget;
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+  const files = Array.from(input.files ?? []);
+  if (!files.length) {
+    return;
+  }
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add images.");
+    input.value = "";
+    return;
+  }
+
+  for (const file of files) {
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      if (!dataUrl) {
+        continue;
+      }
+      const pastedImage = createPastedImage({
+        src: dataUrl,
+        label: file?.name,
+        onRemove: () => notifyCanvasContentChanged(canvas),
+      });
+      canvas.appendChild(pastedImage);
+      positionPastedImage(pastedImage, canvas);
+      pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (error) {
+      console.warn("Unable to read selected image", error);
+    }
+  }
+
+  notifyCanvasContentChanged(canvas);
+  input.value = "";
+}
+
+async function handleAddActivityChange(event) {
+  const select = event.currentTarget;
+  if (!(select instanceof HTMLSelectElement)) {
+    return;
+  }
+  const value = select.value;
+  if (!value) {
+    return;
+  }
+
+  const canvas = getActiveSlideCanvas();
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("No active slide is available to add an activity.");
+    select.value = "";
+    return;
+  }
+
+  const selectedOption = select.options[select.selectedIndex];
+  const label = selectedOption?.textContent?.trim() || value;
+
+  select.disabled = true;
+  try {
+    const activityContent = await fetchActivityTemplateContent(value);
+    const activityWrapper = createDeckActivityWrapper({
+      content: activityContent,
+      label,
+      templateValue: value,
+      onRemove: () => notifyCanvasContentChanged(canvas),
+    });
+    canvas.appendChild(activityWrapper);
+    positionDeckActivity(activityWrapper, canvas);
+    applyActivitySetup(activityWrapper);
+    await hydrateRemoteImages(activityWrapper).catch((error) => {
+      console.warn("Activity image hydration failed", error);
+    });
+    notifyCanvasContentChanged(canvas);
+    activityWrapper.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    console.error(`Unable to add activity template "${value}"`, error);
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+      window.alert("Sorry, we couldn't add that activity. Please try again.");
+    }
+  } finally {
+    select.disabled = false;
+    select.value = "";
+  }
+}
+
 function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="unscramble"]')
@@ -2429,6 +4005,8 @@ function initialiseActivities() {
   document
     .querySelectorAll('[data-activity="stress-mark"]')
     .forEach((el) => setupStressMark(el));
+
+  ensureActivityEditorListener();
 }
 
 async function initialiseDeck() {
@@ -2463,6 +4041,33 @@ async function initialiseDeck() {
   removeHighlightBtn?.addEventListener("click", () => {
     removeHighlight();
   });
+  if (addTextboxBtn && !addTextboxBtn.__deckControlInitialised) {
+    addTextboxBtn.addEventListener("click", handleAddTextboxClick);
+    addTextboxBtn.__deckControlInitialised = true;
+  }
+  if (addImageBtn && !addImageBtn.__deckControlInitialised) {
+    addImageBtn.addEventListener("click", handleAddImageClick);
+    addImageBtn.__deckControlInitialised = true;
+  }
+  if (addImageInput && !addImageInput.__deckControlInitialised) {
+    addImageInput.addEventListener("change", (event) => {
+      handleImageInputChange(event).catch((error) => {
+        console.warn("Image upload failed", error);
+      });
+    });
+    addImageInput.__deckControlInitialised = true;
+  }
+  if (addActivitySelect && !addActivitySelect.__deckControlInitialised) {
+    addActivitySelect.addEventListener("change", (event) => {
+      handleAddActivityChange(event).catch((error) => {
+        console.error("Activity insertion failed", error);
+      });
+    });
+    addActivitySelect.__deckControlInitialised = true;
+  }
+  document
+    .querySelectorAll('.slide-stage:not([data-type="blank"])')
+    .forEach((slide) => makeSlideEditable(slide));
   recalibrateMindMapCounter();
 }
 
@@ -2481,6 +4086,10 @@ export async function setupInteractiveDeck({
   highlightButtonSelector = "#highlight-btn",
   highlightColorSelectSelector = "#highlight-color",
   removeHighlightButtonSelector = "#remove-highlight-btn",
+  addTextboxButtonSelector = "#add-textbox-btn",
+  addImageButtonSelector = "#add-image-btn",
+  addImageInputSelector = "#add-image-input",
+  addActivitySelectSelector = "#add-activity-select",
 } = {}) {
   const rootElement =
     typeof root === "string" ? document.querySelector(root) : root ?? document;
@@ -2518,6 +4127,18 @@ export async function setupInteractiveDeck({
   removeHighlightBtn =
     rootElement?.querySelector(removeHighlightButtonSelector) ??
     document.querySelector(removeHighlightButtonSelector);
+  addTextboxBtn =
+    rootElement?.querySelector(addTextboxButtonSelector) ??
+    document.querySelector(addTextboxButtonSelector);
+  addImageBtn =
+    rootElement?.querySelector(addImageButtonSelector) ??
+    document.querySelector(addImageButtonSelector);
+  addImageInput =
+    rootElement?.querySelector(addImageInputSelector) ??
+    document.querySelector(addImageInputSelector);
+  addActivitySelect =
+    rootElement?.querySelector(addActivitySelectSelector) ??
+    document.querySelector(addActivitySelectSelector);
 
   slides = [];
   currentSlideIndex = 0;
