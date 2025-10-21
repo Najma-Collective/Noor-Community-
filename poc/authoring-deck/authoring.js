@@ -1,4 +1,4 @@
-import { initSlideNavigator } from "../../js/slideNavigator.js";
+import { initSlideNavigator } from "./slideNavigator.js";
 
 const stageViewport = document.getElementById("stage-viewport");
 const slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);

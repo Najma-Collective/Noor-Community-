@@ -5,8 +5,10 @@ This folder contains an isolated proof-of-concept deck that mirrors the structur
 ## What is included?
 
 - **`index.html`** – A standalone HTML entry point that reproduces the deck toolbar, stage viewport, and three example slides.
-- **`authoring.css`** – Imports the shared `CSS-slides.css` design tokens and extends them with authoring-specific layout styles.
-- **`authoring.js`** – Wires up slide navigation using the shared `initSlideNavigator` helper and keeps all logic scoped to this folder.
+- **`deck-tokens.css`** – A local copy of the shared `CSS-slides.css` design tokens so the deck stays self-contained.
+- **`authoring.css`** – Imports the local design tokens and extends them with authoring-specific layout styles.
+- **`slideNavigator.js`** – A local copy of the shared navigator helper scoped to this proof of concept.
+- **`authoring.js`** – Wires up slide navigation and keeps all logic scoped to this folder.
 
 ## How to preview
 
