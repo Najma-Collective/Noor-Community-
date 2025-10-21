@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Activity Builder</title>
+  <link rel="stylesheet" href="./sandbox-css.css">
+  <link rel="stylesheet" href="./activity-builder.css">
+</head>
+<body>
+  <header class="builder-header">
+    <div class="brand">
+      <h1>Activity Builder</h1>
+      <p>Create interactive learning activities from the Noor Templates.</p>
+    </div>
+    <div class="header-actions">
+      <label for="activity-type" class="type-label">Activity Type</label>
+      <select id="activity-type" class="type-select">
+        <option value="multiple-choice">Multiple Choice</option>
+        <option value="gapfill">Gap Fill</option>
+        <option value="grouping">Grouping</option>
+        <option value="table-completion">Table Completion</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="builder-main">
+    <section class="builder-panel" aria-label="Configuration">
+      <div id="builder-form"></div>
+    </section>
+    <section class="preview-panel" aria-label="Preview and Export">
+      <div class="preview-header">
+        <h2>Live Preview</h2>
+        <button id="refresh-preview" class="ghost-btn" type="button">Refresh Preview</button>
+      </div>
+      <iframe id="activity-preview" title="Activity preview"></iframe>
+      <div class="export-area">
+        <div class="export-header">
+          <h2>Generated HTML</h2>
+          <button id="copy-html" class="ghost-btn" type="button">Copy to Clipboard</button>
+        </div>
+        <textarea id="output-html" readonly spellcheck="false"></textarea>
+      </div>
+    </section>
+  </main>
+
+  <template id="alert-template">
+    <div class="alert" role="status"></div>
+  </template>
+
+  <script src="./activity-builder.js" type="module"></script>
+</body>
+</html>
