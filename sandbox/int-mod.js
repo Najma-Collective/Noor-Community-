@@ -94,11 +94,15 @@ let builderJsonPreview;
 let builderCancelBtn;
 let builderCloseBtn;
 let builderStatusEl;
-let builderLayoutField;
+let builderLayoutInputs;
 let builderPreview;
 let builderRefreshPreviewBtn;
 let builderLastFocus;
 let builderFieldId = 0;
+let builderImageResults;
+let builderImageStatus;
+let builderImageSearchBtn;
+let builderImageSearchInput;
 let moduleOverlay;
 let moduleFrame;
 let moduleCloseBtn;
@@ -135,6 +139,9 @@ const MODULE_TYPE_LABELS = {
 };
 
 const DECK_TOAST_TIMEOUT = 3600;
+
+const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
+const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
 
 const DEFAULT_BUILDER_PROMPTS = [
   {
@@ -2874,12 +2881,40 @@ function collectRubricCriteria() {
     .filter(Boolean);
 }
 
+const getSelectedLayout = () => {
+  if (!Array.isArray(builderLayoutInputs)) {
+    return 'blank-canvas';
+  }
+  const selected = builderLayoutInputs.find((input) => input.checked);
+  return selected?.value || 'blank-canvas';
+};
+
+const setSelectedLayout = (layout = 'blank-canvas') => {
+  if (!Array.isArray(builderLayoutInputs)) {
+    return;
+  }
+  let matched = false;
+  builderLayoutInputs.forEach((input) => {
+    if (!(input instanceof HTMLInputElement)) {
+      return;
+    }
+    const shouldCheck = input.value === layout;
+    input.checked = shouldCheck;
+    if (shouldCheck) {
+      matched = true;
+    }
+  });
+  if (!matched && builderLayoutInputs[0] instanceof HTMLInputElement) {
+    builderLayoutInputs[0].checked = true;
+  }
+};
+
 function getBuilderFormState() {
   if (!(builderForm instanceof HTMLFormElement)) {
     return null;
   }
   const formData = new FormData(builderForm);
-  const layout = (formData.get("slideLayout") || "facilitation").toString();
+  const layout = (formData.get("slideLayout") || getSelectedLayout() || "blank-canvas").toString();
   const stageLabel = trimText(formData.get("stageLabel"));
   const activityTitle = trimText(formData.get("activityTitle"));
   const duration = trimText(formData.get("activityDuration"));
@@ -2889,6 +2924,27 @@ function getBuilderFormState() {
   const steps = splitMultiline(formData.get("activitySteps"));
   const levels = parseRubricLevels(formData.get("rubricLevels"));
   const criteria = collectRubricCriteria();
+  const columnOneHeading = trimText(formData.get("columnOneHeading"));
+  const columnOneItems = splitMultiline(formData.get("columnOneItems"));
+  const columnTwoHeading = trimText(formData.get("columnTwoHeading"));
+  const columnTwoItems = splitMultiline(formData.get("columnTwoItems"));
+  const spotlightNarrative = splitMultiline(formData.get("spotlightNarrative"));
+  const imageUrl = trimText(formData.get("imageUrl"));
+  const imageAlt = trimText(formData.get("imageAlt"));
+  const cards = [
+    {
+      heading: trimText(formData.get("cardOneHeading")),
+      body: trimText(formData.get("cardOneBody")),
+    },
+    {
+      heading: trimText(formData.get("cardTwoHeading")),
+      body: trimText(formData.get("cardTwoBody")),
+    },
+    {
+      heading: trimText(formData.get("cardThreeHeading")),
+      body: trimText(formData.get("cardThreeBody")),
+    },
+  ].filter((card) => card.heading || card.body);
 
   return {
     layout,
@@ -2901,6 +2957,14 @@ function getBuilderFormState() {
     steps,
     levels,
     criteria,
+    columnOneHeading,
+    columnOneItems,
+    columnTwoHeading,
+    columnTwoItems,
+    spotlightNarrative,
+    imageUrl,
+    imageAlt,
+    cards,
   };
 }
 
@@ -2911,6 +2975,16 @@ function updateBuilderJsonPreview() {
   const state = getBuilderFormState();
   if (!state) {
     builderJsonPreview.textContent = "{}";
+    return;
+  }
+  if (state.layout === "blank-canvas") {
+    builderJsonPreview.textContent = JSON.stringify(
+      {
+        layout: state.layout,
+      },
+      null,
+      2,
+    );
     return;
   }
   const previewData = {
@@ -2930,15 +3004,43 @@ function updateBuilderJsonPreview() {
         success: criterion.success,
       })),
     },
+    columns:
+      state.layout === "rubric-columns"
+        ? {
+            first: { heading: state.columnOneHeading, items: state.columnOneItems },
+            second: { heading: state.columnTwoHeading, items: state.columnTwoItems },
+          }
+        : undefined,
+    spotlight:
+      state.layout === "image-spotlight"
+        ? {
+            narrative: state.spotlightNarrative,
+            imageUrl: state.imageUrl,
+            imageAlt: state.imageAlt,
+          }
+        : undefined,
+    cards: state.layout === "rubric-cards" ? state.cards : undefined,
   };
   builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
 }
 
-function syncBuilderLayout(layout = "facilitation") {
+function syncBuilderLayout(layout = getSelectedLayout()) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
-  const targetLayout = layout || "facilitation";
+  const targetLayout = layout || getSelectedLayout() || "blank-canvas";
+  setSelectedLayout(targetLayout);
+  if (Array.isArray(builderLayoutInputs)) {
+    builderLayoutInputs.forEach((input) => {
+      if (!(input instanceof HTMLInputElement)) {
+        return;
+      }
+      const parent = input.closest(".layout-option");
+      if (parent instanceof HTMLElement) {
+        parent.classList.toggle("is-selected", input.checked);
+      }
+    });
+  }
   const blocks = builderForm.querySelectorAll("[data-layouts]");
   blocks.forEach((block) => {
     const layouts = (block.dataset.layouts || "")
@@ -2972,34 +3074,90 @@ function updateBuilderPreview() {
     return;
   }
 
+  if (state.layout === "blank-canvas") {
+    const blankSlide = createBlankSlide();
+    if (blankSlide instanceof HTMLElement) {
+      const previewSlide = blankSlide.cloneNode(true);
+      previewSlide.classList.remove("hidden");
+      builderPreview.appendChild(previewSlide);
+      builderPreview.classList.add("has-content");
+    }
+    return;
+  }
+
   const rubricPayload = {
     criteria: state.criteria,
     levels: state.levels,
   };
 
   let slide = null;
-  if (state.layout === "rubric-simple") {
-    slide = createRubricFocusSlide({
-      stageLabel: state.stageLabel || "Activity Workshop",
-      title: state.slideTitle || state.activityTitle || "Success criteria",
-      activityTitle: state.activityTitle,
-      duration: state.duration,
-      rubric: rubricPayload,
-      rubricHeadingText: "Success criteria",
-      rubricIntro: state.rubricIntro,
-    });
-  } else {
-    slide = createActivitySlide({
-      stageLabel: state.stageLabel || "Activity Workshop",
-      title: state.activityTitle || "Activity",
-      duration: state.duration,
-      overview: state.overview,
-      steps: state.steps,
-      rubric: rubricPayload,
-      instructionsHeading: state.slideTitle,
-      rubricHeadingText: "Success criteria",
-      rubricIntro: state.rubricIntro,
-    });
+  switch (state.layout) {
+    case "rubric-simple":
+      slide = createRubricFocusSlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.slideTitle || state.activityTitle || "Success criteria",
+        activityTitle: state.activityTitle,
+        duration: state.duration,
+        rubric: rubricPayload,
+        rubricHeadingText: "Success criteria",
+        rubricIntro: state.rubricIntro,
+      });
+      break;
+    case "rubric-columns":
+      slide = createRubricColumnSlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.activityTitle || state.slideTitle || "Discussion + rubric",
+        duration: state.duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        columnOne: {
+          heading: state.columnOneHeading,
+          items: state.columnOneItems,
+        },
+        columnTwo: {
+          heading: state.columnTwoHeading,
+          items: state.columnTwoItems,
+        },
+      });
+      break;
+    case "image-spotlight":
+      slide = createImageSpotlightSlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.activityTitle || state.slideTitle || "Spotlight",
+        duration: state.duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        narrative: state.spotlightNarrative,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
+      });
+      break;
+    case "rubric-cards":
+      slide = createRubricCardSlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.activityTitle || state.slideTitle || "Strategy lab",
+        duration: state.duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        cards: state.cards,
+      });
+      break;
+    default:
+      slide = createActivitySlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.activityTitle || "Activity",
+        duration: state.duration,
+        overview: state.overview,
+        steps: state.steps,
+        rubric: rubricPayload,
+        instructionsHeading: state.slideTitle,
+        rubricHeadingText: "Success criteria",
+        rubricIntro: state.rubricIntro,
+      });
+      break;
   }
 
   if (slide instanceof HTMLElement) {
@@ -3014,8 +3172,120 @@ function ensureBuilderPrompts() {
   if (!(builderPromptList instanceof HTMLElement)) {
     return;
   }
+  const layout = getSelectedLayout();
+  if (layout === "blank-canvas") {
+    builderPromptList.innerHTML = "";
+    return;
+  }
   if (!builderPromptList.querySelector(".builder-prompt-item")) {
     DEFAULT_BUILDER_PROMPTS.forEach((entry) => addPromptItem(entry));
+  }
+}
+
+function updateImageSearchStatus(message = "", tone = "info") {
+  if (!(builderImageStatus instanceof HTMLElement)) {
+    return;
+  }
+  builderImageStatus.textContent = message;
+  if (message) {
+    builderImageStatus.dataset.tone = tone;
+  } else {
+    builderImageStatus.removeAttribute("data-tone");
+  }
+}
+
+function renderImageSearchResults(photos = []) {
+  if (!(builderImageResults instanceof HTMLElement)) {
+    return;
+  }
+  builderImageResults.innerHTML = "";
+  if (!Array.isArray(photos) || !photos.length) {
+    return;
+  }
+  photos.forEach((photo, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "image-result";
+    button.dataset.url = photo.src?.large2x || photo.src?.large || "";
+    button.dataset.alt = photo.alt || "";
+    button.dataset.id = String(photo.id ?? index);
+    button.setAttribute("role", "option");
+    button.setAttribute("aria-selected", "false");
+    const img = document.createElement("img");
+    img.src = photo.src?.medium || photo.src?.small || photo.src?.tiny || "";
+    img.alt = photo.alt || "Search result";
+    img.loading = "lazy";
+    img.decoding = "async";
+    button.appendChild(img);
+    builderImageResults.appendChild(button);
+  });
+}
+
+function selectImageResult(button) {
+  if (!(button instanceof HTMLElement)) {
+    return;
+  }
+  const url = button.dataset.url || "";
+  const alt = button.dataset.alt || "";
+  if (builderImageResults instanceof HTMLElement) {
+    builderImageResults
+      .querySelectorAll(".image-result")
+      .forEach((item) => {
+        item.classList.remove("is-selected");
+        item.setAttribute("aria-selected", "false");
+      });
+  }
+  button.classList.add("is-selected");
+  button.setAttribute("aria-selected", "true");
+  const urlInput = builderForm?.querySelector('input[name="imageUrl"]');
+  const altInput = builderForm?.querySelector('input[name="imageAlt"]');
+  if (urlInput instanceof HTMLInputElement) {
+    urlInput.value = url;
+  }
+  if (altInput instanceof HTMLInputElement && alt && !altInput.value) {
+    altInput.value = alt;
+  }
+  updateBuilderJsonPreview();
+  updateBuilderPreview();
+}
+
+async function handleImageSearch() {
+  if (!(builderImageSearchInput instanceof HTMLInputElement)) {
+    return;
+  }
+  const query = builderImageSearchInput.value.trim();
+  if (!query) {
+    updateImageSearchStatus("Type a search term to find images.", "info");
+    return;
+  }
+  updateImageSearchStatus("Searching Pexels...", "info");
+  if (!PEXELS_API_KEY) {
+    updateImageSearchStatus("Pexels search is unavailable.", "error");
+    return;
+  }
+  try {
+    const response = await fetch(
+      `${PEXELS_SEARCH_URL}?query=${encodeURIComponent(query)}&per_page=8`,
+      {
+        headers: {
+          Authorization: PEXELS_API_KEY,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`Pexels request failed with status ${response.status}`);
+    }
+    const data = await response.json();
+    const photos = Array.isArray(data?.photos) ? data.photos : [];
+    if (!photos.length) {
+      updateImageSearchStatus("No images found. Try another term.", "info");
+    } else {
+      updateImageSearchStatus(`Found ${photos.length} image${photos.length === 1 ? "" : "s"}.`, "success");
+    }
+    renderImageSearchResults(photos);
+  } catch (error) {
+    console.warn("Image search failed", error);
+    updateImageSearchStatus("We couldn't fetch images right now.", "error");
   }
 }
 
@@ -3084,7 +3354,10 @@ function addPromptItem({ prompt = "", success = "" } = {}) {
 
   removeBtn.addEventListener("click", () => {
     item.remove();
-    if (!builderPromptList.querySelector(".builder-prompt-item")) {
+    if (
+      getSelectedLayout() !== "blank-canvas" &&
+      !builderPromptList.querySelector(".builder-prompt-item")
+    ) {
       addPromptItem();
     }
     updateBuilderJsonPreview();
@@ -3101,11 +3374,18 @@ function resetBuilderForm() {
   if (builderPromptList instanceof HTMLElement) {
     builderPromptList.innerHTML = "";
   }
+  if (builderImageResults instanceof HTMLElement) {
+    builderImageResults.innerHTML = "";
+  }
+  if (builderImageSearchInput instanceof HTMLInputElement) {
+    builderImageSearchInput.value = "";
+  }
+  updateImageSearchStatus("", "info");
   builderFieldId = 0;
+  setSelectedLayout("blank-canvas");
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
-  const layout = builderLayoutField?.value || "facilitation";
-  syncBuilderLayout(layout);
+  syncBuilderLayout("blank-canvas");
   updateBuilderPreview();
   showBuilderStatus("", undefined);
 }
@@ -3117,24 +3397,34 @@ function handleBuilderKeydown(event) {
   }
 }
 
-function openBuilderOverlay() {
+function openBuilderOverlay({ layout } = {}) {
   if (!(builderOverlay instanceof HTMLElement)) {
     return;
   }
   builderLastFocus =
     document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  if (layout) {
+    setSelectedLayout(layout);
+  }
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
-  const layout = builderLayoutField?.value || "facilitation";
-  syncBuilderLayout(layout);
+  const activeLayout = getSelectedLayout();
+  syncBuilderLayout(activeLayout);
   updateBuilderPreview();
   builderOverlay.hidden = false;
   requestAnimationFrame(() => {
     builderOverlay.classList.add("is-visible");
     builderOverlay.setAttribute("aria-hidden", "false");
-    const focusTarget = builderForm?.querySelector("input, textarea, select");
-    if (focusTarget instanceof HTMLElement) {
-      focusTarget.focus({ preventScroll: true });
+    if (builderForm instanceof HTMLFormElement) {
+      const focusable = Array.from(
+        builderForm.querySelectorAll(
+          'input:not([disabled]), textarea:not([disabled]), select:not([disabled])',
+        ) ?? [],
+      ).filter((el) => el.offsetParent !== null);
+      const focusTarget = focusable[0];
+      if (focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
     }
   });
   document.addEventListener("keydown", handleBuilderKeydown);
@@ -3582,6 +3872,527 @@ function createRubricFocusSlide({
   return slide;
 }
 
+function createRubricColumnSlide({
+  stageLabel = "Activity Workshop",
+  title,
+  duration,
+  slideTitle,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  columnOne = {},
+  columnTwo = {},
+} = {}) {
+  const resolvedTitle = trimText(title) || "Collaborative discussion";
+  const headingTitle = trimText(slideTitle) || "Discussion prompts";
+  const firstHeading = trimText(columnOne.heading) || "Team reflections";
+  const secondHeading = trimText(columnTwo.heading) || "Evidence to capture";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--columns";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--columns";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-columns-layout";
+  inner.appendChild(layout);
+
+  const rubricSection = buildRubricSection({
+    heading: "Success criteria",
+    intro: rubricIntro,
+    rubric,
+    className: "activity-rubric activity-rubric--wide",
+  });
+  layout.appendChild(rubricSection);
+
+  const columnsHeading = document.createElement("h3");
+  columnsHeading.className = "activity-columns-heading";
+  columnsHeading.textContent = headingTitle;
+  layout.appendChild(columnsHeading);
+
+  const columnsWrap = document.createElement("div");
+  columnsWrap.className = "activity-columns";
+  layout.appendChild(columnsWrap);
+
+  const makeColumn = ({ headingText, items }) => {
+    const column = document.createElement("article");
+    column.className = "activity-column-card";
+    const columnHeading = document.createElement("h4");
+    columnHeading.textContent = headingText;
+    column.appendChild(columnHeading);
+    const listItems = Array.isArray(items) ? items.filter(Boolean) : [];
+    if (listItems.length) {
+      const list = document.createElement("ul");
+      list.className = "activity-column-list";
+      listItems.forEach((entry) => {
+        const li = document.createElement("li");
+        li.textContent = entry;
+        list.appendChild(li);
+      });
+      column.appendChild(list);
+    } else {
+      const placeholder = document.createElement("p");
+      placeholder.className = "activity-empty";
+      placeholder.textContent = "Add prompts to guide the conversation.";
+      column.appendChild(placeholder);
+    }
+    return column;
+  };
+
+  columnsWrap.appendChild(
+    makeColumn({ headingText: firstHeading, items: columnOne.items }),
+  );
+  columnsWrap.appendChild(
+    makeColumn({ headingText: secondHeading, items: columnTwo.items }),
+  );
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  try {
+    slide.dataset.rubric = JSON.stringify({
+      title: resolvedTitle,
+      levels: rubricLevels,
+      criteria: rubricCriteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    });
+  } catch (error) {
+    console.warn("Unable to serialise rubric data", error);
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createImageSpotlightSlide({
+  stageLabel = "Activity Workshop",
+  title,
+  duration,
+  slideTitle,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  narrative = [],
+  imageUrl,
+  imageAlt,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Spotlight reflection";
+  const resolvedHeading = trimText(slideTitle) || "Reflection spotlight";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--spotlight";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--spotlight";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const spotlightLayout = document.createElement("div");
+  spotlightLayout.className = "activity-spotlight-layout";
+  inner.appendChild(spotlightLayout);
+
+  const contentRow = document.createElement("div");
+  contentRow.className = "activity-spotlight-grid";
+  spotlightLayout.appendChild(contentRow);
+
+  const narrativeSection = document.createElement("article");
+  narrativeSection.className = "activity-spotlight-content";
+  contentRow.appendChild(narrativeSection);
+
+  const narrativeHeading = document.createElement("h3");
+  narrativeHeading.textContent = resolvedHeading;
+  narrativeSection.appendChild(narrativeHeading);
+
+  const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean) : [];
+  if (paragraphs.length) {
+    paragraphs.forEach((paragraph) => {
+      const p = document.createElement("p");
+      p.textContent = paragraph;
+      narrativeSection.appendChild(p);
+    });
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add context or instructions for learners.";
+    narrativeSection.appendChild(placeholder);
+  }
+
+  const imageFigure = document.createElement("figure");
+  imageFigure.className = "activity-spotlight-figure";
+  contentRow.appendChild(imageFigure);
+
+  if (imageUrl) {
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = imageAlt || "Spotlight illustration";
+    img.loading = "lazy";
+    img.decoding = "async";
+    imageFigure.appendChild(img);
+    if (imageAlt) {
+      const figCaption = document.createElement("figcaption");
+      figCaption.textContent = imageAlt;
+      imageFigure.appendChild(figCaption);
+    }
+  } else {
+    const placeholder = document.createElement("div");
+    placeholder.className = "activity-spotlight-placeholder";
+    placeholder.innerHTML = `
+      <i class="fa-solid fa-image" aria-hidden="true"></i>
+      <p>Add a visual to anchor the discussion.</p>
+    `;
+    imageFigure.appendChild(placeholder);
+  }
+
+  const rubricSection = buildRubricSection({
+    heading: "Success criteria",
+    intro: rubricIntro,
+    rubric,
+    className: "activity-rubric activity-rubric--spotlight",
+  });
+  spotlightLayout.appendChild(rubricSection);
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  try {
+    slide.dataset.rubric = JSON.stringify({
+      title: resolvedTitle,
+      levels: rubricLevels,
+      criteria: rubricCriteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    });
+  } catch (error) {
+    console.warn("Unable to serialise rubric data", error);
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createRubricCardSlide({
+  stageLabel = "Activity Workshop",
+  title,
+  duration,
+  slideTitle,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  cards = [],
+} = {}) {
+  const resolvedTitle = trimText(title) || "Strategy studio";
+  const resolvedHeading = trimText(slideTitle) || "Team strategies";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--cards";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--cards";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-card-layout";
+  inner.appendChild(layout);
+
+  const rubricSection = buildRubricSection({
+    heading: "Success criteria",
+    intro: rubricIntro,
+    rubric,
+  });
+  layout.appendChild(rubricSection);
+
+  const cardsHeading = document.createElement("h3");
+  cardsHeading.className = "strategy-cards-heading";
+  cardsHeading.textContent = resolvedHeading;
+  layout.appendChild(cardsHeading);
+
+  const cardsWrap = document.createElement("div");
+  cardsWrap.className = "strategy-cards";
+  layout.appendChild(cardsWrap);
+
+  const cardEntries = Array.isArray(cards) ? cards.filter((card) => card.heading || card.body) : [];
+  if (cardEntries.length) {
+    cardEntries.forEach((card, index) => {
+      const cardEl = document.createElement("article");
+      cardEl.className = "strategy-card";
+      const badge = document.createElement("span");
+      badge.className = "strategy-card-badge";
+      badge.textContent = `Step ${index + 1}`;
+      cardEl.appendChild(badge);
+      if (card.heading) {
+        const cardHeading = document.createElement("h4");
+        cardHeading.textContent = card.heading;
+        cardEl.appendChild(cardHeading);
+      }
+      if (card.body) {
+        const cardBody = document.createElement("p");
+        cardBody.textContent = card.body;
+        cardEl.appendChild(cardBody);
+      }
+      cardsWrap.appendChild(cardEl);
+    });
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add strategy cards to scaffold the task.";
+    cardsWrap.appendChild(placeholder);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  try {
+    slide.dataset.rubric = JSON.stringify({
+      title: resolvedTitle,
+      levels: rubricLevels,
+      criteria: rubricCriteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    });
+  } catch (error) {
+    console.warn("Unable to serialise rubric data", error);
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
 function initialiseBuilderSlide(slide) {
   if (!(slide instanceof HTMLElement)) {
     return slide;
@@ -3707,6 +4518,19 @@ function handleBuilderSubmit(event) {
     return;
   }
 
+  if (state.layout === "blank-canvas") {
+    const blankSlide = createBlankSlide();
+    if (!(blankSlide instanceof HTMLElement)) {
+      showBuilderStatus("We couldn't add a blank slide right now.", "error");
+      return;
+    }
+    attachBlankSlideEvents(blankSlide);
+    insertActivitySlide(blankSlide);
+    showBuilderStatus("Blank canvas ready for your ideas.", "success");
+    closeBuilderOverlay({ reset: true, focus: true });
+    return;
+  }
+
   const title = state.activityTitle;
   if (!title) {
     showBuilderStatus("Add a title for your activity before inserting.", "error");
@@ -3738,35 +4562,96 @@ function handleBuilderSubmit(event) {
   };
 
   let slide = null;
-  if (state.layout === "rubric-simple") {
-    const resolvedSlideTitle = state.slideTitle || state.activityTitle;
-    if (!trimText(resolvedSlideTitle)) {
-      showBuilderStatus("Add a slide title before inserting.", "error");
-      const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
-      slideTitleInput?.focus({ preventScroll: true });
-      return;
+  switch (state.layout) {
+    case "rubric-simple": {
+      const resolvedSlideTitle = state.slideTitle || state.activityTitle;
+      if (!trimText(resolvedSlideTitle)) {
+        showBuilderStatus("Add a slide title before inserting.", "error");
+        const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
+        slideTitleInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createRubricFocusSlide({
+        stageLabel,
+        title: resolvedSlideTitle,
+        activityTitle: state.activityTitle,
+        duration,
+        rubric: rubricData,
+        rubricHeadingText: "Success criteria",
+        rubricIntro: state.rubricIntro,
+      });
+      break;
     }
-    slide = createRubricFocusSlide({
-      stageLabel,
-      title: resolvedSlideTitle,
-      activityTitle: state.activityTitle,
-      duration,
-      rubric: rubricData,
-      rubricHeadingText: "Success criteria",
-      rubricIntro: state.rubricIntro,
-    });
-  } else {
-    slide = createActivitySlide({
-      stageLabel,
-      title,
-      duration,
-      overview,
-      steps,
-      rubric: rubricData,
-      instructionsHeading: state.slideTitle,
-      rubricHeadingText: "Success criteria",
-      rubricIntro: state.rubricIntro,
-    });
+    case "rubric-columns": {
+      if (!trimText(state.slideTitle || "")) {
+        showBuilderStatus("Name the discussion focus before inserting.", "error");
+        const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
+        slideTitleInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createRubricColumnSlide({
+        stageLabel,
+        title,
+        duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        columnOne: {
+          heading: state.columnOneHeading,
+          items: state.columnOneItems,
+        },
+        columnTwo: {
+          heading: state.columnTwoHeading,
+          items: state.columnTwoItems,
+        },
+      });
+      break;
+    }
+    case "image-spotlight": {
+      slide = createImageSpotlightSlide({
+        stageLabel,
+        title,
+        duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        narrative: state.spotlightNarrative,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
+      });
+      break;
+    }
+    case "rubric-cards": {
+      if (!state.cards.length) {
+        showBuilderStatus("Add at least one strategy card.", "error");
+        const cardInput = builderForm.querySelector('[name="cardOneHeading"]');
+        cardInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createRubricCardSlide({
+        stageLabel,
+        title,
+        duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        cards: state.cards,
+      });
+      break;
+    }
+    default:
+      slide = createActivitySlide({
+        stageLabel,
+        title,
+        duration,
+        overview,
+        steps,
+        rubric: rubricData,
+        instructionsHeading: state.slideTitle,
+        rubricHeadingText: "Success criteria",
+        rubricIntro: state.rubricIntro,
+      });
+      break;
   }
 
   if (!(slide instanceof HTMLElement)) {
@@ -3783,9 +4668,6 @@ function handleBuilderSubmit(event) {
 }
 
 function initialiseActivityBuilderUI() {
-  if (!(activityBuilderBtn instanceof HTMLElement)) {
-    return;
-  }
   if (!(builderOverlay instanceof HTMLElement)) {
     return;
   }
@@ -3799,9 +4681,18 @@ function initialiseActivityBuilderUI() {
 
   resetBuilderForm();
 
-  activityBuilderBtn.addEventListener("click", () => {
+  const openForLayout = (layout) => {
     showBuilderStatus("", undefined);
-    openBuilderOverlay();
+    openBuilderOverlay({ layout });
+  };
+
+  addSlideBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    openForLayout("blank-canvas");
+  });
+
+  activityBuilderBtn?.addEventListener("click", () => {
+    openForLayout("facilitation");
   });
 
   builderAddPromptBtn?.addEventListener("click", () => {
@@ -3815,17 +4706,30 @@ function initialiseActivityBuilderUI() {
     updateBuilderPreview();
   });
 
-  builderLayoutField?.addEventListener("change", (event) => {
-    const layoutValue = event.target?.value || "facilitation";
-    syncBuilderLayout(layoutValue);
-    updateBuilderJsonPreview();
-    updateBuilderPreview();
-    const layoutMessage =
-      layoutValue === "rubric-simple"
-        ? "Rubric spotlight layout selected."
-        : "Facilitation layout selected.";
-    showBuilderStatus(layoutMessage, "info");
-  });
+  if (Array.isArray(builderLayoutInputs)) {
+    builderLayoutInputs.forEach((input) => {
+      input.addEventListener("change", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) {
+          return;
+        }
+        const layoutValue = target.value || "blank-canvas";
+        syncBuilderLayout(layoutValue);
+        ensureBuilderPrompts();
+        updateBuilderJsonPreview();
+        updateBuilderPreview();
+        const messages = {
+          "blank-canvas": "Blank canvas selected.",
+          facilitation: "Workshop facilitation layout selected.",
+          "rubric-simple": "Rubric spotlight layout selected.",
+          "rubric-columns": "Discussion columns layout selected.",
+          "image-spotlight": "Spotlight layout selected.",
+          "rubric-cards": "Strategy cards layout selected.",
+        };
+        showBuilderStatus(messages[layoutValue] || "Layout updated.", "info");
+      });
+    });
+  }
 
   builderRefreshPreviewBtn?.addEventListener("click", () => {
     updateBuilderPreview();
@@ -3843,6 +4747,24 @@ function initialiseActivityBuilderUI() {
   builderOverlay.addEventListener("click", (event) => {
     if (event.target === builderOverlay) {
       closeBuilderOverlay({ reset: false, focus: true });
+    }
+  });
+
+  builderImageSearchBtn?.addEventListener("click", () => {
+    handleImageSearch();
+  });
+
+  builderImageSearchInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleImageSearch();
+    }
+  });
+
+  builderImageResults?.addEventListener("click", (event) => {
+    const button = event.target instanceof HTMLElement ? event.target.closest(".image-result") : null;
+    if (button instanceof HTMLElement) {
+      selectImageResult(button);
     }
   });
 
@@ -3883,7 +4805,6 @@ async function initialiseDeck() {
   document
     .querySelectorAll('.slide-stage[data-type="blank"]')
     .forEach((slide) => attachBlankSlideEvents(slide));
-  addSlideBtn?.addEventListener("click", addBlankSlide);
   saveStateBtn?.addEventListener("click", downloadDeckState);
   loadStateBtn?.addEventListener("click", () => {
     loadStateInput?.click();
@@ -3982,15 +4903,28 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  builderLayoutField =
-    builderOverlay?.querySelector("#builder-layout") ??
-    document.querySelector("#builder-layout");
+  builderLayoutInputs = Array.from(
+    builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
+      document.querySelectorAll('input[name="slideLayout"]'),
+  );
   builderPreview =
     builderOverlay?.querySelector("#builder-preview") ??
     document.querySelector("#builder-preview");
   builderRefreshPreviewBtn =
     builderOverlay?.querySelector("#builder-refresh-preview") ??
     document.querySelector("#builder-refresh-preview");
+  builderImageResults =
+    builderOverlay?.querySelector("#builder-image-results") ??
+    document.querySelector("#builder-image-results");
+  builderImageStatus =
+    builderOverlay?.querySelector("#image-search-status") ??
+    document.querySelector("#image-search-status");
+  builderImageSearchBtn =
+    builderOverlay?.querySelector('[data-action="search-image"]') ??
+    document.querySelector('[data-action="search-image"]');
+  builderImageSearchInput =
+    builderOverlay?.querySelector('input[name="imageSearch"]') ??
+    document.querySelector('input[name="imageSearch"]');
   builderLastFocus = null;
   builderFieldId = 0;
   moduleOverlay =
