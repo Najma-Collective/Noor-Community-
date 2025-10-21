@@ -43,6 +43,14 @@
             type="file"
             accept="application/json"
           />
+          <button
+            id="activity-builder-btn"
+            class="toolbar-btn tertiary"
+            type="button"
+          >
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Activity Builder
+          </button>
           <div class="highlight-controls" role="group" aria-label="Highlight text">
             <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
             <label class="sr-only" for="highlight-color">Highlight colour</label>
@@ -1416,6 +1424,135 @@
           </button>
         </div>
       </main>
+    </div>
+
+    <div
+      id="activity-builder-overlay"
+      class="builder-overlay"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
+        <header class="builder-header">
+          <div>
+            <p class="builder-eyebrow">Sandbox tools</p>
+            <h2 id="builder-title">Activity Builder</h2>
+            <p class="builder-subtitle">
+              Convert your rubric prompts into a ready-to-teach activity slide.
+            </p>
+          </div>
+          <button type="button" class="builder-close" aria-label="Close activity builder">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <form id="activity-builder-form" class="builder-form">
+          <div class="builder-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Stage label</span>
+              <input
+                type="text"
+                name="stageLabel"
+                placeholder="e.g. Project Workshop · 15 minutes"
+                value="Activity Workshop · 15 minutes"
+              />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Activity title</span>
+              <input
+                type="text"
+                name="activityTitle"
+                placeholder="What are learners building?"
+                value="Design a community impact project"
+                required
+              />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Duration</span>
+              <input
+                type="text"
+                name="activityDuration"
+                placeholder="e.g. 10 minutes"
+                value="10 minutes"
+              />
+            </label>
+            <label class="builder-field builder-field--full">
+              <span class="builder-field-label">Activity overview</span>
+              <textarea
+                name="activityOverview"
+                rows="2"
+                placeholder="Why does this activity matter?"
+              >Learners review project ideas in small teams and prepare peer feedback.</textarea>
+            </label>
+            <label class="builder-field builder-field--full">
+              <span class="builder-field-label">Facilitation steps</span>
+              <textarea
+                name="activitySteps"
+                rows="4"
+                placeholder="Write one step per line"
+              >Group learners in trios and assign each team a project brief.
+Give two minutes of silent reading to highlight key information.
+Invite teams to complete the rubric together and prepare one insight.
+Cold call teams to share the most compelling improvement idea.</textarea>
+            </label>
+            <label class="builder-field builder-field--full">
+              <span class="builder-field-label">Performance levels (comma separated)</span>
+              <input
+                type="text"
+                name="rubricLevels"
+                placeholder="Emerging, Meeting, Excelling"
+                value="Emerging, Meeting, Excelling"
+              />
+            </label>
+          </div>
+
+          <section class="builder-section">
+            <header class="builder-section-header">
+              <div>
+                <h3>Rubric prompts</h3>
+                <p>List the evidence you want learners to capture.</p>
+              </div>
+              <button
+                type="button"
+                id="builder-add-prompt"
+                class="activity-btn"
+              >
+                <i class="fa-solid fa-plus"></i>
+                Add criterion
+              </button>
+            </header>
+            <ul id="builder-prompt-list" class="builder-prompt-list"></ul>
+          </section>
+
+          <section class="builder-section">
+            <header class="builder-section-header">
+              <div>
+                <h3>Rubric JSON</h3>
+                <p>The generated structure is copied into the slide for future edits.</p>
+              </div>
+            </header>
+            <pre
+              id="builder-json-preview"
+              class="builder-json-preview"
+              aria-live="polite"
+            >{
+  "criteria": []
+}</pre>
+          </section>
+
+          <footer class="builder-footer">
+            <p id="builder-status" class="builder-status" aria-live="polite"></p>
+            <div class="builder-actions">
+              <button type="button" class="toolbar-btn ghost" data-action="cancel-builder">
+                Cancel
+              </button>
+              <button type="submit" class="toolbar-btn">
+                <i class="fa-solid fa-square-plus"></i>
+                Insert activity slide
+              </button>
+            </div>
+          </footer>
+        </form>
+      </div>
     </div>
 
 
