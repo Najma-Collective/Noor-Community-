@@ -1,6 +1,51 @@
-import { initSlideNavigator } from "./slide-nav.js";
-
 // Shared interactive module for Noor Community decks
+
+let slideNavigatorFactory;
+let slideNavigatorLoaderPromise;
+let slideNavigatorLoadLogged = false;
+
+async function resolveSlideNavigatorFactory() {
+  if (typeof slideNavigatorFactory === "function") {
+    return slideNavigatorFactory;
+  }
+
+  if (typeof window !== "undefined" && typeof window.initSlideNavigator === "function") {
+    slideNavigatorFactory = window.initSlideNavigator;
+    return slideNavigatorFactory;
+  }
+
+  if (!slideNavigatorLoaderPromise) {
+    slideNavigatorLoaderPromise = import("./slide-nav.js")
+      .then((module) => {
+        const navigator = module?.initSlideNavigator;
+        if (typeof navigator === "function") {
+          slideNavigatorFactory = navigator;
+          return navigator;
+        }
+        return null;
+      })
+      .catch((error) => {
+        if (!slideNavigatorLoadLogged) {
+          console.warn("Slide navigator module failed to load", error);
+          slideNavigatorLoadLogged = true;
+        }
+        return null;
+      });
+  }
+
+  const navigator = await slideNavigatorLoaderPromise;
+
+  if (typeof navigator === "function") {
+    return navigator;
+  }
+
+  if (typeof window !== "undefined" && typeof window.initSlideNavigator === "function") {
+    slideNavigatorFactory = window.initSlideNavigator;
+    return slideNavigatorFactory;
+  }
+
+  return null;
+}
 
 export const TEXTBOX_COLOR_OPTIONS = [
   { value: "sage", label: "Sage" },
@@ -3302,11 +3347,24 @@ export async function setupInteractiveDeck({
       }
       el.remove();
     });
-  slideNavigatorController =
-    initSlideNavigator({
-      stageViewport,
-      onSelectSlide: (index) => showSlide(index),
-    }) ?? null;
+  const navigatorFactory = await resolveSlideNavigatorFactory();
+  if (typeof navigatorFactory === "function") {
+    try {
+      slideNavigatorController =
+        navigatorFactory({
+          stageViewport,
+          onSelectSlide: (index) => showSlide(index),
+        }) ?? null;
+    } catch (error) {
+      if (!slideNavigatorLoadLogged) {
+        console.warn("Slide navigator initialisation failed", error);
+        slideNavigatorLoadLogged = true;
+      }
+      slideNavigatorController = null;
+    }
+  } else {
+    slideNavigatorController = null;
+  }
 
   initialiseActivityBuilderUI();
 
