@@ -163,10 +163,116 @@ body {
   gap: 1rem;
 }
 
+.form-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.5rem 1.75rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(111, 125, 102, 0.18);
+  margin-bottom: 1.5rem;
+}
+
+.form-hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  color: var(--sage-900);
+  background: rgba(175, 189, 166, 0.2);
+}
+
+.form-hero-copy h2 {
+  margin: 0.15rem 0 0.35rem;
+  font-family: 'Questrial', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.form-hero-copy p {
+  margin: 0;
+  color: var(--sage-500);
+}
+
+.form-hero-eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  color: var(--sage-500);
+}
+
+.accent-mc .form-hero-icon {
+  background: rgba(239, 131, 84, 0.18);
+  color: #cf5f31;
+}
+
+.accent-gap .form-hero-icon {
+  background: rgba(126, 162, 205, 0.18);
+  color: #3763a5;
+}
+
+.accent-group .form-hero-icon {
+  background: rgba(145, 196, 175, 0.18);
+  color: #2f7f62;
+}
+
+.accent-table .form-hero-icon {
+  background: rgba(176, 165, 203, 0.18);
+  color: #5c4f93;
+}
+
 .form-grid {
   display: grid;
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field--span {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-family: 'Questrial', sans-serif;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-heading p {
+  margin: 0.35rem 0 0;
+  color: var(--sage-500);
 }
 
 .form-grid label,
@@ -249,6 +355,12 @@ textarea {
   gap: 0.5rem;
 }
 
+.table-headers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
 .chip-btn {
   border: none;
   background: var(--sage-700);
@@ -258,6 +370,9 @@ textarea {
   font-size: 0.85rem;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .chip-btn:hover,
@@ -271,12 +386,18 @@ textarea {
   color: var(--error);
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .helper-text {
   font-size: 0.85rem;
   color: var(--sage-500);
   margin: -0.35rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .alert {

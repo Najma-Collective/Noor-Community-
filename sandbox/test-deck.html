@@ -1447,7 +1447,7 @@
         </header>
         <form id="activity-builder-form" class="builder-form">
           <div class="builder-grid">
-            <label class="builder-field">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple">
               <span class="builder-field-label">Stage label</span>
               <input
                 type="text"
@@ -1456,7 +1456,7 @@
                 value="Activity Workshop · 15 minutes"
               />
             </label>
-            <label class="builder-field">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple">
               <span class="builder-field-label">Activity title</span>
               <input
                 type="text"
@@ -1466,7 +1466,7 @@
                 required
               />
             </label>
-            <label class="builder-field">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple">
               <span class="builder-field-label">Duration</span>
               <input
                 type="text"
@@ -1475,7 +1475,31 @@
                 value="10 minutes"
               />
             </label>
-            <label class="builder-field builder-field--full">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple">
+              <span class="builder-field-label">Slide layout</span>
+              <select name="slideLayout" id="builder-layout">
+                <option value="facilitation" selected>Facilitation + Rubric</option>
+                <option value="rubric-simple">Rubric spotlight</option>
+              </select>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple">
+              <span class="builder-field-label">Slide title</span>
+              <input
+                type="text"
+                name="slideTitle"
+                placeholder="Headline for the slide body"
+                value="Facilitation steps"
+              />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple">
+              <span class="builder-field-label">Slide rubric lead-in</span>
+              <textarea
+                name="slideRubricLead"
+                rows="2"
+                placeholder="Describe what evidence learners should capture"
+              >Capture evidence for each success criterion as you collaborate.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation">
               <span class="builder-field-label">Activity overview</span>
               <textarea
                 name="activityOverview"
@@ -1483,7 +1507,7 @@
                 placeholder="Why does this activity matter?"
               >Learners review project ideas in small teams and prepare peer feedback.</textarea>
             </label>
-            <label class="builder-field builder-field--full">
+            <label class="builder-field builder-field--full" data-layouts="facilitation">
               <span class="builder-field-label">Facilitation steps</span>
               <textarea
                 name="activitySteps"
@@ -1494,7 +1518,7 @@ Give two minutes of silent reading to highlight key information.
 Invite teams to complete the rubric together and prepare one insight.
 Cold call teams to share the most compelling improvement idea.</textarea>
             </label>
-            <label class="builder-field builder-field--full">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple">
               <span class="builder-field-label">Performance levels (comma separated)</span>
               <input
                 type="text"
@@ -1521,6 +1545,20 @@ Cold call teams to share the most compelling improvement idea.</textarea>
               </button>
             </header>
             <ul id="builder-prompt-list" class="builder-prompt-list"></ul>
+          </section>
+
+          <section class="builder-section builder-preview-section">
+            <header class="builder-section-header">
+              <div>
+                <h3>Slide preview</h3>
+                <p>Updates automatically as you edit the fields.</p>
+              </div>
+              <button type="button" class="ghost-btn" id="builder-refresh-preview">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                Refresh preview
+              </button>
+            </header>
+            <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
           </section>
 
           <section class="builder-section">

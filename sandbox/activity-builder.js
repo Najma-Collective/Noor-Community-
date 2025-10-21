@@ -50,6 +50,39 @@ const DEFAULT_STATES = {
   })
 };
 
+const TYPE_META = {
+  'multiple-choice': {
+    label: 'Multiple choice quiz',
+    icon: 'fa-list-check',
+    accent: 'mc',
+    helper: 'Offer up to four answer choices and mark every correct option.',
+  },
+  gapfill: {
+    label: 'Gap fill activity',
+    icon: 'fa-i-cursor',
+    accent: 'gap',
+    helper: 'Transform passages into interactive cloze tasks with instant feedback.',
+  },
+  grouping: {
+    label: 'Grouping challenge',
+    icon: 'fa-layer-group',
+    accent: 'group',
+    helper: 'Create drag-and-drop cards for learners to sort into categories.',
+  },
+  'table-completion': {
+    label: 'Table completion',
+    icon: 'fa-table-cells-large',
+    accent: 'table',
+    helper: 'Build comparison charts where learners supply the missing details.',
+  },
+  default: {
+    label: 'Interactive activity',
+    icon: 'fa-shapes',
+    accent: 'mc',
+    helper: 'Configure activity content and preview the generated slide.',
+  },
+};
+
 const escapeHtml = (unsafe = '') =>
   unsafe
     .replace(/&/g, '&amp;')
@@ -343,18 +376,41 @@ class ActivityBuilder {
     const { type, data } = this.state;
     let markup = '';
 
+    const meta = TYPE_META[type] || TYPE_META.default;
+
+    const hero = `
+      <section class="form-hero accent-${meta.accent}">
+        <div class="form-hero-icon" aria-hidden="true">
+          <i class="fa-solid ${meta.icon}"></i>
+        </div>
+        <div class="form-hero-copy">
+          <p class="form-hero-eyebrow">Activity preset</p>
+          <h2>${meta.label}</h2>
+          <p>${meta.helper}</p>
+        </div>
+      </section>
+    `;
+
     const shared = `
       <section class="form-section">
-        <h2 class="section-title">General Settings</h2>
+        <header class="section-heading">
+          <div>
+            <h2><i class="fa-solid fa-sliders"></i> General settings</h2>
+            <p>Set the core messaging that anchors this activity for learners.</p>
+          </div>
+        </header>
         <div class="form-grid">
-          <label>Activity title
+          <label class="field">
+            <span class="field-label"><i class="fa-solid fa-heading"></i> Activity title</span>
             <input type="text" value="${escapeHtml(data.title)}" data-field="title" placeholder="Enter a descriptive title" />
           </label>
-          <label>Rubric / success criteria
-            <textarea data-field="rubric" placeholder="Describe how the activity is graded">${escapeHtml(data.rubric)}</textarea>
-          </label>
-          <label>Instructions
+          <label class="field field--span">
+            <span class="field-label"><i class="fa-solid fa-bullseye"></i> Instructions</span>
             <textarea data-field="instructions" placeholder="Provide learner instructions">${escapeHtml(data.instructions)}</textarea>
+          </label>
+          <label class="field field--span">
+            <span class="field-label"><i class="fa-solid fa-star"></i> Rubric / success criteria</span>
+            <textarea data-field="rubric" placeholder="Describe how the activity is graded">${escapeHtml(data.rubric)}</textarea>
           </label>
         </div>
       </section>
@@ -362,19 +418,28 @@ class ActivityBuilder {
 
     if (type === 'multiple-choice') {
       markup = [
+        hero,
         shared,
         '<section class="form-section">',
-        '<h2 class="section-title">Questions</h2>',
+        '<header class="section-heading">',
+        '<div>',
+        '<h2><i class="fa-solid fa-square-check"></i> Questions</h2>',
+        '<p>Create prompts, explanations, and mark every correct answer.</p>',
+        '</div>',
+        '<button type="button" class="chip-btn" data-action="add-question"><i class="fa-solid fa-plus"></i> Add question</button>',
+        '</header>',
         ...data.questions.map((question, qIndex) => `
           <article class="question-block" data-block="question" data-index="${qIndex}">
             <div class="block-header">
               <h3>Question ${qIndex + 1}</h3>
-              <button type="button" class="subtle-link" data-action="remove-question">Remove</button>
+              <button type="button" class="subtle-link" data-action="remove-question"><i class="fa-solid fa-trash-can"></i> Remove</button>
             </div>
-            <label>Prompt
+            <label class="field">
+              <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Prompt</span>
               <textarea data-field="prompt" placeholder="Enter the learner prompt">${escapeHtml(question.prompt)}</textarea>
             </label>
-            <label>Feedback explanation
+            <label class="field">
+              <span class="field-label"><i class="fa-solid fa-message"></i> Feedback explanation</span>
               <textarea data-field="explanation" placeholder="Explain the answer">${escapeHtml(question.explanation)}</textarea>
             </label>
             <div class="option-list">
@@ -387,47 +452,62 @@ class ActivityBuilder {
                         <span>Correct</span>
                       </label>
                       <input type="text" data-field="option-text" value="${escapeHtml(option.text)}" placeholder="Option text" />
-                      <button type="button" class="subtle-link" data-action="remove-option">Remove</button>
+                      <button type="button" class="subtle-link" data-action="remove-option" aria-label="Remove option"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                   `
                 )
                 .join('')}
             </div>
-            <button type="button" class="chip-btn" data-action="add-option">Add option</button>
+            <button type="button" class="chip-btn" data-action="add-option"><i class="fa-solid fa-plus"></i> Add option</button>
           </article>
         `),
-        '<button type="button" class="chip-btn" data-action="add-question">Add question</button>',
         '</section>'
       ].join('');
     } else if (type === 'gapfill') {
       markup = `
+        ${hero}
         ${shared}
         <section class="form-section">
-          <h2 class="section-title">Passage</h2>
-          <label>Passage text with blanks
+          <header class="section-heading">
+            <div>
+              <h2><i class="fa-solid fa-i-cursor"></i> Passage</h2>
+              <p>Use double brackets to indicate each blank learners will complete.</p>
+            </div>
+          </header>
+          <label class="field field--span">
+            <span class="field-label"><i class="fa-solid fa-highlighter"></i> Passage text with blanks</span>
             <textarea data-field="passage" placeholder="Wrap each answer in double brackets like [[answer|alternate]]">${escapeHtml(
               data.passage
             )}</textarea>
           </label>
-          <p class="helper-text">Separate alternate correct answers with a vertical bar. Each pair of brackets creates an input.</p>
+          <p class="helper-text"><i class="fa-solid fa-lightbulb"></i> Separate alternate correct answers with a vertical bar. Each pair of brackets creates an input.</p>
         </section>
       `;
     } else if (type === 'grouping') {
       markup = [
+        hero,
         shared,
         '<section class="form-section">',
-        '<h2 class="section-title">Categories & cards</h2>',
+        '<header class="section-heading">',
+        '<div>',
+        '<h2><i class="fa-solid fa-folder-tree"></i> Categories & cards</h2>',
+        '<p>Define the target groups and the cards learners will sort.</p>',
+        '</div>',
+        '<button type="button" class="chip-btn" data-action="add-category"><i class="fa-solid fa-plus"></i> Add category</button>',
+        '</header>',
         ...data.categories.map(
           (category, cIndex) => `
             <article class="category-block" data-block="category" data-index="${cIndex}">
               <div class="block-header">
                 <h3>Category ${cIndex + 1}</h3>
-                <button type="button" class="subtle-link" data-action="remove-category">Remove</button>
+                <button type="button" class="subtle-link" data-action="remove-category"><i class="fa-solid fa-trash-can"></i> Remove</button>
               </div>
-              <label>Name
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-tag"></i> Name</span>
                 <input type="text" data-field="category-name" value="${escapeHtml(category.name)}" placeholder="Category name" />
               </label>
-              <label>Description (optional)
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-align-left"></i> Description (optional)</span>
                 <textarea data-field="category-description" placeholder="Helpful hints or criteria">${escapeHtml(
                   category.description || ''
                 )}</textarea>
@@ -438,29 +518,36 @@ class ActivityBuilder {
                     (item, iIndex) => `
                       <div class="item-row" data-block="item" data-item-index="${iIndex}">
                         <input type="text" value="${escapeHtml(item)}" placeholder="Card text" />
-                        <button type="button" class="subtle-link" data-action="remove-item">Remove</button>
+                        <button type="button" class="subtle-link" data-action="remove-item" aria-label="Remove card"><i class="fa-solid fa-xmark"></i></button>
                       </div>
                     `
                   )
                   .join('')}
               </div>
-              <button type="button" class="chip-btn" data-action="add-item">Add card</button>
+              <button type="button" class="chip-btn" data-action="add-item"><i class="fa-solid fa-plus"></i> Add card</button>
             </article>
           `
         ),
-        '<button type="button" class="chip-btn" data-action="add-category">Add category</button>',
         '</section>'
       ].join('');
     } else if (type === 'table-completion') {
       markup = [
+        hero,
         shared,
         '<section class="form-section">',
-        '<h2 class="section-title">Table structure</h2>',
+        '<header class="section-heading">',
+        '<div>',
+        '<h2><i class="fa-solid fa-table"></i> Table structure</h2>',
+        '<p>Specify the headers and the correct answers for each row.</p>',
+        '</div>',
+        '<button type="button" class="chip-btn" data-action="add-row"><i class="fa-solid fa-plus"></i> Add row</button>',
+        '</header>',
         '<div class="table-headers" data-block="table-header">',
         data.columnHeaders
           .map(
             (header, hIndex) => `
-              <label>Header ${hIndex + 1}
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-heading"></i> Header ${hIndex + 1}</span>
                 <input type="text" value="${escapeHtml(header)}" data-header-index="${hIndex}" />
               </label>
             `
@@ -473,16 +560,18 @@ class ActivityBuilder {
             <article class="table-row-block" data-block="table-row" data-index="${rIndex}">
               <div class="block-header">
                 <h3>Row ${rIndex + 1}</h3>
-                <button type="button" class="subtle-link" data-action="remove-row">Remove</button>
+                <button type="button" class="subtle-link" data-action="remove-row"><i class="fa-solid fa-trash-can"></i> Remove</button>
               </div>
-              <label>Row label
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-text-width"></i> Row label</span>
                 <input type="text" data-field="row-label" value="${escapeHtml(row.label)}" placeholder="Row label" />
               </label>
               <div class="cell-row">
                 ${row.answers
                   .map(
                     (cell, cellIndex) => `
-                      <label>Cell ${cellIndex + 1}
+                      <label class="field">
+                        <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Cell ${cellIndex + 1}</span>
                         <input type="text" data-field="row-answer-${cellIndex}" value="${escapeHtml(cell)}" placeholder="Correct value" />
                       </label>
                     `
@@ -492,9 +581,12 @@ class ActivityBuilder {
             </article>
           `
         ),
-        '<button type="button" class="chip-btn" data-action="add-row">Add row</button>',
         '</section>'
       ].join('');
+    }
+
+    if (!markup) {
+      markup = `${hero}${shared}`;
     }
 
     this.formContainer.innerHTML = markup;
@@ -635,16 +727,25 @@ const Generators = {
                 : 'No correct answer provided';
               const detail = document.createElement('div');
               detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              detail.innerHTML = `
-                <h4>${question.querySelector('.mc-question-title').innerText}</h4>
-                <p><strong>Your answer:</strong> ${learnerAnswer}</p>
-                ${isCorrect ? '' : `<p><strong>Correct answer:</strong> ${correctAnswer}</p>`}
-                <p class="explanation">${question.dataset.explanation || ''}</p>
-              `;
+              const correctAnswerMarkup = isCorrect
+                ? ''
+                : '<p><strong>Correct answer:</strong> ' + correctAnswer + '</p>';
+              detail.innerHTML =
+                '<h4>' +
+                question.querySelector('.mc-question-title').innerText +
+                '</h4>' +
+                '<p><strong>Your answer:</strong> ' +
+                learnerAnswer +
+                '</p>' +
+                correctAnswerMarkup +
+                '<p class="explanation">' +
+                (question.dataset.explanation || '') +
+                '</p>';
               details.appendChild(detail);
             });
 
-            scoreLine.textContent = `You answered ${correctCount} of ${totalCount} correctly.`;
+            scoreLine.textContent =
+              'You answered ' + correctCount + ' of ' + totalCount + ' correctly.';
             feedback.hidden = false;
             feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
           };
@@ -731,18 +832,28 @@ const Generators = {
               input.classList.toggle('incorrect', !isCorrect);
               const detail = document.createElement('div');
               detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              detail.innerHTML = `
-                <h4>Blank ${index + 1}</h4>
-                <p><strong>Your answer:</strong> ${input.value || 'No response'}</p>
-                ${isCorrect ? '' : `<p><strong>Acceptable answers:</strong> ${gap.dataset.answers.replace(/\|/g, ', ')}</p>`}
-              `;
+              const acceptableAnswersMarkup = isCorrect
+                ? ''
+                :
+                    '<p><strong>Acceptable answers:</strong> ' +
+                    gap.dataset.answers.replace(/\\|/g, ', ') +
+                    '</p>';
+              detail.innerHTML =
+                '<h4>Blank ' +
+                (index + 1) +
+                '</h4>' +
+                '<p><strong>Your answer:</strong> ' +
+                (input.value || 'No response') +
+                '</p>' +
+                acceptableAnswersMarkup;
               details.appendChild(detail);
             });
 
             if (attempted === 0) {
               scoreLine.textContent = 'Please complete at least one blank before checking.';
             } else {
-              scoreLine.textContent = `You answered ${correct} of ${attempted} correctly.`;
+              scoreLine.textContent =
+                'You answered ' + correct + ' of ' + attempted + ' correctly.';
             }
             feedback.hidden = false;
             feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -777,15 +888,20 @@ const Generators = {
 
     const categoryMarkup = config.categories
       .map(
-        (category, index) => `
+        (category, index) => {
+          const descriptionMarkup = category.description
+            ? '<p>' + escapeHtml(category.description) + '</p>'
+            : '';
+          return `
           <section class="group-target" data-accepts="${escapeHtml(category.name)}">
             <header>
               <h3>${escapeHtml(category.name)}</h3>
-              ${category.description ? `<p>${escapeHtml(category.description)}</p>` : ''}
+              ${descriptionMarkup}
             </header>
             <div class="drop-zone" aria-label="${escapeHtml(category.name)}" data-zone-index="${index}"></div>
           </section>
-        `
+        `;
+        }
       )
       .join('');
 
@@ -864,15 +980,21 @@ const Generators = {
                 if (isCorrect) correct += 1;
                 const detail = document.createElement('div');
                 detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-                detail.innerHTML = `
-                  <h4>${item.innerText.trim()}</h4>
-                  <p>${isCorrect ? 'Placed correctly' : 'Should be in ' + item.dataset.category}</p>
-                `;
+                detail.innerHTML =
+                  '<h4>' +
+                  item.innerText.trim() +
+                  '</h4>' +
+                  '<p>' +
+                  (isCorrect
+                    ? 'Placed correctly'
+                    : 'Should be in ' + item.dataset.category) +
+                  '</p>';
                 details.appendChild(detail);
               });
             });
 
-            scoreLine.textContent = `You sorted ${correct} of ${total} cards correctly.`;
+            scoreLine.textContent =
+              'You sorted ' + correct + ' of ' + total + ' cards correctly.';
             feedback.hidden = false;
             feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
           });
@@ -959,18 +1081,27 @@ const Generators = {
               input.classList.toggle('incorrect', !isCorrect);
               const detail = document.createElement('div');
               detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              detail.innerHTML = `
-                <h4>${input.closest('tr').querySelector('th').innerText} – ${input.dataset.header || ''}</h4>
-                <p><strong>Your answer:</strong> ${input.value || 'No response'}</p>
-                ${isCorrect ? '' : `<p><strong>Correct answer:</strong> ${input.dataset.answer}</p>`}
-              `;
+              const tableAnswerMarkup = isCorrect
+                ? ''
+                : '<p><strong>Correct answer:</strong> ' + input.dataset.answer + '</p>';
+              detail.innerHTML =
+                '<h4>' +
+                input.closest('tr').querySelector('th').innerText +
+                ' – ' +
+                (input.dataset.header || '') +
+                '</h4>' +
+                '<p><strong>Your answer:</strong> ' +
+                (input.value || 'No response') +
+                '</p>' +
+                tableAnswerMarkup;
               details.appendChild(detail);
             });
 
             if (attempted === 0) {
               scoreLine.textContent = 'Please complete at least one cell before checking.';
             } else {
-              scoreLine.textContent = `You answered ${correct} of ${attempted} correctly.`;
+              scoreLine.textContent =
+                'You answered ' + correct + ' of ' + attempted + ' correctly.';
             }
             feedback.hidden = false;
             feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -999,6 +1130,19 @@ const wrapInTemplate = (config, innerMarkup) => `
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(config.title)}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-MX58QX8wG7n+9yYvCMpOZXS6jttuPAHyBs+K6TfGsDzpDHK5vVsQt1zArhcXd1LSeX776BF3nf6/3cxguP3R0A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <style>
     :root {
       --bg: #f9faf7;
