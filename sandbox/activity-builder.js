@@ -104,12 +104,15 @@ class ActivityBuilder {
     this.outputArea = document.getElementById('output-html');
     this.copyBtn = document.getElementById('copy-html');
     this.refreshBtn = document.getElementById('refresh-preview');
+    this.sendToDeckBtn = document.getElementById('send-to-deck');
     this.alertTemplate = document.getElementById('alert-template');
+    this.isEmbedded = window.parent && window.parent !== window;
 
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleFormInput = this.handleFormInput.bind(this);
     this.handleFormClick = this.handleFormClick.bind(this);
     this.renderForm = this.renderForm.bind(this);
+    this.sendToDeck = this.sendToDeck.bind(this);
   }
 
   init() {
@@ -119,6 +122,13 @@ class ActivityBuilder {
     this.formContainer.addEventListener('click', this.handleFormClick);
     this.copyBtn.addEventListener('click', () => this.copyHtml());
     this.refreshBtn.addEventListener('click', () => this.updateOutputs());
+    if (this.sendToDeckBtn) {
+      if (!this.isEmbedded) {
+        this.sendToDeckBtn.hidden = true;
+      } else {
+        this.sendToDeckBtn.addEventListener('click', this.sendToDeck);
+      }
+    }
 
     this.renderForm();
     this.updateOutputs();
@@ -632,6 +642,34 @@ class ActivityBuilder {
     } catch (error) {
       console.error(error);
       this.showAlert('Copy failed. Select and copy manually.');
+    }
+  }
+
+  sendToDeck() {
+    if (!this.isEmbedded) {
+      this.showAlert('Open this builder inside the deck to send modules directly.');
+      return;
+    }
+    this.updateOutputs();
+    const html = this.outputArea.value;
+    if (!html.trim()) {
+      this.showAlert('Build an activity before sending it to the deck.');
+      return;
+    }
+
+    const payload = {
+      source: 'noor-activity-builder',
+      type: 'activity-module',
+      config: this.getCurrentConfig(),
+      html,
+    };
+
+    try {
+      window.parent.postMessage(payload, '*');
+      this.showAlert('Sent to the deck workspace.');
+    } catch (error) {
+      console.error('Unable to send module to deck', error);
+      this.showAlert('Unable to send module to the deck right now.');
     }
   }
 

@@ -104,6 +104,16 @@ body {
   gap: 1rem;
 }
 
+.export-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#send-to-deck[hidden] {
+  display: none;
+}
+
 .preview-header h2,
 .export-header h2 {
   margin: 0;
