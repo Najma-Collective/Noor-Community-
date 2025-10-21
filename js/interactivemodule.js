@@ -40,6 +40,17 @@ let highlightBtn;
 let highlightColorSelect;
 let removeHighlightBtn;
 let slideNavigatorController;
+let activityBuilderBtn;
+let builderOverlay;
+let builderForm;
+let builderAddPromptBtn;
+let builderPromptList;
+let builderJsonPreview;
+let builderCancelBtn;
+let builderCloseBtn;
+let builderStatusEl;
+let builderLastFocus;
+let builderFieldId = 0;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -57,6 +68,26 @@ const MINDMAP_CATEGORY_COLOR_MAP = {
   evidence: "sky",
   question: "slate",
 };
+
+const BUILDER_STATUS_TIMEOUT = 3200;
+
+const DEFAULT_BUILDER_PROMPTS = [
+  {
+    prompt: "Does the proposal clearly identify the community challenge?",
+    success:
+      "Learners reference evidence from the brief and explain why the need matters to stakeholders.",
+  },
+  {
+    prompt: "Is the suggested solution realistic for the community context?",
+    success:
+      "Learners highlight available resources, partnerships, or constraints that influence feasibility.",
+  },
+  {
+    prompt: "How well do learners articulate the positive impact?",
+    success:
+      "Learners describe tangible benefits for the community and connect them to longer-term outcomes.",
+  },
+];
 
 const isValidMindmapColor = (color) =>
   typeof color === "string" &&
@@ -216,6 +247,27 @@ const normaliseWhitespace = (text) =>
 
 const normaliseResponseValue = (value) =>
   typeof value === "string" ? value.trim().replace(/\s+/g, " ").toLowerCase() : "";
+
+const trimText = (value) => (typeof value === "string" ? value.trim() : "");
+
+const splitMultiline = (value) =>
+  trimText(value)
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const parseRubricLevels = (value) =>
+  typeof value === "string"
+    ? value
+        .split(",")
+        .map((level) => level.trim())
+        .filter(Boolean)
+    : [];
+
+const generateBuilderFieldId = (prefix = "builder-field") => {
+  builderFieldId += 1;
+  return `${prefix}-${builderFieldId}`;
+};
 
 function getSlideStageLabel(slide, index) {
   const pillText = normaliseWhitespace(slide?.querySelector?.(".pill")?.textContent);
@@ -2431,6 +2483,685 @@ function initialiseActivities() {
     .forEach((el) => setupStressMark(el));
 }
 
+async function copyTextToClipboard(text) {
+  if (typeof text !== "string" || !text) {
+    throw new Error("No text provided for clipboard copy");
+  }
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.clipboard &&
+    typeof navigator.clipboard.writeText === "function"
+  ) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-1000px";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+  const success = document.execCommand ? document.execCommand("copy") : false;
+  document.body.removeChild(textarea);
+  if (!success) {
+    throw new Error("Legacy clipboard command was unsuccessful");
+  }
+  return true;
+}
+
+function showBuilderStatus(message = "", tone) {
+  if (!(builderStatusEl instanceof HTMLElement)) {
+    return;
+  }
+  if (builderStatusEl.__deckStatusTimer) {
+    window.clearTimeout(builderStatusEl.__deckStatusTimer);
+    builderStatusEl.__deckStatusTimer = undefined;
+  }
+  builderStatusEl.textContent = message;
+  if (tone) {
+    builderStatusEl.dataset.tone = tone;
+  } else {
+    builderStatusEl.removeAttribute("data-tone");
+  }
+  if (message) {
+    builderStatusEl.__deckStatusTimer = window.setTimeout(() => {
+      builderStatusEl.textContent = "";
+      builderStatusEl.removeAttribute("data-tone");
+      builderStatusEl.__deckStatusTimer = undefined;
+    }, BUILDER_STATUS_TIMEOUT);
+  }
+}
+
+function collectRubricCriteria() {
+  if (!(builderPromptList instanceof HTMLElement)) {
+    return [];
+  }
+  const items = Array.from(
+    builderPromptList.querySelectorAll(".builder-prompt-item"),
+  );
+  return items
+    .map((item) => {
+      const promptInput = item.querySelector('input[name="rubricPrompt[]"]');
+      const successInput = item.querySelector(
+        'textarea[name="rubricSuccess[]"]',
+      );
+      const prompt = normaliseWhitespace(promptInput?.value ?? "");
+      if (!prompt) {
+        return null;
+      }
+      const success = trimText(successInput?.value ?? "");
+      return { prompt, success };
+    })
+    .filter(Boolean);
+}
+
+function updateBuilderJsonPreview() {
+  if (!(builderJsonPreview instanceof HTMLElement)) {
+    return;
+  }
+  const formData = builderForm instanceof HTMLFormElement
+    ? new FormData(builderForm)
+    : null;
+  const title = trimText(formData?.get("activityTitle"));
+  const levels = parseRubricLevels(formData?.get("rubricLevels"));
+  const criteria = collectRubricCriteria();
+  const previewData = {
+    title,
+    levels,
+    criteria: criteria.map((criterion, index) => ({
+      id: `criterion-${index + 1}`,
+      prompt: criterion.prompt,
+      success: criterion.success,
+    })),
+  };
+  builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
+}
+
+function ensureBuilderPrompts() {
+  if (!(builderPromptList instanceof HTMLElement)) {
+    return;
+  }
+  if (!builderPromptList.querySelector(".builder-prompt-item")) {
+    DEFAULT_BUILDER_PROMPTS.forEach((entry) => addPromptItem(entry));
+  }
+}
+
+function addPromptItem({ prompt = "", success = "" } = {}) {
+  if (!(builderPromptList instanceof HTMLElement)) {
+    return null;
+  }
+
+  const item = document.createElement("li");
+  item.className = "builder-prompt-item";
+
+  const promptField = document.createElement("div");
+  promptField.className = "builder-field";
+  const promptLabel = document.createElement("label");
+  promptLabel.className = "builder-field-label";
+  const promptId = generateBuilderFieldId("builder-prompt");
+  promptLabel.setAttribute("for", promptId);
+  promptLabel.textContent = "Prompt";
+  const promptInput = document.createElement("input");
+  promptInput.type = "text";
+  promptInput.name = "rubricPrompt[]";
+  promptInput.id = promptId;
+  promptInput.required = true;
+  promptInput.placeholder = "What should learners pay attention to?";
+  promptInput.value = prompt;
+  promptField.appendChild(promptLabel);
+  promptField.appendChild(promptInput);
+
+  const successField = document.createElement("div");
+  successField.className = "builder-field";
+  const successLabel = document.createElement("label");
+  successLabel.className = "builder-field-label";
+  const successId = generateBuilderFieldId("builder-success");
+  successLabel.setAttribute("for", successId);
+  successLabel.textContent = "Success description";
+  const successArea = document.createElement("textarea");
+  successArea.name = "rubricSuccess[]";
+  successArea.id = successId;
+  successArea.rows = 2;
+  successArea.placeholder = "Describe what strong evidence looks like";
+  successArea.value = success;
+  successField.appendChild(successLabel);
+  successField.appendChild(successArea);
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "builder-remove-prompt";
+  removeBtn.setAttribute("aria-label", "Remove criterion");
+  const removeIcon = document.createElement("i");
+  removeIcon.className = "fa-solid fa-trash";
+  removeIcon.setAttribute("aria-hidden", "true");
+  removeBtn.appendChild(removeIcon);
+
+  item.appendChild(promptField);
+  item.appendChild(successField);
+  item.appendChild(removeBtn);
+  builderPromptList.appendChild(item);
+
+  const handleFieldInput = () => {
+    updateBuilderJsonPreview();
+  };
+
+  promptInput.addEventListener("input", handleFieldInput);
+  successArea.addEventListener("input", handleFieldInput);
+
+  removeBtn.addEventListener("click", () => {
+    item.remove();
+    if (!builderPromptList.querySelector(".builder-prompt-item")) {
+      addPromptItem();
+    }
+    updateBuilderJsonPreview();
+  });
+
+  return item;
+}
+
+function resetBuilderForm() {
+  if (builderForm instanceof HTMLFormElement) {
+    builderForm.reset();
+  }
+  if (builderPromptList instanceof HTMLElement) {
+    builderPromptList.innerHTML = "";
+  }
+  builderFieldId = 0;
+  ensureBuilderPrompts();
+  updateBuilderJsonPreview();
+  showBuilderStatus("", undefined);
+}
+
+function handleBuilderKeydown(event) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeBuilderOverlay({ reset: false, focus: true });
+  }
+}
+
+function openBuilderOverlay() {
+  if (!(builderOverlay instanceof HTMLElement)) {
+    return;
+  }
+  builderLastFocus =
+    document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  ensureBuilderPrompts();
+  updateBuilderJsonPreview();
+  builderOverlay.hidden = false;
+  requestAnimationFrame(() => {
+    builderOverlay.classList.add("is-visible");
+    builderOverlay.setAttribute("aria-hidden", "false");
+    const focusTarget = builderForm?.querySelector("input, textarea, select");
+    if (focusTarget instanceof HTMLElement) {
+      focusTarget.focus({ preventScroll: true });
+    }
+  });
+  document.addEventListener("keydown", handleBuilderKeydown);
+}
+
+function closeBuilderOverlay({ reset = false, focus = true } = {}) {
+  if (!(builderOverlay instanceof HTMLElement)) {
+    return;
+  }
+  builderOverlay.classList.remove("is-visible");
+  builderOverlay.setAttribute("aria-hidden", "true");
+  document.removeEventListener("keydown", handleBuilderKeydown);
+  window.setTimeout(() => {
+    builderOverlay.hidden = true;
+    if (reset) {
+      resetBuilderForm();
+    }
+  }, 200);
+  if (focus && builderLastFocus instanceof HTMLElement) {
+    builderLastFocus.focus({ preventScroll: true });
+  }
+}
+
+function createActivitySlide({
+  stageLabel = "Activity Workshop",
+  title,
+  duration,
+  overview,
+  steps = [],
+  rubric = { criteria: [], levels: [] },
+} = {}) {
+  const resolvedTitle = trimText(title);
+  if (!resolvedTitle) {
+    return null;
+  }
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const resolvedOverview = trimText(overview);
+  if (resolvedOverview) {
+    const overviewEl = document.createElement("p");
+    overviewEl.className = "activity-overview";
+    overviewEl.textContent = resolvedOverview;
+    header.appendChild(overviewEl);
+  }
+
+  const bodyGrid = document.createElement("div");
+  bodyGrid.className = "activity-body-grid";
+  inner.appendChild(bodyGrid);
+
+  const instructionsSection = document.createElement("section");
+  instructionsSection.className = "activity-instructions";
+  bodyGrid.appendChild(instructionsSection);
+
+  const instructionsHeading = document.createElement("h3");
+  const instructionsIcon = document.createElement("i");
+  instructionsIcon.className = "fa-solid fa-person-chalkboard";
+  instructionsIcon.setAttribute("aria-hidden", "true");
+  instructionsHeading.appendChild(instructionsIcon);
+  instructionsHeading.appendChild(document.createTextNode(" Facilitation steps"));
+  instructionsSection.appendChild(instructionsHeading);
+
+  const stepItems = Array.isArray(steps) ? steps.filter(Boolean) : [];
+  if (stepItems.length) {
+    const stepList = document.createElement("ol");
+    stepList.className = "activity-step-list";
+    stepItems.forEach((step) => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      stepList.appendChild(li);
+    });
+    instructionsSection.appendChild(stepList);
+  } else {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "activity-empty";
+    emptyMessage.textContent =
+      "Add facilitation notes to guide the activity flow.";
+    instructionsSection.appendChild(emptyMessage);
+  }
+
+  const rubricSection = document.createElement("section");
+  rubricSection.className = "activity-rubric";
+  rubricSection.dataset.role = "rubric";
+  bodyGrid.appendChild(rubricSection);
+
+  const rubricHeading = document.createElement("h3");
+  const rubricIcon = document.createElement("i");
+  rubricIcon.className = "fa-solid fa-list-check";
+  rubricIcon.setAttribute("aria-hidden", "true");
+  rubricHeading.appendChild(rubricIcon);
+  rubricHeading.appendChild(document.createTextNode(" Success criteria"));
+  rubricSection.appendChild(rubricHeading);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  if (rubricLevels.length) {
+    const levelsWrap = document.createElement("div");
+    levelsWrap.className = "rubric-levels";
+    rubricLevels.forEach((level) => {
+      const chip = document.createElement("span");
+      chip.className = "level-chip";
+      chip.textContent = level;
+      levelsWrap.appendChild(chip);
+    });
+    rubricSection.appendChild(levelsWrap);
+  }
+
+  const criteriaList = document.createElement("div");
+  criteriaList.className = "rubric-criteria";
+  rubricSection.appendChild(criteriaList);
+
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+  if (rubricCriteria.length) {
+    rubricCriteria.forEach((criterion) => {
+      const card = document.createElement("article");
+      card.className = "rubric-card";
+      const cardTitle = document.createElement("h4");
+      cardTitle.textContent = criterion.prompt;
+      card.appendChild(cardTitle);
+      const successText = trimText(criterion.success);
+      if (successText) {
+        const cardBody = document.createElement("p");
+        cardBody.textContent = successText;
+        card.appendChild(cardBody);
+      }
+      criteriaList.appendChild(card);
+    });
+  } else {
+    const emptyCriteria = document.createElement("p");
+    emptyCriteria.className = "activity-empty";
+    emptyCriteria.textContent =
+      "Add at least one success criterion for learners to reference.";
+    criteriaList.appendChild(emptyCriteria);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  try {
+    slide.dataset.rubric = JSON.stringify({
+      title: resolvedTitle,
+      levels: rubricLevels,
+      criteria: rubricCriteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    });
+  } catch (error) {
+    console.warn("Unable to serialise rubric data", error);
+  }
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function initialiseBuilderSlide(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return slide;
+  }
+  if (slide.__deckBuilderInitialised) {
+    return slide;
+  }
+  slide.__deckBuilderInitialised = true;
+
+  const statusEl = slide.querySelector('[data-role="status"]');
+  const copyBtn = slide.querySelector('[data-action="copy-rubric"]');
+  const toggleBtn = slide.querySelector('[data-action="toggle-rubric"]');
+  const rubricCriteria = slide.querySelector(".rubric-criteria");
+
+  const showStatus = (message, tone = "info") => {
+    if (!(statusEl instanceof HTMLElement)) {
+      return;
+    }
+    statusEl.textContent = message;
+    if (tone) {
+      statusEl.dataset.tone = tone;
+    } else {
+      statusEl.removeAttribute("data-tone");
+    }
+    if (slide.__deckStatusTimer) {
+      window.clearTimeout(slide.__deckStatusTimer);
+    }
+    if (message) {
+      slide.__deckStatusTimer = window.setTimeout(() => {
+        statusEl.textContent = "";
+        statusEl.removeAttribute("data-tone");
+        slide.__deckStatusTimer = undefined;
+      }, BUILDER_STATUS_TIMEOUT);
+    }
+  };
+
+  slide.__deckShowStatus = showStatus;
+
+  if (copyBtn instanceof HTMLElement) {
+    copyBtn.addEventListener("click", () => {
+      const rubricJson = slide.dataset.rubric ?? "";
+      if (!rubricJson) {
+        showStatus("No rubric data found to copy.", "error");
+        return;
+      }
+      copyTextToClipboard(rubricJson)
+        .then(() => {
+          showStatus("Rubric JSON copied to clipboard.", "success");
+        })
+        .catch((error) => {
+          console.warn("Copy to clipboard failed", error);
+          showStatus("We couldn't copy the rubric right now.", "error");
+        });
+    });
+  }
+
+  if (toggleBtn instanceof HTMLElement && rubricCriteria instanceof HTMLElement) {
+    const toggleLabel = toggleBtn.querySelector('[data-role="label"]');
+    const toggleIcon = toggleBtn.querySelector("i");
+    toggleBtn.addEventListener("click", () => {
+      const isCondensed = rubricCriteria.classList.toggle("is-condensed");
+      if (toggleLabel instanceof HTMLElement) {
+        toggleLabel.textContent = isCondensed
+          ? "Show descriptions"
+          : "Hide descriptions";
+      }
+      if (toggleIcon instanceof HTMLElement) {
+        toggleIcon.classList.toggle("fa-eye", isCondensed);
+        toggleIcon.classList.toggle("fa-eye-slash", !isCondensed);
+      }
+      showStatus(
+        isCondensed
+          ? "Rubric descriptions collapsed for quick scanning."
+          : "Rubric descriptions expanded.",
+        "info",
+      );
+    });
+  }
+
+  return slide;
+}
+
+function initialiseGeneratedActivitySlides(root = document) {
+  if (!root) {
+    return;
+  }
+  const scope = root instanceof HTMLElement ? root : document;
+  const slideList = scope.querySelectorAll?.(".slide-stage.activity-slide");
+  if (!slideList || !slideList.length) {
+    return;
+  }
+  slideList.forEach((slide) => initialiseBuilderSlide(slide));
+}
+
+function insertActivitySlide(slide) {
+  if (!(stageViewport instanceof HTMLElement) || !(slide instanceof HTMLElement)) {
+    return;
+  }
+  const navButton = stageViewport.querySelector(".slide-nav");
+  if (navButton instanceof HTMLElement) {
+    stageViewport.insertBefore(slide, navButton);
+  } else {
+    stageViewport.appendChild(slide);
+  }
+  refreshSlides();
+  const newIndex = slides.indexOf(slide);
+  if (newIndex >= 0) {
+    showSlide(newIndex);
+  } else {
+    showSlide(slides.length - 1);
+  }
+  slide.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function handleBuilderSubmit(event) {
+  event.preventDefault();
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const formData = new FormData(builderForm);
+  const title = trimText(formData.get("activityTitle"));
+  if (!title) {
+    showBuilderStatus("Add a title for your activity before inserting.", "error");
+    const titleInput = builderForm.querySelector('[name="activityTitle"]');
+    titleInput?.focus({ preventScroll: true });
+    return;
+  }
+
+  const criteria = collectRubricCriteria();
+  if (!criteria.length) {
+    showBuilderStatus("Add at least one rubric criterion.", "error");
+    return;
+  }
+
+  const stageLabel = trimText(formData.get("stageLabel")) || "Activity Workshop";
+  const duration = trimText(formData.get("activityDuration"));
+  const overview = trimText(formData.get("activityOverview"));
+  const steps = splitMultiline(formData.get("activitySteps"));
+  const levels = parseRubricLevels(formData.get("rubricLevels"));
+
+  const rubricData = {
+    title,
+    levels,
+    criteria: criteria.map((criterion, index) => ({
+      id: `criterion-${index + 1}`,
+      prompt: criterion.prompt,
+      success: criterion.success,
+    })),
+  };
+
+  const slide = createActivitySlide({
+    stageLabel,
+    title,
+    duration,
+    overview,
+    steps,
+    rubric: rubricData,
+  });
+
+  if (!(slide instanceof HTMLElement)) {
+    showBuilderStatus("Unable to build an activity slide right now.", "error");
+    return;
+  }
+
+  initialiseBuilderSlide(slide);
+  insertActivitySlide(slide);
+  if (typeof slide.__deckShowStatus === "function") {
+    slide.__deckShowStatus("Rubric ready for your learners.", "success");
+  }
+  closeBuilderOverlay({ reset: true, focus: true });
+}
+
+function initialiseActivityBuilderUI() {
+  if (!(activityBuilderBtn instanceof HTMLElement)) {
+    return;
+  }
+  if (!(builderOverlay instanceof HTMLElement)) {
+    return;
+  }
+  if (builderOverlay.__deckBuilderInitialised) {
+    initialiseGeneratedActivitySlides();
+    updateBuilderJsonPreview();
+    return;
+  }
+
+  builderOverlay.__deckBuilderInitialised = true;
+
+  resetBuilderForm();
+
+  activityBuilderBtn.addEventListener("click", () => {
+    showBuilderStatus("", undefined);
+    openBuilderOverlay();
+  });
+
+  builderAddPromptBtn?.addEventListener("click", () => {
+    const newItem = addPromptItem();
+    const focusTarget = newItem?.querySelector("input, textarea");
+    if (focusTarget instanceof HTMLElement) {
+      focusTarget.focus({ preventScroll: true });
+    }
+    showBuilderStatus("Added a new criterion.", "info");
+  });
+
+  builderCancelBtn?.addEventListener("click", () => {
+    closeBuilderOverlay({ reset: true, focus: true });
+  });
+
+  builderCloseBtn?.addEventListener("click", () => {
+    closeBuilderOverlay({ reset: false, focus: true });
+  });
+
+  builderOverlay.addEventListener("click", (event) => {
+    if (event.target === builderOverlay) {
+      closeBuilderOverlay({ reset: false, focus: true });
+    }
+  });
+
+  if (builderForm instanceof HTMLFormElement) {
+    builderForm.addEventListener("submit", handleBuilderSubmit);
+    builderForm.addEventListener("input", () => {
+      updateBuilderJsonPreview();
+    });
+    builderForm.addEventListener("change", () => {
+      updateBuilderJsonPreview();
+    });
+  }
+
+  initialiseGeneratedActivitySlides();
+  updateBuilderJsonPreview();
+}
+
 async function initialiseDeck() {
   await hydrateRemoteImages().catch((error) => {
     console.warn(
@@ -2447,6 +3178,7 @@ async function initialiseDeck() {
   ensureLegacyNavigationBridge();
   updateCounter();
   initialiseActivities();
+  initialiseGeneratedActivitySlides();
   document
     .querySelectorAll('.slide-stage[data-type="blank"]')
     .forEach((slide) => attachBlankSlideEvents(slide));
@@ -2518,6 +3250,35 @@ export async function setupInteractiveDeck({
   removeHighlightBtn =
     rootElement?.querySelector(removeHighlightButtonSelector) ??
     document.querySelector(removeHighlightButtonSelector);
+  activityBuilderBtn =
+    rootElement?.querySelector("#activity-builder-btn") ??
+    document.querySelector("#activity-builder-btn");
+  builderOverlay =
+    rootElement?.querySelector("#activity-builder-overlay") ??
+    document.querySelector("#activity-builder-overlay");
+  builderForm =
+    builderOverlay?.querySelector("#activity-builder-form") ??
+    document.querySelector("#activity-builder-form");
+  builderAddPromptBtn =
+    builderOverlay?.querySelector("#builder-add-prompt") ??
+    document.querySelector("#builder-add-prompt");
+  builderPromptList =
+    builderOverlay?.querySelector("#builder-prompt-list") ??
+    document.querySelector("#builder-prompt-list");
+  builderJsonPreview =
+    builderOverlay?.querySelector("#builder-json-preview") ??
+    document.querySelector("#builder-json-preview");
+  builderCancelBtn =
+    builderOverlay?.querySelector('[data-action="cancel-builder"]') ??
+    document.querySelector('[data-action="cancel-builder"]');
+  builderCloseBtn =
+    builderOverlay?.querySelector(".builder-close") ??
+    document.querySelector(".builder-close");
+  builderStatusEl =
+    builderOverlay?.querySelector("#builder-status") ??
+    document.querySelector("#builder-status");
+  builderLastFocus = null;
+  builderFieldId = 0;
 
   slides = [];
   currentSlideIndex = 0;
@@ -2546,6 +3307,8 @@ export async function setupInteractiveDeck({
       stageViewport,
       onSelectSlide: (index) => showSlide(index),
     }) ?? null;
+
+  initialiseActivityBuilderUI();
 
   try {
     await initialiseDeck();
