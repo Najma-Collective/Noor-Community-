@@ -94,6 +94,9 @@ let builderJsonPreview;
 let builderCancelBtn;
 let builderCloseBtn;
 let builderStatusEl;
+let builderLayoutField;
+let builderPreview;
+let builderRefreshPreviewBtn;
 let builderLastFocus;
 let builderFieldId = 0;
 
@@ -308,6 +311,77 @@ const parseRubricLevels = (value) =>
         .map((level) => level.trim())
         .filter(Boolean)
     : [];
+
+const buildRubricSection = ({
+  heading = "Success criteria",
+  intro,
+  rubric = { criteria: [], levels: [] },
+  className = "activity-rubric",
+} = {}) => {
+  const section = document.createElement("section");
+  section.className = className;
+  section.dataset.role = "rubric";
+
+  const headingEl = document.createElement("h3");
+  const icon = document.createElement("i");
+  icon.className = "fa-solid fa-list-check";
+  icon.setAttribute("aria-hidden", "true");
+  headingEl.appendChild(icon);
+  const resolvedHeading = trimText(heading) || "Success criteria";
+  headingEl.appendChild(document.createTextNode(` ${resolvedHeading}`));
+  section.appendChild(headingEl);
+
+  const resolvedIntro = trimText(intro);
+  if (resolvedIntro) {
+    const introParagraph = document.createElement("p");
+    introParagraph.className = "rubric-intro";
+    introParagraph.textContent = resolvedIntro;
+    section.appendChild(introParagraph);
+  }
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  if (rubricLevels.length) {
+    const levelsWrap = document.createElement("div");
+    levelsWrap.className = "rubric-levels";
+    rubricLevels.forEach((level) => {
+      const chip = document.createElement("span");
+      chip.className = "level-chip";
+      chip.textContent = level;
+      levelsWrap.appendChild(chip);
+    });
+    section.appendChild(levelsWrap);
+  }
+
+  const criteriaList = document.createElement("div");
+  criteriaList.className = "rubric-criteria";
+  section.appendChild(criteriaList);
+
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+  if (rubricCriteria.length) {
+    rubricCriteria.forEach((criterion) => {
+      const card = document.createElement("article");
+      card.className = "rubric-card";
+      const cardTitle = document.createElement("h4");
+      cardTitle.textContent = criterion.prompt;
+      card.appendChild(cardTitle);
+      const successText = trimText(criterion.success);
+      if (successText) {
+        const cardBody = document.createElement("p");
+        cardBody.textContent = successText;
+        card.appendChild(cardBody);
+      }
+      criteriaList.appendChild(card);
+    });
+  } else {
+    const emptyCriteria = document.createElement("p");
+    emptyCriteria.className = "activity-empty";
+    emptyCriteria.textContent =
+      "Add at least one success criterion for learners to reference.";
+    criteriaList.appendChild(emptyCriteria);
+  }
+
+  return section;
+};
 
 const generateBuilderFieldId = (prefix = "builder-field") => {
   builderFieldId += 1;
@@ -2604,26 +2678,140 @@ function collectRubricCriteria() {
     .filter(Boolean);
 }
 
+function getBuilderFormState() {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return null;
+  }
+  const formData = new FormData(builderForm);
+  const layout = (formData.get("slideLayout") || "facilitation").toString();
+  const stageLabel = trimText(formData.get("stageLabel"));
+  const activityTitle = trimText(formData.get("activityTitle"));
+  const duration = trimText(formData.get("activityDuration"));
+  const slideTitle = trimText(formData.get("slideTitle"));
+  const rubricIntro = trimText(formData.get("slideRubricLead"));
+  const overview = trimText(formData.get("activityOverview"));
+  const steps = splitMultiline(formData.get("activitySteps"));
+  const levels = parseRubricLevels(formData.get("rubricLevels"));
+  const criteria = collectRubricCriteria();
+
+  return {
+    layout,
+    stageLabel,
+    activityTitle,
+    duration,
+    slideTitle,
+    rubricIntro,
+    overview,
+    steps,
+    levels,
+    criteria,
+  };
+}
+
 function updateBuilderJsonPreview() {
   if (!(builderJsonPreview instanceof HTMLElement)) {
     return;
   }
-  const formData = builderForm instanceof HTMLFormElement
-    ? new FormData(builderForm)
-    : null;
-  const title = trimText(formData?.get("activityTitle"));
-  const levels = parseRubricLevels(formData?.get("rubricLevels"));
-  const criteria = collectRubricCriteria();
+  const state = getBuilderFormState();
+  if (!state) {
+    builderJsonPreview.textContent = "{}";
+    return;
+  }
   const previewData = {
-    title,
-    levels,
-    criteria: criteria.map((criterion, index) => ({
-      id: `criterion-${index + 1}`,
-      prompt: criterion.prompt,
-      success: criterion.success,
-    })),
+    layout: state.layout,
+    stageLabel: state.stageLabel,
+    activityTitle: state.activityTitle,
+    duration: state.duration,
+    slideTitle: state.slideTitle,
+    rubricIntro: state.rubricIntro,
+    overview: state.overview,
+    steps: state.steps,
+    rubric: {
+      levels: state.levels,
+      criteria: state.criteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    },
   };
   builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
+}
+
+function syncBuilderLayout(layout = "facilitation") {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const targetLayout = layout || "facilitation";
+  const blocks = builderForm.querySelectorAll("[data-layouts]");
+  blocks.forEach((block) => {
+    const layouts = (block.dataset.layouts || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+    const isVisible = !layouts.length || layouts.includes(targetLayout);
+    block.hidden = !isVisible;
+    const controls = block.querySelectorAll("input, textarea, select");
+    controls.forEach((control) => {
+      if (!(control instanceof HTMLElement)) {
+        return;
+      }
+      if (isVisible) {
+        control.removeAttribute("disabled");
+      } else {
+        control.setAttribute("disabled", "disabled");
+      }
+    });
+  });
+}
+
+function updateBuilderPreview() {
+  if (!(builderPreview instanceof HTMLElement)) {
+    return;
+  }
+  const state = getBuilderFormState();
+  builderPreview.classList.remove("has-content");
+  builderPreview.innerHTML = "";
+  if (!state) {
+    return;
+  }
+
+  const rubricPayload = {
+    criteria: state.criteria,
+    levels: state.levels,
+  };
+
+  let slide = null;
+  if (state.layout === "rubric-simple") {
+    slide = createRubricFocusSlide({
+      stageLabel: state.stageLabel || "Activity Workshop",
+      title: state.slideTitle || state.activityTitle || "Success criteria",
+      activityTitle: state.activityTitle,
+      duration: state.duration,
+      rubric: rubricPayload,
+      rubricHeadingText: "Success criteria",
+      rubricIntro: state.rubricIntro,
+    });
+  } else {
+    slide = createActivitySlide({
+      stageLabel: state.stageLabel || "Activity Workshop",
+      title: state.activityTitle || "Activity",
+      duration: state.duration,
+      overview: state.overview,
+      steps: state.steps,
+      rubric: rubricPayload,
+      instructionsHeading: state.slideTitle,
+      rubricHeadingText: "Success criteria",
+      rubricIntro: state.rubricIntro,
+    });
+  }
+
+  if (slide instanceof HTMLElement) {
+    const previewSlide = slide.cloneNode(true);
+    previewSlide.classList.remove("hidden");
+    builderPreview.appendChild(previewSlide);
+    builderPreview.classList.add("has-content");
+  }
 }
 
 function ensureBuilderPrompts() {
@@ -2692,6 +2880,7 @@ function addPromptItem({ prompt = "", success = "" } = {}) {
 
   const handleFieldInput = () => {
     updateBuilderJsonPreview();
+    updateBuilderPreview();
   };
 
   promptInput.addEventListener("input", handleFieldInput);
@@ -2703,6 +2892,7 @@ function addPromptItem({ prompt = "", success = "" } = {}) {
       addPromptItem();
     }
     updateBuilderJsonPreview();
+    updateBuilderPreview();
   });
 
   return item;
@@ -2718,6 +2908,9 @@ function resetBuilderForm() {
   builderFieldId = 0;
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
+  const layout = builderLayoutField?.value || "facilitation";
+  syncBuilderLayout(layout);
+  updateBuilderPreview();
   showBuilderStatus("", undefined);
 }
 
@@ -2736,6 +2929,9 @@ function openBuilderOverlay() {
     document.activeElement instanceof HTMLElement ? document.activeElement : null;
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
+  const layout = builderLayoutField?.value || "facilitation";
+  syncBuilderLayout(layout);
+  updateBuilderPreview();
   builderOverlay.hidden = false;
   requestAnimationFrame(() => {
     builderOverlay.classList.add("is-visible");
@@ -2773,6 +2969,9 @@ function createActivitySlide({
   overview,
   steps = [],
   rubric = { criteria: [], levels: [] },
+  instructionsHeading = "Facilitation steps",
+  rubricHeadingText = "Success criteria",
+  rubricIntro,
 } = {}) {
   const resolvedTitle = trimText(title);
   if (!resolvedTitle) {
@@ -2837,13 +3036,14 @@ function createActivitySlide({
   instructionsSection.className = "activity-instructions";
   bodyGrid.appendChild(instructionsSection);
 
-  const instructionsHeading = document.createElement("h3");
+  const instructionsHeadingEl = document.createElement("h3");
   const instructionsIcon = document.createElement("i");
   instructionsIcon.className = "fa-solid fa-person-chalkboard";
   instructionsIcon.setAttribute("aria-hidden", "true");
-  instructionsHeading.appendChild(instructionsIcon);
-  instructionsHeading.appendChild(document.createTextNode(" Facilitation steps"));
-  instructionsSection.appendChild(instructionsHeading);
+  instructionsHeadingEl.appendChild(instructionsIcon);
+  const resolvedInstructionHeading = trimText(instructionsHeading) || "Facilitation steps";
+  instructionsHeadingEl.appendChild(document.createTextNode(` ${resolvedInstructionHeading}`));
+  instructionsSection.appendChild(instructionsHeadingEl);
 
   const stepItems = Array.isArray(steps) ? steps.filter(Boolean) : [];
   if (stepItems.length) {
@@ -2863,59 +3063,14 @@ function createActivitySlide({
     instructionsSection.appendChild(emptyMessage);
   }
 
-  const rubricSection = document.createElement("section");
-  rubricSection.className = "activity-rubric";
-  rubricSection.dataset.role = "rubric";
+  const rubricSection = buildRubricSection({
+    heading: rubricHeadingText,
+    intro: rubricIntro,
+    rubric,
+  });
   bodyGrid.appendChild(rubricSection);
 
-  const rubricHeading = document.createElement("h3");
-  const rubricIcon = document.createElement("i");
-  rubricIcon.className = "fa-solid fa-list-check";
-  rubricIcon.setAttribute("aria-hidden", "true");
-  rubricHeading.appendChild(rubricIcon);
-  rubricHeading.appendChild(document.createTextNode(" Success criteria"));
-  rubricSection.appendChild(rubricHeading);
-
-  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
-  if (rubricLevels.length) {
-    const levelsWrap = document.createElement("div");
-    levelsWrap.className = "rubric-levels";
-    rubricLevels.forEach((level) => {
-      const chip = document.createElement("span");
-      chip.className = "level-chip";
-      chip.textContent = level;
-      levelsWrap.appendChild(chip);
-    });
-    rubricSection.appendChild(levelsWrap);
-  }
-
-  const criteriaList = document.createElement("div");
-  criteriaList.className = "rubric-criteria";
-  rubricSection.appendChild(criteriaList);
-
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
-  if (rubricCriteria.length) {
-    rubricCriteria.forEach((criterion) => {
-      const card = document.createElement("article");
-      card.className = "rubric-card";
-      const cardTitle = document.createElement("h4");
-      cardTitle.textContent = criterion.prompt;
-      card.appendChild(cardTitle);
-      const successText = trimText(criterion.success);
-      if (successText) {
-        const cardBody = document.createElement("p");
-        cardBody.textContent = successText;
-        card.appendChild(cardBody);
-      }
-      criteriaList.appendChild(card);
-    });
-  } else {
-    const emptyCriteria = document.createElement("p");
-    emptyCriteria.className = "activity-empty";
-    emptyCriteria.textContent =
-      "Add at least one success criterion for learners to reference.";
-    criteriaList.appendChild(emptyCriteria);
-  }
 
   const footer = document.createElement("div");
   footer.className = "activity-slide-footer";
@@ -2973,6 +3128,143 @@ function createActivitySlide({
     console.warn("Unable to serialise rubric data", error);
   }
   slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createRubricFocusSlide({
+  stageLabel = "Activity Workshop",
+  title,
+  activityTitle,
+  duration,
+  rubric = { criteria: [], levels: [] },
+  rubricHeadingText = "Success criteria",
+  rubricIntro,
+} = {}) {
+  const resolvedHeading = trimText(title) || trimText(activityTitle);
+  if (!resolvedHeading) {
+    return null;
+  }
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--simple";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--simple";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header activity-slide-header--simple";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const headingGroup = document.createElement("div");
+  headingGroup.className = "activity-title-group";
+  header.appendChild(headingGroup);
+
+  const headingEl = document.createElement("h2");
+  headingEl.textContent = resolvedHeading;
+  headingGroup.appendChild(headingEl);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    headingGroup.appendChild(durationBadge);
+  }
+
+  const subheading = trimText(activityTitle);
+  if (subheading && subheading !== resolvedHeading) {
+    const subtitleEl = document.createElement("p");
+    subtitleEl.className = "activity-overview activity-overview--subtitle";
+    subtitleEl.textContent = subheading;
+    header.appendChild(subtitleEl);
+  }
+
+  const body = document.createElement("div");
+  body.className = "activity-body activity-body--simple";
+  inner.appendChild(body);
+
+  const rubricSection = buildRubricSection({
+    heading: rubricHeadingText,
+    intro: rubricIntro,
+    rubric,
+    className: "activity-rubric activity-rubric--simple",
+  });
+  body.appendChild(rubricSection);
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+  try {
+    slide.dataset.rubric = JSON.stringify({
+      title: resolvedHeading,
+      levels: Array.isArray(rubric?.levels) ? rubric.levels : [],
+      criteria: rubricCriteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    });
+  } catch (error) {
+    console.warn("Unable to serialise rubric data", error);
+  }
+
+  slide.dataset.activityTitle = resolvedHeading;
   return slide;
 }
 
@@ -3095,8 +3387,13 @@ function handleBuilderSubmit(event) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
-  const formData = new FormData(builderForm);
-  const title = trimText(formData.get("activityTitle"));
+  const state = getBuilderFormState();
+  if (!state) {
+    showBuilderStatus("We couldn't read the builder data.", "error");
+    return;
+  }
+
+  const title = state.activityTitle;
   if (!title) {
     showBuilderStatus("Add a title for your activity before inserting.", "error");
     const titleInput = builderForm.querySelector('[name="activityTitle"]');
@@ -3104,17 +3401,17 @@ function handleBuilderSubmit(event) {
     return;
   }
 
-  const criteria = collectRubricCriteria();
+  const criteria = state.criteria;
   if (!criteria.length) {
     showBuilderStatus("Add at least one rubric criterion.", "error");
     return;
   }
 
-  const stageLabel = trimText(formData.get("stageLabel")) || "Activity Workshop";
-  const duration = trimText(formData.get("activityDuration"));
-  const overview = trimText(formData.get("activityOverview"));
-  const steps = splitMultiline(formData.get("activitySteps"));
-  const levels = parseRubricLevels(formData.get("rubricLevels"));
+  const stageLabel = state.stageLabel || "Activity Workshop";
+  const duration = state.duration;
+  const overview = state.overview;
+  const steps = state.steps;
+  const levels = state.levels;
 
   const rubricData = {
     title,
@@ -3126,14 +3423,37 @@ function handleBuilderSubmit(event) {
     })),
   };
 
-  const slide = createActivitySlide({
-    stageLabel,
-    title,
-    duration,
-    overview,
-    steps,
-    rubric: rubricData,
-  });
+  let slide = null;
+  if (state.layout === "rubric-simple") {
+    const resolvedSlideTitle = state.slideTitle || state.activityTitle;
+    if (!trimText(resolvedSlideTitle)) {
+      showBuilderStatus("Add a slide title before inserting.", "error");
+      const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
+      slideTitleInput?.focus({ preventScroll: true });
+      return;
+    }
+    slide = createRubricFocusSlide({
+      stageLabel,
+      title: resolvedSlideTitle,
+      activityTitle: state.activityTitle,
+      duration,
+      rubric: rubricData,
+      rubricHeadingText: "Success criteria",
+      rubricIntro: state.rubricIntro,
+    });
+  } else {
+    slide = createActivitySlide({
+      stageLabel,
+      title,
+      duration,
+      overview,
+      steps,
+      rubric: rubricData,
+      instructionsHeading: state.slideTitle,
+      rubricHeadingText: "Success criteria",
+      rubricIntro: state.rubricIntro,
+    });
+  }
 
   if (!(slide instanceof HTMLElement)) {
     showBuilderStatus("Unable to build an activity slide right now.", "error");
@@ -3177,6 +3497,25 @@ function initialiseActivityBuilderUI() {
       focusTarget.focus({ preventScroll: true });
     }
     showBuilderStatus("Added a new criterion.", "info");
+    updateBuilderJsonPreview();
+    updateBuilderPreview();
+  });
+
+  builderLayoutField?.addEventListener("change", (event) => {
+    const layoutValue = event.target?.value || "facilitation";
+    syncBuilderLayout(layoutValue);
+    updateBuilderJsonPreview();
+    updateBuilderPreview();
+    const layoutMessage =
+      layoutValue === "rubric-simple"
+        ? "Rubric spotlight layout selected."
+        : "Facilitation layout selected.";
+    showBuilderStatus(layoutMessage, "info");
+  });
+
+  builderRefreshPreviewBtn?.addEventListener("click", () => {
+    updateBuilderPreview();
+    showBuilderStatus("Preview refreshed.", "success");
   });
 
   builderCancelBtn?.addEventListener("click", () => {
@@ -3197,14 +3536,17 @@ function initialiseActivityBuilderUI() {
     builderForm.addEventListener("submit", handleBuilderSubmit);
     builderForm.addEventListener("input", () => {
       updateBuilderJsonPreview();
+      updateBuilderPreview();
     });
     builderForm.addEventListener("change", () => {
       updateBuilderJsonPreview();
+      updateBuilderPreview();
     });
   }
 
   initialiseGeneratedActivitySlides();
   updateBuilderJsonPreview();
+  updateBuilderPreview();
 }
 
 async function initialiseDeck() {
@@ -3322,6 +3664,15 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
+  builderLayoutField =
+    builderOverlay?.querySelector("#builder-layout") ??
+    document.querySelector("#builder-layout");
+  builderPreview =
+    builderOverlay?.querySelector("#builder-preview") ??
+    document.querySelector("#builder-preview");
+  builderRefreshPreviewBtn =
+    builderOverlay?.querySelector("#builder-refresh-preview") ??
+    document.querySelector("#builder-refresh-preview");
   builderLastFocus = null;
   builderFieldId = 0;
 
