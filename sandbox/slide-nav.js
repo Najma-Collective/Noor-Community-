@@ -21,6 +21,11 @@ export function initSlideNavigator({
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-modal", "false");
   panel.setAttribute("aria-hidden", "true");
+  panel.setAttribute("tabindex", "-1");
+
+  const panelId = `slide-jump-panel-${Math.random().toString(16).slice(2, 8)}`;
+  panel.id = panelId;
+  trigger.setAttribute("aria-controls", panelId);
 
   const titleId = "slide-jump-title";
   panel.innerHTML = `
@@ -46,6 +51,30 @@ export function initSlideNavigator({
   let slidesMeta = [];
   let activeIndex = 0;
   let isOpen = false;
+
+  function focusItemByOffset(currentIndex, offset) {
+    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
+    if (!items.length) {
+      return;
+    }
+    const boundedIndex = ((currentIndex + offset) % items.length + items.length) % items.length;
+    const target = items[boundedIndex];
+    if (target instanceof HTMLElement) {
+      target.focus({ preventScroll: true });
+    }
+  }
+
+  function focusItemAt(index) {
+    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
+    if (!items.length) {
+      return;
+    }
+    const clamped = Math.max(0, Math.min(index, items.length - 1));
+    const target = items[clamped];
+    if (target instanceof HTMLElement) {
+      target.focus({ preventScroll: true });
+    }
+  }
 
   function applyActiveState() {
     const items = list.querySelectorAll(".slide-jump-item");
@@ -77,6 +106,36 @@ export function initSlideNavigator({
       list.appendChild(item);
     });
     applyActiveState();
+  }
+
+  function handlePanelKeydown(event) {
+    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
+    if (!items.length) {
+      return;
+    }
+
+    const currentIndex = items.indexOf(document.activeElement);
+
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        focusItemByOffset(currentIndex >= 0 ? currentIndex : 0, 1);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        focusItemByOffset(currentIndex >= 0 ? currentIndex : 0, -1);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusItemAt(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusItemAt(items.length - 1);
+        break;
+      default:
+        break;
+    }
   }
 
   function openPanel() {
@@ -142,6 +201,15 @@ export function initSlideNavigator({
     }
   });
 
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" && !isOpen) {
+      event.preventDefault();
+      openPanel();
+    }
+  });
+
+  panel.addEventListener("keydown", handlePanelKeydown);
+
   closeBtn.addEventListener("click", () => {
     closePanel();
   });
@@ -157,6 +225,11 @@ export function initSlideNavigator({
     setActive(index = 0) {
       activeIndex = typeof index === "number" ? index : 0;
       applyActiveState();
+    },
+    destroy() {
+      closePanel();
+      trigger.remove();
+      panel.remove();
     },
   };
 }
