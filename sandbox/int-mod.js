@@ -99,6 +99,12 @@ let builderPreview;
 let builderRefreshPreviewBtn;
 let builderLastFocus;
 let builderFieldId = 0;
+let moduleOverlay;
+let moduleFrame;
+let moduleCloseBtn;
+let moduleLastFocus;
+let moduleTargetCanvas;
+let moduleInsertCallback;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -118,6 +124,13 @@ const MINDMAP_CATEGORY_COLOR_MAP = {
 };
 
 const BUILDER_STATUS_TIMEOUT = 3200;
+
+const MODULE_TYPE_LABELS = {
+  'multiple-choice': 'Multiple choice',
+  gapfill: 'Gap fill',
+  grouping: 'Grouping',
+  'table-completion': 'Table completion',
+};
 
 const DEFAULT_BUILDER_PROMPTS = [
   {
@@ -297,6 +310,16 @@ const normaliseResponseValue = (value) =>
   typeof value === "string" ? value.trim().replace(/\s+/g, " ").toLowerCase() : "";
 
 const trimText = (value) => (typeof value === "string" ? value.trim() : "");
+
+const escapeHtml = (value = "") =>
+  typeof value === "string"
+    ? value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+    : "";
 
 const splitMultiline = (value) =>
   trimText(value)
@@ -513,6 +536,10 @@ export function createBlankSlide() {
       <i class="fa-solid fa-diagram-project"></i>
       Add Mind Map
     </button>
+    <button class="activity-btn tertiary" type="button" data-action="add-module">
+      <i class="fa-solid fa-puzzle-piece"></i>
+      Add Module
+    </button>
   </div>
   <p class="blank-hint" data-role="hint">Add textboxes, paste images, or build a mind map to capture relationships.</p>
   <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
@@ -527,6 +554,7 @@ export function attachBlankSlideEvents(slide) {
   const hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
   const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
+  const addModuleBtn = slide.querySelector('[data-action="add-module"]');
 
   if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
     return;
@@ -542,6 +570,10 @@ export function attachBlankSlideEvents(slide) {
     "Combine textboxes and images to map your ideas visually.";
   const MINDMAP_HINT =
     "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
+  const MODULE_HINT =
+    "Module ready. Facilitate it inside the frame or add another to compare activities.";
+  const MODULE_COMBINATION_HINT =
+    "Combine modules with your notes, visuals, or maps to scaffold the activity.";
 
   if (!canvas.hasAttribute("tabindex")) {
     canvas.setAttribute("tabindex", "0");
@@ -553,7 +585,13 @@ export function attachBlankSlideEvents(slide) {
     const hasTextbox = Boolean(canvas.querySelector(".textbox"));
     const hasImage = Boolean(canvas.querySelector(".pasted-image"));
 
-    if (hasMindmap) {
+    const hasModule = Boolean(canvas.querySelector(".module-embed"));
+
+    if (hasModule && (hasTextbox || hasImage || hasMindmap)) {
+      hint.textContent = MODULE_COMBINATION_HINT;
+    } else if (hasModule) {
+      hint.textContent = MODULE_HINT;
+    } else if (hasMindmap) {
       hint.textContent = MINDMAP_HINT;
     } else if (hasTextbox && hasImage) {
       hint.textContent = MIXED_HINT;
@@ -587,6 +625,16 @@ export function attachBlankSlideEvents(slide) {
     updateHintForCanvas();
   });
 
+  addModuleBtn?.addEventListener("click", () => {
+    moduleInsertCallback = () => {
+      updateHintForCanvas();
+    };
+    const opened = openModuleOverlay({ canvas, trigger: addModuleBtn });
+    if (!opened) {
+      moduleInsertCallback = null;
+    }
+  });
+
   canvas
     .querySelectorAll(".textbox")
     .forEach((textbox) =>
@@ -602,6 +650,10 @@ export function attachBlankSlideEvents(slide) {
   canvas
     .querySelectorAll(".pasted-image")
     .forEach((image) => initialisePastedImage(image, { onRemove: updateHintForCanvas }));
+
+  canvas
+    .querySelectorAll(".module-embed")
+    .forEach((module) => initialiseModuleEmbed(module, { onRemove: updateHintForCanvas }));
 
   const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -967,6 +1019,68 @@ export function positionPastedImage(image, canvas) {
       : 220;
     image.style.height = `${baseHeight}px`;
   }
+}
+
+export function createModuleEmbed({ html = "", title, activityType, onRemove } = {}) {
+  const module = document.createElement("section");
+  module.className = "module-embed";
+  if (typeof activityType === "string" && activityType) {
+    module.dataset.activityType = activityType;
+  }
+
+  const resolvedTitle = trimText(title) || "Interactive module";
+  module.dataset.activityTitle = resolvedTitle;
+  const typeLabel = MODULE_TYPE_LABELS[activityType] || "Interactive activity";
+
+  module.innerHTML = `
+    <div class="module-embed-header">
+      <div class="module-embed-meta">
+        <span class="module-embed-pill">${escapeHtml(typeLabel)}</span>
+        <span class="module-embed-title">${escapeHtml(resolvedTitle)}</span>
+      </div>
+      <div class="module-embed-actions">
+        <button type="button" class="module-embed-remove" data-action="remove-module">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          <span class="sr-only">Remove module</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const frame = document.createElement("iframe");
+  frame.className = "module-embed-frame";
+  frame.setAttribute("title", `${resolvedTitle} interactive module`);
+  frame.setAttribute("loading", "lazy");
+  if (typeof html === "string" && html.trim()) {
+    frame.srcdoc = html;
+  } else {
+    frame.srcdoc = `<!DOCTYPE html><html lang="en"><body style="font-family: sans-serif; padding: 1rem;">No module content yet.</body></html>`;
+  }
+  module.appendChild(frame);
+
+  initialiseModuleEmbed(module, { onRemove });
+  return module;
+}
+
+export function initialiseModuleEmbed(module, { onRemove } = {}) {
+  if (!(module instanceof HTMLElement)) {
+    return module;
+  }
+  module.__deckModuleOnRemove = onRemove;
+  if (module.__deckModuleInitialised) {
+    return module;
+  }
+  module.__deckModuleInitialised = true;
+
+  const removeBtn = module.querySelector('[data-action="remove-module"]');
+  removeBtn?.addEventListener("click", () => {
+    module.remove();
+    if (typeof module.__deckModuleOnRemove === "function") {
+      module.__deckModuleOnRemove();
+    }
+  });
+
+  return module;
 }
 
 export function makeDraggable(element) {
@@ -2962,6 +3076,124 @@ function closeBuilderOverlay({ reset = false, focus = true } = {}) {
   }
 }
 
+function handleModuleOverlayKeydown(event) {
+  if (event.key === "Escape") {
+    closeModuleOverlay({ focus: true });
+  }
+}
+
+function openModuleOverlay({ canvas, trigger } = {}) {
+  if (!(moduleOverlay instanceof HTMLElement)) {
+    console.warn("Module builder overlay is unavailable.");
+    return false;
+  }
+  if (!(canvas instanceof HTMLElement)) {
+    console.warn("Module builder requires a target canvas element.");
+    return false;
+  }
+  moduleTargetCanvas = canvas;
+  moduleLastFocus =
+    trigger instanceof HTMLElement
+      ? trigger
+      : document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+  moduleOverlay.hidden = false;
+  requestAnimationFrame(() => {
+    moduleOverlay.classList.add("is-visible");
+    moduleOverlay.setAttribute("aria-hidden", "false");
+    if (moduleFrame instanceof HTMLElement) {
+      moduleFrame.focus({ preventScroll: true });
+    }
+  });
+  document.addEventListener("keydown", handleModuleOverlayKeydown);
+  return true;
+}
+
+function closeModuleOverlay({ focus = true, resetTarget = true } = {}) {
+  if (!(moduleOverlay instanceof HTMLElement)) {
+    return;
+  }
+  moduleOverlay.classList.remove("is-visible");
+  moduleOverlay.setAttribute("aria-hidden", "true");
+  document.removeEventListener("keydown", handleModuleOverlayKeydown);
+  window.setTimeout(() => {
+    moduleOverlay.hidden = true;
+  }, 200);
+  if (resetTarget) {
+    moduleTargetCanvas = null;
+    moduleInsertCallback = null;
+  }
+  if (focus && moduleLastFocus instanceof HTMLElement) {
+    moduleLastFocus.focus({ preventScroll: true });
+  }
+}
+
+function handleModuleBuilderMessage(event) {
+  if (!(moduleFrame instanceof HTMLIFrameElement)) {
+    return;
+  }
+  if (event.source !== moduleFrame.contentWindow) {
+    return;
+  }
+  const data = event.data;
+  if (!data || data.source !== "noor-activity-builder" || data.type !== "activity-module") {
+    return;
+  }
+  if (!(moduleTargetCanvas instanceof HTMLElement)) {
+    closeModuleOverlay({ focus: true });
+    return;
+  }
+
+  const html = typeof data.html === "string" ? data.html : "";
+  const config = data.config ?? {};
+  const afterInsert = typeof moduleInsertCallback === "function" ? moduleInsertCallback : null;
+
+  const moduleElement = createModuleEmbed({
+    html,
+    title: config?.data?.title,
+    activityType: config?.type,
+    onRemove: () => {
+      afterInsert?.();
+    },
+  });
+
+  moduleTargetCanvas.appendChild(moduleElement);
+  moduleElement.scrollIntoView({ behavior: "smooth", block: "center" });
+  afterInsert?.();
+  moduleInsertCallback = null;
+
+  try {
+    event.source?.postMessage({ source: "noor-deck", type: "activity-module", status: "inserted" }, "*");
+  } catch (error) {
+    console.warn("Unable to confirm module receipt", error);
+  }
+
+  closeModuleOverlay({ focus: true });
+}
+
+function initialiseModuleBuilderBridge() {
+  if (!(moduleOverlay instanceof HTMLElement)) {
+    return;
+  }
+  if (moduleOverlay.__deckModuleInitialised) {
+    return;
+  }
+  moduleOverlay.__deckModuleInitialised = true;
+
+  moduleOverlay.addEventListener("click", (event) => {
+    if (event.target === moduleOverlay) {
+      closeModuleOverlay({ focus: true });
+    }
+  });
+
+  moduleCloseBtn?.addEventListener("click", () => {
+    closeModuleOverlay({ focus: true });
+  });
+
+  window.addEventListener("message", handleModuleBuilderMessage);
+}
+
 function createActivitySlide({
   stageLabel = "Activity Workshop",
   title,
@@ -3675,6 +3907,18 @@ export async function setupInteractiveDeck({
     document.querySelector("#builder-refresh-preview");
   builderLastFocus = null;
   builderFieldId = 0;
+  moduleOverlay =
+    rootElement?.querySelector("#module-builder-overlay") ??
+    document.querySelector("#module-builder-overlay");
+  moduleFrame =
+    moduleOverlay?.querySelector("#module-builder-frame") ??
+    document.querySelector("#module-builder-frame");
+  moduleCloseBtn =
+    moduleOverlay?.querySelector(".module-builder-close") ??
+    document.querySelector(".module-builder-close");
+  moduleLastFocus = null;
+  moduleTargetCanvas = null;
+  moduleInsertCallback = null;
 
   slides = [];
   currentSlideIndex = 0;
@@ -3718,6 +3962,7 @@ export async function setupInteractiveDeck({
   }
 
   initialiseActivityBuilderUI();
+  initialiseModuleBuilderBridge();
 
   try {
     await initialiseDeck();
