@@ -49,6 +49,9 @@ let builderJsonPreview;
 let builderCancelBtn;
 let builderCloseBtn;
 let builderStatusEl;
+let builderActivityTypeSelect;
+let builderActivityConfig;
+let builderActivityController = null;
 let builderLastFocus;
 let builderFieldId = 0;
 
@@ -2450,37 +2453,31 @@ function setupStressMark(activityEl) {
   });
 }
 
-function initialiseActivities() {
-  document
-    .querySelectorAll('[data-activity="unscramble"]')
-    .forEach((el) => setupUnscramble(el));
-  document
-    .querySelectorAll('[data-activity="gap-fill"]')
-    .forEach((el) => setupGapFill(el));
-  document
-    .querySelectorAll('[data-activity="table-completion"]')
-    .forEach((el) => setupClickPlacement(el));
-  document
-    .querySelectorAll('[data-activity="token-drop"]')
-    .forEach((el) => setupClickPlacement(el));
-  document
-    .querySelectorAll('[data-activity="matching"]')
-    .forEach((el) => setupMatching(el));
-  document
-    .querySelectorAll('[data-activity="matching-connect"]')
-    .forEach((el) => setupMatchingConnect(el));
-  document
-    .querySelectorAll('[data-activity="mc-grammar"]')
-    .forEach((el) => setupMcGrammar(el));
-  document
-    .querySelectorAll('[data-activity="mc-grammar-radio"]')
-    .forEach((el) => setupMcGrammarRadio(el));
-  document
-    .querySelectorAll('[data-activity="categorization"]')
-    .forEach((el) => setupCategorization(el));
-  document
-    .querySelectorAll('[data-activity="stress-mark"]')
-    .forEach((el) => setupStressMark(el));
+function initialiseActivities(root = document) {
+  const scope =
+    root instanceof HTMLElement || root instanceof Document ? root : document;
+  const query = (selector) =>
+    Array.from(scope.querySelectorAll?.(selector) ?? document.querySelectorAll(selector));
+  query('[data-activity="unscramble"]').forEach((el) => setupUnscramble(el));
+  query('[data-activity="gap-fill"]').forEach((el) => setupGapFill(el));
+  query('[data-activity="table-completion"]').forEach((el) =>
+    setupClickPlacement(el),
+  );
+  query('[data-activity="token-drop"]').forEach((el) =>
+    setupClickPlacement(el),
+  );
+  query('[data-activity="matching"]').forEach((el) => setupMatching(el));
+  query('[data-activity="matching-connect"]').forEach((el) =>
+    setupMatchingConnect(el),
+  );
+  query('[data-activity="mc-grammar"]').forEach((el) => setupMcGrammar(el));
+  query('[data-activity="mc-grammar-radio"]').forEach((el) =>
+    setupMcGrammarRadio(el),
+  );
+  query('[data-activity="categorization"]').forEach((el) =>
+    setupCategorization(el),
+  );
+  query('[data-activity="stress-mark"]').forEach((el) => setupStressMark(el));
 }
 
 async function copyTextToClipboard(text) {
@@ -2536,6 +2533,1450 @@ function showBuilderStatus(message = "", tone) {
   }
 }
 
+function registerBuilderField(field) {
+  if (!(field instanceof HTMLElement)) {
+    return;
+  }
+  field.addEventListener("input", () => {
+    updateBuilderJsonPreview();
+  });
+  field.addEventListener("change", () => {
+    updateBuilderJsonPreview();
+  });
+}
+
+function createBuilderEmptyState(message) {
+  const empty = document.createElement("p");
+  empty.className = "builder-empty";
+  empty.textContent = message;
+  return empty;
+}
+
+function parseBuilderOptionList(value) {
+  if (typeof value !== "string") {
+    return [];
+  }
+  return value
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function createMultipleChoiceController(container) {
+  if (!(container instanceof HTMLElement)) {
+    return null;
+  }
+
+  container.innerHTML = "";
+  container.dataset.activityType = "multipleChoice";
+
+  const instructionsField = document.createElement("div");
+  instructionsField.className = "builder-field builder-field--full";
+  const instructionsId = generateBuilderFieldId("builder-activity-instructions");
+  const instructionsLabel = document.createElement("label");
+  instructionsLabel.className = "builder-field-label";
+  instructionsLabel.setAttribute("for", instructionsId);
+  instructionsLabel.textContent = "Learner prompt";
+  const instructionsArea = document.createElement("textarea");
+  instructionsArea.name = "activityInstructions";
+  instructionsArea.id = instructionsId;
+  instructionsArea.rows = 2;
+  instructionsArea.placeholder = "Explain what learners should do.";
+  instructionsField.appendChild(instructionsLabel);
+  instructionsField.appendChild(instructionsArea);
+  container.appendChild(instructionsField);
+  registerBuilderField(instructionsArea);
+
+  const listHeader = document.createElement("div");
+  listHeader.className = "builder-subsection-header";
+  const listTitle = document.createElement("h4");
+  listTitle.textContent = "Questions";
+  const listHint = document.createElement("p");
+  listHint.textContent = "Use ___ in the prompt where the answer choices should appear.";
+  listHeader.appendChild(listTitle);
+  listHeader.appendChild(listHint);
+  container.appendChild(listHeader);
+
+  const questionList = document.createElement("ul");
+  questionList.className = "builder-question-list";
+  container.appendChild(questionList);
+
+  const addQuestionBtn = document.createElement("button");
+  addQuestionBtn.type = "button";
+  addQuestionBtn.className = "activity-btn builder-add-item";
+  addQuestionBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add question';
+  container.appendChild(addQuestionBtn);
+
+  const buildQuestionItem = ({ prompt = "", options = [], answer = "" } = {}) => {
+    const item = document.createElement("li");
+    item.className = "builder-question-item";
+
+    const promptField = document.createElement("div");
+    promptField.className = "builder-field builder-field--full";
+    const promptId = generateBuilderFieldId("builder-question");
+    const promptLabel = document.createElement("label");
+    promptLabel.className = "builder-field-label";
+    promptLabel.setAttribute("for", promptId);
+    promptLabel.textContent = "Prompt";
+    const promptArea = document.createElement("textarea");
+    promptArea.id = promptId;
+    promptArea.name = "mcPrompt[]";
+    promptArea.rows = 2;
+    promptArea.placeholder = "Write the question stem. Use ___ for the blank.";
+    promptArea.value = prompt;
+    promptField.appendChild(promptLabel);
+    promptField.appendChild(promptArea);
+    registerBuilderField(promptArea);
+
+    const optionsField = document.createElement("div");
+    optionsField.className = "builder-field builder-field--full";
+    const optionsId = generateBuilderFieldId("builder-options");
+    const optionsLabel = document.createElement("label");
+    optionsLabel.className = "builder-field-label";
+    optionsLabel.setAttribute("for", optionsId);
+    optionsLabel.textContent = "Answer options";
+    const optionsArea = document.createElement("textarea");
+    optionsArea.id = optionsId;
+    optionsArea.name = "mcOptions[]";
+    optionsArea.rows = 3;
+    optionsArea.placeholder = "Enter one option per line.";
+    optionsArea.value = Array.isArray(options) ? options.join("\n") : "";
+    optionsField.appendChild(optionsLabel);
+    optionsField.appendChild(optionsArea);
+    registerBuilderField(optionsArea);
+
+    const answerField = document.createElement("div");
+    answerField.className = "builder-field";
+    const answerId = generateBuilderFieldId("builder-answer");
+    const answerLabel = document.createElement("label");
+    answerLabel.className = "builder-field-label";
+    answerLabel.setAttribute("for", answerId);
+    answerLabel.textContent = "Correct answer";
+    const answerInput = document.createElement("input");
+    answerInput.type = "text";
+    answerInput.id = answerId;
+    answerInput.name = "mcAnswer[]";
+    answerInput.placeholder = "Must exactly match one option";
+    answerInput.value = answer;
+    answerField.appendChild(answerLabel);
+    answerField.appendChild(answerInput);
+    registerBuilderField(answerInput);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "builder-remove-item";
+    removeBtn.setAttribute("aria-label", "Remove question");
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    removeBtn.addEventListener("click", () => {
+      item.remove();
+      if (!questionList.querySelector(".builder-question-item")) {
+        buildQuestionItem();
+      }
+      updateBuilderJsonPreview();
+    });
+
+    item.appendChild(promptField);
+    item.appendChild(optionsField);
+    item.appendChild(answerField);
+    item.appendChild(removeBtn);
+    questionList.appendChild(item);
+
+    return item;
+  };
+
+  addQuestionBtn.addEventListener("click", () => {
+    const newItem = buildQuestionItem();
+    const focusTarget = newItem?.querySelector("textarea, input");
+    if (focusTarget instanceof HTMLElement) {
+      focusTarget.focus({ preventScroll: true });
+    }
+    showBuilderStatus("Added a new question.", "info");
+    updateBuilderJsonPreview();
+  });
+
+  buildQuestionItem();
+
+  return {
+    type: "multipleChoice",
+    collect({ strict = true } = {}) {
+      const instructions = trimText(instructionsArea.value);
+      const items = Array.from(
+        questionList.querySelectorAll(".builder-question-item"),
+      );
+      const questions = items
+        .map((item, index) => {
+          const prompt = trimText(
+            item.querySelector('textarea[name="mcPrompt[]"]')?.value,
+          );
+          const options = parseBuilderOptionList(
+            item.querySelector('textarea[name="mcOptions[]"]')?.value ?? "",
+          );
+          const answer = trimText(
+            item.querySelector('input[name="mcAnswer[]"]')?.value,
+          );
+          if (!prompt && !answer && options.length === 0 && !strict) {
+            return null;
+          }
+          if (strict) {
+            if (!prompt) {
+              throw new Error(`Question ${index + 1}: Add a prompt.`);
+            }
+            if (options.length < 2) {
+              throw new Error(
+                `Question ${index + 1}: Provide at least two answer options.`,
+              );
+            }
+            if (!answer) {
+              throw new Error(
+                `Question ${index + 1}: Specify the correct answer.`,
+              );
+            }
+            if (!options.includes(answer)) {
+              throw new Error(
+                `Question ${index + 1}: The correct answer must match one of the options.`,
+              );
+            }
+          }
+          if (!prompt || !answer || options.length < 2) {
+            return null;
+          }
+          return { prompt, options, answer };
+        })
+        .filter(Boolean);
+
+      if (strict && !questions.length) {
+        throw new Error("Add at least one multiple choice question.");
+      }
+
+      return {
+        type: "multipleChoice",
+        instructions,
+        questions,
+      };
+    },
+  };
+}
+
+function createGapFillController(container) {
+  if (!(container instanceof HTMLElement)) {
+    return null;
+  }
+
+  container.innerHTML = "";
+  container.dataset.activityType = "gapFill";
+
+  const instructionsField = document.createElement("div");
+  instructionsField.className = "builder-field builder-field--full";
+  const instructionsId = generateBuilderFieldId("builder-gapfill-prompt");
+  const instructionsLabel = document.createElement("label");
+  instructionsLabel.className = "builder-field-label";
+  instructionsLabel.setAttribute("for", instructionsId);
+  instructionsLabel.textContent = "Learner prompt";
+  const instructionsArea = document.createElement("textarea");
+  instructionsArea.id = instructionsId;
+  instructionsArea.name = "gapfillPrompt";
+  instructionsArea.rows = 2;
+  instructionsArea.placeholder = "Introduce the gap fill activity.";
+  instructionsField.appendChild(instructionsLabel);
+  instructionsField.appendChild(instructionsArea);
+  container.appendChild(instructionsField);
+  registerBuilderField(instructionsArea);
+
+  const listHeader = document.createElement("div");
+  listHeader.className = "builder-subsection-header";
+  const listTitle = document.createElement("h4");
+  listTitle.textContent = "Prompts";
+  const listHint = document.createElement("p");
+  listHint.textContent = "Write each clue and the answer learners should type.";
+  listHeader.appendChild(listTitle);
+  listHeader.appendChild(listHint);
+  container.appendChild(listHeader);
+
+  const promptList = document.createElement("ul");
+  promptList.className = "builder-question-list";
+  container.appendChild(promptList);
+
+  const addPromptBtn = document.createElement("button");
+  addPromptBtn.type = "button";
+  addPromptBtn.className = "activity-btn builder-add-item";
+  addPromptBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add prompt';
+  container.appendChild(addPromptBtn);
+
+  const buildPromptItem = ({ prompt = "", answer = "" } = {}) => {
+    const item = document.createElement("li");
+    item.className = "builder-question-item";
+
+    const promptField = document.createElement("div");
+    promptField.className = "builder-field builder-field--full";
+    const promptId = generateBuilderFieldId("builder-gapfill-prompt");
+    const promptLabel = document.createElement("label");
+    promptLabel.className = "builder-field-label";
+    promptLabel.setAttribute("for", promptId);
+    promptLabel.textContent = "Prompt";
+    const promptArea = document.createElement("textarea");
+    promptArea.id = promptId;
+    promptArea.name = "gapfillPrompt[]";
+    promptArea.rows = 2;
+    promptArea.placeholder = "What should learners respond to?";
+    promptArea.value = prompt;
+    promptField.appendChild(promptLabel);
+    promptField.appendChild(promptArea);
+    registerBuilderField(promptArea);
+
+    const answerField = document.createElement("div");
+    answerField.className = "builder-field";
+    const answerId = generateBuilderFieldId("builder-gapfill-answer");
+    const answerLabel = document.createElement("label");
+    answerLabel.className = "builder-field-label";
+    answerLabel.setAttribute("for", answerId);
+    answerLabel.textContent = "Correct answer";
+    const answerInput = document.createElement("input");
+    answerInput.type = "text";
+    answerInput.id = answerId;
+    answerInput.name = "gapfillAnswer[]";
+    answerInput.placeholder = "Learner response";
+    answerInput.value = answer;
+    answerField.appendChild(answerLabel);
+    answerField.appendChild(answerInput);
+    registerBuilderField(answerInput);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "builder-remove-item";
+    removeBtn.setAttribute("aria-label", "Remove prompt");
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    removeBtn.addEventListener("click", () => {
+      item.remove();
+      if (!promptList.querySelector(".builder-question-item")) {
+        buildPromptItem();
+      }
+      updateBuilderJsonPreview();
+    });
+
+    item.appendChild(promptField);
+    item.appendChild(answerField);
+    item.appendChild(removeBtn);
+    promptList.appendChild(item);
+    return item;
+  };
+
+  addPromptBtn.addEventListener("click", () => {
+    const newItem = buildPromptItem();
+    newItem?.querySelector("textarea")?.focus({ preventScroll: true });
+    showBuilderStatus("Added a new prompt.", "info");
+    updateBuilderJsonPreview();
+  });
+
+  buildPromptItem();
+
+  return {
+    type: "gapFill",
+    collect({ strict = true } = {}) {
+      const instructions = trimText(instructionsArea.value);
+      const items = Array.from(
+        promptList.querySelectorAll(".builder-question-item"),
+      );
+      const prompts = items
+        .map((item, index) => {
+          const promptValue = trimText(
+            item.querySelector('textarea[name="gapfillPrompt[]"]')?.value,
+          );
+          const answerValue = trimText(
+            item.querySelector('input[name="gapfillAnswer[]"]')?.value,
+          );
+          if (!promptValue && !answerValue && !strict) {
+            return null;
+          }
+          if (strict) {
+            if (!promptValue) {
+              throw new Error(`Prompt ${index + 1}: Add a prompt.`);
+            }
+            if (!answerValue) {
+              throw new Error(
+                `Prompt ${index + 1}: Provide the expected answer.`,
+              );
+            }
+          }
+          if (!promptValue || !answerValue) {
+            return null;
+          }
+          return { prompt: promptValue, answer: answerValue };
+        })
+        .filter(Boolean);
+
+      if (strict && !prompts.length) {
+        throw new Error("Add at least one gap fill prompt.");
+      }
+
+      return {
+        type: "gapFill",
+        instructions,
+        items: prompts,
+      };
+    },
+  };
+}
+
+function createTableCompletionController(container) {
+  if (!(container instanceof HTMLElement)) {
+    return null;
+  }
+
+  container.innerHTML = "";
+  container.dataset.activityType = "tableCompletion";
+
+  const instructionsField = document.createElement("div");
+  instructionsField.className = "builder-field builder-field--full";
+  const instructionsId = generateBuilderFieldId("builder-table-instructions");
+  const instructionsLabel = document.createElement("label");
+  instructionsLabel.className = "builder-field-label";
+  instructionsLabel.setAttribute("for", instructionsId);
+  instructionsLabel.textContent = "Learner prompt";
+  const instructionsArea = document.createElement("textarea");
+  instructionsArea.id = instructionsId;
+  instructionsArea.name = "tableInstructions";
+  instructionsArea.rows = 2;
+  instructionsArea.placeholder = "Describe how learners should complete the table.";
+  instructionsField.appendChild(instructionsLabel);
+  instructionsField.appendChild(instructionsArea);
+  container.appendChild(instructionsField);
+  registerBuilderField(instructionsArea);
+
+  const layoutFieldset = document.createElement("div");
+  layoutFieldset.className = "builder-field builder-field--inline";
+  const columnCountLabel = document.createElement("label");
+  const columnCountId = generateBuilderFieldId("builder-table-columns");
+  columnCountLabel.className = "builder-field-label";
+  columnCountLabel.setAttribute("for", columnCountId);
+  columnCountLabel.textContent = "Number of categories";
+  const columnCountSelect = document.createElement("select");
+  columnCountSelect.id = columnCountId;
+  columnCountSelect.name = "tableColumnCount";
+  [2, 3].forEach((count) => {
+    const option = document.createElement("option");
+    option.value = String(count);
+    option.textContent = `${count} column${count === 1 ? "" : "s"}`;
+    columnCountSelect.appendChild(option);
+  });
+  layoutFieldset.appendChild(columnCountLabel);
+  layoutFieldset.appendChild(columnCountSelect);
+  container.appendChild(layoutFieldset);
+
+  const headingFieldset = document.createElement("div");
+  headingFieldset.className = "builder-field builder-field--full builder-table-headings";
+  const headingLabel = document.createElement("label");
+  headingLabel.className = "builder-field-label";
+  headingLabel.textContent = "Column headings";
+  headingFieldset.appendChild(headingLabel);
+  const headingInputsWrap = document.createElement("div");
+  headingInputsWrap.className = "builder-table-heading-inputs";
+  headingFieldset.appendChild(headingInputsWrap);
+  container.appendChild(headingFieldset);
+
+  const rowsHeader = document.createElement("div");
+  rowsHeader.className = "builder-subsection-header";
+  const rowsTitle = document.createElement("h4");
+  rowsTitle.textContent = "Rows";
+  const rowsHint = document.createElement("p");
+  rowsHint.textContent = "Add each row label and the correct answers for every column.";
+  rowsHeader.appendChild(rowsTitle);
+  rowsHeader.appendChild(rowsHint);
+  container.appendChild(rowsHeader);
+
+  const rowList = document.createElement("ul");
+  rowList.className = "builder-question-list builder-table-list";
+  container.appendChild(rowList);
+
+  const addRowBtn = document.createElement("button");
+  addRowBtn.type = "button";
+  addRowBtn.className = "activity-btn builder-add-item";
+  addRowBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add row';
+  container.appendChild(addRowBtn);
+
+  const rowLabelHeadingField = document.createElement("div");
+  rowLabelHeadingField.className = "builder-field";
+  const rowLabelHeadingId = generateBuilderFieldId("builder-table-row-heading");
+  const rowLabelHeadingLabel = document.createElement("label");
+  rowLabelHeadingLabel.className = "builder-field-label";
+  rowLabelHeadingLabel.setAttribute("for", rowLabelHeadingId);
+  rowLabelHeadingLabel.textContent = "Row label heading";
+  const rowLabelHeadingInput = document.createElement("input");
+  rowLabelHeadingInput.type = "text";
+  rowLabelHeadingInput.id = rowLabelHeadingId;
+  rowLabelHeadingInput.name = "tableRowHeading";
+  rowLabelHeadingInput.placeholder = "e.g. Scenario";
+  rowLabelHeadingInput.value = "Item";
+  rowLabelHeadingField.appendChild(rowLabelHeadingLabel);
+  rowLabelHeadingField.appendChild(rowLabelHeadingInput);
+  headingInputsWrap.appendChild(rowLabelHeadingField);
+  registerBuilderField(rowLabelHeadingInput);
+
+  const columnHeadingInputs = [];
+
+  const buildColumnHeadingInputs = (count) => {
+    const desiredCount = Number.isFinite(count) ? count : 2;
+    while (columnHeadingInputs.length) {
+      const field = columnHeadingInputs.pop();
+      field?.remove();
+    }
+    for (let index = 0; index < desiredCount; index += 1) {
+      const field = document.createElement("div");
+      field.className = "builder-field";
+      const id = generateBuilderFieldId("builder-table-heading");
+      const label = document.createElement("label");
+      label.className = "builder-field-label";
+      label.setAttribute("for", id);
+      label.textContent = `Column ${index + 1}`;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = id;
+      input.name = "tableHeading[]";
+      input.placeholder = `e.g. Column ${index + 1}`;
+      field.appendChild(label);
+      field.appendChild(input);
+      registerBuilderField(input);
+      columnHeadingInputs.push(field);
+      headingInputsWrap.appendChild(field);
+    }
+  };
+
+  const syncRowCells = (rowItem, columnCount) => {
+    const cellsWrap = rowItem.querySelector(".builder-table-cells");
+    if (!(cellsWrap instanceof HTMLElement)) {
+      return;
+    }
+    const existing = Array.from(cellsWrap.querySelectorAll(".builder-field"));
+    const desired = columnCount;
+    existing.slice(desired).forEach((cell) => cell.remove());
+    for (let index = existing.length; index < desired; index += 1) {
+      const field = document.createElement("div");
+      field.className = "builder-field";
+      const id = generateBuilderFieldId("builder-table-cell");
+      const label = document.createElement("label");
+      label.className = "builder-field-label";
+      const headingInput = columnHeadingInputs[index]?.querySelector("input");
+      const headingName = trimText(headingInput?.value) || `Column ${index + 1}`;
+      label.setAttribute("for", id);
+      label.textContent = headingName;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = id;
+      input.name = "tableCell[]";
+      input.dataset.cellIndex = String(index);
+      input.placeholder = `Answer for ${headingName}`;
+      field.appendChild(label);
+      field.appendChild(input);
+      registerBuilderField(input);
+      cellsWrap.appendChild(field);
+    }
+  };
+
+  const updateCellPlaceholders = () => {
+    const rows = Array.from(rowList.querySelectorAll(".builder-table-row"));
+    rows.forEach((row) => {
+      const cells = Array.from(
+        row.querySelectorAll(".builder-table-cells .builder-field"),
+      );
+      cells.forEach((cell, index) => {
+        const headingInput = columnHeadingInputs[index]?.querySelector("input");
+        const headingName = trimText(headingInput?.value) || `Column ${index + 1}`;
+        const label = cell.querySelector("label");
+        const input = cell.querySelector("input");
+        if (label) {
+          label.textContent = headingName;
+        }
+        if (input instanceof HTMLInputElement) {
+          input.placeholder = `Answer for ${headingName}`;
+        }
+      });
+    });
+  };
+
+  const buildRowItem = ({ label = "", cells = [] } = {}) => {
+    const item = document.createElement("li");
+    item.className = "builder-question-item builder-table-row";
+
+    const rowField = document.createElement("div");
+    rowField.className = "builder-field";
+    const rowId = generateBuilderFieldId("builder-table-row");
+    const rowLabel = document.createElement("label");
+    rowLabel.className = "builder-field-label";
+    rowLabel.setAttribute("for", rowId);
+    rowLabel.textContent = "Row label";
+    const rowInput = document.createElement("input");
+    rowInput.type = "text";
+    rowInput.id = rowId;
+    rowInput.name = "tableRowLabel[]";
+    rowInput.placeholder = "e.g. Option A";
+    rowInput.value = label;
+    rowField.appendChild(rowLabel);
+    rowField.appendChild(rowInput);
+    registerBuilderField(rowInput);
+
+    const cellsWrap = document.createElement("div");
+    cellsWrap.className = "builder-table-cells";
+    item.appendChild(rowField);
+    item.appendChild(cellsWrap);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "builder-remove-item";
+    removeBtn.setAttribute("aria-label", "Remove row");
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    removeBtn.addEventListener("click", () => {
+      item.remove();
+      if (!rowList.querySelector(".builder-table-row")) {
+        buildRowItem();
+      }
+      updateBuilderJsonPreview();
+    });
+
+    item.appendChild(removeBtn);
+    rowList.appendChild(item);
+
+    const columnCount = parseInt(columnCountSelect.value, 10) || 2;
+    syncRowCells(item, columnCount);
+    const cellInputs = Array.from(
+      cellsWrap.querySelectorAll('input[name="tableCell[]"]'),
+    );
+    cellInputs.forEach((input, index) => {
+      input.value = cells[index] ?? "";
+    });
+    updateCellPlaceholders();
+    return item;
+  };
+
+  addRowBtn.addEventListener("click", () => {
+    const newRow = buildRowItem();
+    newRow?.querySelector("input")?.focus({ preventScroll: true });
+    showBuilderStatus("Added a new row.", "info");
+    updateBuilderJsonPreview();
+  });
+
+  columnCountSelect.addEventListener("change", () => {
+    const count = parseInt(columnCountSelect.value, 10) || 2;
+    buildColumnHeadingInputs(count);
+    const rows = Array.from(rowList.querySelectorAll(".builder-table-row"));
+    rows.forEach((row) => syncRowCells(row, count));
+    updateCellPlaceholders();
+    updateBuilderJsonPreview();
+  });
+
+  rowLabelHeadingInput.addEventListener("input", updateBuilderJsonPreview);
+  rowLabelHeadingInput.addEventListener("change", updateBuilderJsonPreview);
+
+  const handleHeadingChange = () => {
+    updateCellPlaceholders();
+    updateBuilderJsonPreview();
+  };
+
+  const buildColumnHeadingInputsWithListeners = (count) => {
+    buildColumnHeadingInputs(count);
+    columnHeadingInputs.forEach((field) => {
+      const input = field.querySelector("input");
+      input?.addEventListener("input", handleHeadingChange);
+      input?.addEventListener("change", handleHeadingChange);
+    });
+  };
+
+  buildColumnHeadingInputsWithListeners(parseInt(columnCountSelect.value, 10) || 2);
+  buildRowItem();
+
+  return {
+    type: "tableCompletion",
+    collect({ strict = true } = {}) {
+      const instructions = trimText(instructionsArea.value);
+      const columnCount = parseInt(columnCountSelect.value, 10) || 2;
+      const heading = trimText(rowLabelHeadingInput.value) || "Item";
+      const columnHeadings = columnHeadingInputs
+        .map((field, index) => {
+          const value = trimText(field.querySelector("input")?.value);
+          if (strict && !value) {
+            throw new Error(`Column ${index + 1}: Add a heading.`);
+          }
+          return value || `Column ${index + 1}`;
+        })
+        .slice(0, columnCount);
+
+      const rows = Array.from(rowList.querySelectorAll(".builder-table-row"));
+      const rowData = rows
+        .map((row, rowIndex) => {
+          const labelValue = trimText(
+            row.querySelector('input[name="tableRowLabel[]"]')?.value,
+          );
+          const cellInputs = Array.from(
+            row.querySelectorAll('.builder-table-cells input[name="tableCell[]"]'),
+          );
+          const cells = cellInputs.map((input) => trimText(input.value));
+          const hasContent = labelValue || cells.some(Boolean);
+          if (!hasContent && !strict) {
+            return null;
+          }
+          if (strict) {
+            if (!labelValue) {
+              throw new Error(`Row ${rowIndex + 1}: Add a label.`);
+            }
+            if (cells.length < columnCount) {
+              throw new Error(
+                `Row ${rowIndex + 1}: Provide answers for each column.`,
+              );
+            }
+            const missing = cells.findIndex((cell) => !cell);
+            if (missing >= 0) {
+              throw new Error(
+                `Row ${rowIndex + 1}: Add an answer for ${columnHeadings[missing]}.`,
+              );
+            }
+          }
+          if (!labelValue || cells.some((cell) => !cell)) {
+            return null;
+          }
+          return {
+            label: labelValue,
+            cells: cells.slice(0, columnCount),
+          };
+        })
+        .filter(Boolean);
+
+      if (strict && !rowData.length) {
+        throw new Error("Add at least one table row with answers.");
+      }
+
+      return {
+        type: "tableCompletion",
+        instructions,
+        table: {
+          rowHeading: heading,
+          columnHeadings,
+          rows: rowData,
+        },
+      };
+    },
+  };
+}
+
+function createCategorizationController(container) {
+  if (!(container instanceof HTMLElement)) {
+    return null;
+  }
+
+  container.innerHTML = "";
+  container.dataset.activityType = "categorization";
+
+  const instructionsField = document.createElement("div");
+  instructionsField.className = "builder-field builder-field--full";
+  const instructionsId = generateBuilderFieldId("builder-category-instructions");
+  const instructionsLabel = document.createElement("label");
+  instructionsLabel.className = "builder-field-label";
+  instructionsLabel.setAttribute("for", instructionsId);
+  instructionsLabel.textContent = "Learner prompt";
+  const instructionsArea = document.createElement("textarea");
+  instructionsArea.id = instructionsId;
+  instructionsArea.name = "categorizationPrompt";
+  instructionsArea.rows = 2;
+  instructionsArea.placeholder = "Explain how learners should group the tokens.";
+  instructionsField.appendChild(instructionsLabel);
+  instructionsField.appendChild(instructionsArea);
+  container.appendChild(instructionsField);
+  registerBuilderField(instructionsArea);
+
+  const categoriesHeader = document.createElement("div");
+  categoriesHeader.className = "builder-subsection-header";
+  const categoriesTitle = document.createElement("h4");
+  categoriesTitle.textContent = "Categories";
+  const categoriesHint = document.createElement("p");
+  categoriesHint.textContent = "Add at least two categories for sorting.";
+  categoriesHeader.appendChild(categoriesTitle);
+  categoriesHeader.appendChild(categoriesHint);
+  container.appendChild(categoriesHeader);
+
+  const categoryList = document.createElement("ul");
+  categoryList.className = "builder-category-list";
+  container.appendChild(categoryList);
+
+  const addCategoryBtn = document.createElement("button");
+  addCategoryBtn.type = "button";
+  addCategoryBtn.className = "activity-btn builder-add-item";
+  addCategoryBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add category';
+  container.appendChild(addCategoryBtn);
+
+  const tokensHeader = document.createElement("div");
+  tokensHeader.className = "builder-subsection-header";
+  const tokensTitle = document.createElement("h4");
+  tokensTitle.textContent = "Tokens";
+  const tokensHint = document.createElement("p");
+  tokensHint.textContent = "Provide each word or phrase and choose its correct category.";
+  tokensHeader.appendChild(tokensTitle);
+  tokensHeader.appendChild(tokensHint);
+  container.appendChild(tokensHeader);
+
+  const tokenList = document.createElement("ul");
+  tokenList.className = "builder-token-list";
+  container.appendChild(tokenList);
+
+  const addTokenBtn = document.createElement("button");
+  addTokenBtn.type = "button";
+  addTokenBtn.className = "activity-btn builder-add-item";
+  addTokenBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add token';
+  container.appendChild(addTokenBtn);
+
+  const categories = [];
+
+  const refreshTokenCategoryOptions = () => {
+    const options = categories
+      .map((entry) => {
+        const label = trimText(entry.input.value);
+        if (!label) {
+          return null;
+        }
+        return { id: entry.id, label };
+      })
+      .filter(Boolean);
+    const selects = tokenList.querySelectorAll("select[name='tokenCategory[]']");
+    selects.forEach((select) => {
+      const current = select.value;
+      select.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Select";
+      select.appendChild(placeholder);
+      options.forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.id;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      if (options.some((option) => option.id === current)) {
+        select.value = current;
+      } else {
+        select.value = "";
+      }
+    });
+  };
+
+  const buildCategoryItem = ({ label = "" } = {}) => {
+    const item = document.createElement("li");
+    item.className = "builder-category-item";
+    const id = generateBuilderFieldId("builder-category");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = id;
+    input.name = "categoryLabel[]";
+    input.placeholder = "e.g. Positive";
+    input.value = label;
+    registerBuilderField(input);
+
+    input.addEventListener("input", () => {
+      refreshTokenCategoryOptions();
+      updateBuilderJsonPreview();
+    });
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "builder-remove-item";
+    removeBtn.setAttribute("aria-label", "Remove category");
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    removeBtn.addEventListener("click", () => {
+      if (categories.length <= 2) {
+        showBuilderStatus("Keep at least two categories.", "error");
+        return;
+      }
+      categories.splice(
+        categories.findIndex((entry) => entry.item === item),
+        1,
+      );
+      item.remove();
+      refreshTokenCategoryOptions();
+      updateBuilderJsonPreview();
+    });
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "builder-category-input";
+    const labelEl = document.createElement("label");
+    labelEl.className = "builder-field-label";
+    labelEl.setAttribute("for", id);
+    labelEl.textContent = "Category";
+    wrapper.appendChild(labelEl);
+    wrapper.appendChild(input);
+    item.appendChild(wrapper);
+    item.appendChild(removeBtn);
+    categoryList.appendChild(item);
+
+    const entry = { id: `${id}-${Math.random().toString(16).slice(2, 6)}`, input, item };
+    categories.push(entry);
+    refreshTokenCategoryOptions();
+    return entry;
+  };
+
+  const buildTokenItem = ({ text = "", categoryId = "" } = {}) => {
+    const item = document.createElement("li");
+    item.className = "builder-token-item";
+
+    const textField = document.createElement("div");
+    textField.className = "builder-field";
+    const textId = generateBuilderFieldId("builder-token");
+    const textLabel = document.createElement("label");
+    textLabel.className = "builder-field-label";
+    textLabel.setAttribute("for", textId);
+    textLabel.textContent = "Token";
+    const textInput = document.createElement("input");
+    textInput.type = "text";
+    textInput.id = textId;
+    textInput.name = "tokenText[]";
+    textInput.placeholder = "e.g. scalable";
+    textInput.value = text;
+    textField.appendChild(textLabel);
+    textField.appendChild(textInput);
+    registerBuilderField(textInput);
+
+    const selectField = document.createElement("div");
+    selectField.className = "builder-field";
+    const selectId = generateBuilderFieldId("builder-token-category");
+    const selectLabel = document.createElement("label");
+    selectLabel.className = "builder-field-label";
+    selectLabel.setAttribute("for", selectId);
+    selectLabel.textContent = "Correct category";
+    const select = document.createElement("select");
+    select.id = selectId;
+    select.name = "tokenCategory[]";
+    selectField.appendChild(selectLabel);
+    selectField.appendChild(select);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "builder-remove-item";
+    removeBtn.setAttribute("aria-label", "Remove token");
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    removeBtn.addEventListener("click", () => {
+      item.remove();
+      if (!tokenList.querySelector(".builder-token-item")) {
+        buildTokenItem();
+      }
+      updateBuilderJsonPreview();
+    });
+
+    item.appendChild(textField);
+    item.appendChild(selectField);
+    item.appendChild(removeBtn);
+    tokenList.appendChild(item);
+
+    refreshTokenCategoryOptions();
+    if (categoryId) {
+      select.value = categoryId;
+    }
+    select.addEventListener("change", () => {
+      updateBuilderJsonPreview();
+    });
+
+    return item;
+  };
+
+  addCategoryBtn.addEventListener("click", () => {
+    const entry = buildCategoryItem();
+    entry.input.focus({ preventScroll: true });
+    showBuilderStatus("Added a new category.", "info");
+    updateBuilderJsonPreview();
+  });
+
+  addTokenBtn.addEventListener("click", () => {
+    const tokenItem = buildTokenItem();
+    tokenItem?.querySelector("input")?.focus({ preventScroll: true });
+    showBuilderStatus("Added a new token.", "info");
+    updateBuilderJsonPreview();
+  });
+
+  buildCategoryItem({ label: "Category A" });
+  buildCategoryItem({ label: "Category B" });
+  buildTokenItem();
+
+  return {
+    type: "categorization",
+    collect({ strict = true } = {}) {
+      const instructions = trimText(instructionsArea.value);
+      const categoryData = categories
+        .map((entry) => ({ id: entry.id, label: trimText(entry.input.value) }))
+        .filter((entry) => Boolean(entry.label));
+      if (strict && categoryData.length < 2) {
+        throw new Error("Add at least two categories with labels.");
+      }
+
+      const tokens = Array.from(tokenList.querySelectorAll(".builder-token-item"))
+        .map((item, index) => {
+          const text = trimText(item.querySelector('input[name="tokenText[]"]')?.value);
+          const categoryId = item.querySelector('select[name="tokenCategory[]"]')?.value ?? "";
+          if (!text && !categoryId && !strict) {
+            return null;
+          }
+          if (strict) {
+            if (!text) {
+              throw new Error(`Token ${index + 1}: Add a label.`);
+            }
+            if (!categoryId) {
+              throw new Error(`Token ${index + 1}: Select a category.`);
+            }
+            if (!categoryData.some((entry) => entry.id === categoryId)) {
+              throw new Error(`Token ${index + 1}: Choose a valid category.`);
+            }
+          }
+          if (!text || !categoryId) {
+            return null;
+          }
+          return { text, categoryId };
+        })
+        .filter(Boolean);
+
+      if (strict && !tokens.length) {
+        throw new Error("Add at least one token with a category.");
+      }
+
+      return {
+        type: "categorization",
+        instructions,
+        categories: categoryData,
+        tokens,
+      };
+    },
+  };
+}
+
+const BUILDER_ACTIVITY_FACTORIES = {
+  multipleChoice: createMultipleChoiceController,
+  gapFill: createGapFillController,
+  tableCompletion: createTableCompletionController,
+  categorization: createCategorizationController,
+};
+
+function renderActivityConfigurator(type) {
+  if (!(builderActivityConfig instanceof HTMLElement)) {
+    builderActivityController = null;
+    return;
+  }
+  const factory = type ? BUILDER_ACTIVITY_FACTORIES[type] : null;
+  if (!factory) {
+    builderActivityConfig.innerHTML = "";
+    builderActivityConfig.dataset.activityType = "";
+    builderActivityConfig.appendChild(
+      createBuilderEmptyState("Select an activity type to configure it."),
+    );
+    builderActivityController = null;
+    return;
+  }
+  const controller = factory(builderActivityConfig);
+  builderActivityController = controller;
+  updateBuilderJsonPreview();
+}
+
+function collectBuilderActivityData({ strict = true } = {}) {
+  const type = builderActivityTypeSelect?.value;
+  if (!type) {
+    if (strict) {
+      showBuilderStatus("Select an activity type to continue.", "error");
+    }
+    return null;
+  }
+  if (!builderActivityController || builderActivityController.type !== type) {
+    renderActivityConfigurator(type);
+  }
+  if (!builderActivityController) {
+    if (strict) {
+      showBuilderStatus("Unable to configure the selected activity right now.", "error");
+    }
+    return null;
+  }
+  try {
+    return builderActivityController.collect({ strict });
+  } catch (error) {
+    if (strict) {
+      showBuilderStatus(error?.message || "Check the activity fields for details.", "error");
+    }
+    return null;
+  }
+}
+
+function buildMultipleChoiceActivityCard(activity) {
+  const questions = Array.isArray(activity?.questions)
+    ? activity.questions.filter((question) =>
+        question && typeof question.prompt === "string" && question.answer,
+      )
+    : [];
+  if (!questions.length) {
+    return null;
+  }
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.activity = "mc-grammar";
+
+  const instructions = trimText(activity?.instructions);
+  if (instructions) {
+    const intro = document.createElement("p");
+    intro.textContent = instructions;
+    card.appendChild(intro);
+  }
+
+  let appended = 0;
+  questions.forEach((question, index) => {
+    const options = Array.isArray(question.options)
+      ? question.options.filter(Boolean)
+      : [];
+    if (!options.length) {
+      return;
+    }
+    const quizCard = document.createElement("div");
+    quizCard.className = "quiz-card";
+    quizCard.dataset.answer = question.answer;
+
+    const text = document.createElement("p");
+    text.appendChild(document.createTextNode(`${index + 1}. `));
+
+    const select = document.createElement("select");
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "...";
+    select.appendChild(placeholder);
+    options.forEach((option) => {
+      const opt = document.createElement("option");
+      opt.value = option;
+      opt.textContent = option;
+      select.appendChild(opt);
+    });
+
+    const promptText = typeof question.prompt === "string" ? question.prompt : "";
+    const blankIndex = promptText.indexOf("___");
+    if (blankIndex >= 0) {
+      const before = promptText.slice(0, blankIndex);
+      const after = promptText.slice(blankIndex + 3);
+      if (before) {
+        text.appendChild(document.createTextNode(before));
+      }
+      text.appendChild(select);
+      if (after) {
+        text.appendChild(document.createTextNode(after));
+      }
+    } else {
+      text.appendChild(document.createTextNode(`${promptText} `));
+      text.appendChild(select);
+    }
+
+    quizCard.appendChild(text);
+    card.appendChild(quizCard);
+    appended += 1;
+  });
+
+  if (!appended) {
+    return null;
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "activity-actions";
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = "Check Answers";
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "activity-btn secondary";
+  resetBtn.dataset.action = "reset";
+  resetBtn.textContent = "Reset";
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  card.appendChild(actions);
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  card.appendChild(feedback);
+
+  return card;
+}
+
+function buildGapFillActivityCard(activity) {
+  const items = Array.isArray(activity?.items)
+    ? activity.items.filter(
+        (item) => item && item.prompt && typeof item.answer === "string",
+      )
+    : [];
+  if (!items.length) {
+    return null;
+  }
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.activity = "gap-fill";
+
+  const instructions = trimText(activity?.instructions);
+  if (instructions) {
+    const intro = document.createElement("p");
+    intro.textContent = instructions;
+    card.appendChild(intro);
+  }
+
+  const list = document.createElement("ol");
+  list.className = "gapfill-list";
+  items.forEach((item, index) => {
+    const listItem = document.createElement("li");
+    const prompt = document.createElement("span");
+    prompt.textContent = item.prompt;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "gap-input";
+    input.dataset.answer = item.answer;
+    input.setAttribute("aria-label", `Gap ${index + 1}`);
+    listItem.appendChild(prompt);
+    listItem.appendChild(input);
+    list.appendChild(listItem);
+  });
+  card.appendChild(list);
+
+  const actions = document.createElement("div");
+  actions.className = "activity-actions";
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = "Check Answers";
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "activity-btn secondary";
+  resetBtn.dataset.action = "reset";
+  resetBtn.textContent = "Reset";
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  card.appendChild(actions);
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  card.appendChild(feedback);
+
+  return card;
+}
+
+function buildTableCompletionActivityCard(activity) {
+  const tableData = activity?.table;
+  const rows = Array.isArray(tableData?.rows)
+    ? tableData.rows.filter(
+        (row) =>
+          row && row.label && Array.isArray(row.cells) && row.cells.every(Boolean),
+      )
+    : [];
+  if (!rows.length) {
+    return null;
+  }
+  const columnHeadings = Array.isArray(tableData?.columnHeadings)
+    ? tableData.columnHeadings.filter(Boolean)
+    : [];
+  const columnCount = columnHeadings.length;
+  if (!columnCount) {
+    return null;
+  }
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.activity = "table-completion";
+
+  const instructions = trimText(activity?.instructions);
+  if (instructions) {
+    const intro = document.createElement("p");
+    intro.textContent = instructions;
+    card.appendChild(intro);
+  }
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "table-responsive";
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+
+  const rowHeadingCell = document.createElement("th");
+  rowHeadingCell.textContent = trimText(tableData?.rowHeading) || "Item";
+  headerRow.appendChild(rowHeadingCell);
+
+  columnHeadings.forEach((heading) => {
+    const th = document.createElement("th");
+    th.textContent = heading;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  const tokens = [];
+  rows.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    const labelCell = document.createElement("td");
+    labelCell.textContent = row.label;
+    tr.appendChild(labelCell);
+    row.cells.slice(0, columnCount).forEach((cellValue, columnIndex) => {
+      const td = document.createElement("td");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "drop-zone placeholder";
+      button.dataset.answer = cellValue;
+      button.dataset.placeholder = "Select answer";
+      button.setAttribute(
+        "aria-label",
+        `${row.label} · ${columnHeadings[columnIndex]}`,
+      );
+      button.textContent = "Select answer";
+      td.appendChild(button);
+      tr.appendChild(td);
+      tokens.push({ text: cellValue });
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  card.appendChild(tableWrap);
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+  tokenBank.setAttribute("aria-label", "Answer choices");
+  tokens.forEach((token, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "click-token";
+    button.dataset.value = token.text;
+    button.textContent = token.text;
+    button.dataset.tokenId = `token-${index}`;
+    tokenBank.appendChild(button);
+  });
+  card.appendChild(tokenBank);
+
+  const actions = document.createElement("div");
+  actions.className = "activity-actions";
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = "Check";
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "activity-btn secondary";
+  resetBtn.dataset.action = "reset";
+  resetBtn.textContent = "Reset";
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  card.appendChild(actions);
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  card.appendChild(feedback);
+
+  return card;
+}
+
+function buildCategorizationActivityCard(activity) {
+  const categories = Array.isArray(activity?.categories)
+    ? activity.categories.filter((category) => category && category.label)
+    : [];
+  const tokens = Array.isArray(activity?.tokens)
+    ? activity.tokens.filter((token) => token && token.text && token.categoryId)
+    : [];
+  if (!categories.length || !tokens.length) {
+    return null;
+  }
+
+  const lookup = new Map(categories.map((category) => [category.id, category.label]));
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.activity = "categorization";
+
+  const instructions = trimText(activity?.instructions);
+  if (instructions) {
+    const intro = document.createElement("p");
+    intro.textContent = instructions;
+    card.appendChild(intro);
+  }
+
+  const tokenBank = document.createElement("div");
+  tokenBank.className = "token-bank";
+  tokens.forEach((token) => {
+    const categoryLabel = lookup.get(token.categoryId);
+    if (!categoryLabel) {
+      return;
+    }
+    const chip = document.createElement("span");
+    chip.className = "click-token";
+    chip.dataset.category = categoryLabel;
+    chip.textContent = token.text;
+    tokenBank.appendChild(chip);
+  });
+  card.appendChild(tokenBank);
+
+  const columnsWrap = document.createElement("div");
+  columnsWrap.className = "drop-categorization";
+  categories.forEach((category) => {
+    const column = document.createElement("div");
+    column.className = "category-column";
+    column.dataset.category = category.label;
+    const heading = document.createElement("h3");
+    heading.textContent = category.label;
+    const zone = document.createElement("div");
+    zone.className = "drop-zone";
+    column.appendChild(heading);
+    column.appendChild(zone);
+    columnsWrap.appendChild(column);
+  });
+  card.appendChild(columnsWrap);
+
+  const actions = document.createElement("div");
+  actions.className = "activity-actions";
+  const checkBtn = document.createElement("button");
+  checkBtn.type = "button";
+  checkBtn.className = "activity-btn";
+  checkBtn.dataset.action = "check";
+  checkBtn.textContent = "Check Answers";
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "activity-btn secondary";
+  resetBtn.dataset.action = "reset";
+  resetBtn.textContent = "Reset";
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  card.appendChild(actions);
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback-msg";
+  feedback.setAttribute("aria-live", "polite");
+  card.appendChild(feedback);
+
+  return card;
+}
+
+function buildInteractiveActivitySection(activity) {
+  if (!activity || typeof activity !== "object") {
+    return null;
+  }
+  let card = null;
+  switch (activity.type) {
+    case "multipleChoice":
+      card = buildMultipleChoiceActivityCard(activity);
+      break;
+    case "gapFill":
+      card = buildGapFillActivityCard(activity);
+      break;
+    case "tableCompletion":
+      card = buildTableCompletionActivityCard(activity);
+      break;
+    case "categorization":
+      card = buildCategorizationActivityCard(activity);
+      break;
+    default:
+      card = null;
+  }
+  if (!(card instanceof HTMLElement)) {
+    return null;
+  }
+  const section = document.createElement("section");
+  section.className = "activity-interactive";
+  section.dataset.activityType = activity.type;
+  section.appendChild(card);
+  return section;
+}
+
 function collectRubricCriteria() {
   if (!(builderPromptList instanceof HTMLElement)) {
     return [];
@@ -2569,14 +4010,19 @@ function updateBuilderJsonPreview() {
   const title = trimText(formData?.get("activityTitle"));
   const levels = parseRubricLevels(formData?.get("rubricLevels"));
   const criteria = collectRubricCriteria();
+  const activityData = collectBuilderActivityData({ strict: false });
   const previewData = {
     title,
-    levels,
-    criteria: criteria.map((criterion, index) => ({
-      id: `criterion-${index + 1}`,
-      prompt: criterion.prompt,
-      success: criterion.success,
-    })),
+    activityType: activityData?.type ?? builderActivityTypeSelect?.value ?? null,
+    activity: activityData,
+    rubric: {
+      levels,
+      criteria: criteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    },
   };
   builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
 }
@@ -2667,10 +4113,14 @@ function resetBuilderForm() {
   if (builderForm instanceof HTMLFormElement) {
     builderForm.reset();
   }
+  if (builderActivityTypeSelect instanceof HTMLSelectElement) {
+    builderActivityTypeSelect.value = "";
+  }
   if (builderPromptList instanceof HTMLElement) {
     builderPromptList.innerHTML = "";
   }
   builderFieldId = 0;
+  renderActivityConfigurator(builderActivityTypeSelect?.value ?? "");
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
   showBuilderStatus("", undefined);
@@ -2727,6 +4177,7 @@ function createActivitySlide({
   duration,
   overview,
   steps = [],
+  activity = null,
   rubric = { criteria: [], levels: [] },
 } = {}) {
   const resolvedTitle = trimText(title);
@@ -2737,7 +4188,7 @@ function createActivitySlide({
   const slide = document.createElement("div");
   slide.className = "slide-stage hidden activity-slide";
   slide.dataset.type = "activity";
-  slide.dataset.activity = "rubric";
+  slide.dataset.activity = activity?.type || "rubric";
 
   const inner = document.createElement("div");
   inner.className = "slide-inner activity-builder-slide";
@@ -2818,10 +4269,19 @@ function createActivitySlide({
     instructionsSection.appendChild(emptyMessage);
   }
 
+  const detailColumn = document.createElement("div");
+  detailColumn.className = "activity-detail-column";
+  bodyGrid.appendChild(detailColumn);
+
+  const activitySection = buildInteractiveActivitySection(activity);
+  if (activitySection) {
+    detailColumn.appendChild(activitySection);
+  }
+
   const rubricSection = document.createElement("section");
   rubricSection.className = "activity-rubric";
   rubricSection.dataset.role = "rubric";
-  bodyGrid.appendChild(rubricSection);
+  detailColumn.appendChild(rubricSection);
 
   const rubricHeading = document.createElement("h3");
   const rubricIcon = document.createElement("i");
@@ -2927,6 +4387,14 @@ function createActivitySlide({
   } catch (error) {
     console.warn("Unable to serialise rubric data", error);
   }
+
+  if (activity) {
+    try {
+      slide.dataset.activityConfig = JSON.stringify(activity);
+    } catch (error) {
+      console.warn("Unable to serialise activity data", error);
+    }
+  }
   slide.dataset.activityTitle = resolvedTitle;
   return slide;
 }
@@ -3022,7 +4490,10 @@ function initialiseGeneratedActivitySlides(root = document) {
   if (!slideList || !slideList.length) {
     return;
   }
-  slideList.forEach((slide) => initialiseBuilderSlide(slide));
+  slideList.forEach((slide) => {
+    initialiseBuilderSlide(slide);
+    initialiseActivities(slide);
+  });
 }
 
 function insertActivitySlide(slide) {
@@ -3070,6 +4541,10 @@ function handleBuilderSubmit(event) {
   const overview = trimText(formData.get("activityOverview"));
   const steps = splitMultiline(formData.get("activitySteps"));
   const levels = parseRubricLevels(formData.get("rubricLevels"));
+  const activityData = collectBuilderActivityData({ strict: true });
+  if (!activityData) {
+    return;
+  }
 
   const rubricData = {
     title,
@@ -3087,6 +4562,7 @@ function handleBuilderSubmit(event) {
     duration,
     overview,
     steps,
+    activity: activityData,
     rubric: rubricData,
   });
 
@@ -3097,6 +4573,7 @@ function handleBuilderSubmit(event) {
 
   initialiseBuilderSlide(slide);
   insertActivitySlide(slide);
+  initialiseActivities(slide);
   if (typeof slide.__deckShowStatus === "function") {
     slide.__deckShowStatus("Rubric ready for your learners.", "success");
   }
@@ -3117,6 +4594,13 @@ function initialiseActivityBuilderUI() {
   }
 
   builderOverlay.__deckBuilderInitialised = true;
+
+  if (builderActivityTypeSelect instanceof HTMLSelectElement) {
+    builderActivityTypeSelect.addEventListener("change", (event) => {
+      renderActivityConfigurator(event.target.value);
+      updateBuilderJsonPreview();
+    });
+  }
 
   resetBuilderForm();
 
@@ -3268,6 +4752,12 @@ export async function setupInteractiveDeck({
   builderJsonPreview =
     builderOverlay?.querySelector("#builder-json-preview") ??
     document.querySelector("#builder-json-preview");
+  builderActivityTypeSelect =
+    builderOverlay?.querySelector('[name="activityType"]') ??
+    document.querySelector('[name="activityType"]');
+  builderActivityConfig =
+    builderOverlay?.querySelector("#builder-activity-config") ??
+    document.querySelector("#builder-activity-config");
   builderCancelBtn =
     builderOverlay?.querySelector('[data-action="cancel-builder"]') ??
     document.querySelector('[data-action="cancel-builder"]');

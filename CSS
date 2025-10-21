@@ -823,3 +823,47 @@ html, body { overscroll-behavior-y: none; }
     font-size: clamp(1.05rem, 3vw, 1.2rem);
   }
 }
+
+/* -------------------------------
+   Activity builder layout
+----------------------------------*/
+.activity-body-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(24px, 4vw, 42px);
+}
+
+.activity-detail-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.activity-interactive {
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.15);
+  padding: clamp(20px, 3vw, 32px);
+  box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.activity-interactive .card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.activity-interactive .activity-actions {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 960px) {
+  .activity-body-grid {
+    grid-template-columns: 1fr;
+  }
+}

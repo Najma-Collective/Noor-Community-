@@ -374,6 +374,120 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+.builder-activity-config {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.builder-subsection-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.builder-subsection-header h4 {
+  margin: 0;
+  font-size: var(--step-0);
+  font-weight: 700;
+  color: var(--forest-shadow);
+}
+
+.builder-subsection-header p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.builder-question-list,
+.builder-table-list,
+.builder-category-list,
+.builder-token-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.builder-question-item,
+.builder-table-row,
+.builder-category-item,
+.builder-token-item {
+  position: relative;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(122, 132, 113, 0.18);
+  box-shadow: var(--shadow-1);
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.builder-table-cells {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.builder-field--inline {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.builder-field--inline select,
+.builder-field--inline input {
+  max-width: 200px;
+}
+
+.builder-table-heading-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.builder-add-item {
+  align-self: flex-start;
+  padding-inline: 1.1rem 1.4rem;
+  font-size: 0.95rem;
+}
+
+.builder-category-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.builder-remove-item {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(239, 108, 82, 0.12);
+  color: #b85c47;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.builder-empty {
+  margin: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed rgba(122, 132, 113, 0.35);
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 .builder-remove-prompt {
   position: absolute;
   top: 12px;
@@ -2368,6 +2482,34 @@ ol {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: clamp(24px, 4vw, 42px);
+}
+
+.activity-detail-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.activity-interactive {
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.15);
+  padding: clamp(20px, 3vw, 32px);
+  box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.activity-interactive .card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.activity-interactive .activity-actions {
+  margin-top: var(--space-4);
 }
 
 .activity-instructions,
