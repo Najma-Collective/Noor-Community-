@@ -108,6 +108,8 @@ let builderImageResults;
 let builderImageStatus;
 let builderImageSearchBtn;
 let builderImageSearchInput;
+let builderRubricSection;
+let builderRubricToggle;
 let moduleOverlay;
 let moduleFrame;
 let moduleCloseBtn;
@@ -173,6 +175,154 @@ const DEFAULT_BUILDER_PROMPTS = [
       "Learners describe tangible benefits for the community and connect them to longer-term outcomes.",
   },
 ];
+
+const clonePromptEntries = (entries = []) =>
+  entries.map((entry) => ({ prompt: entry.prompt ?? "", success: entry.success ?? "" }));
+
+const BUILDER_LAYOUT_DEFAULTS = {
+  'blank-canvas': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
+  facilitation: () => ({
+    includeRubric: true,
+    stageLabel: 'Activity Workshop · 15 minutes',
+    activityTitle: 'Design a community impact project',
+    duration: '10 minutes',
+    slideTitle: 'Facilitation steps',
+    rubricIntro: 'Capture evidence for each success criterion as you collaborate.',
+    overview: 'Learners review project ideas in small teams and prepare peer feedback.',
+    steps: [
+      'Group learners in trios and assign each team a project brief.',
+      'Give two minutes of silent reading to highlight key information.',
+      'Invite teams to complete the rubric together and prepare one insight.',
+      'Cold call teams to share the most compelling improvement idea.',
+    ],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
+  'rubric-simple': () => ({
+    includeRubric: true,
+    stageLabel: 'Workshop showcase · 10 minutes',
+    activityTitle: 'Present your proposal',
+    duration: '10 minutes',
+    slideTitle: 'Success criteria spotlight',
+    rubricIntro: 'Capture quick evidence as teams present their ideas.',
+    overview: '',
+    steps: [],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
+  'rubric-columns': () => ({
+    includeRubric: true,
+    stageLabel: 'Feedback lab · 12 minutes',
+    activityTitle: 'Compare project ideas',
+    duration: '12 minutes',
+    slideTitle: 'Discussion prompts',
+    rubricIntro: 'Capture the highlights from each conversation.',
+    overview: '',
+    steps: [],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: 'Discuss together',
+    columnOneItems: ['Identify a strength you noticed.', 'Explain why it matters for the community.'],
+    columnTwoHeading: 'Capture evidence',
+    columnTwoItems: ['Quote the part of the proposal you are referencing.', 'Note questions you still have.'],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
+  'image-spotlight': () => ({
+    includeRubric: true,
+    stageLabel: 'Spotlight reflection · 8 minutes',
+    activityTitle: 'Reflect on community impact',
+    duration: '8 minutes',
+    slideTitle: 'Spotlight prompts',
+    rubricIntro: 'Collect key takeaways linked to the image.',
+    overview: '',
+    steps: [],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [
+      'Set the scene for the project you are analysing.',
+      'Highlight the aspect that the image represents.',
+      'Invite learners to connect evidence back to the rubric.',
+    ],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
+  'rubric-cards': () => ({
+    includeRubric: true,
+    stageLabel: 'Strategy sprint · 15 minutes',
+    activityTitle: 'Plan a response',
+    duration: '15 minutes',
+    slideTitle: 'Strategy steps',
+    rubricIntro: 'Check each card as your team progresses.',
+    overview: '',
+    steps: [],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [
+      {
+        heading: 'Plan',
+        body: 'Clarify the need you are addressing and list target beneficiaries.',
+      },
+      {
+        heading: 'Prototype',
+        body: 'Sketch how your idea will work in practice and who is involved.',
+      },
+      {
+        heading: 'Evaluate',
+        body: 'List evidence that shows impact and note the data you still need.',
+      },
+    ],
+  }),
+};
 
 const isValidMindmapColor = (color) =>
   typeof color === "string" &&
@@ -3948,6 +4098,9 @@ function collectRubricCriteria() {
   if (!(builderPromptList instanceof HTMLElement)) {
     return [];
   }
+  if (!isRubricEnabled()) {
+    return [];
+  }
   const items = Array.from(
     builderPromptList.querySelectorAll(".builder-prompt-item"),
   );
@@ -3995,6 +4148,113 @@ const setSelectedLayout = (layout = 'blank-canvas') => {
   }
 };
 
+const isRubricEnabled = () =>
+  !(builderRubricToggle instanceof HTMLInputElement) || builderRubricToggle.checked;
+
+const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
+  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['facilitation'];
+  if (typeof factory === 'function') {
+    try {
+      return factory();
+    } catch (error) {
+      console.warn('Unable to generate builder defaults for layout', layout, error);
+    }
+  }
+  return null;
+};
+
+function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+
+  const defaults = getBuilderLayoutDefaults(layout);
+  if (!defaults) {
+    return;
+  }
+
+  const setFieldValue = (name, value = '') => {
+    const field = builderForm.elements.namedItem?.(name);
+    if (!field) {
+      return;
+    }
+    if (typeof RadioNodeList !== "undefined" && field instanceof RadioNodeList) {
+      if (typeof value === 'string') {
+        field.value = value;
+      }
+      return;
+    }
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+      field.value = value;
+    }
+  };
+
+  setFieldValue('stageLabel', defaults.stageLabel ?? '');
+  setFieldValue('activityTitle', defaults.activityTitle ?? '');
+  setFieldValue('activityDuration', defaults.duration ?? '');
+  setFieldValue('slideTitle', defaults.slideTitle ?? '');
+  setFieldValue('slideRubricLead', defaults.rubricIntro ?? '');
+  setFieldValue('activityOverview', defaults.overview ?? '');
+  setFieldValue(
+    'activitySteps',
+    Array.isArray(defaults.steps) ? defaults.steps.join('\n') : defaults.steps ?? '',
+  );
+  setFieldValue(
+    'rubricLevels',
+    Array.isArray(defaults.rubricLevels)
+      ? defaults.rubricLevels.join(', ')
+      : defaults.rubricLevels ?? '',
+  );
+  setFieldValue('columnOneHeading', defaults.columnOneHeading ?? '');
+  setFieldValue(
+    'columnOneItems',
+    Array.isArray(defaults.columnOneItems)
+      ? defaults.columnOneItems.join('\n')
+      : defaults.columnOneItems ?? '',
+  );
+  setFieldValue('columnTwoHeading', defaults.columnTwoHeading ?? '');
+  setFieldValue(
+    'columnTwoItems',
+    Array.isArray(defaults.columnTwoItems)
+      ? defaults.columnTwoItems.join('\n')
+      : defaults.columnTwoItems ?? '',
+  );
+  setFieldValue(
+    'spotlightNarrative',
+    Array.isArray(defaults.spotlightNarrative)
+      ? defaults.spotlightNarrative.join('\n')
+      : defaults.spotlightNarrative ?? '',
+  );
+  setFieldValue('imageUrl', defaults.imageUrl ?? '');
+  setFieldValue('imageAlt', defaults.imageAlt ?? '');
+
+  const cards = Array.isArray(defaults.cards) ? defaults.cards : [];
+  setFieldValue('cardOneHeading', cards[0]?.heading ?? '');
+  setFieldValue('cardOneBody', cards[0]?.body ?? '');
+  setFieldValue('cardTwoHeading', cards[1]?.heading ?? '');
+  setFieldValue('cardTwoBody', cards[1]?.body ?? '');
+  setFieldValue('cardThreeHeading', cards[2]?.heading ?? '');
+  setFieldValue('cardThreeBody', cards[2]?.body ?? '');
+
+  if (typeof defaults.includeRubric === 'boolean' && builderRubricToggle instanceof HTMLInputElement) {
+    builderRubricToggle.checked = defaults.includeRubric;
+  }
+
+  if (builderPromptList instanceof HTMLElement) {
+    builderPromptList.innerHTML = '';
+    if (Array.isArray(defaults.prompts)) {
+      defaults.prompts.forEach((entry) => addPromptItem(entry));
+    }
+  }
+
+  handleRubricToggleChange({ preservePrompts: true, updatePreview });
+
+  if (updatePreview) {
+    updateBuilderJsonPreview();
+    updateBuilderPreview();
+  }
+}
+
 function getBuilderFormState() {
   if (!(builderForm instanceof HTMLFormElement)) {
     return null;
@@ -4005,11 +4265,12 @@ function getBuilderFormState() {
   const activityTitle = trimText(formData.get("activityTitle"));
   const duration = trimText(formData.get("activityDuration"));
   const slideTitle = trimText(formData.get("slideTitle"));
-  const rubricIntro = trimText(formData.get("slideRubricLead"));
+  const includeRubric = isRubricEnabled();
+  const rubricIntro = includeRubric ? trimText(formData.get("slideRubricLead")) : "";
   const overview = trimText(formData.get("activityOverview"));
   const steps = splitMultiline(formData.get("activitySteps"));
-  const levels = parseRubricLevels(formData.get("rubricLevels"));
-  const criteria = collectRubricCriteria();
+  const levels = includeRubric ? parseRubricLevels(formData.get("rubricLevels")) : [];
+  const criteria = includeRubric ? collectRubricCriteria() : [];
   const columnOneHeading = trimText(formData.get("columnOneHeading"));
   const columnOneItems = splitMultiline(formData.get("columnOneItems"));
   const columnTwoHeading = trimText(formData.get("columnTwoHeading"));
@@ -4038,6 +4299,7 @@ function getBuilderFormState() {
     activityTitle,
     duration,
     slideTitle,
+    includeRubric,
     rubricIntro,
     overview,
     steps,
@@ -4079,17 +4341,10 @@ function updateBuilderJsonPreview() {
     activityTitle: state.activityTitle,
     duration: state.duration,
     slideTitle: state.slideTitle,
-    rubricIntro: state.rubricIntro,
+    includeRubric: state.includeRubric,
+    rubricIntro: state.includeRubric ? state.rubricIntro : undefined,
     overview: state.overview,
     steps: state.steps,
-    rubric: {
-      levels: state.levels,
-      criteria: state.criteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    },
     columns:
       state.layout === "rubric-columns"
         ? {
@@ -4107,6 +4362,16 @@ function updateBuilderJsonPreview() {
         : undefined,
     cards: state.layout === "rubric-cards" ? state.cards : undefined,
   };
+  if (state.includeRubric) {
+    previewData.rubric = {
+      levels: state.levels,
+      criteria: state.criteria.map((criterion, index) => ({
+        id: `criterion-${index + 1}`,
+        prompt: criterion.prompt,
+        success: criterion.success,
+      })),
+    };
+  }
   builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
 }
 
@@ -4171,10 +4436,12 @@ function updateBuilderPreview() {
     return;
   }
 
-  const rubricPayload = {
-    criteria: state.criteria,
-    levels: state.levels,
-  };
+  const rubricPayload = state.includeRubric
+    ? {
+        criteria: state.criteria,
+        levels: state.levels,
+      }
+    : null;
 
   let slide = null;
   switch (state.layout) {
@@ -4187,6 +4454,7 @@ function updateBuilderPreview() {
         rubric: rubricPayload,
         rubricHeadingText: "Success criteria",
         rubricIntro: state.rubricIntro,
+        rubricEnabled: state.includeRubric,
       });
       break;
     case "rubric-columns":
@@ -4205,6 +4473,7 @@ function updateBuilderPreview() {
           heading: state.columnTwoHeading,
           items: state.columnTwoItems,
         },
+        rubricEnabled: state.includeRubric,
       });
       break;
     case "image-spotlight":
@@ -4218,6 +4487,7 @@ function updateBuilderPreview() {
         narrative: state.spotlightNarrative,
         imageUrl: state.imageUrl,
         imageAlt: state.imageAlt,
+        rubricEnabled: state.includeRubric,
       });
       break;
     case "rubric-cards":
@@ -4229,6 +4499,7 @@ function updateBuilderPreview() {
         rubric: rubricPayload,
         rubricIntro: state.rubricIntro,
         cards: state.cards,
+        rubricEnabled: state.includeRubric,
       });
       break;
     default:
@@ -4242,6 +4513,7 @@ function updateBuilderPreview() {
         instructionsHeading: state.slideTitle,
         rubricHeadingText: "Success criteria",
         rubricIntro: state.rubricIntro,
+        rubricEnabled: state.includeRubric,
       });
       break;
   }
@@ -4258,6 +4530,10 @@ function ensureBuilderPrompts() {
   if (!(builderPromptList instanceof HTMLElement)) {
     return;
   }
+  if (!isRubricEnabled()) {
+    builderPromptList.innerHTML = "";
+    return;
+  }
   const layout = getSelectedLayout();
   if (layout === "blank-canvas") {
     builderPromptList.innerHTML = "";
@@ -4265,6 +4541,37 @@ function ensureBuilderPrompts() {
   }
   if (!builderPromptList.querySelector(".builder-prompt-item")) {
     DEFAULT_BUILDER_PROMPTS.forEach((entry) => addPromptItem(entry));
+  }
+}
+
+function handleRubricToggleChange({ preservePrompts = false, updatePreview = true } = {}) {
+  const enabled = isRubricEnabled();
+  if (builderRubricSection instanceof HTMLElement) {
+    builderRubricSection.classList.toggle("is-disabled", !enabled);
+  }
+  if (builderAddPromptBtn instanceof HTMLButtonElement) {
+    builderAddPromptBtn.disabled = !enabled;
+    builderAddPromptBtn.setAttribute("aria-disabled", String(!enabled));
+  }
+  if (builderPromptList instanceof HTMLElement) {
+    builderPromptList.hidden = !enabled;
+    const controls = builderPromptList.querySelectorAll("input, textarea");
+    controls.forEach((control) => {
+      if (control instanceof HTMLElement) {
+        if (enabled) {
+          control.removeAttribute("disabled");
+        } else {
+          control.setAttribute("disabled", "disabled");
+        }
+      }
+    });
+    if (enabled && !builderPromptList.querySelector(".builder-prompt-item")) {
+      ensureBuilderPrompts();
+    }
+  }
+  if (updatePreview) {
+    updateBuilderJsonPreview();
+    updateBuilderPreview();
   }
 }
 
@@ -4469,6 +4776,8 @@ function resetBuilderForm() {
   updateImageSearchStatus("", "info");
   builderFieldId = 0;
   setSelectedLayout("blank-canvas");
+  handleRubricToggleChange({ preservePrompts: true, updatePreview: false });
+  applyBuilderLayoutDefaults("blank-canvas", { updatePreview: false });
   ensureBuilderPrompts();
   updateBuilderJsonPreview();
   syncBuilderLayout("blank-canvas");
@@ -4493,9 +4802,10 @@ function openBuilderOverlay({ layout } = {}) {
     setSelectedLayout(layout);
   }
   ensureBuilderPrompts();
-  updateBuilderJsonPreview();
   const activeLayout = getSelectedLayout();
+  applyBuilderLayoutDefaults(activeLayout, { updatePreview: false });
   syncBuilderLayout(activeLayout);
+  updateBuilderJsonPreview();
   updateBuilderPreview();
   builderOverlay.hidden = false;
   requestAnimationFrame(() => {
@@ -4771,6 +5081,7 @@ function createActivitySlide({
   instructionsHeading = "Facilitation steps",
   rubricHeadingText = "Success criteria",
   rubricIntro,
+  rubricEnabled = true,
 } = {}) {
   const resolvedTitle = trimText(title);
   if (!resolvedTitle) {
@@ -4829,6 +5140,9 @@ function createActivitySlide({
 
   const bodyGrid = document.createElement("div");
   bodyGrid.className = "activity-body-grid";
+  if (!rubricEnabled) {
+    bodyGrid.classList.add("activity-body-grid--single");
+  }
   inner.appendChild(bodyGrid);
 
   const instructionsSection = document.createElement("section");
@@ -4862,13 +5176,16 @@ function createActivitySlide({
     instructionsSection.appendChild(emptyMessage);
   }
 
-  const rubricSection = buildRubricSection({
-    heading: rubricHeadingText,
-    intro: rubricIntro,
-    rubric,
-  });
-  bodyGrid.appendChild(rubricSection);
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: rubricHeadingText,
+      intro: rubricIntro,
+      rubric,
+    });
+    bodyGrid.appendChild(rubricSection);
+  }
 
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
 
   const footer = document.createElement("div");
@@ -4913,18 +5230,24 @@ function createActivitySlide({
   toggleBtn.appendChild(toggleLabel);
   actionsWrap.appendChild(toggleBtn);
 
-  try {
-    slide.dataset.rubric = JSON.stringify({
-      title: resolvedTitle,
-      levels: rubricLevels,
-      criteria: rubricCriteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    });
-  } catch (error) {
-    console.warn("Unable to serialise rubric data", error);
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
   }
   slide.dataset.activityTitle = resolvedTitle;
   return slide;
@@ -4938,6 +5261,7 @@ function createRubricFocusSlide({
   rubric = { criteria: [], levels: [] },
   rubricHeadingText = "Success criteria",
   rubricIntro,
+  rubricEnabled = true,
 } = {}) {
   const resolvedHeading = trimText(title) || trimText(activityTitle);
   if (!resolvedHeading) {
@@ -4998,13 +5322,20 @@ function createRubricFocusSlide({
   body.className = "activity-body activity-body--simple";
   inner.appendChild(body);
 
-  const rubricSection = buildRubricSection({
-    heading: rubricHeadingText,
-    intro: rubricIntro,
-    rubric,
-    className: "activity-rubric activity-rubric--simple",
-  });
-  body.appendChild(rubricSection);
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: rubricHeadingText,
+      intro: rubricIntro,
+      rubric,
+      className: "activity-rubric activity-rubric--simple",
+    });
+    body.appendChild(rubricSection);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Success criteria are hidden for this layout.";
+    body.appendChild(placeholder);
+  }
 
   const footer = document.createElement("div");
   footer.className = "activity-slide-footer";
@@ -5049,18 +5380,25 @@ function createRubricFocusSlide({
   actionsWrap.appendChild(toggleBtn);
 
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
-  try {
-    slide.dataset.rubric = JSON.stringify({
-      title: resolvedHeading,
-      levels: Array.isArray(rubric?.levels) ? rubric.levels : [],
-      criteria: rubricCriteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    });
-  } catch (error) {
-    console.warn("Unable to serialise rubric data", error);
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedHeading,
+        levels: Array.isArray(rubric?.levels) ? rubric.levels : [],
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
   }
 
   slide.dataset.activityTitle = resolvedHeading;
@@ -5076,6 +5414,7 @@ function createRubricColumnSlide({
   rubricIntro,
   columnOne = {},
   columnTwo = {},
+  rubricEnabled = true,
 } = {}) {
   const resolvedTitle = trimText(title) || "Collaborative discussion";
   const headingTitle = trimText(slideTitle) || "Discussion prompts";
@@ -5126,15 +5465,20 @@ function createRubricColumnSlide({
 
   const layout = document.createElement("div");
   layout.className = "activity-columns-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-columns-layout--no-rubric");
+  }
   inner.appendChild(layout);
 
-  const rubricSection = buildRubricSection({
-    heading: "Success criteria",
-    intro: rubricIntro,
-    rubric,
-    className: "activity-rubric activity-rubric--wide",
-  });
-  layout.appendChild(rubricSection);
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+      className: "activity-rubric activity-rubric--wide",
+    });
+    layout.appendChild(rubricSection);
+  }
 
   const columnsHeading = document.createElement("h3");
   columnsHeading.className = "activity-columns-heading";
@@ -5222,18 +5566,24 @@ function createRubricColumnSlide({
   const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
 
-  try {
-    slide.dataset.rubric = JSON.stringify({
-      title: resolvedTitle,
-      levels: rubricLevels,
-      criteria: rubricCriteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    });
-  } catch (error) {
-    console.warn("Unable to serialise rubric data", error);
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
   }
 
   slide.dataset.activityTitle = resolvedTitle;
@@ -5250,6 +5600,7 @@ function createImageSpotlightSlide({
   narrative = [],
   imageUrl,
   imageAlt,
+  rubricEnabled = true,
 } = {}) {
   const resolvedTitle = trimText(title) || "Spotlight reflection";
   const resolvedHeading = trimText(slideTitle) || "Reflection spotlight";
@@ -5298,6 +5649,9 @@ function createImageSpotlightSlide({
 
   const spotlightLayout = document.createElement("div");
   spotlightLayout.className = "activity-spotlight-layout";
+  if (!rubricEnabled) {
+    spotlightLayout.classList.add("activity-spotlight-layout--no-rubric");
+  }
   inner.appendChild(spotlightLayout);
 
   const contentRow = document.createElement("div");
@@ -5352,13 +5706,15 @@ function createImageSpotlightSlide({
     imageFigure.appendChild(placeholder);
   }
 
-  const rubricSection = buildRubricSection({
-    heading: "Success criteria",
-    intro: rubricIntro,
-    rubric,
-    className: "activity-rubric activity-rubric--spotlight",
-  });
-  spotlightLayout.appendChild(rubricSection);
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+      className: "activity-rubric activity-rubric--spotlight",
+    });
+    spotlightLayout.appendChild(rubricSection);
+  }
 
   const footer = document.createElement("div");
   footer.className = "activity-slide-footer";
@@ -5405,18 +5761,24 @@ function createImageSpotlightSlide({
   const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
 
-  try {
-    slide.dataset.rubric = JSON.stringify({
-      title: resolvedTitle,
-      levels: rubricLevels,
-      criteria: rubricCriteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    });
-  } catch (error) {
-    console.warn("Unable to serialise rubric data", error);
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
   }
 
   slide.dataset.activityTitle = resolvedTitle;
@@ -5431,6 +5793,7 @@ function createRubricCardSlide({
   rubric = { criteria: [], levels: [] },
   rubricIntro,
   cards = [],
+  rubricEnabled = true,
 } = {}) {
   const resolvedTitle = trimText(title) || "Strategy studio";
   const resolvedHeading = trimText(slideTitle) || "Team strategies";
@@ -5479,14 +5842,19 @@ function createRubricCardSlide({
 
   const layout = document.createElement("div");
   layout.className = "activity-card-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-card-layout--no-rubric");
+  }
   inner.appendChild(layout);
 
-  const rubricSection = buildRubricSection({
-    heading: "Success criteria",
-    intro: rubricIntro,
-    rubric,
-  });
-  layout.appendChild(rubricSection);
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+    });
+    layout.appendChild(rubricSection);
+  }
 
   const cardsHeading = document.createElement("h3");
   cardsHeading.className = "strategy-cards-heading";
@@ -5570,18 +5938,24 @@ function createRubricCardSlide({
   const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
   const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
 
-  try {
-    slide.dataset.rubric = JSON.stringify({
-      title: resolvedTitle,
-      levels: rubricLevels,
-      criteria: rubricCriteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    });
-  } catch (error) {
-    console.warn("Unable to serialise rubric data", error);
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
   }
 
   slide.dataset.activityTitle = resolvedTitle;
@@ -5910,6 +6284,7 @@ function initialiseActivityBuilderUI() {
         }
         const layoutValue = target.value || "blank-canvas";
         syncBuilderLayout(layoutValue);
+        applyBuilderLayoutDefaults(layoutValue);
         ensureBuilderPrompts();
         updateBuilderJsonPreview();
         updateBuilderPreview();
@@ -5963,6 +6338,10 @@ function initialiseActivityBuilderUI() {
     }
   });
 
+  builderRubricToggle?.addEventListener("change", () => {
+    handleRubricToggleChange({ preservePrompts: false, updatePreview: true });
+  });
+
   if (builderForm instanceof HTMLFormElement) {
     builderForm.addEventListener("submit", handleBuilderSubmit);
     builderForm.addEventListener("input", () => {
@@ -5975,6 +6354,7 @@ function initialiseActivityBuilderUI() {
     });
   }
 
+  handleRubricToggleChange({ preservePrompts: true, updatePreview: false });
   initialiseGeneratedActivitySlides();
   updateBuilderJsonPreview();
   updateBuilderPreview();
@@ -6120,6 +6500,12 @@ export async function setupInteractiveDeck({
   builderImageSearchInput =
     builderOverlay?.querySelector('input[name="imageSearch"]') ??
     document.querySelector('input[name="imageSearch"]');
+  builderRubricSection =
+    builderOverlay?.querySelector('[data-role="rubric-section"]') ??
+    document.querySelector('[data-role="rubric-section"]');
+  builderRubricToggle =
+    builderOverlay?.querySelector('input[name="includeRubric"]') ??
+    document.querySelector('input[name="includeRubric"]');
   builderLastFocus = null;
   builderFieldId = 0;
   moduleOverlay =
