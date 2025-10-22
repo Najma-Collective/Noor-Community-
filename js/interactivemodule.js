@@ -2,6 +2,56 @@ import { initSlideNavigator } from "./slideNavigator.js";
 
 // Shared interactive module for Noor Community decks
 
+const DECK_MODE_STORAGE_KEY = "noor.deckMode";
+const DECK_MODES = ["teacher", "student", "revision"];
+const READ_ONLY_MODES = new Set(["student", "revision"]);
+
+let deckMode = "teacher";
+
+const getModeStorage = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    return window.localStorage ?? null;
+  } catch (error) {
+    console.warn("Unable to access localStorage for deck mode", error);
+    return null;
+  }
+};
+
+const isValidDeckMode = (value) =>
+  typeof value === "string" && DECK_MODES.includes(value);
+
+const resolveDeckMode = (requestedMode) => {
+  if (isValidDeckMode(requestedMode)) {
+    return requestedMode;
+  }
+  const storage = getModeStorage();
+  if (storage) {
+    const stored = storage.getItem(DECK_MODE_STORAGE_KEY);
+    if (isValidDeckMode(stored)) {
+      return stored;
+    }
+  }
+  return "teacher";
+};
+
+const persistDeckMode = (mode) => {
+  const storage = getModeStorage();
+  if (!storage) {
+    return;
+  }
+  try {
+    storage.setItem(DECK_MODE_STORAGE_KEY, mode);
+  } catch (error) {
+    console.warn("Unable to persist deck mode", error);
+  }
+};
+
+const isReadOnlyMode = () => READ_ONLY_MODES.has(deckMode);
+const isTeacherMode = () => deckMode === "teacher";
+
 export const TEXTBOX_COLOR_OPTIONS = [
   { value: "sage", label: "Sage" },
   { value: "wheat", label: "Wheat" },
@@ -51,6 +101,13 @@ let builderCloseBtn;
 let builderStatusEl;
 let builderLastFocus;
 let builderFieldId = 0;
+
+let modeSwitcherSelect;
+let progressTrackerEl;
+let markCompleteBtn;
+let progressStorageKey = "";
+let completedSlides = new Set();
+let deckRootElement = null;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -326,6 +383,7 @@ function showSlide(index) {
   });
   updateCounter();
   slideNavigatorController?.setActive(currentSlideIndex);
+  updateProgressTracker();
 }
 
 function navigate(direction) {
@@ -368,6 +426,404 @@ function ensureLegacyNavigationBridge() {
   }
 }
 
+const getDeckIdentifier = () => {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  const { pathname = "" } = window.location ?? {};
+  return pathname || "deck";
+};
+
+const getProgressStorage = () => {
+  const storage = getModeStorage();
+  if (!storage) {
+    return null;
+  }
+  try {
+    return storage;
+  } catch (error) {
+    console.warn("Unable to access storage for deck progress", error);
+    return null;
+  }
+};
+
+const loadCompletedSlidesFromStorage = () => {
+  const storage = getProgressStorage();
+  if (!storage || !progressStorageKey) {
+    return new Set();
+  }
+  try {
+    const raw = storage.getItem(progressStorageKey);
+    if (!raw) {
+      return new Set();
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return new Set();
+    }
+    return new Set(parsed.map((value) => Number.parseInt(value, 10)).filter((value) => Number.isInteger(value)));
+  } catch (error) {
+    console.warn("Unable to load deck progress", error);
+    return new Set();
+  }
+};
+
+const persistCompletedSlides = () => {
+  const storage = getProgressStorage();
+  if (!storage || !progressStorageKey) {
+    return;
+  }
+  try {
+    storage.setItem(
+      progressStorageKey,
+      JSON.stringify(Array.from(completedSlides.values()).sort((a, b) => a - b)),
+    );
+  } catch (error) {
+    console.warn("Unable to persist deck progress", error);
+  }
+};
+
+const formatModeLabel = (mode) => {
+  switch (mode) {
+    case "student":
+      return "Student";
+    case "revision":
+      return "Revision";
+    case "teacher":
+    default:
+      return "Teacher";
+  }
+};
+
+function initialiseModeSwitcher(root = document) {
+  const scope = root instanceof HTMLElement ? root : document;
+  const actions = scope.querySelector?.(".toolbar-actions") ?? document.querySelector(".toolbar-actions");
+  if (!(actions instanceof HTMLElement)) {
+    return;
+  }
+
+  let container = actions.querySelector('[data-role="deck-mode-switcher"]');
+  if (!(container instanceof HTMLElement)) {
+    container = document.createElement("label");
+    container.dataset.role = "deck-mode-switcher";
+    container.className = "mode-switcher";
+    container.innerHTML = `
+      <span class="mode-switcher-label">Mode</span>
+    `;
+    const select = document.createElement("select");
+    select.className = "mode-switcher-select";
+    select.setAttribute("aria-label", "Deck mode");
+    DECK_MODES.forEach((mode) => {
+      const option = document.createElement("option");
+      option.value = mode;
+      option.textContent = `${formatModeLabel(mode)} mode`;
+      select.appendChild(option);
+    });
+    container.appendChild(select);
+    actions.appendChild(container);
+    modeSwitcherSelect = select;
+  } else {
+    const select = container.querySelector("select");
+    if (select instanceof HTMLSelectElement) {
+      modeSwitcherSelect = select;
+    }
+  }
+
+  if (!(modeSwitcherSelect instanceof HTMLSelectElement)) {
+    return;
+  }
+
+  modeSwitcherSelect.value = deckMode;
+  if (modeSwitcherSelect.dataset.modeInitialised === "true") {
+    return;
+  }
+  modeSwitcherSelect.dataset.modeInitialised = "true";
+  modeSwitcherSelect.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLSelectElement)) {
+      return;
+    }
+    const nextMode = event.target.value;
+    if (!isValidDeckMode(nextMode) || nextMode === deckMode) {
+      event.target.value = deckMode;
+      return;
+    }
+    persistDeckMode(nextMode);
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
+  });
+}
+
+const setControlDisabledState = (control, disabled) => {
+  if (!(control instanceof HTMLElement)) {
+    return;
+  }
+  if ("disabled" in control) {
+    control.disabled = disabled;
+  }
+  control.classList.toggle("is-disabled", disabled);
+  if (disabled) {
+    control.setAttribute("aria-disabled", "true");
+  } else {
+    control.removeAttribute("aria-disabled");
+  }
+};
+
+const ensureModeStyles = () => {
+  if (typeof document === "undefined") {
+    return;
+  }
+  if (document.head?.querySelector('[data-role="deck-mode-styles"]')) {
+    return;
+  }
+  const style = document.createElement("style");
+  style.dataset.role = "deck-mode-styles";
+  style.textContent = `
+    .mode-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .mode-switcher-label {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      color: var(--ink-muted, #6b7465);
+    }
+    .mode-switcher-select {
+      border-radius: 999px;
+      border: 1px solid var(--border-sage, rgba(98,112,92,0.35));
+      padding: 0.35rem 0.9rem;
+      background: var(--soft-white, #fdfbf5);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .read-only-tools {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-inline-end: 1rem;
+    }
+    .read-only-progress {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink-muted, #6b7465);
+    }
+    .read-only-progress-bar {
+      width: 92px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(98,112,92,0.18);
+      overflow: hidden;
+    }
+    .read-only-progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--primary-sage, #8aa870);
+      transition: width 220ms ease-in-out;
+    }
+    .mark-complete-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-sage, rgba(98,112,92,0.35));
+      background: transparent;
+      color: var(--primary-sage, #8aa870);
+      font-weight: 600;
+    }
+    .mark-complete-btn.is-active {
+      background: var(--primary-sage, #8aa870);
+      color: var(--soft-white, #fdfbf5);
+      border-color: transparent;
+    }
+    .toolbar-actions .is-hidden {
+      display: none !important;
+    }
+    .is-disabled {
+      pointer-events: none !important;
+      opacity: 0.55;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+const hideElement = (element, shouldHide) => {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  element.classList.toggle("is-hidden", shouldHide);
+  if (shouldHide) {
+    element.setAttribute("hidden", "hidden");
+  } else {
+    element.removeAttribute("hidden");
+  }
+};
+
+function disableActivityBuilderUI() {
+  setControlDisabledState(activityBuilderBtn, true);
+  hideElement(activityBuilderBtn, true);
+  if (builderOverlay instanceof HTMLElement) {
+    builderOverlay.setAttribute("aria-hidden", "true");
+    builderOverlay.classList.add("is-disabled");
+  }
+}
+
+function applyToolbarStateForMode() {
+  if (isTeacherMode()) {
+    setControlDisabledState(addSlideBtn, false);
+    setControlDisabledState(saveStateBtn, false);
+    setControlDisabledState(loadStateBtn, false);
+    setControlDisabledState(highlightBtn, false);
+    setControlDisabledState(removeHighlightBtn, false);
+    if (highlightColorSelect instanceof HTMLSelectElement) {
+      highlightColorSelect.disabled = false;
+    }
+    hideElement(activityBuilderBtn, false);
+    hideElement(addSlideBtn, false);
+    hideElement(saveStateBtn, false);
+    hideElement(loadStateBtn, false);
+    const highlightControls = highlightBtn?.closest?.(".highlight-controls");
+    hideElement(highlightControls, false);
+    if (builderOverlay instanceof HTMLElement) {
+      builderOverlay.removeAttribute("aria-hidden");
+      builderOverlay.classList.remove("is-disabled");
+    }
+    return;
+  }
+
+  setControlDisabledState(addSlideBtn, true);
+  setControlDisabledState(saveStateBtn, true);
+  setControlDisabledState(loadStateBtn, true);
+  setControlDisabledState(highlightBtn, true);
+  setControlDisabledState(removeHighlightBtn, true);
+  if (highlightColorSelect instanceof HTMLSelectElement) {
+    highlightColorSelect.disabled = true;
+  }
+  hideElement(addSlideBtn, true);
+  hideElement(saveStateBtn, true);
+  hideElement(loadStateBtn, true);
+  const highlightControls = highlightBtn?.closest?.(".highlight-controls");
+  hideElement(highlightControls, true);
+  disableActivityBuilderUI();
+}
+
+const getProgressAssistContainer = () => {
+  const scope = deckRootElement instanceof HTMLElement ? deckRootElement : document;
+  const actions = scope.querySelector?.(".toolbar-actions") ?? document.querySelector(".toolbar-actions");
+  if (!(actions instanceof HTMLElement)) {
+    return null;
+  }
+  let container = actions.querySelector('[data-role="read-only-tools"]');
+  if (!(container instanceof HTMLElement)) {
+    container = document.createElement("div");
+    container.dataset.role = "read-only-tools";
+    container.className = "read-only-tools";
+    container.innerHTML = `
+      <div class="read-only-progress">
+        <span class="read-only-progress-label" data-role="progress-label"></span>
+        <div class="read-only-progress-bar" role="presentation">
+          <div class="read-only-progress-fill" data-role="progress-fill"></div>
+        </div>
+      </div>
+    `;
+    actions.prepend(container);
+  }
+  return container;
+};
+
+const clampCompletedSlides = () => {
+  const clamped = new Set();
+  completedSlides.forEach((index) => {
+    if (typeof index === "number" && index >= 0 && index < slides.length) {
+      clamped.add(index);
+    }
+  });
+  completedSlides = clamped;
+};
+
+function updateProgressTracker() {
+  if (!isReadOnlyMode()) {
+    return;
+  }
+  clampCompletedSlides();
+  const completedCount = completedSlides.size;
+  const totalSlides = slides.length;
+  const progressPercent = totalSlides ? Math.round((completedCount / totalSlides) * 100) : 0;
+  if (progressTrackerEl instanceof HTMLElement) {
+    const label = progressTrackerEl.querySelector('[data-role="progress-label"]');
+    if (label instanceof HTMLElement) {
+      label.textContent = `${completedCount} of ${totalSlides} complete`;
+    }
+    const fill = progressTrackerEl.querySelector('[data-role="progress-fill"]');
+    if (fill instanceof HTMLElement) {
+      fill.style.width = `${progressPercent}%`;
+    }
+  }
+  if (markCompleteBtn instanceof HTMLElement) {
+    const isComplete = completedSlides.has(currentSlideIndex);
+    markCompleteBtn.classList.toggle("is-active", isComplete);
+    markCompleteBtn.setAttribute(
+      "aria-pressed",
+      isComplete ? "true" : "false",
+    );
+    markCompleteBtn.textContent = isComplete ? "Completed" : "Mark complete";
+  }
+}
+
+const toggleSlideCompletion = () => {
+  if (!isReadOnlyMode() || !slides.length) {
+    return;
+  }
+  if (completedSlides.has(currentSlideIndex)) {
+    completedSlides.delete(currentSlideIndex);
+  } else {
+    completedSlides.add(currentSlideIndex);
+  }
+  persistCompletedSlides();
+  updateProgressTracker();
+};
+
+function ensureMarkCompleteButton() {
+  if (!isReadOnlyMode()) {
+    return;
+  }
+  if (markCompleteBtn instanceof HTMLElement) {
+    return;
+  }
+  const scope = deckRootElement instanceof HTMLElement ? deckRootElement : document;
+  const actions = scope.querySelector?.(".toolbar-actions") ?? document.querySelector(".toolbar-actions");
+  if (!(actions instanceof HTMLElement)) {
+    return;
+  }
+  markCompleteBtn = document.createElement("button");
+  markCompleteBtn.type = "button";
+  markCompleteBtn.className = "toolbar-btn mark-complete-btn";
+  markCompleteBtn.setAttribute("aria-pressed", "false");
+  markCompleteBtn.textContent = "Mark complete";
+  markCompleteBtn.addEventListener("click", () => {
+    toggleSlideCompletion();
+  });
+  actions.prepend(markCompleteBtn);
+}
+
+function initialiseReadOnlyAssistUI() {
+  if (!isReadOnlyMode()) {
+    return;
+  }
+  const identifier = getDeckIdentifier();
+  progressStorageKey = `${identifier}::progress::${deckMode}`;
+  completedSlides = loadCompletedSlidesFromStorage();
+  const container = getProgressAssistContainer();
+  if (container instanceof HTMLElement) {
+    progressTrackerEl = container.querySelector(".read-only-progress");
+  }
+  ensureMarkCompleteButton();
+  updateProgressTracker();
+}
+
 export function addBlankSlide() {
   if (!stageViewport) return;
   const newSlide = createBlankSlide();
@@ -408,6 +864,7 @@ export function attachBlankSlideEvents(slide) {
   const hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
   const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
+  const readOnly = isReadOnlyMode();
 
   if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
     return;
@@ -447,26 +904,37 @@ export function attachBlankSlideEvents(slide) {
     }
   }
 
-  addTextboxBtn?.addEventListener("click", () => {
-    const textbox = createTextbox({ onRemove: updateHintForCanvas });
-    canvas.appendChild(textbox);
-    positionTextbox(textbox, canvas);
-    updateHintForCanvas();
-  });
-
-  addMindmapBtn?.addEventListener("click", () => {
-    if (canvas.querySelector(".mindmap")) {
-      const existing = canvas.querySelector(".mindmap");
-      existing?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
+  if (readOnly) {
+    if (addTextboxBtn instanceof HTMLButtonElement) {
+      setControlDisabledState(addTextboxBtn, true);
+      addTextboxBtn.classList.add("is-hidden");
     }
-    const mindmap = createMindMap(() => {
+    if (addMindmapBtn instanceof HTMLButtonElement) {
+      setControlDisabledState(addMindmapBtn, true);
+      addMindmapBtn.classList.add("is-hidden");
+    }
+  } else {
+    addTextboxBtn?.addEventListener("click", () => {
+      const textbox = createTextbox({ onRemove: updateHintForCanvas });
+      canvas.appendChild(textbox);
+      positionTextbox(textbox, canvas);
       updateHintForCanvas();
     });
-    initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
-    canvas.appendChild(mindmap);
-    updateHintForCanvas();
-  });
+
+    addMindmapBtn?.addEventListener("click", () => {
+      if (canvas.querySelector(".mindmap")) {
+        const existing = canvas.querySelector(".mindmap");
+        existing?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      const mindmap = createMindMap(() => {
+        updateHintForCanvas();
+      });
+      initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
+      canvas.appendChild(mindmap);
+      updateHintForCanvas();
+    });
+  }
 
   canvas
     .querySelectorAll(".textbox")
@@ -544,11 +1012,13 @@ export function attachBlankSlideEvents(slide) {
     canvas.focus({ preventScroll: true });
   }
 
-  canvas.addEventListener("paste", (event) => {
-    handleCanvasPaste(event).catch((error) => {
-      console.warn("Image paste failed", error);
+  if (!readOnly) {
+    canvas.addEventListener("paste", (event) => {
+      handleCanvasPaste(event).catch((error) => {
+        console.warn("Image paste failed", error);
+      });
     });
-  });
+  }
 
   canvas.addEventListener("pointerdown", (event) => {
     if (event.target === canvas) {
@@ -612,26 +1082,7 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
   }
 
   const removeBtn = textbox.querySelector(".textbox-remove");
-  removeBtn?.addEventListener("click", () => {
-    textbox.remove();
-    if (typeof textbox.__deckTextboxOnRemove === "function") {
-      textbox.__deckTextboxOnRemove();
-    }
-  });
-
   const body = textbox.querySelector(".textbox-body");
-  body?.addEventListener("dblclick", () => {
-    if (body instanceof HTMLElement) {
-      body.focus();
-    }
-  });
-
-  body?.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      body.blur();
-    }
-  });
-
   const colorButtons = Array.from(
     textbox.querySelectorAll(".textbox-color-swatch"),
   );
@@ -646,6 +1097,26 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
     });
   };
 
+  syncTextboxColourState();
+  textbox.__deckTextboxSyncColor = () => syncTextboxColourState();
+
+  if (isReadOnlyMode()) {
+    textbox.classList.add("is-readonly");
+    if (removeBtn instanceof HTMLButtonElement) {
+      setControlDisabledState(removeBtn, true);
+      removeBtn.classList.add("is-hidden");
+    }
+    if (body instanceof HTMLElement) {
+      body.setAttribute("contenteditable", "false");
+      body.setAttribute("tabindex", "0");
+      body.classList.add("is-readonly");
+    }
+    colorButtons.forEach((button) => {
+      setControlDisabledState(button, true);
+    });
+    return textbox;
+  }
+
   colorButtons.forEach((button) => {
     button.addEventListener("click", () => {
       if (!button.dataset.color) return;
@@ -656,8 +1127,24 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
     });
   });
 
-  syncTextboxColourState();
-  textbox.__deckTextboxSyncColor = () => syncTextboxColourState();
+  removeBtn?.addEventListener("click", () => {
+    textbox.remove();
+    if (typeof textbox.__deckTextboxOnRemove === "function") {
+      textbox.__deckTextboxOnRemove();
+    }
+  });
+
+  body?.addEventListener("dblclick", () => {
+    if (body instanceof HTMLElement) {
+      body.focus();
+    }
+  });
+
+  body?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      body.blur();
+    }
+  });
 
   makeDraggable(textbox);
   return textbox;
@@ -668,6 +1155,10 @@ function makeResizable(element, { handleSelector = ".resize-handle", minWidth = 
     return;
   }
   if (element.__deckResizableInitialised) {
+    return;
+  }
+  if (isReadOnlyMode()) {
+    element.classList.add("is-readonly");
     return;
   }
 
@@ -855,6 +1346,10 @@ export function makeDraggable(element) {
   if (element.__deckDraggableInitialised) {
     return;
   }
+  if (isReadOnlyMode()) {
+    element.classList.add("is-readonly");
+    return;
+  }
   element.__deckDraggableInitialised = true;
 
   const handle = element.querySelector(".textbox-handle") ?? element;
@@ -984,17 +1479,28 @@ export function initialiseMindMap(container, { onRemove } = {}) {
   const sortBtn = container.querySelector('[data-action="sort-branches"]');
   const copyBtn = container.querySelector('[data-action="copy-mindmap"]');
   const center = container.querySelector(".mindmap-center");
+  const removeBtn = container.querySelector(".mindmap-remove");
+  const readOnly = isReadOnlyMode();
 
   container.__deckMindmapOnRemove = onRemove;
   if (!container.__deckMindmapInitialised) {
     container.__deckMindmapInitialised = true;
-    const removeBtn = container.querySelector(".mindmap-remove");
-    removeBtn?.addEventListener("click", () => {
-      container.remove();
-      if (typeof container.__deckMindmapOnRemove === "function") {
-        container.__deckMindmapOnRemove();
-      }
-    });
+    if (!readOnly) {
+      removeBtn?.addEventListener("click", () => {
+        container.remove();
+        if (typeof container.__deckMindmapOnRemove === "function") {
+          container.__deckMindmapOnRemove();
+        }
+      });
+    }
+  }
+
+  if (readOnly) {
+    container.classList.add("is-readonly");
+    if (removeBtn instanceof HTMLButtonElement) {
+      setControlDisabledState(removeBtn, true);
+      removeBtn.classList.add("is-hidden");
+    }
   }
 
   let statusTimeoutId = null;
@@ -1122,74 +1628,93 @@ export function initialiseMindMap(container, { onRemove } = {}) {
     onChange: handleBranchUpdate,
   };
 
-  if (form && !form.__deckSubmitInitialised) {
-    form.__deckSubmitInitialised = true;
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      if (!(branches instanceof HTMLElement) || !(input instanceof HTMLInputElement)) {
-        return;
+  if (form) {
+    if (readOnly) {
+      form.classList.add("is-disabled");
+      form.setAttribute("aria-disabled", "true");
+      const submitBtn = form.querySelector('button[type="submit"]');
+      setControlDisabledState(submitBtn, true);
+      if (input instanceof HTMLInputElement) {
+        input.disabled = true;
       }
-      const value = input.value.trim();
-      if (!value) {
-        showStatus("Enter a branch idea before adding it.");
-        return;
-      }
-      const category = getNextBranchCategory(branches);
-      const newBranch = createMindMapBranch(value, {
-        category,
-        label: getMindmapLabelForCategory(category),
-        color: getMindmapColorForCategory(category),
+    } else if (!form.__deckSubmitInitialised) {
+      form.__deckSubmitInitialised = true;
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!(branches instanceof HTMLElement) || !(input instanceof HTMLInputElement)) {
+          return;
+        }
+        const value = input.value.trim();
+        if (!value) {
+          showStatus("Enter a branch idea before adding it.");
+          return;
+        }
+        const category = getNextBranchCategory(branches);
+        const newBranch = createMindMapBranch(value, {
+          category,
+          label: getMindmapLabelForCategory(category),
+          color: getMindmapColorForCategory(category),
+        });
+        branches.appendChild(newBranch);
+        initialiseMindMapBranch(newBranch, branchCallbacks);
+        handleBranchUpdate({ type: "added" });
+        input.value = "";
+        const textarea = newBranch.querySelector("textarea");
+        textarea?.focus();
       });
-      branches.appendChild(newBranch);
-      initialiseMindMapBranch(newBranch, branchCallbacks);
-      handleBranchUpdate({ type: "added" });
-      input.value = "";
-      const textarea = newBranch.querySelector("textarea");
-      textarea?.focus();
-    });
+    }
   }
 
-  if (center instanceof HTMLElement && !center.__deckMindmapCenterInitialised) {
-    center.__deckMindmapCenterInitialised = true;
-    let centerDebounceId = null;
-    center.addEventListener("input", () => {
-      if (centerDebounceId) {
-        window.clearTimeout(centerDebounceId);
-      }
-      centerDebounceId = window.setTimeout(() => {
+  if (center instanceof HTMLElement) {
+    if (readOnly) {
+      center.setAttribute("contenteditable", "false");
+      center.setAttribute("tabindex", "0");
+    } else if (!center.__deckMindmapCenterInitialised) {
+      center.__deckMindmapCenterInitialised = true;
+      let centerDebounceId = null;
+      center.addEventListener("input", () => {
+        if (centerDebounceId) {
+          window.clearTimeout(centerDebounceId);
+        }
+        centerDebounceId = window.setTimeout(() => {
+          updateBranchMetrics();
+          showStatus("Central idea updated.");
+        }, 400);
+      });
+    }
+  }
+
+  if (sortBtn) {
+    if (readOnly) {
+      setControlDisabledState(sortBtn, true);
+    } else if (!sortBtn.__deckMindmapSortInitialised) {
+      sortBtn.__deckMindmapSortInitialised = true;
+      sortBtn.addEventListener("click", () => {
+        if (!(branches instanceof HTMLElement)) {
+          return;
+        }
+        const branchList = Array.from(
+          branches.querySelectorAll(".mindmap-branch"),
+        );
+        if (branchList.length <= 1) {
+          showStatus("Add at least two branches to sort them.");
+          return;
+        }
+        branchList
+          .sort((a, b) => {
+            const textA =
+              a.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
+            const textB =
+              b.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
+            return textA.localeCompare(textB, undefined, {
+              sensitivity: "base",
+            });
+          })
+          .forEach((branch) => branches.appendChild(branch));
         updateBranchMetrics();
-        showStatus("Central idea updated.");
-      }, 400);
-    });
-  }
-
-  if (sortBtn && !sortBtn.__deckMindmapSortInitialised) {
-    sortBtn.__deckMindmapSortInitialised = true;
-    sortBtn.addEventListener("click", () => {
-      if (!(branches instanceof HTMLElement)) {
-        return;
-      }
-      const branchList = Array.from(
-        branches.querySelectorAll(".mindmap-branch"),
-      );
-      if (branchList.length <= 1) {
-        showStatus("Add at least two branches to sort them.");
-        return;
-      }
-      branchList
-        .sort((a, b) => {
-          const textA =
-            a.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
-          const textB =
-            b.querySelector("textarea")?.value.trim().toLowerCase() ?? "";
-          return textA.localeCompare(textB, undefined, {
-            sensitivity: "base",
-          });
-        })
-        .forEach((branch) => branches.appendChild(branch));
-      updateBranchMetrics();
-      showStatus("Branches sorted A to Z.");
-    });
+        showStatus("Branches sorted A to Z.");
+      });
+    }
   }
 
   if (copyBtn && !copyBtn.__deckMindmapCopyInitialised) {
@@ -1336,6 +1861,7 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
   const indexEl = branch.querySelector(".mindmap-branch-index");
   const textarea = branch.querySelector("textarea");
   let labelInput = branch.querySelector(".mindmap-branch-select");
+  const readOnly = isReadOnlyMode();
 
   if (labelInput instanceof HTMLSelectElement) {
     const replacement = document.createElement("input");
@@ -1453,6 +1979,26 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
   branch.__deckMindmapBranchSyncColor = () => syncColourState();
   syncBranchState();
 
+  if (readOnly) {
+    branch.classList.add("is-readonly");
+    if (textarea instanceof HTMLTextAreaElement) {
+      textarea.setAttribute("readonly", "true");
+      textarea.setAttribute("tabindex", "0");
+    }
+    if (labelInput instanceof HTMLInputElement) {
+      labelInput.setAttribute("readonly", "true");
+      labelInput.setAttribute("tabindex", "0");
+    }
+    if (removeBtn instanceof HTMLButtonElement) {
+      setControlDisabledState(removeBtn, true);
+      removeBtn.classList.add("is-hidden");
+    }
+    colorButtons.forEach((button) => {
+      setControlDisabledState(button, true);
+    });
+    return branch;
+  }
+
   textarea?.addEventListener("input", () => {
     syncBranchState();
   });
@@ -1532,6 +2078,12 @@ function getDeckState() {
 }
 
 function downloadDeckState() {
+  if (isReadOnlyMode()) {
+    if (typeof window !== "undefined") {
+      window.alert("Saving is disabled while viewing in read-only mode.");
+    }
+    return;
+  }
   try {
     const state = getDeckState();
     const blob = new Blob([JSON.stringify(state, null, 2)], {
@@ -3171,6 +3723,21 @@ async function initialiseDeck() {
   });
 
   refreshSlides();
+  if (isReadOnlyMode()) {
+    initialiseReadOnlyAssistUI();
+  } else {
+    progressStorageKey = "";
+    completedSlides = new Set();
+    if (markCompleteBtn instanceof HTMLElement) {
+      markCompleteBtn.remove();
+    }
+    const assist = deckRootElement?.querySelector?.('[data-role="read-only-tools"]');
+    if (assist instanceof HTMLElement) {
+      assist.remove();
+    }
+    progressTrackerEl = null;
+    markCompleteBtn = undefined;
+  }
   if (slides.length) {
     showSlide(0);
   }
@@ -3182,19 +3749,22 @@ async function initialiseDeck() {
   document
     .querySelectorAll('.slide-stage[data-type="blank"]')
     .forEach((slide) => attachBlankSlideEvents(slide));
-  addSlideBtn?.addEventListener("click", addBlankSlide);
-  saveStateBtn?.addEventListener("click", downloadDeckState);
-  loadStateBtn?.addEventListener("click", () => {
-    loadStateInput?.click();
-  });
-  loadStateInput?.addEventListener("change", handleStateFileSelection);
-  highlightBtn?.addEventListener("click", () => {
-    const selectedColor = highlightColorSelect?.value || "#F9E27D";
-    applyHighlight(selectedColor);
-  });
-  removeHighlightBtn?.addEventListener("click", () => {
-    removeHighlight();
-  });
+
+  if (isTeacherMode()) {
+    addSlideBtn?.addEventListener("click", addBlankSlide);
+    saveStateBtn?.addEventListener("click", downloadDeckState);
+    loadStateBtn?.addEventListener("click", () => {
+      loadStateInput?.click();
+    });
+    loadStateInput?.addEventListener("change", handleStateFileSelection);
+    highlightBtn?.addEventListener("click", () => {
+      const selectedColor = highlightColorSelect?.value || "#F9E27D";
+      applyHighlight(selectedColor);
+    });
+    removeHighlightBtn?.addEventListener("click", () => {
+      removeHighlight();
+    });
+  }
   recalibrateMindMapCounter();
 }
 
@@ -3213,9 +3783,15 @@ export async function setupInteractiveDeck({
   highlightButtonSelector = "#highlight-btn",
   highlightColorSelectSelector = "#highlight-color",
   removeHighlightButtonSelector = "#remove-highlight-btn",
+  mode,
 } = {}) {
   const rootElement =
     typeof root === "string" ? document.querySelector(root) : root ?? document;
+
+  deckRootElement = rootElement instanceof HTMLElement ? rootElement : document;
+  deckMode = resolveDeckMode(mode);
+  persistDeckMode(deckMode);
+  ensureModeStyles();
 
   stageViewport =
     rootElement?.querySelector(stageViewportSelector) ??
@@ -3284,6 +3860,9 @@ export async function setupInteractiveDeck({
   currentSlideIndex = 0;
   mindMapId = 0;
 
+  initialiseModeSwitcher(deckRootElement);
+  applyToolbarStateForMode();
+
   stageViewport
     ?.querySelectorAll(".slide-jump-trigger, .slide-jump-panel")
     .forEach((el) => {
@@ -3308,7 +3887,9 @@ export async function setupInteractiveDeck({
       onSelectSlide: (index) => showSlide(index),
     }) ?? null;
 
-  initialiseActivityBuilderUI();
+  if (isTeacherMode()) {
+    initialiseActivityBuilderUI();
+  }
 
   try {
     await initialiseDeck();
