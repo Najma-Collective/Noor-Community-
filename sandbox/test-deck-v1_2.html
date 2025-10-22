@@ -46,14 +46,6 @@
             type="file"
             accept="application/json"
           />
-          <button
-            id="activity-builder-btn"
-            class="toolbar-btn tertiary"
-            type="button"
-          >
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            Activity Builder
-          </button>
           <div class="highlight-controls" role="group" aria-label="Highlight text">
             <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
             <label class="sr-only" for="highlight-color">Highlight colour</label>
@@ -1633,12 +1625,25 @@ Invite learners to connect evidence back to the rubric.</textarea>
             </label>
           </div>
 
-          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+          <section
+            class="builder-section"
+            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards"
+            data-role="rubric-section"
+          >
             <header class="builder-section-header">
               <div>
                 <h3>Rubric prompts</h3>
                 <p>List the evidence you want learners to capture.</p>
               </div>
+              <label class="builder-toggle">
+                <input
+                  type="checkbox"
+                  name="includeRubric"
+                  value="true"
+                  checked
+                />
+                <span>Include success criteria</span>
+              </label>
               <button
                 type="button"
                 id="builder-add-prompt"
