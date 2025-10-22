@@ -4,6 +4,7 @@ export function initSlideNavigator({
   onDuplicateSlide,
   onDeleteSlide,
   onMoveSlide,
+  onMoveSlidesToSection,
 } = {}) {
   if (!(stageViewport instanceof HTMLElement)) {
     return null;
@@ -31,6 +32,7 @@ export function initSlideNavigator({
   trigger.setAttribute("aria-controls", panelId);
 
   const titleId = "slide-jump-title";
+  const sectionSelectId = `${titleId}-move-section`;
   panel.innerHTML = `
     <div class="slide-jump-header">
       <h2 id="${titleId}">Jump to a slide</h2>
@@ -49,6 +51,33 @@ export function initSlideNavigator({
         />
       </div>
       <p class="slide-jump-status sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div class="slide-jump-toolbar" data-role="selection-toolbar">
+        <label class="slide-jump-select-all">
+          <input type="checkbox" class="slide-jump-select-all-input" />
+          <span>Select all</span>
+        </label>
+        <span class="slide-jump-toolbar-count" aria-live="polite">No slides selected</span>
+        <div class="slide-jump-toolbar-actions">
+          <button type="button" class="slide-jump-toolbar-btn" data-action="duplicate">
+            <i class="fa-solid fa-clone" aria-hidden="true"></i>
+            <span>Duplicate</span>
+          </button>
+          <button type="button" class="slide-jump-toolbar-btn slide-jump-toolbar-btn--danger" data-action="delete">
+            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+            <span>Delete</span>
+          </button>
+          <div class="slide-jump-move-group">
+            <label class="sr-only" for="${sectionSelectId}">Choose a section</label>
+            <select id="${sectionSelectId}" class="slide-jump-section-select">
+              <option value="" disabled selected>Choose section</option>
+            </select>
+            <button type="button" class="slide-jump-toolbar-btn" data-action="move-section">
+              <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i>
+              <span>Move to section</span>
+            </button>
+          </div>
+        </div>
+      </div>
       <ul class="slide-jump-list"></ul>
     </div>
   `;
@@ -58,17 +87,30 @@ export function initSlideNavigator({
   const closeBtn = panel.querySelector(".slide-jump-close");
   const searchInput = panel.querySelector(".slide-jump-search");
   const statusRegion = panel.querySelector(".slide-jump-status");
+  const toolbar = panel.querySelector(".slide-jump-toolbar");
+  const selectAllInput = panel.querySelector(".slide-jump-select-all-input");
+  const selectionCountEl = panel.querySelector(".slide-jump-toolbar-count");
+  const duplicateBtn = panel.querySelector('[data-action="duplicate"]');
+  const deleteBtn = panel.querySelector('[data-action="delete"]');
+  const moveSectionBtn = panel.querySelector('[data-action="move-section"]');
+  const sectionSelect = panel.querySelector(".slide-jump-section-select");
   const externalStatus = document.getElementById("deck-status");
 
-  if (!list || !closeBtn || !searchInput || !statusRegion) {
+  if (
+    !list ||
+    !closeBtn ||
+    !searchInput ||
+    !statusRegion ||
+    !toolbar ||
+    !selectAllInput ||
+    !selectionCountEl ||
+    !duplicateBtn ||
+    !deleteBtn ||
+    !moveSectionBtn ||
+    !sectionSelect
+  ) {
     return null;
   }
-
-  let slidesMeta = [];
-  let filteredSlides = [];
-  let activeIndex = 0;
-  let isOpen = false;
-  let searchTerm = "";
 
   const focusableSelectors = [
     "a[href]",
@@ -79,7 +121,23 @@ export function initSlideNavigator({
     '[tabindex]:not([tabindex="-1"])',
   ].join(",");
 
+  const RENDER_CHUNK_SIZE = 36;
+  const SEARCH_THROTTLE_MS = 160;
+
   const announceTargets = [statusRegion, externalStatus].filter(Boolean);
+
+  let slidesMeta = [];
+  let filteredSlides = [];
+  let availableSections = [];
+  let activeIndex = 0;
+  let isOpen = false;
+  let searchTerm = "";
+  let renderOffset = 0;
+  let sentinel = null;
+  let chunkObserver = null;
+  let searchTimeout = 0;
+
+  const selectedIndices = new Set();
 
   function announce(message = "") {
     announceTargets.forEach((target) => {
@@ -97,6 +155,42 @@ export function initSlideNavigator({
       }
       return element.offsetParent !== null || element === document.activeElement;
     });
+  }
+
+  function normaliseThumbnailDescriptor(descriptor) {
+    if (!descriptor) {
+      return null;
+    }
+
+    if (descriptor instanceof HTMLElement) {
+      return { type: "node", value: descriptor };
+    }
+
+    if (typeof descriptor === "string") {
+      const trimmed = descriptor.trim();
+      if (!trimmed) {
+        return null;
+      }
+      if (trimmed.startsWith("<")) {
+        return { type: "html", value: trimmed };
+      }
+      return { type: "url", value: trimmed };
+    }
+
+    if (typeof descriptor === "object") {
+      const { html, url, node } = descriptor;
+      if (typeof html === "string" && html.trim()) {
+        return { type: "html", value: html.trim() };
+      }
+      if (node instanceof HTMLElement) {
+        return { type: "node", value: node };
+      }
+      if (typeof url === "string" && url.trim()) {
+        return { type: "url", value: url.trim() };
+      }
+    }
+
+    return null;
   }
 
   function applyFilter() {
@@ -163,195 +257,392 @@ export function initSlideNavigator({
     });
   }
 
+  function cleanupVirtualObserver() {
+    if (chunkObserver && sentinel) {
+      chunkObserver.unobserve(sentinel);
+    }
+    chunkObserver = null;
+  }
+
+  function destroySentinel() {
+    if (sentinel) {
+      sentinel.remove();
+      sentinel = null;
+    }
+  }
+
+  function handleSelectionAnnouncement(total) {
+    if (total === 0) {
+      announce("No slides selected.");
+      return;
+    }
+    const plural = total === 1 ? "slide" : "slides";
+    announce(`${total} ${plural} selected.`);
+  }
+
+  function updateToolbarAvailability() {
+    const totalSelected = selectedIndices.size;
+    const hasSelection = totalSelected > 0;
+    const hasDuplicateAction = typeof onDuplicateSlide === "function";
+    const hasDeleteAction = typeof onDeleteSlide === "function";
+    const hasMoveToSection = typeof onMoveSlidesToSection === "function";
+    duplicateBtn.disabled = !hasSelection || !hasDuplicateAction;
+    deleteBtn.disabled = !hasSelection || !hasDeleteAction;
+
+    const hasSectionTarget = Boolean(sectionSelect.value);
+    moveSectionBtn.disabled = !hasSelection || !hasMoveToSection || !hasSectionTarget;
+
+    const filteredIndices = filteredSlides.map((slide) => slide.originalIndex);
+    const selectedInFiltered = filteredIndices.filter((index) => selectedIndices.has(index));
+    if (filteredIndices.length === 0) {
+      selectAllInput.checked = false;
+      selectAllInput.indeterminate = false;
+      selectAllInput.disabled = true;
+    } else {
+      selectAllInput.disabled = false;
+      selectAllInput.checked = selectedInFiltered.length === filteredIndices.length && filteredIndices.length > 0;
+      selectAllInput.indeterminate =
+        selectedInFiltered.length > 0 && selectedInFiltered.length < filteredIndices.length;
+    }
+
+    let summary = "No slides selected";
+    if (totalSelected > 0) {
+      const plural = totalSelected === 1 ? "slide" : "slides";
+      summary = `${totalSelected} ${plural} selected`;
+    }
+    selectionCountEl.textContent = summary;
+  }
+
+  function clearSelection({ announceChange = true } = {}) {
+    if (!selectedIndices.size) {
+      return;
+    }
+    selectedIndices.clear();
+    if (announceChange) {
+      handleSelectionAnnouncement(0);
+    }
+    updateToolbarAvailability();
+    list.querySelectorAll('.slide-jump-select').forEach((checkbox) => {
+      if (checkbox instanceof HTMLInputElement) {
+        checkbox.checked = false;
+      }
+    });
+  }
+
+  function toggleSelection(index, shouldSelect) {
+    if (!Number.isInteger(index)) {
+      return;
+    }
+    if (shouldSelect) {
+      selectedIndices.add(index);
+    } else {
+      selectedIndices.delete(index);
+    }
+    handleSelectionAnnouncement(selectedIndices.size);
+    updateToolbarAvailability();
+  }
+
+  function getSelectedIndicesSorted() {
+    return Array.from(selectedIndices).filter((index) => Number.isInteger(index)).sort((a, b) => a - b);
+  }
+
+  function createThumbnailElement(thumbnail) {
+    if (!thumbnail) {
+      return null;
+    }
+    const container = document.createElement("div");
+    container.className = "slide-jump-thumbnail";
+    switch (thumbnail.type) {
+      case "html":
+        container.innerHTML = thumbnail.value;
+        break;
+      case "url": {
+        const img = document.createElement("img");
+        img.src = thumbnail.value;
+        img.alt = "";
+        img.loading = "lazy";
+        container.appendChild(img);
+        break;
+      }
+      case "node": {
+        container.appendChild(thumbnail.value.cloneNode(true));
+        break;
+      }
+      default:
+        return null;
+    }
+    return container.childElementCount || container.textContent ? container : null;
+  }
+
+  function createSlideRow(meta, filteredIndex) {
+    const { stage, title, originalIndex, thumbnail } = meta;
+    const item = document.createElement("li");
+    item.className = "slide-jump-row";
+    item.dataset.filteredIndex = String(filteredIndex);
+
+    const selectWrap = document.createElement("label");
+    selectWrap.className = "slide-jump-select-wrap";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "slide-jump-select";
+    checkbox.dataset.index = String(originalIndex);
+    checkbox.checked = selectedIndices.has(originalIndex);
+    checkbox.addEventListener("change", (event) => {
+      event.stopPropagation();
+      const isChecked = Boolean(event.target?.checked);
+      toggleSelection(originalIndex, isChecked);
+    });
+
+    const fauxBox = document.createElement("span");
+    fauxBox.className = "slide-jump-select-box";
+
+    const srLabel = document.createElement("span");
+    srLabel.className = "sr-only";
+    const titleText = String(title ?? "");
+    const stageText = String(stage ?? "");
+    srLabel.textContent = stageText && titleText
+      ? `Select slide ${stageText} – ${titleText}`
+      : `Select slide ${titleText || stageText || originalIndex + 1}`;
+
+    selectWrap.appendChild(checkbox);
+    selectWrap.appendChild(fauxBox);
+    selectWrap.appendChild(srLabel);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "slide-jump-item";
+    button.dataset.index = String(originalIndex);
+
+    const content = document.createElement("div");
+    content.className = "slide-jump-content";
+
+    const thumbnailEl = createThumbnailElement(thumbnail);
+    if (thumbnailEl) {
+      content.appendChild(thumbnailEl);
+    }
+
+    const metaWrap = document.createElement("div");
+    metaWrap.className = "slide-jump-meta";
+
+    const stageEl = document.createElement("span");
+    stageEl.className = "slide-jump-stage";
+    stageEl.textContent = stage;
+
+    const titleEl = document.createElement("span");
+    titleEl.className = "slide-jump-title";
+    titleEl.textContent = title;
+
+    metaWrap.appendChild(stageEl);
+    metaWrap.appendChild(titleEl);
+    content.appendChild(metaWrap);
+
+    button.appendChild(content);
+    button.addEventListener("click", () => {
+      if (typeof onSelectSlide === "function") {
+        onSelectSlide(originalIndex);
+      }
+      closePanel();
+    });
+
+    item.appendChild(selectWrap);
+    item.appendChild(button);
+
+    return item;
+  }
+
+  function appendChunk() {
+    if (!filteredSlides.length || renderOffset >= filteredSlides.length) {
+      return;
+    }
+    const end = Math.min(renderOffset + RENDER_CHUNK_SIZE, filteredSlides.length);
+    for (let i = renderOffset; i < end; i += 1) {
+      const row = createSlideRow(filteredSlides[i], i);
+      if (sentinel) {
+        list.insertBefore(row, sentinel);
+      } else {
+        list.appendChild(row);
+      }
+    }
+    renderOffset = end;
+    applyActiveState();
+
+    if (renderOffset >= filteredSlides.length) {
+      cleanupVirtualObserver();
+      destroySentinel();
+    }
+  }
+
+  function ensureActiveRendered() {
+    const filteredIndex = filteredSlides.findIndex((slide) => slide.originalIndex === activeIndex);
+    if (filteredIndex === -1) {
+      return;
+    }
+    while (filteredIndex >= renderOffset && renderOffset < filteredSlides.length) {
+      appendChunk();
+    }
+    const activeItem = list.querySelector(`.slide-jump-item[data-index="${activeIndex}"]`);
+    if (activeItem instanceof HTMLElement) {
+      activeItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }
+
   function renderSlides() {
+    cleanupVirtualObserver();
+    destroySentinel();
     list.innerHTML = "";
+    renderOffset = 0;
+
     if (!filteredSlides.length) {
       const emptyItem = document.createElement("li");
       emptyItem.className = "slide-jump-empty";
       emptyItem.textContent = "No slides match your search.";
       list.appendChild(emptyItem);
+      updateToolbarAvailability();
       return;
     }
 
-    const hasDuplicateAction = typeof onDuplicateSlide === "function";
-    const hasDeleteAction = typeof onDeleteSlide === "function";
-    const hasMoveAction = typeof onMoveSlide === "function";
-    const hasActions = hasDuplicateAction || hasDeleteAction || hasMoveAction;
+    sentinel = document.createElement("li");
+    sentinel.className = "slide-jump-sentinel";
+    list.appendChild(sentinel);
 
-    filteredSlides.forEach(({ stage, title, originalIndex }) => {
-      const item = document.createElement("li");
-      if (hasActions) {
-        item.className = "slide-jump-row";
-      }
+    appendChunk();
 
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "slide-jump-item";
-      button.dataset.index = String(originalIndex);
-      button.innerHTML = `
-        <span class="slide-jump-stage">${stage}</span>
-        <span class="slide-jump-title">${title}</span>
-      `;
-      button.addEventListener("click", () => {
-        if (typeof onSelectSlide === "function") {
-          onSelectSlide(originalIndex);
-        }
-        closePanel();
+    if (renderOffset < filteredSlides.length) {
+      chunkObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            appendChunk();
+          }
+        });
+      }, {
+        root: list,
+        threshold: 0.25,
       });
-      item.appendChild(button);
-
-      if (hasActions) {
-        const actions = document.createElement("div");
-        actions.className = "slide-jump-actions";
-
-        if (hasMoveAction) {
-          const totalSlides = slidesMeta.length;
-
-          const moveUpBtn = document.createElement("button");
-          moveUpBtn.type = "button";
-          moveUpBtn.className = "slide-jump-action";
-          moveUpBtn.innerHTML = `
-            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
-            <span>Move up</span>
-          `;
-          moveUpBtn.disabled = originalIndex <= 0;
-          moveUpBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (typeof onMoveSlide !== "function") {
-              return;
-            }
-            const nextIndex = Math.max(0, originalIndex - 1);
-            if (nextIndex === originalIndex) {
-              return;
-            }
-            try {
-              const result = onMoveSlide(originalIndex, nextIndex);
-              if (result && typeof result.then === "function") {
-                result.catch((error) => {
-                  console.warn("Slide move (up) failed", error);
-                });
-              }
-            } catch (error) {
-              console.warn("Slide move (up) threw an error", error);
-            }
-          });
-
-          const moveDownBtn = document.createElement("button");
-          moveDownBtn.type = "button";
-          moveDownBtn.className = "slide-jump-action";
-          moveDownBtn.innerHTML = `
-            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-            <span>Move down</span>
-          `;
-          moveDownBtn.disabled =
-            originalIndex >= totalSlides - 1 || totalSlides <= 1;
-          moveDownBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (typeof onMoveSlide !== "function") {
-              return;
-            }
-            const nextIndex = Math.min(totalSlides - 1, originalIndex + 1);
-            if (nextIndex === originalIndex) {
-              return;
-            }
-            try {
-              const result = onMoveSlide(originalIndex, nextIndex);
-              if (result && typeof result.then === "function") {
-                result.catch((error) => {
-                  console.warn("Slide move (down) failed", error);
-                });
-              }
-            } catch (error) {
-              console.warn("Slide move (down) threw an error", error);
-            }
-          });
-
-          actions.appendChild(moveUpBtn);
-          actions.appendChild(moveDownBtn);
-        }
-
-        if (hasDuplicateAction) {
-          const duplicateBtn = document.createElement("button");
-          duplicateBtn.type = "button";
-          duplicateBtn.className = "slide-jump-action";
-          duplicateBtn.innerHTML = `
-            <i class="fa-solid fa-clone" aria-hidden="true"></i>
-            <span>Duplicate</span>
-          `;
-          duplicateBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (typeof onDuplicateSlide !== "function") {
-              return;
-            }
-            try {
-              const result = onDuplicateSlide(originalIndex);
-              if (result && typeof result.then === "function") {
-                result
-                  .then((value) => {
-                    if (typeof value === "number") {
-                      closePanel();
-                    }
-                  })
-                  .catch((error) => {
-                    console.warn("Slide duplication failed", error);
-                  });
-              } else if (typeof result === "number") {
-                closePanel();
-              }
-            } catch (error) {
-              console.warn("Slide duplication threw an error", error);
-            }
-          });
-
-          actions.appendChild(duplicateBtn);
-        }
-
-        if (hasDeleteAction) {
-          const deleteBtn = document.createElement("button");
-          deleteBtn.type = "button";
-          deleteBtn.className = "slide-jump-action slide-jump-action--danger";
-          deleteBtn.innerHTML = `
-            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-            <span>Delete</span>
-          `;
-          deleteBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (typeof onDeleteSlide !== "function") {
-              return;
-            }
-            try {
-              const result = onDeleteSlide(originalIndex);
-              if (result && typeof result.then === "function") {
-                result
-                  .then((value) => {
-                    if (value !== false) {
-                      closePanel();
-                    }
-                  })
-                  .catch((error) => {
-                    console.warn("Slide deletion failed", error);
-                  });
-              } else if (result !== false) {
-                closePanel();
-              }
-            } catch (error) {
-              console.warn("Slide deletion threw an error", error);
-            }
-          });
-
-          actions.appendChild(deleteBtn);
-        }
-
-        item.appendChild(actions);
+      if (sentinel) {
+        chunkObserver.observe(sentinel);
       }
+    }
 
-      list.appendChild(item);
+    updateToolbarAvailability();
+  }
+
+  function rebuildSectionOptions() {
+    const previousValue = sectionSelect.value;
+    sectionSelect.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Choose section";
+    placeholder.disabled = true;
+    sectionSelect.appendChild(placeholder);
+
+    const seen = new Set();
+    availableSections = [];
+    slidesMeta.forEach(({ stage }) => {
+      const label = String(stage ?? "").trim();
+      if (!label || seen.has(label)) {
+        return;
+      }
+      seen.add(label);
+      availableSections.push(label);
+      const option = document.createElement("option");
+      option.value = label;
+      option.textContent = label;
+      sectionSelect.appendChild(option);
     });
-    applyActiveState();
+
+    if (availableSections.includes(previousValue)) {
+      sectionSelect.value = previousValue;
+    } else {
+      sectionSelect.value = "";
+    }
+
+    sectionSelect.disabled =
+      availableSections.length === 0 || typeof onMoveSlidesToSection !== "function";
+    updateToolbarAvailability();
+  }
+
+  function syncSelectionWithSlides() {
+    const availableIndices = new Set(slidesMeta.map((slide) => slide.originalIndex));
+    Array.from(selectedIndices).forEach((index) => {
+      if (!availableIndices.has(index)) {
+        selectedIndices.delete(index);
+      }
+    });
+  }
+
+  async function runSequentialAction(indices, callback, { onSuccessMessage } = {}) {
+    if (typeof callback !== "function") {
+      return;
+    }
+    const uniqueIndices = Array.from(new Set(indices)).filter((index) => Number.isInteger(index));
+    if (!uniqueIndices.length) {
+      return;
+    }
+
+    let successCount = 0;
+    for (const index of uniqueIndices) {
+      try {
+        const result = callback(index, { bulk: true, indices: uniqueIndices.slice() });
+        const resolved = await Promise.resolve(result);
+        if (resolved !== false) {
+          successCount += 1;
+        }
+      } catch (error) {
+        console.warn("Slide navigator bulk action failed", error);
+      }
+    }
+
+    if (successCount && onSuccessMessage) {
+      const plural = successCount === 1 ? "slide" : "slides";
+      announce(onSuccessMessage.replace("{count}", `${successCount} ${plural}`));
+    }
+  }
+
+  async function handleBulkDuplicate() {
+    const indices = getSelectedIndicesSorted();
+    if (!indices.length) {
+      return;
+    }
+    await runSequentialAction(indices, onDuplicateSlide, {
+      onSuccessMessage: "{count} duplicated.",
+    });
+    clearSelection({ announceChange: false });
+    updateToolbarAvailability();
+  }
+
+  async function handleBulkDelete() {
+    const indices = getSelectedIndicesSorted().sort((a, b) => b - a);
+    if (!indices.length) {
+      return;
+    }
+    await runSequentialAction(indices, onDeleteSlide, {
+      onSuccessMessage: "{count} deleted.",
+    });
+    clearSelection({ announceChange: false });
+    updateToolbarAvailability();
+  }
+
+  async function handleBulkMoveToSection() {
+    const indices = getSelectedIndicesSorted();
+    const targetSection = sectionSelect.value;
+    if (!indices.length || !targetSection) {
+      return;
+    }
+    if (typeof onMoveSlidesToSection !== "function") {
+      announce("Move to section is not available in this deck.");
+      return;
+    }
+    try {
+      const result = onMoveSlidesToSection(indices, targetSection);
+      await Promise.resolve(result);
+      announce(`Moved ${indices.length === 1 ? "slide" : "slides"} to ${targetSection}.`);
+      clearSelection({ announceChange: false });
+      updateToolbarAvailability();
+    } catch (error) {
+      console.warn("Moving slides to section failed", error);
+      announce("We couldn’t move those slides. Try again.");
+    }
   }
 
   function handlePanelKeydown(event) {
@@ -468,11 +759,19 @@ export function initSlideNavigator({
     }
   }
 
+  function queueSearch(value) {
+    const term = typeof value === "string" ? value : "";
+    window.clearTimeout(searchTimeout);
+    searchTimeout = window.setTimeout(() => {
+      searchTerm = term;
+      applyFilter();
+      renderSlides();
+      announceSearchResults();
+    }, SEARCH_THROTTLE_MS);
+  }
+
   searchInput.addEventListener("input", (event) => {
-    searchTerm = typeof event.target?.value === "string" ? event.target.value : "";
-    applyFilter();
-    renderSlides();
-    announceSearchResults();
+    queueSearch(event.target?.value ?? "");
   });
 
   searchInput.addEventListener("keydown", (event) => {
@@ -491,6 +790,44 @@ export function initSlideNavigator({
         lastItem.focus({ preventScroll: true });
       }
     }
+  });
+
+  selectAllInput.addEventListener("change", (event) => {
+    const isChecked = Boolean(event.target?.checked);
+    if (isChecked) {
+      filteredSlides.forEach(({ originalIndex }) => {
+        selectedIndices.add(originalIndex);
+      });
+      handleSelectionAnnouncement(selectedIndices.size);
+    } else {
+      filteredSlides.forEach(({ originalIndex }) => {
+        selectedIndices.delete(originalIndex);
+      });
+      handleSelectionAnnouncement(selectedIndices.size);
+    }
+    list.querySelectorAll('.slide-jump-select').forEach((checkbox) => {
+      if (checkbox instanceof HTMLInputElement) {
+        const index = Number(checkbox.dataset.index);
+        checkbox.checked = selectedIndices.has(index);
+      }
+    });
+    updateToolbarAvailability();
+  });
+
+  duplicateBtn.addEventListener("click", () => {
+    handleBulkDuplicate();
+  });
+
+  deleteBtn.addEventListener("click", () => {
+    handleBulkDelete();
+  });
+
+  moveSectionBtn.addEventListener("click", () => {
+    handleBulkMoveToSection();
+  });
+
+  sectionSelect.addEventListener("change", () => {
+    updateToolbarAvailability();
   });
 
   trigger.addEventListener("click", () => {
@@ -523,10 +860,16 @@ export function initSlideNavigator({
         ? meta.map((item, index) => ({
             stage: typeof item?.stage === "string" ? item.stage : String(item?.stage ?? ""),
             title: typeof item?.title === "string" ? item.title : String(item?.title ?? ""),
-            originalIndex: index,
+            originalIndex:
+              typeof item?.originalIndex === "number" && Number.isFinite(item.originalIndex)
+                ? item.originalIndex
+                : index,
+            thumbnail: normaliseThumbnailDescriptor(item?.thumbnail ?? item?.thumbnailHtml ?? item?.thumbnailUrl),
           }))
         : [];
+      syncSelectionWithSlides();
       applyFilter();
+      rebuildSectionOptions();
       renderSlides();
       if (isOpen) {
         announceSearchResults();
@@ -535,8 +878,12 @@ export function initSlideNavigator({
     setActive(index = 0) {
       activeIndex = typeof index === "number" ? index : 0;
       applyActiveState();
+      ensureActiveRendered();
     },
     destroy() {
+      window.clearTimeout(searchTimeout);
+      cleanupVirtualObserver();
+      destroySentinel();
       closePanel();
       trigger.remove();
       panel.remove();
