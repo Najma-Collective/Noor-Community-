@@ -119,6 +119,8 @@ let moduleInsertCallback;
 let moduleEditTarget;
 let modulePendingConfig;
 let moduleBuilderReady = false;
+let moduleBuilderUrl;
+let moduleBuilderUrlPromise;
 let deckToastRoot;
 let deckStatusEl;
 
@@ -5038,6 +5040,141 @@ function handleModuleBuilderMessage(event) {
   closeModuleOverlay({ focus: true });
 }
 
+async function resolveModuleBuilderUrl() {
+  if (moduleBuilderUrl) {
+    return moduleBuilderUrl;
+  }
+
+  if (moduleBuilderUrlPromise) {
+    try {
+      moduleBuilderUrl = await moduleBuilderUrlPromise;
+      return moduleBuilderUrl;
+    } catch (error) {
+      console.warn("Module builder URL resolution failed", error);
+      moduleBuilderUrlPromise = null;
+    }
+  }
+
+  const gatherCandidates = () => {
+    const seen = new Set();
+    const candidates = [];
+    const addCandidate = (value) => {
+      if (typeof value !== "string") {
+        return;
+      }
+      const trimmed = value.trim();
+      if (!trimmed || trimmed === "about:blank" || seen.has(trimmed)) {
+        return;
+      }
+      seen.add(trimmed);
+      candidates.push(trimmed);
+    };
+
+    if (moduleFrame instanceof HTMLIFrameElement) {
+      addCandidate(moduleFrame.dataset?.builderSrc);
+      addCandidate(moduleFrame.getAttribute("data-builder-src"));
+      addCandidate(moduleFrame.getAttribute("src"));
+    }
+
+    addCandidate("./activity-builder.html");
+
+    return candidates;
+  };
+
+  const resolveAgainstBases = (value) => {
+    const resolved = [];
+    const addResolved = (url) => {
+      if (typeof url !== "string") {
+        return;
+      }
+      const trimmed = url.trim();
+      if (trimmed && !resolved.includes(trimmed)) {
+        resolved.push(trimmed);
+      }
+    };
+
+    if (!value) {
+      return resolved;
+    }
+
+    const bases = [];
+    try {
+      if (typeof import.meta.url === "string") {
+        bases.push(import.meta.url);
+      }
+    } catch (error) {
+      /* noop */
+    }
+
+    if (typeof document !== "undefined" && typeof document.baseURI === "string") {
+      bases.push(document.baseURI);
+    }
+
+    if (
+      typeof window !== "undefined" &&
+      window.location &&
+      typeof window.location.href === "string"
+    ) {
+      bases.push(window.location.href);
+    }
+
+    if (bases.length === 0) {
+      addResolved(value);
+      return resolved;
+    }
+
+    bases.forEach((base) => {
+      try {
+        addResolved(new URL(value, base).href);
+      } catch (error) {
+        /* noop */
+      }
+    });
+
+    return resolved;
+  };
+
+  moduleBuilderUrlPromise = (async () => {
+    const candidates = gatherCandidates();
+    const absoluteCandidates = candidates
+      .map((candidate) => resolveAgainstBases(candidate))
+      .reduce((acc, urls) => acc.concat(urls), []);
+
+    const uniqueAbsoluteCandidates = absoluteCandidates.filter(
+      (url, index, list) => list.indexOf(url) === index,
+    );
+
+    if (typeof fetch === "function") {
+      for (const url of uniqueAbsoluteCandidates) {
+        try {
+          const response = await fetch(url, { method: "HEAD" });
+          if (response.ok) {
+            moduleBuilderUrl = url;
+            return url;
+          }
+        } catch (error) {
+          console.warn(`Module builder probe failed for ${url}`, error);
+        }
+      }
+    }
+
+    const fallback = uniqueAbsoluteCandidates[0] ?? candidates[0] ?? "./activity-builder.html";
+    moduleBuilderUrl = fallback;
+    return fallback;
+  })();
+
+  try {
+    moduleBuilderUrl = await moduleBuilderUrlPromise;
+    return moduleBuilderUrl;
+  } catch (error) {
+    console.warn("Module builder URL probe failed", error);
+    moduleBuilderUrl = "./activity-builder.html";
+    return moduleBuilderUrl;
+  } finally {
+    moduleBuilderUrlPromise = null;
+  }
+}
+
 function initialiseModuleBuilderBridge() {
   if (!(moduleOverlay instanceof HTMLElement)) {
     return;
@@ -6520,6 +6657,20 @@ export async function setupInteractiveDeck({
   moduleLastFocus = null;
   moduleTargetCanvas = null;
   moduleInsertCallback = null;
+
+  if (moduleFrame instanceof HTMLIFrameElement) {
+    try {
+      const builderUrl = await resolveModuleBuilderUrl();
+      if (builderUrl && moduleFrame.src !== builderUrl) {
+        moduleFrame.src = builderUrl;
+      }
+      if (builderUrl) {
+        moduleFrame.dataset.builderResolved = builderUrl;
+      }
+    } catch (error) {
+      console.warn("Unable to resolve activity builder source", error);
+    }
+  }
 
   slides = [];
   currentSlideIndex = 0;
