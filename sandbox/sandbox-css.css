@@ -1900,6 +1900,30 @@ ol {
   --textbox-handle-fg: var(--deep-forest);
   --textbox-remove-bg: rgba(254, 252, 247, 0.9);
   --textbox-remove-fg: var(--forest-shadow);
+  --textbox-toolbar-bg: color-mix(in srgb, var(--textbox-bg) 86%, #ffffff 14%);
+  --textbox-toolbar-fg: color-mix(
+    in srgb,
+    var(--textbox-handle-fg) 70%,
+    var(--forest-shadow) 30%
+  );
+  --textbox-toolbar-border: color-mix(
+    in srgb,
+    var(--textbox-border) 75%,
+    transparent
+  );
+  --textbox-toolbar-button-bg: transparent;
+  --textbox-toolbar-button-fg: var(--textbox-toolbar-fg);
+  --textbox-toolbar-button-hover-bg: color-mix(
+    in srgb,
+    var(--textbox-toolbar-fg) 14%,
+    transparent
+  );
+  --textbox-toolbar-button-active-bg: color-mix(
+    in srgb,
+    var(--textbox-toolbar-fg) 22%,
+    transparent
+  );
+  --textbox-toolbar-button-active-fg: var(--textbox-handle-fg);
   position: absolute;
   top: 0;
   left: 0;
@@ -1936,6 +1960,55 @@ ol {
   cursor: grab;
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
+}
+
+.textbox-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--textbox-toolbar-bg);
+  color: var(--textbox-toolbar-fg);
+  border-bottom: 1px solid var(--textbox-toolbar-border);
+  cursor: default;
+}
+
+.textbox-toolbar-btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.35rem 0.4rem;
+  background: var(--textbox-toolbar-button-bg);
+  color: var(--textbox-toolbar-button-fg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 2.15rem;
+  min-height: 2.15rem;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.textbox-toolbar-btn i {
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+.textbox-toolbar-btn:hover {
+  background: var(--textbox-toolbar-button-hover-bg);
+  color: var(--textbox-toolbar-button-active-fg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 28%, transparent);
+}
+
+.textbox-toolbar-btn.is-active {
+  background: var(--textbox-toolbar-button-active-bg);
+  color: var(--textbox-toolbar-button-active-fg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.textbox-toolbar-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--textbox-toolbar-fg) 60%, transparent);
+  outline-offset: 2px;
 }
 
 .textbox-title {
@@ -2000,6 +2073,7 @@ ol {
   --textbox-handle-fg: var(--deep-forest);
   --textbox-remove-bg: rgba(254, 252, 247, 0.9);
   --textbox-remove-fg: var(--forest-shadow);
+  --textbox-toolbar-fg: var(--forest-shadow);
 }
 
 .textbox[data-color="wheat"] {
@@ -2009,6 +2083,8 @@ ol {
   --textbox-handle-fg: #3d2a12;
   --textbox-remove-bg: rgba(255, 247, 228, 0.92);
   --textbox-remove-fg: #3d2a12;
+  --textbox-toolbar-fg: #4a3116;
+  --textbox-toolbar-button-active-fg: #3d2a12;
 }
 
 .textbox[data-color="sky"] {
@@ -2018,6 +2094,8 @@ ol {
   --textbox-handle-fg: #f5f8ff;
   --textbox-remove-bg: rgba(232, 242, 255, 0.94);
   --textbox-remove-fg: #234974;
+  --textbox-toolbar-fg: #2c4a72;
+  --textbox-toolbar-button-active-fg: #f5f8ff;
 }
 
 .textbox[data-color="rose"] {
@@ -2027,6 +2105,8 @@ ol {
   --textbox-handle-fg: #fff6f8;
   --textbox-remove-bg: rgba(255, 236, 243, 0.94);
   --textbox-remove-fg: #622b3b;
+  --textbox-toolbar-fg: #6a2c3e;
+  --textbox-toolbar-button-active-fg: #fff6f8;
 }
 
 .textbox[data-color="slate"] {
@@ -2036,6 +2116,8 @@ ol {
   --textbox-handle-fg: #f8fbff;
   --textbox-remove-bg: rgba(238, 243, 248, 0.94);
   --textbox-remove-fg: #1f2d3a;
+  --textbox-toolbar-fg: #2a3b4a;
+  --textbox-toolbar-button-active-fg: #f8fbff;
 }
 
 .textbox-body {
@@ -2047,6 +2129,68 @@ ol {
   outline: none;
   cursor: text;
   overflow: auto;
+}
+
+.textbox-body strong {
+  font-weight: 700;
+  color: color-mix(in srgb, var(--forest-shadow) 90%, #000 10%);
+}
+
+.textbox-body em {
+  font-style: italic;
+}
+
+.textbox-body u {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--textbox-toolbar-fg) 65%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.textbox-body mark.textbox-highlight {
+  background: color-mix(in srgb, var(--secondary-sage) 55%, #fff 45%);
+  color: var(--forest-shadow);
+  padding: 0.05em 0.2em;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-sage) 22%, transparent);
+}
+
+.textbox-body ul,
+.textbox-body ol {
+  margin: 0.5rem 0 0.5rem 1.25rem;
+  padding: 0;
+}
+
+.textbox-body ul {
+  list-style-type: disc;
+}
+
+.textbox-body ol {
+  list-style-type: decimal;
+}
+
+.textbox-body li {
+  padding-inline-start: 0.25rem;
+  margin-block: 0.25rem;
+}
+
+.textbox-body ul li::marker,
+.textbox-body ol li::marker {
+  color: color-mix(in srgb, var(--textbox-toolbar-fg) 80%, var(--forest-shadow) 20%);
+  font-weight: 600;
+}
+
+.textbox-body a.textbox-audio-link {
+  color: var(--primary-forest);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dashed color-mix(in srgb, currentColor 55%, transparent);
+  padding-bottom: 0.05em;
+}
+
+.textbox-body a.textbox-audio-link:hover,
+.textbox-body a.textbox-audio-link:focus-visible {
+  text-decoration: underline;
 }
 
 .textbox-body:focus {

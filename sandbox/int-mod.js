@@ -1691,6 +1691,691 @@ export function positionTextbox(textbox, canvas) {
   textbox.style.top = `${offset}px`;
 }
 
+const TEXTBOX_TOOLBAR_CONFIG = [
+  { command: "bold", icon: "fa-bold", label: "Bold" },
+  { command: "italic", icon: "fa-italic", label: "Italic" },
+  { command: "underline", icon: "fa-underline", label: "Underline" },
+  { command: "bullet-list", icon: "fa-list-ul", label: "Bullet list" },
+  { command: "numbered-list", icon: "fa-list-ol", label: "Numbered list" },
+  { command: "highlight", icon: "fa-highlighter", label: "Highlight" },
+  { command: "audio-link", icon: "fa-headphones", label: "Insert audio link" },
+];
+
+const TEXTBOX_CONTENT_ALLOWED_TAGS = new Set([
+  "DIV",
+  "P",
+  "BR",
+  "STRONG",
+  "EM",
+  "U",
+  "MARK",
+  "UL",
+  "OL",
+  "LI",
+  "A",
+  "SPAN",
+]);
+
+const TEXTBOX_ATTRIBUTE_ALLOWLIST = {
+  MARK: new Set(["class"]),
+  A: new Set(["href", "target", "rel", "class"]),
+};
+
+const TEXTBOX_ALLOWED_CLASSNAMES = new Set([
+  "textbox-highlight",
+  "textbox-audio-link",
+]);
+
+function createToolbarButton({ command, icon, label }) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "textbox-toolbar-btn";
+  button.dataset.command = command;
+  button.setAttribute("aria-label", label);
+  button.setAttribute("aria-pressed", "false");
+  button.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i>`;
+  return button;
+}
+
+function findAncestor(node, predicate, boundary) {
+  let current =
+    node instanceof Node && node.nodeType === Node.TEXT_NODE
+      ? node.parentElement
+      : node instanceof Element
+        ? node
+        : null;
+  while (current instanceof HTMLElement && current !== boundary) {
+    if (predicate(current)) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
+function getSelectionContextWithin(element) {
+  const selection = window.getSelection?.();
+  if (!selection || selection.rangeCount === 0) {
+    return null;
+  }
+  const range = selection.getRangeAt(0);
+  const startContainer =
+    range.startContainer instanceof HTMLElement
+      ? range.startContainer
+      : range.startContainer?.parentElement ?? null;
+  const endContainer =
+    range.endContainer instanceof HTMLElement
+      ? range.endContainer
+      : range.endContainer?.parentElement ?? null;
+  if (!startContainer || !endContainer) {
+    return null;
+  }
+  if (!element.contains(startContainer) || !element.contains(endContainer)) {
+    return null;
+  }
+  return { selection, range };
+}
+
+function unwrapElement(element, { preserveSelection = true } = {}) {
+  if (!(element instanceof HTMLElement) || !element.parentNode) {
+    return;
+  }
+  const selection = window.getSelection?.();
+  const parent = element.parentNode;
+  const fragment = document.createDocumentFragment();
+  let firstInserted = null;
+  let lastInserted = null;
+  while (element.firstChild) {
+    const child = element.firstChild;
+    element.removeChild(child);
+    fragment.appendChild(child);
+    if (!firstInserted) {
+      firstInserted = child;
+    }
+    lastInserted = child;
+  }
+  parent.insertBefore(fragment, element);
+  parent.removeChild(element);
+
+  if (preserveSelection && selection && firstInserted && lastInserted) {
+    selection.removeAllRanges();
+    const range = document.createRange();
+    range.setStartBefore(firstInserted);
+    range.setEndAfter(lastInserted);
+    selection.addRange(range);
+  }
+}
+
+function wrapRange(range, element) {
+  if (!(range instanceof Range) || !(element instanceof HTMLElement)) {
+    return null;
+  }
+  const contents = range.extractContents();
+  if (!contents.childNodes.length) {
+    contents.appendChild(document.createTextNode("\u200B"));
+  }
+  element.appendChild(contents);
+  range.insertNode(element);
+  return element;
+}
+
+function ensureRange(range) {
+  if (!(range instanceof Range)) {
+    return null;
+  }
+  if (range.collapsed) {
+    const placeholder = document.createTextNode("\u200B");
+    range.insertNode(placeholder);
+    range.selectNode(placeholder);
+  }
+  return range;
+}
+
+function toggleInlineFormat(body, tagName, { className } = {}) {
+  const context = getSelectionContextWithin(body);
+  if (!context) {
+    return;
+  }
+  const { selection } = context;
+  let { range } = context;
+  const predicate = (node) =>
+    node.tagName === tagName && (!className || node.classList.contains(className));
+  const startElement = findAncestor(range.startContainer, predicate, body);
+  const endElement = findAncestor(range.endContainer, predicate, body);
+
+  if (startElement && startElement === endElement) {
+    unwrapElement(startElement);
+    return;
+  }
+
+  range = ensureRange(range);
+  const wrapper = document.createElement(tagName.toLowerCase());
+  if (className) {
+    wrapper.classList.add(className);
+  }
+  const inserted = wrapRange(range, wrapper);
+  if (inserted && selection) {
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNodeContents(inserted);
+    selection.addRange(newRange);
+  }
+}
+
+function createListFromRange(body, listTag) {
+  const context = getSelectionContextWithin(body);
+  if (!context) {
+    return;
+  }
+  const { selection } = context;
+  let { range } = context;
+
+  const predicate = (node) => node.tagName === listTag;
+  const startList = findAncestor(range.startContainer, predicate, body);
+  const endList = findAncestor(range.endContainer, predicate, body);
+  if (startList && startList === endList) {
+    unwrapList(startList);
+    return;
+  }
+
+  if (range.collapsed) {
+    const list = document.createElement(listTag.toLowerCase());
+    const item = document.createElement("li");
+    item.appendChild(document.createElement("br"));
+    list.appendChild(item);
+    range.insertNode(list);
+    if (selection) {
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(item);
+      newRange.collapse(true);
+      selection.addRange(newRange);
+    }
+    return;
+  }
+
+  range = ensureRange(range);
+  const fragment = range.extractContents();
+  const list = document.createElement(listTag.toLowerCase());
+
+  let currentItem = document.createElement("li");
+  const pushCurrentItem = () => {
+    if (!currentItem.hasChildNodes()) {
+      currentItem.appendChild(document.createElement("br"));
+    }
+    list.appendChild(currentItem);
+    currentItem = document.createElement("li");
+  };
+
+  const consumeChildren = (element) => {
+    while (element.firstChild) {
+      const child = element.firstChild;
+      element.removeChild(child);
+      currentItem.appendChild(child);
+    }
+    pushCurrentItem();
+  };
+
+  Array.from(fragment.childNodes).forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent ?? "";
+      const parts = text.split(/\n/);
+      parts.forEach((part, index) => {
+        if (part.length) {
+          currentItem.appendChild(document.createTextNode(part));
+        }
+        if (index < parts.length - 1) {
+          pushCurrentItem();
+        }
+      });
+      return;
+    }
+    if (node.nodeName === "BR") {
+      pushCurrentItem();
+      return;
+    }
+    if (node instanceof HTMLElement && (node.tagName === "DIV" || node.tagName === "P")) {
+      consumeChildren(node);
+      return;
+    }
+    if (node instanceof HTMLElement && node.tagName === listTag) {
+      Array.from(node.children).forEach((child) => {
+        if (!(child instanceof HTMLElement)) {
+          return;
+        }
+        if (child.tagName !== "LI") {
+          currentItem.appendChild(child);
+          pushCurrentItem();
+          return;
+        }
+        const li = document.createElement("li");
+        while (child.firstChild) {
+          li.appendChild(child.firstChild);
+        }
+        list.appendChild(li);
+      });
+      currentItem = document.createElement("li");
+      return;
+    }
+    currentItem.appendChild(node);
+  });
+
+  if (currentItem.hasChildNodes()) {
+    pushCurrentItem();
+  }
+
+  if (!list.childElementCount) {
+    const item = document.createElement("li");
+    item.appendChild(document.createElement("br"));
+    list.appendChild(item);
+  }
+
+  range.insertNode(list);
+  if (selection) {
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNodeContents(list);
+    selection.addRange(newRange);
+  }
+}
+
+function unwrapList(list) {
+  if (!(list instanceof HTMLElement) || !list.parentNode) {
+    return;
+  }
+  const selection = window.getSelection?.();
+  const parent = list.parentNode;
+  const fragment = document.createDocumentFragment();
+  let first = null;
+  let last = null;
+  Array.from(list.children).forEach((item, index, array) => {
+    if (!(item instanceof HTMLElement)) {
+      return;
+    }
+    while (item.firstChild) {
+      const child = item.firstChild;
+      item.removeChild(child);
+      fragment.appendChild(child);
+      if (!first) {
+        first = child;
+      }
+      last = child;
+    }
+    if (index < array.length - 1) {
+      const br = document.createElement("br");
+      fragment.appendChild(br);
+      last = br;
+      if (!first) {
+        first = br;
+      }
+    }
+  });
+  parent.insertBefore(fragment, list);
+  parent.removeChild(list);
+
+  if (selection && first && last) {
+    selection.removeAllRanges();
+    const range = document.createRange();
+    range.setStartBefore(first);
+    range.setEndAfter(last);
+    selection.addRange(range);
+  }
+}
+
+function insertAudioLink(body) {
+  const context = getSelectionContextWithin(body);
+  if (!context) {
+    return;
+  }
+  const { selection, range } = context;
+
+  const input = window.prompt?.("Paste the audio URL (https://…)");
+  if (!input) {
+    return;
+  }
+  let safeURL;
+  try {
+    const parsed = new URL(input, window.location.href);
+    if (!/^https?:$/i.test(parsed.protocol)) {
+      throw new Error("Unsupported protocol");
+    }
+    safeURL = parsed.href;
+  } catch (error) {
+    console.warn("Invalid audio URL", error);
+    showDeckToast?.("Please enter a valid audio URL (starting with http/https).", {
+      icon: "fa-triangle-exclamation",
+    });
+    return;
+  }
+
+  const anchor = document.createElement("a");
+  anchor.href = safeURL;
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer";
+  anchor.classList.add("textbox-audio-link");
+  if (range.collapsed) {
+    anchor.textContent = "Audio link";
+    range.insertNode(anchor);
+  } else {
+    const fragment = range.extractContents();
+    anchor.appendChild(fragment);
+    range.insertNode(anchor);
+  }
+  if (selection) {
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNode(anchor);
+    selection.addRange(newRange);
+  }
+}
+
+function updateToolbarState(toolbar, body) {
+  if (!(toolbar instanceof HTMLElement)) {
+    return;
+  }
+  const buttons = Array.from(toolbar.querySelectorAll("button[data-command]"));
+  if (!buttons.length) {
+    return;
+  }
+  const context = getSelectionContextWithin(body);
+  buttons.forEach((button) => {
+    const command = button.dataset.command;
+    let active = false;
+    if (!context) {
+      button.setAttribute("aria-pressed", "false");
+      button.classList.toggle("is-active", false);
+      return;
+    }
+    const { range } = context;
+    switch (command) {
+      case "bold":
+        active = Boolean(
+          findAncestor(range.startContainer, (node) => node.tagName === "STRONG", body),
+        );
+        break;
+      case "italic":
+        active = Boolean(
+          findAncestor(range.startContainer, (node) => node.tagName === "EM", body),
+        );
+        break;
+      case "underline":
+        active = Boolean(
+          findAncestor(range.startContainer, (node) => node.tagName === "U", body),
+        );
+        break;
+      case "highlight":
+        active = Boolean(
+          findAncestor(
+            range.startContainer,
+            (node) => node.tagName === "MARK" && node.classList.contains("textbox-highlight"),
+            body,
+          ),
+        );
+        break;
+      case "bullet-list":
+        active = Boolean(
+          findAncestor(range.startContainer, (node) => node.tagName === "UL", body),
+        );
+        break;
+      case "numbered-list":
+        active = Boolean(
+          findAncestor(range.startContainer, (node) => node.tagName === "OL", body),
+        );
+        break;
+      case "audio-link":
+        active = Boolean(
+          findAncestor(
+            range.startContainer,
+            (node) => node.tagName === "A" && node.classList.contains("textbox-audio-link"),
+            body,
+          ),
+        );
+        break;
+      default:
+        active = false;
+    }
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+    button.classList.toggle("is-active", active);
+  });
+}
+
+function initialiseTextboxToolbar(toolbar, body) {
+  if (!(toolbar instanceof HTMLElement) || toolbar.__deckTextboxToolbarInitialised) {
+    return toolbar;
+  }
+  toolbar.__deckTextboxToolbarInitialised = true;
+  toolbar.setAttribute("role", "toolbar");
+  toolbar.setAttribute("aria-label", "Textbox formatting controls");
+  toolbar.innerHTML = "";
+  TEXTBOX_TOOLBAR_CONFIG.forEach((config) => {
+    toolbar.appendChild(createToolbarButton(config));
+  });
+
+  let storedRange = null;
+
+  const saveSelection = () => {
+    const context = getSelectionContextWithin(body);
+    if (context) {
+      storedRange = context.range.cloneRange();
+    }
+  };
+
+  const restoreSelection = () => {
+    if (!storedRange) {
+      return;
+    }
+    const selection = window.getSelection?.();
+    if (!selection) {
+      return;
+    }
+    selection.removeAllRanges();
+    selection.addRange(storedRange.cloneRange());
+  };
+
+  const handleToolbarPointerDown = (event) => {
+    const target = event.target instanceof HTMLElement ? event.target.closest("button") : null;
+    if (!target) {
+      return;
+    }
+    event.preventDefault();
+  };
+
+  const handleToolbarClick = (event) => {
+    const button = event.target instanceof HTMLElement ? event.target.closest("button") : null;
+    if (!(button instanceof HTMLButtonElement) || !button.dataset.command) {
+      return;
+    }
+    event.preventDefault();
+    restoreSelection();
+    body.focus({ preventScroll: true });
+    const command = button.dataset.command;
+    switch (command) {
+      case "bold":
+        toggleInlineFormat(body, "STRONG");
+        break;
+      case "italic":
+        toggleInlineFormat(body, "EM");
+        break;
+      case "underline":
+        toggleInlineFormat(body, "U");
+        break;
+      case "highlight":
+        toggleInlineFormat(body, "MARK", { className: "textbox-highlight" });
+        break;
+      case "bullet-list":
+        createListFromRange(body, "UL");
+        break;
+      case "numbered-list":
+        createListFromRange(body, "OL");
+        break;
+      case "audio-link":
+        insertAudioLink(body);
+        break;
+      default:
+        break;
+    }
+    saveSelection();
+    updateToolbarState(toolbar, body);
+  };
+
+  const handleBodyInput = () => {
+    saveSelection();
+    updateToolbarState(toolbar, body);
+  };
+
+  toolbar.addEventListener("pointerdown", handleToolbarPointerDown);
+  toolbar.addEventListener("click", handleToolbarClick);
+  body.addEventListener("keyup", handleBodyInput);
+  body.addEventListener("mouseup", handleBodyInput);
+  body.addEventListener("mouseleave", saveSelection);
+  body.addEventListener("input", handleBodyInput);
+  const handleBodyFocus = () => {
+    requestAnimationFrame(() => {
+      saveSelection();
+      updateToolbarState(toolbar, body);
+    });
+  };
+  const handleBodyBlur = () => {
+    storedRange = null;
+    updateToolbarState(toolbar, body);
+  };
+  body.addEventListener("focus", handleBodyFocus);
+  body.addEventListener("blur", handleBodyBlur);
+
+  toolbar.__deckTextboxToolbarCleanup = () => {
+    toolbar.removeEventListener("pointerdown", handleToolbarPointerDown);
+    toolbar.removeEventListener("click", handleToolbarClick);
+    body.removeEventListener("keyup", handleBodyInput);
+    body.removeEventListener("mouseup", handleBodyInput);
+    body.removeEventListener("mouseleave", saveSelection);
+    body.removeEventListener("input", handleBodyInput);
+    body.removeEventListener("focus", handleBodyFocus);
+    body.removeEventListener("blur", handleBodyBlur);
+  };
+
+  updateToolbarState(toolbar, body);
+  return toolbar;
+}
+
+function sanitizeTextboxNode(node) {
+  if (!(node instanceof Node)) {
+    return;
+  }
+  if (node.nodeType === Node.ELEMENT_NODE) {
+    const element = node;
+    const tagName = element.tagName.toUpperCase();
+    if (!TEXTBOX_CONTENT_ALLOWED_TAGS.has(tagName)) {
+      const parent = element.parentNode;
+      if (parent) {
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      }
+      return;
+    }
+
+    Array.from(element.attributes).forEach((attribute) => {
+      const name = attribute.name.toLowerCase();
+      if (name.startsWith("on")) {
+        element.removeAttribute(attribute.name);
+        return;
+      }
+      const allowedForTag = TEXTBOX_ATTRIBUTE_ALLOWLIST[tagName];
+      const allowed = allowedForTag?.has(attribute.name) ?? false;
+      if (!allowed && attribute.name !== "class") {
+        element.removeAttribute(attribute.name);
+      }
+    });
+
+    if (element.classList.length) {
+      const filtered = Array.from(element.classList).filter((className) =>
+        TEXTBOX_ALLOWED_CLASSNAMES.has(className),
+      );
+      if (filtered.length) {
+        element.className = filtered.join(" ");
+      } else {
+        element.removeAttribute("class");
+      }
+    }
+
+    if (tagName === "MARK") {
+      element.classList.add("textbox-highlight");
+    }
+
+    if (tagName === "A") {
+      const href = element.getAttribute("href") ?? "";
+      let safeHref = null;
+      try {
+        const parsed = new URL(href, window.location.href);
+        if (/^https?:$/i.test(parsed.protocol)) {
+          safeHref = parsed.href;
+        }
+      } catch (error) {
+        safeHref = null;
+      }
+      if (!safeHref) {
+        const parent = element.parentNode;
+        if (parent) {
+          while (element.firstChild) {
+            parent.insertBefore(element.firstChild, element);
+          }
+          parent.removeChild(element);
+        }
+        return;
+      }
+      element.setAttribute("href", safeHref);
+      element.setAttribute("target", "_blank");
+      element.setAttribute("rel", "noopener noreferrer");
+      element.classList.add("textbox-audio-link");
+    }
+  }
+
+  Array.from(node.childNodes).forEach((child) => sanitizeTextboxNode(child));
+}
+
+function sanitizeTextboxHTML(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html ?? "";
+  Array.from(template.content.childNodes).forEach((child) => sanitizeTextboxNode(child));
+  return template.innerHTML;
+}
+
+function sanitiseTextboxElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return element;
+  }
+  element.innerHTML = sanitizeTextboxHTML(element.innerHTML);
+  return element;
+}
+
+function serialiseSlide(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return "";
+  }
+  const clone = slide.cloneNode(true);
+  const textboxes = clone.querySelectorAll(".textbox-body");
+  textboxes.forEach((body) => {
+    if (body instanceof HTMLElement) {
+      sanitiseTextboxElement(body);
+    }
+  });
+  return clone.outerHTML;
+}
+
+function sanitiseTextboxesIn(root) {
+  if (!(root instanceof HTMLElement) && !(root instanceof DocumentFragment)) {
+    return;
+  }
+  const scope = root;
+  const bodies = scope.querySelectorAll?.(".textbox-body") ?? [];
+  bodies.forEach((body) => {
+    if (body instanceof HTMLElement) {
+      sanitiseTextboxElement(body);
+    }
+  });
+}
+
 export function createTextbox({ onRemove } = {}) {
   const textbox = document.createElement("div");
   textbox.className = "textbox";
@@ -1708,6 +2393,7 @@ export function createTextbox({ onRemove } = {}) {
 ${renderColorSwatchButtons()}
 </div>
     </div>
+    <div class="textbox-toolbar" role="toolbar" aria-label="Textbox formatting controls"></div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
   initialiseTextbox(textbox, { onRemove });
@@ -1738,6 +2424,13 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
 
   const removeBtn = textbox.querySelector(".textbox-remove");
   removeBtn?.addEventListener("click", () => {
+    if (toolbar instanceof HTMLElement) {
+      try {
+        toolbar.__deckTextboxToolbarCleanup?.();
+      } catch (error) {
+        console.warn("Failed to cleanup textbox toolbar", error);
+      }
+    }
     textbox.remove();
     if (typeof textbox.__deckTextboxOnRemove === "function") {
       textbox.__deckTextboxOnRemove();
@@ -1745,6 +2438,13 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
   });
 
   const body = textbox.querySelector(".textbox-body");
+  if (body instanceof HTMLElement) {
+    sanitiseTextboxElement(body);
+  }
+  const toolbar = textbox.querySelector(".textbox-toolbar");
+  if (toolbar instanceof HTMLElement && body instanceof HTMLElement) {
+    initialiseTextboxToolbar(toolbar, body);
+  }
   body?.addEventListener("dblclick", () => {
     if (body instanceof HTMLElement) {
       body.focus();
@@ -3309,7 +4009,7 @@ function getDeckState() {
   return {
     version: 2,
     currentSlideIndex,
-    slides: slides.map((slide) => slide.outerHTML),
+    slides: slides.map((slide) => serialiseSlide(slide)),
     modules,
   };
 }
@@ -3370,12 +4070,14 @@ function applyDeckState(state) {
     template.innerHTML = slideHTML.trim();
     const slide = template.content.firstElementChild;
     if (slide instanceof HTMLElement && slide.classList.contains("slide-stage")) {
+      sanitiseTextboxesIn(slide);
       fragment.appendChild(slide);
     }
   });
 
   stageViewport.innerHTML = "";
   stageViewport.appendChild(fragment);
+  sanitiseTextboxesIn(stageViewport);
   navButtons.forEach((button) => stageViewport.appendChild(button));
 
   refreshSlides();
