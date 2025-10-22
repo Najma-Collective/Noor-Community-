@@ -114,6 +114,9 @@ let moduleCloseBtn;
 let moduleLastFocus;
 let moduleTargetCanvas;
 let moduleInsertCallback;
+let moduleEditTarget;
+let modulePendingConfig;
+let moduleBuilderReady = false;
 let deckToastRoot;
 let deckStatusEl;
 
@@ -144,6 +147,11 @@ const MODULE_TYPE_LABELS = {
 };
 
 const DECK_TOAST_TIMEOUT = 3600;
+
+const MODULE_CONFIG_SCRIPT_SELECTOR =
+  'script[type="application/json"].module-embed-config';
+const MODULE_EMPTY_HTML =
+  "<!DOCTYPE html><html lang=\"en\"><body style=\"font-family: sans-serif; padding: 1rem;\">No module content yet.</body></html>";
 
 const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
 const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
@@ -1096,13 +1104,13 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const handleAddModule = () => {
-    moduleInsertCallback = () => {
-      updateHintForCanvas();
-    };
-    const opened = openModuleOverlay({ canvas, trigger: addModuleBtn });
-    if (!opened) {
-      moduleInsertCallback = null;
-    }
+    openModuleOverlay({
+      canvas,
+      trigger: addModuleBtn,
+      onInsert: () => {
+        updateHintForCanvas();
+      },
+    });
   };
 
   if (addModuleBtn instanceof HTMLElement) {
@@ -1862,16 +1870,184 @@ export function positionPastedImage(image, canvas) {
   }
 }
 
-export function createModuleEmbed({ html = "", title, activityType, onRemove } = {}) {
-  const module = document.createElement("section");
-  module.className = "module-embed";
-  if (typeof activityType === "string" && activityType) {
-    module.dataset.activityType = activityType;
+function serialiseModuleConfig(config) {
+  if (!config || typeof config !== "object") {
+    return null;
+  }
+  try {
+    return JSON.stringify(config);
+  } catch (error) {
+    console.warn("Unable to serialise module config", error);
+    return null;
+  }
+}
+
+function setModuleConfigOnElement(module, config) {
+  if (!(module instanceof HTMLElement)) {
+    return;
   }
 
-  const resolvedTitle = trimText(title) || "Interactive module";
+  const serialised = serialiseModuleConfig(config);
+
+  if (serialised) {
+    module.dataset.moduleConfig = serialised;
+    let script = module.querySelector(MODULE_CONFIG_SCRIPT_SELECTOR);
+    if (!(script instanceof HTMLScriptElement)) {
+      script = document.createElement("script");
+      script.type = "application/json";
+      script.className = "module-embed-config";
+    }
+    script.textContent = serialised;
+    const frame = module.querySelector(".module-embed-frame");
+    if (frame instanceof HTMLElement && frame.parentNode === module) {
+      module.insertBefore(script, frame);
+    } else if (!script.parentNode) {
+      module.appendChild(script);
+    }
+    try {
+      module.__deckModuleConfig = JSON.parse(serialised);
+    } catch (error) {
+      module.__deckModuleConfig = null;
+    }
+  } else {
+    delete module.dataset.moduleConfig;
+    const script = module.querySelector(MODULE_CONFIG_SCRIPT_SELECTOR);
+    if (script instanceof HTMLScriptElement) {
+      script.remove();
+    }
+    module.__deckModuleConfig = null;
+  }
+}
+
+function getModuleConfigFromElement(module) {
+  if (!(module instanceof HTMLElement)) {
+    return null;
+  }
+
+  const existing = module.__deckModuleConfig;
+  if (existing && typeof existing === "object") {
+    return existing;
+  }
+
+  let raw = module.dataset.moduleConfig;
+  if (!raw) {
+    const script = module.querySelector(MODULE_CONFIG_SCRIPT_SELECTOR);
+    raw = script?.textContent ?? "";
+  }
+
+  if (!raw) {
+    module.__deckModuleConfig = null;
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    module.__deckModuleConfig = parsed;
+    return parsed;
+  } catch (error) {
+    console.warn("Unable to parse stored module config", error);
+    module.__deckModuleConfig = null;
+    return null;
+  }
+}
+
+function resolveModuleTitle({ title, config, fallback } = {}) {
+  return (
+    trimText(title) ||
+    trimText(config?.data?.title) ||
+    trimText(fallback) ||
+    "Interactive module"
+  );
+}
+
+function resolveModuleType({ activityType, config } = {}) {
+  if (typeof activityType === "string" && activityType.trim()) {
+    return activityType.trim();
+  }
+  const fromConfig = config?.type;
+  return typeof fromConfig === "string" && fromConfig ? fromConfig : "";
+}
+
+function updateModuleEmbedContent(
+  module,
+  { html, title, activityType, config } = {},
+) {
+  if (!(module instanceof HTMLElement)) {
+    return module;
+  }
+
+  if (config && typeof config === "object") {
+    setModuleConfigOnElement(module, config);
+  } else if (!module.dataset.moduleConfig) {
+    getModuleConfigFromElement(module);
+  }
+
+  const storedConfig = getModuleConfigFromElement(module);
+  const resolvedTitle = resolveModuleTitle({
+    title,
+    config: storedConfig,
+    fallback: module.dataset.activityTitle,
+  });
+  const resolvedType = resolveModuleType({
+    activityType,
+    config: storedConfig,
+  });
+
+  if (resolvedType) {
+    module.dataset.activityType = resolvedType;
+  } else {
+    delete module.dataset.activityType;
+  }
   module.dataset.activityTitle = resolvedTitle;
-  const typeLabel = MODULE_TYPE_LABELS[activityType] || "Interactive activity";
+
+  const pill = module.querySelector(".module-embed-pill");
+  if (pill instanceof HTMLElement) {
+    pill.textContent = MODULE_TYPE_LABELS[resolvedType] || "Interactive activity";
+  }
+
+  const titleEl = module.querySelector(".module-embed-title");
+  if (titleEl instanceof HTMLElement) {
+    titleEl.textContent = resolvedTitle;
+  }
+
+  let frame = module.querySelector(".module-embed-frame");
+  if (!(frame instanceof HTMLIFrameElement)) {
+    frame = document.createElement("iframe");
+    frame.className = "module-embed-frame";
+    frame.setAttribute("loading", "lazy");
+    module.appendChild(frame);
+  }
+
+  frame.setAttribute("title", `${resolvedTitle} interactive module`);
+
+  if (typeof html === "string") {
+    frame.srcdoc = html.trim() ? html : MODULE_EMPTY_HTML;
+  } else if (!frame.srcdoc || !frame.srcdoc.trim()) {
+    frame.srcdoc = MODULE_EMPTY_HTML;
+  }
+
+  return module;
+}
+
+export function createModuleEmbed({
+  html = "",
+  title,
+  activityType,
+  config,
+  onRemove,
+} = {}) {
+  const module = document.createElement("section");
+  module.className = "module-embed";
+
+  const resolvedType = resolveModuleType({ activityType, config });
+  const resolvedTitle = resolveModuleTitle({ title, config });
+
+  if (resolvedType) {
+    module.dataset.activityType = resolvedType;
+  }
+  module.dataset.activityTitle = resolvedTitle;
+
+  const typeLabel = MODULE_TYPE_LABELS[resolvedType] || "Interactive activity";
 
   module.innerHTML = `
     <div class="module-embed-header">
@@ -1880,6 +2056,10 @@ export function createModuleEmbed({ html = "", title, activityType, onRemove } =
         <span class="module-embed-title">${escapeHtml(resolvedTitle)}</span>
       </div>
       <div class="module-embed-actions">
+        <button type="button" class="module-embed-edit" data-action="edit-module">
+          <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+          <span class="sr-only">Edit module</span>
+        </button>
         <button type="button" class="module-embed-remove" data-action="remove-module">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           <span class="sr-only">Remove module</span>
@@ -1888,16 +2068,12 @@ export function createModuleEmbed({ html = "", title, activityType, onRemove } =
     </div>
   `;
 
-  const frame = document.createElement("iframe");
-  frame.className = "module-embed-frame";
-  frame.setAttribute("title", `${resolvedTitle} interactive module`);
-  frame.setAttribute("loading", "lazy");
-  if (typeof html === "string" && html.trim()) {
-    frame.srcdoc = html;
-  } else {
-    frame.srcdoc = `<!DOCTYPE html><html lang="en"><body style="font-family: sans-serif; padding: 1rem;">No module content yet.</body></html>`;
-  }
-  module.appendChild(frame);
+  updateModuleEmbedContent(module, {
+    html,
+    config,
+    title: resolvedTitle,
+    activityType: resolvedType,
+  });
 
   initialiseModuleEmbed(module, { onRemove });
   return module;
@@ -1907,7 +2083,7 @@ export function initialiseModuleEmbed(module, { onRemove } = {}) {
   if (!(module instanceof HTMLElement)) {
     return module;
   }
-  module.__deckModuleOnRemove = onRemove;
+  module.__deckModuleOnRemove = onRemove ?? module.__deckModuleOnRemove ?? null;
 
   if (typeof module.__deckModuleCleanup === "function") {
     try {
@@ -1916,6 +2092,13 @@ export function initialiseModuleEmbed(module, { onRemove } = {}) {
       console.warn("Module embed cleanup failed", error);
     }
   }
+
+  const cleanupTasks = [];
+  const registerCleanup = (callback) => {
+    if (typeof callback === "function") {
+      cleanupTasks.push(callback);
+    }
+  };
 
   const removeBtn = module.querySelector('[data-action="remove-module"]');
 
@@ -1935,12 +2118,45 @@ export function initialiseModuleEmbed(module, { onRemove } = {}) {
 
   if (removeBtn instanceof HTMLElement) {
     removeBtn.addEventListener("click", handleRemove);
-    module.__deckModuleCleanup = () => {
+    registerCleanup(() => {
       removeBtn.removeEventListener("click", handleRemove);
-    };
-  } else {
-    module.__deckModuleCleanup = () => {};
+    });
   }
+
+  const editBtn = module.querySelector('[data-action="edit-module"]');
+  if (editBtn instanceof HTMLElement) {
+    const handleEdit = () => {
+      const canvas =
+        module.closest(".blank-canvas") ??
+        (module.parentElement instanceof HTMLElement ? module.parentElement : null);
+      const onInsertCallback =
+        typeof module.__deckModuleOnRemove === "function"
+          ? () => module.__deckModuleOnRemove()
+          : null;
+      openModuleOverlay({
+        canvas,
+        trigger: editBtn,
+        module,
+        onInsert: onInsertCallback,
+      });
+    };
+    editBtn.addEventListener("click", handleEdit);
+    registerCleanup(() => {
+      editBtn.removeEventListener("click", handleEdit);
+    });
+  }
+
+  module.__deckModuleCleanup = () => {
+    cleanupTasks.forEach((task) => {
+      try {
+        task();
+      } catch (error) {
+        console.warn("Module embed cleanup task failed", error);
+      }
+    });
+  };
+
+  getModuleConfigFromElement(module);
 
   if (!module.__deckModuleInitialised) {
     module.__deckModuleInitialised = true;
@@ -2623,10 +2839,35 @@ function recalibrateMindMapCounter() {
 
 function getDeckState() {
   refreshSlides();
+  const modules = [];
+  slides.forEach((slide, slideIndex) => {
+    if (!(slide instanceof HTMLElement)) {
+      return;
+    }
+    const moduleNodes = Array.from(slide.querySelectorAll(".module-embed"));
+    moduleNodes.forEach((module, moduleIndex) => {
+      if (!(module instanceof HTMLElement)) {
+        return;
+      }
+      const storedConfig = getModuleConfigFromElement(module);
+      const clonedConfig = cloneModuleConfig(storedConfig);
+      if (!clonedConfig) {
+        return;
+      }
+      modules.push({
+        slideIndex,
+        moduleIndex,
+        title: module.dataset.activityTitle ?? null,
+        activityType: module.dataset.activityType ?? null,
+        config: clonedConfig,
+      });
+    });
+  });
   return {
-    version: 1,
+    version: 2,
     currentSlideIndex,
     slides: slides.map((slide) => slide.outerHTML),
+    modules,
   };
 }
 
@@ -2695,11 +2936,39 @@ function applyDeckState(state) {
   navButtons.forEach((button) => stageViewport.appendChild(button));
 
   refreshSlides();
+  if (Array.isArray(state.modules)) {
+    state.modules.forEach((entry) => {
+      if (!entry || typeof entry !== "object") {
+        return;
+      }
+      const { slideIndex, moduleIndex, config, title, activityType } = entry;
+      if (!Number.isInteger(slideIndex) || !Number.isInteger(moduleIndex)) {
+        return;
+      }
+      const slide = slides[slideIndex];
+      if (!(slide instanceof HTMLElement)) {
+        return;
+      }
+      const moduleNodes = Array.from(slide.querySelectorAll(".module-embed"));
+      const targetModule = moduleNodes[moduleIndex];
+      if (!(targetModule instanceof HTMLElement)) {
+        return;
+      }
+      updateModuleEmbedContent(targetModule, {
+        config,
+        title,
+        activityType,
+      });
+    });
+  }
   slides
     .filter((slide) => slide.dataset.type === "blank")
     .forEach((slide) => attachBlankSlideEvents(slide));
 
   initialiseActivities();
+  stageViewport
+    ?.querySelectorAll(".module-embed")
+    .forEach((module) => initialiseModuleEmbed(module));
   recalibrateMindMapCounter();
 
   if (slides.length) {
@@ -4271,16 +4540,63 @@ function handleModuleOverlayKeydown(event) {
   }
 }
 
-function openModuleOverlay({ canvas, trigger } = {}) {
+function cloneModuleConfig(config) {
+  const serialised = serialiseModuleConfig(config);
+  if (!serialised) {
+    return null;
+  }
+  try {
+    return JSON.parse(serialised);
+  } catch (error) {
+    console.warn("Unable to clone module config", error);
+    return null;
+  }
+}
+
+function sendModuleConfigToBuilder(config) {
+  if (!(moduleFrame instanceof HTMLIFrameElement)) {
+    return;
+  }
+  if (!config || typeof config !== "object") {
+    return;
+  }
+  try {
+    moduleFrame.contentWindow?.postMessage(
+      { source: "noor-deck", type: "activity-module-load", config },
+      "*",
+    );
+  } catch (error) {
+    console.warn("Unable to deliver module config to builder", error);
+  }
+}
+
+function openModuleOverlay({ canvas, trigger, module, onInsert } = {}) {
   if (!(moduleOverlay instanceof HTMLElement)) {
     console.warn("Module builder overlay is unavailable.");
     return false;
   }
-  if (!(canvas instanceof HTMLElement)) {
+  if (!(moduleFrame instanceof HTMLIFrameElement)) {
+    console.warn("Module builder frame is unavailable.");
+    return false;
+  }
+
+  const targetCanvas =
+    module instanceof HTMLElement
+      ? module.closest(".blank-canvas") ??
+        (module.parentElement instanceof HTMLElement ? module.parentElement : null)
+      : canvas;
+
+  if (!(targetCanvas instanceof HTMLElement)) {
     console.warn("Module builder requires a target canvas element.");
     return false;
   }
-  moduleTargetCanvas = canvas;
+
+  moduleTargetCanvas = targetCanvas;
+  moduleInsertCallback = typeof onInsert === "function" ? onInsert : null;
+  moduleEditTarget = module instanceof HTMLElement ? module : null;
+  modulePendingConfig = moduleEditTarget
+    ? cloneModuleConfig(getModuleConfigFromElement(moduleEditTarget))
+    : null;
   moduleLastFocus =
     trigger instanceof HTMLElement
       ? trigger
@@ -4296,6 +4612,11 @@ function openModuleOverlay({ canvas, trigger } = {}) {
     }
   });
   document.addEventListener("keydown", handleModuleOverlayKeydown);
+
+  if (moduleEditTarget && moduleBuilderReady && modulePendingConfig) {
+    sendModuleConfigToBuilder(modulePendingConfig);
+  }
+
   return true;
 }
 
@@ -4312,6 +4633,8 @@ function closeModuleOverlay({ focus = true, resetTarget = true } = {}) {
   if (resetTarget) {
     moduleTargetCanvas = null;
     moduleInsertCallback = null;
+    moduleEditTarget = null;
+    modulePendingConfig = null;
   }
   if (focus && moduleLastFocus instanceof HTMLElement) {
     moduleLastFocus.focus({ preventScroll: true });
@@ -4329,19 +4652,61 @@ function handleModuleBuilderMessage(event) {
   if (!data || data.source !== "noor-activity-builder" || data.type !== "activity-module") {
     return;
   }
+  if (data.status === "ready") {
+    moduleBuilderReady = true;
+    if (modulePendingConfig) {
+      sendModuleConfigToBuilder(modulePendingConfig);
+    }
+    return;
+  }
+
+  if (data.status === "loaded") {
+    modulePendingConfig = null;
+    return;
+  }
+
   if (!(moduleTargetCanvas instanceof HTMLElement)) {
     closeModuleOverlay({ focus: true });
     return;
   }
 
   const html = typeof data.html === "string" ? data.html : "";
-  const config = data.config ?? {};
+  const config =
+    data.config && typeof data.config === "object" ? data.config : null;
   const afterInsert = typeof moduleInsertCallback === "function" ? moduleInsertCallback : null;
+
+  if (
+    moduleEditTarget instanceof HTMLElement &&
+    moduleTargetCanvas.contains(moduleEditTarget)
+  ) {
+    updateModuleEmbedContent(moduleEditTarget, {
+      html,
+      config,
+      title: config?.data?.title,
+      activityType: config?.type,
+    });
+    moduleEditTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+    afterInsert?.();
+    moduleInsertCallback = null;
+    modulePendingConfig = null;
+    moduleEditTarget = null;
+    try {
+      event.source?.postMessage(
+        { source: "noor-deck", type: "activity-module", status: "updated" },
+        "*",
+      );
+    } catch (error) {
+      console.warn("Unable to confirm module update", error);
+    }
+    closeModuleOverlay({ focus: true });
+    return;
+  }
 
   const moduleElement = createModuleEmbed({
     html,
     title: config?.data?.title,
     activityType: config?.type,
+    config,
     onRemove: () => {
       afterInsert?.();
     },
@@ -4351,6 +4716,8 @@ function handleModuleBuilderMessage(event) {
   moduleElement.scrollIntoView({ behavior: "smooth", block: "center" });
   afterInsert?.();
   moduleInsertCallback = null;
+  modulePendingConfig = null;
+  moduleEditTarget = null;
 
   try {
     event.source?.postMessage({ source: "noor-deck", type: "activity-module", status: "inserted" }, "*");
@@ -4379,6 +4746,17 @@ function initialiseModuleBuilderBridge() {
   moduleCloseBtn?.addEventListener("click", () => {
     closeModuleOverlay({ focus: true });
   });
+
+  if (moduleFrame instanceof HTMLIFrameElement) {
+    moduleFrame.addEventListener("load", () => {
+      moduleBuilderReady = false;
+      if (moduleEditTarget instanceof HTMLElement) {
+        modulePendingConfig = cloneModuleConfig(
+          getModuleConfigFromElement(moduleEditTarget),
+        );
+      }
+    });
+  }
 
   window.addEventListener("message", handleModuleBuilderMessage);
 }

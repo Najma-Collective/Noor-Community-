@@ -1271,6 +1271,52 @@ class ActivityBuilder {
     };
   }
 
+  loadConfig(config, { announce = true } = {}) {
+    if (!config || typeof config !== 'object') {
+      return false;
+    }
+
+    const type = typeof config.type === 'string' ? config.type : null;
+    if (!type || !(type in DEFAULT_STATES)) {
+      return false;
+    }
+
+    const baseData =
+      config.data && typeof config.data === 'object'
+        ? deepClone(config.data)
+        : this.getDefaultState(type);
+
+    if (!baseData || typeof baseData !== 'object') {
+      return false;
+    }
+
+    const presetId =
+      typeof config.presetId === 'string' && config.presetId.trim()
+        ? config.presetId.trim()
+        : null;
+
+    this.state = {
+      type,
+      data: baseData,
+      presetId,
+    };
+
+    if (this.typeSelect) {
+      this.typeSelect.value = type;
+    }
+
+    this.renderForm();
+    this.updateOutputs();
+    this.flushUpdateQueue();
+
+    if (announce) {
+      const meta = TYPE_META[type] || TYPE_META.default;
+      this.announceStatus(`${meta.label} loaded from deck.`);
+    }
+
+    return true;
+  }
+
   updateOutputs() {
     const config = this.getCurrentConfig();
     this.scheduleRender(config);
@@ -2215,4 +2261,33 @@ const parseGapfill = (passage = '') => {
 window.addEventListener('DOMContentLoaded', () => {
   const builder = new ActivityBuilder();
   builder.init();
+
+  if (builder.isEmbedded) {
+    const postStatus = (status) => {
+      try {
+        window.parent.postMessage(
+          { source: 'noor-activity-builder', type: 'activity-module', status },
+          '*',
+        );
+      } catch (error) {
+        console.warn(`Unable to notify deck of builder ${status} status`, error);
+      }
+    };
+
+    postStatus('ready');
+
+    window.addEventListener('message', (event) => {
+      if (event.source !== window.parent) {
+        return;
+      }
+      const message = event.data;
+      if (!message || message.source !== 'noor-deck' || message.type !== 'activity-module-load') {
+        return;
+      }
+      const loaded = builder.loadConfig(message.config);
+      if (loaded) {
+        postStatus('loaded');
+      }
+    });
+  }
 });
