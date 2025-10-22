@@ -2,6 +2,7 @@ export function initSlideNavigator({
   stageViewport,
   onSelectSlide,
   onDuplicateSlide,
+  onDeleteSlide,
 } = {}) {
   if (!(stageViewport instanceof HTMLElement)) {
     return null;
@@ -172,10 +173,12 @@ export function initSlideNavigator({
     }
 
     const hasDuplicateAction = typeof onDuplicateSlide === "function";
+    const hasDeleteAction = typeof onDeleteSlide === "function";
+    const hasActions = hasDuplicateAction || hasDeleteAction;
 
     filteredSlides.forEach(({ stage, title, originalIndex }) => {
       const item = document.createElement("li");
-      if (hasDuplicateAction) {
+      if (hasActions) {
         item.className = "slide-jump-row";
       }
 
@@ -195,44 +198,84 @@ export function initSlideNavigator({
       });
       item.appendChild(button);
 
-      if (hasDuplicateAction) {
+      if (hasActions) {
         const actions = document.createElement("div");
         actions.className = "slide-jump-actions";
 
-        const duplicateBtn = document.createElement("button");
-        duplicateBtn.type = "button";
-        duplicateBtn.className = "slide-jump-action";
-        duplicateBtn.innerHTML = `
-          <i class="fa-solid fa-clone" aria-hidden="true"></i>
-          <span>Duplicate</span>
-        `;
-        duplicateBtn.addEventListener("click", (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          if (typeof onDuplicateSlide !== "function") {
-            return;
-          }
-          try {
-            const result = onDuplicateSlide(originalIndex);
-            if (result && typeof result.then === "function") {
-              result
-                .then((value) => {
-                  if (typeof value === "number") {
-                    closePanel();
-                  }
-                })
-                .catch((error) => {
-                  console.warn("Slide duplication failed", error);
-                });
-            } else if (typeof result === "number") {
-              closePanel();
+        if (hasDuplicateAction) {
+          const duplicateBtn = document.createElement("button");
+          duplicateBtn.type = "button";
+          duplicateBtn.className = "slide-jump-action";
+          duplicateBtn.innerHTML = `
+            <i class="fa-solid fa-clone" aria-hidden="true"></i>
+            <span>Duplicate</span>
+          `;
+          duplicateBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof onDuplicateSlide !== "function") {
+              return;
             }
-          } catch (error) {
-            console.warn("Slide duplication threw an error", error);
-          }
-        });
+            try {
+              const result = onDuplicateSlide(originalIndex);
+              if (result && typeof result.then === "function") {
+                result
+                  .then((value) => {
+                    if (typeof value === "number") {
+                      closePanel();
+                    }
+                  })
+                  .catch((error) => {
+                    console.warn("Slide duplication failed", error);
+                  });
+              } else if (typeof result === "number") {
+                closePanel();
+              }
+            } catch (error) {
+              console.warn("Slide duplication threw an error", error);
+            }
+          });
 
-        actions.appendChild(duplicateBtn);
+          actions.appendChild(duplicateBtn);
+        }
+
+        if (hasDeleteAction) {
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "slide-jump-action slide-jump-action--danger";
+          deleteBtn.innerHTML = `
+            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+            <span>Delete</span>
+          `;
+          deleteBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof onDeleteSlide !== "function") {
+              return;
+            }
+            try {
+              const result = onDeleteSlide(originalIndex);
+              if (result && typeof result.then === "function") {
+                result
+                  .then((value) => {
+                    if (value !== false) {
+                      closePanel();
+                    }
+                  })
+                  .catch((error) => {
+                    console.warn("Slide deletion failed", error);
+                  });
+              } else if (result !== false) {
+                closePanel();
+              }
+            } catch (error) {
+              console.warn("Slide deletion threw an error", error);
+            }
+          });
+
+          actions.appendChild(deleteBtn);
+        }
+
         item.appendChild(actions);
       }
 
