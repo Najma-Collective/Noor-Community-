@@ -3,6 +3,7 @@ export function initSlideNavigator({
   onSelectSlide,
   onDuplicateSlide,
   onDeleteSlide,
+  onMoveSlide,
 } = {}) {
   if (!(stageViewport instanceof HTMLElement)) {
     return null;
@@ -174,7 +175,8 @@ export function initSlideNavigator({
 
     const hasDuplicateAction = typeof onDuplicateSlide === "function";
     const hasDeleteAction = typeof onDeleteSlide === "function";
-    const hasActions = hasDuplicateAction || hasDeleteAction;
+    const hasMoveAction = typeof onMoveSlide === "function";
+    const hasActions = hasDuplicateAction || hasDeleteAction || hasMoveAction;
 
     filteredSlides.forEach(({ stage, title, originalIndex }) => {
       const item = document.createElement("li");
@@ -201,6 +203,74 @@ export function initSlideNavigator({
       if (hasActions) {
         const actions = document.createElement("div");
         actions.className = "slide-jump-actions";
+
+        if (hasMoveAction) {
+          const totalSlides = slidesMeta.length;
+
+          const moveUpBtn = document.createElement("button");
+          moveUpBtn.type = "button";
+          moveUpBtn.className = "slide-jump-action";
+          moveUpBtn.innerHTML = `
+            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+            <span>Move up</span>
+          `;
+          moveUpBtn.disabled = originalIndex <= 0;
+          moveUpBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof onMoveSlide !== "function") {
+              return;
+            }
+            const nextIndex = Math.max(0, originalIndex - 1);
+            if (nextIndex === originalIndex) {
+              return;
+            }
+            try {
+              const result = onMoveSlide(originalIndex, nextIndex);
+              if (result && typeof result.then === "function") {
+                result.catch((error) => {
+                  console.warn("Slide move (up) failed", error);
+                });
+              }
+            } catch (error) {
+              console.warn("Slide move (up) threw an error", error);
+            }
+          });
+
+          const moveDownBtn = document.createElement("button");
+          moveDownBtn.type = "button";
+          moveDownBtn.className = "slide-jump-action";
+          moveDownBtn.innerHTML = `
+            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+            <span>Move down</span>
+          `;
+          moveDownBtn.disabled =
+            originalIndex >= totalSlides - 1 || totalSlides <= 1;
+          moveDownBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof onMoveSlide !== "function") {
+              return;
+            }
+            const nextIndex = Math.min(totalSlides - 1, originalIndex + 1);
+            if (nextIndex === originalIndex) {
+              return;
+            }
+            try {
+              const result = onMoveSlide(originalIndex, nextIndex);
+              if (result && typeof result.then === "function") {
+                result.catch((error) => {
+                  console.warn("Slide move (down) failed", error);
+                });
+              }
+            } catch (error) {
+              console.warn("Slide move (down) threw an error", error);
+            }
+          });
+
+          actions.appendChild(moveUpBtn);
+          actions.appendChild(moveDownBtn);
+        }
 
         if (hasDuplicateAction) {
           const duplicateBtn = document.createElement("button");
