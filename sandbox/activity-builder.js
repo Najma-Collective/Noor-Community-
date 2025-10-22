@@ -235,6 +235,10 @@ class ActivityBuilder {
     this.formContainer.addEventListener('change', this.handleFormInput);
     this.formContainer.addEventListener('click', this.handleFormClick);
     this.copyBtn.addEventListener('click', () => this.copyHtml());
+    this.downloadBtn = document.getElementById('download-html');
+    if (this.downloadBtn) {
+      this.downloadBtn.addEventListener('click', () => this.downloadHtml());
+    }
     this.refreshBtn.addEventListener('click', () => {
       this.forceUpdate();
       this.showAlert('Preview refreshed.');
@@ -757,6 +761,42 @@ class ActivityBuilder {
     } catch (error) {
       console.error(error);
       this.showAlert('Copy failed. Select and copy manually.');
+    }
+  }
+
+  downloadHtml() {
+    let downloadUrl;
+    let anchor;
+    try {
+      this.forceUpdate();
+      const html = this.outputArea?.value ?? '';
+      if (!html.trim()) {
+        this.showAlert('Build an activity before downloading.');
+        return;
+      }
+
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      downloadUrl = URL.createObjectURL(blob);
+      const title = (this.state?.data?.title || 'activity').trim().toLowerCase();
+      const slug = title.replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'activity';
+      const filename = `${slug}-module.html`;
+
+      anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      this.showAlert(`Downloaded ${filename}.`);
+    } catch (error) {
+      console.error('Unable to download activity HTML', error);
+      this.showAlert('Download failed. Try copying the HTML instead.');
+    } finally {
+      if (anchor?.parentNode) {
+        anchor.remove();
+      }
+      if (downloadUrl) {
+        URL.revokeObjectURL(downloadUrl);
+      }
     }
   }
 

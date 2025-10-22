@@ -48,6 +48,8 @@ The **Activity Builder** button launches a full-screen slide library where you c
 3. **Add rubric prompts.** Use **Add criterion** to build success measures, review the live JSON preview, and refresh the slide preview if needed. 【F:sandbox/test-deck-v1_2.html†L1636-L1678】
 4. **Insert the slide.** Submitting the form validates required fields. Blank canvas inserts a plain workspace; structured layouts build full facilitation slides with headings, steps, rubric tables, cards, or images. The deck focuses the new slide and shows a confirmation message when ready. 【F:sandbox/test-deck-v1_2.html†L1684-L1693】【F:sandbox/int-mod.js†L4500-L4668】
 
+When you generate an activity, use **Copy to Clipboard** to paste the HTML into another tool, or click **Download HTML** to save a standalone file that you can attach to emails or store in your lesson resources. Each action refreshes the output before exporting and confirms success through on-screen alerts.
+
 ## Tips for facilitating with custom slides
 
 * The blank slide hint text updates as you mix textboxes, pasted images, mind maps, and modules—use it as a quick reminder of available interactions to prompt learners. 【F:sandbox/int-mod.js†L629-L670】
