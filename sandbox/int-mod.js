@@ -591,6 +591,110 @@ export function addBlankSlide() {
   showSlide(slides.length - 1);
 }
 
+export function duplicateSlide(index = currentSlideIndex) {
+  if (!(stageViewport instanceof HTMLElement)) {
+    showDeckToast("Slides are not ready to duplicate yet.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  refreshSlides();
+  if (!slides.length) {
+    showDeckToast("There are no slides to duplicate right now.", {
+      icon: "fa-circle-info",
+    });
+    return null;
+  }
+
+  const targetIndex = Number.isInteger(index) ? index : currentSlideIndex;
+  const sourceSlide = slides[targetIndex];
+  if (!(sourceSlide instanceof HTMLElement)) {
+    showDeckToast("We couldn't find that slide to duplicate.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  const clonedSlide = sourceSlide.cloneNode(true);
+  if (!(clonedSlide instanceof HTMLElement)) {
+    showDeckToast("Slide duplication is unavailable right now.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  clonedSlide.classList.add("hidden");
+  clonedSlide.classList.remove("is-active");
+
+  clonedSlide
+    .querySelectorAll('[data-dragging], [data-resizing], [data-selected]')
+    .forEach((el) => {
+      if (el instanceof HTMLElement) {
+        el.removeAttribute("data-dragging");
+        el.removeAttribute("data-resizing");
+        el.removeAttribute("data-selected");
+      }
+    });
+
+  recalibrateMindMapCounter();
+  const mindmapInputs = Array.from(
+    clonedSlide.querySelectorAll('.mindmap-form input[id^="mindmap-branch-"]'),
+  );
+  mindmapInputs.forEach((input) => {
+    if (!(input instanceof HTMLInputElement)) {
+      return;
+    }
+    const previousId = input.id;
+    const nextId = `mindmap-branch-${++mindMapId}`;
+    input.id = nextId;
+    if (input.getAttribute("aria-labelledby") === previousId) {
+      input.setAttribute("aria-labelledby", nextId);
+    }
+    const form = input.closest("form");
+    if (form instanceof HTMLElement && previousId) {
+      const labelSelector = `[for="${previousId}"]`;
+      form.querySelectorAll(labelSelector).forEach((label) => {
+        if (label instanceof HTMLLabelElement) {
+          label.setAttribute("for", nextId);
+        }
+      });
+    }
+  });
+
+  if (clonedSlide.dataset.type === "blank") {
+    attachBlankSlideEvents(clonedSlide);
+  }
+
+  if (clonedSlide.classList.contains("activity-slide")) {
+    initialiseBuilderSlide(clonedSlide);
+  }
+
+  initialiseActivities(clonedSlide);
+
+  if (clonedSlide.dataset.type !== "blank") {
+    clonedSlide
+      .querySelectorAll('.module-embed')
+      .forEach((module) => initialiseModuleEmbed(module));
+  }
+
+  const referenceNode = sourceSlide.nextSibling;
+  stageViewport.insertBefore(clonedSlide, referenceNode ?? null);
+
+  hydrateRemoteImages(clonedSlide).catch((error) => {
+    console.warn("Remote image hydration failed after duplicating slide", error);
+  });
+
+  refreshSlides();
+  recalibrateMindMapCounter();
+  const newIndex = slides.indexOf(clonedSlide);
+  const resolvedIndex = newIndex >= 0 ? newIndex : slides.length - 1;
+  showSlide(resolvedIndex);
+  clonedSlide.scrollIntoView({ behavior: "smooth", block: "center" });
+  showDeckToast("Slide duplicated.", { icon: "fa-clone" });
+  return resolvedIndex;
+}
+
 export function createBlankSlide() {
   const slide = document.createElement("div");
   slide.className = "slide-stage hidden";
@@ -3147,37 +3251,46 @@ function setupStressMark(activityEl) {
   });
 }
 
-function initialiseActivities() {
-  document
-    .querySelectorAll('[data-activity="unscramble"]')
-    .forEach((el) => setupUnscramble(el));
-  document
-    .querySelectorAll('[data-activity="gap-fill"]')
-    .forEach((el) => setupGapFill(el));
-  document
-    .querySelectorAll('[data-activity="table-completion"]')
-    .forEach((el) => setupClickPlacement(el));
-  document
-    .querySelectorAll('[data-activity="token-drop"]')
-    .forEach((el) => setupClickPlacement(el));
-  document
-    .querySelectorAll('[data-activity="matching"]')
-    .forEach((el) => setupMatching(el));
-  document
-    .querySelectorAll('[data-activity="matching-connect"]')
-    .forEach((el) => setupMatchingConnect(el));
-  document
-    .querySelectorAll('[data-activity="mc-grammar"]')
-    .forEach((el) => setupMcGrammar(el));
-  document
-    .querySelectorAll('[data-activity="mc-grammar-radio"]')
-    .forEach((el) => setupMcGrammarRadio(el));
-  document
-    .querySelectorAll('[data-activity="categorization"]')
-    .forEach((el) => setupCategorization(el));
-  document
-    .querySelectorAll('[data-activity="stress-mark"]')
-    .forEach((el) => setupStressMark(el));
+function initialiseActivities(root = document) {
+  if (!root) {
+    return;
+  }
+
+  const scope =
+    root instanceof Element || root instanceof Document ? root : document;
+
+  if (typeof scope.querySelectorAll !== "function") {
+    return;
+  }
+
+  const queryAll = (selector) => Array.from(scope.querySelectorAll(selector));
+
+  queryAll('[data-activity="unscramble"]').forEach((el) =>
+    setupUnscramble(el),
+  );
+  queryAll('[data-activity="gap-fill"]').forEach((el) => setupGapFill(el));
+  queryAll('[data-activity="table-completion"]').forEach((el) =>
+    setupClickPlacement(el),
+  );
+  queryAll('[data-activity="token-drop"]').forEach((el) =>
+    setupClickPlacement(el),
+  );
+  queryAll('[data-activity="matching"]').forEach((el) => setupMatching(el));
+  queryAll('[data-activity="matching-connect"]').forEach((el) =>
+    setupMatchingConnect(el),
+  );
+  queryAll('[data-activity="mc-grammar"]').forEach((el) =>
+    setupMcGrammar(el),
+  );
+  queryAll('[data-activity="mc-grammar-radio"]').forEach((el) =>
+    setupMcGrammarRadio(el),
+  );
+  queryAll('[data-activity="categorization"]').forEach((el) =>
+    setupCategorization(el),
+  );
+  queryAll('[data-activity="stress-mark"]').forEach((el) =>
+    setupStressMark(el),
+  );
 }
 
 async function copyTextToClipboard(text) {
@@ -5344,6 +5457,7 @@ export async function setupInteractiveDeck({
         navigatorFactory({
           stageViewport,
           onSelectSlide: (index) => showSlide(index),
+          onDuplicateSlide: (index) => duplicateSlide(index),
         }) ?? null;
     } catch (error) {
       if (!slideNavigatorLoadLogged) {

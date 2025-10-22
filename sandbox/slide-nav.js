@@ -1,6 +1,7 @@
 export function initSlideNavigator({
   stageViewport,
   onSelectSlide,
+  onDuplicateSlide,
 } = {}) {
   if (!(stageViewport instanceof HTMLElement)) {
     return null;
@@ -170,8 +171,14 @@ export function initSlideNavigator({
       return;
     }
 
+    const hasDuplicateAction = typeof onDuplicateSlide === "function";
+
     filteredSlides.forEach(({ stage, title, originalIndex }) => {
       const item = document.createElement("li");
+      if (hasDuplicateAction) {
+        item.className = "slide-jump-row";
+      }
+
       const button = document.createElement("button");
       button.type = "button";
       button.className = "slide-jump-item";
@@ -187,6 +194,48 @@ export function initSlideNavigator({
         closePanel();
       });
       item.appendChild(button);
+
+      if (hasDuplicateAction) {
+        const actions = document.createElement("div");
+        actions.className = "slide-jump-actions";
+
+        const duplicateBtn = document.createElement("button");
+        duplicateBtn.type = "button";
+        duplicateBtn.className = "slide-jump-action";
+        duplicateBtn.innerHTML = `
+          <i class="fa-solid fa-clone" aria-hidden="true"></i>
+          <span>Duplicate</span>
+        `;
+        duplicateBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (typeof onDuplicateSlide !== "function") {
+            return;
+          }
+          try {
+            const result = onDuplicateSlide(originalIndex);
+            if (result && typeof result.then === "function") {
+              result
+                .then((value) => {
+                  if (typeof value === "number") {
+                    closePanel();
+                  }
+                })
+                .catch((error) => {
+                  console.warn("Slide duplication failed", error);
+                });
+            } else if (typeof result === "number") {
+              closePanel();
+            }
+          } catch (error) {
+            console.warn("Slide duplication threw an error", error);
+          }
+        });
+
+        actions.appendChild(duplicateBtn);
+        item.appendChild(actions);
+      }
+
       list.appendChild(item);
     });
     applyActiveState();
