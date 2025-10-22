@@ -16,6 +16,19 @@
     />
     <link rel="stylesheet" href="../../CSS-slides.css" />
     <link rel="stylesheet" href="../sandbox-css.css" />
+    <style>
+      .editable-text {
+        cursor: text;
+        outline: none;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .editable-text:focus {
+        outline: 2px dashed var(--primary-sage, #7aa884);
+        outline-offset: 2px;
+      }
+    </style>
   </head>
   <body>
     <a class="skip-link" href="#lesson-stage">Skip to lesson workspace</a>
@@ -1741,6 +1754,240 @@ Invite learners to connect evidence back to the rubric.</textarea>
     <script type="module">
       import { setupInteractiveDeck } from "../int-mod.js";
       setupInteractiveDeck();
+    </script>
+
+    <script>
+      (() => {
+        const inlineTagNames = new Set([
+          "A",
+          "ABBR",
+          "B",
+          "BDI",
+          "BDO",
+          "BR",
+          "CITE",
+          "CODE",
+          "DATA",
+          "DFN",
+          "EM",
+          "I",
+          "KBD",
+          "MARK",
+          "Q",
+          "S",
+          "SAMP",
+          "SMALL",
+          "SPAN",
+          "STRONG",
+          "SUB",
+          "SUP",
+          "TIME",
+          "U",
+          "VAR",
+          "WBR",
+          "SVG",
+          "USE",
+          "PATH",
+        ]);
+
+        const excludedTagNames = new Set([
+          "BUTTON",
+          "INPUT",
+          "SELECT",
+          "OPTION",
+          "TEXTAREA",
+          "SCRIPT",
+          "STYLE",
+          "IMG",
+          "VIDEO",
+          "AUDIO",
+          "CANVAS",
+          "IFRAME",
+          "OBJECT",
+          "EMBED",
+        ]);
+
+        const editableElements = [];
+        const editableSet = new Set();
+
+        const isInlineElement = (el) => inlineTagNames.has(el.tagName);
+
+        const hasOnlyInlineChildren = (el) =>
+          Array.from(el.children).every((child) =>
+            isInlineElement(child) ||
+            child.matches("[data-editable-ignore], [contenteditable='false']")
+          );
+
+        const shouldMakeEditable = (el) => {
+          if (!el) return false;
+          if (!el.closest(".slide-stage")) return false;
+          if (el.closest("[data-editable-ignore]")) return false;
+          if (el.dataset.editableProcessed === "true") return false;
+          if (excludedTagNames.has(el.tagName)) return false;
+          if (el.matches("button, [role='button'], select, option, textarea, input")) {
+            return false;
+          }
+          if (el.matches("a[href]")) return false;
+          if (!el.textContent || !el.textContent.trim()) return false;
+          if (el.classList.contains("sr-only")) return false;
+          if (el.childElementCount > 0 && !hasOnlyInlineChildren(el)) {
+            return false;
+          }
+          return true;
+        };
+
+        const storeMetrics = (el, force = false) => {
+          const style = window.getComputedStyle(el);
+          const baseFont = parseFloat(style.fontSize) || 16;
+          if (force || !el.dataset.baseFontSize) {
+            el.dataset.baseFontSize = baseFont;
+            el.dataset.minFontSize = Math.max(8, Math.round(baseFont * 0.5));
+          }
+
+          const rect = el.getBoundingClientRect();
+          if (
+            (force || !el.dataset.maxWidth || !el.dataset.maxHeight) &&
+            rect.width > 0 &&
+            rect.height > 0
+          ) {
+            el.dataset.maxWidth = rect.width;
+            el.dataset.maxHeight = rect.height;
+          }
+        };
+
+        const autoFit = (el) => {
+          storeMetrics(el);
+          const base = parseFloat(el.dataset.baseFontSize) ||
+            parseFloat(window.getComputedStyle(el).fontSize) ||
+            16;
+          const min = parseFloat(el.dataset.minFontSize) || Math.max(8, Math.round(base * 0.5));
+          let width = parseFloat(el.dataset.maxWidth) || 0;
+          let height = parseFloat(el.dataset.maxHeight) || 0;
+
+          if ((!width || !height) && el.offsetParent) {
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+              width = rect.width;
+              height = rect.height;
+              el.dataset.maxWidth = width;
+              el.dataset.maxHeight = height;
+            }
+          }
+
+          el.style.fontSize = `${base}px`;
+          el.style.overflow = "hidden";
+
+          if (!width || !height || width < 4 || height < 4) {
+            return;
+          }
+
+          const tolerance = 1;
+          let fontSize = base;
+          let iterations = 0;
+          let overflow =
+            el.scrollHeight > height + tolerance || el.scrollWidth > width + tolerance;
+
+          while (overflow && fontSize > min && iterations < 200) {
+            fontSize -= 0.5;
+            el.style.fontSize = `${fontSize}px`;
+            iterations += 1;
+            overflow =
+              el.scrollHeight > height + tolerance ||
+              el.scrollWidth > width + tolerance;
+          }
+
+          if (overflow) {
+            el.dataset.overflow = "true";
+            el.title = "Text truncated to preserve layout.";
+          } else {
+            delete el.dataset.overflow;
+            if (el.title === "Text truncated to preserve layout.") {
+              el.removeAttribute("title");
+            }
+          }
+        };
+
+        const initEditableText = () => {
+          const iconElements = document.querySelectorAll(
+            ".slide-stage i, .slide-stage .fa"
+          );
+          iconElements.forEach((icon) => {
+            icon.setAttribute("contenteditable", "false");
+            icon.setAttribute("data-editable-ignore", "true");
+          });
+
+          const candidates = Array.from(document.querySelectorAll(".slide-stage *"))
+            .filter((el) => shouldMakeEditable(el));
+
+          candidates.forEach((el) => {
+            el.dataset.editableProcessed = "true";
+            el.classList.add("editable-text");
+            el.setAttribute("contenteditable", "true");
+            el.setAttribute("spellcheck", "false");
+            if (!el.hasAttribute("tabindex")) {
+              el.setAttribute("tabindex", "0");
+            }
+            el.style.overflow = "hidden";
+
+            el.addEventListener("focus", () => {
+              storeMetrics(el, true);
+              autoFit(el);
+            });
+
+            el.addEventListener("input", () => {
+              autoFit(el);
+            });
+
+            el.addEventListener("blur", () => {
+              autoFit(el);
+            });
+
+            const mutationObserver = new MutationObserver(() => {
+              autoFit(el);
+            });
+
+            mutationObserver.observe(el, {
+              characterData: true,
+              childList: true,
+              subtree: true,
+            });
+
+            editableElements.push(el);
+            editableSet.add(el);
+          });
+
+          editableElements.forEach((el) => {
+            storeMetrics(el, true);
+            autoFit(el);
+          });
+
+          if ("ResizeObserver" in window) {
+            const resizeObserver = new ResizeObserver((entries) => {
+              entries.forEach((entry) => {
+                const el = entry.target;
+                if (!editableSet.has(el)) return;
+                storeMetrics(el, true);
+                autoFit(el);
+              });
+            });
+
+            editableElements.forEach((el) => resizeObserver.observe(el));
+          } else {
+            window.addEventListener("resize", () => {
+              editableElements.forEach((el) => {
+                storeMetrics(el, true);
+                autoFit(el);
+              });
+            });
+          }
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initEditableText);
+        } else {
+          initEditableText();
+        }
+      })();
     </script>
 
   </body>
