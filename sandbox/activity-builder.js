@@ -84,6 +84,7 @@ const TYPE_META = {
 };
 
 const STORAGE_KEY = 'noor-activity-builder-state-v2';
+const SELECTED_STORAGE_KEY = 'noor-activity-builder-selected-preset-v1';
 const deepClone = (value) => {
   if (value === undefined) {
     return value;
@@ -103,7 +104,8 @@ class ActivityBuilder {
   constructor() {
     this.state = {
       type: 'multiple-choice',
-      data: DEFAULT_STATES['multiple-choice']()
+      data: this.getDefaultState('multiple-choice'),
+      presetId: null,
     };
 
     this.typeSelect = document.getElementById('activity-type');
@@ -118,10 +120,50 @@ class ActivityBuilder {
     this.isEmbedded = window.parent && window.parent !== window;
 
     this.canUseStorage = typeof window !== 'undefined' && 'localStorage' in window;
+    this.pendingSelectedPresets = {};
+    this.needsStateMigrationPersist = false;
     this.savedStates = this.loadSavedStates();
-    const storedState = this.savedStates?.[this.state.type];
-    if (storedState) {
-      this.state.data = deepClone(storedState);
+    this.selectedPresets = this.loadSelectedPresets();
+
+    let selectionsChanged = false;
+    const cleanedSelections = {};
+    Object.entries(this.selectedPresets || {}).forEach(([type, presetId]) => {
+      if (this.getPresetById(type, presetId)) {
+        cleanedSelections[type] = presetId;
+      } else {
+        selectionsChanged = true;
+      }
+    });
+    this.selectedPresets = cleanedSelections;
+
+    if (Object.keys(this.pendingSelectedPresets).length) {
+      this.selectedPresets = { ...this.selectedPresets, ...this.pendingSelectedPresets };
+      selectionsChanged = true;
+      this.pendingSelectedPresets = {};
+    }
+
+    if (selectionsChanged) {
+      this.persistSelectedPresets();
+    }
+
+    if (this.needsStateMigrationPersist) {
+      this.persistSavedStates();
+    }
+
+    const initialPresetId = this.selectedPresets[this.state.type];
+    const initialPreset = this.getPresetById(this.state.type, initialPresetId);
+    if (initialPreset) {
+      this.state.data = deepClone(initialPreset.data);
+      this.state.presetId = initialPreset.id;
+    } else {
+      const presets = this.getPresetsForType(this.state.type);
+      if (presets.length) {
+        const firstPreset = presets[0];
+        this.state.data = deepClone(firstPreset.data);
+        this.state.presetId = firstPreset.id;
+        this.selectedPresets[this.state.type] = firstPreset.id;
+        this.persistSelectedPresets();
+      }
     }
 
     this.pendingConfig = null;
@@ -131,23 +173,150 @@ class ActivityBuilder {
     this.handleFormInput = this.handleFormInput.bind(this);
     this.handleFormClick = this.handleFormClick.bind(this);
     this.renderForm = this.renderForm.bind(this);
+    this.handlePresetSelect = this.handlePresetSelect.bind(this);
     this.sendToDeck = this.sendToDeck.bind(this);
   }
 
   loadSavedStates() {
+    const result = {};
+    this.pendingSelectedPresets = {};
+    this.needsStateMigrationPersist = false;
+
+    if (!this.canUseStorage) {
+      return result;
+    }
+
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return result;
+      }
+
+      const parsed = JSON.parse(raw);
+      if (typeof parsed !== 'object' || parsed === null) {
+        return result;
+      }
+
+      const migratedSelections = {};
+      let needsPersist = false;
+
+      Object.entries(parsed).forEach(([type, value]) => {
+        if (!value) {
+          return;
+        }
+
+        if (Array.isArray(value)) {
+          const cleaned = value
+            .map((preset) => {
+              if (!preset || typeof preset !== 'object') {
+                needsPersist = true;
+                return null;
+              }
+
+              const id = typeof preset.id === 'string' && preset.id.trim()
+                ? preset.id.trim()
+                : this.generatePresetId();
+              if (id !== preset.id) {
+                needsPersist = true;
+              }
+
+              const name = typeof preset.name === 'string' && preset.name.trim()
+                ? preset.name.trim()
+                : 'Untitled preset';
+              if (name !== preset.name) {
+                needsPersist = true;
+              }
+
+              const hasValidData = preset.data && typeof preset.data === 'object';
+              const data = hasValidData ? preset.data : this.getDefaultState(type);
+              if (!hasValidData) {
+                needsPersist = true;
+              }
+              if (!data) {
+                return null;
+              }
+
+              return {
+                id,
+                name,
+                data: deepClone(data),
+              };
+            })
+            .filter(Boolean);
+
+          if (cleaned.length) {
+            result[type] = cleaned;
+            if (cleaned.length !== value.length) {
+              needsPersist = true;
+            }
+          }
+        } else if (typeof value === 'object') {
+          const id = this.generatePresetId();
+          result[type] = [
+            {
+              id,
+              name: 'Saved preset',
+              data: deepClone(value),
+            },
+          ];
+          migratedSelections[type] = id;
+          needsPersist = true;
+        }
+      });
+
+      this.pendingSelectedPresets = migratedSelections;
+      this.needsStateMigrationPersist = needsPersist;
+      return result;
+    } catch (error) {
+      console.warn('Unable to parse saved builder state', error);
+      return {};
+    }
+  }
+
+  loadSelectedPresets() {
     if (!this.canUseStorage) {
       return {};
     }
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.localStorage.getItem(SELECTED_STORAGE_KEY);
       if (!raw) {
         return {};
       }
       const parsed = JSON.parse(raw);
       return typeof parsed === 'object' && parsed !== null ? parsed : {};
     } catch (error) {
-      console.warn('Unable to parse saved builder state', error);
+      console.warn('Unable to parse selected preset state', error);
       return {};
+    }
+  }
+
+  persistSavedStates() {
+    if (!this.canUseStorage) {
+      return;
+    }
+    try {
+      if (!Object.keys(this.savedStates || {}).length) {
+        window.localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedStates));
+    } catch (error) {
+      console.warn('Unable to persist builder state', error);
+    }
+  }
+
+  persistSelectedPresets() {
+    if (!this.canUseStorage) {
+      return;
+    }
+    try {
+      if (!Object.keys(this.selectedPresets || {}).length) {
+        window.localStorage.removeItem(SELECTED_STORAGE_KEY);
+        return;
+      }
+      window.localStorage.setItem(SELECTED_STORAGE_KEY, JSON.stringify(this.selectedPresets));
+    } catch (error) {
+      console.warn('Unable to persist selected preset state', error);
     }
   }
 
@@ -155,14 +324,268 @@ class ActivityBuilder {
     if (!config || !config.type) {
       return;
     }
-    this.savedStates[config.type] = deepClone(config.data);
-    if (!this.canUseStorage) {
+
+    const { type, data, presetId } = config;
+    if (!presetId) {
       return;
     }
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedStates));
-    } catch (error) {
-      console.warn('Unable to persist builder state', error);
+
+    const presets = this.getPresetsForType(type);
+    if (!presets.length) {
+      return;
+    }
+
+    let didUpdate = false;
+    const nextPresets = presets.map((preset) => {
+      if (preset.id !== presetId) {
+        return preset;
+      }
+      didUpdate = true;
+      return {
+        ...preset,
+        data: deepClone(data),
+      };
+    });
+
+    if (didUpdate) {
+      this.setPresetsForType(type, nextPresets);
+    }
+  }
+
+  getDefaultState(type) {
+    const factory = DEFAULT_STATES[type];
+    return typeof factory === 'function' ? factory() : {};
+  }
+
+  generatePresetId() {
+    return `preset-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  getPresetsForType(type) {
+    const presets = this.savedStates?.[type];
+    return Array.isArray(presets) ? presets : [];
+  }
+
+  setPresetsForType(type, presets) {
+    if (!type) {
+      return;
+    }
+
+    const nextPresets = (Array.isArray(presets) ? presets : [])
+      .map((preset) => {
+        if (!preset || typeof preset !== 'object') {
+          return null;
+        }
+        const id = typeof preset.id === 'string' && preset.id.trim() ? preset.id.trim() : this.generatePresetId();
+        const name = typeof preset.name === 'string' && preset.name.trim() ? preset.name.trim() : 'Untitled preset';
+        const data = preset.data && typeof preset.data === 'object' ? preset.data : this.getDefaultState(type);
+        if (!data) {
+          return null;
+        }
+        return {
+          id,
+          name,
+          data: deepClone(data),
+        };
+      })
+      .filter(Boolean);
+
+    if (nextPresets.length) {
+      this.savedStates[type] = nextPresets;
+    } else {
+      delete this.savedStates[type];
+    }
+
+    this.persistSavedStates();
+  }
+
+  getPresetById(type, presetId) {
+    if (!presetId) {
+      return null;
+    }
+    const presets = this.getPresetsForType(type);
+    const preset = presets.find((entry) => entry.id === presetId);
+    if (!preset) {
+      return null;
+    }
+    return {
+      id: preset.id,
+      name: preset.name,
+      data: deepClone(preset.data),
+    };
+  }
+
+  generateDefaultPresetName(type) {
+    const presets = this.getPresetsForType(type);
+    const nextNumber = presets.length + 1;
+    const meta = TYPE_META[type] || TYPE_META.default;
+    return `${meta.label} preset ${nextNumber}`;
+  }
+
+  handlePresetSelect(event) {
+    const presetId = event.target.value;
+    const { type } = this.state;
+
+    if (!presetId) {
+      this.state = {
+        type,
+        data: this.getDefaultState(type),
+        presetId: null,
+      };
+      delete this.selectedPresets[type];
+      this.persistSelectedPresets();
+      this.renderForm();
+      this.updateOutputs();
+      this.flushUpdateQueue();
+      this.showAlert('Reverted to default starter content.');
+      return;
+    }
+
+    const preset = this.getPresetById(type, presetId);
+    if (!preset) {
+      event.target.value = '';
+      this.showAlert('Selected preset could not be loaded.');
+      return;
+    }
+
+    this.state = {
+      type,
+      data: deepClone(preset.data),
+      presetId: preset.id,
+    };
+    this.selectedPresets[type] = preset.id;
+    this.persistSelectedPresets();
+    this.renderForm();
+    this.updateOutputs();
+    this.flushUpdateQueue();
+    this.showAlert(`Loaded "${preset.name}" preset.`);
+  }
+
+  saveCurrentAsPreset() {
+    const { type, data } = this.state;
+    const defaultName = this.generateDefaultPresetName(type);
+    if (typeof window === 'undefined' || typeof window.prompt !== 'function') {
+      this.showAlert('Preset saving is unavailable in this environment.');
+      return;
+    }
+    const response = window.prompt('Name this preset', defaultName);
+    if (response === null) {
+      this.announceStatus('Preset save cancelled.');
+      return;
+    }
+    const presetName = response.trim() || defaultName;
+    const newPreset = {
+      id: this.generatePresetId(),
+      name: presetName,
+      data: deepClone(data),
+    };
+    const presets = this.getPresetsForType(type);
+    const nextPresets = [...presets, newPreset];
+    this.setPresetsForType(type, nextPresets);
+    this.state.presetId = newPreset.id;
+    this.selectedPresets[type] = newPreset.id;
+    this.persistSelectedPresets();
+    this.renderForm();
+    this.updateOutputs();
+    this.flushUpdateQueue();
+    this.showAlert(`Saved preset "${presetName}".`);
+  }
+
+  renameSelectedPreset() {
+    const { type, presetId } = this.state;
+    if (!presetId) {
+      this.showAlert('Select a preset to rename first.');
+      return;
+    }
+    const presets = this.getPresetsForType(type);
+    const preset = presets.find((entry) => entry.id === presetId);
+    if (!preset) {
+      this.showAlert('The selected preset is no longer available.');
+      this.renderForm();
+      return;
+    }
+    if (typeof window === 'undefined' || typeof window.prompt !== 'function') {
+      this.showAlert('Preset rename is unavailable in this environment.');
+      return;
+    }
+    const response = window.prompt('Rename preset', preset.name);
+    if (response === null) {
+      this.announceStatus('Preset rename cancelled.');
+      return;
+    }
+    const trimmed = response.trim();
+    if (!trimmed) {
+      this.showAlert('Preset name cannot be empty.');
+      return;
+    }
+    if (trimmed === preset.name) {
+      this.announceStatus('Preset name unchanged.');
+      return;
+    }
+    const nextPresets = presets.map((entry) =>
+      entry.id === presetId
+        ? {
+            ...entry,
+            name: trimmed,
+          }
+        : entry
+    );
+    this.setPresetsForType(type, nextPresets);
+    this.renderForm();
+    this.showAlert(`Preset renamed to "${trimmed}".`);
+  }
+
+  deleteSelectedPreset() {
+    const { type, presetId } = this.state;
+    if (!presetId) {
+      this.showAlert('Select a preset to delete first.');
+      return;
+    }
+    const presets = this.getPresetsForType(type);
+    const preset = presets.find((entry) => entry.id === presetId);
+    if (!preset) {
+      this.showAlert('The selected preset is no longer available.');
+      this.renderForm();
+      return;
+    }
+    if (typeof window === 'undefined' || typeof window.confirm !== 'function') {
+      this.showAlert('Preset deletion is unavailable in this environment.');
+      return;
+    }
+    const confirmed = window.confirm(`Delete the "${preset.name}" preset? This cannot be undone.`);
+    if (!confirmed) {
+      this.announceStatus('Preset deletion cancelled.');
+      return;
+    }
+
+    const nextPresets = presets.filter((entry) => entry.id !== presetId);
+    this.setPresetsForType(type, nextPresets);
+
+    if (nextPresets.length) {
+      const fallback = nextPresets[0];
+      this.state = {
+        type,
+        data: deepClone(fallback.data),
+        presetId: fallback.id,
+      };
+      this.selectedPresets[type] = fallback.id;
+      this.persistSelectedPresets();
+      this.renderForm();
+      this.updateOutputs();
+      this.flushUpdateQueue();
+      this.showAlert(`Deleted preset "${preset.name}". Loaded "${fallback.name}".`);
+    } else {
+      this.state = {
+        type,
+        data: this.getDefaultState(type),
+        presetId: null,
+      };
+      delete this.selectedPresets[type];
+      this.persistSelectedPresets();
+      this.renderForm();
+      this.updateOutputs();
+      this.flushUpdateQueue();
+      this.showAlert(`Deleted preset "${preset.name}".`);
     }
   }
 
@@ -258,19 +681,54 @@ class ActivityBuilder {
 
   handleTypeChange(event) {
     const nextType = event.target.value;
-    this.state = {
-      type: nextType,
-      data: deepClone(this.savedStates?.[nextType]) || DEFAULT_STATES[nextType]()
-    };
+    const selectedPresetId = this.selectedPresets[nextType];
+    const selectedPreset = this.getPresetById(nextType, selectedPresetId);
+    let statusMessage;
+
+    if (selectedPreset) {
+      this.state = {
+        type: nextType,
+        data: deepClone(selectedPreset.data),
+        presetId: selectedPreset.id,
+      };
+      statusMessage = `Loaded "${selectedPreset.name}" preset.`;
+    } else {
+      const presets = this.getPresetsForType(nextType);
+      if (presets.length) {
+        const fallbackPreset = presets[0];
+        this.state = {
+          type: nextType,
+          data: deepClone(fallbackPreset.data),
+          presetId: fallbackPreset.id,
+        };
+        this.selectedPresets[nextType] = fallbackPreset.id;
+        this.persistSelectedPresets();
+        statusMessage = `Loaded "${fallbackPreset.name}" preset.`;
+      } else {
+        this.state = {
+          type: nextType,
+          data: this.getDefaultState(nextType),
+          presetId: null,
+        };
+        delete this.selectedPresets[nextType];
+        this.persistSelectedPresets();
+        const meta = TYPE_META[nextType] || TYPE_META.default;
+        statusMessage = `${meta.label} preset ready to customise.`;
+      }
+    }
     this.renderForm();
     this.updateOutputs();
     this.flushUpdateQueue();
-    const meta = TYPE_META[nextType] || TYPE_META.default;
-    this.announceStatus(`${meta.label} preset ready to customise.`);
+    if (statusMessage) {
+      this.announceStatus(statusMessage);
+    }
   }
 
   handleFormInput(event) {
     const { target } = event;
+    if (target.id === 'preset-select') {
+      return;
+    }
     if (!target.closest('[data-block]')) {
       // high-level fields
       this.updateGlobalField(target);
@@ -348,6 +806,15 @@ class ActivityBuilder {
         break;
       case 'copy-html':
         this.copyHtml();
+        break;
+      case 'preset-save':
+        this.saveCurrentAsPreset();
+        break;
+      case 'preset-rename':
+        this.renameSelectedPreset();
+        break;
+      case 'preset-delete':
+        this.deleteSelectedPreset();
         break;
       default:
         break;
@@ -509,9 +976,49 @@ class ActivityBuilder {
 
   renderForm() {
     const { type, data } = this.state;
+    const presets = this.getPresetsForType(type);
+    const selectedPresetId = this.state.presetId || '';
+    const hasPresetSelection = Boolean(selectedPresetId);
     let markup = '';
 
     const meta = TYPE_META[type] || TYPE_META.default;
+
+    const placeholderLabel = presets.length
+      ? 'Start from default template'
+      : 'No saved presets yet — using default template';
+    const presetOptions = [
+      `<option value="" ${hasPresetSelection ? '' : 'selected'}>${placeholderLabel}</option>`,
+      ...presets.map(
+        (preset) =>
+          `<option value="${escapeHtml(preset.id)}" ${
+            preset.id === selectedPresetId ? 'selected' : ''
+          }>${escapeHtml(preset.name)}</option>`
+      ),
+    ].join('');
+
+    const presetControls = `
+      <section class="form-section preset-section">
+        <header class="section-heading">
+          <div>
+            <h2><i class="fa-solid fa-floppy-disk"></i> Presets</h2>
+            <p>Choose, save, or manage presets for this activity type.</p>
+          </div>
+        </header>
+        <div class="preset-toolbar">
+          <label class="field">
+            <span class="field-label"><i class="fa-solid fa-folder-open"></i> Saved presets</span>
+            <select id="preset-select" aria-label="Saved presets">
+              ${presetOptions}
+            </select>
+          </label>
+          <div class="preset-actions">
+            <button type="button" class="chip-btn" data-action="preset-save"><i class="fa-solid fa-floppy-disk"></i> Save as new</button>
+            <button type="button" class="chip-btn" data-action="preset-rename" ${hasPresetSelection ? '' : 'disabled'}><i class="fa-solid fa-pen-to-square"></i> Rename</button>
+            <button type="button" class="chip-btn" data-action="preset-delete" ${hasPresetSelection ? '' : 'disabled'}><i class="fa-solid fa-trash-can"></i> Delete</button>
+          </div>
+        </div>
+      </section>
+    `;
 
     const hero = `
       <section class="form-hero accent-${meta.accent}">
@@ -724,7 +1231,22 @@ class ActivityBuilder {
       markup = `${hero}${shared}`;
     }
 
-    this.formContainer.innerHTML = markup;
+    const finalMarkup = `${presetControls}${markup}`;
+    this.formContainer.innerHTML = finalMarkup;
+
+    this.presetSelect = this.formContainer.querySelector('#preset-select');
+    if (this.presetSelect) {
+      this.presetSelect.addEventListener('change', this.handlePresetSelect);
+    }
+
+    const renameBtn = this.formContainer.querySelector('[data-action="preset-rename"]');
+    const deleteBtn = this.formContainer.querySelector('[data-action="preset-delete"]');
+    if (renameBtn) {
+      renameBtn.disabled = !hasPresetSelection;
+    }
+    if (deleteBtn) {
+      deleteBtn.disabled = !hasPresetSelection;
+    }
 
     // annotate inputs for headers (for change events)
     if (this.state.type === 'table-completion') {
@@ -741,10 +1263,11 @@ class ActivityBuilder {
   }
 
   getCurrentConfig() {
-    const { type, data } = this.state;
+    const { type, data, presetId } = this.state;
     return {
       type,
-      data: deepClone(data)
+      data: deepClone(data),
+      presetId: presetId ?? null,
     };
   }
 
