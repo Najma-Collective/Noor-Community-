@@ -963,10 +963,55 @@ function getSlideTitle(slide, index) {
   return `Slide ${index + 1}`;
 }
 
+function getSlideThumbnailDescriptor(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return null;
+  }
+
+  const { dataset = {} } = slide;
+  const htmlDescriptor = typeof dataset.thumbnailHtml === "string" ? dataset.thumbnailHtml.trim() : "";
+  if (htmlDescriptor) {
+    return { html: htmlDescriptor };
+  }
+
+  const urlDescriptor =
+    typeof dataset.thumbnailUrl === "string"
+      ? dataset.thumbnailUrl.trim()
+      : typeof dataset.thumbnail === "string"
+      ? dataset.thumbnail.trim()
+      : "";
+  if (urlDescriptor) {
+    return { url: urlDescriptor };
+  }
+
+  const template = slide.querySelector?.("[data-slide-thumbnail-html]");
+  if (template instanceof HTMLElement) {
+    const markup = template.innerHTML.trim();
+    if (markup) {
+      return { html: markup };
+    }
+  }
+
+  const imageSelectors = ["[data-slide-thumbnail] img", "[data-role=\"slide-thumbnail\"] img", "img"];
+  for (const selector of imageSelectors) {
+    const candidate = slide.querySelector?.(selector);
+    if (candidate instanceof HTMLImageElement) {
+      const source = candidate.currentSrc || candidate.src;
+      if (source) {
+        return { url: source };
+      }
+    }
+  }
+
+  return null;
+}
+
 function buildSlideNavigatorMeta() {
   return slides.map((slide, index) => ({
     stage: getSlideStageLabel(slide, index),
     title: getSlideTitle(slide, index),
+    thumbnail: getSlideThumbnailDescriptor(slide),
+    originalIndex: index,
   }));
 }
 
@@ -1295,6 +1340,107 @@ function moveSlide(fromIndex, toIndex) {
   });
 
   return targetIndex;
+}
+
+export function moveSlidesToSection(indices, targetSection) {
+  if (!(stageViewport instanceof HTMLElement)) {
+    showDeckToast("Slides are not ready to move yet.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return false;
+  }
+
+  const sectionLabel = typeof targetSection === "string" ? targetSection.trim() : "";
+  if (!sectionLabel) {
+    showDeckToast("Choose a section before moving slides.", {
+      icon: "fa-circle-info",
+    });
+    return false;
+  }
+
+  const normalisedIndices = Array.isArray(indices) ? indices : [indices];
+  const uniqueIndices = Array.from(new Set(normalisedIndices.filter((value) => Number.isInteger(value)))).sort(
+    (a, b) => a - b,
+  );
+  const indexSet = new Set(uniqueIndices);
+  if (!uniqueIndices.length) {
+    showDeckToast("Select at least one slide to move.", {
+      icon: "fa-circle-info",
+    });
+    return false;
+  }
+
+  refreshSlides();
+
+  if (!slides.length) {
+    showDeckToast("There are no slides to move right now.", {
+      icon: "fa-circle-info",
+    });
+    return false;
+  }
+
+  const sectionIndices = slides.reduce((accumulator, slide, index) => {
+    if (getSlideStageLabel(slide, index) === sectionLabel) {
+      accumulator.push(index);
+    }
+    return accumulator;
+  }, []);
+
+  if (!sectionIndices.length) {
+    showDeckToast(`We couldn't find the “${sectionLabel}” section.`, {
+      icon: "fa-triangle-exclamation",
+    });
+    return false;
+  }
+
+  const nodesToMove = uniqueIndices
+    .map((index) => ({ index, node: slides[index] }))
+    .filter(({ node }) => node instanceof HTMLElement);
+
+  if (!nodesToMove.length) {
+    showDeckToast("We couldn't locate those slides to move.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return false;
+  }
+
+  const firstSectionIndex = sectionIndices[0];
+  let referenceIndex = firstSectionIndex;
+  while (referenceIndex < slides.length && indexSet.has(referenceIndex)) {
+    referenceIndex += 1;
+  }
+
+  const fragment = document.createDocumentFragment();
+  nodesToMove.sort((a, b) => a.index - b.index).forEach(({ node }) => {
+    fragment.appendChild(node);
+  });
+
+  const referenceNode = slides[referenceIndex] ?? null;
+  stageViewport.insertBefore(fragment, referenceNode);
+
+  const movedNodes = nodesToMove.map(({ node }) => node);
+
+  refreshSlides();
+
+  recalibrateMindMapCounter();
+
+  const firstMovedNode = movedNodes.find((node) => slides.includes(node));
+  const nextIndex = firstMovedNode ? slides.indexOf(firstMovedNode) : -1;
+  if (nextIndex >= 0) {
+    currentSlideIndex = nextIndex;
+    showSlide(nextIndex);
+    focusSlideAtIndex(nextIndex);
+  } else if (slides.length) {
+    showSlide(currentSlideIndex);
+  }
+
+  const movedCount = movedNodes.length;
+  const plural = movedCount === 1 ? "slide" : "slides";
+  showDeckToast(`Moved ${plural} to ${sectionLabel}.`, {
+    icon: "fa-arrow-turn-down",
+  });
+
+  return true;
 }
 
 export function deleteSlide(index = currentSlideIndex) {
@@ -8979,6 +9125,8 @@ export async function setupInteractiveDeck({
           onDuplicateSlide: (index) => duplicateSlide(index),
           onDeleteSlide: (index) => deleteSlide(index),
           onMoveSlide: (fromIndex, toIndex) => moveSlide(fromIndex, toIndex),
+          onMoveSlidesToSection: (selectedIndices, sectionLabel) =>
+            moveSlidesToSection(selectedIndices, sectionLabel),
         }) ?? null;
     } catch (error) {
       if (!slideNavigatorLoadLogged) {
