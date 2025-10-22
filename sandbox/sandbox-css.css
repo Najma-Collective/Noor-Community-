@@ -409,9 +409,32 @@ body {
 }
 
 .layout-option-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.layout-option-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.layout-option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background: rgba(156, 175, 136, 0.2);
+  color: var(--forest-shadow);
+  font-size: 1.2rem;
+  box-shadow: inset 0 0 0 1px rgba(122, 132, 113, 0.18);
+}
+
+.layout-option-icon i {
   pointer-events: none;
 }
 
@@ -3005,8 +3028,270 @@ ol {
 
 .activity-builder-slide--columns,
 .activity-builder-slide--spotlight,
-.activity-builder-slide--cards {
+.activity-builder-slide--cards,
+.activity-builder-slide--vocabulary,
+.activity-builder-slide--reading,
+.activity-builder-slide--pronunciation,
+.activity-builder-slide--homework {
   gap: var(--space-5);
+}
+
+.activity-vocab-layout,
+.activity-reading-layout,
+.activity-pronunciation-layout,
+.activity-homework-layout {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.activity-vocab-layout {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+}
+
+.activity-vocab-layout--no-rubric {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.activity-vocab-content {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.activity-vocab-focus,
+.activity-vocab-bank,
+.reading-excerpt,
+.reading-questions,
+.pronunciation-focus,
+.pronunciation-pairs,
+.homework-summary,
+.homework-share,
+.homework-actions {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.18);
+  box-shadow: var(--shadow-1);
+  padding: clamp(20px, 3vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.activity-vocab-focus h3,
+.activity-vocab-bank h3,
+.reading-excerpt h3,
+.reading-questions h3,
+.pronunciation-focus h3,
+.pronunciation-pairs h3,
+.homework-summary h3,
+.homework-share h3,
+.homework-actions h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  color: var(--forest-shadow);
+  font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
+}
+
+.vocab-detail-list,
+.vocab-practice-list,
+.reading-pretask-list,
+.reading-question-list,
+.pronunciation-steps,
+.pronunciation-feedback,
+.homework-share-list,
+.homework-next-list,
+.homework-evidence-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.vocab-detail-list li strong,
+.homework-evidence-list li strong {
+  font-weight: 700;
+}
+
+.vocab-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.vocab-card {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(122, 132, 113, 0.18);
+  background: rgba(246, 248, 243, 0.85);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  box-shadow: var(--shadow-1);
+}
+
+.vocab-card h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  color: var(--forest-shadow);
+}
+
+.vocab-example {
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+.reading-source {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--forest-shadow) 65%, white 35%);
+}
+
+.reading-question-list {
+  padding-left: 1.2rem;
+}
+
+.reading-question-item {
+  background: rgba(156, 175, 136, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid rgba(122, 132, 113, 0.18);
+  padding: 0.85rem 1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.reading-question-answer strong {
+  color: var(--forest-shadow);
+}
+
+.reading-post-task {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: rgba(239, 131, 84, 0.12);
+  color: var(--forest-shadow);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reading-post-task.activity-empty {
+  background: rgba(122, 132, 113, 0.12);
+}
+
+.pronunciation-body {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.pronunciation-steps {
+  counter-reset: drill-step;
+}
+
+.pronunciation-steps li {
+  counter-increment: drill-step;
+  list-style: none;
+  position: relative;
+  padding-left: 2.2rem;
+}
+
+.pronunciation-steps li::before {
+  content: counter(drill-step);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: rgba(156, 175, 136, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--forest-shadow);
+}
+
+.pronunciation-choral {
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius);
+  background: rgba(239, 131, 84, 0.12);
+  color: var(--forest-shadow);
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.pronunciation-choral i {
+  margin-top: 0.15rem;
+  color: var(--accent);
+}
+
+.minimal-pair-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.minimal-pair-table th,
+.minimal-pair-table td {
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+.homework-share-list,
+.homework-next-list,
+.homework-evidence-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.homework-share-list li,
+.homework-next-list li,
+.homework-evidence-list li {
+  position: relative;
+  padding-left: 1.65rem;
+}
+
+.homework-share-list li::before,
+.homework-next-list li::before,
+.homework-evidence-list li::before {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  color: var(--primary-forest);
+}
+
+.activity-reading-layout {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+}
+
+.activity-reading-layout--no-rubric {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.activity-pronunciation-layout {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+
+.activity-pronunciation-layout--no-rubric {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.activity-homework-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.activity-homework-layout--no-rubric {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .activity-slide-header {

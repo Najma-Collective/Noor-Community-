@@ -1442,54 +1442,135 @@
         </header>
         <form id="activity-builder-form" class="builder-form">
           <div class="builder-grid">
-            <fieldset class="builder-field builder-field--full layout-picker" data-layouts="blank-canvas,facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <fieldset
+              class="builder-field builder-field--full layout-picker"
+              data-layouts="blank-canvas,facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
+            >
               <legend class="builder-field-label">Choose a layout</legend>
               <div class="layout-picker-grid">
-                <label class="layout-option">
+                <label class="layout-option" title="Start with an empty slide and build everything yourself.">
                   <input type="radio" name="slideLayout" value="blank-canvas" checked />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Blank canvas</span>
-                    <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-border-all"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Blank canvas</span>
+                      <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                    </span>
                   </span>
                 </label>
-                <label class="layout-option">
+                <label class="layout-option" title="Lead a facilitation block with overview, steps, and rubric side by side.">
                   <input type="radio" name="slideLayout" value="facilitation" />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Workshop facilitation</span>
-                    <span class="layout-option-desc">Stage label, facilitation steps, and rubric side by side.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-people-group"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Workshop facilitation</span>
+                      <span class="layout-option-desc">Stage label, facilitation steps, and rubric side by side.</span>
+                    </span>
                   </span>
                 </label>
-                <label class="layout-option">
+                <label class="layout-option" title="Spotlight a single rubric focus for rapid evidence capture.">
                   <input type="radio" name="slideLayout" value="rubric-simple" />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Rubric spotlight</span>
-                    <span class="layout-option-desc">Title with rubric focus for rapid evidence capture.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-clipboard-check"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Rubric spotlight</span>
+                      <span class="layout-option-desc">Title with rubric focus for rapid evidence capture.</span>
+                    </span>
                   </span>
                 </label>
-                <label class="layout-option">
+                <label class="layout-option" title="Balance a discussion prompt with evidence capture columns.">
                   <input type="radio" name="slideLayout" value="rubric-columns" />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Discussion columns</span>
-                    <span class="layout-option-desc">Rubric with two guided discussion columns beneath the title.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-table-columns"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Discussion columns</span>
+                      <span class="layout-option-desc">Rubric with two guided discussion columns beneath the title.</span>
+                    </span>
                   </span>
                 </label>
-                <label class="layout-option">
+                <label class="layout-option" title="Pair a narrative spotlight with supporting visuals and rubric.">
                   <input type="radio" name="slideLayout" value="image-spotlight" />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Spotlight + image</span>
-                    <span class="layout-option-desc">Narrative column with rubric alongside an inspirational image.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-image"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Spotlight + image</span>
+                      <span class="layout-option-desc">Narrative column with rubric alongside an inspirational image.</span>
+                    </span>
                   </span>
                 </label>
-                <label class="layout-option">
+                <label class="layout-option" title="Guide teams with a rubric plus three scaffolded action cards.">
                   <input type="radio" name="slideLayout" value="rubric-cards" />
                   <span class="layout-option-body">
-                    <span class="layout-option-title">Strategy cards</span>
-                    <span class="layout-option-desc">Rubric plus three actionable strategy cards for teams.</span>
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-layer-group"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Strategy cards</span>
+                      <span class="layout-option-desc">Rubric plus three actionable strategy cards for teams.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Introduce an ELT vocabulary bank with CEFR notes and practice ideas.">
+                  <input type="radio" name="slideLayout" value="vocabulary-grid" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-table-cells-large"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Vocabulary grid</span>
+                      <span class="layout-option-desc">Target language with definitions, examples, and CEFR-aligned practice.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Build a reading lesson slide with strategy prompts and answer key.">
+                  <input type="radio" name="slideLayout" value="reading-comprehension" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-book-open-reader"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Reading comprehension</span>
+                      <span class="layout-option-desc">Text excerpt, pre-reading tasks, questions, and answer key for ELT lessons.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Coach pronunciation with minimal pairs, drill steps, and reflection rubric.">
+                  <input type="radio" name="slideLayout" value="pronunciation-drill" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-wave-square"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Pronunciation drill</span>
+                      <span class="layout-option-desc">Sound focus, minimal pairs, and coaching tips to monitor production.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Reflect on homework and link evidence to CEFR success criteria.">
+                  <input type="radio" name="slideLayout" value="homework-recap" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-house-circle-check"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Homework recap</span>
+                      <span class="layout-option-desc">Homework summary, share-out prompts, and next steps for transfer.</span>
+                    </span>
                   </span>
                 </label>
               </div>
             </fieldset>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Stage label</span>
               <input
                 type="text"
@@ -1498,7 +1579,7 @@
                 value="Activity Workshop · 15 minutes"
               />
             </label>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Activity title</span>
               <input
                 type="text"
@@ -1507,7 +1588,7 @@
                 value="Design a community impact project"
               />
             </label>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Duration</span>
               <input
                 type="text"
@@ -1516,7 +1597,7 @@
                 value="10 minutes"
               />
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Slide title</span>
               <input
                 type="text"
@@ -1525,7 +1606,7 @@
                 value="Facilitation steps"
               />
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Slide rubric lead-in</span>
               <textarea
                 name="slideRubricLead"
@@ -1614,7 +1695,155 @@ Invite learners to connect evidence back to the rubric.</textarea>
               <span class="builder-field-label">Card 3 description</span>
               <textarea name="cardThreeBody" rows="2" placeholder="What should learners do?">List evidence that shows impact and note the data you still need.</textarea>
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Target language focus</span>
+              <textarea
+                name="vocabTargetLanguage"
+                rows="3"
+                placeholder="Describe the phrases, grammar, or functions learners will rehearse"
+              ></textarea>
+            </label>
+            <label class="builder-field" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Skills focus</span>
+              <input
+                type="text"
+                name="vocabSkillsFocus"
+                placeholder="e.g. Lexis and controlled speaking"
+              />
+            </label>
+            <label class="builder-field" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">CEFR alignment</span>
+              <input type="text" name="vocabCefr" placeholder="e.g. B1-B2" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Practice ideas (one per line)</span>
+              <textarea
+                name="vocabPracticeIdeas"
+                rows="3"
+                placeholder="Prompt learners with quick tasks that recycle the vocabulary"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Vocabulary entries (word | definition | example)</span>
+              <textarea
+                name="vocabWordList"
+                rows="5"
+                placeholder="coordinate | organise people to work together | We coordinate volunteers each weekend"
+              ></textarea>
+            </label>
+            <label class="builder-field" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Reading text title</span>
+              <input type="text" name="readingTextTitle" placeholder="e.g. NGO launches mobile clinic" />
+            </label>
+            <label class="builder-field" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Reading source</span>
+              <input type="text" name="readingTextSource" placeholder="e.g. Community Voices Magazine" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Reading excerpt</span>
+              <textarea
+                name="readingExcerpt"
+                rows="4"
+                placeholder="Paste the paragraph learners will read"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Pre-reading tasks (one per line)</span>
+              <textarea
+                name="readingPreTasks"
+                rows="3"
+                placeholder="Skim the headline and predict two challenges"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Comprehension questions + answers</span>
+              <textarea
+                name="readingQuestions"
+                rows="4"
+                placeholder="What is the main idea? | It explains how the clinic serves remote villages"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Post-reading task</span>
+              <textarea
+                name="readingPostTask"
+                rows="2"
+                placeholder="Summarise the article using two target phrases"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Pronunciation focus</span>
+              <textarea
+                name="pronunciationFocus"
+                rows="2"
+                placeholder="Describe the sound contrast or stress pattern"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Drill steps (one per line)</span>
+              <textarea
+                name="pronunciationSteps"
+                rows="3"
+                placeholder="Mark stress on the board"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Minimal pairs (word A / word B | coaching tip)</span>
+              <textarea
+                name="pronunciationMinimalPairs"
+                rows="4"
+                placeholder="ship / sheep | Exaggerate the long vowel in 'sheep'"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Coaching tips (one per line)</span>
+              <textarea
+                name="pronunciationFeedback"
+                rows="3"
+                placeholder="Use mirrors so learners can see lip shape"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Choral prompt</span>
+              <textarea
+                name="pronunciationChoral"
+                rows="2"
+                placeholder="Model sentence for choral drilling"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Homework summary</span>
+              <textarea
+                name="homeworkSummary"
+                rows="3"
+                placeholder="Summarise what learners completed before class"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Share-out prompts (one per line)</span>
+              <textarea
+                name="homeworkSharePrompts"
+                rows="3"
+                placeholder="What language felt most useful from homework?"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Next steps (one per line)</span>
+              <textarea
+                name="homeworkNextSteps"
+                rows="3"
+                placeholder="Record the update again adding one connector"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Evidence checklist (one per line)</span>
+              <textarea
+                name="homeworkEvidenceChecklist"
+                rows="3"
+                placeholder="Learner uses at least two target chunks"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Performance levels (comma separated)</span>
               <input
                 type="text"
@@ -1627,7 +1856,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
 
           <section
             class="builder-section"
-            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards"
+            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
             data-role="rubric-section"
           >
             <header class="builder-section-header">
@@ -1656,7 +1885,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
             <ul id="builder-prompt-list" class="builder-prompt-list"></ul>
           </section>
 
-          <section class="builder-section builder-preview-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+          <section class="builder-section builder-preview-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
             <header class="builder-section-header">
               <div>
                 <h3>Slide preview</h3>
@@ -1670,7 +1899,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
             <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
           </section>
 
-          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards">
+          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
             <header class="builder-section-header">
               <div>
                 <h3>Rubric JSON</h3>
