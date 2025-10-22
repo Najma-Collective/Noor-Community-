@@ -8,6 +8,12 @@ This guide shows you how to run and customise the interactive lesson deck in `sa
 2. Use the left/right chevrons that appear beneath the slides to move through the deck during class. 【F:sandbox/test-deck-v1_2.html†L1422-L1427】
 3. Save your customised sequence at any time with **Save Deck** (downloads a JSON state file) and reload it later with **Load Deck** (choose the saved JSON). Each action confirms success or errors through on-screen toasts. 【F:sandbox/test-deck-v1_2.html†L35-L48】【F:sandbox/int-mod.js†L1800-L1950】
 
+## Navigating slides quickly
+
+* Use the table icon in the toolbar to open the slide navigator dialog. It traps focus, supports Escape to close, and keeps keyboard users inside the panel until they choose a slide or dismiss it. 【F:sandbox/slide-nav.js†L195-L307】
+* Type in the **Search slides** field above the list to filter by stage or title. Results update live, the current slide stays highlighted if it remains in view, and an on-screen-reader announcement confirms how many slides match. 【F:sandbox/slide-nav.js†L39-L193】【F:sandbox/slide-nav.js†L309-L371】
+* When the filter returns no matches, the list shows clear guidance that nothing was found so you can adjust your keywords without losing context. 【F:sandbox/slide-nav.js†L163-L170】
+
 ## Highlighting key language
 
 * Select text on any slide, pick a colour from the highlight menu, and click **Apply** to emphasise vocabulary or instructions. Highlights must stay within a single slide and only activate when text is selected. 【F:sandbox/test-deck-v1_2.html†L57-L75】【F:sandbox/int-mod.js†L1964-L2013】
