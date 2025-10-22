@@ -36,6 +36,16 @@ export function initSlideNavigator({
       </button>
     </div>
     <div class="slide-jump-body">
+      <div class="slide-jump-search-group">
+        <label class="sr-only" for="${titleId}-search">Search slides</label>
+        <input
+          type="search"
+          id="${titleId}-search"
+          class="slide-jump-search"
+          placeholder="Search by stage or title"
+        />
+      </div>
+      <p class="slide-jump-status sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
       <ul class="slide-jump-list"></ul>
     </div>
   `;
@@ -43,14 +53,78 @@ export function initSlideNavigator({
 
   const list = panel.querySelector(".slide-jump-list");
   const closeBtn = panel.querySelector(".slide-jump-close");
+  const searchInput = panel.querySelector(".slide-jump-search");
+  const statusRegion = panel.querySelector(".slide-jump-status");
+  const externalStatus = document.getElementById("deck-status");
 
-  if (!list || !closeBtn) {
+  if (!list || !closeBtn || !searchInput || !statusRegion) {
     return null;
   }
 
   let slidesMeta = [];
+  let filteredSlides = [];
   let activeIndex = 0;
   let isOpen = false;
+  let searchTerm = "";
+
+  const focusableSelectors = [
+    "a[href]",
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(",");
+
+  const announceTargets = [statusRegion, externalStatus].filter(Boolean);
+
+  function announce(message = "") {
+    announceTargets.forEach((target) => {
+      target.textContent = message;
+    });
+  }
+
+  function getFocusableElements() {
+    return Array.from(panel.querySelectorAll(focusableSelectors)).filter((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+      if (element.hasAttribute("disabled")) {
+        return false;
+      }
+      return element.offsetParent !== null || element === document.activeElement;
+    });
+  }
+
+  function applyFilter() {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      filteredSlides = slidesMeta.slice();
+      return;
+    }
+    filteredSlides = slidesMeta.filter(({ stage, title }) => {
+      const stageText = String(stage ?? "").toLowerCase();
+      const titleText = String(title ?? "").toLowerCase();
+      return stageText.includes(term) || titleText.includes(term);
+    });
+  }
+
+  function announceSearchResults() {
+    const total = filteredSlides.length;
+    const term = searchTerm.trim();
+    let message = "";
+    if (total === 0) {
+      message = term
+        ? `No slides match “${term}”.`
+        : "No slides are currently available.";
+    } else {
+      const plural = total === 1 ? "slide" : "slides";
+      message = term
+        ? `Showing ${total} ${plural} for “${term}”.`
+        : `Showing all ${total} ${plural}.`;
+    }
+    announce(message);
+  }
 
   function focusItemByOffset(currentIndex, offset) {
     const items = Array.from(list.querySelectorAll(".slide-jump-item"));
@@ -78,27 +152,37 @@ export function initSlideNavigator({
 
   function applyActiveState() {
     const items = list.querySelectorAll(".slide-jump-item");
-    items.forEach((item, index) => {
-      item.classList.toggle("is-active", index === activeIndex);
-      item.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+    items.forEach((item) => {
+      const itemIndex = Number(item.dataset.index);
+      const isActiveItem = itemIndex === activeIndex;
+      item.classList.toggle("is-active", isActiveItem);
+      item.setAttribute("aria-current", isActiveItem ? "true" : "false");
     });
   }
 
   function renderSlides() {
     list.innerHTML = "";
-    slidesMeta.forEach(({ stage, title }, index) => {
+    if (!filteredSlides.length) {
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "slide-jump-empty";
+      emptyItem.textContent = "No slides match your search.";
+      list.appendChild(emptyItem);
+      return;
+    }
+
+    filteredSlides.forEach(({ stage, title, originalIndex }) => {
       const item = document.createElement("li");
       const button = document.createElement("button");
       button.type = "button";
       button.className = "slide-jump-item";
-      button.dataset.index = String(index);
+      button.dataset.index = String(originalIndex);
       button.innerHTML = `
         <span class="slide-jump-stage">${stage}</span>
         <span class="slide-jump-title">${title}</span>
       `;
       button.addEventListener("click", () => {
         if (typeof onSelectSlide === "function") {
-          onSelectSlide(index);
+          onSelectSlide(originalIndex);
         }
         closePanel();
       });
@@ -109,6 +193,29 @@ export function initSlideNavigator({
   }
 
   function handlePanelKeydown(event) {
+    if (event.key === "Tab") {
+      const focusable = getFocusableElements();
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const current = document.activeElement;
+
+      if (event.shiftKey) {
+        if (current === first || !panel.contains(current)) {
+          event.preventDefault();
+          last.focus({ preventScroll: true });
+        }
+      } else if (current === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+      }
+      return;
+    }
+
     const items = Array.from(list.querySelectorAll(".slide-jump-item"));
     if (!items.length) {
       return;
@@ -143,6 +250,7 @@ export function initSlideNavigator({
     isOpen = true;
     panel.classList.add("is-visible");
     panel.setAttribute("aria-hidden", "false");
+    panel.setAttribute("aria-modal", "true");
     trigger.setAttribute("aria-expanded", "true");
 
     const handleOutsideClick = (event) => {
@@ -163,6 +271,9 @@ export function initSlideNavigator({
     window.addEventListener("pointerdown", handleOutsideClick);
     window.addEventListener("keydown", handleKeydown);
 
+    announceSearchResults();
+    announce("Slide navigator opened." + (statusRegion.textContent ? ` ${statusRegion.textContent}` : ""));
+
     requestAnimationFrame(() => {
       const activeItem = list.querySelector(".slide-jump-item.is-active");
       if (activeItem instanceof HTMLElement) {
@@ -177,9 +288,11 @@ export function initSlideNavigator({
 
   function closePanel() {
     if (!isOpen) return;
+    announce("Slide navigator closed.");
     isOpen = false;
     panel.classList.remove("is-visible");
     panel.setAttribute("aria-hidden", "true");
+    panel.setAttribute("aria-modal", "false");
     trigger.setAttribute("aria-expanded", "false");
     trigger.focus({ preventScroll: true });
 
@@ -192,6 +305,31 @@ export function initSlideNavigator({
       delete panel.__deckKeyListener;
     }
   }
+
+  searchInput.addEventListener("input", (event) => {
+    searchTerm = typeof event.target?.value === "string" ? event.target.value : "";
+    applyFilter();
+    renderSlides();
+    announceSearchResults();
+  });
+
+  searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      const firstItem = list.querySelector(".slide-jump-item");
+      if (firstItem instanceof HTMLElement) {
+        event.preventDefault();
+        firstItem.focus({ preventScroll: true });
+      }
+    }
+    if (event.key === "ArrowUp") {
+      const items = list.querySelectorAll(".slide-jump-item");
+      const lastItem = items[items.length - 1];
+      if (lastItem instanceof HTMLElement) {
+        event.preventDefault();
+        lastItem.focus({ preventScroll: true });
+      }
+    }
+  });
 
   trigger.addEventListener("click", () => {
     if (isOpen) {
@@ -219,8 +357,18 @@ export function initSlideNavigator({
 
   return {
     updateSlides(meta = []) {
-      slidesMeta = Array.isArray(meta) ? meta : [];
+      slidesMeta = Array.isArray(meta)
+        ? meta.map((item, index) => ({
+            stage: typeof item?.stage === "string" ? item.stage : String(item?.stage ?? ""),
+            title: typeof item?.title === "string" ? item.title : String(item?.title ?? ""),
+            originalIndex: index,
+          }))
+        : [];
+      applyFilter();
       renderSlides();
+      if (isOpen) {
+        announceSearchResults();
+      }
     },
     setActive(index = 0) {
       activeIndex = typeof index === "number" ? index : 0;
