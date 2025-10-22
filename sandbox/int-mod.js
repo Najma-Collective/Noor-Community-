@@ -779,6 +779,73 @@ export function duplicateSlide(index = currentSlideIndex) {
   return resolvedIndex;
 }
 
+function moveSlide(fromIndex, toIndex) {
+  if (!(stageViewport instanceof HTMLElement)) {
+    showDeckToast("Slides are not ready to move yet.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  refreshSlides();
+
+  const total = slides.length;
+  if (!total) {
+    showDeckToast("There are no slides to move right now.", {
+      icon: "fa-circle-info",
+    });
+    return null;
+  }
+
+  if (!Number.isInteger(fromIndex) || !Number.isInteger(toIndex)) {
+    showDeckToast("We couldn't understand which slide to move.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  const clampedFrom = Math.min(Math.max(fromIndex, 0), total - 1);
+  const clampedTo = Math.min(Math.max(toIndex, 0), total - 1);
+
+  if (clampedFrom === clampedTo) {
+    showDeckToast("Slide is already in that position.", {
+      icon: "fa-circle-info",
+    });
+    return clampedFrom;
+  }
+
+  const slide = slides[clampedFrom];
+  if (!(slide instanceof HTMLElement)) {
+    showDeckToast("We couldn't find that slide to move.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return null;
+  }
+
+  const movingDown = clampedTo > clampedFrom;
+  const referenceIndex = movingDown ? clampedTo + 1 : clampedTo;
+  const referenceNode = slides[referenceIndex] ?? null;
+
+  stageViewport.insertBefore(slide, referenceNode);
+
+  refreshSlides();
+
+  const newIndex = slides.indexOf(slide);
+  const targetIndex = newIndex >= 0 ? newIndex : clampedTo;
+
+  showSlide(targetIndex);
+  focusSlideAtIndex(targetIndex);
+  recalibrateMindMapCounter();
+
+  const descriptor = getSlideTitle(slide, targetIndex);
+  const humanIndex = targetIndex + 1;
+  showDeckToast(`Moved “${descriptor}” to position ${humanIndex}.`, {
+    icon: "fa-up-down-left-right",
+  });
+
+  return targetIndex;
+}
+
 export function deleteSlide(index = currentSlideIndex) {
   if (!(stageViewport instanceof HTMLElement)) {
     showDeckToast("Slides are not ready to delete yet.", {
@@ -5721,6 +5788,7 @@ export async function setupInteractiveDeck({
           onSelectSlide: (index) => showSlide(index),
           onDuplicateSlide: (index) => duplicateSlide(index),
           onDeleteSlide: (index) => deleteSlide(index),
+          onMoveSlide: (fromIndex, toIndex) => moveSlide(fromIndex, toIndex),
         }) ?? null;
     } catch (error) {
       if (!slideNavigatorLoadLogged) {
