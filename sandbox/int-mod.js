@@ -291,6 +291,29 @@ const BUILDER_LAYOUT_DEFAULTS = {
     imageAlt: '',
     cards: [],
   }),
+  'full-bleed-image': () => ({
+    includeRubric: false,
+    stageLabel: 'Visual reflection · 5 minutes',
+    activityTitle: 'Analyse the moment',
+    duration: '5 minutes',
+    slideTitle: 'Focus prompt',
+    rubricIntro: 'Capture evidence that connects to the visual story.',
+    overview: '',
+    steps: [],
+    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [
+      'Describe what is happening in this scene.',
+      'Call out the detail you want learners to notice.',
+    ],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+  }),
   'rubric-cards': () => ({
     includeRubric: true,
     stageLabel: 'Strategy sprint · 15 minutes',
@@ -5596,7 +5619,7 @@ function updateBuilderJsonPreview() {
           }
         : undefined,
     spotlight:
-      state.layout === "image-spotlight"
+      state.layout === "image-spotlight" || state.layout === "full-bleed-image"
         ? {
             narrative: state.spotlightNarrative,
             imageUrl: state.imageUrl,
@@ -5731,6 +5754,20 @@ function updateBuilderPreview() {
       slide = createImageSpotlightSlide({
         stageLabel: state.stageLabel || "Activity Workshop",
         title: state.activityTitle || state.slideTitle || "Spotlight",
+        duration: state.duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        narrative: state.spotlightNarrative,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    case "full-bleed-image":
+      slide = createFullBleedSlide({
+        stageLabel: state.stageLabel || "Activity Workshop",
+        title: state.activityTitle || state.slideTitle || "Visual reflection",
         duration: state.duration,
         slideTitle: state.slideTitle,
         rubric: rubricPayload,
@@ -7215,6 +7252,192 @@ function createImageSpotlightSlide({
   return slide;
 }
 
+function createFullBleedSlide({
+  stageLabel = "Activity Workshop",
+  title,
+  duration,
+  slideTitle,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  narrative = [],
+  imageUrl,
+  imageAlt,
+  rubricEnabled = false,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Visual reflection";
+  const overlayHeading = trimText(slideTitle) || resolvedTitle;
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--fullbleed";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--fullbleed";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-fullbleed-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-fullbleed-layout--no-rubric");
+  }
+  inner.appendChild(layout);
+
+  const figure = document.createElement("figure");
+  figure.className = "activity-fullbleed-figure";
+  layout.appendChild(figure);
+
+  if (imageUrl) {
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = imageAlt || "Full-bleed illustration";
+    img.loading = "lazy";
+    img.decoding = "async";
+    figure.appendChild(img);
+  } else {
+    const placeholder = document.createElement("div");
+    placeholder.className = "activity-fullbleed-placeholder";
+    placeholder.innerHTML = `
+      <i class="fa-solid fa-image" aria-hidden="true"></i>
+      <p>Add a full-bleed image to complete this slide.</p>
+    `;
+    figure.appendChild(placeholder);
+  }
+
+  const overlay = document.createElement("figcaption");
+  overlay.className = "activity-fullbleed-overlay";
+  figure.appendChild(overlay);
+
+  const overlayHeadingEl = document.createElement("h3");
+  overlayHeadingEl.textContent = overlayHeading;
+  overlay.appendChild(overlayHeadingEl);
+
+  const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean) : [];
+  if (paragraphs.length) {
+    paragraphs.forEach((paragraph) => {
+      const p = document.createElement("p");
+      p.textContent = paragraph;
+      overlay.appendChild(p);
+    });
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add guiding text to pair with the image.";
+    overlay.appendChild(placeholder);
+  }
+
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+      className: "activity-rubric activity-rubric--fullbleed",
+    });
+    layout.appendChild(rubricSection);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
 function createRubricCardSlide({
   stageLabel = "Activity Workshop",
   title,
@@ -8595,7 +8818,7 @@ function handleBuilderSubmit(event) {
   }
 
   const criteria = state.criteria;
-  if (!criteria.length) {
+  if (state.includeRubric && !criteria.length) {
     showBuilderStatus("Add at least one rubric criterion.", "error");
     return;
   }
@@ -8634,6 +8857,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricHeadingText: "Success criteria",
         rubricIntro: state.rubricIntro,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8659,6 +8883,7 @@ function handleBuilderSubmit(event) {
           heading: state.columnTwoHeading,
           items: state.columnTwoItems,
         },
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8673,6 +8898,28 @@ function handleBuilderSubmit(event) {
         narrative: state.spotlightNarrative,
         imageUrl: state.imageUrl,
         imageAlt: state.imageAlt,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    }
+    case "full-bleed-image": {
+      if (!trimText(state.imageUrl || "")) {
+        showBuilderStatus("Add an image before inserting this layout.", "error");
+        const imageUrlInput = builderForm.querySelector('[name="imageUrl"]');
+        imageUrlInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createFullBleedSlide({
+        stageLabel,
+        title,
+        duration,
+        slideTitle: state.slideTitle,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        narrative: state.spotlightNarrative,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8691,6 +8938,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricIntro: state.rubricIntro,
         cards: state.cards,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8708,6 +8956,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricIntro: state.rubricIntro,
         vocabulary: state.vocabulary,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8725,6 +8974,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricIntro: state.rubricIntro,
         reading: state.reading,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8742,6 +8992,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricIntro: state.rubricIntro,
         pronunciation: state.pronunciation,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8759,6 +9010,7 @@ function handleBuilderSubmit(event) {
         rubric: rubricData,
         rubricIntro: state.rubricIntro,
         homework: state.homework,
+        rubricEnabled: state.includeRubric,
       });
       break;
     }
@@ -8773,6 +9025,7 @@ function handleBuilderSubmit(event) {
         instructionsHeading: state.slideTitle,
         rubricHeadingText: "Success criteria",
         rubricIntro: state.rubricIntro,
+        rubricEnabled: state.includeRubric,
       });
       break;
   }
@@ -8785,7 +9038,11 @@ function handleBuilderSubmit(event) {
   initialiseBuilderSlide(slide);
   insertActivitySlide(slide);
   if (typeof slide.__deckShowStatus === "function") {
-    slide.__deckShowStatus("Rubric ready for your learners.", "success");
+    if (state.includeRubric) {
+      slide.__deckShowStatus("Rubric ready for your learners.", "success");
+    } else {
+      slide.__deckShowStatus("Slide inserted and ready to customise.", "info");
+    }
   }
   closeBuilderOverlay({ reset: true, focus: true });
 }
@@ -8848,6 +9105,7 @@ function initialiseActivityBuilderUI() {
           "rubric-simple": "Rubric spotlight layout selected.",
           "rubric-columns": "Discussion columns layout selected.",
           "image-spotlight": "Spotlight layout selected.",
+          "full-bleed-image": "Full-bleed image layout selected.",
           "rubric-cards": "Strategy cards layout selected.",
           "vocabulary-grid": "Vocabulary grid layout selected.",
           "reading-comprehension": "Reading comprehension layout selected.",

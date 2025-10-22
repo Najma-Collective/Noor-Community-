@@ -3341,6 +3341,7 @@ ol {
 
 .activity-builder-slide--columns,
 .activity-builder-slide--spotlight,
+.activity-builder-slide--fullbleed,
 .activity-builder-slide--cards,
 .activity-builder-slide--vocabulary,
 .activity-builder-slide--reading,
@@ -3798,6 +3799,84 @@ ol {
 }
 .activity-spotlight-layout--no-rubric {
   gap: var(--space-3);
+}
+
+.activity-fullbleed-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.activity-fullbleed-layout--no-rubric {
+  gap: var(--space-3);
+}
+
+.activity-fullbleed-figure {
+  position: relative;
+  margin: 0;
+  border-radius: clamp(22px, 3vw, 36px);
+  overflow: hidden;
+  box-shadow: var(--shadow-3);
+  isolation: isolate;
+  min-height: clamp(260px, 45vh, 520px);
+  background: #0e1511;
+}
+
+.activity-fullbleed-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.activity-fullbleed-placeholder {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  gap: var(--space-3);
+  color: rgba(255, 255, 255, 0.85);
+  padding: var(--space-6);
+  min-height: clamp(260px, 45vh, 520px);
+  background: linear-gradient(135deg, rgba(108, 160, 140, 0.45), rgba(34, 60, 52, 0.9));
+}
+
+.activity-fullbleed-placeholder i {
+  font-size: 2.6rem;
+}
+
+.activity-fullbleed-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: clamp(24px, 6vw, 48px);
+  background: linear-gradient(180deg, rgba(6, 13, 10, 0.05) 0%, rgba(6, 13, 10, 0.72) 60%, rgba(6, 13, 10, 0.92) 100%);
+  color: #fff;
+}
+
+.activity-fullbleed-overlay h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.6vw, 2.4rem);
+  letter-spacing: 0.01em;
+}
+
+.activity-fullbleed-overlay p {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 42ch;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.activity-fullbleed-overlay .activity-empty {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.activity-rubric--fullbleed {
+  margin: 0;
+  border-radius: clamp(18px, 2.5vw, 28px);
 }
 
 .activity-spotlight-grid {

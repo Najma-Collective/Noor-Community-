@@ -1444,7 +1444,7 @@
           <div class="builder-grid">
             <fieldset
               class="builder-field builder-field--full layout-picker"
-              data-layouts="blank-canvas,facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
+              data-layouts="blank-canvas,facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
             >
               <legend class="builder-field-label">Choose a layout</legend>
               <div class="layout-picker-grid">
@@ -1505,6 +1505,18 @@
                     <span class="layout-option-copy">
                       <span class="layout-option-title">Spotlight + image</span>
                       <span class="layout-option-desc">Narrative column with rubric alongside an inspirational image.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Blend a full-bleed image with an overlay text prompt.">
+                  <input type="radio" name="slideLayout" value="full-bleed-image" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-panorama"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Full-bleed visual</span>
+                      <span class="layout-option-desc">Edge-to-edge image with overlay text guidance.</span>
                     </span>
                   </span>
                 </label>
@@ -1570,7 +1582,7 @@
                 </label>
               </div>
             </fieldset>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Stage label</span>
               <input
                 type="text"
@@ -1579,7 +1591,7 @@
                 value="Activity Workshop · 15 minutes"
               />
             </label>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Activity title</span>
               <input
                 type="text"
@@ -1588,7 +1600,7 @@
                 value="Design a community impact project"
               />
             </label>
-            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Duration</span>
               <input
                 type="text"
@@ -1597,7 +1609,7 @@
                 value="10 minutes"
               />
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Slide title</span>
               <input
                 type="text"
@@ -1606,7 +1618,7 @@
                 value="Facilitation steps"
               />
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Slide rubric lead-in</span>
               <textarea
                 name="slideRubricLead"
@@ -1651,13 +1663,13 @@ Explain why it matters for the community.</textarea>
               <textarea name="columnTwoItems" rows="3" placeholder="List what learners should record">Quote the part of the proposal you are referencing.
 Note questions you still have.</textarea>
             </label>
-            <label class="builder-field builder-field--full" data-layouts="image-spotlight">
+            <label class="builder-field builder-field--full" data-layouts="image-spotlight,full-bleed-image">
               <span class="builder-field-label">Spotlight narrative (each line becomes a paragraph)</span>
               <textarea name="spotlightNarrative" rows="4" placeholder="Share context or reflection">Set the scene for the project you are analysing.
 Highlight the aspect that the image represents.
 Invite learners to connect evidence back to the rubric.</textarea>
             </label>
-            <div class="builder-field builder-field--full image-search" data-layouts="image-spotlight">
+            <div class="builder-field builder-field--full image-search" data-layouts="image-spotlight,full-bleed-image">
               <span class="builder-field-label">Find an image</span>
               <div class="image-search-controls">
                 <input type="text" name="imageSearch" placeholder="Search Pexels" />
@@ -1843,7 +1855,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
                 placeholder="Learner uses at least two target chunks"
               ></textarea>
             </label>
-            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
               <span class="builder-field-label">Performance levels (comma separated)</span>
               <input
                 type="text"
@@ -1856,7 +1868,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
 
           <section
             class="builder-section"
-            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
+            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
             data-role="rubric-section"
           >
             <header class="builder-section-header">
@@ -1885,7 +1897,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
             <ul id="builder-prompt-list" class="builder-prompt-list"></ul>
           </section>
 
-          <section class="builder-section builder-preview-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+          <section class="builder-section builder-preview-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
             <header class="builder-section-header">
               <div>
                 <h3>Slide preview</h3>
@@ -1899,7 +1911,7 @@ Invite learners to connect evidence back to the rubric.</textarea>
             <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
           </section>
 
-          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,full-bleed-image,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
             <header class="builder-section-header">
               <div>
                 <h3>Rubric JSON</h3>
