@@ -1709,6 +1709,19 @@ ol {
   transform: translateY(-1px);
 }
 
+.slide-jump-action--danger {
+  border-color: rgba(193, 92, 92, 0.35);
+  color: #8f2f2a;
+  background: rgba(255, 250, 249, 0.92);
+}
+
+.slide-jump-action--danger:hover,
+.slide-jump-action--danger:focus-visible {
+  border-color: rgba(193, 92, 92, 0.6);
+  background: rgba(255, 245, 243, 0.98);
+  color: #74211d;
+}
+
 .blank-slide {
   display: flex;
   flex-direction: column;

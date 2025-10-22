@@ -519,6 +519,46 @@ function buildSlideNavigatorMeta() {
   }));
 }
 
+function cleanupSlide(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+
+  if (typeof slide.__deckBlankCleanup === "function") {
+    try {
+      slide.__deckBlankCleanup();
+    } catch (error) {
+      console.warn("Blank slide cleanup threw an error", error);
+    }
+    delete slide.__deckBlankCleanup;
+  }
+
+  if (
+    moduleTargetCanvas instanceof HTMLElement &&
+    slide.contains(moduleTargetCanvas)
+  ) {
+    closeModuleOverlay({ focus: false });
+  }
+
+  slide.querySelectorAll(".module-embed").forEach((module) => {
+    if (!(module instanceof HTMLElement)) {
+      return;
+    }
+    if (typeof module.__deckModuleCleanup === "function") {
+      try {
+        module.__deckModuleCleanup();
+      } catch (error) {
+        console.warn("Module embed cleanup failed", error);
+      }
+      delete module.__deckModuleCleanup;
+    }
+    const iframe = module.querySelector("iframe");
+    if (iframe instanceof HTMLIFrameElement) {
+      iframe.src = "about:blank";
+    }
+  });
+}
+
 function refreshSlides() {
   slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
   slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
@@ -539,6 +579,50 @@ function showSlide(index) {
   });
   updateCounter();
   slideNavigatorController?.setActive(currentSlideIndex);
+}
+
+function focusSlideAtIndex(index) {
+  const slide = slides[index];
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+
+  const focusTarget = slide.querySelector(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]',
+  );
+
+  if (focusTarget instanceof HTMLElement) {
+    focusTarget.focus({ preventScroll: true });
+    return;
+  }
+
+  const inner = slide.querySelector(".slide-inner");
+  if (inner instanceof HTMLElement) {
+    const hadTabindex = inner.hasAttribute("tabindex");
+    const previousTabindex = inner.getAttribute("tabindex");
+    if (!hadTabindex) {
+      inner.setAttribute("tabindex", "-1");
+    }
+    inner.focus({ preventScroll: true });
+    if (!hadTabindex) {
+      inner.removeAttribute("tabindex");
+    } else if (previousTabindex !== null) {
+      inner.setAttribute("tabindex", previousTabindex);
+    }
+    return;
+  }
+
+  const hadTabindex = slide.hasAttribute("tabindex");
+  const previousTabindex = slide.getAttribute("tabindex");
+  if (!hadTabindex) {
+    slide.setAttribute("tabindex", "-1");
+  }
+  slide.focus({ preventScroll: true });
+  if (!hadTabindex) {
+    slide.removeAttribute("tabindex");
+  } else if (previousTabindex !== null) {
+    slide.setAttribute("tabindex", previousTabindex);
+  }
 }
 
 function navigate(direction) {
@@ -695,6 +779,84 @@ export function duplicateSlide(index = currentSlideIndex) {
   return resolvedIndex;
 }
 
+export function deleteSlide(index = currentSlideIndex) {
+  if (!(stageViewport instanceof HTMLElement)) {
+    showDeckToast("Slides are not ready to delete yet.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return false;
+  }
+
+  refreshSlides();
+  if (!slides.length) {
+    showDeckToast("There are no slides to delete right now.", {
+      icon: "fa-circle-info",
+    });
+    return false;
+  }
+
+  const targetIndex = Number.isInteger(index) ? index : currentSlideIndex;
+  const slide = slides[targetIndex];
+  if (!(slide instanceof HTMLElement)) {
+    showDeckToast("We couldn't find that slide to delete.", {
+      icon: "fa-triangle-exclamation",
+    });
+    return false;
+  }
+
+  const stageLabel = getSlideStageLabel(slide, targetIndex);
+  const slideTitle = getSlideTitle(slide, targetIndex);
+  const descriptor = stageLabel && slideTitle && stageLabel !== slideTitle
+    ? `${stageLabel} — ${slideTitle}`
+    : slideTitle || stageLabel || `Slide ${targetIndex + 1}`;
+
+  const confirmMessage = `Delete this slide?\n\n“${descriptor}” and its content will be removed. This action cannot be undone.`;
+  const isConfirmed =
+    typeof window !== "undefined" && typeof window.confirm === "function"
+      ? window.confirm(confirmMessage)
+      : true;
+
+  if (!isConfirmed) {
+    return false;
+  }
+
+  cleanupSlide(slide);
+  slide.remove();
+  refreshSlides();
+  recalibrateMindMapCounter();
+
+  if (!slides.length) {
+    currentSlideIndex = 0;
+    updateCounter();
+    slideNavigatorController?.setActive(0);
+    if (stageViewport instanceof HTMLElement) {
+      const hadTabindex = stageViewport.hasAttribute("tabindex");
+      const previousTabindex = stageViewport.getAttribute("tabindex");
+      if (!hadTabindex) {
+        stageViewport.setAttribute("tabindex", "-1");
+      }
+      stageViewport.focus({ preventScroll: true });
+      if (!hadTabindex) {
+        stageViewport.removeAttribute("tabindex");
+      } else if (previousTabindex !== null) {
+        stageViewport.setAttribute("tabindex", previousTabindex);
+      }
+    }
+    showDeckToast(`Deleted “${descriptor}”. Deck is now empty.`, {
+      icon: "fa-trash-can",
+    });
+    return 0;
+  }
+
+  const nextIndex = Math.min(targetIndex, slides.length - 1);
+  showSlide(nextIndex);
+  focusSlideAtIndex(nextIndex);
+  showDeckToast(`Deleted “${descriptor}”.`, {
+    icon: "fa-trash-can",
+  });
+  return nextIndex;
+}
+
 export function createBlankSlide() {
   const slide = document.createElement("div");
   slide.className = "slide-stage hidden";
@@ -729,6 +891,18 @@ export function createBlankSlide() {
 }
 
 export function attachBlankSlideEvents(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+
+  if (typeof slide.__deckBlankCleanup === "function") {
+    try {
+      slide.__deckBlankCleanup();
+    } catch (error) {
+      console.warn("Failed to clear previous blank slide listeners", error);
+    }
+  }
+
   const canvas = slide.querySelector(".blank-canvas");
   const hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
@@ -737,8 +911,16 @@ export function attachBlankSlideEvents(slide) {
   const addModuleBtn = slide.querySelector('[data-action="add-module"]');
 
   if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+    delete slide.__deckBlankCleanup;
     return;
   }
+
+  const cleanupTasks = [];
+  const registerCleanup = (callback) => {
+    if (typeof callback === "function") {
+      cleanupTasks.push(callback);
+    }
+  };
 
   const DEFAULT_HINT =
     "Add textboxes, paste images, or build a mind map to capture relationships.";
@@ -769,7 +951,6 @@ export function attachBlankSlideEvents(slide) {
     const hasTextbox = Boolean(canvas.querySelector(".textbox"));
     const hasImage = Boolean(canvas.querySelector(".pasted-image"));
     const hasTable = Boolean(canvas.querySelector(".canvas-table"));
-
     const hasModule = Boolean(canvas.querySelector(".module-embed"));
 
     if (hasModule && (hasTextbox || hasImage || hasMindmap || hasTable)) {
@@ -793,14 +974,21 @@ export function attachBlankSlideEvents(slide) {
     }
   }
 
-  addTextboxBtn?.addEventListener("click", () => {
+  const handleAddTextbox = () => {
     const textbox = createTextbox({ onRemove: updateHintForCanvas });
     canvas.appendChild(textbox);
     positionTextbox(textbox, canvas);
     updateHintForCanvas();
-  });
+  };
 
-  addTableBtn?.addEventListener("click", () => {
+  if (addTextboxBtn instanceof HTMLElement) {
+    addTextboxBtn.addEventListener("click", handleAddTextbox);
+    registerCleanup(() => {
+      addTextboxBtn.removeEventListener("click", handleAddTextbox);
+    });
+  }
+
+  const handleAddTable = () => {
     const table = createCanvasTable({ onRemove: updateHintForCanvas });
     canvas.appendChild(table);
     positionCanvasTable(table, canvas);
@@ -810,9 +998,16 @@ export function attachBlankSlideEvents(slide) {
     if (firstEditableCell instanceof HTMLElement) {
       firstEditableCell.focus({ preventScroll: true });
     }
-  });
+  };
 
-  addMindmapBtn?.addEventListener("click", () => {
+  if (addTableBtn instanceof HTMLElement) {
+    addTableBtn.addEventListener("click", handleAddTable);
+    registerCleanup(() => {
+      addTableBtn.removeEventListener("click", handleAddTable);
+    });
+  }
+
+  const handleAddMindmap = () => {
     if (canvas.querySelector(".mindmap")) {
       const existing = canvas.querySelector(".mindmap");
       existing?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -824,9 +1019,16 @@ export function attachBlankSlideEvents(slide) {
     initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
     canvas.appendChild(mindmap);
     updateHintForCanvas();
-  });
+  };
 
-  addModuleBtn?.addEventListener("click", () => {
+  if (addMindmapBtn instanceof HTMLElement) {
+    addMindmapBtn.addEventListener("click", handleAddMindmap);
+    registerCleanup(() => {
+      addMindmapBtn.removeEventListener("click", handleAddMindmap);
+    });
+  }
+
+  const handleAddModule = () => {
     moduleInsertCallback = () => {
       updateHintForCanvas();
     };
@@ -834,7 +1036,14 @@ export function attachBlankSlideEvents(slide) {
     if (!opened) {
       moduleInsertCallback = null;
     }
-  });
+  };
+
+  if (addModuleBtn instanceof HTMLElement) {
+    addModuleBtn.addEventListener("click", handleAddModule);
+    registerCleanup(() => {
+      addModuleBtn.removeEventListener("click", handleAddModule);
+    });
+  }
 
   canvas
     .querySelectorAll(".textbox")
@@ -922,17 +1131,37 @@ export function attachBlankSlideEvents(slide) {
     canvas.focus({ preventScroll: true });
   }
 
-  canvas.addEventListener("paste", (event) => {
+  const handleCanvasPasteEvent = (event) => {
     handleCanvasPaste(event).catch((error) => {
       console.warn("Image paste failed", error);
     });
+  };
+
+  canvas.addEventListener("paste", handleCanvasPasteEvent);
+  registerCleanup(() => {
+    canvas.removeEventListener("paste", handleCanvasPasteEvent);
   });
 
-  canvas.addEventListener("pointerdown", (event) => {
+  const handleCanvasPointerDown = (event) => {
     if (event.target === canvas) {
       canvas.focus({ preventScroll: true });
     }
+  };
+
+  canvas.addEventListener("pointerdown", handleCanvasPointerDown);
+  registerCleanup(() => {
+    canvas.removeEventListener("pointerdown", handleCanvasPointerDown);
   });
+
+  slide.__deckBlankCleanup = () => {
+    cleanupTasks.splice(0).forEach((task) => {
+      try {
+        task();
+      } catch (error) {
+        console.warn("Blank slide cleanup failed", error);
+      }
+    });
+  };
 
   updateHintForCanvas();
 }
@@ -1612,18 +1841,43 @@ export function initialiseModuleEmbed(module, { onRemove } = {}) {
     return module;
   }
   module.__deckModuleOnRemove = onRemove;
-  if (module.__deckModuleInitialised) {
-    return module;
+
+  if (typeof module.__deckModuleCleanup === "function") {
+    try {
+      module.__deckModuleCleanup();
+    } catch (error) {
+      console.warn("Module embed cleanup failed", error);
+    }
   }
-  module.__deckModuleInitialised = true;
 
   const removeBtn = module.querySelector('[data-action="remove-module"]');
-  removeBtn?.addEventListener("click", () => {
+
+  const handleRemove = () => {
+    if (typeof module.__deckModuleCleanup === "function") {
+      try {
+        module.__deckModuleCleanup();
+      } catch (error) {
+        console.warn("Module embed cleanup failed", error);
+      }
+    }
     module.remove();
     if (typeof module.__deckModuleOnRemove === "function") {
       module.__deckModuleOnRemove();
     }
-  });
+  };
+
+  if (removeBtn instanceof HTMLElement) {
+    removeBtn.addEventListener("click", handleRemove);
+    module.__deckModuleCleanup = () => {
+      removeBtn.removeEventListener("click", handleRemove);
+    };
+  } else {
+    module.__deckModuleCleanup = () => {};
+  }
+
+  if (!module.__deckModuleInitialised) {
+    module.__deckModuleInitialised = true;
+  }
 
   return module;
 }
@@ -2347,6 +2601,14 @@ function applyDeckState(state) {
   }
 
   const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
+  const existingSlides = Array.from(
+    stageViewport.querySelectorAll(".slide-stage"),
+  );
+  existingSlides.forEach((slide) => {
+    if (slide instanceof HTMLElement) {
+      cleanupSlide(slide);
+    }
+  });
   const fragment = document.createDocumentFragment();
 
   state.slides.forEach((slideHTML) => {
@@ -5458,6 +5720,7 @@ export async function setupInteractiveDeck({
           stageViewport,
           onSelectSlide: (index) => showSlide(index),
           onDuplicateSlide: (index) => duplicateSlide(index),
+          onDeleteSlide: (index) => deleteSlide(index),
         }) ?? null;
     } catch (error) {
       if (!slideNavigatorLoadLogged) {
