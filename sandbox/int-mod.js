@@ -162,19 +162,19 @@ const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
 
 const DEFAULT_BUILDER_PROMPTS = [
   {
-    prompt: "Does the proposal clearly identify the community challenge?",
+    prompt: "How accurately do learners use the target language?",
     success:
-      "Learners reference evidence from the brief and explain why the need matters to stakeholders.",
+      "Learners select lesson vocabulary confidently and produce grammatically accurate sentences that fit the context.",
   },
   {
-    prompt: "Is the suggested solution realistic for the community context?",
+    prompt: "Are learners demonstrating the skills focus of the lesson?",
     success:
-      "Learners highlight available resources, partnerships, or constraints that influence feasibility.",
+      "Learners apply the featured skill (e.g. gist reading, controlled pronunciation) with minimal prompting and explain their strategy.",
   },
   {
-    prompt: "How well do learners articulate the positive impact?",
+    prompt: "Do learners connect the task to the CEFR outcome?",
     success:
-      "Learners describe tangible benefits for the community and connect them to longer-term outcomes.",
+      "Learners show the performance expected at the stated CEFR level and reflect on what evidence supports their progress.",
   },
 ];
 
@@ -323,6 +323,228 @@ const BUILDER_LAYOUT_DEFAULTS = {
         body: 'List evidence that shows impact and note the data you still need.',
       },
     ],
+  }),
+  'vocabulary-grid': () => ({
+    includeRubric: true,
+    stageLabel: 'Language lab · 12 minutes',
+    activityTitle: 'Vocabulary grid: community solutions',
+    duration: '12 minutes',
+    slideTitle: 'Vocabulary bank',
+    rubricIntro: 'Capture how confidently learners use and pronounce the target lexis.',
+    overview: 'Learners explore key words and co-create examples before role-play practice.',
+    steps: [
+      'Preview pronunciation and stress for each term together.',
+      'Learners add a personalised example sentence to the grid.',
+      'Pairs quiz each other using the practice prompts.',
+    ],
+    rubricLevels: ['Developing', 'Secure', 'Confident'],
+    prompts: clonePromptEntries([
+      {
+        prompt: 'Is the target vocabulary used accurately in context?',
+        success: 'Learners choose precise collocations and adapt the words to the scenario.',
+      },
+      {
+        prompt: 'Do learners pronounce the focus sounds clearly?',
+        success: 'Learners stress the highlighted syllables and produce the new phonemes intelligibly.',
+      },
+      {
+        prompt: 'Are learners extending the language with their own ideas?',
+        success: 'Learners personalise the language and justify their word choices.',
+      },
+    ]),
+    vocabulary: {
+      targetLanguage: 'Problem-solving verbs for NGO planning meetings.',
+      skillsFocus: 'Lexis and pronunciation with controlled speaking practice.',
+      cefr: 'B1-B2',
+      practiceIdeas: [
+        'Say a sentence that uses one verb with a partner\'s community project idea.',
+        'Swap cards and upgrade a peer\'s sentence with a stronger verb choice.',
+      ],
+      items: [
+        {
+          term: 'coordinate',
+          definition: 'organise people or resources to work together smoothly',
+          example: 'We coordinate volunteers for the weekend clean-up.',
+        },
+        {
+          term: 'scale up',
+          definition: 'increase the size or impact of an initiative',
+          example: 'Can we scale up the recycling pilot to all districts?',
+        },
+        {
+          term: 'pilot',
+          definition: 'test an idea before a wider launch',
+          example: 'Let\'s pilot the mentoring sessions with one school first.',
+        },
+        {
+          term: 'allocate',
+          definition: 'decide how to use limited funds or time',
+          example: 'Allocate two hours for volunteer training each week.',
+        },
+      ],
+    },
+  }),
+  'reading-comprehension': () => ({
+    includeRubric: true,
+    stageLabel: 'Reading workshop · 15 minutes',
+    activityTitle: 'Community impact article',
+    duration: '15 minutes',
+    slideTitle: 'Reading comprehension',
+    rubricIntro: 'Note evidence of reading strategies and language use.',
+    overview: 'Learners skim and scan a short article before discussing solutions.',
+    steps: [
+      'Skim the article together and highlight headline vocabulary.',
+      'Learners reread in pairs to underline supporting details.',
+      'Groups prepare a 30-second summary using the target phrases.',
+    ],
+    rubricLevels: ['Emerging', 'Meeting', 'Exceeding'],
+    prompts: clonePromptEntries([
+      {
+        prompt: 'Do learners identify the main idea accurately?',
+        success: 'Learners state the author\'s key message using the target language.',
+      },
+      {
+        prompt: 'Can learners support answers with evidence?',
+        success: 'Learners quote or paraphrase lines from the text using accurate grammar.',
+      },
+      {
+        prompt: 'Do learners connect the text to the CEFR descriptor?',
+        success: 'Learners describe how the text demonstrates the B1/B2 reading outcome.',
+      },
+    ]),
+    reading: {
+      textTitle: 'NGO launches mobile clinic',
+      textSource: 'Community Voices Magazine',
+      excerpt:
+        'The Nablus Health Collective launched a mobile clinic to reach villages that lack permanent medical facilities. Each week the clinic visits three communities, offering check-ups and essential medicine.',
+      preTasks: [
+        'Skim the headline and predict two challenges the NGO faces.',
+        'Highlight three words connected to healthcare logistics.',
+      ],
+      questions: [
+        {
+          question: 'What is the main purpose of the mobile clinic?',
+          answer: 'It brings medical care to isolated villages each week.',
+        },
+        {
+          question: 'Which barrier did volunteers mention?',
+          answer: 'They cited limited refrigeration for vaccines and long travel times.',
+        },
+        {
+          question: 'How will the NGO measure success?',
+          answer: 'They will track patient numbers and follow-up appointment attendance.',
+        },
+      ],
+      postTask:
+        'In pairs, summarise the article using at least two target vocabulary items.',
+    },
+  }),
+  'pronunciation-drill': () => ({
+    includeRubric: true,
+    stageLabel: 'Sound clinic · 8 minutes',
+    activityTitle: 'Pronunciation drill: /ɪ/ vs /iː/',
+    duration: '8 minutes',
+    slideTitle: 'Pronunciation focus',
+    rubricIntro: 'Capture evidence of accurate vowel contrast and sentence stress.',
+    overview: 'Learners rehearse minimal pairs before delivering short role-play lines.',
+    steps: [
+      'Model each minimal pair and mark the stressed syllable.',
+      'Learners chorally repeat then practise in pairs using the script.',
+      'Coach learners to integrate the sound contrast into meaningful sentences.',
+    ],
+    rubricLevels: ['Developing', 'Secure', 'Automatic'],
+    prompts: clonePromptEntries([
+      {
+        prompt: 'Are learners producing the vowel contrast clearly?',
+        success: 'Learners exaggerate the lip shape and length difference between /ɪ/ and /iː/.',
+      },
+      {
+        prompt: 'Do learners sustain natural sentence stress?',
+        success: 'Learners place primary stress on the information word while keeping rhythm.',
+      },
+      {
+        prompt: 'Are learners self-monitoring and correcting?',
+        success: 'Learners notice slips, try again, and support their partner with feedback language.',
+      },
+    ]),
+    pronunciation: {
+      focus: 'Contrast short /ɪ/ and long /iː/ in key NGO vocabulary.',
+      drillSteps: [
+        'Mark stress and vowel length on the board.',
+        'Choral repetition with rising hand gesture for /iː/.',
+        'Pair role-play using the pronunciation script.',
+      ],
+      minimalPairs: [
+        {
+          first: 'ship',
+          second: 'sheep',
+          tip: 'Note the longer smile vowel in “sheep”.',
+        },
+        {
+          first: 'fit',
+          second: 'feet',
+          tip: 'Add the /t/ release while keeping the long vowel.',
+        },
+        {
+          first: 'live',
+          second: 'leave',
+          tip: 'Tap the table for the voiced /v/ endings.',
+        },
+      ],
+      feedbackTips: [
+        'Use the mirror cue so learners can see mouth shape.',
+        'Praise accurate vowel length before correcting slips.',
+      ],
+      choralPrompt:
+        'Let’s read the volunteer update: “We need to ship these kits this week.”',
+    },
+  }),
+  'homework-recap': () => ({
+    includeRubric: true,
+    stageLabel: 'Homework debrief · 10 minutes',
+    activityTitle: 'Homework recap circle',
+    duration: '10 minutes',
+    slideTitle: 'Homework reflections',
+    rubricIntro: 'Document how learners transfer homework practice into class performance.',
+    overview: 'Learners share homework highlights and plan next steps with the teacher.',
+    steps: [
+      'Invite two learners to summarise their homework task in 60 seconds.',
+      'Open the floor for follow-up questions using the sentence stems.',
+      'Agree on a mini-goal for the next lesson based on the reflections.',
+    ],
+    rubricLevels: ['Getting there', 'On track', 'Ready to transfer'],
+    prompts: clonePromptEntries([
+      {
+        prompt: 'Did learners complete the homework task with the target language?',
+        success: 'Learners describe what they practised and quote key language accurately.',
+      },
+      {
+        prompt: 'Are learners reflecting on strategy and skills?',
+        success: 'Learners state what helped them succeed and identify a focus area.',
+      },
+      {
+        prompt: 'Do learners set a next-step aligned to the CEFR outcome?',
+        success: 'Learners commit to a realistic action that matches the lesson descriptor.',
+      },
+    ]),
+    homework: {
+      summary:
+        'Learners prepared a 90-second update about their community project using the present perfect.',
+      sharePrompts: [
+        'What language from homework felt most useful today?',
+        'Which challenge did you notice while recording yourself?',
+        'Give a compliment to a partner’s homework submission.',
+      ],
+      nextSteps: [
+        'Record the update again adding one new connector.',
+        'Bring one question about vocabulary for office hours.',
+      ],
+      evidenceChecklist: [
+        'Learner uses at least two target language chunks.',
+        'Learner mentions a success and an improvement goal.',
+        'Learner responds to a peer using follow-up questions.',
+      ],
+    },
   }),
 };
 
@@ -557,6 +779,75 @@ const splitMultiline = (value) =>
     .split(/\r?\n+/)
     .map((line) => line.trim())
     .filter(Boolean);
+
+const formatVocabularyItems = (items = []) =>
+  items
+    .map((item) => {
+      const term = trimText(item?.term);
+      const definition = trimText(item?.definition);
+      const example = trimText(item?.example);
+      return [term, definition, example].filter(Boolean).join(" | ");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+const parseVocabularyItems = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [term = "", definition = "", example = ""] = line
+        .split("|")
+        .map((part) => part.trim());
+      return {
+        term,
+        definition,
+        example,
+      };
+    })
+    .filter((entry) => entry.term || entry.definition || entry.example);
+
+const formatQuestionAnswerPairs = (entries = []) =>
+  entries
+    .map((entry) => {
+      const question = trimText(entry?.question ?? entry?.prompt);
+      const answer = trimText(entry?.answer);
+      return [question, answer].filter(Boolean).join(" | ");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+const parseQuestionAnswerPairs = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [question = "", answer = ""] = line
+        .split("|")
+        .map((part) => part.trim());
+      return { question, answer };
+    })
+    .filter((entry) => entry.question || entry.answer);
+
+const formatMinimalPairs = (entries = []) =>
+  entries
+    .map((entry) => {
+      const first = trimText(entry?.first ?? entry?.a);
+      const second = trimText(entry?.second ?? entry?.b);
+      const tip = trimText(entry?.tip);
+      return [first && second ? `${first} / ${second}` : first || second, tip]
+        .filter(Boolean)
+        .join(" | ");
+    })
+    .filter(Boolean)
+    .join("\n");
+
+const parseMinimalPairs = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [pair = "", tip = ""] = line
+        .split("|")
+        .map((part) => part.trim());
+      const [first = "", second = ""] = pair.split("/").map((part) => part.trim());
+      return { first, second, tip };
+    })
+    .filter((entry) => entry.first || entry.second || entry.tip);
 
 const parseRubricLevels = (value) =>
   typeof value === "string"
@@ -4238,6 +4529,72 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   setFieldValue('cardThreeHeading', cards[2]?.heading ?? '');
   setFieldValue('cardThreeBody', cards[2]?.body ?? '');
 
+  const vocabDefaults = defaults.vocabulary ?? {};
+  setFieldValue('vocabTargetLanguage', vocabDefaults.targetLanguage ?? '');
+  setFieldValue('vocabSkillsFocus', vocabDefaults.skillsFocus ?? '');
+  setFieldValue('vocabCefr', vocabDefaults.cefr ?? '');
+  setFieldValue(
+    'vocabPracticeIdeas',
+    Array.isArray(vocabDefaults.practiceIdeas)
+      ? vocabDefaults.practiceIdeas.join('\n')
+      : vocabDefaults.practiceIdeas ?? '',
+  );
+  setFieldValue('vocabWordList', formatVocabularyItems(vocabDefaults.items));
+
+  const readingDefaults = defaults.reading ?? {};
+  setFieldValue('readingTextTitle', readingDefaults.textTitle ?? '');
+  setFieldValue('readingTextSource', readingDefaults.textSource ?? '');
+  setFieldValue('readingExcerpt', readingDefaults.excerpt ?? '');
+  setFieldValue(
+    'readingPreTasks',
+    Array.isArray(readingDefaults.preTasks)
+      ? readingDefaults.preTasks.join('\n')
+      : readingDefaults.preTasks ?? '',
+  );
+  setFieldValue('readingQuestions', formatQuestionAnswerPairs(readingDefaults.questions));
+  setFieldValue('readingPostTask', readingDefaults.postTask ?? '');
+
+  const pronunciationDefaults = defaults.pronunciation ?? {};
+  setFieldValue('pronunciationFocus', pronunciationDefaults.focus ?? '');
+  setFieldValue(
+    'pronunciationSteps',
+    Array.isArray(pronunciationDefaults.drillSteps)
+      ? pronunciationDefaults.drillSteps.join('\n')
+      : pronunciationDefaults.drillSteps ?? '',
+  );
+  setFieldValue(
+    'pronunciationMinimalPairs',
+    formatMinimalPairs(pronunciationDefaults.minimalPairs),
+  );
+  setFieldValue(
+    'pronunciationFeedback',
+    Array.isArray(pronunciationDefaults.feedbackTips)
+      ? pronunciationDefaults.feedbackTips.join('\n')
+      : pronunciationDefaults.feedbackTips ?? '',
+  );
+  setFieldValue('pronunciationChoral', pronunciationDefaults.choralPrompt ?? '');
+
+  const homeworkDefaults = defaults.homework ?? {};
+  setFieldValue('homeworkSummary', homeworkDefaults.summary ?? '');
+  setFieldValue(
+    'homeworkSharePrompts',
+    Array.isArray(homeworkDefaults.sharePrompts)
+      ? homeworkDefaults.sharePrompts.join('\n')
+      : homeworkDefaults.sharePrompts ?? '',
+  );
+  setFieldValue(
+    'homeworkNextSteps',
+    Array.isArray(homeworkDefaults.nextSteps)
+      ? homeworkDefaults.nextSteps.join('\n')
+      : homeworkDefaults.nextSteps ?? '',
+  );
+  setFieldValue(
+    'homeworkEvidenceChecklist',
+    Array.isArray(homeworkDefaults.evidenceChecklist)
+      ? homeworkDefaults.evidenceChecklist.join('\n')
+      : homeworkDefaults.evidenceChecklist ?? '',
+  );
+
   if (typeof defaults.includeRubric === 'boolean' && builderRubricToggle instanceof HTMLInputElement) {
     builderRubricToggle.checked = defaults.includeRubric;
   }
@@ -4295,6 +4652,38 @@ function getBuilderFormState() {
     },
   ].filter((card) => card.heading || card.body);
 
+  const vocabulary = {
+    targetLanguage: trimText(formData.get("vocabTargetLanguage")),
+    skillsFocus: trimText(formData.get("vocabSkillsFocus")),
+    cefr: trimText(formData.get("vocabCefr")),
+    practiceIdeas: splitMultiline(formData.get("vocabPracticeIdeas")),
+    items: parseVocabularyItems(formData.get("vocabWordList")),
+  };
+
+  const reading = {
+    textTitle: trimText(formData.get("readingTextTitle")),
+    textSource: trimText(formData.get("readingTextSource")),
+    excerpt: trimText(formData.get("readingExcerpt")),
+    preTasks: splitMultiline(formData.get("readingPreTasks")),
+    questions: parseQuestionAnswerPairs(formData.get("readingQuestions")),
+    postTask: trimText(formData.get("readingPostTask")),
+  };
+
+  const pronunciation = {
+    focus: trimText(formData.get("pronunciationFocus")),
+    drillSteps: splitMultiline(formData.get("pronunciationSteps")),
+    minimalPairs: parseMinimalPairs(formData.get("pronunciationMinimalPairs")),
+    feedbackTips: splitMultiline(formData.get("pronunciationFeedback")),
+    choralPrompt: trimText(formData.get("pronunciationChoral")),
+  };
+
+  const homework = {
+    summary: trimText(formData.get("homeworkSummary")),
+    sharePrompts: splitMultiline(formData.get("homeworkSharePrompts")),
+    nextSteps: splitMultiline(formData.get("homeworkNextSteps")),
+    evidenceChecklist: splitMultiline(formData.get("homeworkEvidenceChecklist")),
+  };
+
   return {
     layout,
     stageLabel,
@@ -4315,6 +4704,10 @@ function getBuilderFormState() {
     imageUrl,
     imageAlt,
     cards,
+    vocabulary,
+    reading,
+    pronunciation,
+    homework,
   };
 }
 
@@ -4363,6 +4756,14 @@ function updateBuilderJsonPreview() {
           }
         : undefined,
     cards: state.layout === "rubric-cards" ? state.cards : undefined,
+    vocabulary:
+      state.layout === "vocabulary-grid" ? state.vocabulary : undefined,
+    reading:
+      state.layout === "reading-comprehension" ? state.reading : undefined,
+    pronunciation:
+      state.layout === "pronunciation-drill" ? state.pronunciation : undefined,
+    homework:
+      state.layout === "homework-recap" ? state.homework : undefined,
   };
   if (state.includeRubric) {
     previewData.rubric = {
@@ -4501,6 +4902,50 @@ function updateBuilderPreview() {
         rubric: rubricPayload,
         rubricIntro: state.rubricIntro,
         cards: state.cards,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    case "vocabulary-grid":
+      slide = createVocabularyGridSlide({
+        stageLabel: state.stageLabel || "Language lab",
+        title: state.activityTitle || state.slideTitle || "Vocabulary grid",
+        duration: state.duration,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        vocabulary: state.vocabulary,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    case "reading-comprehension":
+      slide = createReadingComprehensionSlide({
+        stageLabel: state.stageLabel || "Reading workshop",
+        title: state.activityTitle || state.slideTitle || "Reading comprehension",
+        duration: state.duration,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        reading: state.reading,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    case "pronunciation-drill":
+      slide = createPronunciationDrillSlide({
+        stageLabel: state.stageLabel || "Sound clinic",
+        title: state.activityTitle || state.slideTitle || "Pronunciation focus",
+        duration: state.duration,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        pronunciation: state.pronunciation,
+        rubricEnabled: state.includeRubric,
+      });
+      break;
+    case "homework-recap":
+      slide = createHomeworkRecapSlide({
+        stageLabel: state.stageLabel || "Homework debrief",
+        title: state.activityTitle || state.slideTitle || "Homework reflections",
+        duration: state.duration,
+        rubric: rubricPayload,
+        rubricIntro: state.rubricIntro,
+        homework: state.homework,
         rubricEnabled: state.includeRubric,
       });
       break;
@@ -6099,6 +6544,1062 @@ function createRubricCardSlide({
   return slide;
 }
 
+function createVocabularyGridSlide({
+  stageLabel = "Language lab",
+  title,
+  duration,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  vocabulary = {},
+  rubricEnabled = true,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Vocabulary grid";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--vocabulary";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--vocabulary";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-chalkboard-user";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-vocab-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-vocab-layout--no-rubric");
+  }
+  inner.appendChild(layout);
+
+  const content = document.createElement("div");
+  content.className = "activity-vocab-content";
+  layout.appendChild(content);
+
+  const focusSection = document.createElement("section");
+  focusSection.className = "activity-vocab-focus";
+  content.appendChild(focusSection);
+
+  const focusHeading = document.createElement("h3");
+  const focusIcon = document.createElement("i");
+  focusIcon.className = "fa-solid fa-language";
+  focusIcon.setAttribute("aria-hidden", "true");
+  focusHeading.appendChild(focusIcon);
+  focusHeading.appendChild(document.createTextNode(" Target language focus"));
+  focusSection.appendChild(focusHeading);
+
+  const targetLanguage = trimText(vocabulary?.targetLanguage);
+  if (targetLanguage) {
+    const targetParagraph = document.createElement("p");
+    targetParagraph.className = "vocab-target";
+    targetParagraph.textContent = targetLanguage;
+    focusSection.appendChild(targetParagraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Describe the target language outcome for learners.";
+    focusSection.appendChild(placeholder);
+  }
+
+  const detailsList = document.createElement("ul");
+  detailsList.className = "vocab-detail-list";
+  const skillsFocus = trimText(vocabulary?.skillsFocus);
+  if (skillsFocus) {
+    const item = document.createElement("li");
+    const label = document.createElement("strong");
+    label.textContent = "Skills focus:";
+    item.appendChild(label);
+    item.appendChild(document.createTextNode(` ${skillsFocus}`));
+    detailsList.appendChild(item);
+  }
+  const cefr = trimText(vocabulary?.cefr);
+  if (cefr) {
+    const item = document.createElement("li");
+    const label = document.createElement("strong");
+    label.textContent = "CEFR target:";
+    item.appendChild(label);
+    item.appendChild(document.createTextNode(` ${cefr}`));
+    detailsList.appendChild(item);
+  }
+  if (detailsList.childElementCount) {
+    focusSection.appendChild(detailsList);
+  }
+
+  const practiceIdeas = Array.isArray(vocabulary?.practiceIdeas)
+    ? vocabulary.practiceIdeas.filter(Boolean)
+    : [];
+  const practiceSection = document.createElement("div");
+  practiceSection.className = "vocab-practice";
+  const practiceHeading = document.createElement("h4");
+  const practiceIcon = document.createElement("i");
+  practiceIcon.className = "fa-solid fa-person-chalkboard";
+  practiceIcon.setAttribute("aria-hidden", "true");
+  practiceHeading.appendChild(practiceIcon);
+  practiceHeading.appendChild(document.createTextNode(" Practice ideas"));
+  practiceSection.appendChild(practiceHeading);
+  if (practiceIdeas.length) {
+    const practiceList = document.createElement("ul");
+    practiceList.className = "vocab-practice-list";
+    practiceIdeas.forEach((idea) => {
+      const li = document.createElement("li");
+      li.textContent = idea;
+      practiceList.appendChild(li);
+    });
+    practiceSection.appendChild(practiceList);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add prompts learners can use to recycle the vocabulary.";
+    practiceSection.appendChild(placeholder);
+  }
+  focusSection.appendChild(practiceSection);
+
+  const bankSection = document.createElement("section");
+  bankSection.className = "activity-vocab-bank";
+  content.appendChild(bankSection);
+
+  const bankHeading = document.createElement("h3");
+  const bankIcon = document.createElement("i");
+  bankIcon.className = "fa-solid fa-table-cells-large";
+  bankIcon.setAttribute("aria-hidden", "true");
+  bankHeading.appendChild(bankIcon);
+  bankHeading.appendChild(document.createTextNode(" Vocabulary bank"));
+  bankSection.appendChild(bankHeading);
+
+  const vocabItems = Array.isArray(vocabulary?.items)
+    ? vocabulary.items.filter((item) => item.term || item.definition || item.example)
+    : [];
+  const grid = document.createElement("div");
+  grid.className = "vocab-grid";
+  bankSection.appendChild(grid);
+
+  if (vocabItems.length) {
+    vocabItems.forEach((item) => {
+      const card = document.createElement("article");
+      card.className = "vocab-card";
+      if (item.term) {
+        const termHeading = document.createElement("h4");
+        termHeading.textContent = item.term;
+        card.appendChild(termHeading);
+      }
+      if (item.definition) {
+        const definitionParagraph = document.createElement("p");
+        definitionParagraph.className = "vocab-definition";
+        definitionParagraph.textContent = item.definition;
+        card.appendChild(definitionParagraph);
+      }
+      if (item.example) {
+        const exampleParagraph = document.createElement("p");
+        exampleParagraph.className = "vocab-example";
+        exampleParagraph.textContent = item.example;
+        card.appendChild(exampleParagraph);
+      }
+      grid.appendChild(card);
+    });
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add vocabulary entries with definitions and model sentences.";
+    grid.appendChild(placeholder);
+  }
+
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+    });
+    layout.appendChild(rubricSection);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createReadingComprehensionSlide({
+  stageLabel = "Reading workshop",
+  title,
+  duration,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  reading = {},
+  rubricEnabled = true,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Reading comprehension";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--reading";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--reading";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-book-open";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-reading-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-reading-layout--no-rubric");
+  }
+  inner.appendChild(layout);
+
+  const body = document.createElement("div");
+  body.className = "reading-body";
+  layout.appendChild(body);
+
+  const excerptSection = document.createElement("article");
+  excerptSection.className = "reading-excerpt";
+  body.appendChild(excerptSection);
+
+  const excerptHeading = document.createElement("h3");
+  const excerptIcon = document.createElement("i");
+  excerptIcon.className = "fa-solid fa-newspaper";
+  excerptIcon.setAttribute("aria-hidden", "true");
+  excerptHeading.appendChild(excerptIcon);
+  const readingTitle = trimText(reading?.textTitle) || "Reading excerpt";
+  excerptHeading.appendChild(document.createTextNode(` ${readingTitle}`));
+  excerptSection.appendChild(excerptHeading);
+
+  const source = trimText(reading?.textSource);
+  if (source) {
+    const sourceBadge = document.createElement("p");
+    sourceBadge.className = "reading-source";
+    sourceBadge.textContent = source;
+    excerptSection.appendChild(sourceBadge);
+  }
+
+  const excerptText = trimText(reading?.excerpt);
+  if (excerptText) {
+    const paragraph = document.createElement("p");
+    paragraph.className = "reading-excerpt-body";
+    paragraph.textContent = excerptText;
+    excerptSection.appendChild(paragraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Paste a short excerpt that learners will read.";
+    excerptSection.appendChild(placeholder);
+  }
+
+  const preTasks = Array.isArray(reading?.preTasks)
+    ? reading.preTasks.filter(Boolean)
+    : [];
+  const preSection = document.createElement("section");
+  preSection.className = "reading-pretasks";
+  const preHeading = document.createElement("h4");
+  const preIcon = document.createElement("i");
+  preIcon.className = "fa-solid fa-compass";
+  preIcon.setAttribute("aria-hidden", "true");
+  preHeading.appendChild(preIcon);
+  preHeading.appendChild(document.createTextNode(" Pre-reading focus"));
+  preSection.appendChild(preHeading);
+  if (preTasks.length) {
+    const list = document.createElement("ul");
+    list.className = "reading-pretask-list";
+    preTasks.forEach((task) => {
+      const li = document.createElement("li");
+      li.textContent = task;
+      list.appendChild(li);
+    });
+    preSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add a prediction or gist-reading task.";
+    preSection.appendChild(placeholder);
+  }
+  excerptSection.appendChild(preSection);
+
+  const questionsSection = document.createElement("section");
+  questionsSection.className = "reading-questions";
+  body.appendChild(questionsSection);
+
+  const questionsHeading = document.createElement("h3");
+  const questionIcon = document.createElement("i");
+  questionIcon.className = "fa-solid fa-circle-question";
+  questionIcon.setAttribute("aria-hidden", "true");
+  questionsHeading.appendChild(questionIcon);
+  questionsHeading.appendChild(document.createTextNode(" Comprehension questions"));
+  questionsSection.appendChild(questionsHeading);
+
+  const questionEntries = Array.isArray(reading?.questions)
+    ? reading.questions.filter((question) => question.question || question.answer)
+    : [];
+
+  if (questionEntries.length) {
+    const list = document.createElement("ol");
+    list.className = "reading-question-list";
+    questionEntries.forEach((entry, index) => {
+      const item = document.createElement("li");
+      item.className = "reading-question-item";
+      const prompt = document.createElement("p");
+      prompt.className = "reading-question-prompt";
+      prompt.textContent = entry.question || `Question ${index + 1}`;
+      item.appendChild(prompt);
+      if (entry.answer) {
+        const answer = document.createElement("p");
+        answer.className = "reading-question-answer";
+        const answerLabel = document.createElement("strong");
+        answerLabel.textContent = "Answer:";
+        answer.appendChild(answerLabel);
+        answer.appendChild(document.createTextNode(` ${entry.answer}`));
+        item.appendChild(answer);
+      }
+      list.appendChild(item);
+    });
+    questionsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add comprehension questions with answer keys.";
+    questionsSection.appendChild(placeholder);
+  }
+
+  const postTask = trimText(reading?.postTask);
+  const postTaskEl = document.createElement("p");
+  postTaskEl.className = "reading-post-task";
+  if (postTask) {
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-arrow-up-right-dots";
+    icon.setAttribute("aria-hidden", "true");
+    postTaskEl.appendChild(icon);
+    postTaskEl.appendChild(document.createTextNode(` ${postTask}`));
+  } else {
+    postTaskEl.textContent = "Add a post-reading production task.";
+    postTaskEl.classList.add("activity-empty");
+  }
+  questionsSection.appendChild(postTaskEl);
+
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+    });
+    layout.appendChild(rubricSection);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createPronunciationDrillSlide({
+  stageLabel = "Sound clinic",
+  title,
+  duration,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  pronunciation = {},
+  rubricEnabled = true,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Pronunciation clinic";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--pronunciation";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--pronunciation";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-microphone-lines";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-pronunciation-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-pronunciation-layout--no-rubric");
+  }
+  inner.appendChild(layout);
+
+  const content = document.createElement("div");
+  content.className = "pronunciation-body";
+  layout.appendChild(content);
+
+  const focusSection = document.createElement("section");
+  focusSection.className = "pronunciation-focus";
+  content.appendChild(focusSection);
+
+  const focusHeading = document.createElement("h3");
+  const focusIcon = document.createElement("i");
+  focusIcon.className = "fa-solid fa-wave-square";
+  focusIcon.setAttribute("aria-hidden", "true");
+  focusHeading.appendChild(focusIcon);
+  focusHeading.appendChild(document.createTextNode(" Sound focus"));
+  focusSection.appendChild(focusHeading);
+
+  const focusText = trimText(pronunciation?.focus);
+  if (focusText) {
+    const focusParagraph = document.createElement("p");
+    focusParagraph.textContent = focusText;
+    focusSection.appendChild(focusParagraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Describe the pronunciation feature learners will practise.";
+    focusSection.appendChild(placeholder);
+  }
+
+  const drillSteps = Array.isArray(pronunciation?.drillSteps)
+    ? pronunciation.drillSteps.filter(Boolean)
+    : [];
+  const drillHeading = document.createElement("h4");
+  const drillIcon = document.createElement("i");
+  drillIcon.className = "fa-solid fa-list-ol";
+  drillIcon.setAttribute("aria-hidden", "true");
+  drillHeading.appendChild(drillIcon);
+  drillHeading.appendChild(document.createTextNode(" Drill sequence"));
+  focusSection.appendChild(drillHeading);
+  if (drillSteps.length) {
+    const list = document.createElement("ol");
+    list.className = "pronunciation-steps";
+    drillSteps.forEach((step) => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      list.appendChild(li);
+    });
+    focusSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Outline the steps for the drill.";
+    focusSection.appendChild(placeholder);
+  }
+
+  const choralPrompt = trimText(pronunciation?.choralPrompt);
+  if (choralPrompt) {
+    const promptCallout = document.createElement("blockquote");
+    promptCallout.className = "pronunciation-choral";
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-quote-left";
+    icon.setAttribute("aria-hidden", "true");
+    promptCallout.appendChild(icon);
+    promptCallout.appendChild(document.createTextNode(` ${choralPrompt}`));
+    focusSection.appendChild(promptCallout);
+  }
+
+  const pairsSection = document.createElement("section");
+  pairsSection.className = "pronunciation-pairs";
+  content.appendChild(pairsSection);
+
+  const pairsHeading = document.createElement("h3");
+  const pairsIcon = document.createElement("i");
+  pairsIcon.className = "fa-solid fa-arrows-left-right";
+  pairsIcon.setAttribute("aria-hidden", "true");
+  pairsHeading.appendChild(pairsIcon);
+  pairsHeading.appendChild(document.createTextNode(" Minimal pairs"));
+  pairsSection.appendChild(pairsHeading);
+
+  const pairEntries = Array.isArray(pronunciation?.minimalPairs)
+    ? pronunciation.minimalPairs.filter((pair) => pair.first || pair.second || pair.tip)
+    : [];
+
+  if (pairEntries.length) {
+    const table = document.createElement("table");
+    table.className = "minimal-pair-table";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Word A", "Word B", "Coaching tip"].forEach((headingText) => {
+      const th = document.createElement("th");
+      th.textContent = headingText;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    pairEntries.forEach((pair) => {
+      const row = document.createElement("tr");
+      const firstCell = document.createElement("td");
+      firstCell.textContent = pair.first || "—";
+      row.appendChild(firstCell);
+      const secondCell = document.createElement("td");
+      secondCell.textContent = pair.second || "—";
+      row.appendChild(secondCell);
+      const tipCell = document.createElement("td");
+      tipCell.textContent = pair.tip || "";
+      row.appendChild(tipCell);
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    pairsSection.appendChild(table);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "List minimal pairs for learners to contrast.";
+    pairsSection.appendChild(placeholder);
+  }
+
+  const feedbackTips = Array.isArray(pronunciation?.feedbackTips)
+    ? pronunciation.feedbackTips.filter(Boolean)
+    : [];
+  if (feedbackTips.length) {
+    const feedbackHeading = document.createElement("h4");
+    const feedbackIcon = document.createElement("i");
+    feedbackIcon.className = "fa-solid fa-hands";
+    feedbackIcon.setAttribute("aria-hidden", "true");
+    feedbackHeading.appendChild(feedbackIcon);
+    feedbackHeading.appendChild(document.createTextNode(" Coaching moves"));
+    const feedbackList = document.createElement("ul");
+    feedbackList.className = "pronunciation-feedback";
+    feedbackTips.forEach((tip) => {
+      const li = document.createElement("li");
+      li.textContent = tip;
+      feedbackList.appendChild(li);
+    });
+    pairsSection.appendChild(feedbackHeading);
+    pairsSection.appendChild(feedbackList);
+  }
+
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+    });
+    layout.appendChild(rubricSection);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
+function createHomeworkRecapSlide({
+  stageLabel = "Homework debrief",
+  title,
+  duration,
+  rubric = { criteria: [], levels: [] },
+  rubricIntro,
+  homework = {},
+  rubricEnabled = true,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Homework recap";
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden activity-slide activity-slide--homework";
+  slide.dataset.type = "activity";
+  slide.dataset.activity = "rubric";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner activity-builder-slide activity-builder-slide--homework";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "activity-slide-header";
+  inner.appendChild(header);
+
+  const pill = document.createElement("span");
+  pill.className = "pill activity-pill";
+  const pillIcon = document.createElement("i");
+  pillIcon.className = "fa-solid fa-house-circle-check";
+  pillIcon.setAttribute("aria-hidden", "true");
+  pill.appendChild(pillIcon);
+  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
+  header.appendChild(pill);
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "activity-title-group";
+  header.appendChild(titleGroup);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  titleGroup.appendChild(heading);
+
+  const resolvedDuration = trimText(duration);
+  if (resolvedDuration) {
+    const durationBadge = document.createElement("span");
+    durationBadge.className = "activity-duration";
+    const durationIcon = document.createElement("i");
+    durationIcon.className = "fa-solid fa-clock";
+    durationIcon.setAttribute("aria-hidden", "true");
+    durationBadge.appendChild(durationIcon);
+    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
+    titleGroup.appendChild(durationBadge);
+  }
+
+  const layout = document.createElement("div");
+  layout.className = "activity-homework-layout";
+  if (!rubricEnabled) {
+    layout.classList.add("activity-homework-layout--no-rubric");
+  }
+  inner.appendChild(layout);
+
+  const recapSection = document.createElement("section");
+  recapSection.className = "homework-summary";
+  layout.appendChild(recapSection);
+
+  const recapHeading = document.createElement("h3");
+  const recapIcon = document.createElement("i");
+  recapIcon.className = "fa-solid fa-book";
+  recapIcon.setAttribute("aria-hidden", "true");
+  recapHeading.appendChild(recapIcon);
+  recapHeading.appendChild(document.createTextNode(" Homework focus"));
+  recapSection.appendChild(recapHeading);
+
+  const summaryText = trimText(homework?.summary);
+  if (summaryText) {
+    const summaryParagraph = document.createElement("p");
+    summaryParagraph.textContent = summaryText;
+    recapSection.appendChild(summaryParagraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Summarise the homework task learners completed.";
+    recapSection.appendChild(placeholder);
+  }
+
+  const sharePrompts = Array.isArray(homework?.sharePrompts)
+    ? homework.sharePrompts.filter(Boolean)
+    : [];
+  const shareSection = document.createElement("section");
+  shareSection.className = "homework-share";
+  layout.appendChild(shareSection);
+
+  const shareHeading = document.createElement("h3");
+  const shareIcon = document.createElement("i");
+  shareIcon.className = "fa-solid fa-comments";
+  shareIcon.setAttribute("aria-hidden", "true");
+  shareHeading.appendChild(shareIcon);
+  shareHeading.appendChild(document.createTextNode(" Share-out prompts"));
+  shareSection.appendChild(shareHeading);
+
+  if (sharePrompts.length) {
+    const list = document.createElement("ul");
+    list.className = "homework-share-list";
+    sharePrompts.forEach((prompt) => {
+      const li = document.createElement("li");
+      li.textContent = prompt;
+      list.appendChild(li);
+    });
+    shareSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "Add speaking prompts for learners to discuss their homework.";
+    shareSection.appendChild(placeholder);
+  }
+
+  const actionSection = document.createElement("section");
+  actionSection.className = "homework-actions";
+  layout.appendChild(actionSection);
+
+  const nextHeading = document.createElement("h3");
+  const nextIcon = document.createElement("i");
+  nextIcon.className = "fa-solid fa-forward-step";
+  nextIcon.setAttribute("aria-hidden", "true");
+  nextHeading.appendChild(nextIcon);
+  nextHeading.appendChild(document.createTextNode(" Next steps"));
+  actionSection.appendChild(nextHeading);
+
+  const nextSteps = Array.isArray(homework?.nextSteps)
+    ? homework.nextSteps.filter(Boolean)
+    : [];
+  if (nextSteps.length) {
+    const list = document.createElement("ul");
+    list.className = "homework-next-list";
+    nextSteps.forEach((step) => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      list.appendChild(li);
+    });
+    actionSection.appendChild(list);
+  }
+
+  const evidenceChecklist = Array.isArray(homework?.evidenceChecklist)
+    ? homework.evidenceChecklist.filter(Boolean)
+    : [];
+  const checklistHeading = document.createElement("h4");
+  const checklistIcon = document.createElement("i");
+  checklistIcon.className = "fa-solid fa-list-check";
+  checklistIcon.setAttribute("aria-hidden", "true");
+  checklistHeading.appendChild(checklistIcon);
+  checklistHeading.appendChild(document.createTextNode(" Evidence to capture"));
+  actionSection.appendChild(checklistHeading);
+  if (evidenceChecklist.length) {
+    const list = document.createElement("ul");
+    list.className = "homework-evidence-list";
+    evidenceChecklist.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    actionSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "activity-empty";
+    placeholder.textContent = "List what evidence you\'ll collect during the share-out.";
+    actionSection.appendChild(placeholder);
+  }
+
+  if (rubricEnabled) {
+    const rubricSection = buildRubricSection({
+      heading: "Success criteria",
+      intro: rubricIntro,
+      rubric,
+    });
+    layout.appendChild(rubricSection);
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "activity-slide-footer";
+  inner.appendChild(footer);
+
+  const statusMessage = document.createElement("p");
+  statusMessage.className = "activity-status-message";
+  statusMessage.dataset.role = "status";
+  statusMessage.setAttribute("aria-live", "polite");
+  footer.appendChild(statusMessage);
+
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "activity-actions";
+  footer.appendChild(actionsWrap);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "activity-btn";
+  copyBtn.dataset.action = "copy-rubric";
+  const copyIcon = document.createElement("i");
+  copyIcon.className = "fa-solid fa-copy";
+  copyIcon.setAttribute("aria-hidden", "true");
+  copyBtn.appendChild(copyIcon);
+  const copyLabel = document.createElement("span");
+  copyLabel.dataset.role = "label";
+  copyLabel.textContent = "Copy rubric JSON";
+  copyBtn.appendChild(copyLabel);
+  actionsWrap.appendChild(copyBtn);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "activity-btn secondary";
+  toggleBtn.dataset.action = "toggle-rubric";
+  const toggleIcon = document.createElement("i");
+  toggleIcon.className = "fa-solid fa-eye-slash";
+  toggleIcon.setAttribute("aria-hidden", "true");
+  toggleBtn.appendChild(toggleIcon);
+  const toggleLabel = document.createElement("span");
+  toggleLabel.dataset.role = "label";
+  toggleLabel.textContent = "Hide descriptions";
+  toggleBtn.appendChild(toggleLabel);
+  actionsWrap.appendChild(toggleBtn);
+
+  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
+  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
+
+  if (!rubricEnabled) {
+    copyBtn.hidden = true;
+    toggleBtn.hidden = true;
+    delete slide.dataset.rubric;
+  } else {
+    try {
+      slide.dataset.rubric = JSON.stringify({
+        title: resolvedTitle,
+        levels: rubricLevels,
+        criteria: rubricCriteria.map((criterion, index) => ({
+          id: `criterion-${index + 1}`,
+          prompt: criterion.prompt,
+          success: criterion.success,
+        })),
+      });
+    } catch (error) {
+      console.warn("Unable to serialise rubric data", error);
+    }
+  }
+
+  slide.dataset.activityTitle = resolvedTitle;
+  return slide;
+}
+
 function initialiseBuilderSlide(slide) {
   if (!(slide instanceof HTMLElement)) {
     return slide;
@@ -6345,6 +7846,74 @@ function handleBuilderSubmit(event) {
       });
       break;
     }
+    case "vocabulary-grid": {
+      if (!state.vocabulary.items.length) {
+        showBuilderStatus("Add at least one vocabulary entry with a definition.", "error");
+        const vocabInput = builderForm.querySelector('[name="vocabWordList"]');
+        vocabInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createVocabularyGridSlide({
+        stageLabel,
+        title,
+        duration,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        vocabulary: state.vocabulary,
+      });
+      break;
+    }
+    case "reading-comprehension": {
+      if (!state.reading.questions.length) {
+        showBuilderStatus("List at least one comprehension question and answer.", "error");
+        const readingInput = builderForm.querySelector('[name="readingQuestions"]');
+        readingInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createReadingComprehensionSlide({
+        stageLabel,
+        title,
+        duration,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        reading: state.reading,
+      });
+      break;
+    }
+    case "pronunciation-drill": {
+      if (!state.pronunciation.minimalPairs.length) {
+        showBuilderStatus("Provide at least one minimal pair to practise.", "error");
+        const pairInput = builderForm.querySelector('[name="pronunciationMinimalPairs"]');
+        pairInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createPronunciationDrillSlide({
+        stageLabel,
+        title,
+        duration,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        pronunciation: state.pronunciation,
+      });
+      break;
+    }
+    case "homework-recap": {
+      if (!state.homework.summary) {
+        showBuilderStatus("Add a homework summary to orient learners.", "error");
+        const summaryInput = builderForm.querySelector('[name="homeworkSummary"]');
+        summaryInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createHomeworkRecapSlide({
+        stageLabel,
+        title,
+        duration,
+        rubric: rubricData,
+        rubricIntro: state.rubricIntro,
+        homework: state.homework,
+      });
+      break;
+    }
     default:
       slide = createActivitySlide({
         stageLabel,
@@ -6432,6 +8001,10 @@ function initialiseActivityBuilderUI() {
           "rubric-columns": "Discussion columns layout selected.",
           "image-spotlight": "Spotlight layout selected.",
           "rubric-cards": "Strategy cards layout selected.",
+          "vocabulary-grid": "Vocabulary grid layout selected.",
+          "reading-comprehension": "Reading comprehension layout selected.",
+          "pronunciation-drill": "Pronunciation drill layout selected.",
+          "homework-recap": "Homework recap layout selected.",
         };
         showBuilderStatus(messages[layoutValue] || "Layout updated.", "info");
       });
