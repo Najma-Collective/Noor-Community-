@@ -2407,34 +2407,33 @@ ol {
 
 .textbox-handle--floating {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  width: 36px;
-  height: 36px;
-  padding: 0;
+  top: 0.4rem;
+  left: 0.4rem;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0.15rem;
+  border: 1px solid transparent;
   border-bottom: none;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 0;
-  background: var(--textbox-handle-bg, rgba(27, 34, 24, 0.78));
-  color: var(--textbox-handle-fg, #ffffff);
-  font-size: 1rem;
+  background: transparent;
+  color: var(--textbox-toolbar-fg, var(--forest-shadow));
+  font-size: 0.95rem;
   letter-spacing: 0;
   text-transform: none;
-  box-shadow: var(--shadow-1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .textbox-handle--floating:hover,
 .textbox-handle--floating:focus-visible {
-  background: color-mix(
-    in srgb,
-    var(--textbox-handle-bg, rgba(27, 34, 24, 0.78)) 85%,
-    #000000 15%
-  );
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-2);
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  color: color-mix(in srgb, currentColor 80%, var(--deep-forest) 20%);
+  border-color: color-mix(in srgb, currentColor 22%, transparent);
+  box-shadow: none;
 }
 
 .textbox-handle--floating:focus-visible {
@@ -2444,7 +2443,7 @@ ol {
 
 .textbox-handle--floating i {
   pointer-events: none;
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .textbox-toolbar {
