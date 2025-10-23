@@ -1586,7 +1586,7 @@ export function createBlankSlide() {
     </button>
     <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
       <p class="blank-toolbar-empty" data-role="toolbar-empty">
-        Select a canvas item to edit its appearance. Use the icons to open its tools.
+        Select a canvas item to edit its appearance. Choose a tool icon to continue.
       </p>
       <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
       <div
@@ -1809,6 +1809,15 @@ export function attachBlankSlideEvents(slide) {
   const SELECTED_CLASS = "blank-toolbar-selected";
   const CANVAS_ITEM_CLASS = "blank-toolbar-item";
 
+  const TOOLBAR_EMPTY_PROMPTS = {
+    default:
+      "Select a canvas item to edit its appearance. Choose a tool icon to continue.",
+    textbox: "Choose a tool icon to style this textbox.",
+    table: "Choose a tool icon to format this table.",
+    mindmap: "Choose a tool icon to colour this branch.",
+    image: "Choose a tool icon to adjust this image.",
+  };
+
   let selectedItem = null;
   let selectedType = null;
   let activeToolsType = null;
@@ -1896,6 +1905,16 @@ export function attachBlankSlideEvents(slide) {
       default:
         return "";
     }
+  };
+
+  const getToolbarPrompt = () => {
+    if (!selectedType) {
+      return TOOLBAR_EMPTY_PROMPTS.default;
+    }
+    return (
+      TOOLBAR_EMPTY_PROMPTS[selectedType] ??
+      `Choose a tool icon to adjust this ${selectedType}.`
+    );
   };
 
   const syncColorControls = () => {
@@ -2044,7 +2063,15 @@ export function attachBlankSlideEvents(slide) {
     const hasActiveSection = hasSelection && Boolean(activeToolsType);
     toolbar.classList.toggle("has-selection", hasSelection);
     if (toolbarEmpty instanceof HTMLElement) {
-      toolbarEmpty.hidden = hasActiveSection;
+      if (!hasSelection) {
+        toolbarEmpty.hidden = false;
+        toolbarEmpty.textContent = TOOLBAR_EMPTY_PROMPTS.default;
+      } else if (!hasActiveSection) {
+        toolbarEmpty.hidden = false;
+        toolbarEmpty.textContent = getToolbarPrompt();
+      } else {
+        toolbarEmpty.hidden = true;
+      }
     }
     if (toolbarSelectionLabel instanceof HTMLElement) {
       if (hasSelection) {
@@ -2098,9 +2125,9 @@ export function attachBlankSlideEvents(slide) {
     if (selectedItem instanceof HTMLElement) {
       selectedItem.classList.remove(SELECTED_CLASS);
     }
+    const previousType = selectedType;
     selectedItem = element;
     selectedType = type;
-    setActiveToolsType(type, { force: true });
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -2116,7 +2143,9 @@ export function attachBlankSlideEvents(slide) {
     } else {
       saveTextboxSelection();
     }
-    setToolbarExpanded(true);
+    if (previousType !== type) {
+      setActiveToolsType(null);
+    }
     updateToolbar();
   };
 
@@ -3363,7 +3392,7 @@ export function createTextbox({ onRemove } = {}) {
     </button>
     <div class="textbox-handle textbox-handle--floating">
       <span class="sr-only">Drag textbox</span>
-      <i class="fa-solid fa-grip-dots" aria-hidden="true"></i>
+      <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
     </div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
@@ -3826,7 +3855,7 @@ export function createPastedImage({ src, label, onRemove } = {}) {
     </button>
     <div class="textbox-handle textbox-handle--floating pasted-image-handle">
       <span class="sr-only">Drag image</span>
-      <i class="fa-solid fa-grip-dots" aria-hidden="true"></i>
+      <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
     </div>
     <div class="pasted-image-body">
       <img loading="lazy" decoding="async" alt="" />
