@@ -1569,6 +1569,80 @@ export function createBlankSlide() {
       Add Module
     </button>
   </div>
+  <div class="blank-toolbar" data-role="blank-toolbar">
+    <button
+      class="blank-toolbar-toggle"
+      type="button"
+      data-action="toggle-toolbar"
+      aria-expanded="false"
+    >
+      <span class="blank-toolbar-toggle-icon" aria-hidden="true">
+        <i class="fa-solid fa-sliders"></i>
+      </span>
+      <span class="blank-toolbar-toggle-label">Canvas tools</span>
+      <span class="blank-toolbar-toggle-caret" aria-hidden="true">
+        <i class="fa-solid fa-chevron-down"></i>
+      </span>
+    </button>
+    <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
+      <p class="blank-toolbar-empty" data-role="toolbar-empty">
+        Select a canvas item to edit its appearance.
+      </p>
+      <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
+      <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
+        <h3 class="blank-toolbar-heading">Textbox style</h3>
+        <div
+          class="blank-toolbar-swatches textbox-color-options"
+          data-role="toolbar-color-options"
+          data-tools-for="textbox"
+        ></div>
+        <label class="blank-toolbar-checkbox">
+          <input type="checkbox" data-role="textbox-shadow" />
+          <span>Add drop shadow</span>
+        </label>
+      </section>
+      <section class="blank-toolbar-section" data-tools-for="table" hidden>
+        <h3 class="blank-toolbar-heading">Table style</h3>
+        <div
+          class="blank-toolbar-swatches textbox-color-options"
+          data-role="toolbar-color-options"
+          data-tools-for="table"
+        ></div>
+      </section>
+      <section class="blank-toolbar-section" data-tools-for="mindmap" hidden>
+        <h3 class="blank-toolbar-heading">Branch colour</h3>
+        <p class="blank-toolbar-help">
+          Changes the colour for the selected branch.
+        </p>
+        <div
+          class="blank-toolbar-swatches textbox-color-options"
+          data-role="toolbar-color-options"
+          data-tools-for="mindmap"
+        ></div>
+      </section>
+      <section class="blank-toolbar-section" data-tools-for="image" hidden>
+        <h3 class="blank-toolbar-heading">Image adjustments</h3>
+        <label class="blank-toolbar-range">
+          <span>Scale</span>
+          <input
+            type="range"
+            min="60"
+            max="160"
+            step="10"
+            value="100"
+            data-role="image-size"
+          />
+          <span class="blank-toolbar-range-value" data-role="image-size-value">
+            100%
+          </span>
+        </label>
+        <label class="blank-toolbar-checkbox">
+          <input type="checkbox" data-role="image-shadow" />
+          <span>Add drop shadow</span>
+        </label>
+      </section>
+    </div>
+  </div>
   <p class="blank-hint" data-role="hint">Add textboxes, paste images, or build a mind map to capture relationships.</p>
   <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
 </div>
@@ -1609,16 +1683,466 @@ export function attachBlankSlideEvents(slide) {
     }
   };
 
+  const toolbar = slide.querySelector('[data-role="blank-toolbar"]');
+  const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
+  const toolbarPanel = toolbar?.querySelector('[data-role="toolbar-panel"]');
+  const toolbarEmpty = toolbarPanel?.querySelector('[data-role="toolbar-empty"]');
+  const toolbarSelectionLabel = toolbarPanel?.querySelector(
+    '[data-role="toolbar-selection"]',
+  );
+  const toolbarSections = Array.from(
+    toolbarPanel?.querySelectorAll?.('.blank-toolbar-section[data-tools-for]') ?? [],
+  );
+  const colorContainers = Array.from(
+    toolbarPanel?.querySelectorAll?.('[data-role="toolbar-color-options"]') ?? [],
+  );
+  const textboxShadowToggle = toolbarPanel?.querySelector('[data-role="textbox-shadow"]');
+  const imageShadowToggle = toolbarPanel?.querySelector('[data-role="image-shadow"]');
+  const imageSizeInput = toolbarPanel?.querySelector('[data-role="image-size"]');
+  const imageSizeValue = toolbarPanel?.querySelector('[data-role="image-size-value"]');
+
+  const SELECTED_CLASS = "blank-toolbar-selected";
+  const CANVAS_ITEM_CLASS = "blank-toolbar-item";
+
+  let selectedItem = null;
+  let selectedType = null;
+  let imageSizeReference = null;
+
+  const setToolbarExpanded = (expanded) => {
+    if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
+      return;
+    }
+    const isExpanded = Boolean(expanded);
+    toolbar.classList.toggle("is-expanded", isExpanded);
+    toolbarToggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+    if (toolbarPanel instanceof HTMLElement) {
+      toolbarPanel.hidden = !isExpanded;
+    }
+  };
+
+  const getSelectionLabel = () => {
+    if (!(selectedItem instanceof HTMLElement) || !selectedType) {
+      return "";
+    }
+    switch (selectedType) {
+      case "textbox":
+        return "Editing textbox";
+      case "table":
+        return "Editing table";
+      case "mindmap": {
+        const label = selectedItem.dataset.label?.trim();
+        if (label) {
+          return `Editing branch: ${label}`;
+        }
+        return `Editing branch: ${getMindmapColourLabel(selectedItem.dataset.color)}`;
+      }
+      case "image":
+        return "Editing image";
+      default:
+        return "";
+    }
+  };
+
+  const syncColorControls = () => {
+    colorContainers.forEach((container) => {
+      if (!(container instanceof HTMLElement)) {
+        return;
+      }
+      const targetType = container.dataset.toolsFor;
+      const buttons = Array.from(
+        container.querySelectorAll?.(".textbox-color-swatch") ?? [],
+      );
+      buttons.forEach((button) => {
+        if (!(button instanceof HTMLElement)) {
+          return;
+        }
+        const colorValue = button.dataset.color ?? "";
+        const isActive =
+          targetType === selectedType &&
+          selectedItem instanceof HTMLElement &&
+          colorValue === selectedItem.dataset.color;
+        button.classList.toggle("is-active", Boolean(isActive));
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+  };
+
+  const syncEffectControls = () => {
+    const effect =
+      selectedItem instanceof HTMLElement ? selectedItem.dataset.effect ?? "" : "";
+    if (textboxShadowToggle instanceof HTMLInputElement) {
+      textboxShadowToggle.checked = selectedType === "textbox" && effect === "shadow";
+    }
+    if (imageShadowToggle instanceof HTMLInputElement) {
+      imageShadowToggle.checked = selectedType === "image" && effect === "shadow";
+    }
+  };
+
+  const syncImageSizeControls = () => {
+    if (!(imageSizeInput instanceof HTMLInputElement) || !(imageSizeValue instanceof HTMLElement)) {
+      return;
+    }
+    if (selectedType !== "image" || !(selectedItem instanceof HTMLElement)) {
+      imageSizeInput.disabled = true;
+      imageSizeInput.value = "100";
+      imageSizeValue.textContent = "100%";
+      return;
+    }
+    imageSizeInput.disabled = false;
+    const baseWidth = imageSizeReference?.width || selectedItem.offsetWidth || 1;
+    const currentWidth = selectedItem.offsetWidth || baseWidth;
+    const percent = Math.max(
+      60,
+      Math.min(160, Math.round((currentWidth / baseWidth) * 100) || 100),
+    );
+    imageSizeInput.value = String(percent);
+    imageSizeValue.textContent = `${percent}%`;
+  };
+
+  const updateToolbar = () => {
+    if (!(toolbar instanceof HTMLElement)) {
+      return;
+    }
+    toolbar.classList.toggle("has-selection", Boolean(selectedType));
+    if (toolbarEmpty instanceof HTMLElement) {
+      toolbarEmpty.hidden = Boolean(selectedType);
+    }
+    if (toolbarSelectionLabel instanceof HTMLElement) {
+      if (selectedType) {
+        toolbarSelectionLabel.hidden = false;
+        toolbarSelectionLabel.textContent = getSelectionLabel();
+      } else {
+        toolbarSelectionLabel.hidden = true;
+        toolbarSelectionLabel.textContent = "";
+      }
+    }
+    toolbarSections.forEach((section) => {
+      if (!(section instanceof HTMLElement)) {
+        return;
+      }
+      const targetType = section.dataset.toolsFor;
+      const isActive = Boolean(selectedType && targetType === selectedType);
+      section.hidden = !isActive;
+      section.setAttribute("data-active", isActive ? "true" : "false");
+    });
+    syncColorControls();
+    syncEffectControls();
+    syncImageSizeControls();
+  };
+
+  const clearSelection = () => {
+    if (selectedItem instanceof HTMLElement) {
+      selectedItem.classList.remove(SELECTED_CLASS);
+    }
+    selectedItem = null;
+    selectedType = null;
+    imageSizeReference = null;
+    updateToolbar();
+  };
+
+  const setSelection = (element, type) => {
+    if (!(element instanceof HTMLElement) || !type) {
+      clearSelection();
+      return;
+    }
+    if (selectedItem === element && selectedType === type) {
+      updateToolbar();
+      return;
+    }
+    if (selectedItem instanceof HTMLElement) {
+      selectedItem.classList.remove(SELECTED_CLASS);
+    }
+    selectedItem = element;
+    selectedType = type;
+    element.classList.add(SELECTED_CLASS);
+    if (type === "image") {
+      const width = Math.max(1, element.offsetWidth || 1);
+      const height = Math.max(1, element.offsetHeight || 1);
+      imageSizeReference = { width, height };
+      element.dataset.baseWidth = String(width);
+      element.dataset.baseHeight = String(height);
+    } else {
+      imageSizeReference = null;
+    }
+    setToolbarExpanded(true);
+    updateToolbar();
+  };
+
+  const registerCanvasItem = (element, type) => {
+    if (!(element instanceof HTMLElement) || element.__deckCanvasSelectable) {
+      return;
+    }
+    element.__deckCanvasSelectable = true;
+    element.classList.add(CANVAS_ITEM_CLASS);
+    const pointerHandler = (event) => {
+      if (event.button !== undefined && event.button !== 0) {
+        return;
+      }
+      setSelection(element, type);
+    };
+    const focusHandler = () => setSelection(element, type);
+    element.addEventListener("pointerdown", pointerHandler);
+    element.addEventListener("focusin", focusHandler);
+    registerCleanup(() => {
+      element.removeEventListener("pointerdown", pointerHandler);
+      element.removeEventListener("focusin", focusHandler);
+      element.classList.remove(CANVAS_ITEM_CLASS);
+      delete element.__deckCanvasSelectable;
+    });
+  };
+
+  const applyColor = (value, targetType = selectedType) => {
+    if (!value || !(selectedItem instanceof HTMLElement)) {
+      return;
+    }
+    switch (targetType) {
+      case "textbox":
+        if (typeof selectedItem.__deckTextboxSetColor === "function") {
+          selectedItem.__deckTextboxSetColor(value);
+        } else {
+          selectedItem.dataset.color = value;
+        }
+        break;
+      case "table":
+        if (typeof selectedItem.__deckTableSetColor === "function") {
+          selectedItem.__deckTableSetColor(value);
+        } else {
+          selectedItem.dataset.color = value;
+        }
+        break;
+      case "mindmap":
+        if (typeof selectedItem.__deckMindmapBranchSetColor === "function") {
+          selectedItem.__deckMindmapBranchSetColor(value);
+        } else {
+          selectedItem.dataset.color = value;
+        }
+        break;
+      default:
+        break;
+    }
+    updateToolbar();
+  };
+
+  const prepareTextbox = (textbox) => {
+    if (!(textbox instanceof HTMLElement)) {
+      return;
+    }
+    initialiseTextbox(textbox, {
+      onRemove: () => {
+        if (selectedItem === textbox) {
+          clearSelection();
+        }
+        updateHintForCanvas();
+      },
+    });
+    registerCanvasItem(textbox, "textbox");
+  };
+
+  const prepareTable = (table) => {
+    if (!(table instanceof HTMLElement)) {
+      return;
+    }
+    initialiseCanvasTable(table, {
+      onRemove: () => {
+        if (selectedItem === table) {
+          clearSelection();
+        }
+        updateHintForCanvas();
+      },
+    });
+    registerCanvasItem(table, "table");
+  };
+
+  const prepareImage = (image) => {
+    if (!(image instanceof HTMLElement)) {
+      return;
+    }
+    initialisePastedImage(image, {
+      onRemove: () => {
+        if (selectedItem === image) {
+          clearSelection();
+        }
+        updateHintForCanvas();
+      },
+    });
+    registerCanvasItem(image, "image");
+  };
+
+  const registerMindmapBranch = (branch) => {
+    if (!(branch instanceof HTMLElement)) {
+      return;
+    }
+    registerCanvasItem(branch, "mindmap");
+    const originalChange = branch.__deckMindmapBranchOnChange;
+    branch.__deckMindmapBranchOnChange = (payload) => {
+      if (typeof originalChange === "function") {
+        originalChange(payload);
+      }
+      if (selectedItem === branch) {
+        updateToolbar();
+      }
+    };
+    const originalRemove = branch.__deckMindmapBranchOnRemove;
+    branch.__deckMindmapBranchOnRemove = () => {
+      if (selectedItem === branch) {
+        clearSelection();
+      }
+      if (typeof originalRemove === "function") {
+        originalRemove();
+      }
+    };
+  };
+
+  const prepareMindmap = (mindmap) => {
+    if (!(mindmap instanceof HTMLElement)) {
+      return;
+    }
+    initialiseMindMap(mindmap, {
+      onRemove: () => {
+        if (
+          selectedItem instanceof HTMLElement &&
+          mindmap.contains(selectedItem)
+        ) {
+          clearSelection();
+        }
+        updateHintForCanvas();
+      },
+    });
+    const branches = Array.from(
+      mindmap.querySelectorAll?.(".mindmap-branch") ?? [],
+    );
+    branches.forEach((branch) => registerMindmapBranch(branch));
+    const branchContainer = mindmap.querySelector(".mindmap-branches");
+    if (branchContainer instanceof HTMLElement && !branchContainer.__deckMindmapObserver) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLElement && node.classList.contains("mindmap-branch")) {
+              registerMindmapBranch(node);
+            }
+          });
+          mutation.removedNodes.forEach((node) => {
+            if (
+              node instanceof HTMLElement &&
+              node.classList.contains("mindmap-branch") &&
+              node === selectedItem
+            ) {
+              clearSelection();
+            }
+          });
+        });
+      });
+      observer.observe(branchContainer, { childList: true });
+      branchContainer.__deckMindmapObserver = observer;
+      registerCleanup(() => {
+        observer.disconnect();
+        delete branchContainer.__deckMindmapObserver;
+      });
+    }
+  };
+
+  colorContainers.forEach((container) => {
+    if (!(container instanceof HTMLElement)) {
+      return;
+    }
+    container.innerHTML = renderColorSwatchButtons();
+    const handleColorClick = (event) => {
+      const button =
+        event.target instanceof HTMLElement
+          ? event.target.closest(".textbox-color-swatch")
+          : null;
+      if (!(button instanceof HTMLElement) || !button.dataset.color) {
+        return;
+      }
+      const targetType = container.dataset.toolsFor;
+      if (targetType && selectedType === targetType) {
+        applyColor(button.dataset.color, targetType);
+      }
+    };
+    container.addEventListener("click", handleColorClick);
+    registerCleanup(() => {
+      container.removeEventListener("click", handleColorClick);
+    });
+  });
+
+  if (textboxShadowToggle instanceof HTMLInputElement) {
+    const handleTextboxEffect = () => {
+      if (selectedType === "textbox" && selectedItem instanceof HTMLElement) {
+        if (textboxShadowToggle.checked) {
+          selectedItem.dataset.effect = "shadow";
+        } else {
+          delete selectedItem.dataset.effect;
+        }
+        updateToolbar();
+      }
+    };
+    textboxShadowToggle.addEventListener("change", handleTextboxEffect);
+    registerCleanup(() => {
+      textboxShadowToggle.removeEventListener("change", handleTextboxEffect);
+    });
+  }
+
+  if (imageShadowToggle instanceof HTMLInputElement) {
+    const handleImageEffect = () => {
+      if (selectedType === "image" && selectedItem instanceof HTMLElement) {
+        if (imageShadowToggle.checked) {
+          selectedItem.dataset.effect = "shadow";
+        } else {
+          delete selectedItem.dataset.effect;
+        }
+        updateToolbar();
+      }
+    };
+    imageShadowToggle.addEventListener("change", handleImageEffect);
+    registerCleanup(() => {
+      imageShadowToggle.removeEventListener("change", handleImageEffect);
+    });
+  }
+
+  if (imageSizeInput instanceof HTMLInputElement) {
+    const handleImageScale = () => {
+      if (selectedType !== "image" || !(selectedItem instanceof HTMLElement)) {
+        return;
+      }
+      const baseWidth = imageSizeReference?.width || selectedItem.offsetWidth || 1;
+      const baseHeight = imageSizeReference?.height || selectedItem.offsetHeight || 1;
+      const scale = Number.parseFloat(imageSizeInput.value);
+      const factor = Number.isFinite(scale) ? scale / 100 : 1;
+      const nextWidth = Math.max(120, Math.round(baseWidth * factor));
+      const nextHeight = Math.max(90, Math.round(baseHeight * factor));
+      selectedItem.style.width = `${nextWidth}px`;
+      selectedItem.style.height = `${nextHeight}px`;
+      if (imageSizeValue instanceof HTMLElement) {
+        imageSizeValue.textContent = `${Math.round(factor * 100)}%`;
+      }
+    };
+    imageSizeInput.addEventListener("input", handleImageScale);
+    registerCleanup(() => {
+      imageSizeInput.removeEventListener("input", handleImageScale);
+    });
+  }
+
+  if (toolbarToggle instanceof HTMLElement) {
+    const toggleHandler = () => {
+      const expanded = toolbarToggle.getAttribute("aria-expanded") === "true";
+      setToolbarExpanded(!expanded);
+    };
+    toolbarToggle.addEventListener("click", toggleHandler);
+    registerCleanup(() => {
+      toolbarToggle.removeEventListener("click", toggleHandler);
+    });
+  }
+
   const DEFAULT_HINT =
     "Add textboxes, paste images, or build a mind map to capture relationships.";
   const TEXTBOX_HINT =
-    "Drag your textboxes into place, double-click to edit, and use the colour dots to organise ideas.";
+    "Drag your textboxes into place, double-click to edit, and use the toolbar to organise ideas.";
   const IMAGE_HINT =
-    "Paste images to bring ideas to life. Drag to move them and use the corner handle to resize.";
+    "Paste images to bring ideas to life. Drag to move them and adjust size or effects from the toolbar.";
   const MIXED_HINT =
-    "Combine textboxes and images to map your ideas visually.";
+    "Combine textboxes and images to map your ideas visually and style them from the toolbar.";
   const TABLE_HINT =
-    "Table ready. Add rows, columns, and colour-code cells to organise information.";
+    "Table ready. Add rows, columns, and colour-code cells from the toolbar to organise information.";
   const TABLE_COMBINATION_HINT =
     "Tables pair well with your notes, visuals, or maps to compare ideas.";
   const MINDMAP_HINT =
@@ -1662,9 +2186,11 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const handleAddTextbox = () => {
-    const textbox = createTextbox({ onRemove: updateHintForCanvas });
+    const textbox = createTextbox();
     canvas.appendChild(textbox);
+    prepareTextbox(textbox);
     positionTextbox(textbox, canvas);
+    setSelection(textbox, "textbox");
     updateHintForCanvas();
   };
 
@@ -1676,9 +2202,11 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const handleAddTable = () => {
-    const table = createCanvasTable({ onRemove: updateHintForCanvas });
+    const table = createCanvasTable();
     canvas.appendChild(table);
+    prepareTable(table);
     positionCanvasTable(table, canvas);
+    setSelection(table, "table");
     updateHintForCanvas();
     table.scrollIntoView({ behavior: "smooth", block: "nearest" });
     const firstEditableCell = table.querySelector("thead th, tbody td");
@@ -1703,8 +2231,12 @@ export function attachBlankSlideEvents(slide) {
     const mindmap = createMindMap(() => {
       updateHintForCanvas();
     });
-    initialiseMindMap(mindmap, { onRemove: updateHintForCanvas });
     canvas.appendChild(mindmap);
+    prepareMindmap(mindmap);
+    const firstBranch = mindmap.querySelector(".mindmap-branch");
+    if (firstBranch instanceof HTMLElement) {
+      setSelection(firstBranch, "mindmap");
+    }
     updateHintForCanvas();
   };
 
@@ -1732,27 +2264,13 @@ export function attachBlankSlideEvents(slide) {
     });
   }
 
-  canvas
-    .querySelectorAll(".textbox")
-    .forEach((textbox) =>
-      initialiseTextbox(textbox, { onRemove: updateHintForCanvas }),
-    );
+  canvas.querySelectorAll(".textbox").forEach((textbox) => prepareTextbox(textbox));
 
-  canvas
-    .querySelectorAll(".canvas-table")
-    .forEach((table) =>
-      initialiseCanvasTable(table, { onRemove: updateHintForCanvas }),
-    );
+  canvas.querySelectorAll(".canvas-table").forEach((table) => prepareTable(table));
 
-  canvas
-    .querySelectorAll(".mindmap")
-    .forEach((mindmap) =>
-      initialiseMindMap(mindmap, { onRemove: updateHintForCanvas }),
-    );
+  canvas.querySelectorAll(".mindmap").forEach((mindmap) => prepareMindmap(mindmap));
 
-  canvas
-    .querySelectorAll(".pasted-image")
-    .forEach((image) => initialisePastedImage(image, { onRemove: updateHintForCanvas }));
+  canvas.querySelectorAll(".pasted-image").forEach((image) => prepareImage(image));
 
   canvas
     .querySelectorAll(".module-embed")
@@ -1807,10 +2325,11 @@ export function attachBlankSlideEvents(slide) {
       const pastedImage = createPastedImage({
         src: dataUrl,
         label: file.name,
-        onRemove: updateHintForCanvas,
       });
       canvas.appendChild(pastedImage);
+      prepareImage(pastedImage);
       positionPastedImage(pastedImage, canvas);
+      setSelection(pastedImage, "image");
       pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
@@ -1831,6 +2350,7 @@ export function attachBlankSlideEvents(slide) {
 
   const handleCanvasPointerDown = (event) => {
     if (event.target === canvas) {
+      clearSelection();
       canvas.focus({ preventScroll: true });
     }
   };
@@ -1850,6 +2370,7 @@ export function attachBlankSlideEvents(slide) {
     });
   };
 
+  updateToolbar();
   updateHintForCanvas();
 }
 
@@ -2558,9 +3079,6 @@ export function createTextbox({ onRemove } = {}) {
   <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
   Textbox
 </span>
-<div class="textbox-color-options" role="group" aria-label="Textbox colours">
-${renderColorSwatchButtons()}
-</div>
     </div>
     <div class="textbox-toolbar" role="toolbar" aria-label="Textbox formatting controls"></div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
@@ -2626,32 +3144,15 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
     }
   });
 
-  const colorButtons = Array.from(
-    textbox.querySelectorAll(".textbox-color-swatch"),
-  );
-
   const syncTextboxColourState = (target = textbox.dataset.color) => {
     const chosen = target && target.trim() ? target : DEFAULT_TEXTBOX_COLOR;
     textbox.dataset.color = chosen;
-    colorButtons.forEach((button) => {
-      const isActive = button.dataset.color === chosen;
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-pressed", isActive ? "true" : "false");
-    });
+    return chosen;
   };
-
-  colorButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (!button.dataset.color) return;
-      syncTextboxColourState(button.dataset.color);
-    });
-    button.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-    });
-  });
 
   syncTextboxColourState();
   textbox.__deckTextboxSyncColor = () => syncTextboxColourState();
+  textbox.__deckTextboxSetColor = (value) => syncTextboxColourState(value);
 
   makeDraggable(textbox);
   return textbox;
@@ -2814,9 +3315,6 @@ export function createCanvasTable({
         Table
       </span>
       <div class="canvas-table-toolbar">
-        <div class="textbox-color-options canvas-table-colors" role="group" aria-label="Table colours">
-          ${renderColorSwatchButtons()}
-        </div>
         <div class="canvas-table-actions" role="group" aria-label="Table controls">
           <button type="button" class="canvas-table-action" data-action="add-column">
             <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
@@ -2891,34 +3389,15 @@ export function initialiseCanvasTable(table, { onRemove } = {}) {
     }
   });
 
-  const colorButtons = Array.from(
-    table.querySelectorAll(".textbox-color-swatch"),
-  );
-
   const syncColorState = (next = table.dataset.color) => {
     const chosen = next && next.trim() ? next : DEFAULT_TEXTBOX_COLOR;
     table.dataset.color = chosen;
-    colorButtons.forEach((button) => {
-      const isActive = button.dataset.color === chosen;
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-pressed", isActive ? "true" : "false");
-    });
+    return chosen;
   };
-
-  colorButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (!button.dataset.color) {
-        return;
-      }
-      syncColorState(button.dataset.color);
-    });
-    button.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-    });
-  });
 
   syncColorState();
   table.__deckTableSyncColor = () => syncColorState();
+  table.__deckTableSetColor = (value) => syncColorState(value);
 
   const addColumnBtn = table.querySelector('[data-action="add-column"]');
   const addRowBtn = table.querySelector('[data-action="add-row"]');
@@ -3904,12 +4383,6 @@ export function createMindMapBranch(text, { category, label, color } = {}) {
   labelInput.autocomplete = "off";
   labelInput.value = branch.dataset.label ?? "";
 
-  const colorOptions = document.createElement("div");
-  colorOptions.className = "mindmap-color-options";
-  colorOptions.setAttribute("role", "group");
-  colorOptions.setAttribute("aria-label", "Branch colour");
-  colorOptions.innerHTML = renderColorSwatchButtons();
-
   const textarea = document.createElement("textarea");
   textarea.value = text;
   textarea.placeholder = "Add supporting detail...";
@@ -3929,7 +4402,7 @@ export function createMindMapBranch(text, { category, label, color } = {}) {
   removeBtn.append(removeIcon, removeLabel);
   actions.append(removeBtn);
 
-  header.append(indexBadge, labelInput, colorOptions);
+  header.append(indexBadge, labelInput);
   branch.append(header, textarea, actions);
 
   return branch;
@@ -4004,43 +4477,6 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
     );
   }
 
-  let colorOptions = branch.querySelector(".mindmap-color-options");
-  if (!(colorOptions instanceof HTMLElement)) {
-    colorOptions = document.createElement("div");
-    colorOptions.className = "mindmap-color-options";
-    colorOptions.setAttribute("role", "group");
-    colorOptions.setAttribute("aria-label", "Branch colour");
-    colorOptions.innerHTML = renderColorSwatchButtons();
-  } else {
-    colorOptions.classList.add("mindmap-color-options");
-    colorOptions.setAttribute("role", "group");
-    colorOptions.setAttribute("aria-label", "Branch colour");
-    if (!colorOptions.querySelector(".textbox-color-swatch")) {
-      colorOptions.innerHTML = renderColorSwatchButtons();
-    }
-  }
-
-  if (header instanceof HTMLElement) {
-    if (colorOptions.parentElement !== header) {
-      if (
-        labelInput instanceof HTMLElement &&
-        labelInput.parentElement === header
-      ) {
-        header.insertBefore(colorOptions, labelInput.nextSibling);
-      } else if (indexEl instanceof HTMLElement) {
-        header.insertBefore(colorOptions, indexEl.nextSibling);
-      } else {
-        header.appendChild(colorOptions);
-      }
-    }
-  } else if (!colorOptions.parentElement) {
-    branch.insertBefore(colorOptions, branch.firstChild);
-  }
-
-  const colorButtons = Array.from(
-    colorOptions.querySelectorAll(".textbox-color-swatch"),
-  );
-
   const syncColourState = (target = branch.dataset.color) => {
     const chosen = isValidMindmapColor(target)
       ? target
@@ -4048,11 +4484,7 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
           branch.dataset.category ?? MINDMAP_BRANCH_PRESETS[0].value,
         );
     branch.dataset.color = chosen;
-    colorButtons.forEach((button) => {
-      const isActive = button.dataset.color === chosen;
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-pressed", isActive ? "true" : "false");
-    });
+    return chosen;
   };
 
   const removeBtn = branch.querySelector(".branch-remove");
@@ -4078,6 +4510,16 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
 
   branch.__deckMindmapBranchSync = syncBranchState;
   branch.__deckMindmapBranchSyncColor = () => syncColourState();
+  branch.__deckMindmapBranchSetColor = (value) => {
+    const chosen = syncColourState(value);
+    if (typeof branch.__deckMindmapBranchOnChange === "function") {
+      branch.__deckMindmapBranchOnChange({
+        type: "color",
+        value: chosen,
+        branch,
+      });
+    }
+  };
   syncBranchState();
 
   textarea?.addEventListener("input", () => {
@@ -4109,24 +4551,6 @@ export function initialiseMindMapBranch(branch, { onRemove, onChange } = {}) {
     if (typeof branch.__deckMindmapBranchOnRemove === "function") {
       branch.__deckMindmapBranchOnRemove();
     }
-  });
-
-  colorButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (!button.dataset.color) return;
-      const chosen = button.dataset.color;
-      syncColourState(chosen);
-      if (typeof branch.__deckMindmapBranchOnChange === "function") {
-        branch.__deckMindmapBranchOnChange({
-          type: "color",
-          value: chosen,
-          branch,
-        });
-      }
-    });
-    button.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-    });
   });
 
   return branch;

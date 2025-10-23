@@ -1949,6 +1949,168 @@ ol {
   gap: 0.75rem;
 }
 
+.blank-toolbar {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-0);
+  overflow: hidden;
+}
+
+.blank-toolbar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--forest-shadow);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.blank-toolbar-toggle:hover,
+.blank-toolbar-toggle:focus-visible {
+  background: rgba(122, 132, 113, 0.12);
+  color: var(--deep-forest);
+}
+
+.blank-toolbar-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary-forest) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.blank-toolbar-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: rgba(122, 132, 113, 0.16);
+  color: var(--primary-forest);
+  font-size: 0.85rem;
+}
+
+.blank-toolbar-toggle-caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.blank-toolbar.is-expanded .blank-toolbar-toggle-caret {
+  transform: rotate(180deg);
+}
+
+.blank-toolbar-panel {
+  padding: 0.75rem 0.9rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.blank-toolbar-empty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.blank-toolbar-selection {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--forest-shadow);
+}
+
+.blank-toolbar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(122, 132, 113, 0.18);
+}
+
+.blank-toolbar-section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.blank-toolbar-heading {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--forest-shadow);
+}
+
+.blank-toolbar-help {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.blank-toolbar-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.blank-toolbar-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--forest-shadow);
+}
+
+.blank-toolbar-checkbox input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--secondary-sage);
+}
+
+.blank-toolbar-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--forest-shadow);
+}
+
+.blank-toolbar-range input[type="range"] {
+  grid-column: 1 / -1;
+  accent-color: var(--secondary-sage);
+}
+
+.blank-toolbar-range-value {
+  font-weight: 700;
+}
+
+.blank-toolbar.has-selection {
+  box-shadow: var(--shadow-1);
+}
+
+.blank-toolbar-item {
+  position: relative;
+}
+
+.blank-toolbar-selected {
+  outline: 2px solid rgba(107, 122, 99, 0.65);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-2);
+}
+
 .blank-canvas {
   flex: 1;
   border-radius: var(--radius-lg);
@@ -2107,6 +2269,12 @@ ol {
   cursor: move;
   touch-action: none;
   transition: box-shadow 0.2s ease;
+}
+
+.textbox[data-effect="shadow"],
+.canvas-table[data-effect="shadow"],
+.pasted-image[data-effect="shadow"] {
+  box-shadow: var(--shadow-3);
 }
 
 .textbox:focus-within {
@@ -2428,10 +2596,6 @@ ol {
 
 .canvas-table .textbox-title i {
   color: var(--table-accent);
-}
-
-.canvas-table .textbox-color-options {
-  align-items: center;
 }
 
 .canvas-table-toolbar {
@@ -3145,17 +3309,6 @@ ol {
   font-size: var(--step--1);
   background: var(--mindmap-branch-select-bg);
   color: var(--forest-shadow);
-}
-
-.mindmap-color-options {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-left: auto;
-}
-
-.mindmap-color-options .textbox-color-swatch {
-  --swatch-size: 16px;
 }
 
 .mindmap-branch-select:focus {
