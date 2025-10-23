@@ -148,6 +148,8 @@ const MODULE_TYPE_LABELS = {
   gapfill: 'Gap fill',
   grouping: 'Grouping',
   'table-completion': 'Table completion',
+  matching: 'Matching',
+  'error-correction': 'Error correction',
 };
 
 const DECK_TOAST_TIMEOUT = 3600;
@@ -201,6 +203,172 @@ const BUILDER_LAYOUT_DEFAULTS = {
     imageUrl: '',
     imageAlt: '',
     cards: [],
+  }),
+  'learning-objectives': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    learningTitle: 'Learning Outcomes',
+    learningGoal1: '',
+    learningGoal2: '',
+    learningGoal3: '',
+    learningCommunicative: '',
+    learningImageUrl: '',
+  }),
+  'model-dialogue': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    modelTitle: '',
+    modelInstructions: '',
+    modelImageUrl: '',
+    modelSpeaker1Name: '',
+    modelSpeaker1Line: '',
+    modelSpeaker2Name: '',
+    modelSpeaker2Line: '',
+    modelSpeaker3Name: '',
+    modelSpeaker3Line: '',
+    modelAudioUrl: '',
+  }),
+  'interactive-practice': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    practiceTitle: 'Practice',
+    practiceInstructions: '',
+    practiceActivityType: 'multiple-choice',
+    practiceQuestion1: '',
+    practiceOptions1: '',
+    practiceAnswer1: '',
+    practiceQuestion2: '',
+    practiceOptions2: '',
+    practiceAnswer2: '',
+    practiceQuestion3: '',
+    practiceOptions3: '',
+    practiceAnswer3: '',
+  }),
+  'communicative-task': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    taskTitle: '',
+    taskImageUrl: '',
+    taskPreparation: '',
+    taskPerformance: '',
+    taskScaffolding: '',
+  }),
+  'pronunciation-focus': () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    pronunciationTitle: '',
+    pronunciationTarget: '',
+    pronunciationWord1: '',
+    pronunciationWord2: '',
+    pronunciationSentence1: '',
+    pronunciationSentence2: '',
+    pronunciationInstructions: '',
+    pronunciationImageUrl: '',
+  }),
+  reflection: () => ({
+    includeRubric: false,
+    stageLabel: '',
+    activityTitle: '',
+    duration: '',
+    slideTitle: '',
+    rubricIntro: '',
+    overview: '',
+    steps: [],
+    rubricLevels: [],
+    prompts: [],
+    columnOneHeading: '',
+    columnOneItems: [],
+    columnTwoHeading: '',
+    columnTwoItems: [],
+    spotlightNarrative: [],
+    imageUrl: '',
+    imageAlt: '',
+    cards: [],
+    reflectionTitle: 'Reflection',
+    reflectionPrompt1: '',
+    reflectionPrompt2: '',
+    reflectionPrompt3: '',
+    reflectionImageUrl: '',
   }),
   facilitation: () => ({
     includeRubric: true,
@@ -6028,7 +6196,8 @@ const isRubricEnabled = () =>
   !(builderRubricToggle instanceof HTMLInputElement) || builderRubricToggle.checked;
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
-  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['facilitation'];
+  const factory =
+    BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
   if (typeof factory === 'function') {
     try {
       return factory();
@@ -6058,6 +6227,10 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       if (typeof value === 'string') {
         field.value = value;
       }
+      return;
+    }
+    if (field instanceof HTMLSelectElement) {
+      field.value = typeof value === 'string' ? value : String(value ?? '');
       return;
     }
     if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
@@ -6103,6 +6276,58 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   );
   setFieldValue('imageUrl', defaults.imageUrl ?? '');
   setFieldValue('imageAlt', defaults.imageAlt ?? '');
+
+  setFieldValue('learningTitle', defaults.learningTitle ?? '');
+  setFieldValue('learningGoal1', defaults.learningGoal1 ?? '');
+  setFieldValue('learningGoal2', defaults.learningGoal2 ?? '');
+  setFieldValue('learningGoal3', defaults.learningGoal3 ?? '');
+  setFieldValue('learningCommunicative', defaults.learningCommunicative ?? '');
+  setFieldValue('learningImageUrl', defaults.learningImageUrl ?? '');
+
+  setFieldValue('modelTitle', defaults.modelTitle ?? '');
+  setFieldValue('modelInstructions', defaults.modelInstructions ?? '');
+  setFieldValue('modelImageUrl', defaults.modelImageUrl ?? '');
+  setFieldValue('modelSpeaker1Name', defaults.modelSpeaker1Name ?? '');
+  setFieldValue('modelSpeaker1Line', defaults.modelSpeaker1Line ?? '');
+  setFieldValue('modelSpeaker2Name', defaults.modelSpeaker2Name ?? '');
+  setFieldValue('modelSpeaker2Line', defaults.modelSpeaker2Line ?? '');
+  setFieldValue('modelSpeaker3Name', defaults.modelSpeaker3Name ?? '');
+  setFieldValue('modelSpeaker3Line', defaults.modelSpeaker3Line ?? '');
+  setFieldValue('modelAudioUrl', defaults.modelAudioUrl ?? '');
+
+  setFieldValue('practiceTitle', defaults.practiceTitle ?? '');
+  setFieldValue('practiceInstructions', defaults.practiceInstructions ?? '');
+  setFieldValue('practiceActivityType', defaults.practiceActivityType ?? 'multiple-choice');
+  setFieldValue('practiceQuestion1', defaults.practiceQuestion1 ?? '');
+  setFieldValue('practiceOptions1', defaults.practiceOptions1 ?? '');
+  setFieldValue('practiceAnswer1', defaults.practiceAnswer1 ?? '');
+  setFieldValue('practiceQuestion2', defaults.practiceQuestion2 ?? '');
+  setFieldValue('practiceOptions2', defaults.practiceOptions2 ?? '');
+  setFieldValue('practiceAnswer2', defaults.practiceAnswer2 ?? '');
+  setFieldValue('practiceQuestion3', defaults.practiceQuestion3 ?? '');
+  setFieldValue('practiceOptions3', defaults.practiceOptions3 ?? '');
+  setFieldValue('practiceAnswer3', defaults.practiceAnswer3 ?? '');
+
+  setFieldValue('taskTitle', defaults.taskTitle ?? '');
+  setFieldValue('taskImageUrl', defaults.taskImageUrl ?? '');
+  setFieldValue('taskPreparation', defaults.taskPreparation ?? '');
+  setFieldValue('taskPerformance', defaults.taskPerformance ?? '');
+  setFieldValue('taskScaffolding', defaults.taskScaffolding ?? '');
+
+  setFieldValue('pronunciationTitle', defaults.pronunciationTitle ?? '');
+  setFieldValue('pronunciationTarget', defaults.pronunciationTarget ?? '');
+  setFieldValue('pronunciationWord1', defaults.pronunciationWord1 ?? '');
+  setFieldValue('pronunciationWord2', defaults.pronunciationWord2 ?? '');
+  setFieldValue('pronunciationSentence1', defaults.pronunciationSentence1 ?? '');
+  setFieldValue('pronunciationSentence2', defaults.pronunciationSentence2 ?? '');
+  setFieldValue('pronunciationInstructions', defaults.pronunciationInstructions ?? '');
+  setFieldValue('pronunciationImageUrl', defaults.pronunciationImageUrl ?? '');
+
+  setFieldValue('reflectionTitle', defaults.reflectionTitle ?? '');
+  setFieldValue('reflectionPrompt1', defaults.reflectionPrompt1 ?? '');
+  setFieldValue('reflectionPrompt2', defaults.reflectionPrompt2 ?? '');
+  setFieldValue('reflectionPrompt3', defaults.reflectionPrompt3 ?? '');
+  setFieldValue('reflectionImageUrl', defaults.reflectionImageUrl ?? '');
 
   const cards = Array.isArray(defaults.cards) ? defaults.cards : [];
   setFieldValue('cardOneHeading', cards[0]?.heading ?? '');
@@ -6267,6 +6492,92 @@ function getBuilderFormState() {
     evidenceChecklist: splitMultiline(formData.get("homeworkEvidenceChecklist")),
   };
 
+  const learningObjectives = {
+    title: trimText(formData.get("learningTitle")),
+    goals: [
+      trimText(formData.get("learningGoal1")),
+      trimText(formData.get("learningGoal2")),
+      trimText(formData.get("learningGoal3")),
+    ].filter(Boolean),
+    communicative: trimText(formData.get("learningCommunicative")),
+    imageUrl: trimText(formData.get("learningImageUrl")),
+  };
+
+  const modelDialogue = {
+    title: trimText(formData.get("modelTitle")),
+    instructions: trimText(formData.get("modelInstructions")),
+    imageUrl: trimText(formData.get("modelImageUrl")),
+    audioUrl: trimText(formData.get("modelAudioUrl")),
+    speakers: [
+      {
+        name: trimText(formData.get("modelSpeaker1Name")),
+        line: trimText(formData.get("modelSpeaker1Line")),
+      },
+      {
+        name: trimText(formData.get("modelSpeaker2Name")),
+        line: trimText(formData.get("modelSpeaker2Line")),
+      },
+      {
+        name: trimText(formData.get("modelSpeaker3Name")),
+        line: trimText(formData.get("modelSpeaker3Line")),
+      },
+    ].filter((entry) => entry.name || entry.line),
+  };
+
+  const practice = {
+    title: trimText(formData.get("practiceTitle")),
+    instructions: trimText(formData.get("practiceInstructions")),
+    activityType: trimText(formData.get("practiceActivityType")) || "multiple-choice",
+    questions: [
+      {
+        prompt: trimText(formData.get("practiceQuestion1")),
+        options: splitMultiline(formData.get("practiceOptions1")),
+        answer: trimText(formData.get("practiceAnswer1")),
+      },
+      {
+        prompt: trimText(formData.get("practiceQuestion2")),
+        options: splitMultiline(formData.get("practiceOptions2")),
+        answer: trimText(formData.get("practiceAnswer2")),
+      },
+      {
+        prompt: trimText(formData.get("practiceQuestion3")),
+        options: splitMultiline(formData.get("practiceOptions3")),
+        answer: trimText(formData.get("practiceAnswer3")),
+      },
+    ].filter((entry) => entry.prompt || entry.options.length || entry.answer),
+  };
+
+  const communicativeTask = {
+    title: trimText(formData.get("taskTitle")),
+    imageUrl: trimText(formData.get("taskImageUrl")),
+    preparation: trimText(formData.get("taskPreparation")),
+    performance: trimText(formData.get("taskPerformance")),
+    scaffolding: splitMultiline(formData.get("taskScaffolding")),
+  };
+
+  const pronunciationFocus = {
+    title: trimText(formData.get("pronunciationTitle")),
+    target: trimText(formData.get("pronunciationTarget")),
+    words: [
+      trimText(formData.get("pronunciationWord1")),
+      trimText(formData.get("pronunciationWord2")),
+    ].filter(Boolean),
+    sentence1: trimText(formData.get("pronunciationSentence1")),
+    sentence2: trimText(formData.get("pronunciationSentence2")),
+    instructions: trimText(formData.get("pronunciationInstructions")),
+    imageUrl: trimText(formData.get("pronunciationImageUrl")),
+  };
+
+  const reflection = {
+    title: trimText(formData.get("reflectionTitle")),
+    prompts: [
+      trimText(formData.get("reflectionPrompt1")),
+      trimText(formData.get("reflectionPrompt2")),
+      trimText(formData.get("reflectionPrompt3")),
+    ].filter(Boolean),
+    imageUrl: trimText(formData.get("reflectionImageUrl")),
+  };
+
   return {
     layout,
     stageLabel,
@@ -6291,6 +6602,12 @@ function getBuilderFormState() {
     reading,
     pronunciation,
     homework,
+    learningObjectives,
+    modelDialogue,
+    practice,
+    communicativeTask,
+    pronunciationFocus,
+    reflection,
   };
 }
 
@@ -6347,6 +6664,20 @@ function updateBuilderJsonPreview() {
       state.layout === "pronunciation-drill" ? state.pronunciation : undefined,
     homework:
       state.layout === "homework-recap" ? state.homework : undefined,
+    learningObjectives:
+      state.layout === "learning-objectives"
+        ? state.learningObjectives
+        : undefined,
+    modelDialogue:
+      state.layout === "model-dialogue" ? state.modelDialogue : undefined,
+    practice: state.layout === "interactive-practice" ? state.practice : undefined,
+    communicativeTask:
+      state.layout === "communicative-task" ? state.communicativeTask : undefined,
+    pronunciationFocus:
+      state.layout === "pronunciation-focus"
+        ? state.pronunciationFocus
+        : undefined,
+    reflection: state.layout === "reflection" ? state.reflection : undefined,
   };
   if (state.includeRubric) {
     previewData.rubric = {
@@ -6431,6 +6762,58 @@ function updateBuilderPreview() {
 
   let slide = null;
   switch (state.layout) {
+    case "learning-objectives":
+      slide = createLearningObjectivesSlide({
+        title: state.learningObjectives.title,
+        goals: state.learningObjectives.goals,
+        communicative: state.learningObjectives.communicative,
+        imageUrl: state.learningObjectives.imageUrl || state.imageUrl,
+      });
+      break;
+    case "model-dialogue":
+      slide = createModelDialogueSlide({
+        title: state.modelDialogue.title,
+        instructions: state.modelDialogue.instructions,
+        speakers: state.modelDialogue.speakers,
+        imageUrl: state.modelDialogue.imageUrl || state.imageUrl,
+        audioUrl: state.modelDialogue.audioUrl,
+      });
+      break;
+    case "interactive-practice":
+      slide = createInteractivePracticeSlide({
+        title: state.practice.title,
+        instructions: state.practice.instructions,
+        activityType: state.practice.activityType,
+        questions: state.practice.questions,
+      });
+      break;
+    case "communicative-task":
+      slide = createCommunicativeTaskSlide({
+        title: state.communicativeTask.title,
+        preparation: state.communicativeTask.preparation,
+        performance: state.communicativeTask.performance,
+        scaffolding: state.communicativeTask.scaffolding,
+        imageUrl: state.communicativeTask.imageUrl || state.imageUrl,
+      });
+      break;
+    case "pronunciation-focus":
+      slide = createPronunciationFocusSlide({
+        title: state.pronunciationFocus.title,
+        target: state.pronunciationFocus.target,
+        words: state.pronunciationFocus.words,
+        sentence1: state.pronunciationFocus.sentence1,
+        sentence2: state.pronunciationFocus.sentence2,
+        instructions: state.pronunciationFocus.instructions,
+        imageUrl: state.pronunciationFocus.imageUrl || state.imageUrl,
+      });
+      break;
+    case "reflection":
+      slide = createReflectionSlide({
+        title: state.reflection.title,
+        prompts: state.reflection.prompts,
+        imageUrl: state.reflection.imageUrl || state.imageUrl,
+      });
+      break;
     case "rubric-simple":
       slide = createRubricFocusSlide({
         stageLabel: state.stageLabel || "Activity Workshop",
@@ -6580,6 +6963,19 @@ function ensureBuilderPrompts() {
   }
   const layout = getSelectedLayout();
   if (layout === "blank-canvas") {
+    builderPromptList.innerHTML = "";
+    return;
+  }
+  if (
+    [
+      'learning-objectives',
+      'model-dialogue',
+      'interactive-practice',
+      'communicative-task',
+      'pronunciation-focus',
+      'reflection',
+    ].includes(layout)
+  ) {
     builderPromptList.innerHTML = "";
     return;
   }
@@ -9383,6 +9779,586 @@ function createHomeworkRecapSlide({
   return slide;
 }
 
+function createLearningObjectivesSlide({
+  title,
+  goals = [],
+  communicative,
+  imageUrl,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Learning Outcomes";
+  const resolvedGoals = Array.isArray(goals) ? goals.filter(Boolean) : [];
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden lesson-slide lesson-slide--learning";
+  slide.dataset.type = "learning-objectives";
+
+  if (trimText(imageUrl)) {
+    slide.classList.add("lesson-slide--has-image");
+    slide.style.setProperty("--lesson-bg-image", `url("${imageUrl}")`);
+  }
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner lesson-slide-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "lesson-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const communicativeGoal = trimText(communicative);
+  if (communicativeGoal) {
+    const subtitle = document.createElement("p");
+    subtitle.className = "lesson-communicative";
+    subtitle.innerHTML = `<strong>So you can</strong> ${escapeHtml(communicativeGoal)}`;
+    header.appendChild(subtitle);
+  }
+
+  const body = document.createElement("div");
+  body.className = "lesson-body";
+  inner.appendChild(body);
+
+  if (resolvedGoals.length) {
+    const list = document.createElement("ul");
+    list.className = "lesson-goals";
+    resolvedGoals.forEach((goal) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="lesson-goal-icon">We will</span><span>${escapeHtml(goal)}</span>`;
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Add the learning outcomes for this lesson.";
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createModelDialogueSlide({
+  title,
+  instructions,
+  speakers = [],
+  imageUrl,
+  audioUrl,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Model dialogue";
+  const resolvedSpeakers = Array.isArray(speakers)
+    ? speakers.filter((entry) => entry && (entry.name || entry.line))
+    : [];
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden lesson-slide lesson-slide--dialogue";
+  slide.dataset.type = "model-dialogue";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner lesson-slide-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "lesson-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const instructionText = trimText(instructions);
+  if (instructionText) {
+    const instructionEl = document.createElement("p");
+    instructionEl.className = "lesson-instructions";
+    instructionEl.textContent = instructionText;
+    header.appendChild(instructionEl);
+  }
+
+  const content = document.createElement("div");
+  content.className = "lesson-dialogue";
+  inner.appendChild(content);
+
+  const dialogueWrap = document.createElement("div");
+  dialogueWrap.className = "lesson-dialogue-text";
+  content.appendChild(dialogueWrap);
+
+  if (resolvedSpeakers.length) {
+    resolvedSpeakers.forEach(({ name, line }, index) => {
+      const turn = document.createElement("div");
+      turn.className = "dialogue-turn";
+      const speakerLabel = document.createElement("span");
+      speakerLabel.className = "dialogue-speaker";
+      speakerLabel.textContent = name || `Speaker ${index + 1}`;
+      turn.appendChild(speakerLabel);
+      const lineEl = document.createElement("p");
+      lineEl.className = "dialogue-line";
+      lineEl.textContent = line || "(Add line)";
+      turn.appendChild(lineEl);
+      dialogueWrap.appendChild(turn);
+    });
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Add speaker names and lines to build the dialogue.";
+    dialogueWrap.appendChild(placeholder);
+  }
+
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    const visual = document.createElement("div");
+    visual.className = "lesson-dialogue-visual";
+    const img = document.createElement("img");
+    img.src = resolvedImage;
+    img.alt = "Dialogue context";
+    img.loading = "lazy";
+    img.decoding = "async";
+    visual.appendChild(img);
+    content.appendChild(visual);
+  }
+
+  const resolvedAudio = trimText(audioUrl);
+  if (resolvedAudio) {
+    const audioBlock = document.createElement("div");
+    audioBlock.className = "lesson-audio";
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.src = resolvedAudio;
+    audioBlock.appendChild(audio);
+    inner.appendChild(audioBlock);
+  }
+
+  return slide;
+}
+
+function createInteractivePracticeSlide({
+  title,
+  instructions,
+  activityType,
+  questions = [],
+} = {}) {
+  const resolvedTitle = trimText(title) || "Practice";
+  const resolvedInstructions = trimText(instructions);
+  const resolvedType = trimText(activityType) || "multiple-choice";
+  const resolvedQuestions = Array.isArray(questions)
+    ? questions.filter((q) => q && (q.prompt || q.options?.length))
+    : [];
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden interactive-practice-slide";
+  slide.dataset.type = "interactive-practice";
+  slide.dataset.activityType = resolvedType;
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner interactive-practice-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "practice-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const typeBadge = document.createElement("span");
+  typeBadge.className = "practice-type";
+  typeBadge.textContent = MODULE_TYPE_LABELS[resolvedType] || resolvedType;
+  header.appendChild(typeBadge);
+
+  const body = document.createElement("div");
+  body.className = "practice-body";
+  inner.appendChild(body);
+
+  const instructionSection = document.createElement("section");
+  instructionSection.className = "practice-instructions";
+  if (resolvedInstructions) {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = resolvedInstructions;
+    instructionSection.appendChild(paragraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Describe how learners should complete the activity.";
+    instructionSection.appendChild(placeholder);
+  }
+  body.appendChild(instructionSection);
+
+  const questionSection = document.createElement("section");
+  questionSection.className = "practice-questions";
+  body.appendChild(questionSection);
+
+  if (resolvedQuestions.length) {
+    const list = document.createElement("ol");
+    resolvedQuestions.forEach(({ prompt, options = [], answer }, index) => {
+      const item = document.createElement("li");
+      item.className = "practice-question";
+      const promptEl = document.createElement("p");
+      promptEl.className = "practice-question-text";
+      promptEl.textContent = prompt || `Question ${index + 1}`;
+      item.appendChild(promptEl);
+      const optionList = Array.isArray(options) ? options.filter(Boolean) : [];
+      if (optionList.length) {
+        const optionsEl = document.createElement("ul");
+        optionsEl.className = "practice-options";
+        optionList.forEach((opt) => {
+          const optLi = document.createElement("li");
+          optLi.textContent = opt;
+          optionsEl.appendChild(optLi);
+        });
+        item.appendChild(optionsEl);
+      }
+      const answerText = trimText(answer);
+      if (answerText) {
+        const answerEl = document.createElement("p");
+        answerEl.className = "practice-answer";
+        answerEl.textContent = `Correct: ${answerText}`;
+        item.appendChild(answerEl);
+      }
+      list.appendChild(item);
+    });
+    questionSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "List the prompts or stems learners will respond to.";
+    questionSection.appendChild(placeholder);
+  }
+
+  const moduleArea = document.createElement("div");
+  moduleArea.className = "practice-module";
+  moduleArea.dataset.role = "practice-module-area";
+  inner.appendChild(moduleArea);
+
+  const moduleHint = document.createElement("p");
+  moduleHint.className = "practice-module-hint";
+  moduleHint.dataset.role = "practice-module-hint";
+  moduleHint.textContent = "Drop in an interactive module to make this practice task live.";
+  moduleArea.appendChild(moduleHint);
+
+  const moduleHost = document.createElement("div");
+  moduleHost.className = "practice-module-host";
+  moduleHost.dataset.role = "practice-module-host";
+  moduleArea.appendChild(moduleHost);
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "activity-btn";
+  addBtn.dataset.action = "add-module";
+  addBtn.innerHTML = '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
+  moduleArea.appendChild(addBtn);
+
+  return slide;
+}
+
+function createCommunicativeTaskSlide({
+  title,
+  preparation,
+  performance,
+  scaffolding = [],
+  imageUrl,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Communicative task";
+  const prepText = trimText(preparation);
+  const performanceText = trimText(performance);
+  const scaffoldingItems = Array.isArray(scaffolding)
+    ? scaffolding.filter(Boolean)
+    : splitMultiline(scaffolding);
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden lesson-slide lesson-slide--task";
+  slide.dataset.type = "communicative-task";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner lesson-slide-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "lesson-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const body = document.createElement("div");
+  body.className = "task-body";
+  inner.appendChild(body);
+
+  if (trimText(imageUrl)) {
+    const visual = document.createElement("div");
+    visual.className = "task-visual";
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = "Task context";
+    img.loading = "lazy";
+    img.decoding = "async";
+    visual.appendChild(img);
+    body.appendChild(visual);
+  }
+
+  const phases = document.createElement("div");
+  phases.className = "task-phases";
+  body.appendChild(phases);
+
+  const prepSection = document.createElement("section");
+  prepSection.className = "task-phase";
+  prepSection.innerHTML = '<h3>Preparation</h3>';
+  if (prepText) {
+    const p = document.createElement("p");
+    p.textContent = prepText;
+    prepSection.appendChild(p);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Describe how learners should prepare for the task.";
+    prepSection.appendChild(placeholder);
+  }
+  phases.appendChild(prepSection);
+
+  const performanceSection = document.createElement("section");
+  performanceSection.className = "task-phase";
+  performanceSection.innerHTML = '<h3>Performance</h3>';
+  if (performanceText) {
+    const p = document.createElement("p");
+    p.textContent = performanceText;
+    performanceSection.appendChild(p);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Explain what happens during the live task.";
+    performanceSection.appendChild(placeholder);
+  }
+  phases.appendChild(performanceSection);
+
+  if (scaffoldingItems.length) {
+    const scaffSection = document.createElement("section");
+    scaffSection.className = "task-scaffolding";
+    const headingEl = document.createElement("h4");
+    headingEl.textContent = "Scaffolding language";
+    scaffSection.appendChild(headingEl);
+    const list = document.createElement("ul");
+    scaffoldingItems.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    scaffSection.appendChild(list);
+    phases.appendChild(scaffSection);
+  }
+
+  return slide;
+}
+
+function createPronunciationFocusSlide({
+  title,
+  target,
+  words = [],
+  sentence1,
+  sentence2,
+  instructions,
+  imageUrl,
+} = {}) {
+  const resolvedTitle = trimText(title) || "Pronunciation focus";
+  const resolvedTarget = trimText(target);
+  const resolvedWords = Array.isArray(words) ? words.filter(Boolean) : [];
+  const exampleOne = trimText(sentence1);
+  const exampleTwo = trimText(sentence2);
+  const practiceNotes = trimText(instructions);
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden lesson-slide lesson-slide--pronunciation";
+  slide.dataset.type = "pronunciation-focus";
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner lesson-slide-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "lesson-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const body = document.createElement("div");
+  body.className = "pronunciation-body";
+  inner.appendChild(body);
+
+  if (trimText(imageUrl)) {
+    const visual = document.createElement("div");
+    visual.className = "pronunciation-visual";
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = "Pronunciation context";
+    img.loading = "lazy";
+    img.decoding = "async";
+    visual.appendChild(img);
+    body.appendChild(visual);
+  }
+
+  const focusSection = document.createElement("section");
+  focusSection.className = "pronunciation-focus-card";
+  body.appendChild(focusSection);
+
+  if (resolvedTarget) {
+    const targetEl = document.createElement("p");
+    targetEl.className = "pronunciation-target";
+    targetEl.innerHTML = `<span>Target:</span> ${escapeHtml(resolvedTarget)}`;
+    focusSection.appendChild(targetEl);
+  }
+
+  if (resolvedWords.length) {
+    const wordList = document.createElement("ul");
+    wordList.className = "pronunciation-words";
+    resolvedWords.forEach((word) => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      wordList.appendChild(li);
+    });
+    focusSection.appendChild(wordList);
+  }
+
+  if (exampleOne || exampleTwo) {
+    const examples = document.createElement("div");
+    examples.className = "pronunciation-examples";
+    if (exampleOne) {
+      const exampleEl = document.createElement("p");
+      exampleEl.textContent = exampleOne;
+      examples.appendChild(exampleEl);
+    }
+    if (exampleTwo) {
+      const exampleEl = document.createElement("p");
+      exampleEl.textContent = exampleTwo;
+      examples.appendChild(exampleEl);
+    }
+    focusSection.appendChild(examples);
+  }
+
+  const practiceSection = document.createElement("section");
+  practiceSection.className = "pronunciation-practice";
+  body.appendChild(practiceSection);
+
+  if (practiceNotes) {
+    const notes = document.createElement("p");
+    notes.textContent = practiceNotes;
+    practiceSection.appendChild(notes);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Describe how learners will practise and personalise the sound.";
+    practiceSection.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createReflectionSlide({ title, prompts = [], imageUrl } = {}) {
+  const resolvedTitle = trimText(title) || "Reflection";
+  const resolvedPrompts = Array.isArray(prompts) ? prompts.filter(Boolean) : [];
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden lesson-slide lesson-slide--reflection";
+  slide.dataset.type = "reflection";
+
+  if (trimText(imageUrl)) {
+    slide.classList.add("lesson-slide--has-image");
+    slide.style.setProperty("--lesson-bg-image", `url("${imageUrl}")`);
+  }
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner lesson-slide-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "lesson-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const body = document.createElement("div");
+  body.className = "reflection-body";
+  inner.appendChild(body);
+
+  if (resolvedPrompts.length) {
+    const list = document.createElement("ul");
+    list.className = "reflection-prompts";
+    resolvedPrompts.forEach((prompt) => {
+      const li = document.createElement("li");
+      li.textContent = prompt;
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Add prompts to guide learner reflection.";
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function refreshInteractivePracticeModuleState(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+  const host = slide.querySelector('[data-role="practice-module-host"]');
+  const hint = slide.querySelector('[data-role="practice-module-hint"]');
+  const addBtn = slide.querySelector('[data-action="add-module"]');
+  const hasModule = host?.querySelector('.module-embed');
+  if (hint instanceof HTMLElement) {
+    hint.hidden = Boolean(hasModule);
+  }
+  if (addBtn instanceof HTMLElement) {
+    addBtn.hidden = Boolean(hasModule);
+  }
+}
+
+function initialiseInteractivePracticeSlide(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return slide;
+  }
+  if (slide.__deckPracticeInitialised) {
+    refreshInteractivePracticeModuleState(slide);
+    return slide;
+  }
+  slide.__deckPracticeInitialised = true;
+
+  const host = slide.querySelector('[data-role="practice-module-host"]');
+  const addBtn = slide.querySelector('[data-action="add-module"]');
+
+  const updateState = () => refreshInteractivePracticeModuleState(slide);
+
+  if (host instanceof HTMLElement) {
+    const existingModules = host.querySelectorAll?.('.module-embed') ?? [];
+    existingModules.forEach((module) => initialiseModuleEmbed(module, { onRemove: updateState }));
+  }
+
+  if (addBtn instanceof HTMLButtonElement && host instanceof HTMLElement) {
+    addBtn.addEventListener('click', () => {
+      openModuleOverlay({
+        canvas: host,
+        trigger: addBtn,
+        onInsert: () => {
+          const module = host.querySelector('.module-embed');
+          if (module instanceof HTMLElement) {
+            initialiseModuleEmbed(module, { onRemove: updateState });
+          }
+          updateState();
+        },
+      });
+    });
+  }
+
+  updateState();
+  return slide;
+}
+
 function initialiseBuilderSlide(slide) {
   if (!(slide instanceof HTMLElement)) {
     return slide;
@@ -9471,10 +10447,13 @@ function initialiseGeneratedActivitySlides(root = document) {
   }
   const scope = root instanceof HTMLElement ? root : document;
   const slideList = scope.querySelectorAll?.(".slide-stage.activity-slide");
-  if (!slideList || !slideList.length) {
-    return;
+  if (slideList && slideList.length) {
+    slideList.forEach((slide) => initialiseBuilderSlide(slide));
   }
-  slideList.forEach((slide) => initialiseBuilderSlide(slide));
+  const practiceSlides = scope.querySelectorAll?.(".interactive-practice-slide");
+  if (practiceSlides && practiceSlides.length) {
+    practiceSlides.forEach((slide) => initialiseInteractivePracticeSlide(slide));
+  }
 }
 
 function insertActivitySlide(slide) {
@@ -9522,7 +10501,15 @@ function handleBuilderSubmit(event) {
   }
 
   const title = state.activityTitle;
-  if (!title) {
+  const requiresActivityTitle = ![
+    'learning-objectives',
+    'model-dialogue',
+    'interactive-practice',
+    'communicative-task',
+    'pronunciation-focus',
+    'reflection',
+  ].includes(state.layout);
+  if (requiresActivityTitle && !title) {
     showBuilderStatus("Add a title for your activity before inserting.", "error");
     const titleInput = builderForm.querySelector('[name="activityTitle"]');
     titleInput?.focus({ preventScroll: true });
@@ -9553,6 +10540,110 @@ function handleBuilderSubmit(event) {
 
   let slide = null;
   switch (state.layout) {
+    case "learning-objectives": {
+      const goals = state.learningObjectives.goals;
+      if (!goals.length) {
+        showBuilderStatus("Add at least one instructional goal.", "error");
+        const goalInput = builderForm.querySelector('[name="learningGoal1"]');
+        goalInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createLearningObjectivesSlide({
+        title: state.learningObjectives.title,
+        goals,
+        communicative: state.learningObjectives.communicative,
+        imageUrl: state.learningObjectives.imageUrl || state.imageUrl,
+      });
+      break;
+    }
+    case "model-dialogue": {
+      const speakers = Array.isArray(state.modelDialogue.speakers)
+        ? state.modelDialogue.speakers
+        : [];
+      if (speakers.length < 2) {
+        showBuilderStatus("Add at least two speaker turns.", "error");
+        const speakerInput = builderForm.querySelector('[name="modelSpeaker1Line"]');
+        speakerInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createModelDialogueSlide({
+        title: state.modelDialogue.title,
+        instructions: state.modelDialogue.instructions,
+        speakers,
+        imageUrl: state.modelDialogue.imageUrl || state.imageUrl,
+        audioUrl: state.modelDialogue.audioUrl,
+      });
+      break;
+    }
+    case "interactive-practice": {
+      const questions = Array.isArray(state.practice.questions)
+        ? state.practice.questions.filter((q) => q.prompt && q.options.length)
+        : [];
+      if (!questions.length) {
+        showBuilderStatus("Provide at least one question with options.", "error");
+        const questionInput = builderForm.querySelector('[name="practiceQuestion1"]');
+        questionInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createInteractivePracticeSlide({
+        title: state.practice.title,
+        instructions: state.practice.instructions,
+        activityType: state.practice.activityType,
+        questions,
+      });
+      break;
+    }
+    case "communicative-task": {
+      if (!trimText(state.communicativeTask.title || "")) {
+        showBuilderStatus("Add a task title before inserting.", "error");
+        const taskTitleInput = builderForm.querySelector('[name="taskTitle"]');
+        taskTitleInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createCommunicativeTaskSlide({
+        title: state.communicativeTask.title,
+        preparation: state.communicativeTask.preparation,
+        performance: state.communicativeTask.performance,
+        scaffolding: state.communicativeTask.scaffolding,
+        imageUrl: state.communicativeTask.imageUrl || state.imageUrl,
+      });
+      break;
+    }
+    case "pronunciation-focus": {
+      if (!trimText(state.pronunciationFocus.target || "")) {
+        showBuilderStatus("Describe the target sound or feature.", "error");
+        const targetInput = builderForm.querySelector('[name="pronunciationTarget"]');
+        targetInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createPronunciationFocusSlide({
+        title: state.pronunciationFocus.title,
+        target: state.pronunciationFocus.target,
+        words: state.pronunciationFocus.words,
+        sentence1: state.pronunciationFocus.sentence1,
+        sentence2: state.pronunciationFocus.sentence2,
+        instructions: state.pronunciationFocus.instructions,
+        imageUrl: state.pronunciationFocus.imageUrl || state.imageUrl,
+      });
+      break;
+    }
+    case "reflection": {
+      const prompts = Array.isArray(state.reflection.prompts)
+        ? state.reflection.prompts
+        : [];
+      if (!prompts.length) {
+        showBuilderStatus("Add at least one reflection prompt.", "error");
+        const promptInput = builderForm.querySelector('[name="reflectionPrompt1"]');
+        promptInput?.focus({ preventScroll: true });
+        return;
+      }
+      slide = createReflectionSlide({
+        title: state.reflection.title,
+        prompts,
+        imageUrl: state.reflection.imageUrl || state.imageUrl,
+      });
+      break;
+    }
     case "rubric-simple": {
       const resolvedSlideTitle = state.slideTitle || state.activityTitle;
       if (!trimText(resolvedSlideTitle)) {
@@ -9747,6 +10838,10 @@ function handleBuilderSubmit(event) {
     return;
   }
 
+  if (state.layout === "interactive-practice") {
+    initialiseInteractivePracticeSlide(slide);
+  }
+
   initialiseBuilderSlide(slide);
   insertActivitySlide(slide);
   if (typeof slide.__deckShowStatus === "function") {
@@ -9784,7 +10879,7 @@ function initialiseActivityBuilderUI() {
   });
 
   activityBuilderBtn?.addEventListener("click", () => {
-    openForLayout("facilitation");
+    openForLayout("learning-objectives");
   });
 
   builderAddPromptBtn?.addEventListener("click", () => {
@@ -9813,16 +10908,12 @@ function initialiseActivityBuilderUI() {
         updateBuilderPreview();
         const messages = {
           "blank-canvas": "Blank canvas selected.",
-          facilitation: "Workshop facilitation layout selected.",
-          "rubric-simple": "Rubric spotlight layout selected.",
-          "rubric-columns": "Discussion columns layout selected.",
-          "image-spotlight": "Spotlight layout selected.",
-          "full-bleed-image": "Full-bleed image layout selected.",
-          "rubric-cards": "Strategy cards layout selected.",
-          "vocabulary-grid": "Vocabulary grid layout selected.",
-          "reading-comprehension": "Reading comprehension layout selected.",
-          "pronunciation-drill": "Pronunciation drill layout selected.",
-          "homework-recap": "Homework recap layout selected.",
+          "learning-objectives": "Learning objectives layout selected.",
+          "model-dialogue": "Model dialogue layout selected.",
+          "interactive-practice": "Interactive practice layout selected.",
+          "communicative-task": "Communicative task layout selected.",
+          "pronunciation-focus": "Pronunciation focus layout selected.",
+          reflection: "Reflection layout selected.",
         };
         showBuilderStatus(messages[layoutValue] || "Layout updated.", "info");
       });

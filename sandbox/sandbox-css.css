@@ -842,6 +842,35 @@ body {
   box-shadow: var(--shadow-1);
 }
 
+.deck-logo-cluster {
+  position: absolute;
+  right: clamp(12px, 2vw, 28px);
+  bottom: clamp(12px, 2vw, 28px);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--soft-white) 88%, transparent);
+  box-shadow: 0 6px 20px rgba(34, 41, 32, 0.08);
+  opacity: 0.82;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.deck-logo-cluster:hover,
+.deck-logo-cluster:focus-within {
+  opacity: 1;
+}
+
+.deck-logo-cluster img {
+  height: 26px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(34, 41, 32, 0.16));
+}
+
 .bg-media {
   position: absolute;
   inset: 0;
@@ -4552,4 +4581,315 @@ ol {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+
+/* Lesson-focused layouts */
+.lesson-slide {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 246, 240, 0.96) 65%);
+  border: 1px solid rgba(122, 132, 113, 0.18);
+  box-shadow: var(--shadow-1);
+}
+
+.lesson-slide--has-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--lesson-bg-image, none) center/cover no-repeat;
+  opacity: 0.18;
+}
+
+.lesson-slide-inner,
+.interactive-practice-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: clamp(32px, 5vw, 48px);
+  height: 100%;
+  color: var(--ink);
+  backdrop-filter: blur(4px);
+}
+
+.lesson-header,
+.practice-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lesson-header h2,
+.practice-header h2 {
+  margin: 0;
+  font-size: var(--step-2);
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+.lesson-communicative {
+  margin: 0;
+  font-weight: 600;
+  color: var(--primary-forest);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.lesson-communicative strong {
+  margin-right: 0.35rem;
+}
+
+.lesson-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  justify-content: center;
+}
+
+.lesson-goals {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.lesson-goals li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+.lesson-goal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  font-weight: 700;
+  color: var(--primary-forest);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--step--1);
+}
+
+.lesson-empty {
+  margin: 0;
+  font-style: italic;
+  color: rgba(47, 58, 43, 0.6);
+}
+
+.lesson-instructions {
+  margin: 0;
+  font-weight: 600;
+  color: rgba(47, 58, 43, 0.78);
+}
+
+.lesson-dialogue {
+  display: grid;
+  gap: clamp(16px, 4vw, 36px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr);
+  align-items: start;
+}
+
+.lesson-dialogue-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dialogue-turn {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-1);
+}
+
+.dialogue-speaker {
+  display: block;
+  font-weight: 700;
+  color: var(--primary-forest);
+  margin-bottom: 0.25rem;
+}
+
+.dialogue-line {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.lesson-dialogue-visual img,
+.task-visual img,
+.pronunciation-visual img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+.lesson-audio {
+  margin-top: auto;
+}
+
+.lesson-audio audio {
+  width: 100%;
+}
+
+.interactive-practice-slide {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(244, 244, 236, 0.92));
+  border: 1px solid rgba(122, 132, 113, 0.18);
+}
+
+.practice-header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.practice-type {
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(122, 132, 113, 0.16);
+  color: var(--primary-forest);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.practice-body {
+  flex: 1;
+  display: grid;
+  gap: clamp(16px, 4vw, 32px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+}
+
+.practice-instructions,
+.practice-questions,
+.task-phase,
+.task-scaffolding,
+.pronunciation-focus-card,
+.pronunciation-practice {
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-1);
+}
+
+.practice-instructions p {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.practice-questions ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.practice-question-text {
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+}
+
+.practice-options {
+  margin: 0 0 0.35rem;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  color: rgba(47, 58, 43, 0.78);
+}
+
+.practice-answer {
+  margin: 0;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--primary-forest);
+}
+
+.practice-module {
+  margin-top: auto;
+  border: 2px dashed rgba(122, 132, 113, 0.35);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.practice-module-hint {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.65);
+  font-style: italic;
+}
+
+.practice-module-host {
+  width: 100%;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.practice-module-host .module-embed {
+  width: 100%;
+}
+
+.task-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.8fr);
+  gap: clamp(16px, 4vw, 32px);
+  align-items: start;
+}
+
+.task-phase h3,
+.task-scaffolding h4 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+
+.task-scaffolding ul,
+.pronunciation-words,
+.reflection-prompts {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.pronunciation-target {
+  margin: 0;
+  font-weight: 700;
+  color: var(--primary-forest);
+}
+
+.pronunciation-examples {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.pronunciation-practice p {
+  margin: 0;
+}
+
+.reflection-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reflection-prompts {
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: rgba(47, 58, 43, 0.9);
 }
