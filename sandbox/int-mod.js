@@ -10303,14 +10303,95 @@ function createReflectionSlide({ title, prompts = [], imageUrl } = {}) {
   return slide;
 }
 
-function refreshInteractivePracticeModuleState(slide) {
+function ensureInteractivePracticeModuleControls(slide) {
   if (!(slide instanceof HTMLElement)) {
+    return {
+      moduleArea: null,
+      host: null,
+      hint: null,
+      addBtn: null,
+    };
+  }
+
+  const inner =
+    slide.querySelector('.interactive-practice-inner') ??
+    slide.querySelector('.slide-inner');
+
+  if (!(inner instanceof HTMLElement)) {
+    return {
+      moduleArea: null,
+      host: null,
+      hint: null,
+      addBtn: null,
+    };
+  }
+
+  let moduleArea = slide.querySelector('[data-role="practice-module-area"]');
+  if (!(moduleArea instanceof HTMLElement)) {
+    moduleArea = document.createElement('div');
+    moduleArea.className = 'practice-module';
+    moduleArea.dataset.role = 'practice-module-area';
+    inner.appendChild(moduleArea);
+  } else {
+    moduleArea.classList.add('practice-module');
+    moduleArea.dataset.role = 'practice-module-area';
+  }
+
+  let hint = moduleArea.querySelector('[data-role="practice-module-hint"]');
+  if (!(hint instanceof HTMLElement)) {
+    hint = document.createElement('p');
+    hint.className = 'practice-module-hint';
+    hint.dataset.role = 'practice-module-hint';
+    hint.textContent =
+      'Drop in an interactive module to make this practice task live.';
+    moduleArea.insertBefore(hint, moduleArea.firstChild);
+  } else {
+    hint.classList.add('practice-module-hint');
+    hint.dataset.role = 'practice-module-hint';
+    if (!hint.textContent || !hint.textContent.trim()) {
+      hint.textContent =
+        'Drop in an interactive module to make this practice task live.';
+    }
+  }
+
+  let host = moduleArea.querySelector('[data-role="practice-module-host"]');
+  if (!(host instanceof HTMLElement)) {
+    host = document.createElement('div');
+    host.className = 'practice-module-host';
+    host.dataset.role = 'practice-module-host';
+    moduleArea.appendChild(host);
+  } else {
+    host.classList.add('practice-module-host');
+    host.dataset.role = 'practice-module-host';
+  }
+
+  let addBtn = moduleArea.querySelector('[data-action="add-module"]');
+  if (!(addBtn instanceof HTMLButtonElement)) {
+    addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'activity-btn';
+    addBtn.dataset.action = 'add-module';
+    addBtn.innerHTML =
+      '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
+    moduleArea.appendChild(addBtn);
+  } else {
+    addBtn.classList.add('activity-btn');
+    addBtn.dataset.action = 'add-module';
+    if (!addBtn.innerHTML.trim()) {
+      addBtn.innerHTML =
+        '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
+    }
+  }
+
+  return { moduleArea, host, hint, addBtn };
+}
+
+function refreshInteractivePracticeModuleState(slide) {
+  const { host, hint, addBtn } = ensureInteractivePracticeModuleControls(slide);
+  if (!(host instanceof HTMLElement)) {
     return;
   }
-  const host = slide.querySelector('[data-role="practice-module-host"]');
-  const hint = slide.querySelector('[data-role="practice-module-hint"]');
-  const addBtn = slide.querySelector('[data-action="add-module"]');
-  const hasModule = host?.querySelector('.module-embed');
+  const hasModule = host.querySelector('.module-embed');
   if (hint instanceof HTMLElement) {
     hint.hidden = Boolean(hasModule);
   }
@@ -10329,8 +10410,7 @@ function initialiseInteractivePracticeSlide(slide) {
   }
   slide.__deckPracticeInitialised = true;
 
-  const host = slide.querySelector('[data-role="practice-module-host"]');
-  const addBtn = slide.querySelector('[data-action="add-module"]');
+  const { host, addBtn } = ensureInteractivePracticeModuleControls(slide);
 
   const updateState = () => refreshInteractivePracticeModuleState(slide);
 
