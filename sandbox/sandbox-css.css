@@ -1962,6 +1962,10 @@ ol {
   overflow: visible;
 }
 
+.blank-toolbar [hidden] {
+  display: none !important;
+}
+
 .blank-toolbar-toggle {
   display: flex;
   align-items: center;
