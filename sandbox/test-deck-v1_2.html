@@ -1448,7 +1448,7 @@
           <div class="builder-grid">
             <fieldset
               class="builder-field builder-field--full layout-picker"
-              data-layouts="blank-canvas,learning-objectives,model-dialogue,interactive-practice,communicative-task,pronunciation-focus,reflection"
+              data-layouts="blank-canvas,learning-objectives,model-dialogue,image-slide,communicative-task,pronunciation-focus,reflection"
             >
               <legend class="builder-field-label">Choose a layout</legend>
               <div class="layout-picker-grid">
@@ -1488,15 +1488,15 @@
                     </span>
                   </span>
                 </label>
-                <label class="layout-option" title="Guide a controlled practice task with interactive options.">
-                  <input type="radio" name="slideLayout" value="interactive-practice" />
+                <label class="layout-option" title="Share a full-bleed image with overlay text.">
+                  <input type="radio" name="slideLayout" value="image-slide" />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true">
-                      <i class="fa-solid fa-puzzle-piece"></i>
+                      <i class="fa-solid fa-image"></i>
                     </span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Interactive Practice</span>
-                      <span class="layout-option-desc">Set up a controlled task and attach an interactive activity module.</span>
+                      <span class="layout-option-title">Image Slide</span>
+                      <span class="layout-option-desc">Add a full workspace image with an optional text overlay.</span>
                     </span>
                   </span>
                 </label>
@@ -1637,72 +1637,45 @@
               <input type="url" name="modelAudioUrl" placeholder="https://" />
             </label>
 
-            <label class="builder-field builder-field--full" data-layouts="interactive-practice">
-              <span class="builder-field-label">Slide title</span>
-              <input type="text" name="practiceTitle" placeholder="e.g. Practice" />
+            <label class="builder-field" data-layouts="image-slide">
+              <span class="builder-field-label">Overlay pill (optional)</span>
+              <input
+                type="text"
+                name="imageSlideEyebrow"
+                placeholder="e.g. Spotlight"
+              />
             </label>
-            <label class="builder-field builder-field--full" data-layouts="interactive-practice">
-              <span class="builder-field-label">Instructions</span>
+            <label class="builder-field builder-field--full" data-layouts="image-slide">
+              <span class="builder-field-label">Overlay heading</span>
+              <input
+                type="text"
+                name="imageSlideHeading"
+                placeholder="Add a bold statement"
+              />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="image-slide">
+              <span class="builder-field-label">Supporting text</span>
               <textarea
-                name="practiceInstructions"
+                name="imageSlideBody"
                 rows="3"
-                placeholder="Explain what learners should do with the task."
+                placeholder="Add supporting details or prompts."
               ></textarea>
             </label>
-            <label class="builder-field" data-layouts="interactive-practice">
-              <span class="builder-field-label">Activity type</span>
-              <select name="practiceActivityType">
-                <option value="multiple-choice">Multiple Choice</option>
-                <option value="gapfill">Gap Fill</option>
-                <option value="matching">Matching</option>
-                <option value="error-correction">Error Correction</option>
+            <label class="builder-field" data-layouts="image-slide">
+              <span class="builder-field-label">Overlay alignment</span>
+              <select name="imageSlideAlignment">
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
               </select>
             </label>
-            <div class="builder-fieldset" data-layouts="interactive-practice">
-              <span class="builder-field-label">Question prompts</span>
-              <div class="builder-field builder-field--stack">
-                <label>
-                  <span>Question 1</span>
-                  <textarea name="practiceQuestion1" rows="2" placeholder="Prompt"></textarea>
-                </label>
-                <label>
-                  <span>Answer options 1 (one per line)</span>
-                  <textarea name="practiceOptions1" rows="3" placeholder="Option A"></textarea>
-                </label>
-                <label>
-                  <span>Correct answer 1</span>
-                  <input type="text" name="practiceAnswer1" placeholder="Exact match" />
-                </label>
-              </div>
-              <div class="builder-field builder-field--stack">
-                <label>
-                  <span>Question 2</span>
-                  <textarea name="practiceQuestion2" rows="2" placeholder="Prompt"></textarea>
-                </label>
-                <label>
-                  <span>Answer options 2 (one per line)</span>
-                  <textarea name="practiceOptions2" rows="3" placeholder="Option A"></textarea>
-                </label>
-                <label>
-                  <span>Correct answer 2</span>
-                  <input type="text" name="practiceAnswer2" placeholder="Exact match" />
-                </label>
-              </div>
-              <div class="builder-field builder-field--stack">
-                <label>
-                  <span>Question 3</span>
-                  <textarea name="practiceQuestion3" rows="2" placeholder="Prompt"></textarea>
-                </label>
-                <label>
-                  <span>Answer options 3 (one per line)</span>
-                  <textarea name="practiceOptions3" rows="3" placeholder="Option A"></textarea>
-                </label>
-                <label>
-                  <span>Correct answer 3</span>
-                  <input type="text" name="practiceAnswer3" placeholder="Exact match" />
-                </label>
-              </div>
-            </div>
+            <label class="builder-field" data-layouts="image-slide">
+              <span class="builder-field-label">Overlay theme</span>
+              <select name="imageSlideTheme">
+                <option value="dark">Dark overlay</option>
+                <option value="light">Light overlay</option>
+              </select>
+            </label>
             <label class="builder-field builder-field--full" data-layouts="communicative-task">
               <span class="builder-field-label">Task title</span>
               <input type="text" name="taskTitle" placeholder="e.g. Present Your Family!" />
@@ -1795,7 +1768,7 @@
             </fieldset>
             <div
               class="builder-field builder-field--full image-search"
-              data-layouts="learning-objectives,model-dialogue,communicative-task,pronunciation-focus,reflection"
+              data-layouts="learning-objectives,model-dialogue,image-slide,communicative-task,pronunciation-focus,reflection"
             >
               <span class="builder-field-label">Find an image</span>
               <div class="image-search-controls">

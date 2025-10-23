@@ -260,7 +260,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     modelSpeaker3Line: '',
     modelAudioUrl: '',
   }),
-  'interactive-practice': () => ({
+  'image-slide': () => ({
     includeRubric: false,
     stageLabel: '',
     activityTitle: '',
@@ -279,18 +279,11 @@ const BUILDER_LAYOUT_DEFAULTS = {
     imageUrl: '',
     imageAlt: '',
     cards: [],
-    practiceTitle: 'Practice',
-    practiceInstructions: '',
-    practiceActivityType: 'multiple-choice',
-    practiceQuestion1: '',
-    practiceOptions1: '',
-    practiceAnswer1: '',
-    practiceQuestion2: '',
-    practiceOptions2: '',
-    practiceAnswer2: '',
-    practiceQuestion3: '',
-    practiceOptions3: '',
-    practiceAnswer3: '',
+    imageSlideEyebrow: '',
+    imageSlideHeading: '',
+    imageSlideBody: '',
+    imageSlideAlignment: 'center',
+    imageSlideTheme: 'dark',
   }),
   'communicative-task': () => ({
     includeRubric: false,
@@ -6295,18 +6288,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   setFieldValue('modelSpeaker3Line', defaults.modelSpeaker3Line ?? '');
   setFieldValue('modelAudioUrl', defaults.modelAudioUrl ?? '');
 
-  setFieldValue('practiceTitle', defaults.practiceTitle ?? '');
-  setFieldValue('practiceInstructions', defaults.practiceInstructions ?? '');
-  setFieldValue('practiceActivityType', defaults.practiceActivityType ?? 'multiple-choice');
-  setFieldValue('practiceQuestion1', defaults.practiceQuestion1 ?? '');
-  setFieldValue('practiceOptions1', defaults.practiceOptions1 ?? '');
-  setFieldValue('practiceAnswer1', defaults.practiceAnswer1 ?? '');
-  setFieldValue('practiceQuestion2', defaults.practiceQuestion2 ?? '');
-  setFieldValue('practiceOptions2', defaults.practiceOptions2 ?? '');
-  setFieldValue('practiceAnswer2', defaults.practiceAnswer2 ?? '');
-  setFieldValue('practiceQuestion3', defaults.practiceQuestion3 ?? '');
-  setFieldValue('practiceOptions3', defaults.practiceOptions3 ?? '');
-  setFieldValue('practiceAnswer3', defaults.practiceAnswer3 ?? '');
+  setFieldValue('imageSlideEyebrow', defaults.imageSlideEyebrow ?? '');
+  setFieldValue('imageSlideHeading', defaults.imageSlideHeading ?? '');
+  setFieldValue('imageSlideBody', defaults.imageSlideBody ?? '');
+  setFieldValue('imageSlideAlignment', defaults.imageSlideAlignment ?? 'center');
+  setFieldValue('imageSlideTheme', defaults.imageSlideTheme ?? 'dark');
 
   setFieldValue('taskTitle', defaults.taskTitle ?? '');
   setFieldValue('taskImageUrl', defaults.taskImageUrl ?? '');
@@ -6524,27 +6510,12 @@ function getBuilderFormState() {
     ].filter((entry) => entry.name || entry.line),
   };
 
-  const practice = {
-    title: trimText(formData.get("practiceTitle")),
-    instructions: trimText(formData.get("practiceInstructions")),
-    activityType: trimText(formData.get("practiceActivityType")) || "multiple-choice",
-    questions: [
-      {
-        prompt: trimText(formData.get("practiceQuestion1")),
-        options: splitMultiline(formData.get("practiceOptions1")),
-        answer: trimText(formData.get("practiceAnswer1")),
-      },
-      {
-        prompt: trimText(formData.get("practiceQuestion2")),
-        options: splitMultiline(formData.get("practiceOptions2")),
-        answer: trimText(formData.get("practiceAnswer2")),
-      },
-      {
-        prompt: trimText(formData.get("practiceQuestion3")),
-        options: splitMultiline(formData.get("practiceOptions3")),
-        answer: trimText(formData.get("practiceAnswer3")),
-      },
-    ].filter((entry) => entry.prompt || entry.options.length || entry.answer),
+  const imageSlide = {
+    eyebrow: trimText(formData.get("imageSlideEyebrow")),
+    heading: trimText(formData.get("imageSlideHeading")),
+    body: trimText(formData.get("imageSlideBody")),
+    alignment: trimText(formData.get("imageSlideAlignment")) || "center",
+    theme: trimText(formData.get("imageSlideTheme")) || "dark",
   };
 
   const communicativeTask = {
@@ -6604,7 +6575,7 @@ function getBuilderFormState() {
     homework,
     learningObjectives,
     modelDialogue,
-    practice,
+    imageSlide,
     communicativeTask,
     pronunciationFocus,
     reflection,
@@ -6670,7 +6641,7 @@ function updateBuilderJsonPreview() {
         : undefined,
     modelDialogue:
       state.layout === "model-dialogue" ? state.modelDialogue : undefined,
-    practice: state.layout === "interactive-practice" ? state.practice : undefined,
+    imageSlide: state.layout === "image-slide" ? state.imageSlide : undefined,
     communicativeTask:
       state.layout === "communicative-task" ? state.communicativeTask : undefined,
     pronunciationFocus:
@@ -6779,12 +6750,15 @@ function updateBuilderPreview() {
         audioUrl: state.modelDialogue.audioUrl,
       });
       break;
-    case "interactive-practice":
-      slide = createInteractivePracticeSlide({
-        title: state.practice.title,
-        instructions: state.practice.instructions,
-        activityType: state.practice.activityType,
-        questions: state.practice.questions,
+    case "image-slide":
+      slide = createImageOverlaySlide({
+        eyebrow: state.imageSlide.eyebrow,
+        heading: state.imageSlide.heading,
+        body: state.imageSlide.body,
+        alignment: state.imageSlide.alignment,
+        theme: state.imageSlide.theme,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
       });
       break;
     case "communicative-task":
@@ -6970,7 +6944,7 @@ function ensureBuilderPrompts() {
     [
       'learning-objectives',
       'model-dialogue',
-      'interactive-practice',
+      'image-slide',
       'communicative-task',
       'pronunciation-focus',
       'reflection',
@@ -10303,6 +10277,90 @@ function createReflectionSlide({ title, prompts = [], imageUrl } = {}) {
   return slide;
 }
 
+function createImageOverlaySlide({
+  eyebrow,
+  heading,
+  body,
+  alignment = 'center',
+  theme = 'dark',
+  imageUrl,
+  imageAlt,
+} = {}) {
+  const resolvedHeading = trimText(heading) || 'Image spotlight';
+  const resolvedBody = trimText(body);
+  const resolvedEyebrow = trimText(eyebrow);
+  const resolvedTheme = theme === 'light' ? 'light' : 'dark';
+  const resolvedAlignment = ['left', 'right', 'center'].includes(
+    alignment,
+  )
+    ? alignment
+    : 'center';
+
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden full-width-bg image-overlay-slide';
+  slide.dataset.type = 'image-slide';
+  slide.classList.add(`theme-${resolvedTheme}`);
+  slide.classList.add(`align-${resolvedAlignment}`);
+
+  const media = document.createElement('div');
+  media.className = 'bg-media';
+  if (trimText(imageUrl)) {
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = imageAlt || '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    media.appendChild(img);
+  } else {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'bg-media-placeholder';
+    placeholder.textContent = 'Add an inspiring image to this slide.';
+    media.appendChild(placeholder);
+  }
+  slide.appendChild(media);
+
+  const overlay = document.createElement('div');
+  overlay.className = 'img-overlay';
+  overlay.classList.add(`theme-${resolvedTheme}`);
+  slide.appendChild(overlay);
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner';
+  slide.appendChild(inner);
+
+  const content = document.createElement('div');
+  content.className = 'bg-content';
+  content.classList.add(`overlay-align-${resolvedAlignment}`);
+  inner.appendChild(content);
+
+  const card = document.createElement('div');
+  card.className = 'overlay-card';
+  if (resolvedTheme === 'light') {
+    card.classList.add('is-light');
+  }
+  content.appendChild(card);
+
+  if (resolvedEyebrow) {
+    const pill = document.createElement('span');
+    pill.className = 'pill overlay-pill';
+    pill.textContent = resolvedEyebrow;
+    card.appendChild(pill);
+  }
+
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedHeading;
+  card.appendChild(headingEl);
+
+  if (resolvedBody) {
+    const bodyEl = document.createElement('p');
+    bodyEl.className = 'deck-subtitle';
+    bodyEl.textContent = resolvedBody;
+    card.appendChild(bodyEl);
+  }
+
+  return slide;
+}
+
 function ensureInteractivePracticeModuleControls(slide) {
   if (!(slide instanceof HTMLElement)) {
     return {
@@ -10584,7 +10642,7 @@ function handleBuilderSubmit(event) {
   const requiresActivityTitle = ![
     'learning-objectives',
     'model-dialogue',
-    'interactive-practice',
+    'image-slide',
     'communicative-task',
     'pronunciation-focus',
     'reflection',
@@ -10655,21 +10713,21 @@ function handleBuilderSubmit(event) {
       });
       break;
     }
-    case "interactive-practice": {
-      const questions = Array.isArray(state.practice.questions)
-        ? state.practice.questions.filter((q) => q.prompt && q.options.length)
-        : [];
-      if (!questions.length) {
-        showBuilderStatus("Provide at least one question with options.", "error");
-        const questionInput = builderForm.querySelector('[name="practiceQuestion1"]');
-        questionInput?.focus({ preventScroll: true });
+    case "image-slide": {
+      if (!trimText(state.imageSlide.heading || "")) {
+        showBuilderStatus("Add a heading for the overlay.", "error");
+        const headingInput = builderForm.querySelector('[name="imageSlideHeading"]');
+        headingInput?.focus({ preventScroll: true });
         return;
       }
-      slide = createInteractivePracticeSlide({
-        title: state.practice.title,
-        instructions: state.practice.instructions,
-        activityType: state.practice.activityType,
-        questions,
+      slide = createImageOverlaySlide({
+        eyebrow: state.imageSlide.eyebrow,
+        heading: state.imageSlide.heading,
+        body: state.imageSlide.body,
+        alignment: state.imageSlide.alignment,
+        theme: state.imageSlide.theme,
+        imageUrl: state.imageUrl,
+        imageAlt: state.imageAlt,
       });
       break;
     }
@@ -10918,10 +10976,6 @@ function handleBuilderSubmit(event) {
     return;
   }
 
-  if (state.layout === "interactive-practice") {
-    initialiseInteractivePracticeSlide(slide);
-  }
-
   initialiseBuilderSlide(slide);
   insertActivitySlide(slide);
   if (typeof slide.__deckShowStatus === "function") {
@@ -10990,7 +11044,7 @@ function initialiseActivityBuilderUI() {
           "blank-canvas": "Blank canvas selected.",
           "learning-objectives": "Learning objectives layout selected.",
           "model-dialogue": "Model dialogue layout selected.",
-          "interactive-practice": "Interactive practice layout selected.",
+          "image-slide": "Image slide layout selected.",
           "communicative-task": "Communicative task layout selected.",
           "pronunciation-focus": "Pronunciation focus layout selected.",
           reflection: "Reflection layout selected.",
