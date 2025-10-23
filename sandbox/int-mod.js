@@ -1586,9 +1586,15 @@ export function createBlankSlide() {
     </button>
     <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
       <p class="blank-toolbar-empty" data-role="toolbar-empty">
-        Select a canvas item to edit its appearance.
+        Select a canvas item to edit its appearance. Use the icons to open its tools.
       </p>
       <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
+      <div
+        class="blank-toolbar-tabs"
+        data-role="toolbar-tabs"
+        role="tablist"
+        hidden
+      ></div>
       <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
         <h3 class="blank-toolbar-heading">Textbox style</h3>
         <div
@@ -1711,6 +1717,7 @@ export function attachBlankSlideEvents(slide) {
   const toolbarSelectionLabel = toolbarPanel?.querySelector(
     '[data-role="toolbar-selection"]',
   );
+  const toolbarTabs = toolbarPanel?.querySelector('[data-role="toolbar-tabs"]');
   const toolbarSections = Array.from(
     toolbarPanel?.querySelectorAll?.('.blank-toolbar-section[data-tools-for]') ?? [],
   );
@@ -1726,11 +1733,85 @@ export function attachBlankSlideEvents(slide) {
   const imageSizeInput = toolbarPanel?.querySelector('[data-role="image-size"]');
   const imageSizeValue = toolbarPanel?.querySelector('[data-role="image-size-value"]');
 
+  const TOOLBAR_TAB_DETAILS = new Map([
+    ["textbox", { icon: "fa-solid fa-pen-to-square", label: "Textbox tools" }],
+    ["table", { icon: "fa-solid fa-table", label: "Table tools" }],
+    [
+      "mindmap",
+      { icon: "fa-solid fa-diagram-project", label: "Mind map tools" },
+    ],
+    ["image", { icon: "fa-solid fa-image", label: "Image tools" }],
+  ]);
+
+  const toolbarInstanceId =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `toolbar-${Math.random().toString(36).slice(2, 11)}`;
+
+  toolbarSections.forEach((section, index) => {
+    if (!(section instanceof HTMLElement)) {
+      return;
+    }
+    const targetType = section.dataset.toolsFor ?? `section-${index}`;
+    if (!section.id) {
+      section.id = `blank-tools-${targetType}-${toolbarInstanceId}`;
+    }
+    section.setAttribute("role", "tabpanel");
+    section.setAttribute("tabindex", "-1");
+    section.setAttribute("aria-hidden", "true");
+  });
+
+  if (toolbarTabs instanceof HTMLElement) {
+    toolbarTabs.innerHTML = "";
+    toolbarTabs.setAttribute("aria-label", "Canvas item tools");
+    const created = new Set();
+    toolbarSections.forEach((section, index) => {
+      if (!(section instanceof HTMLElement)) {
+        return;
+      }
+      const type = section.dataset.toolsFor;
+      if (!type || created.has(type) || !TOOLBAR_TAB_DETAILS.has(type)) {
+        return;
+      }
+      created.add(type);
+      const details = TOOLBAR_TAB_DETAILS.get(type);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "blank-toolbar-tab";
+      button.dataset.toolsTarget = type;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", "false");
+      if (section.id) {
+        button.setAttribute("aria-controls", section.id);
+        const tabId = `${section.id}-tab`;
+        button.id = tabId;
+        section.setAttribute("aria-labelledby", tabId);
+      }
+      if (details?.label) {
+        button.title = details.label;
+      }
+      const iconSpan = document.createElement("span");
+      iconSpan.className = "blank-toolbar-tab-icon";
+      iconSpan.setAttribute("aria-hidden", "true");
+      iconSpan.innerHTML = `<i class="${details?.icon ?? ""}"></i>`;
+      button.appendChild(iconSpan);
+      const labelSpan = document.createElement("span");
+      labelSpan.className = "sr-only";
+      labelSpan.textContent = details?.label ?? type;
+      button.appendChild(labelSpan);
+      toolbarTabs.appendChild(button);
+    });
+    if (!toolbarTabs.children.length) {
+      toolbarTabs.hidden = true;
+    }
+  }
+
   const SELECTED_CLASS = "blank-toolbar-selected";
   const CANVAS_ITEM_CLASS = "blank-toolbar-item";
 
   let selectedItem = null;
   let selectedType = null;
+  let activeToolsType = null;
   let imageSizeReference = null;
   let storedTextboxRange = null;
 
@@ -1745,6 +1826,54 @@ export function attachBlankSlideEvents(slide) {
       toolbarPanel.hidden = !isExpanded;
     }
   };
+
+  const setActiveToolsType = (type, { force = false } = {}) => {
+    if (typeof type !== "string" || !type.trim()) {
+      activeToolsType = null;
+      return;
+    }
+    const targetType = type.trim();
+    if (!force && activeToolsType === targetType) {
+      activeToolsType = null;
+      return;
+    }
+    activeToolsType = targetType;
+  };
+
+  const updateToolbarTabs = () => {
+    if (!(toolbarTabs instanceof HTMLElement)) {
+      return;
+    }
+    const buttons = Array.from(
+      toolbarTabs.querySelectorAll?.('button[data-tools-target]') ?? [],
+    );
+    if (!buttons.length) {
+      toolbarTabs.hidden = true;
+      return;
+    }
+    const hasSelection = Boolean(selectedType);
+    let visibleCount = 0;
+    buttons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const targetType = button.dataset.toolsTarget ?? "";
+      const isRelevant = hasSelection && targetType === selectedType;
+      const isActive = isRelevant && activeToolsType === targetType;
+      button.disabled = !isRelevant;
+      button.tabIndex = isRelevant ? 0 : -1;
+      button.setAttribute("aria-disabled", isRelevant ? "false" : "true");
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.classList.toggle("is-active", isActive);
+      button.hidden = !hasSelection;
+      if (isRelevant) {
+        visibleCount += 1;
+      }
+    });
+    toolbarTabs.hidden = !hasSelection || visibleCount === 0;
+  };
+
+  setToolbarExpanded(false);
 
   const getSelectionLabel = () => {
     if (!(selectedItem instanceof HTMLElement) || !selectedType) {
@@ -1911,12 +2040,14 @@ export function attachBlankSlideEvents(slide) {
     if (!(toolbar instanceof HTMLElement)) {
       return;
     }
-    toolbar.classList.toggle("has-selection", Boolean(selectedType));
+    const hasSelection = Boolean(selectedType);
+    const hasActiveSection = hasSelection && Boolean(activeToolsType);
+    toolbar.classList.toggle("has-selection", hasSelection);
     if (toolbarEmpty instanceof HTMLElement) {
-      toolbarEmpty.hidden = Boolean(selectedType);
+      toolbarEmpty.hidden = hasActiveSection;
     }
     if (toolbarSelectionLabel instanceof HTMLElement) {
-      if (selectedType) {
+      if (hasSelection) {
         toolbarSelectionLabel.hidden = false;
         toolbarSelectionLabel.textContent = getSelectionLabel();
       } else {
@@ -1929,10 +2060,13 @@ export function attachBlankSlideEvents(slide) {
         return;
       }
       const targetType = section.dataset.toolsFor;
-      const isActive = Boolean(selectedType && targetType === selectedType);
+      const isRelevant = hasSelection && targetType === selectedType;
+      const isActive = Boolean(isRelevant && activeToolsType === targetType);
       section.hidden = !isActive;
       section.setAttribute("data-active", isActive ? "true" : "false");
+      section.setAttribute("aria-hidden", isActive ? "false" : "true");
     });
+    updateToolbarTabs();
     syncColorControls();
     syncEffectControls();
     syncImageSizeControls();
@@ -1946,6 +2080,7 @@ export function attachBlankSlideEvents(slide) {
     }
     selectedItem = null;
     selectedType = null;
+    setActiveToolsType(null);
     imageSizeReference = null;
     storedTextboxRange = null;
     updateToolbar();
@@ -1965,6 +2100,7 @@ export function attachBlankSlideEvents(slide) {
     }
     selectedItem = element;
     selectedType = type;
+    setActiveToolsType(type, { force: true });
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -2366,6 +2502,28 @@ export function attachBlankSlideEvents(slide) {
     imageSizeInput.addEventListener("input", handleImageScale);
     registerCleanup(() => {
       imageSizeInput.removeEventListener("input", handleImageScale);
+    });
+  }
+
+  if (toolbarTabs instanceof HTMLElement) {
+    const handleToolbarTabClick = (event) => {
+      const button =
+        event.target instanceof HTMLElement
+          ? event.target.closest('button[data-tools-target]')
+          : null;
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const targetType = button.dataset.toolsTarget;
+      if (!targetType || targetType !== selectedType) {
+        return;
+      }
+      setActiveToolsType(targetType);
+      updateToolbar();
+    };
+    toolbarTabs.addEventListener("click", handleToolbarTabClick);
+    registerCleanup(() => {
+      toolbarTabs.removeEventListener("click", handleToolbarTabClick);
     });
   }
 
@@ -3201,13 +3359,11 @@ export function createTextbox({ onRemove } = {}) {
   textbox.dataset.color = DEFAULT_TEXTBOX_COLOR;
   textbox.innerHTML = `
     <button type="button" class="textbox-remove" aria-label="Remove textbox">
-<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle">
-<span class="textbox-title">
-  <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-  Textbox
-</span>
+    <div class="textbox-handle textbox-handle--floating">
+      <span class="sr-only">Drag textbox</span>
+      <i class="fa-solid fa-grip-dots" aria-hidden="true"></i>
     </div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
@@ -3668,11 +3824,9 @@ export function createPastedImage({ src, label, onRemove } = {}) {
     <button type="button" class="textbox-remove pasted-image-remove" aria-label="Remove image">
       <i class="fa-solid fa-xmark" aria-hidden="true"></i>
     </button>
-    <div class="textbox-handle pasted-image-handle">
-      <span class="textbox-title">
-        <i class="fa-solid fa-image" aria-hidden="true"></i>
-        Image
-      </span>
+    <div class="textbox-handle textbox-handle--floating pasted-image-handle">
+      <span class="sr-only">Drag image</span>
+      <i class="fa-solid fa-grip-dots" aria-hidden="true"></i>
     </div>
     <div class="pasted-image-body">
       <img loading="lazy" decoding="async" alt="" />
