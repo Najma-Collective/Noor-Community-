@@ -119,6 +119,18 @@ body {
   color: var(--forest-shadow);
 }
 
+.toolbar-logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toolbar-logos img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
 .toolbar-brand span {
   letter-spacing: 0.04em;
   text-transform: uppercase;
