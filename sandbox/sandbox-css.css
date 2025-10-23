@@ -898,6 +898,26 @@ body {
   display: block;
 }
 
+.bg-media-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  text-align: center;
+  font-weight: 600;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: rgba(253, 251, 245, 0.85);
+  background: linear-gradient(
+      135deg,
+      rgba(28, 45, 33, 0.68) 0%,
+      rgba(16, 28, 21, 0.84) 100%
+    ),
+    url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"%3E%3Cpath fill="%23ffffff1a" d="M0 0h40v40H0zM80 0h40v40H80zM40 40h40v40H40zM120 40h40v40h-40zM0 80h40v40H0zM80 80h40v40H80zM40 120h40v40H40zM120 120h40v40h-40z"/%3E%3C/svg%3E');
+  background-size: cover;
+  backdrop-filter: blur(2px);
+}
+
 .bg-media.remote-image-fallback {
   background: linear-gradient(
     135deg,
@@ -924,6 +944,16 @@ body {
   z-index: 1;
 }
 
+.img-overlay.theme-light {
+  background: linear-gradient(
+    120deg,
+    rgba(253, 251, 245, 0.65) 0%,
+    rgba(253, 251, 245, 0.35) 45%,
+    rgba(253, 251, 245, 0.18) 70%,
+    transparent 100%
+  );
+}
+
 .slide-inner {
   position: absolute;
   inset: 0;
@@ -937,6 +967,11 @@ body {
   scrollbar-gutter: stable both-edges;
 }
 
+.image-overlay-slide .slide-inner {
+  justify-content: center;
+  align-items: stretch;
+}
+
 .bg-content {
   position: relative;
   z-index: 2;
@@ -945,6 +980,24 @@ body {
   flex-direction: column;
   gap: 1.2rem;
   align-items: flex-start;
+}
+
+.bg-content.overlay-align-center {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.bg-content.overlay-align-right {
+  align-items: flex-end;
+  text-align: right;
+  justify-content: center;
+}
+
+.bg-content.overlay-align-left {
+  align-items: flex-start;
+  text-align: left;
+  justify-content: center;
 }
 
 .bg-content.centered {
@@ -1011,6 +1064,49 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.bg-content.overlay-align-center .overlay-card {
+  margin-inline: auto;
+  text-align: center;
+  align-items: center;
+}
+
+.bg-content.overlay-align-right .overlay-card {
+  margin-left: auto;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.bg-content.overlay-align-left .overlay-card {
+  margin-right: auto;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.overlay-card.is-light {
+  background: color-mix(
+    in srgb,
+    rgba(253, 251, 245, 0.9) 75%,
+    rgba(240, 235, 220, 0.65) 25%
+  );
+  color: rgba(34, 41, 32, 0.92);
+  border-color: rgba(148, 136, 116, 0.25);
+  box-shadow: 0 24px 60px rgba(12, 16, 10, 0.18);
+}
+
+.overlay-card.is-light h1,
+.overlay-card.is-light h2,
+.overlay-card.is-light p,
+.overlay-card.is-light .pill,
+.overlay-card.is-light .deck-subtitle {
+  color: rgba(34, 41, 32, 0.92);
+}
+
+.overlay-card.is-light .overlay-pill {
+  background: rgba(34, 41, 32, 0.1) !important;
+  color: rgba(34, 41, 32, 0.92) !important;
+  box-shadow: inset 0 0 0 1px rgba(34, 41, 32, 0.16);
 }
 
 .overlay-card.centered {
