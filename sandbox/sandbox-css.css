@@ -2016,11 +2016,13 @@ ol {
 }
 
 .blank-toolbar-panel {
-  padding: 0.75rem 0.9rem 0.9rem;
+  padding: 0.75rem 0.9rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   background: rgba(255, 255, 255, 0.96);
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
 }
 
 .blank-toolbar-empty {
@@ -2034,6 +2036,64 @@ ol {
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--forest-shadow);
+}
+
+.blank-toolbar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0 0.5rem;
+  border-bottom: 1px solid rgba(122, 132, 113, 0.18);
+}
+
+.blank-toolbar-tabs[hidden] {
+  display: none;
+}
+
+.blank-toolbar-tab {
+  border: none;
+  background: rgba(122, 132, 113, 0.12);
+  color: var(--forest-shadow);
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.blank-toolbar-tab[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.blank-toolbar-tab:not([disabled]):hover,
+.blank-toolbar-tab:not([disabled]):focus-visible {
+  background: rgba(122, 132, 113, 0.2);
+  color: var(--deep-forest);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(39, 51, 35, 0.1);
+}
+
+.blank-toolbar-tab:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary-forest) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.blank-toolbar-tab.is-active {
+  background: color-mix(in srgb, var(--accent) 30%, rgba(122, 132, 113, 0.16));
+  color: var(--deep-forest);
+  box-shadow: inset 0 0 0 1px rgba(122, 132, 113, 0.28);
+  transform: translateY(-1px);
+}
+
+.blank-toolbar-tab-icon i {
+  pointer-events: none;
+  font-size: 1rem;
 }
 
 .blank-toolbar-section {
@@ -2286,55 +2346,40 @@ ol {
 }
 
 .textbox {
-  --textbox-bg: rgba(254, 252, 247, 0.95);
-  --textbox-border: rgba(122, 132, 113, 0.35);
-  --textbox-handle-bg: rgba(122, 132, 113, 0.16);
-  --textbox-handle-fg: var(--deep-forest);
-  --textbox-remove-bg: rgba(254, 252, 247, 0.9);
-  --textbox-remove-fg: var(--forest-shadow);
-  --textbox-toolbar-bg: color-mix(in srgb, var(--textbox-bg) 86%, #ffffff 14%);
-  --textbox-toolbar-fg: color-mix(
-    in srgb,
-    var(--textbox-handle-fg) 70%,
-    var(--forest-shadow) 30%
-  );
-  --textbox-toolbar-border: color-mix(
-    in srgb,
-    var(--textbox-border) 75%,
-    transparent
-  );
+  --textbox-bg: rgba(255, 255, 255, 0.98);
+  --textbox-border: rgba(122, 132, 113, 0.25);
+  --textbox-handle-bg: rgba(27, 34, 24, 0.78);
+  --textbox-handle-fg: #ffffff;
+  --textbox-remove-bg: rgba(27, 34, 24, 0.78);
+  --textbox-remove-fg: #ffffff;
+  --textbox-toolbar-bg: transparent;
+  --textbox-toolbar-fg: var(--forest-shadow);
+  --textbox-toolbar-border: transparent;
   --textbox-toolbar-button-bg: transparent;
-  --textbox-toolbar-button-fg: var(--textbox-toolbar-fg);
-  --textbox-toolbar-button-hover-bg: color-mix(
-    in srgb,
-    var(--textbox-toolbar-fg) 14%,
-    transparent
-  );
-  --textbox-toolbar-button-active-bg: color-mix(
-    in srgb,
-    var(--textbox-toolbar-fg) 22%,
-    transparent
-  );
-  --textbox-toolbar-button-active-fg: var(--textbox-handle-fg);
+  --textbox-toolbar-button-fg: var(--forest-shadow);
+  --textbox-toolbar-button-hover-bg: rgba(122, 132, 113, 0.12);
+  --textbox-toolbar-button-active-bg: rgba(122, 132, 113, 0.2);
+  --textbox-toolbar-button-active-fg: var(--deep-forest);
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--textbox-border);
-  box-shadow: var(--shadow-1);
   background: var(--textbox-bg);
+  box-shadow: var(--shadow-1);
   width: clamp(240px, 35%, 420px);
-  min-height: 140px;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
-  cursor: move;
+  padding: 1.5rem 1.5rem 1.25rem;
+  padding-top: 2rem;
+  cursor: text;
   touch-action: none;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .textbox[data-effect="shadow"],
-.canvas-table[data-effect="shadow"],
-.pasted-image[data-effect="shadow"] {
+.canvas-table[data-effect="shadow"] {
   box-shadow: var(--shadow-3);
 }
 
@@ -2358,6 +2403,48 @@ ol {
   cursor: grab;
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
+}
+
+.textbox-handle--floating {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-bottom: none;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  gap: 0;
+  background: var(--textbox-handle-bg, rgba(27, 34, 24, 0.78));
+  color: var(--textbox-handle-fg, #ffffff);
+  font-size: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: var(--shadow-1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.textbox-handle--floating:hover,
+.textbox-handle--floating:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--textbox-handle-bg, rgba(27, 34, 24, 0.78)) 85%,
+    #000000 15%
+  );
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+}
+
+.textbox-handle--floating:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary-forest) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.textbox-handle--floating i {
+  pointer-events: none;
+  font-size: 1rem;
 }
 
 .textbox-toolbar {
@@ -2467,20 +2554,16 @@ ol {
 .textbox[data-color="sage"] {
   --textbox-bg: rgba(254, 252, 247, 0.95);
   --textbox-border: rgba(122, 132, 113, 0.35);
-  --textbox-handle-bg: rgba(122, 132, 113, 0.18);
-  --textbox-handle-fg: var(--deep-forest);
-  --textbox-remove-bg: rgba(254, 252, 247, 0.9);
-  --textbox-remove-fg: var(--forest-shadow);
+  --textbox-handle-bg: rgba(122, 132, 113, 0.85);
+  --textbox-handle-fg: #ffffff;
   --textbox-toolbar-fg: var(--forest-shadow);
 }
 
 .textbox[data-color="wheat"] {
   --textbox-bg: rgba(255, 249, 236, 0.96);
   --textbox-border: rgba(199, 147, 79, 0.55);
-  --textbox-handle-bg: rgba(199, 147, 79, 0.9);
-  --textbox-handle-fg: #3d2a12;
-  --textbox-remove-bg: rgba(255, 247, 228, 0.92);
-  --textbox-remove-fg: #3d2a12;
+  --textbox-handle-bg: rgba(199, 147, 79, 0.88);
+  --textbox-handle-fg: #fff4e3;
   --textbox-toolbar-fg: #4a3116;
   --textbox-toolbar-button-active-fg: #3d2a12;
 }
@@ -2488,10 +2571,8 @@ ol {
 .textbox[data-color="sky"] {
   --textbox-bg: rgba(239, 247, 255, 0.96);
   --textbox-border: rgba(79, 130, 196, 0.45);
-  --textbox-handle-bg: rgba(79, 130, 196, 0.9);
-  --textbox-handle-fg: #f5f8ff;
-  --textbox-remove-bg: rgba(232, 242, 255, 0.94);
-  --textbox-remove-fg: #234974;
+  --textbox-handle-bg: rgba(79, 130, 196, 0.88);
+  --textbox-handle-fg: #ffffff;
   --textbox-toolbar-fg: #2c4a72;
   --textbox-toolbar-button-active-fg: #f5f8ff;
 }
@@ -2499,10 +2580,8 @@ ol {
 .textbox[data-color="rose"] {
   --textbox-bg: rgba(255, 241, 245, 0.96);
   --textbox-border: rgba(191, 106, 130, 0.45);
-  --textbox-handle-bg: rgba(191, 106, 130, 0.9);
-  --textbox-handle-fg: #fff6f8;
-  --textbox-remove-bg: rgba(255, 236, 243, 0.94);
-  --textbox-remove-fg: #622b3b;
+  --textbox-handle-bg: rgba(191, 106, 130, 0.88);
+  --textbox-handle-fg: #fff7fa;
   --textbox-toolbar-fg: #6a2c3e;
   --textbox-toolbar-button-active-fg: #fff6f8;
 }
@@ -2510,23 +2589,22 @@ ol {
 .textbox[data-color="slate"] {
   --textbox-bg: rgba(245, 248, 251, 0.96);
   --textbox-border: rgba(92, 111, 130, 0.5);
-  --textbox-handle-bg: rgba(92, 111, 130, 0.88);
+  --textbox-handle-bg: rgba(92, 111, 130, 0.85);
   --textbox-handle-fg: #f8fbff;
-  --textbox-remove-bg: rgba(238, 243, 248, 0.94);
-  --textbox-remove-fg: #1f2d3a;
   --textbox-toolbar-fg: #2a3b4a;
   --textbox-toolbar-button-active-fg: #f8fbff;
 }
 
 .textbox-body {
   flex: 1;
-  padding: 0.75rem;
+  padding: 0;
   font-family: var(--font-body);
   font-size: var(--step--1);
   line-height: 1.5;
   outline: none;
   cursor: text;
   overflow: auto;
+  min-height: 90px;
 }
 
 .textbox-body strong {
@@ -2593,30 +2671,61 @@ ol {
 
 .textbox-body:focus {
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--textbox-border) 65%, transparent);
+  border-radius: calc(var(--radius-lg) - 12px);
 }
 
 .textbox-remove {
   position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
-  border: none;
+  top: 0.5rem;
+  right: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   background: var(--textbox-remove-bg);
   color: var(--textbox-remove-fg);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  box-shadow: var(--shadow-1);
+  box-shadow: 0 12px 24px rgba(27, 34, 24, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
 }
 
-.textbox-remove:hover {
-  color: #c62828;
+.textbox-remove:hover,
+.textbox-remove:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(27, 34, 24, 0.28);
+}
+
+.textbox-remove:focus-visible {
+  outline: 2px solid color-mix(in srgb, #ffffff 60%, transparent);
+  outline-offset: 2px;
 }
 
 .textbox-remove i {
   pointer-events: none;
+}
+
+.canvas-table .textbox-remove {
+  border: none;
+  background: var(--table-remove-bg);
+  color: var(--table-remove-fg);
+  width: 30px;
+  height: 30px;
+  box-shadow: var(--shadow-1);
+  transform: none;
+}
+
+.canvas-table .textbox-remove:hover {
+  background: var(--table-remove-bg);
+  color: #c62828;
+  box-shadow: var(--shadow-1);
+}
+
+.canvas-table .textbox-remove:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--table-remove-fg) 45%, transparent);
+  outline-offset: 2px;
 }
 
 .canvas-table {
@@ -2803,33 +2912,26 @@ ol {
 }
 
 .pasted-image {
+  --textbox-handle-bg: rgba(27, 34, 24, 0.72);
+  --textbox-handle-fg: #ffffff;
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: var(--radius);
-  border: 1px solid rgba(122, 132, 113, 0.28);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: var(--shadow-1);
+  border-radius: var(--radius-lg);
+  border: none;
+  background: transparent;
+  box-shadow: none;
   min-width: 180px;
   min-height: 160px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   touch-action: none;
-  transition: box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
-.pasted-image:focus-within {
-  box-shadow: var(--shadow-2);
-}
-
-.pasted-image .textbox-handle {
-  background: rgba(122, 132, 113, 0.16);
-  color: var(--deep-forest);
-}
-
-.pasted-image .textbox-title i {
-  color: var(--primary-sage);
+.pasted-image:focus-within .pasted-image-body img {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-forest) 45%, transparent);
 }
 
 .pasted-image-body {
@@ -2837,40 +2939,53 @@ ol {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem;
-  background: rgba(248, 252, 246, 0.9);
+  padding: 0;
+  background: transparent;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .pasted-image-body img {
-  max-width: 100%;
-  max-height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: calc(var(--radius) - 6px);
-  box-shadow: 0 12px 24px rgba(34, 41, 32, 0.12);
+  border-radius: inherit;
+  box-shadow: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.pasted-image[data-effect="shadow"] .pasted-image-body img {
+  box-shadow: 0 20px 36px rgba(27, 34, 24, 0.28);
 }
 
 .pasted-image-resizer {
   position: absolute;
   bottom: 0.5rem;
   right: 0.5rem;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--deep-forest);
-  box-shadow: var(--shadow-1);
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(27, 34, 24, 0.78);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(27, 34, 24, 0.22);
   display: grid;
   place-items: center;
   cursor: nwse-resize;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .pasted-image-resizer:hover,
 .pasted-image-resizer:focus-visible {
-  outline: none;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-2);
+  box-shadow: 0 16px 28px rgba(27, 34, 24, 0.28);
+  background: rgba(27, 34, 24, 0.88);
+}
+
+.pasted-image-resizer:focus-visible {
+  outline: 2px solid color-mix(in srgb, #ffffff 60%, transparent);
+  outline-offset: 2px;
 }
 
 .pasted-image-resizer i {
