@@ -1592,6 +1592,12 @@ export function createBlankSlide() {
       <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
         <h3 class="blank-toolbar-heading">Textbox style</h3>
         <div
+          class="blank-toolbar-actions blank-toolbar-actions--tight"
+          data-role="textbox-formatting"
+          role="group"
+          aria-label="Textbox formatting"
+        ></div>
+        <div
           class="blank-toolbar-swatches textbox-color-options"
           data-role="toolbar-color-options"
           data-tools-for="textbox"
@@ -1603,6 +1609,21 @@ export function createBlankSlide() {
       </section>
       <section class="blank-toolbar-section" data-tools-for="table" hidden>
         <h3 class="blank-toolbar-heading">Table style</h3>
+        <div
+          class="blank-toolbar-actions"
+          data-role="table-structure"
+          role="group"
+          aria-label="Table structure"
+        >
+          <button type="button" class="blank-toolbar-action" data-action="table-add-column">
+            <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+            <span>Add column</span>
+          </button>
+          <button type="button" class="blank-toolbar-action" data-action="table-add-row">
+            <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
+            <span>Add row</span>
+          </button>
+        </div>
         <div
           class="blank-toolbar-swatches textbox-color-options"
           data-role="toolbar-color-options"
@@ -1623,7 +1644,7 @@ export function createBlankSlide() {
       <section class="blank-toolbar-section" data-tools-for="image" hidden>
         <h3 class="blank-toolbar-heading">Image adjustments</h3>
         <label class="blank-toolbar-range">
-          <span>Scale</span>
+          <span>Resize</span>
           <input
             type="range"
             min="60"
@@ -1696,6 +1717,10 @@ export function attachBlankSlideEvents(slide) {
   const colorContainers = Array.from(
     toolbarPanel?.querySelectorAll?.('[data-role="toolbar-color-options"]') ?? [],
   );
+  const textboxFormattingContainer = toolbarPanel?.querySelector(
+    '[data-role="textbox-formatting"]',
+  );
+  const tableStructureContainer = toolbarPanel?.querySelector('[data-role="table-structure"]');
   const textboxShadowToggle = toolbarPanel?.querySelector('[data-role="textbox-shadow"]');
   const imageShadowToggle = toolbarPanel?.querySelector('[data-role="image-shadow"]');
   const imageSizeInput = toolbarPanel?.querySelector('[data-role="image-size"]');
@@ -1707,6 +1732,7 @@ export function attachBlankSlideEvents(slide) {
   let selectedItem = null;
   let selectedType = null;
   let imageSizeReference = null;
+  let storedTextboxRange = null;
 
   const setToolbarExpanded = (expanded) => {
     if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
@@ -1799,6 +1825,88 @@ export function attachBlankSlideEvents(slide) {
     imageSizeValue.textContent = `${percent}%`;
   };
 
+  const getActiveTextboxBody = () => {
+    if (selectedType !== "textbox" || !(selectedItem instanceof HTMLElement)) {
+      return null;
+    }
+    const body = selectedItem.querySelector(".textbox-body");
+    return body instanceof HTMLElement ? body : null;
+  };
+
+  const saveTextboxSelection = () => {
+    const body = getActiveTextboxBody();
+    if (!(body instanceof HTMLElement)) {
+      storedTextboxRange = null;
+      return;
+    }
+    const context = getSelectionContextWithin(body);
+    if (context) {
+      storedTextboxRange = context.range.cloneRange();
+    }
+  };
+
+  const restoreTextboxSelection = () => {
+    if (!storedTextboxRange) {
+      return;
+    }
+    const selection = window.getSelection?.();
+    if (!selection) {
+      return;
+    }
+    selection.removeAllRanges();
+    selection.addRange(storedTextboxRange.cloneRange());
+  };
+
+  const syncTextboxFormattingControls = () => {
+    if (!(textboxFormattingContainer instanceof HTMLElement)) {
+      return;
+    }
+    const buttons = Array.from(
+      textboxFormattingContainer.querySelectorAll?.("button[data-command]") ?? [],
+    );
+    if (!buttons.length) {
+      return;
+    }
+    const body = getActiveTextboxBody();
+    const enabled = body instanceof HTMLElement;
+    buttons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      if (enabled) {
+        button.removeAttribute("disabled");
+      } else {
+        button.setAttribute("disabled", "disabled");
+      }
+    });
+    if (enabled) {
+      updateToolbarState(textboxFormattingContainer, body);
+    } else {
+      buttons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) {
+          return;
+        }
+        button.setAttribute("aria-pressed", "false");
+        button.classList.remove("is-active");
+      });
+    }
+  };
+
+  const syncTableStructureControls = () => {
+    if (!(tableStructureContainer instanceof HTMLElement)) {
+      return;
+    }
+    const buttons = Array.from(
+      tableStructureContainer.querySelectorAll?.("button[data-action]") ?? [],
+    );
+    const enabled = selectedType === "table" && selectedItem instanceof HTMLElement;
+    buttons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = !enabled;
+      }
+    });
+  };
+
   const updateToolbar = () => {
     if (!(toolbar instanceof HTMLElement)) {
       return;
@@ -1828,6 +1936,8 @@ export function attachBlankSlideEvents(slide) {
     syncColorControls();
     syncEffectControls();
     syncImageSizeControls();
+    syncTextboxFormattingControls();
+    syncTableStructureControls();
   };
 
   const clearSelection = () => {
@@ -1837,6 +1947,7 @@ export function attachBlankSlideEvents(slide) {
     selectedItem = null;
     selectedType = null;
     imageSizeReference = null;
+    storedTextboxRange = null;
     updateToolbar();
   };
 
@@ -1863,6 +1974,11 @@ export function attachBlankSlideEvents(slide) {
       element.dataset.baseHeight = String(height);
     } else {
       imageSizeReference = null;
+    }
+    if (type !== "textbox") {
+      storedTextboxRange = null;
+    } else {
+      saveTextboxSelection();
     }
     setToolbarExpanded(true);
     updateToolbar();
@@ -2040,6 +2156,137 @@ export function attachBlankSlideEvents(slide) {
       });
     }
   };
+
+  if (textboxFormattingContainer instanceof HTMLElement) {
+    textboxFormattingContainer.innerHTML = "";
+    TEXTBOX_TOOLBAR_CONFIG.forEach((config) => {
+      const button = createToolbarButton(config);
+      if (button instanceof HTMLButtonElement) {
+        button.classList.add("blank-toolbar-action", "blank-toolbar-action--icon");
+        textboxFormattingContainer.appendChild(button);
+      }
+    });
+    const handleTextboxToolbarPointerDown = (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest("button[data-command]")
+          : null;
+      if (!target) {
+        return;
+      }
+      event.preventDefault();
+    };
+    const handleTextboxToolbarClick = (event) => {
+      const button =
+        event.target instanceof HTMLElement
+          ? event.target.closest("button[data-command]")
+          : null;
+      if (!(button instanceof HTMLButtonElement) || !button.dataset.command) {
+        return;
+      }
+      if (selectedType !== "textbox" || !(selectedItem instanceof HTMLElement)) {
+        return;
+      }
+      event.preventDefault();
+      restoreTextboxSelection();
+      const body = getActiveTextboxBody();
+      if (!(body instanceof HTMLElement)) {
+        return;
+      }
+      body.focus({ preventScroll: true });
+      const command = button.dataset.command;
+      switch (command) {
+        case "bold":
+          toggleInlineFormat(body, "STRONG");
+          break;
+        case "italic":
+          toggleInlineFormat(body, "EM");
+          break;
+        case "underline":
+          toggleInlineFormat(body, "U");
+          break;
+        case "highlight":
+          toggleInlineFormat(body, "MARK", { className: "textbox-highlight" });
+          break;
+        case "bullet-list":
+          createListFromRange(body, "UL");
+          break;
+        case "numbered-list":
+          createListFromRange(body, "OL");
+          break;
+        case "audio-link":
+          insertAudioLink(body);
+          break;
+        default:
+          break;
+      }
+      saveTextboxSelection();
+      syncTextboxFormattingControls();
+    };
+    textboxFormattingContainer.addEventListener(
+      "pointerdown",
+      handleTextboxToolbarPointerDown,
+    );
+    textboxFormattingContainer.addEventListener("click", handleTextboxToolbarClick);
+    registerCleanup(() => {
+      textboxFormattingContainer.removeEventListener(
+        "pointerdown",
+        handleTextboxToolbarPointerDown,
+      );
+      textboxFormattingContainer.removeEventListener("click", handleTextboxToolbarClick);
+    });
+  }
+
+  if (tableStructureContainer instanceof HTMLElement) {
+    const handleTableStructureClick = (event) => {
+      const button =
+        event.target instanceof HTMLElement
+          ? event.target.closest("button[data-action]")
+          : null;
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      if (selectedType !== "table" || !(selectedItem instanceof HTMLElement)) {
+        return;
+      }
+      event.preventDefault();
+      const action = button.dataset.action;
+      if (action === "table-add-column" && typeof selectedItem.__deckTableAddColumn === "function") {
+        selectedItem.__deckTableAddColumn();
+      } else if (
+        action === "table-add-row" &&
+        typeof selectedItem.__deckTableAddRow === "function"
+      ) {
+        selectedItem.__deckTableAddRow();
+      }
+      updateToolbar();
+    };
+    tableStructureContainer.addEventListener("click", handleTableStructureClick);
+    registerCleanup(() => {
+      tableStructureContainer.removeEventListener("click", handleTableStructureClick);
+    });
+  }
+
+  const handleDocumentSelectionChange = () => {
+    if (selectedType !== "textbox") {
+      return;
+    }
+    const body = getActiveTextboxBody();
+    if (!(body instanceof HTMLElement)) {
+      return;
+    }
+    const context = getSelectionContextWithin(body);
+    if (!context) {
+      return;
+    }
+    storedTextboxRange = context.range.cloneRange();
+    syncTextboxFormattingControls();
+  };
+
+  document.addEventListener("selectionchange", handleDocumentSelectionChange);
+  registerCleanup(() => {
+    document.removeEventListener("selectionchange", handleDocumentSelectionChange);
+  });
 
   colorContainers.forEach((container) => {
     if (!(container instanceof HTMLElement)) {
@@ -2829,124 +3076,6 @@ function updateToolbarState(toolbar, body) {
   });
 }
 
-function initialiseTextboxToolbar(toolbar, body) {
-  if (!(toolbar instanceof HTMLElement) || toolbar.__deckTextboxToolbarInitialised) {
-    return toolbar;
-  }
-  toolbar.__deckTextboxToolbarInitialised = true;
-  toolbar.setAttribute("role", "toolbar");
-  toolbar.setAttribute("aria-label", "Textbox formatting controls");
-  toolbar.innerHTML = "";
-  TEXTBOX_TOOLBAR_CONFIG.forEach((config) => {
-    toolbar.appendChild(createToolbarButton(config));
-  });
-
-  let storedRange = null;
-
-  const saveSelection = () => {
-    const context = getSelectionContextWithin(body);
-    if (context) {
-      storedRange = context.range.cloneRange();
-    }
-  };
-
-  const restoreSelection = () => {
-    if (!storedRange) {
-      return;
-    }
-    const selection = window.getSelection?.();
-    if (!selection) {
-      return;
-    }
-    selection.removeAllRanges();
-    selection.addRange(storedRange.cloneRange());
-  };
-
-  const handleToolbarPointerDown = (event) => {
-    const target = event.target instanceof HTMLElement ? event.target.closest("button") : null;
-    if (!target) {
-      return;
-    }
-    event.preventDefault();
-  };
-
-  const handleToolbarClick = (event) => {
-    const button = event.target instanceof HTMLElement ? event.target.closest("button") : null;
-    if (!(button instanceof HTMLButtonElement) || !button.dataset.command) {
-      return;
-    }
-    event.preventDefault();
-    restoreSelection();
-    body.focus({ preventScroll: true });
-    const command = button.dataset.command;
-    switch (command) {
-      case "bold":
-        toggleInlineFormat(body, "STRONG");
-        break;
-      case "italic":
-        toggleInlineFormat(body, "EM");
-        break;
-      case "underline":
-        toggleInlineFormat(body, "U");
-        break;
-      case "highlight":
-        toggleInlineFormat(body, "MARK", { className: "textbox-highlight" });
-        break;
-      case "bullet-list":
-        createListFromRange(body, "UL");
-        break;
-      case "numbered-list":
-        createListFromRange(body, "OL");
-        break;
-      case "audio-link":
-        insertAudioLink(body);
-        break;
-      default:
-        break;
-    }
-    saveSelection();
-    updateToolbarState(toolbar, body);
-  };
-
-  const handleBodyInput = () => {
-    saveSelection();
-    updateToolbarState(toolbar, body);
-  };
-
-  toolbar.addEventListener("pointerdown", handleToolbarPointerDown);
-  toolbar.addEventListener("click", handleToolbarClick);
-  body.addEventListener("keyup", handleBodyInput);
-  body.addEventListener("mouseup", handleBodyInput);
-  body.addEventListener("mouseleave", saveSelection);
-  body.addEventListener("input", handleBodyInput);
-  const handleBodyFocus = () => {
-    requestAnimationFrame(() => {
-      saveSelection();
-      updateToolbarState(toolbar, body);
-    });
-  };
-  const handleBodyBlur = () => {
-    storedRange = null;
-    updateToolbarState(toolbar, body);
-  };
-  body.addEventListener("focus", handleBodyFocus);
-  body.addEventListener("blur", handleBodyBlur);
-
-  toolbar.__deckTextboxToolbarCleanup = () => {
-    toolbar.removeEventListener("pointerdown", handleToolbarPointerDown);
-    toolbar.removeEventListener("click", handleToolbarClick);
-    body.removeEventListener("keyup", handleBodyInput);
-    body.removeEventListener("mouseup", handleBodyInput);
-    body.removeEventListener("mouseleave", saveSelection);
-    body.removeEventListener("input", handleBodyInput);
-    body.removeEventListener("focus", handleBodyFocus);
-    body.removeEventListener("blur", handleBodyBlur);
-  };
-
-  updateToolbarState(toolbar, body);
-  return toolbar;
-}
-
 function sanitizeTextboxNode(node) {
   if (!(node instanceof Node)) {
     return;
@@ -3080,7 +3209,6 @@ export function createTextbox({ onRemove } = {}) {
   Textbox
 </span>
     </div>
-    <div class="textbox-toolbar" role="toolbar" aria-label="Textbox formatting controls"></div>
     <div class="textbox-body" contenteditable="true" aria-label="Editable textbox">Double-click to start typing...</div>
   `;
   initialiseTextbox(textbox, { onRemove });
@@ -3111,13 +3239,6 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
 
   const removeBtn = textbox.querySelector(".textbox-remove");
   removeBtn?.addEventListener("click", () => {
-    if (toolbar instanceof HTMLElement) {
-      try {
-        toolbar.__deckTextboxToolbarCleanup?.();
-      } catch (error) {
-        console.warn("Failed to cleanup textbox toolbar", error);
-      }
-    }
     textbox.remove();
     if (typeof textbox.__deckTextboxOnRemove === "function") {
       textbox.__deckTextboxOnRemove();
@@ -3127,10 +3248,6 @@ export function initialiseTextbox(textbox, { onRemove } = {}) {
   const body = textbox.querySelector(".textbox-body");
   if (body instanceof HTMLElement) {
     sanitiseTextboxElement(body);
-  }
-  const toolbar = textbox.querySelector(".textbox-toolbar");
-  if (toolbar instanceof HTMLElement && body instanceof HTMLElement) {
-    initialiseTextboxToolbar(toolbar, body);
   }
   body?.addEventListener("dblclick", () => {
     if (body instanceof HTMLElement) {
@@ -3314,18 +3431,6 @@ export function createCanvasTable({
         <i class="fa-solid fa-table" aria-hidden="true"></i>
         Table
       </span>
-      <div class="canvas-table-toolbar">
-        <div class="canvas-table-actions" role="group" aria-label="Table controls">
-          <button type="button" class="canvas-table-action" data-action="add-column">
-            <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
-            Column
-          </button>
-          <button type="button" class="canvas-table-action" data-action="add-row">
-            <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
-            Row
-          </button>
-        </div>
-      </div>
     </div>
     <div class="canvas-table-body" role="region" aria-label="Editable table workspace">
       <table>
@@ -3399,8 +3504,6 @@ export function initialiseCanvasTable(table, { onRemove } = {}) {
   table.__deckTableSyncColor = () => syncColorState();
   table.__deckTableSetColor = (value) => syncColorState(value);
 
-  const addColumnBtn = table.querySelector('[data-action="add-column"]');
-  const addRowBtn = table.querySelector('[data-action="add-row"]');
   const tableElement = table.querySelector("table");
   const tableHead = tableElement?.querySelector("thead");
   const tableBody = tableElement?.querySelector("tbody");
@@ -3445,17 +3548,19 @@ export function initialiseCanvasTable(table, { onRemove } = {}) {
     }
   };
 
-  addColumnBtn?.addEventListener("click", () => {
+  table.__deckTableAddColumn = () => {
     addColumn();
     if (bodyWrapper instanceof HTMLElement) {
       bodyWrapper.scrollTo({ left: bodyWrapper.scrollWidth, behavior: "smooth" });
     }
-  });
-  addRowBtn?.addEventListener("click", addRow);
+  };
 
-  [addColumnBtn, addRowBtn].forEach((button) => {
-    button?.addEventListener("pointerdown", (event) => event.stopPropagation());
-  });
+  table.__deckTableAddRow = () => {
+    addRow();
+    if (bodyWrapper instanceof HTMLElement) {
+      bodyWrapper.scrollTo({ top: bodyWrapper.scrollHeight, behavior: "smooth" });
+    }
+  };
 
   const resizer = table.querySelector(".canvas-table-resizer");
   resizer?.addEventListener("pointerdown", (event) => {
