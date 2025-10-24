@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Minimal Deck Fixture</title>
+  </head>
+  <body>
+    <div id="deck-status" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="deck-toast-root"></div>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-actions">
+          <div class="highlight-controls">
+            <select id="highlight-color">
+              <option value="#F9E27D">Sunbeam</option>
+            </select>
+            <button id="highlight-btn" type="button">Apply</button>
+            <button id="remove-highlight-btn" type="button">Clear</button>
+          </div>
+          <button id="add-slide-btn" type="button">Add Blank Slide</button>
+          <button id="activity-builder-btn" type="button">Open Builder</button>
+          <button id="save-state-btn" type="button">Save</button>
+          <button id="load-state-btn" type="button">Load</button>
+          <input id="load-state-input" type="file" />
+        </div>
+      </header>
+      <main id="lesson-stage" class="deck-workspace">
+        <div class="stage-viewport"></div>
+      </main>
+    </div>
+
+    <div
+      id="activity-builder-overlay"
+      class="builder-overlay"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
+        <header class="builder-header">
+          <div>
+            <p class="builder-eyebrow">Slide library</p>
+            <h2 id="builder-title">Add a blank or templated slide</h2>
+            <p class="builder-subtitle">
+              Start with an empty canvas or choose a ready-made layout for objectives, models, practice, and reflection.
+            </p>
+          </div>
+          <button type="button" class="builder-close" aria-label="Close slide builder">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <form id="activity-builder-form" class="builder-form">
+          <div class="builder-grid">
+            <fieldset
+              class="builder-field builder-field--full layout-picker"
+              data-layouts="blank-canvas,facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
+            >
+              <legend class="builder-field-label">Choose a layout</legend>
+              <div class="layout-picker-grid">
+                <label class="layout-option" title="Start with an empty slide and build everything yourself.">
+                  <input type="radio" name="slideLayout" value="blank-canvas" checked />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-border-all"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Blank canvas</span>
+                      <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Lead a facilitation block with overview, steps, and rubric side by side.">
+                  <input type="radio" name="slideLayout" value="facilitation" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-people-group"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Workshop facilitation</span>
+                      <span class="layout-option-desc">Stage label, facilitation steps, and rubric side by side.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Spotlight a single rubric focus for rapid evidence capture.">
+                  <input type="radio" name="slideLayout" value="rubric-simple" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-clipboard-check"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Rubric spotlight</span>
+                      <span class="layout-option-desc">Title with rubric focus for rapid evidence capture.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Balance a discussion prompt with evidence capture columns.">
+                  <input type="radio" name="slideLayout" value="rubric-columns" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-table-columns"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Discussion columns</span>
+                      <span class="layout-option-desc">Rubric with two guided discussion columns beneath the title.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Pair a narrative spotlight with supporting visuals and rubric.">
+                  <input type="radio" name="slideLayout" value="image-spotlight" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-image"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Spotlight + image</span>
+                      <span class="layout-option-desc">Narrative column with rubric alongside an inspirational image.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Guide teams with a rubric plus three scaffolded action cards.">
+                  <input type="radio" name="slideLayout" value="rubric-cards" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-layer-group"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Strategy cards</span>
+                      <span class="layout-option-desc">Rubric plus three actionable strategy cards for teams.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Introduce an ELT vocabulary bank with CEFR notes and practice ideas.">
+                  <input type="radio" name="slideLayout" value="vocabulary-grid" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-table-cells-large"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Vocabulary grid</span>
+                      <span class="layout-option-desc">Target language with definitions, examples, and CEFR-aligned practice.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Build a reading lesson slide with strategy prompts and answer key.">
+                  <input type="radio" name="slideLayout" value="reading-comprehension" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-book-open-reader"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Reading comprehension</span>
+                      <span class="layout-option-desc">Text excerpt, pre-reading tasks, questions, and answer key for ELT lessons.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Coach pronunciation with minimal pairs, drill steps, and reflection rubric.">
+                  <input type="radio" name="slideLayout" value="pronunciation-drill" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-wave-square"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Pronunciation drill</span>
+                      <span class="layout-option-desc">Sound focus, minimal pairs, and coaching tips to monitor production.</span>
+                    </span>
+                  </span>
+                </label>
+                <label class="layout-option" title="Reflect on homework and link evidence to CEFR success criteria.">
+                  <input type="radio" name="slideLayout" value="homework-recap" />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-house-circle-check"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Homework recap</span>
+                      <span class="layout-option-desc">Homework summary, share-out prompts, and next steps for transfer.</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Stage label</span>
+              <input type="text" name="stageLabel" value="Activity Workshop · 15 minutes" />
+            </label>
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Activity title</span>
+              <input type="text" name="activityTitle" value="Design a community impact project" />
+            </label>
+            <label class="builder-field" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Duration</span>
+              <input type="text" name="activityDuration" value="10 minutes" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Slide title</span>
+              <input type="text" name="slideTitle" value="Facilitation steps" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Slide rubric lead-in</span>
+              <textarea name="slideRubricLead" rows="2">Capture evidence for each success criterion as you collaborate.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation">
+              <span class="builder-field-label">Activity overview</span>
+              <textarea name="activityOverview" rows="2">Learners review project ideas in small teams and prepare peer feedback.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation">
+              <span class="builder-field-label">Facilitation steps</span>
+              <textarea name="activitySteps" rows="4">Group learners in trios and assign each team a project brief.
+Give two minutes of silent reading to highlight key information.
+Invite teams to complete the rubric together and prepare one insight.
+Cold call teams to share the most compelling improvement idea.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-columns">
+              <span class="builder-field-label">Column A heading</span>
+              <input type="text" name="columnOneHeading" value="Discuss together" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-columns">
+              <span class="builder-field-label">Column A points (one per line)</span>
+              <textarea name="columnOneItems" rows="3">Identify a strength you noticed.
+Explain why it matters for the community.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-columns">
+              <span class="builder-field-label">Column B heading</span>
+              <input type="text" name="columnTwoHeading" value="Capture evidence" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-columns">
+              <span class="builder-field-label">Column B points (one per line)</span>
+              <textarea name="columnTwoItems" rows="3">Quote the part of the proposal you are referencing.
+Note questions you still have.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="image-spotlight">
+              <span class="builder-field-label">Spotlight narrative (each line becomes a paragraph)</span>
+              <textarea name="spotlightNarrative" rows="4">Set the scene for the project you are analysing.
+Highlight the aspect that the image represents.
+Invite learners to connect evidence back to the rubric.</textarea>
+            </label>
+            <div class="builder-field builder-field--full image-search" data-layouts="image-spotlight">
+              <span class="builder-field-label">Find an image</span>
+              <div class="image-search-controls">
+                <input type="text" name="imageSearch" placeholder="Search Pexels" />
+                <button type="button" class="ghost-btn" data-action="search-image">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  Search
+                </button>
+              </div>
+              <div class="image-search-results" id="builder-image-results" role="listbox" aria-label="Image search results"></div>
+              <input type="url" name="imageUrl" placeholder="Or paste an image URL" />
+              <input type="text" name="imageAlt" placeholder="Image description for accessibility" />
+              <p class="image-search-status" id="image-search-status" aria-live="polite"></p>
+            </div>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 1 heading</span>
+              <input type="text" name="cardOneHeading" value="Plan" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 1 description</span>
+              <textarea name="cardOneBody" rows="2">Clarify the need you are addressing and list target beneficiaries.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 2 heading</span>
+              <input type="text" name="cardTwoHeading" value="Prototype" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 2 description</span>
+              <textarea name="cardTwoBody" rows="2">Sketch how your idea will work in practice and who is involved.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 3 heading</span>
+              <input type="text" name="cardThreeHeading" value="Evaluate" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="rubric-cards">
+              <span class="builder-field-label">Card 3 description</span>
+              <textarea name="cardThreeBody" rows="2">List evidence that shows impact and note the data you still need.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Target language focus</span>
+              <textarea name="vocabTargetLanguage" rows="2">Community impact project vocabulary</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Practice ideas (one per line)</span>
+              <textarea name="vocabPracticeIdeas" rows="3">Use each word in a question for your partner.
+Create a short role play using three target words.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="vocabulary-grid">
+              <span class="builder-field-label">Vocabulary entries (word | definition | example)</span>
+              <textarea name="vocabWordList" rows="5">coordinate | organise people to work together | We coordinate volunteers each weekend</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Reading text title</span>
+              <input type="text" name="readingTextTitle" value="NGO launches mobile clinic" />
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Reading excerpt</span>
+              <textarea name="readingExcerpt" rows="4">The Nablus Health Collective launched a mobile clinic to reach villages that lack permanent medical facilities.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Comprehension questions + answers</span>
+              <textarea name="readingQuestions" rows="4">What is the main purpose of the mobile clinic? | It brings medical care to isolated villages each week.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="reading-comprehension">
+              <span class="builder-field-label">Post-reading task</span>
+              <textarea name="readingPostTask" rows="2">Summarise the article using two target phrases.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Pronunciation focus</span>
+              <textarea name="pronunciationFocus" rows="2">Contrast short /ɪ/ and long /iː/ in key NGO vocabulary.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Drill steps (one per line)</span>
+              <textarea name="pronunciationSteps" rows="3">Mark stress and vowel length on the board.
+Choral repetition with rising hand gesture for /iː/.
+Pair role-play using the pronunciation script.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Minimal pairs (word A / word B | coaching tip)</span>
+              <textarea name="pronunciationMinimalPairs" rows="4">ship / sheep | Exaggerate the long vowel in 'sheep'</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="pronunciation-drill">
+              <span class="builder-field-label">Coaching tips (one per line)</span>
+              <textarea name="pronunciationFeedback" rows="3">Use mirrors so learners can see lip shape.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Homework summary</span>
+              <textarea name="homeworkSummary" rows="3">Learners completed the vocabulary survey with community partners.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Share-out prompts (one per line)</span>
+              <textarea name="homeworkSharePrompts" rows="3">What language felt most useful from homework?</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Next steps (one per line)</span>
+              <textarea name="homeworkNextSteps" rows="3">Record the update again adding one connector.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="homework-recap">
+              <span class="builder-field-label">Evidence checklist (one per line)</span>
+              <textarea name="homeworkEvidenceChecklist" rows="3">Learner uses at least two target chunks.</textarea>
+            </label>
+            <label class="builder-field builder-field--full" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+              <span class="builder-field-label">Performance levels (comma separated)</span>
+              <input type="text" name="rubricLevels" value="Emerging, Meeting, Excelling" />
+            </label>
+          </div>
+
+          <section
+            class="builder-section"
+            data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap"
+            data-role="rubric-section"
+          >
+            <header class="builder-section-header">
+              <div>
+                <h3>Rubric prompts</h3>
+                <p>List the evidence you want learners to capture.</p>
+              </div>
+              <label class="builder-toggle">
+                <input type="checkbox" name="includeRubric" value="true" checked />
+                <span>Include success criteria</span>
+              </label>
+              <button type="button" id="builder-add-prompt" class="activity-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add criterion
+              </button>
+            </header>
+            <ul id="builder-prompt-list" class="builder-prompt-list"></ul>
+          </section>
+
+          <section class="builder-section builder-preview-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <header class="builder-section-header">
+              <div>
+                <h3>Slide preview</h3>
+                <p>Updates automatically as you edit the fields.</p>
+              </div>
+              <button type="button" class="ghost-btn" id="builder-refresh-preview">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                Refresh preview
+              </button>
+            </header>
+            <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
+          </section>
+
+          <section class="builder-section" data-layouts="facilitation,rubric-simple,rubric-columns,image-spotlight,rubric-cards,vocabulary-grid,reading-comprehension,pronunciation-drill,homework-recap">
+            <header class="builder-section-header">
+              <div>
+                <h3>Rubric JSON</h3>
+                <p>The generated structure is copied into the slide for future edits.</p>
+              </div>
+            </header>
+            <pre id="builder-json-preview" class="builder-json-preview" aria-live="polite">{
+  "criteria": []
+}</pre>
+          </section>
+
+          <footer class="builder-footer">
+            <p id="builder-status" class="builder-status" aria-live="polite"></p>
+            <div class="builder-actions">
+              <button type="button" class="toolbar-btn ghost" data-action="cancel-builder">Cancel</button>
+              <button type="submit" class="toolbar-btn">
+                <i class="fa-solid fa-square-plus"></i>
+                Insert slide
+              </button>
+            </div>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="module-builder-overlay"
+      class="builder-overlay module-builder-overlay"
+      aria-hidden="true"
+      hidden
+    >
+      <div
+        class="builder-dialog module-builder-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="module-builder-title"
+      >
+        <header class="builder-header module-builder-header">
+          <div>
+            <p class="builder-eyebrow">Sandbox tools</p>
+            <h2 id="module-builder-title">Interactive Activity Modules</h2>
+            <p class="builder-subtitle">
+              Configure Noor templates and drop the activity onto your blank slide.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="builder-close module-builder-close"
+            aria-label="Close module builder"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <div class="module-builder-body">
+          <iframe
+            id="module-builder-frame"
+            title="Activity module builder"
+            src="about:blank"
+            data-builder-src="./activity-builder.html"
+            loading="lazy"
+            tabindex="-1"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
