@@ -657,27 +657,6 @@ body {
   align-items: flex-start;
 }
 
-.builder-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--forest-shadow);
-  white-space: nowrap;
-}
-
-.builder-toggle input {
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--secondary-sage);
-  cursor: pointer;
-}
-
-.builder-toggle span {
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
 .builder-section-header h3 {
   margin: 0;
   font-family: var(--font-display);
@@ -691,7 +670,7 @@ body {
   color: var(--ink-muted);
 }
 
-.builder-prompt-list {
+.builder-dynamic-list {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -700,19 +679,25 @@ body {
   gap: var(--space-4);
 }
 
-.builder-prompt-item {
+.builder-dynamic-item {
   position: relative;
   padding: var(--space-4);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(122, 132, 113, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(122, 132, 113, 0.2);
   box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.builder-dynamic-fields {
   display: grid;
   gap: var(--space-4);
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.builder-remove-prompt {
+.builder-remove-btn {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -726,6 +711,12 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.builder-remove-btn:hover,
+.builder-remove-btn:focus-visible {
+  background: rgba(239, 108, 82, 0.22);
+  color: #9c4a35;
 }
 
 .builder-json-preview {

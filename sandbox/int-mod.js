@@ -93,8 +93,6 @@ let slideNavigatorController;
 let activityBuilderBtn;
 let builderOverlay;
 let builderForm;
-let builderAddPromptBtn;
-let builderPromptList;
 let builderJsonPreview;
 let builderCancelBtn;
 let builderCloseBtn;
@@ -108,8 +106,10 @@ let builderImageResults;
 let builderImageStatus;
 let builderImageSearchBtn;
 let builderImageSearchInput;
-let builderRubricSection;
-let builderRubricToggle;
+let builderDialogueList;
+let builderAddDialogueBtn;
+let builderPracticeList;
+let builderAddPracticeBtn;
 let moduleOverlay;
 let moduleFrame;
 let moduleCloseBtn;
@@ -448,393 +448,68 @@ function syncBlankControlsAvailability() {
   blankControlsPanel.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
 }
 
-const DEFAULT_BUILDER_PROMPTS = [
-  {
-    prompt: "How accurately do learners use the target language?",
-    success:
-      "Learners select lesson vocabulary confidently and produce grammatically accurate sentences that fit the context.",
-  },
-  {
-    prompt: "Are learners demonstrating the skills focus of the lesson?",
-    success:
-      "Learners apply the featured skill (e.g. gist reading, controlled pronunciation) with minimal prompting and explain their strategy.",
-  },
-  {
-    prompt: "Do learners connect the task to the CEFR outcome?",
-    success:
-      "Learners show the performance expected at the stated CEFR level and reflect on what evidence supports their progress.",
-  },
-];
-
-const clonePromptEntries = (entries = []) =>
-  entries.map((entry) => ({ prompt: entry.prompt ?? "", success: entry.success ?? "" }));
-
 const BUILDER_LAYOUT_DEFAULTS = {
-  "blank-canvas": () => ({
-    includeRubric: false,
-    stageLabel: "",
-    activityTitle: "",
-    duration: "",
-    slideTitle: "",
-    rubricIntro: "",
-    overview: "",
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: "",
-    columnOneItems: [],
-    columnTwoHeading: "",
-    columnTwoItems: [],
-    spotlightNarrative: [],
+  "blank-canvas": () => ({}),
+  "learning-objectives": () => ({
+    title: "Learning Outcomes",
+    goals: [
+      "Learn vocabulary for jobs and places in a city.",
+      "Practise asking and answering questions with 'do'.",
+      "Focus on blending the /st/ sound.",
+    ],
+    communicativeGoal: "get to know a new person.",
     imageUrl: "",
-    imageAlt: "",
-    cards: [],
   }),
-  facilitation: () => ({
-    includeRubric: true,
-    stageLabel: "Activity Workshop · 15 minutes",
-    activityTitle: "Design a community impact project",
-    duration: "10 minutes",
-    slideTitle: "Facilitation steps",
-    rubricIntro: "Capture evidence for each success criterion as you collaborate.",
-    overview: "Learners review project ideas in small teams and prepare peer feedback.",
-    steps: [
-      "Group learners in trios and assign each team a project brief.",
-      "Give two minutes of silent reading to highlight key information.",
-      "Invite teams to complete the rubric together and prepare one insight.",
-      "Cold call teams to share the most compelling improvement idea.",
-    ],
-    rubricLevels: ["Emerging", "Meeting", "Excelling"],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: "",
-    columnOneItems: [],
-    columnTwoHeading: "",
-    columnTwoItems: [],
-    spotlightNarrative: [],
+  "model-dialogue": () => ({
+    title: "Get to know people",
+    instructions: "In pairs, identify the two main questions and how the speakers answer them.",
     imageUrl: "",
-    imageAlt: "",
-    cards: [],
+    audioUrl: "",
+    turns: [
+      { speaker: "Amina", line: "Hi! I'm Amina. Nice to meet you." },
+      { speaker: "Sara", line: "Hi Amina! I'm Sara. Where are you from?" },
+    ],
   }),
-  "rubric-simple": () => ({
-    includeRubric: true,
-    stageLabel: "Workshop showcase · 10 minutes",
-    activityTitle: "Present your proposal",
-    duration: "10 minutes",
-    slideTitle: "Success criteria spotlight",
-    rubricIntro: "Capture quick evidence as teams present their ideas.",
-    overview: "",
-    steps: [],
-    rubricLevels: ["Emerging", "Meeting", "Excelling"],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: "",
-    columnOneItems: [],
-    columnTwoHeading: "",
-    columnTwoItems: [],
-    spotlightNarrative: [],
+  "interactive-practice": () => ({
+    activityType: "Gap Fill",
+    title: "Practice",
+    instructions: "Complete each sentence with the best option.",
+    questions: [
+      {
+        prompt: "I live ____ a flat ___ Ramallah.",
+        options: ["in / on", "in / in", "on / in"],
+        answer: "in / in",
+      },
+    ],
+  }),
+  "communicative-task": () => ({
+    title: "Language exchange introductions",
     imageUrl: "",
-    imageAlt: "",
-    cards: [],
+    preparation:
+      "You are at a language exchange event. Decide who you will meet and note two follow-up questions you want to ask.",
+    performance:
+      "Move to breakout rooms. Take turns introducing yourselves and asking the follow-up questions you prepared.",
+    scaffolding: [
+      "A: Where do you live, ____?",
+      "B: I live in ____. What do you do?",
+      "A: I work as a ____ because ____.",
+    ],
   }),
-  "rubric-columns": () => ({
-    includeRubric: true,
-    stageLabel: "Feedback lab · 12 minutes",
-    activityTitle: "Compare project ideas",
-    duration: "12 minutes",
-    slideTitle: "Discussion prompts",
-    rubricIntro: "Capture the highlights from each conversation.",
-    overview: "",
-    steps: [],
-    rubricLevels: ["Emerging", "Meeting", "Excelling"],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: "Discuss together",
-    columnOneItems: ["Identify a strength you noticed.", "Explain why it matters for the community."],
-    columnTwoHeading: "Capture evidence",
-    columnTwoItems: ["Quote the part of the proposal you are referencing.", "Note questions you still have."],
-    spotlightNarrative: [],
+  "pronunciation-focus": () => ({
+    title: "What does /st/ sound like?",
+    target: "/st/ sound",
+    words: ["student", "study"],
+    sentences: ["Are you a student? ↗", "We start at six o'clock. ↘"],
+    practice: "Invite 3-4 learners to say the sentences, then personalise with their own ideas.",
     imageUrl: "",
-    imageAlt: "",
-    cards: [],
   }),
-  "image-spotlight": () => ({
-    includeRubric: true,
-    stageLabel: "Spotlight reflection · 8 minutes",
-    activityTitle: "Reflect on community impact",
-    duration: "8 minutes",
-    slideTitle: "Spotlight prompts",
-    rubricIntro: "Collect key takeaways linked to the image.",
-    overview: "",
-    steps: [],
-    rubricLevels: ["Emerging", "Meeting", "Excelling"],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: "",
-    columnOneItems: [],
-    columnTwoHeading: "",
-    columnTwoItems: [],
-    spotlightNarrative: [
-      "Set the scene for the project you are analysing.",
-      "Highlight the aspect that the image represents.",
-      "Invite learners to connect evidence back to the rubric.",
-    ],
+  reflection: () => ({
+    title: "Reflection",
+    prompts: ["A classmate’s name", "A place in Palestine", "A job"],
     imageUrl: "",
-    imageAlt: "",
-    cards: [],
-  }),
-  "rubric-cards": () => ({
-    includeRubric: true,
-    stageLabel: "Strategy sprint · 15 minutes",
-    activityTitle: "Plan a response",
-    duration: "15 minutes",
-    slideTitle: "Strategy steps",
-    rubricIntro: "Check each card as your team progresses.",
-    overview: "",
-    steps: [],
-    rubricLevels: ["Emerging", "Meeting", "Excelling"],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: "",
-    columnOneItems: [],
-    columnTwoHeading: "",
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: "",
-    imageAlt: "",
-    cards: [
-      {
-        heading: "Plan",
-        body: "Clarify the need you are addressing and list target beneficiaries.",
-      },
-      {
-        heading: "Prototype",
-        body: "Sketch how your idea will work in practice and who is involved.",
-      },
-      {
-        heading: "Evaluate",
-        body: "List evidence that shows impact and note the data you still need.",
-      },
-    ],
-  }),
-  "vocabulary-grid": () => ({
-    includeRubric: true,
-    stageLabel: "Language lab · 12 minutes",
-    activityTitle: "Vocabulary grid: community solutions",
-    duration: "12 minutes",
-    slideTitle: "Vocabulary bank",
-    rubricIntro: "Capture how confidently learners use and pronounce the target lexis.",
-    overview: "Learners explore key words and co-create examples before role-play practice.",
-    steps: [
-      "Preview pronunciation and stress for each term together.",
-      "Learners add a personalised example sentence to the grid.",
-      "Pairs quiz each other using the practice prompts.",
-    ],
-    rubricLevels: ["Developing", "Secure", "Confident"],
-    prompts: clonePromptEntries([
-      {
-        prompt: "Is the target vocabulary used accurately in context?",
-        success: "Learners choose precise collocations and adapt the words to the scenario.",
-      },
-      {
-        prompt: "Do learners pronounce the focus sounds clearly?",
-        success: "Learners stress the highlighted syllables and produce the new phonemes intelligibly.",
-      },
-      {
-        prompt: "Are learners extending the language with their own ideas?",
-        success: "Learners personalise the language and justify their word choices.",
-      },
-    ]),
-    vocabulary: {
-      targetLanguage: "Problem-solving verbs for NGO planning meetings.",
-      skillsFocus: "Lexis and pronunciation with controlled speaking practice.",
-      cefr: "B1-B2",
-      practiceIdeas: [
-        "Say a sentence that uses one verb with a partner's community project idea.",
-        "Swap cards and upgrade a peer's sentence with a stronger verb choice.",
-      ],
-      items: [
-        {
-          term: "coordinate",
-          definition: "organise people or resources to work together smoothly",
-          example: "We coordinate volunteers for the weekend clean-up.",
-        },
-        {
-          term: "scale up",
-          definition: "increase the size or impact of an initiative",
-          example: "Can we scale up the recycling pilot to all districts?",
-        },
-        {
-          term: "pilot",
-          definition: "test an idea before a wider launch",
-          example: "Let's pilot the mentoring sessions with one school first.",
-        },
-        {
-          term: "allocate",
-          definition: "decide how to use limited funds or time",
-          example: "Allocate two hours for volunteer training each week.",
-        },
-      ],
-    },
-  }),
-  "reading-comprehension": () => ({
-    includeRubric: true,
-    stageLabel: "Reading workshop · 15 minutes",
-    activityTitle: "Community impact article",
-    duration: "15 minutes",
-    slideTitle: "Reading comprehension",
-    rubricIntro: "Note evidence of reading strategies and language use.",
-    overview: "Learners skim and scan a short article before discussing solutions.",
-    steps: [
-      "Skim the article together and highlight headline vocabulary.",
-      "Learners reread in pairs to underline supporting details.",
-      "Groups prepare a 30-second summary using the target phrases.",
-    ],
-    rubricLevels: ["Emerging", "Meeting", "Exceeding"],
-    prompts: clonePromptEntries([
-      {
-        prompt: "Do learners identify the main idea accurately?",
-        success: "Learners state the author's key message using the target language.",
-      },
-      {
-        prompt: "Can learners support answers with evidence?",
-        success: "Learners quote or paraphrase lines from the text using accurate grammar.",
-      },
-      {
-        prompt: "Do learners connect the text to the CEFR descriptor?",
-        success: "Learners describe how the text demonstrates the B1/B2 reading outcome.",
-      },
-    ]),
-    reading: {
-      textTitle: "NGO launches mobile clinic",
-      textSource: "Community Voices Magazine",
-      excerpt:
-        "The Nablus Health Collective launched a mobile clinic to reach villages that lack permanent medical facilities. Each week the clinic visits three communities, offering check-ups and essential medicine.",
-      preTasks: [
-        "Skim the headline and predict two challenges the NGO faces.",
-        "Highlight three words connected to healthcare logistics.",
-      ],
-      questions: [
-        {
-          question: "What is the main purpose of the mobile clinic?",
-          answer: "It brings medical care to isolated villages each week.",
-        },
-        {
-          question: "Which barrier did volunteers mention?",
-          answer: "They cited limited refrigeration for vaccines and long travel times.",
-        },
-        {
-          question: "How will the NGO measure success?",
-          answer: "They will track patient numbers and follow-up appointment attendance.",
-        },
-      ],
-      postTask:
-        "In pairs, summarise the article using at least two target vocabulary items.",
-    },
-  }),
-  "pronunciation-drill": () => ({
-    includeRubric: true,
-    stageLabel: "Sound clinic · 8 minutes",
-    activityTitle: "Pronunciation drill: /ɪ/ vs /iː/",
-    duration: "8 minutes",
-    slideTitle: "Pronunciation focus",
-    rubricIntro: "Capture evidence of accurate vowel contrast and sentence stress.",
-    overview: "Learners rehearse minimal pairs before delivering short role-play lines.",
-    steps: [
-      "Model each minimal pair and mark the stressed syllable.",
-      "Learners chorally repeat then practise in pairs using the script.",
-      "Coach learners to integrate the sound contrast into meaningful sentences.",
-    ],
-    rubricLevels: ["Developing", "Secure", "Automatic"],
-    prompts: clonePromptEntries([
-      {
-        prompt: "Are learners producing the vowel contrast clearly?",
-        success: "Learners exaggerate the lip shape and length difference between /ɪ/ and /iː/.",
-      },
-      {
-        prompt: "Do learners sustain natural sentence stress?",
-        success: "Learners place primary stress on the information word while keeping rhythm.",
-      },
-      {
-        prompt: "Are learners self-monitoring and correcting?",
-        success: "Learners notice slips, try again, and support their partner with feedback language.",
-      },
-    ]),
-    pronunciation: {
-      focus: "Contrast short /ɪ/ and long /iː/ in key NGO vocabulary.",
-      drillSteps: [
-        "Mark stress and vowel length on the board.",
-        "Choral repetition with rising hand gesture for /iː/.",
-        "Pair role-play using the pronunciation script.",
-      ],
-      minimalPairs: [
-        {
-          first: "ship",
-          second: "sheep",
-          tip: "Note the longer smile vowel in “sheep”.",
-        },
-        {
-          first: "fit",
-          second: "feet",
-          tip: "Add the /t/ release while keeping the long vowel.",
-        },
-        {
-          first: "live",
-          second: "leave",
-          tip: "Tap the table for the voiced /v/ endings.",
-        },
-      ],
-      feedbackTips: [
-        "Use the mirror cue so learners can see mouth shape.",
-        "Praise accurate vowel length before correcting slips.",
-      ],
-      choralPrompt:
-        "Let’s read the volunteer update: “We need to ship these kits this week.”",
-    },
-  }),
-  "homework-recap": () => ({
-    includeRubric: true,
-    stageLabel: "Homework debrief · 10 minutes",
-    activityTitle: "Homework recap circle",
-    duration: "10 minutes",
-    slideTitle: "Homework reflections",
-    rubricIntro: "Document how learners transfer homework practice into class performance.",
-    overview: "Learners share homework highlights and plan next steps with the teacher.",
-    steps: [
-      "Invite two learners to summarise their homework task in 60 seconds.",
-      "Open the floor for follow-up questions using the sentence stems.",
-      "Agree on a mini-goal for the next lesson based on the reflections.",
-    ],
-    rubricLevels: ["Getting there", "On track", "Ready to transfer"],
-    prompts: clonePromptEntries([
-      {
-        prompt: "Did learners complete the homework task with the target language?",
-        success: "Learners describe what they practised and quote key language accurately.",
-      },
-      {
-        prompt: "Are learners reflecting on strategy and skills?",
-        success: "Learners state what helped them succeed and identify a focus area.",
-      },
-      {
-        prompt: "Do learners set a next-step aligned to the CEFR outcome?",
-        success: "Learners commit to a realistic action that matches the lesson descriptor.",
-      },
-    ]),
-    homework: {
-      summary:
-        "Learners prepared a 90-second update about their community project using the present perfect.",
-      sharePrompts: [
-        "What language from homework felt most useful today?",
-        "Which challenge did you notice while recording yourself?",
-        "Give a compliment to a partner’s homework submission.",
-      ],
-      nextSteps: [
-        "Record the update again adding one new connector.",
-        "Bring one question about vocabulary for office hours.",
-      ],
-      evidenceChecklist: [
-        "Learner uses at least two target language chunks.",
-        "Learner mentions a success and an improvement goal.",
-        "Learner responds to a peer using follow-up questions.",
-      ],
-    },
   }),
 };
+
 
 const isValidMindmapColor = (color) =>
   typeof color === "string" &&
@@ -6299,32 +5974,6 @@ function showBuilderStatus(message = "", tone) {
   }
 }
 
-function collectRubricCriteria() {
-  if (!(builderPromptList instanceof HTMLElement)) {
-    return [];
-  }
-  if (!isRubricEnabled()) {
-    return [];
-  }
-  const items = Array.from(
-    builderPromptList.querySelectorAll(".builder-prompt-item"),
-  );
-  return items
-    .map((item) => {
-      const promptInput = item.querySelector('input[name="rubricPrompt[]"]');
-      const successInput = item.querySelector(
-        'textarea[name="rubricSuccess[]"]',
-      );
-      const prompt = normaliseWhitespace(promptInput?.value ?? "");
-      if (!prompt) {
-        return null;
-      }
-      const success = trimText(successInput?.value ?? "");
-      return { prompt, success };
-    })
-    .filter(Boolean);
-}
-
 const getSelectedLayout = () => {
   if (!Array.isArray(builderLayoutInputs)) {
     return 'blank-canvas';
@@ -6353,12 +6002,9 @@ const setSelectedLayout = (layout = 'blank-canvas') => {
   }
 };
 
-const isRubricEnabled = () =>
-  builderRubricToggle instanceof HTMLInputElement ? builderRubricToggle.checked : false;
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
-  const factory =
-    BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
+  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
   if (typeof factory === 'function') {
     try {
       return factory();
@@ -6368,6 +6014,130 @@ const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
   }
   return null;
 };
+
+function createDialogueItem({ speaker = '', line = '' } = {}) {
+  builderFieldId += 1;
+  const item = document.createElement('li');
+  item.className = 'builder-dynamic-item builder-dialogue-item';
+  const safeSpeaker = escapeHtml(speaker ?? '');
+  const safeLine = escapeHtml(line ?? '');
+  item.innerHTML = `
+    <div class="builder-dynamic-fields">
+      <label class="builder-field">
+        <span class="builder-field-label">Speaker</span>
+        <input type="text" name="dialogueSpeaker" placeholder="Speaker name" value="${safeSpeaker}" />
+      </label>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Dialogue</span>
+        <textarea name="dialogueLine" rows="2" placeholder="What does the speaker say?">${safeLine}</textarea>
+      </label>
+      <button type="button" class="builder-remove-btn" data-action="remove-dialogue">
+        <span class="sr-only">Remove dialogue turn</span>
+        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+      </button>
+    </div>
+  `;
+  item.querySelectorAll('input, textarea').forEach((element) => {
+    element.addEventListener('input', () => {
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  });
+  const removeBtn = item.querySelector('[data-action="remove-dialogue"]');
+  if (removeBtn instanceof HTMLButtonElement) {
+    removeBtn.addEventListener('click', () => {
+      item.remove();
+      if (builderDialogueList instanceof HTMLElement && builderDialogueList.children.length === 0) {
+        addDialogueItem();
+      }
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
+  return item;
+}
+
+function addDialogueItem(initial = {}) {
+  if (!(builderDialogueList instanceof HTMLElement)) {
+    return null;
+  }
+  const item = createDialogueItem(initial);
+  builderDialogueList.appendChild(item);
+  return item;
+}
+
+function resetDialogueList(turns = []) {
+  if (!(builderDialogueList instanceof HTMLElement)) {
+    return;
+  }
+  builderDialogueList.innerHTML = '';
+  const entries = Array.isArray(turns) && turns.length ? turns : [{}, {}];
+  entries.forEach((turn) => addDialogueItem(turn));
+}
+
+
+function createPracticeItem({ prompt = '', options = [], answer = '' } = {}) {
+  builderFieldId += 1;
+  const item = document.createElement('li');
+  item.className = 'builder-dynamic-item builder-practice-item';
+  const normalisedOptions = Array.isArray(options) ? options : splitMultiline(options);
+  const optionsValue = Array.isArray(normalisedOptions) ? normalisedOptions.join('\n') : '';
+  item.innerHTML = `
+    <div class="builder-dynamic-fields">
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Question or prompt</span>
+        <input type="text" name="practicePrompt" placeholder="What should learners do?" value="${escapeHtml(prompt ?? '')}" />
+      </label>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Answer options (one per line)</span>
+        <textarea name="practiceOptions" rows="3" placeholder="Option A">${escapeHtml(optionsValue)}</textarea>
+      </label>
+      <label class="builder-field">
+        <span class="builder-field-label">Correct answer</span>
+        <input type="text" name="practiceAnswer" placeholder="Correct answer" value="${escapeHtml(answer ?? '')}" />
+      </label>
+      <button type="button" class="builder-remove-btn" data-action="remove-practice">
+        <span class="sr-only">Remove practice item</span>
+        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+      </button>
+    </div>
+  `;
+  item.querySelectorAll('input, textarea').forEach((element) => {
+    element.addEventListener('input', () => {
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  });
+  const removeBtn = item.querySelector('[data-action="remove-practice"]');
+  if (removeBtn instanceof HTMLButtonElement) {
+    removeBtn.addEventListener('click', () => {
+      item.remove();
+      if (builderPracticeList instanceof HTMLElement && builderPracticeList.children.length === 0) {
+        addPracticeItem();
+      }
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
+  return item;
+}
+function addPracticeItem(initial = {}) {
+  if (!(builderPracticeList instanceof HTMLElement)) {
+    return null;
+  }
+  const item = createPracticeItem(initial);
+  builderPracticeList.appendChild(item);
+  return item;
+}
+
+function resetPracticeList(questions = []) {
+  if (!(builderPracticeList instanceof HTMLElement)) {
+    return;
+  }
+  builderPracticeList.innerHTML = '';
+  const entries = Array.isArray(questions) && questions.length ? questions : [{}];
+  entries.forEach((question) => addPracticeItem(question));
+}
 
 function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   if (!(builderForm instanceof HTMLFormElement)) {
@@ -6384,151 +6154,114 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     if (!field) {
       return;
     }
-    if (typeof RadioNodeList !== "undefined" && field instanceof RadioNodeList) {
-      if (typeof value === 'string') {
-        field.value = value;
-      }
-      return;
-    }
-    if (field instanceof HTMLSelectElement) {
-      field.value = typeof value === 'string' ? value : String(value ?? '');
-      return;
-    }
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
-      field.value = value;
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+      field.value = value ?? '';
     }
   };
 
-  setFieldValue('stageLabel', defaults.stageLabel ?? '');
-  setFieldValue('activityTitle', defaults.activityTitle ?? '');
-  setFieldValue('activityDuration', defaults.duration ?? '');
-  setFieldValue('slideTitle', defaults.slideTitle ?? '');
-  setFieldValue('slideRubricLead', defaults.rubricIntro ?? '');
-  setFieldValue('activityOverview', defaults.overview ?? '');
-  setFieldValue(
-    'activitySteps',
-    Array.isArray(defaults.steps) ? defaults.steps.join('\n') : defaults.steps ?? '',
-  );
-  setFieldValue(
-    'rubricLevels',
-    Array.isArray(defaults.rubricLevels)
-      ? defaults.rubricLevels.join(', ')
-      : defaults.rubricLevels ?? '',
-  );
-  setFieldValue('columnOneHeading', defaults.columnOneHeading ?? '');
-  setFieldValue(
-    'columnOneItems',
-    Array.isArray(defaults.columnOneItems)
-      ? defaults.columnOneItems.join('\n')
-      : defaults.columnOneItems ?? '',
-  );
-  setFieldValue('columnTwoHeading', defaults.columnTwoHeading ?? '');
-  setFieldValue(
-    'columnTwoItems',
-    Array.isArray(defaults.columnTwoItems)
-      ? defaults.columnTwoItems.join('\n')
-      : defaults.columnTwoItems ?? '',
-  );
-  setFieldValue(
-    'spotlightNarrative',
-    Array.isArray(defaults.spotlightNarrative)
-      ? defaults.spotlightNarrative.join('\n')
-      : defaults.spotlightNarrative ?? '',
-  );
-  setFieldValue('imageUrl', defaults.imageUrl ?? '');
-  setFieldValue('imageAlt', defaults.imageAlt ?? '');
+  const clearFields = () => {
+    [
+      'learningTitle',
+      'learningGoalOne',
+      'learningGoalTwo',
+      'learningGoalThree',
+      'learningCommunicativeGoal',
+      'learningImageUrl',
+      'dialogueTitle',
+      'dialogueInstructions',
+      'dialogueImageUrl',
+      'dialogueAudioUrl',
+      'practiceTitle',
+      'practiceInstructions',
+      'practiceActivityType',
+      'taskTitle',
+      'taskImageUrl',
+      'taskPreparation',
+      'taskPerformance',
+      'taskScaffolding',
+      'pronunciationTitle',
+      'pronunciationTarget',
+      'pronunciationWordOne',
+      'pronunciationWordTwo',
+      'pronunciationSentenceOne',
+      'pronunciationSentenceTwo',
+      'pronunciationPractice',
+      'pronunciationImageUrl',
+      'reflectionTitle',
+      'reflectionPromptOne',
+      'reflectionPromptTwo',
+      'reflectionPromptThree',
+      'reflectionImageUrl',
+    ].forEach((name) => setFieldValue(name, ''));
+    resetDialogueList([]);
+    resetPracticeList([]);
+  };
 
+  clearFields();
 
-
-
-
-
-
-  const cards = Array.isArray(defaults.cards) ? defaults.cards : [];
-  setFieldValue('cardOneHeading', cards[0]?.heading ?? '');
-  setFieldValue('cardOneBody', cards[0]?.body ?? '');
-  setFieldValue('cardTwoHeading', cards[1]?.heading ?? '');
-  setFieldValue('cardTwoBody', cards[1]?.body ?? '');
-  setFieldValue('cardThreeHeading', cards[2]?.heading ?? '');
-  setFieldValue('cardThreeBody', cards[2]?.body ?? '');
-
-  const vocabDefaults = defaults.vocabulary ?? {};
-  setFieldValue('vocabTargetLanguage', vocabDefaults.targetLanguage ?? '');
-  setFieldValue('vocabSkillsFocus', vocabDefaults.skillsFocus ?? '');
-  setFieldValue('vocabCefr', vocabDefaults.cefr ?? '');
-  setFieldValue(
-    'vocabPracticeIdeas',
-    Array.isArray(vocabDefaults.practiceIdeas)
-      ? vocabDefaults.practiceIdeas.join('\n')
-      : vocabDefaults.practiceIdeas ?? '',
-  );
-  setFieldValue('vocabWordList', formatVocabularyItems(vocabDefaults.items));
-
-  const readingDefaults = defaults.reading ?? {};
-  setFieldValue('readingTextTitle', readingDefaults.textTitle ?? '');
-  setFieldValue('readingTextSource', readingDefaults.textSource ?? '');
-  setFieldValue('readingExcerpt', readingDefaults.excerpt ?? '');
-  setFieldValue(
-    'readingPreTasks',
-    Array.isArray(readingDefaults.preTasks)
-      ? readingDefaults.preTasks.join('\n')
-      : readingDefaults.preTasks ?? '',
-  );
-  setFieldValue('readingQuestions', formatQuestionAnswerPairs(readingDefaults.questions));
-  setFieldValue('readingPostTask', readingDefaults.postTask ?? '');
-
-  const pronunciationDefaults = defaults.pronunciation ?? {};
-  setFieldValue(
-    'pronunciationSteps',
-    Array.isArray(pronunciationDefaults.drillSteps)
-      ? pronunciationDefaults.drillSteps.join('\n')
-      : pronunciationDefaults.drillSteps ?? '',
-  );
-  setFieldValue(
-    'pronunciationMinimalPairs',
-    formatMinimalPairs(pronunciationDefaults.minimalPairs),
-  );
-  setFieldValue(
-    'pronunciationFeedback',
-    Array.isArray(pronunciationDefaults.feedbackTips)
-      ? pronunciationDefaults.feedbackTips.join('\n')
-      : pronunciationDefaults.feedbackTips ?? '',
-  );
-  setFieldValue('pronunciationChoral', pronunciationDefaults.choralPrompt ?? '');
-
-  const homeworkDefaults = defaults.homework ?? {};
-  setFieldValue('homeworkSummary', homeworkDefaults.summary ?? '');
-  setFieldValue(
-    'homeworkSharePrompts',
-    Array.isArray(homeworkDefaults.sharePrompts)
-      ? homeworkDefaults.sharePrompts.join('\n')
-      : homeworkDefaults.sharePrompts ?? '',
-  );
-  setFieldValue(
-    'homeworkNextSteps',
-    Array.isArray(homeworkDefaults.nextSteps)
-      ? homeworkDefaults.nextSteps.join('\n')
-      : homeworkDefaults.nextSteps ?? '',
-  );
-  setFieldValue(
-    'homeworkEvidenceChecklist',
-    Array.isArray(homeworkDefaults.evidenceChecklist)
-      ? homeworkDefaults.evidenceChecklist.join('\n')
-      : homeworkDefaults.evidenceChecklist ?? '',
-  );
-
-  if (typeof defaults.includeRubric === 'boolean' && builderRubricToggle instanceof HTMLInputElement) {
-    builderRubricToggle.checked = defaults.includeRubric;
-  }
-
-  if (builderPromptList instanceof HTMLElement) {
-    builderPromptList.innerHTML = '';
-    if (Array.isArray(defaults.prompts)) {
-      defaults.prompts.forEach((entry) => addPromptItem(entry));
+  switch (layout) {
+    case 'learning-objectives': {
+      const goals = Array.isArray(defaults.goals) ? defaults.goals : [];
+      setFieldValue('learningTitle', defaults.title ?? '');
+      setFieldValue('learningGoalOne', goals[0] ?? '');
+      setFieldValue('learningGoalTwo', goals[1] ?? '');
+      setFieldValue('learningGoalThree', goals[2] ?? '');
+      setFieldValue('learningCommunicativeGoal', defaults.communicativeGoal ?? '');
+      setFieldValue('learningImageUrl', defaults.imageUrl ?? '');
+      break;
     }
+    case 'model-dialogue': {
+      setFieldValue('dialogueTitle', defaults.title ?? '');
+      setFieldValue('dialogueInstructions', defaults.instructions ?? '');
+      setFieldValue('dialogueImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('dialogueAudioUrl', defaults.audioUrl ?? '');
+      resetDialogueList(defaults.turns);
+      break;
+    }
+    case 'interactive-practice': {
+      setFieldValue('practiceTitle', defaults.title ?? '');
+      setFieldValue('practiceInstructions', defaults.instructions ?? '');
+      setFieldValue('practiceActivityType', defaults.activityType ?? '');
+      resetPracticeList(defaults.questions);
+      break;
+    }
+    case 'communicative-task': {
+      setFieldValue('taskTitle', defaults.title ?? '');
+      setFieldValue('taskImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('taskPreparation', defaults.preparation ?? '');
+      setFieldValue('taskPerformance', defaults.performance ?? '');
+      setFieldValue(
+        'taskScaffolding',
+        Array.isArray(defaults.scaffolding) ? defaults.scaffolding.join('
+') : defaults.scaffolding ?? '',
+      );
+      break;
+    }
+    case 'pronunciation-focus': {
+      setFieldValue('pronunciationTitle', defaults.title ?? '');
+      setFieldValue('pronunciationTarget', defaults.target ?? '');
+      const words = Array.isArray(defaults.words) ? defaults.words : [];
+      setFieldValue('pronunciationWordOne', words[0] ?? '');
+      setFieldValue('pronunciationWordTwo', words[1] ?? '');
+      const sentences = Array.isArray(defaults.sentences) ? defaults.sentences : [];
+      setFieldValue('pronunciationSentenceOne', sentences[0] ?? '');
+      setFieldValue('pronunciationSentenceTwo', sentences[1] ?? '');
+      setFieldValue('pronunciationPractice', defaults.practice ?? '');
+      setFieldValue('pronunciationImageUrl', defaults.imageUrl ?? '');
+      break;
+    }
+    case 'reflection': {
+      setFieldValue('reflectionTitle', defaults.title ?? '');
+      const prompts = Array.isArray(defaults.prompts) ? defaults.prompts : [];
+      setFieldValue('reflectionPromptOne', prompts[0] ?? '');
+      setFieldValue('reflectionPromptTwo', prompts[1] ?? '');
+      setFieldValue('reflectionPromptThree', prompts[2] ?? '');
+      setFieldValue('reflectionImageUrl', defaults.imageUrl ?? '');
+      break;
+    }
+    default:
+      break;
   }
-
-  handleRubricToggleChange({ preservePrompts: true, updatePreview });
 
   if (updatePreview) {
     updateBuilderJsonPreview();
@@ -6541,95 +6274,112 @@ function getBuilderFormState() {
     return null;
   }
   const formData = new FormData(builderForm);
-  const layout = (formData.get("slideLayout") || getSelectedLayout() || "blank-canvas").toString();
-  const stageLabel = trimText(formData.get("stageLabel"));
-  const activityTitle = trimText(formData.get("activityTitle"));
-  const duration = trimText(formData.get("activityDuration"));
-  const slideTitle = trimText(formData.get("slideTitle"));
-  const includeRubric = isRubricEnabled();
-  const rubricIntro = includeRubric ? trimText(formData.get("slideRubricLead")) : "";
-  const overview = trimText(formData.get("activityOverview"));
-  const steps = splitMultiline(formData.get("activitySteps"));
-  const levels = includeRubric ? parseRubricLevels(formData.get("rubricLevels")) : [];
-  const criteria = includeRubric ? collectRubricCriteria() : [];
-  const columnOneHeading = trimText(formData.get("columnOneHeading"));
-  const columnOneItems = splitMultiline(formData.get("columnOneItems"));
-  const columnTwoHeading = trimText(formData.get("columnTwoHeading"));
-  const columnTwoItems = splitMultiline(formData.get("columnTwoItems"));
-  const spotlightNarrative = splitMultiline(formData.get("spotlightNarrative"));
-  const imageUrl = trimText(formData.get("imageUrl"));
-  const imageAlt = trimText(formData.get("imageAlt"));
-  const cards = [
-    {
-      heading: trimText(formData.get("cardOneHeading")),
-      body: trimText(formData.get("cardOneBody")),
-    },
-    {
-      heading: trimText(formData.get("cardTwoHeading")),
-      body: trimText(formData.get("cardTwoBody")),
-    },
-    {
-      heading: trimText(formData.get("cardThreeHeading")),
-      body: trimText(formData.get("cardThreeBody")),
-    },
-  ].filter((card) => card.heading || card.body);
-
-  const vocabulary = {
-    targetLanguage: trimText(formData.get("vocabTargetLanguage")),
-    skillsFocus: trimText(formData.get("vocabSkillsFocus")),
-    cefr: trimText(formData.get("vocabCefr")),
-    practiceIdeas: splitMultiline(formData.get("vocabPracticeIdeas")),
-    items: parseVocabularyItems(formData.get("vocabWordList")),
-  };
-
-  const reading = {
-    textTitle: trimText(formData.get("readingTextTitle")),
-    textSource: trimText(formData.get("readingTextSource")),
-    excerpt: trimText(formData.get("readingExcerpt")),
-    preTasks: splitMultiline(formData.get("readingPreTasks")),
-    questions: parseQuestionAnswerPairs(formData.get("readingQuestions")),
-    postTask: trimText(formData.get("readingPostTask")),
-  };
-
-  const pronunciation = {
-    drillSteps: splitMultiline(formData.get("pronunciationSteps")),
-    minimalPairs: parseMinimalPairs(formData.get("pronunciationMinimalPairs")),
-    feedbackTips: splitMultiline(formData.get("pronunciationFeedback")),
-    choralPrompt: trimText(formData.get("pronunciationChoral")),
-  };
-
-  const homework = {
-    summary: trimText(formData.get("homeworkSummary")),
-    sharePrompts: splitMultiline(formData.get("homeworkSharePrompts")),
-    nextSteps: splitMultiline(formData.get("homeworkNextSteps")),
-    evidenceChecklist: splitMultiline(formData.get("homeworkEvidenceChecklist")),
-  };
-
-  return {
-    layout,
-    stageLabel,
-    activityTitle,
-    duration,
-    slideTitle,
-    includeRubric,
-    rubricIntro,
-    overview,
-    steps,
-    levels,
-    criteria,
-    columnOneHeading,
-    columnOneItems,
-    columnTwoHeading,
-    columnTwoItems,
-    spotlightNarrative,
-    imageUrl,
-    imageAlt,
-    cards,
-    vocabulary,
-    reading,
-    pronunciation,
-    homework,
-  };
+  const layout = (formData.get('slideLayout') || getSelectedLayout() || 'blank-canvas').toString();
+  const state = { layout };
+  switch (layout) {
+    case 'learning-objectives': {
+      const goals = [
+        trimText(formData.get('learningGoalOne')),
+        trimText(formData.get('learningGoalTwo')),
+        trimText(formData.get('learningGoalThree')),
+      ].filter(Boolean);
+      state.data = {
+        title: trimText(formData.get('learningTitle')) || 'Learning Outcomes',
+        goals,
+        communicativeGoal: trimText(formData.get('learningCommunicativeGoal')),
+        imageUrl: trimText(formData.get('learningImageUrl')),
+      };
+      break;
+    }
+    case 'model-dialogue': {
+      const speakers = formData.getAll('dialogueSpeaker').map((value) => trimText(value));
+      const lines = formData.getAll('dialogueLine').map((value) => trimText(value));
+      const turns = [];
+      const count = Math.max(speakers.length, lines.length);
+      for (let index = 0; index < count; index += 1) {
+        const speaker = speakers[index] || '';
+        const line = lines[index] || '';
+        if (speaker || line) {
+          turns.push({ speaker, line });
+        }
+      }
+      state.data = {
+        title: trimText(formData.get('dialogueTitle')) || 'Model dialogue',
+        instructions: trimText(formData.get('dialogueInstructions')),
+        imageUrl: trimText(formData.get('dialogueImageUrl')),
+        audioUrl: trimText(formData.get('dialogueAudioUrl')),
+        turns,
+      };
+      break;
+    }
+    case 'interactive-practice': {
+      const prompts = formData.getAll('practicePrompt').map((value) => trimText(value));
+      const optionsList = formData.getAll('practiceOptions');
+      const answers = formData.getAll('practiceAnswer').map((value) => trimText(value));
+      const count = Math.max(prompts.length, optionsList.length, answers.length);
+      const questions = [];
+      for (let index = 0; index < count; index += 1) {
+        const prompt = prompts[index] || '';
+        const options = splitMultiline(optionsList[index]);
+        const answer = answers[index] || '';
+        if (prompt || options.length || answer) {
+          questions.push({ prompt, options, answer });
+        }
+      }
+      state.data = {
+        activityType: trimText(formData.get('practiceActivityType')),
+        title: trimText(formData.get('practiceTitle')) || 'Practice',
+        instructions: trimText(formData.get('practiceInstructions')),
+        questions,
+      };
+      break;
+    }
+    case 'communicative-task': {
+      state.data = {
+        title: trimText(formData.get('taskTitle')) || 'Communicative task',
+        imageUrl: trimText(formData.get('taskImageUrl')),
+        preparation: trimText(formData.get('taskPreparation')),
+        performance: trimText(formData.get('taskPerformance')),
+        scaffolding: splitMultiline(formData.get('taskScaffolding')),
+      };
+      break;
+    }
+    case 'pronunciation-focus': {
+      const words = [
+        trimText(formData.get('pronunciationWordOne')),
+        trimText(formData.get('pronunciationWordTwo')),
+      ].filter(Boolean);
+      const sentences = [
+        trimText(formData.get('pronunciationSentenceOne')),
+        trimText(formData.get('pronunciationSentenceTwo')),
+      ].filter(Boolean);
+      state.data = {
+        title: trimText(formData.get('pronunciationTitle')) || 'Pronunciation focus',
+        target: trimText(formData.get('pronunciationTarget')),
+        words,
+        sentences,
+        practice: trimText(formData.get('pronunciationPractice')),
+        imageUrl: trimText(formData.get('pronunciationImageUrl')),
+      };
+      break;
+    }
+    case 'reflection': {
+      const prompts = [
+        trimText(formData.get('reflectionPromptOne')),
+        trimText(formData.get('reflectionPromptTwo')),
+        trimText(formData.get('reflectionPromptThree')),
+      ].filter(Boolean);
+      state.data = {
+        title: trimText(formData.get('reflectionTitle')) || 'Reflection',
+        prompts,
+        imageUrl: trimText(formData.get('reflectionImageUrl')),
+      };
+      break;
+    }
+    default:
+      break;
+  }
+  return state;
 }
 
 function updateBuilderJsonPreview() {
@@ -6638,101 +6388,46 @@ function updateBuilderJsonPreview() {
   }
   const state = getBuilderFormState();
   if (!state) {
-    builderJsonPreview.textContent = "{}";
+    builderJsonPreview.textContent = '{}';
     return;
   }
-  if (state.layout === "blank-canvas") {
-    builderJsonPreview.textContent = JSON.stringify(
-      {
-        layout: state.layout,
-      },
-      null,
-      2,
-    );
-    return;
-  }
-  const previewData = {
-    layout: state.layout,
-    stageLabel: state.stageLabel,
-    activityTitle: state.activityTitle,
-    duration: state.duration,
-    slideTitle: state.slideTitle,
-    includeRubric: state.includeRubric,
-    rubricIntro: state.includeRubric ? state.rubricIntro : undefined,
-    overview: state.overview,
-    steps: state.steps,
-    columns:
-      state.layout === "rubric-columns"
-        ? {
-            first: { heading: state.columnOneHeading, items: state.columnOneItems },
-            second: { heading: state.columnTwoHeading, items: state.columnTwoItems },
-          }
-        : undefined,
-    spotlight:
-      state.layout === "image-spotlight"
-        ? {
-            narrative: state.spotlightNarrative,
-            imageUrl: state.imageUrl,
-            imageAlt: state.imageAlt,
-          }
-        : undefined,
-    cards: state.layout === "rubric-cards" ? state.cards : undefined,
-    vocabulary:
-      state.layout === "vocabulary-grid" ? state.vocabulary : undefined,
-    reading:
-      state.layout === "reading-comprehension" ? state.reading : undefined,
-    pronunciation:
-      state.layout === "pronunciation-drill" ? state.pronunciation : undefined,
-    homework:
-      state.layout === "homework-recap" ? state.homework : undefined,
-  };
-  if (state.includeRubric) {
-    previewData.rubric = {
-      levels: state.levels,
-      criteria: state.criteria.map((criterion, index) => ({
-        id: `criterion-${index + 1}`,
-        prompt: criterion.prompt,
-        success: criterion.success,
-      })),
-    };
-  }
-  builderJsonPreview.textContent = JSON.stringify(previewData, null, 2);
+  builderJsonPreview.textContent = JSON.stringify(state, null, 2);
 }
 
 function syncBuilderLayout(layout = getSelectedLayout()) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
-  const targetLayout = layout || getSelectedLayout() || "blank-canvas";
+  const targetLayout = layout || getSelectedLayout() || 'blank-canvas';
   setSelectedLayout(targetLayout);
   if (Array.isArray(builderLayoutInputs)) {
     builderLayoutInputs.forEach((input) => {
       if (!(input instanceof HTMLInputElement)) {
         return;
       }
-      const parent = input.closest(".layout-option");
+      const parent = input.closest('.layout-option');
       if (parent instanceof HTMLElement) {
-        parent.classList.toggle("is-selected", input.checked);
+        parent.classList.toggle('is-selected', input.checked);
       }
     });
   }
-  const blocks = builderForm.querySelectorAll("[data-layouts]");
+  const blocks = builderForm.querySelectorAll('[data-layouts]');
   blocks.forEach((block) => {
-    const layouts = (block.dataset.layouts || "")
-      .split(",")
+    const layouts = (block.dataset.layouts || '')
+      .split(',')
       .map((value) => value.trim())
       .filter(Boolean);
     const isVisible = !layouts.length || layouts.includes(targetLayout);
     block.hidden = !isVisible;
-    const controls = block.querySelectorAll("input, textarea, select");
+    const controls = block.querySelectorAll('input, textarea, select');
     controls.forEach((control) => {
       if (!(control instanceof HTMLElement)) {
         return;
       }
       if (isVisible) {
-        control.removeAttribute("disabled");
+        control.removeAttribute('disabled');
       } else {
-        control.setAttribute("disabled", "disabled");
+        control.setAttribute('disabled', 'disabled');
       }
     });
   });
@@ -6743,206 +6438,53 @@ function updateBuilderPreview() {
     return;
   }
   const state = getBuilderFormState();
-  builderPreview.classList.remove("has-content");
-  builderPreview.innerHTML = "";
+  builderPreview.classList.remove('has-content');
+  builderPreview.innerHTML = '';
   if (!state) {
     return;
   }
-
-  if (state.layout === "blank-canvas") {
+  if (state.layout === 'blank-canvas') {
     const blankSlide = createBlankSlide();
     if (blankSlide instanceof HTMLElement) {
       const previewSlide = blankSlide.cloneNode(true);
-      previewSlide.classList.remove("hidden");
+      previewSlide.classList.remove('hidden');
       builderPreview.appendChild(previewSlide);
-      builderPreview.classList.add("has-content");
+      builderPreview.classList.add('has-content');
     }
     return;
   }
-
-  const rubricPayload = state.includeRubric
-    ? {
-        criteria: state.criteria,
-        levels: state.levels,
-      }
-    : null;
-
   let slide = null;
   switch (state.layout) {
-    case "rubric-simple":
-      slide = createRubricFocusSlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.slideTitle || state.activityTitle || "Success criteria",
-        activityTitle: state.activityTitle,
-        duration: state.duration,
-        rubric: rubricPayload,
-        rubricHeadingText: "Success criteria",
-        rubricIntro: state.rubricIntro,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'learning-objectives':
+      slide = createLearningObjectivesSlide(state.data);
       break;
-    case "rubric-columns":
-      slide = createRubricColumnSlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.activityTitle || state.slideTitle || "Discussion + rubric",
-        duration: state.duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        columnOne: {
-          heading: state.columnOneHeading,
-          items: state.columnOneItems,
-        },
-        columnTwo: {
-          heading: state.columnTwoHeading,
-          items: state.columnTwoItems,
-        },
-        rubricEnabled: state.includeRubric,
-      });
+    case 'model-dialogue':
+      slide = createModelDialogueSlide(state.data);
       break;
-    case "image-spotlight":
-      slide = createImageSpotlightSlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.activityTitle || state.slideTitle || "Spotlight",
-        duration: state.duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        narrative: state.spotlightNarrative,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'interactive-practice':
+      slide = createInteractivePracticeSlide(state.data);
       break;
-    case "rubric-cards":
-      slide = createRubricCardSlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.activityTitle || state.slideTitle || "Strategy lab",
-        duration: state.duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        cards: state.cards,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'communicative-task':
+      slide = createCommunicativeTaskSlide(state.data);
       break;
-    case "vocabulary-grid":
-      slide = createVocabularyGridSlide({
-        stageLabel: state.stageLabel || "Language lab",
-        title: state.activityTitle || state.slideTitle || "Vocabulary grid",
-        duration: state.duration,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        vocabulary: state.vocabulary,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'pronunciation-focus':
+      slide = createPronunciationFocusSlide(state.data);
       break;
-    case "reading-comprehension":
-      slide = createReadingComprehensionSlide({
-        stageLabel: state.stageLabel || "Reading workshop",
-        title: state.activityTitle || state.slideTitle || "Reading comprehension",
-        duration: state.duration,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        reading: state.reading,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    case "pronunciation-drill":
-      slide = createPronunciationDrillSlide({
-        stageLabel: state.stageLabel || "Sound clinic",
-        title: state.activityTitle || state.slideTitle || "Pronunciation focus",
-        duration: state.duration,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        pronunciation: state.pronunciation,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    case "homework-recap":
-      slide = createHomeworkRecapSlide({
-        stageLabel: state.stageLabel || "Homework debrief",
-        duration: state.duration,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        homework: state.homework,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'reflection':
+      slide = createReflectionSlide(state.data);
       break;
     default:
-      slide = createActivitySlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.activityTitle || "Activity",
-        duration: state.duration,
-        overview: state.overview,
-        steps: state.steps,
-        rubric: rubricPayload,
-        instructionsHeading: state.slideTitle,
-        rubricHeadingText: "Success criteria",
-        rubricIntro: state.rubricIntro,
-        rubricEnabled: state.includeRubric,
-      });
       break;
   }
-
   if (slide instanceof HTMLElement) {
     const previewSlide = slide.cloneNode(true);
-    previewSlide.classList.remove("hidden");
+    previewSlide.classList.remove('hidden');
     builderPreview.appendChild(previewSlide);
-    builderPreview.classList.add("has-content");
+    builderPreview.classList.add('has-content');
   }
 }
 
-function ensureBuilderPrompts() {
-  if (!(builderPromptList instanceof HTMLElement)) {
-    return;
-  }
-  if (!isRubricEnabled()) {
-    builderPromptList.innerHTML = "";
-    return;
-  }
-  const layout = getSelectedLayout();
-  if (layout === "blank-canvas") {
-    builderPromptList.innerHTML = "";
-    return;
-  }
-  if (!builderPromptList.querySelector(".builder-prompt-item")) {
-    DEFAULT_BUILDER_PROMPTS.forEach((entry) => addPromptItem(entry));
-  }
-}
-
-function handleRubricToggleChange({ preservePrompts = false, updatePreview = true } = {}) {
-  const enabled = isRubricEnabled();
-  if (builderRubricSection instanceof HTMLElement) {
-    builderRubricSection.classList.toggle("is-disabled", !enabled);
-  }
-  if (builderAddPromptBtn instanceof HTMLButtonElement) {
-    builderAddPromptBtn.disabled = !enabled;
-    builderAddPromptBtn.setAttribute("aria-disabled", String(!enabled));
-  }
-  if (builderPromptList instanceof HTMLElement) {
-    builderPromptList.hidden = !enabled;
-    const controls = builderPromptList.querySelectorAll("input, textarea");
-    controls.forEach((control) => {
-      if (control instanceof HTMLElement) {
-        if (enabled) {
-          control.removeAttribute("disabled");
-        } else {
-          control.setAttribute("disabled", "disabled");
-        }
-      }
-    });
-    if (enabled && !builderPromptList.querySelector(".builder-prompt-item")) {
-      ensureBuilderPrompts();
-    }
-  }
-  if (updatePreview) {
-    updateBuilderJsonPreview();
-    updateBuilderPreview();
-  }
-}
-
-function updateImageSearchStatus(message = "", tone = "info") {
+function updateImageSearchStatus(message = '', tone = 'info') {
   if (!(builderImageStatus instanceof HTMLElement)) {
     return;
   }
@@ -6950,7 +6492,7 @@ function updateImageSearchStatus(message = "", tone = "info") {
   if (message) {
     builderImageStatus.dataset.tone = tone;
   } else {
-    builderImageStatus.removeAttribute("data-tone");
+    builderImageStatus.removeAttribute('data-tone');
   }
 }
 
@@ -6958,24 +6500,24 @@ function renderImageSearchResults(photos = []) {
   if (!(builderImageResults instanceof HTMLElement)) {
     return;
   }
-  builderImageResults.innerHTML = "";
+  builderImageResults.innerHTML = '';
   if (!Array.isArray(photos) || !photos.length) {
     return;
   }
   photos.forEach((photo, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "image-result";
-    button.dataset.url = photo.src?.large2x || photo.src?.large || "";
-    button.dataset.alt = photo.alt || "";
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'image-result';
+    button.dataset.url = photo.src?.large2x || photo.src?.large || '';
+    button.dataset.alt = photo.alt || '';
     button.dataset.id = String(photo.id ?? index);
-    button.setAttribute("role", "option");
-    button.setAttribute("aria-selected", "false");
-    const img = document.createElement("img");
-    img.src = photo.src?.medium || photo.src?.small || photo.src?.tiny || "";
-    img.alt = photo.alt || "Search result";
-    img.loading = "lazy";
-    img.decoding = "async";
+    button.setAttribute('role', 'option');
+    button.setAttribute('aria-selected', 'false');
+    const img = document.createElement('img');
+    img.src = photo.src?.medium || photo.src?.small || photo.src?.tiny || '';
+    img.alt = photo.alt || 'Search result';
+    img.loading = 'lazy';
+    img.decoding = 'async';
     button.appendChild(img);
     builderImageResults.appendChild(button);
   });
@@ -6985,42 +6527,50 @@ function selectImageResult(button) {
   if (!(button instanceof HTMLElement)) {
     return;
   }
-  const url = button.dataset.url || "";
-  const alt = button.dataset.alt || "";
+  const url = button.dataset.url || '';
   if (builderImageResults instanceof HTMLElement) {
     builderImageResults
-      .querySelectorAll(".image-result")
+      .querySelectorAll('.image-result')
       .forEach((item) => {
-        item.classList.remove("is-selected");
-        item.setAttribute("aria-selected", "false");
+        item.classList.remove('is-selected');
+        item.setAttribute('aria-selected', 'false');
       });
   }
-  button.classList.add("is-selected");
-  button.setAttribute("aria-selected", "true");
-  const urlInput = builderForm?.querySelector('input[name="imageUrl"]');
-  const altInput = builderForm?.querySelector('input[name="imageAlt"]');
-  if (urlInput instanceof HTMLInputElement) {
-    urlInput.value = url;
+  button.classList.add('is-selected');
+  button.setAttribute('aria-selected', 'true');
+  const layout = getSelectedLayout();
+  const fieldMap = {
+    'learning-objectives': 'learningImageUrl',
+    'model-dialogue': 'dialogueImageUrl',
+    'interactive-practice': null,
+    'communicative-task': 'taskImageUrl',
+    'pronunciation-focus': 'pronunciationImageUrl',
+    reflection: 'reflectionImageUrl',
+  };
+  const targetName = fieldMap[layout];
+  if (targetName) {
+    const targetField = builderForm?.elements.namedItem?.(targetName);
+    if (targetField instanceof HTMLInputElement) {
+      targetField.value = url;
+      targetField.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   }
-  if (altInput instanceof HTMLInputElement && alt && !altInput.value) {
-    altInput.value = alt;
-  }
-  updateBuilderJsonPreview();
-  updateBuilderPreview();
 }
 
-async function handleImageSearch() {
-  if (!(builderImageSearchInput instanceof HTMLInputElement)) {
-    return;
-  }
-  const query = builderImageSearchInput.value.trim();
+function handleImageSearch() {
+  const query = trimText(builderImageSearchInput?.value ?? '');
+  searchPexelsImages(query);
+}
+
+async function searchPexelsImages(query) {
   if (!query) {
-    updateImageSearchStatus("Type a search term to find images.", "info");
+    updateImageSearchStatus('Enter a keyword to search for lesson visuals.', 'info');
+    renderImageSearchResults([]);
     return;
   }
-  updateImageSearchStatus("Searching Pexels...", "info");
+  updateImageSearchStatus('Searching Pexels...', 'info');
   if (!PEXELS_API_KEY) {
-    updateImageSearchStatus("Pexels search is unavailable.", "error");
+    updateImageSearchStatus('Pexels search is unavailable.', 'error');
     return;
   }
   try {
@@ -7038,127 +6588,34 @@ async function handleImageSearch() {
     const data = await response.json();
     const photos = Array.isArray(data?.photos) ? data.photos : [];
     if (!photos.length) {
-      updateImageSearchStatus("No images found. Try another term.", "info");
+      updateImageSearchStatus('No images found. Try another term.', 'info');
     } else {
-      updateImageSearchStatus(`Found ${photos.length} image${photos.length === 1 ? "" : "s"}.`, "success");
+      updateImageSearchStatus(`Found ${photos.length} image${photos.length === 1 ? '' : 's'}.`, 'success');
     }
     renderImageSearchResults(photos);
   } catch (error) {
-    console.warn("Image search failed", error);
-    updateImageSearchStatus("We couldn't fetch images right now.", "error");
+    console.warn('Image search failed', error);
+    updateImageSearchStatus("We couldn't fetch images right now.", 'error');
   }
-}
-
-function addPromptItem({ prompt = "", success = "" } = {}) {
-  if (!(builderPromptList instanceof HTMLElement)) {
-    return null;
-  }
-
-  const item = document.createElement("li");
-  item.className = "builder-prompt-item";
-
-  const promptField = document.createElement("div");
-  promptField.className = "builder-field";
-  const promptLabel = document.createElement("label");
-  promptLabel.className = "builder-field-label";
-  const promptId = generateBuilderFieldId("builder-prompt");
-  promptLabel.setAttribute("for", promptId);
-  promptLabel.textContent = "Prompt";
-  const promptInput = document.createElement("input");
-  promptInput.type = "text";
-  promptInput.name = "rubricPrompt[]";
-  promptInput.id = promptId;
-  promptInput.required = true;
-  promptInput.placeholder = "What should learners pay attention to?";
-  promptInput.value = prompt;
-  promptField.appendChild(promptLabel);
-  promptField.appendChild(promptInput);
-
-  const successField = document.createElement("div");
-  successField.className = "builder-field";
-  const successLabel = document.createElement("label");
-  successLabel.className = "builder-field-label";
-  const successId = generateBuilderFieldId("builder-success");
-  successLabel.setAttribute("for", successId);
-  successLabel.textContent = "Success description";
-  const successArea = document.createElement("textarea");
-  successArea.name = "rubricSuccess[]";
-  successArea.id = successId;
-  successArea.rows = 2;
-  successArea.placeholder = "Describe what strong evidence looks like";
-  successArea.value = success;
-  successField.appendChild(successLabel);
-  successField.appendChild(successArea);
-
-  const removeBtn = document.createElement("button");
-  removeBtn.type = "button";
-  removeBtn.className = "builder-remove-prompt";
-  removeBtn.setAttribute("aria-label", "Remove criterion");
-  const removeIcon = document.createElement("i");
-  removeIcon.className = "fa-solid fa-trash";
-  removeIcon.setAttribute("aria-hidden", "true");
-  removeBtn.appendChild(removeIcon);
-
-  item.appendChild(promptField);
-  item.appendChild(successField);
-  item.appendChild(removeBtn);
-  builderPromptList.appendChild(item);
-
-  const handleFieldInput = () => {
-    updateBuilderJsonPreview();
-    updateBuilderPreview();
-  };
-
-  promptInput.addEventListener("input", handleFieldInput);
-  successArea.addEventListener("input", handleFieldInput);
-
-  removeBtn.addEventListener("click", () => {
-    item.remove();
-    if (
-      getSelectedLayout() !== "blank-canvas" &&
-      !builderPromptList.querySelector(".builder-prompt-item")
-    ) {
-      addPromptItem();
-    }
-    updateBuilderJsonPreview();
-    updateBuilderPreview();
-  });
-
-  return item;
 }
 
 function resetBuilderForm() {
   if (builderForm instanceof HTMLFormElement) {
     builderForm.reset();
   }
-  if (builderPromptList instanceof HTMLElement) {
-    builderPromptList.innerHTML = "";
-  }
+  resetDialogueList([]);
+  resetPracticeList([]);
   if (builderImageResults instanceof HTMLElement) {
-    builderImageResults.innerHTML = "";
+    builderImageResults.innerHTML = '';
   }
   if (builderImageSearchInput instanceof HTMLInputElement) {
-    builderImageSearchInput.value = "";
+    builderImageSearchInput.value = '';
   }
-  updateImageSearchStatus("", "info");
-  builderFieldId = 0;
-  setSelectedLayout("blank-canvas");
-  handleRubricToggleChange({ preservePrompts: true, updatePreview: false });
-  applyBuilderLayoutDefaults("blank-canvas", { updatePreview: false });
-  ensureBuilderPrompts();
-  updateBuilderJsonPreview();
-  syncBuilderLayout("blank-canvas");
-  updateBuilderPreview();
-  showBuilderStatus("", undefined);
+  updateImageSearchStatus('', 'info');
+  setSelectedLayout('blank-canvas');
+  syncBuilderLayout('blank-canvas');
+  applyBuilderLayoutDefaults('blank-canvas', { updatePreview: true });
 }
-
-function handleBuilderKeydown(event) {
-  if (event.key === "Escape") {
-    event.preventDefault();
-    closeBuilderOverlay({ reset: false, focus: true });
-  }
-}
-
 function openBuilderOverlay({ layout } = {}) {
   if (!(builderOverlay instanceof HTMLElement)) {
     return;
@@ -7168,7 +6625,6 @@ function openBuilderOverlay({ layout } = {}) {
   if (layout) {
     setSelectedLayout(layout);
   }
-  ensureBuilderPrompts();
   const activeLayout = getSelectedLayout();
   applyBuilderLayoutDefaults(activeLayout, { updatePreview: false });
   syncBuilderLayout(activeLayout);
@@ -7208,6 +6664,12 @@ function closeBuilderOverlay({ reset = false, focus = true } = {}) {
   }, 200);
   if (focus && builderLastFocus instanceof HTMLElement) {
     builderLastFocus.focus({ preventScroll: true });
+  }
+}
+
+function handleBuilderKeydown(event) {
+  if (event.key === 'Escape') {
+    closeBuilderOverlay({ reset: false, focus: true });
   }
 }
 
@@ -9521,6 +8983,351 @@ function createHomeworkRecapSlide({
 
 
 
+
+function createLearningObjectivesSlide({ title = 'Learning Outcomes', goals = [], communicativeGoal = '', imageUrl = '' } = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'lesson';
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Learning Outcomes';
+  header.appendChild(heading);
+
+  const goalText = trimText(communicativeGoal);
+  if (goalText) {
+    const goalElement = document.createElement('p');
+    goalElement.className = 'lesson-communicative';
+    const lead = document.createElement('strong');
+    lead.textContent = 'So you can';
+    goalElement.appendChild(lead);
+    goalElement.appendChild(document.createTextNode(` ${goalText}`));
+    header.appendChild(goalElement);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'lesson-body';
+  inner.appendChild(body);
+
+  const cleanedGoals = Array.isArray(goals) ? goals.map((goal) => trimText(goal)).filter(Boolean) : [];
+  if (cleanedGoals.length) {
+    const list = document.createElement('ul');
+    list.className = 'lesson-goals';
+    cleanedGoals.forEach((goal, index) => {
+      const item = document.createElement('li');
+      const icon = document.createElement('span');
+      icon.className = 'lesson-goal-icon';
+      icon.textContent = `Goal ${index + 1}`;
+      const text = document.createElement('p');
+      text.textContent = goal;
+      item.appendChild(icon);
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the lesson goals to orient learners.';
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createModelDialogueSlide({ title = 'Model dialogue', instructions = '', imageUrl = '', audioUrl = '', turns = [] } = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'lesson';
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Model dialogue';
+  header.appendChild(heading);
+
+  const instructionText = trimText(instructions);
+  if (instructionText) {
+    const instructionEl = document.createElement('p');
+    instructionEl.className = 'lesson-instructions';
+    instructionEl.textContent = instructionText;
+    header.appendChild(instructionEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'lesson-dialogue';
+  inner.appendChild(body);
+
+  const dialogueWrap = document.createElement('div');
+  dialogueWrap.className = 'lesson-dialogue-text';
+  body.appendChild(dialogueWrap);
+
+  const cleanedTurns = Array.isArray(turns)
+    ? turns
+        .map((turn) => ({ speaker: trimText(turn?.speaker), line: trimText(turn?.line) }))
+        .filter((turn) => turn.speaker || turn.line)
+    : [];
+
+  if (cleanedTurns.length) {
+    cleanedTurns.forEach((turn) => {
+      const block = document.createElement('div');
+      block.className = 'dialogue-turn';
+      const speaker = document.createElement('span');
+      speaker.className = 'dialogue-speaker';
+      speaker.textContent = turn.speaker || 'Speaker';
+      const line = document.createElement('p');
+      line.className = 'dialogue-line';
+      line.textContent = turn.line || '';
+      block.appendChild(speaker);
+      block.appendChild(line);
+      dialogueWrap.appendChild(block);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add dialogue turns so learners can analyse the model.';
+    dialogueWrap.appendChild(placeholder);
+  }
+
+  if (resolvedImage) {
+    const visual = document.createElement('div');
+    visual.className = 'lesson-dialogue-visual';
+    const img = document.createElement('img');
+    img.src = resolvedImage;
+    img.alt = trimText(title) || 'Dialogue context';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    visual.appendChild(img);
+    body.appendChild(visual);
+  }
+
+  const audioSource = trimText(audioUrl);
+  if (audioSource) {
+    const audioWrap = document.createElement('div');
+    audioWrap.className = 'lesson-audio';
+    const audioEl = document.createElement('audio');
+    audioEl.controls = true;
+    audioEl.src = audioSource;
+    audioWrap.appendChild(audioEl);
+    inner.appendChild(audioWrap);
+  }
+
+  return slide;
+}
+
+function createCommunicativeTaskSlide({ title = 'Communicative task', imageUrl = '', preparation = '', performance = '', scaffolding = [] } = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'communicative-task';
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Communicative task';
+  header.appendChild(heading);
+
+  const body = document.createElement('div');
+  body.className = 'task-body';
+  inner.appendChild(body);
+
+  const prepSection = document.createElement('section');
+  prepSection.className = 'task-phase';
+  const prepHeading = document.createElement('h3');
+  prepHeading.textContent = 'Preparation';
+  const prepText = document.createElement('p');
+  prepText.textContent = trimText(preparation) || 'Describe the scenario learners should prepare for.';
+  prepSection.appendChild(prepHeading);
+  prepSection.appendChild(prepText);
+  body.appendChild(prepSection);
+
+  const performanceSection = document.createElement('section');
+  performanceSection.className = 'task-phase';
+  const perfHeading = document.createElement('h3');
+  perfHeading.textContent = 'Performance';
+  const perfText = document.createElement('p');
+  perfText.textContent = trimText(performance) || 'Explain how learners will carry out the task.';
+  performanceSection.appendChild(perfHeading);
+  performanceSection.appendChild(perfText);
+  body.appendChild(performanceSection);
+
+  const scaffoldingItems = Array.isArray(scaffolding)
+    ? scaffolding.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (scaffoldingItems.length) {
+    const scaffoldSection = document.createElement('section');
+    scaffoldSection.className = 'task-scaffolding';
+    const scaffoldHeading = document.createElement('h4');
+    scaffoldHeading.textContent = 'Language support';
+    scaffoldSection.appendChild(scaffoldHeading);
+    const list = document.createElement('ul');
+    list.className = 'task-scaffolding-list';
+    scaffoldingItems.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    scaffoldSection.appendChild(list);
+    body.appendChild(scaffoldSection);
+  }
+
+  return slide;
+}
+
+function createPronunciationFocusSlide({
+  title = 'Pronunciation focus',
+  target = '',
+  words = [],
+  sentences = [],
+  practice = '',
+  imageUrl = '',
+} = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'pronunciation';
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Pronunciation focus';
+  header.appendChild(heading);
+
+  const targetText = trimText(target);
+  if (targetText) {
+    const targetEl = document.createElement('p');
+    targetEl.className = 'pronunciation-target';
+    targetEl.textContent = targetText;
+    header.appendChild(targetEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'pronunciation-focus-card';
+  inner.appendChild(card);
+
+  const wordList = Array.isArray(words) ? words.map((word) => trimText(word)).filter(Boolean) : [];
+  if (wordList.length) {
+    const wordsEl = document.createElement('div');
+    wordsEl.className = 'pronunciation-words';
+    wordList.forEach((word) => {
+      const span = document.createElement('span');
+      span.textContent = word;
+      wordsEl.appendChild(span);
+    });
+    card.appendChild(wordsEl);
+  }
+
+  const sentenceList = Array.isArray(sentences)
+    ? sentences.map((sentence) => trimText(sentence)).filter(Boolean)
+    : [];
+  if (sentenceList.length) {
+    const sentenceEl = document.createElement('div');
+    sentenceEl.className = 'pronunciation-examples';
+    sentenceList.forEach((sentence) => {
+      const example = document.createElement('span');
+      example.textContent = sentence;
+      sentenceEl.appendChild(example);
+    });
+    card.appendChild(sentenceEl);
+  }
+
+  const practiceText = trimText(practice);
+  const practiceEl = document.createElement('div');
+  practiceEl.className = 'pronunciation-practice';
+  practiceEl.textContent = practiceText || 'Describe how learners should practise the target sound.';
+  card.appendChild(practiceEl);
+
+  return slide;
+}
+
+function createReflectionSlide({ title = 'Reflection', prompts = [], imageUrl = '' } = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'reflection';
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Reflection';
+  header.appendChild(heading);
+
+  const body = document.createElement('div');
+  body.className = 'reflection-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(prompts) ? prompts.map((prompt) => trimText(prompt)).filter(Boolean) : [];
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reflection-prompts';
+    promptList.forEach((prompt) => {
+      const li = document.createElement('li');
+      li.textContent = prompt;
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add reflection prompts to guide learners.';
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
 function createInteractivePracticeSlide({
   title,
   instructions,
@@ -9903,364 +9710,190 @@ function handleBuilderSubmit(event) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
+
   const state = getBuilderFormState();
   if (!state) {
     showBuilderStatus("We couldn't read the builder data.", "error");
     return;
   }
 
-  if (state.layout === "blank-canvas") {
-    const blankSlide = createBlankSlide();
-    if (!(blankSlide instanceof HTMLElement)) {
-      showBuilderStatus("We couldn't add a blank slide right now.", "error");
-      return;
-    }
-    attachBlankSlideEvents(blankSlide);
-    insertActivitySlide(blankSlide);
-    showBuilderStatus("Blank canvas ready for your ideas.", "success");
-    closeBuilderOverlay({ reset: true, focus: true });
-    return;
-  }
-
-  const criteria = state.criteria;
-  if (state.includeRubric && !criteria.length) {
-    showBuilderStatus("Add at least one rubric criterion.", "error");
-    return;
-  }
-
-  const title = state.activityTitle;
-  const stageLabel = state.stageLabel || "Activity Workshop";
-  const duration = state.duration;
-  const overview = state.overview;
-  const steps = state.steps;
-  const levels = state.levels;
-
-  const rubricData = {
-    title,
-    levels,
-    criteria: criteria.map((criterion, index) => ({
-      id: `criterion-${index + 1}`,
-      prompt: criterion.prompt,
-      success: criterion.success,
-    })),
-  };
-
   let slide = null;
+
   switch (state.layout) {
-    case "rubric-simple": {
-      const resolvedSlideTitle = state.slideTitle || state.activityTitle;
-      if (!trimText(resolvedSlideTitle)) {
-        showBuilderStatus("Add a slide title before inserting.", "error");
-        const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
-        slideTitleInput?.focus({ preventScroll: true });
-        return;
+    case 'blank-canvas': {
+      slide = createBlankSlide();
+      if (slide instanceof HTMLElement) {
+        attachBlankSlideEvents(slide);
       }
-      slide = createRubricFocusSlide({
-        stageLabel,
-        title: resolvedSlideTitle,
-        activityTitle: state.activityTitle,
-        duration,
-        rubric: rubricData,
-        rubricHeadingText: "Success criteria",
-        rubricIntro: state.rubricIntro,
-        rubricEnabled: state.includeRubric,
-      });
       break;
     }
-    case "rubric-columns": {
-      if (!trimText(state.slideTitle || "")) {
-        showBuilderStatus("Name the discussion focus before inserting.", "error");
-        const slideTitleInput = builderForm.querySelector('[name="slideTitle"]');
-        slideTitleInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createRubricColumnSlide({
-        stageLabel,
-        title,
-        duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricData,
-        rubricIntro: state.rubricIntro,
-        columnOne: {
-          heading: state.columnOneHeading,
-          items: state.columnOneItems,
-        },
-        columnTwo: {
-          heading: state.columnTwoHeading,
-          items: state.columnTwoItems,
-        },
-        rubricEnabled: state.includeRubric,
-      });
+    case 'learning-objectives':
+      slide = createLearningObjectivesSlide(state.data);
       break;
-    }
-    case "image-spotlight": {
-      slide = createImageSpotlightSlide({
-        stageLabel,
-        title,
-        duration,
-        slideTitle: state.slideTitle,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        narrative: state.spotlightNarrative,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'model-dialogue':
+      slide = createModelDialogueSlide(state.data);
       break;
-    }
-    case "rubric-cards": {
-      if (!state.cards.length) {
-        showBuilderStatus("Add at least one strategy card.", "error");
-        const cardInput = builderForm.querySelector('[name="cardOneHeading"]');
-        cardInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createRubricCardSlide({
-        stageLabel,
-        title,
-        duration,
-        slideTitle: state.slideTitle,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        cards: state.cards,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'interactive-practice':
+      slide = createInteractivePracticeSlide(state.data);
       break;
-    }
-    case "vocabulary-grid": {
-      if (!state.vocabulary.items.length) {
-        showBuilderStatus("Add at least one vocabulary entry with a definition.", "error");
-        const vocabInput = builderForm.querySelector('[name="vocabWordList"]');
-        vocabInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createVocabularyGridSlide({
-        stageLabel,
-        title,
-        duration,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        vocabulary: state.vocabulary,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'communicative-task':
+      slide = createCommunicativeTaskSlide(state.data);
       break;
-    }
-    case "reading-comprehension": {
-      if (!state.reading.questions.length) {
-        showBuilderStatus("List at least one comprehension question and answer.", "error");
-        const readingInput = builderForm.querySelector('[name="readingQuestions"]');
-        readingInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createReadingComprehensionSlide({
-        stageLabel,
-        title,
-        duration,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        reading: state.reading,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'pronunciation-focus':
+      slide = createPronunciationFocusSlide(state.data);
       break;
-    }
-    case "pronunciation-drill": {
-      if (!state.pronunciation.minimalPairs.length) {
-        showBuilderStatus("Provide at least one minimal pair to practise.", "error");
-        const pairInput = builderForm.querySelector('[name="pronunciationMinimalPairs"]');
-        pairInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createPronunciationDrillSlide({
-        stageLabel,
-        title,
-        duration,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        pronunciation: state.pronunciation,
-        rubricEnabled: state.includeRubric,
-      });
+    case 'reflection':
+      slide = createReflectionSlide(state.data);
       break;
-    }
-    case "homework-recap": {
-      if (!state.homework.summary) {
-        showBuilderStatus("Add a homework summary to orient learners.", "error");
-        const summaryInput = builderForm.querySelector('[name="homeworkSummary"]');
-        summaryInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createHomeworkRecapSlide({
-        stageLabel,
-        title,
-        duration,
-        rubric: state.includeRubric ? rubricData : null,
-        rubricIntro: state.rubricIntro,
-        homework: state.homework,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    }
-    default: {
-      slide = createActivitySlide({
-        stageLabel,
-        title: state.activityTitle || "Activity",
-        duration,
-        overview,
-        steps,
-        rubric: state.includeRubric ? rubricData : null,
-        instructionsHeading: state.slideTitle,
-        rubricHeadingText: "Success criteria",
-        rubricIntro: state.rubricIntro,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    }
+    default:
+      showBuilderStatus('Choose a slide layout to continue.', 'error');
+      return;
   }
 
   if (!(slide instanceof HTMLElement)) {
-    showBuilderStatus("Unable to build an activity slide right now.", "error");
+    showBuilderStatus("We couldn't build that slide right now.", "error");
     return;
   }
 
-  initialiseBuilderSlide(slide);
-  insertActivitySlide(slide);
-  if (typeof slide.__deckShowStatus === "function") {
-    if (state.includeRubric) {
-      slide.__deckShowStatus("Rubric ready for your learners.", "success");
-    } else {
-      slide.__deckShowStatus("Slide inserted and ready to customise.", "info");
-    }
+  if (state.layout === 'interactive-practice') {
+    initialiseInteractivePracticeSlide(slide);
   }
+
+  insertActivitySlide(slide);
+  showBuilderStatus('Slide added to your deck.', 'success');
   closeBuilderOverlay({ reset: true, focus: true });
 }
-
 function initialiseActivityBuilderUI() {
-  if (!(builderOverlay instanceof HTMLElement)) {
+  if (!(builderOverlay instanceof HTMLElement) || !(builderForm instanceof HTMLFormElement)) {
     return;
   }
   if (builderOverlay.__deckBuilderInitialised) {
-    initialiseGeneratedActivitySlides();
     updateBuilderJsonPreview();
+    updateBuilderPreview();
     return;
   }
 
   builderOverlay.__deckBuilderInitialised = true;
 
-  resetBuilderForm();
-
   const openForLayout = (layout) => {
-    showBuilderStatus("", undefined);
+    showBuilderStatus('', undefined);
     openBuilderOverlay({ layout });
   };
 
-  addSlideBtn?.addEventListener("click", (event) => {
+  addSlideBtn?.addEventListener('click', (event) => {
     event.preventDefault();
-    openForLayout("blank-canvas");
+    openForLayout('blank-canvas');
   });
 
-  activityBuilderBtn?.addEventListener("click", () => {
-    openForLayout("facilitation");
+  activityBuilderBtn?.addEventListener('click', () => {
+    openForLayout('learning-objectives');
   });
 
-  builderAddPromptBtn?.addEventListener("click", () => {
-    const newItem = addPromptItem();
-    const focusTarget = newItem?.querySelector("input, textarea");
-    if (focusTarget instanceof HTMLElement) {
-      focusTarget.focus({ preventScroll: true });
-    }
-    showBuilderStatus("Added a new criterion.", "info");
-    updateBuilderJsonPreview();
-    updateBuilderPreview();
-  });
+  if (builderAddDialogueBtn instanceof HTMLButtonElement) {
+    builderAddDialogueBtn.addEventListener('click', () => {
+      const newItem = addDialogueItem();
+      const focusTarget = newItem?.querySelector('input, textarea');
+      if (focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
+      showBuilderStatus('Added a dialogue turn.', 'info');
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
+
+  if (builderAddPracticeBtn instanceof HTMLButtonElement) {
+    builderAddPracticeBtn.addEventListener('click', () => {
+      const newItem = addPracticeItem();
+      const focusTarget = newItem?.querySelector('input, textarea');
+      if (focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
+      showBuilderStatus('Added a practice prompt.', 'info');
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
 
   if (Array.isArray(builderLayoutInputs)) {
+    const messages = {
+      'blank-canvas': 'Blank canvas selected.',
+      'learning-objectives': 'Learning objectives layout selected.',
+      'model-dialogue': 'Model dialogue layout selected.',
+      'interactive-practice': 'Interactive practice layout selected.',
+      'communicative-task': 'Communicative task layout selected.',
+      'pronunciation-focus': 'Pronunciation focus layout selected.',
+      reflection: 'Reflection layout selected.',
+    };
     builderLayoutInputs.forEach((input) => {
-      input.addEventListener("change", (event) => {
+      input.addEventListener('change', (event) => {
         const target = event.target;
         if (!(target instanceof HTMLInputElement)) {
           return;
         }
-        const layoutValue = target.value || "blank-canvas";
+        const layoutValue = target.value || 'blank-canvas';
         syncBuilderLayout(layoutValue);
         applyBuilderLayoutDefaults(layoutValue);
-        ensureBuilderPrompts();
         updateBuilderJsonPreview();
         updateBuilderPreview();
-        const messages = {
-          "blank-canvas": "Blank canvas selected.",
-          facilitation: "Facilitation layout selected.",
-          "rubric-simple": "Rubric spotlight layout selected.",
-          "rubric-columns": "Discussion columns layout selected.",
-          "image-spotlight": "Image spotlight layout selected.",
-          "rubric-cards": "Strategy cards layout selected.",
-          "vocabulary-grid": "Vocabulary grid layout selected.",
-          "reading-comprehension": "Reading comprehension layout selected.",
-          "pronunciation-drill": "Pronunciation drill layout selected.",
-          "homework-recap": "Homework recap layout selected.",
-        };
-        showBuilderStatus(messages[layoutValue] || "Layout updated.", "info");
+        showBuilderStatus(messages[layoutValue] || 'Layout updated.', 'info');
       });
     });
   }
 
-  builderRefreshPreviewBtn?.addEventListener("click", () => {
+  builderRefreshPreviewBtn?.addEventListener('click', () => {
     updateBuilderPreview();
-    showBuilderStatus("Preview refreshed.", "success");
+    showBuilderStatus('Preview refreshed.', 'success');
   });
 
-  builderCancelBtn?.addEventListener("click", () => {
+  builderCancelBtn?.addEventListener('click', () => {
     closeBuilderOverlay({ reset: true, focus: true });
   });
 
-  builderCloseBtn?.addEventListener("click", () => {
+  builderCloseBtn?.addEventListener('click', () => {
     closeBuilderOverlay({ reset: false, focus: true });
   });
 
-  builderOverlay.addEventListener("click", (event) => {
+  builderOverlay.addEventListener('click', (event) => {
     if (event.target === builderOverlay) {
       closeBuilderOverlay({ reset: false, focus: true });
     }
   });
 
-  builderImageSearchBtn?.addEventListener("click", () => {
+  builderImageSearchBtn?.addEventListener('click', () => {
     handleImageSearch();
   });
 
-  builderImageSearchInput?.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
+  builderImageSearchInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
       event.preventDefault();
       handleImageSearch();
     }
   });
 
-  builderImageResults?.addEventListener("click", (event) => {
-    const button = event.target instanceof HTMLElement ? event.target.closest(".image-result") : null;
+  builderImageResults?.addEventListener('click', (event) => {
+    const button = event.target instanceof HTMLElement ? event.target.closest('.image-result') : null;
     if (button instanceof HTMLElement) {
       selectImageResult(button);
     }
   });
 
-  builderRubricToggle?.addEventListener("change", () => {
-    handleRubricToggleChange({ preservePrompts: false, updatePreview: true });
-  });
-
   if (builderForm instanceof HTMLFormElement) {
-    builderForm.addEventListener("submit", handleBuilderSubmit);
-    builderForm.addEventListener("input", () => {
+    builderForm.addEventListener('submit', handleBuilderSubmit);
+    builderForm.addEventListener('input', () => {
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
-    builderForm.addEventListener("change", () => {
+    builderForm.addEventListener('change', () => {
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
   }
 
-  handleRubricToggleChange({ preservePrompts: true, updatePreview: false });
-  initialiseGeneratedActivitySlides();
+  resetBuilderForm();
   updateBuilderJsonPreview();
   updateBuilderPreview();
 }
-
 async function initialiseDeck() {
   await hydrateRemoteImages().catch((error) => {
     console.warn(
@@ -10362,12 +9995,18 @@ export async function setupInteractiveDeck({
   builderForm =
     builderOverlay?.querySelector("#activity-builder-form") ??
     document.querySelector("#activity-builder-form");
-  builderAddPromptBtn =
-    builderOverlay?.querySelector("#builder-add-prompt") ??
-    document.querySelector("#builder-add-prompt");
-  builderPromptList =
-    builderOverlay?.querySelector("#builder-prompt-list") ??
-    document.querySelector("#builder-prompt-list");
+  builderDialogueList =
+    builderOverlay?.querySelector("#builder-dialogue-list") ??
+    document.querySelector("#builder-dialogue-list");
+  builderAddDialogueBtn =
+    builderOverlay?.querySelector("#builder-add-dialogue") ??
+    document.querySelector("#builder-add-dialogue");
+  builderPracticeList =
+    builderOverlay?.querySelector("#builder-practice-list") ??
+    document.querySelector("#builder-practice-list");
+  builderAddPracticeBtn =
+    builderOverlay?.querySelector("#builder-add-practice") ??
+    document.querySelector("#builder-add-practice");
   builderJsonPreview =
     builderOverlay?.querySelector("#builder-json-preview") ??
     document.querySelector("#builder-json-preview");
@@ -10402,12 +10041,6 @@ export async function setupInteractiveDeck({
   builderImageSearchInput =
     builderOverlay?.querySelector('input[name="imageSearch"]') ??
     document.querySelector('input[name="imageSearch"]');
-  builderRubricSection =
-    builderOverlay?.querySelector('[data-role="rubric-section"]') ??
-    document.querySelector('[data-role="rubric-section"]');
-  builderRubricToggle =
-    builderOverlay?.querySelector('input[name="includeRubric"]') ??
-    document.querySelector('input[name="includeRubric"]');
   builderLastFocus = null;
   builderFieldId = 0;
   moduleOverlay =
