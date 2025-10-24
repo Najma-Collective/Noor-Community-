@@ -3096,6 +3096,7 @@ export function attachBlankSlideEvents(slide) {
     prepareTextbox(textbox);
     positionTextbox(textbox, canvas);
     setSelection(textbox, "textbox");
+    textbox.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     updateHintForCanvas();
   };
 
@@ -6496,7 +6497,7 @@ const setSelectedLayout = (layout = 'blank-canvas') => {
 };
 
 const isRubricEnabled = () =>
-  !(builderRubricToggle instanceof HTMLInputElement) || builderRubricToggle.checked;
+  builderRubricToggle instanceof HTMLInputElement ? builderRubricToggle.checked : false;
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
   const factory =
