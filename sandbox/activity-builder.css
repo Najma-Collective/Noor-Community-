@@ -364,6 +364,11 @@ body::before {
   color: #5c4f93;
 }
 
+.accent-quiz .form-hero-icon {
+  background: rgba(255, 205, 141, 0.22);
+  color: #c86f1d;
+}
+
 .form-grid {
   display: grid;
   gap: 0.75rem;
@@ -445,6 +450,8 @@ textarea {
 }
 
 .question-block,
+.quiz-question-block,
+.team-block,
 .category-block,
 .table-row-block {
   border: 1px solid var(--sage-150);
@@ -517,6 +524,36 @@ textarea {
 .chip-btn:hover,
 .chip-btn:focus-visible {
   opacity: 0.85;
+}
+
+.team-fields,
+.quiz-question-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.team-icon-preview {
+  border: 1px dashed var(--sage-300);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 82px;
+  background: #fff;
+  color: var(--sage-600);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.team-icon-preview i {
+  font-size: 1.8rem;
+}
+
+.team-block .helper-text {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--sage-500);
 }
 
 .subtle-link {
