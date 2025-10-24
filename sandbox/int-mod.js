@@ -470,549 +470,367 @@ const clonePromptEntries = (entries = []) =>
   entries.map((entry) => ({ prompt: entry.prompt ?? "", success: entry.success ?? "" }));
 
 const BUILDER_LAYOUT_DEFAULTS = {
-  'blank-canvas': () => ({
+  "blank-canvas": () => ({
     includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
+    stageLabel: "",
+    activityTitle: "",
+    duration: "",
+    slideTitle: "",
+    rubricIntro: "",
+    overview: "",
     steps: [],
     rubricLevels: [],
     prompts: [],
-    columnOneHeading: '',
+    columnOneHeading: "",
     columnOneItems: [],
-    columnTwoHeading: '',
+    columnTwoHeading: "",
     columnTwoItems: [],
     spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [],
-  }),
-  'learning-objectives': () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    learningTitle: 'Learning Outcomes',
-    learningGoal1: '',
-    learningGoal2: '',
-    learningGoal3: '',
-    learningCommunicative: '',
-    learningImageUrl: '',
-  }),
-  'model-dialogue': () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    modelTitle: '',
-    modelInstructions: '',
-    modelImageUrl: '',
-    modelSpeaker1Name: '',
-    modelSpeaker1Line: '',
-    modelSpeaker2Name: '',
-    modelSpeaker2Line: '',
-    modelSpeaker3Name: '',
-    modelSpeaker3Line: '',
-    modelAudioUrl: '',
-  }),
-  'image-slide': () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    imageSlideEyebrow: '',
-    imageSlideHeading: '',
-    imageSlideBody: '',
-    imageSlideAlignment: 'center',
-    imageSlideTheme: 'dark',
-  }),
-  'communicative-task': () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    taskTitle: '',
-    taskImageUrl: '',
-    taskPreparation: '',
-    taskPerformance: '',
-    taskScaffolding: '',
-  }),
-  'pronunciation-focus': () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    pronunciationTitle: '',
-    pronunciationTarget: '',
-    pronunciationWord1: '',
-    pronunciationWord2: '',
-    pronunciationSentence1: '',
-    pronunciationSentence2: '',
-    pronunciationInstructions: '',
-    pronunciationImageUrl: '',
-  }),
-  reflection: () => ({
-    includeRubric: false,
-    stageLabel: '',
-    activityTitle: '',
-    duration: '',
-    slideTitle: '',
-    rubricIntro: '',
-    overview: '',
-    steps: [],
-    rubricLevels: [],
-    prompts: [],
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-    reflectionTitle: 'Reflection',
-    reflectionPrompt1: '',
-    reflectionPrompt2: '',
-    reflectionPrompt3: '',
-    reflectionImageUrl: '',
   }),
   facilitation: () => ({
     includeRubric: true,
-    stageLabel: 'Activity Workshop · 15 minutes',
-    activityTitle: 'Design a community impact project',
-    duration: '10 minutes',
-    slideTitle: 'Facilitation steps',
-    rubricIntro: 'Capture evidence for each success criterion as you collaborate.',
-    overview: 'Learners review project ideas in small teams and prepare peer feedback.',
+    stageLabel: "Activity Workshop · 15 minutes",
+    activityTitle: "Design a community impact project",
+    duration: "10 minutes",
+    slideTitle: "Facilitation steps",
+    rubricIntro: "Capture evidence for each success criterion as you collaborate.",
+    overview: "Learners review project ideas in small teams and prepare peer feedback.",
     steps: [
-      'Group learners in trios and assign each team a project brief.',
-      'Give two minutes of silent reading to highlight key information.',
-      'Invite teams to complete the rubric together and prepare one insight.',
-      'Cold call teams to share the most compelling improvement idea.',
+      "Group learners in trios and assign each team a project brief.",
+      "Give two minutes of silent reading to highlight key information.",
+      "Invite teams to complete the rubric together and prepare one insight.",
+      "Cold call teams to share the most compelling improvement idea.",
     ],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    rubricLevels: ["Emerging", "Meeting", "Excelling"],
     prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: '',
+    columnOneHeading: "",
     columnOneItems: [],
-    columnTwoHeading: '',
+    columnTwoHeading: "",
     columnTwoItems: [],
     spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [],
   }),
-  'rubric-simple': () => ({
+  "rubric-simple": () => ({
     includeRubric: true,
-    stageLabel: 'Workshop showcase · 10 minutes',
-    activityTitle: 'Present your proposal',
-    duration: '10 minutes',
-    slideTitle: 'Success criteria spotlight',
-    rubricIntro: 'Capture quick evidence as teams present their ideas.',
-    overview: '',
+    stageLabel: "Workshop showcase · 10 minutes",
+    activityTitle: "Present your proposal",
+    duration: "10 minutes",
+    slideTitle: "Success criteria spotlight",
+    rubricIntro: "Capture quick evidence as teams present their ideas.",
+    overview: "",
     steps: [],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    rubricLevels: ["Emerging", "Meeting", "Excelling"],
     prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: '',
+    columnOneHeading: "",
     columnOneItems: [],
-    columnTwoHeading: '',
+    columnTwoHeading: "",
     columnTwoItems: [],
     spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [],
   }),
-  'rubric-columns': () => ({
+  "rubric-columns": () => ({
     includeRubric: true,
-    stageLabel: 'Feedback lab · 12 minutes',
-    activityTitle: 'Compare project ideas',
-    duration: '12 minutes',
-    slideTitle: 'Discussion prompts',
-    rubricIntro: 'Capture the highlights from each conversation.',
-    overview: '',
+    stageLabel: "Feedback lab · 12 minutes",
+    activityTitle: "Compare project ideas",
+    duration: "12 minutes",
+    slideTitle: "Discussion prompts",
+    rubricIntro: "Capture the highlights from each conversation.",
+    overview: "",
     steps: [],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    rubricLevels: ["Emerging", "Meeting", "Excelling"],
     prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: 'Discuss together',
-    columnOneItems: ['Identify a strength you noticed.', 'Explain why it matters for the community.'],
-    columnTwoHeading: 'Capture evidence',
-    columnTwoItems: ['Quote the part of the proposal you are referencing.', 'Note questions you still have.'],
+    columnOneHeading: "Discuss together",
+    columnOneItems: ["Identify a strength you noticed.", "Explain why it matters for the community."],
+    columnTwoHeading: "Capture evidence",
+    columnTwoItems: ["Quote the part of the proposal you are referencing.", "Note questions you still have."],
     spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [],
   }),
-  'image-spotlight': () => ({
+  "image-spotlight": () => ({
     includeRubric: true,
-    stageLabel: 'Spotlight reflection · 8 minutes',
-    activityTitle: 'Reflect on community impact',
-    duration: '8 minutes',
-    slideTitle: 'Spotlight prompts',
-    rubricIntro: 'Collect key takeaways linked to the image.',
-    overview: '',
+    stageLabel: "Spotlight reflection · 8 minutes",
+    activityTitle: "Reflect on community impact",
+    duration: "8 minutes",
+    slideTitle: "Spotlight prompts",
+    rubricIntro: "Collect key takeaways linked to the image.",
+    overview: "",
     steps: [],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    rubricLevels: ["Emerging", "Meeting", "Excelling"],
     prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: '',
+    columnOneHeading: "",
     columnOneItems: [],
-    columnTwoHeading: '',
+    columnTwoHeading: "",
     columnTwoItems: [],
     spotlightNarrative: [
-      'Set the scene for the project you are analysing.',
-      'Highlight the aspect that the image represents.',
-      'Invite learners to connect evidence back to the rubric.',
+      "Set the scene for the project you are analysing.",
+      "Highlight the aspect that the image represents.",
+      "Invite learners to connect evidence back to the rubric.",
     ],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [],
   }),
-  'full-bleed-image': () => ({
-    includeRubric: false,
-    stageLabel: 'Visual reflection · 5 minutes',
-    activityTitle: 'Analyse the moment',
-    duration: '5 minutes',
-    slideTitle: 'Focus prompt',
-    rubricIntro: 'Capture evidence that connects to the visual story.',
-    overview: '',
-    steps: [],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
-    prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: '',
-    columnOneItems: [],
-    columnTwoHeading: '',
-    columnTwoItems: [],
-    spotlightNarrative: [
-      'Describe what is happening in this scene.',
-      'Call out the detail you want learners to notice.',
-    ],
-    imageUrl: '',
-    imageAlt: '',
-    cards: [],
-  }),
-  'rubric-cards': () => ({
+  "rubric-cards": () => ({
     includeRubric: true,
-    stageLabel: 'Strategy sprint · 15 minutes',
-    activityTitle: 'Plan a response',
-    duration: '15 minutes',
-    slideTitle: 'Strategy steps',
-    rubricIntro: 'Check each card as your team progresses.',
-    overview: '',
+    stageLabel: "Strategy sprint · 15 minutes",
+    activityTitle: "Plan a response",
+    duration: "15 minutes",
+    slideTitle: "Strategy steps",
+    rubricIntro: "Check each card as your team progresses.",
+    overview: "",
     steps: [],
-    rubricLevels: ['Emerging', 'Meeting', 'Excelling'],
+    rubricLevels: ["Emerging", "Meeting", "Excelling"],
     prompts: clonePromptEntries(DEFAULT_BUILDER_PROMPTS),
-    columnOneHeading: '',
+    columnOneHeading: "",
     columnOneItems: [],
-    columnTwoHeading: '',
+    columnTwoHeading: "",
     columnTwoItems: [],
     spotlightNarrative: [],
-    imageUrl: '',
-    imageAlt: '',
+    imageUrl: "",
+    imageAlt: "",
     cards: [
       {
-        heading: 'Plan',
-        body: 'Clarify the need you are addressing and list target beneficiaries.',
+        heading: "Plan",
+        body: "Clarify the need you are addressing and list target beneficiaries.",
       },
       {
-        heading: 'Prototype',
-        body: 'Sketch how your idea will work in practice and who is involved.',
+        heading: "Prototype",
+        body: "Sketch how your idea will work in practice and who is involved.",
       },
       {
-        heading: 'Evaluate',
-        body: 'List evidence that shows impact and note the data you still need.',
+        heading: "Evaluate",
+        body: "List evidence that shows impact and note the data you still need.",
       },
     ],
   }),
-  'vocabulary-grid': () => ({
+  "vocabulary-grid": () => ({
     includeRubric: true,
-    stageLabel: 'Language lab · 12 minutes',
-    activityTitle: 'Vocabulary grid: community solutions',
-    duration: '12 minutes',
-    slideTitle: 'Vocabulary bank',
-    rubricIntro: 'Capture how confidently learners use and pronounce the target lexis.',
-    overview: 'Learners explore key words and co-create examples before role-play practice.',
+    stageLabel: "Language lab · 12 minutes",
+    activityTitle: "Vocabulary grid: community solutions",
+    duration: "12 minutes",
+    slideTitle: "Vocabulary bank",
+    rubricIntro: "Capture how confidently learners use and pronounce the target lexis.",
+    overview: "Learners explore key words and co-create examples before role-play practice.",
     steps: [
-      'Preview pronunciation and stress for each term together.',
-      'Learners add a personalised example sentence to the grid.',
-      'Pairs quiz each other using the practice prompts.',
+      "Preview pronunciation and stress for each term together.",
+      "Learners add a personalised example sentence to the grid.",
+      "Pairs quiz each other using the practice prompts.",
     ],
-    rubricLevels: ['Developing', 'Secure', 'Confident'],
+    rubricLevels: ["Developing", "Secure", "Confident"],
     prompts: clonePromptEntries([
       {
-        prompt: 'Is the target vocabulary used accurately in context?',
-        success: 'Learners choose precise collocations and adapt the words to the scenario.',
+        prompt: "Is the target vocabulary used accurately in context?",
+        success: "Learners choose precise collocations and adapt the words to the scenario.",
       },
       {
-        prompt: 'Do learners pronounce the focus sounds clearly?',
-        success: 'Learners stress the highlighted syllables and produce the new phonemes intelligibly.',
+        prompt: "Do learners pronounce the focus sounds clearly?",
+        success: "Learners stress the highlighted syllables and produce the new phonemes intelligibly.",
       },
       {
-        prompt: 'Are learners extending the language with their own ideas?',
-        success: 'Learners personalise the language and justify their word choices.',
+        prompt: "Are learners extending the language with their own ideas?",
+        success: "Learners personalise the language and justify their word choices.",
       },
     ]),
     vocabulary: {
-      targetLanguage: 'Problem-solving verbs for NGO planning meetings.',
-      skillsFocus: 'Lexis and pronunciation with controlled speaking practice.',
-      cefr: 'B1-B2',
+      targetLanguage: "Problem-solving verbs for NGO planning meetings.",
+      skillsFocus: "Lexis and pronunciation with controlled speaking practice.",
+      cefr: "B1-B2",
       practiceIdeas: [
-        'Say a sentence that uses one verb with a partner\'s community project idea.',
-        'Swap cards and upgrade a peer\'s sentence with a stronger verb choice.',
+        "Say a sentence that uses one verb with a partner's community project idea.",
+        "Swap cards and upgrade a peer's sentence with a stronger verb choice.",
       ],
       items: [
         {
-          term: 'coordinate',
-          definition: 'organise people or resources to work together smoothly',
-          example: 'We coordinate volunteers for the weekend clean-up.',
+          term: "coordinate",
+          definition: "organise people or resources to work together smoothly",
+          example: "We coordinate volunteers for the weekend clean-up.",
         },
         {
-          term: 'scale up',
-          definition: 'increase the size or impact of an initiative',
-          example: 'Can we scale up the recycling pilot to all districts?',
+          term: "scale up",
+          definition: "increase the size or impact of an initiative",
+          example: "Can we scale up the recycling pilot to all districts?",
         },
         {
-          term: 'pilot',
-          definition: 'test an idea before a wider launch',
-          example: 'Let\'s pilot the mentoring sessions with one school first.',
+          term: "pilot",
+          definition: "test an idea before a wider launch",
+          example: "Let's pilot the mentoring sessions with one school first.",
         },
         {
-          term: 'allocate',
-          definition: 'decide how to use limited funds or time',
-          example: 'Allocate two hours for volunteer training each week.',
+          term: "allocate",
+          definition: "decide how to use limited funds or time",
+          example: "Allocate two hours for volunteer training each week.",
         },
       ],
     },
   }),
-  'reading-comprehension': () => ({
+  "reading-comprehension": () => ({
     includeRubric: true,
-    stageLabel: 'Reading workshop · 15 minutes',
-    activityTitle: 'Community impact article',
-    duration: '15 minutes',
-    slideTitle: 'Reading comprehension',
-    rubricIntro: 'Note evidence of reading strategies and language use.',
-    overview: 'Learners skim and scan a short article before discussing solutions.',
+    stageLabel: "Reading workshop · 15 minutes",
+    activityTitle: "Community impact article",
+    duration: "15 minutes",
+    slideTitle: "Reading comprehension",
+    rubricIntro: "Note evidence of reading strategies and language use.",
+    overview: "Learners skim and scan a short article before discussing solutions.",
     steps: [
-      'Skim the article together and highlight headline vocabulary.',
-      'Learners reread in pairs to underline supporting details.',
-      'Groups prepare a 30-second summary using the target phrases.',
+      "Skim the article together and highlight headline vocabulary.",
+      "Learners reread in pairs to underline supporting details.",
+      "Groups prepare a 30-second summary using the target phrases.",
     ],
-    rubricLevels: ['Emerging', 'Meeting', 'Exceeding'],
+    rubricLevels: ["Emerging", "Meeting", "Exceeding"],
     prompts: clonePromptEntries([
       {
-        prompt: 'Do learners identify the main idea accurately?',
-        success: 'Learners state the author\'s key message using the target language.',
+        prompt: "Do learners identify the main idea accurately?",
+        success: "Learners state the author's key message using the target language.",
       },
       {
-        prompt: 'Can learners support answers with evidence?',
-        success: 'Learners quote or paraphrase lines from the text using accurate grammar.',
+        prompt: "Can learners support answers with evidence?",
+        success: "Learners quote or paraphrase lines from the text using accurate grammar.",
       },
       {
-        prompt: 'Do learners connect the text to the CEFR descriptor?',
-        success: 'Learners describe how the text demonstrates the B1/B2 reading outcome.',
+        prompt: "Do learners connect the text to the CEFR descriptor?",
+        success: "Learners describe how the text demonstrates the B1/B2 reading outcome.",
       },
     ]),
     reading: {
-      textTitle: 'NGO launches mobile clinic',
-      textSource: 'Community Voices Magazine',
+      textTitle: "NGO launches mobile clinic",
+      textSource: "Community Voices Magazine",
       excerpt:
-        'The Nablus Health Collective launched a mobile clinic to reach villages that lack permanent medical facilities. Each week the clinic visits three communities, offering check-ups and essential medicine.',
+        "The Nablus Health Collective launched a mobile clinic to reach villages that lack permanent medical facilities. Each week the clinic visits three communities, offering check-ups and essential medicine.",
       preTasks: [
-        'Skim the headline and predict two challenges the NGO faces.',
-        'Highlight three words connected to healthcare logistics.',
+        "Skim the headline and predict two challenges the NGO faces.",
+        "Highlight three words connected to healthcare logistics.",
       ],
       questions: [
         {
-          question: 'What is the main purpose of the mobile clinic?',
-          answer: 'It brings medical care to isolated villages each week.',
+          question: "What is the main purpose of the mobile clinic?",
+          answer: "It brings medical care to isolated villages each week.",
         },
         {
-          question: 'Which barrier did volunteers mention?',
-          answer: 'They cited limited refrigeration for vaccines and long travel times.',
+          question: "Which barrier did volunteers mention?",
+          answer: "They cited limited refrigeration for vaccines and long travel times.",
         },
         {
-          question: 'How will the NGO measure success?',
-          answer: 'They will track patient numbers and follow-up appointment attendance.',
+          question: "How will the NGO measure success?",
+          answer: "They will track patient numbers and follow-up appointment attendance.",
         },
       ],
       postTask:
-        'In pairs, summarise the article using at least two target vocabulary items.',
+        "In pairs, summarise the article using at least two target vocabulary items.",
     },
   }),
-  'pronunciation-drill': () => ({
+  "pronunciation-drill": () => ({
     includeRubric: true,
-    stageLabel: 'Sound clinic · 8 minutes',
-    activityTitle: 'Pronunciation drill: /ɪ/ vs /iː/',
-    duration: '8 minutes',
-    slideTitle: 'Pronunciation focus',
-    rubricIntro: 'Capture evidence of accurate vowel contrast and sentence stress.',
-    overview: 'Learners rehearse minimal pairs before delivering short role-play lines.',
+    stageLabel: "Sound clinic · 8 minutes",
+    activityTitle: "Pronunciation drill: /ɪ/ vs /iː/",
+    duration: "8 minutes",
+    slideTitle: "Pronunciation focus",
+    rubricIntro: "Capture evidence of accurate vowel contrast and sentence stress.",
+    overview: "Learners rehearse minimal pairs before delivering short role-play lines.",
     steps: [
-      'Model each minimal pair and mark the stressed syllable.',
-      'Learners chorally repeat then practise in pairs using the script.',
-      'Coach learners to integrate the sound contrast into meaningful sentences.',
+      "Model each minimal pair and mark the stressed syllable.",
+      "Learners chorally repeat then practise in pairs using the script.",
+      "Coach learners to integrate the sound contrast into meaningful sentences.",
     ],
-    rubricLevels: ['Developing', 'Secure', 'Automatic'],
+    rubricLevels: ["Developing", "Secure", "Automatic"],
     prompts: clonePromptEntries([
       {
-        prompt: 'Are learners producing the vowel contrast clearly?',
-        success: 'Learners exaggerate the lip shape and length difference between /ɪ/ and /iː/.',
+        prompt: "Are learners producing the vowel contrast clearly?",
+        success: "Learners exaggerate the lip shape and length difference between /ɪ/ and /iː/.",
       },
       {
-        prompt: 'Do learners sustain natural sentence stress?',
-        success: 'Learners place primary stress on the information word while keeping rhythm.',
+        prompt: "Do learners sustain natural sentence stress?",
+        success: "Learners place primary stress on the information word while keeping rhythm.",
       },
       {
-        prompt: 'Are learners self-monitoring and correcting?',
-        success: 'Learners notice slips, try again, and support their partner with feedback language.',
+        prompt: "Are learners self-monitoring and correcting?",
+        success: "Learners notice slips, try again, and support their partner with feedback language.",
       },
     ]),
     pronunciation: {
-      focus: 'Contrast short /ɪ/ and long /iː/ in key NGO vocabulary.',
+      focus: "Contrast short /ɪ/ and long /iː/ in key NGO vocabulary.",
       drillSteps: [
-        'Mark stress and vowel length on the board.',
-        'Choral repetition with rising hand gesture for /iː/.',
-        'Pair role-play using the pronunciation script.',
+        "Mark stress and vowel length on the board.",
+        "Choral repetition with rising hand gesture for /iː/.",
+        "Pair role-play using the pronunciation script.",
       ],
       minimalPairs: [
         {
-          first: 'ship',
-          second: 'sheep',
-          tip: 'Note the longer smile vowel in “sheep”.',
+          first: "ship",
+          second: "sheep",
+          tip: "Note the longer smile vowel in “sheep”.",
         },
         {
-          first: 'fit',
-          second: 'feet',
-          tip: 'Add the /t/ release while keeping the long vowel.',
+          first: "fit",
+          second: "feet",
+          tip: "Add the /t/ release while keeping the long vowel.",
         },
         {
-          first: 'live',
-          second: 'leave',
-          tip: 'Tap the table for the voiced /v/ endings.',
+          first: "live",
+          second: "leave",
+          tip: "Tap the table for the voiced /v/ endings.",
         },
       ],
       feedbackTips: [
-        'Use the mirror cue so learners can see mouth shape.',
-        'Praise accurate vowel length before correcting slips.',
+        "Use the mirror cue so learners can see mouth shape.",
+        "Praise accurate vowel length before correcting slips.",
       ],
       choralPrompt:
-        'Let’s read the volunteer update: “We need to ship these kits this week.”',
+        "Let’s read the volunteer update: “We need to ship these kits this week.”",
     },
   }),
-  'homework-recap': () => ({
+  "homework-recap": () => ({
     includeRubric: true,
-    stageLabel: 'Homework debrief · 10 minutes',
-    activityTitle: 'Homework recap circle',
-    duration: '10 minutes',
-    slideTitle: 'Homework reflections',
-    rubricIntro: 'Document how learners transfer homework practice into class performance.',
-    overview: 'Learners share homework highlights and plan next steps with the teacher.',
+    stageLabel: "Homework debrief · 10 minutes",
+    activityTitle: "Homework recap circle",
+    duration: "10 minutes",
+    slideTitle: "Homework reflections",
+    rubricIntro: "Document how learners transfer homework practice into class performance.",
+    overview: "Learners share homework highlights and plan next steps with the teacher.",
     steps: [
-      'Invite two learners to summarise their homework task in 60 seconds.',
-      'Open the floor for follow-up questions using the sentence stems.',
-      'Agree on a mini-goal for the next lesson based on the reflections.',
+      "Invite two learners to summarise their homework task in 60 seconds.",
+      "Open the floor for follow-up questions using the sentence stems.",
+      "Agree on a mini-goal for the next lesson based on the reflections.",
     ],
-    rubricLevels: ['Getting there', 'On track', 'Ready to transfer'],
+    rubricLevels: ["Getting there", "On track", "Ready to transfer"],
     prompts: clonePromptEntries([
       {
-        prompt: 'Did learners complete the homework task with the target language?',
-        success: 'Learners describe what they practised and quote key language accurately.',
+        prompt: "Did learners complete the homework task with the target language?",
+        success: "Learners describe what they practised and quote key language accurately.",
       },
       {
-        prompt: 'Are learners reflecting on strategy and skills?',
-        success: 'Learners state what helped them succeed and identify a focus area.',
+        prompt: "Are learners reflecting on strategy and skills?",
+        success: "Learners state what helped them succeed and identify a focus area.",
       },
       {
-        prompt: 'Do learners set a next-step aligned to the CEFR outcome?',
-        success: 'Learners commit to a realistic action that matches the lesson descriptor.',
+        prompt: "Do learners set a next-step aligned to the CEFR outcome?",
+        success: "Learners commit to a realistic action that matches the lesson descriptor.",
       },
     ]),
     homework: {
       summary:
-        'Learners prepared a 90-second update about their community project using the present perfect.',
+        "Learners prepared a 90-second update about their community project using the present perfect.",
       sharePrompts: [
-        'What language from homework felt most useful today?',
-        'Which challenge did you notice while recording yourself?',
-        'Give a compliment to a partner’s homework submission.',
+        "What language from homework felt most useful today?",
+        "Which challenge did you notice while recording yourself?",
+        "Give a compliment to a partner’s homework submission.",
       ],
       nextSteps: [
-        'Record the update again adding one new connector.',
-        'Bring one question about vocabulary for office hours.',
+        "Record the update again adding one new connector.",
+        "Bring one question about vocabulary for office hours.",
       ],
       evidenceChecklist: [
-        'Learner uses at least two target language chunks.',
-        'Learner mentions a success and an improvement goal.',
-        'Learner responds to a peer using follow-up questions.',
+        "Learner uses at least two target language chunks.",
+        "Learner mentions a success and an improvement goal.",
+        "Learner responds to a peer using follow-up questions.",
       ],
     },
   }),
@@ -2140,10 +1958,49 @@ export function createBlankSlide() {
   return slide;
 }
 
+function upgradeLegacyBlankSlide(slide) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+
+  const blank = slide.querySelector(".blank-slide");
+  if (!(blank instanceof HTMLElement)) {
+    return;
+  }
+
+  if (blank.querySelector('[data-role="blank-controls-home"]')) {
+    return;
+  }
+
+  const templateSlide = createBlankSlide();
+  const templateBlank = templateSlide?.querySelector?.(".blank-slide") ?? null;
+  if (!(templateBlank instanceof HTMLElement)) {
+    return;
+  }
+
+  const legacyCanvas = blank.querySelector(".blank-canvas");
+  const legacyHint =
+    blank.querySelector('[data-role="hint"], .blank-hint') ?? null;
+
+  const newCanvas = templateBlank.querySelector(".blank-canvas");
+  if (legacyCanvas instanceof HTMLElement && newCanvas instanceof HTMLElement) {
+    newCanvas.replaceWith(legacyCanvas);
+  }
+
+  const newHint = templateBlank.querySelector('[data-role="hint"]');
+  if (legacyHint instanceof HTMLElement && newHint instanceof HTMLElement) {
+    newHint.replaceWith(legacyHint);
+  }
+
+  blank.replaceWith(templateBlank);
+}
+
 export function attachBlankSlideEvents(slide) {
   if (!(slide instanceof HTMLElement)) {
     return;
   }
+
+  upgradeLegacyBlankSlide(slide);
 
   if (typeof slide.__deckBlankCleanup === "function") {
     try {
@@ -6581,50 +6438,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   setFieldValue('imageUrl', defaults.imageUrl ?? '');
   setFieldValue('imageAlt', defaults.imageAlt ?? '');
 
-  setFieldValue('learningTitle', defaults.learningTitle ?? '');
-  setFieldValue('learningGoal1', defaults.learningGoal1 ?? '');
-  setFieldValue('learningGoal2', defaults.learningGoal2 ?? '');
-  setFieldValue('learningGoal3', defaults.learningGoal3 ?? '');
-  setFieldValue('learningCommunicative', defaults.learningCommunicative ?? '');
-  setFieldValue('learningImageUrl', defaults.learningImageUrl ?? '');
 
-  setFieldValue('modelTitle', defaults.modelTitle ?? '');
-  setFieldValue('modelInstructions', defaults.modelInstructions ?? '');
-  setFieldValue('modelImageUrl', defaults.modelImageUrl ?? '');
-  setFieldValue('modelSpeaker1Name', defaults.modelSpeaker1Name ?? '');
-  setFieldValue('modelSpeaker1Line', defaults.modelSpeaker1Line ?? '');
-  setFieldValue('modelSpeaker2Name', defaults.modelSpeaker2Name ?? '');
-  setFieldValue('modelSpeaker2Line', defaults.modelSpeaker2Line ?? '');
-  setFieldValue('modelSpeaker3Name', defaults.modelSpeaker3Name ?? '');
-  setFieldValue('modelSpeaker3Line', defaults.modelSpeaker3Line ?? '');
-  setFieldValue('modelAudioUrl', defaults.modelAudioUrl ?? '');
 
-  setFieldValue('imageSlideEyebrow', defaults.imageSlideEyebrow ?? '');
-  setFieldValue('imageSlideHeading', defaults.imageSlideHeading ?? '');
-  setFieldValue('imageSlideBody', defaults.imageSlideBody ?? '');
-  setFieldValue('imageSlideAlignment', defaults.imageSlideAlignment ?? 'center');
-  setFieldValue('imageSlideTheme', defaults.imageSlideTheme ?? 'dark');
 
-  setFieldValue('taskTitle', defaults.taskTitle ?? '');
-  setFieldValue('taskImageUrl', defaults.taskImageUrl ?? '');
-  setFieldValue('taskPreparation', defaults.taskPreparation ?? '');
-  setFieldValue('taskPerformance', defaults.taskPerformance ?? '');
-  setFieldValue('taskScaffolding', defaults.taskScaffolding ?? '');
 
-  setFieldValue('pronunciationTitle', defaults.pronunciationTitle ?? '');
-  setFieldValue('pronunciationTarget', defaults.pronunciationTarget ?? '');
-  setFieldValue('pronunciationWord1', defaults.pronunciationWord1 ?? '');
-  setFieldValue('pronunciationWord2', defaults.pronunciationWord2 ?? '');
-  setFieldValue('pronunciationSentence1', defaults.pronunciationSentence1 ?? '');
-  setFieldValue('pronunciationSentence2', defaults.pronunciationSentence2 ?? '');
-  setFieldValue('pronunciationInstructions', defaults.pronunciationInstructions ?? '');
-  setFieldValue('pronunciationImageUrl', defaults.pronunciationImageUrl ?? '');
 
-  setFieldValue('reflectionTitle', defaults.reflectionTitle ?? '');
-  setFieldValue('reflectionPrompt1', defaults.reflectionPrompt1 ?? '');
-  setFieldValue('reflectionPrompt2', defaults.reflectionPrompt2 ?? '');
-  setFieldValue('reflectionPrompt3', defaults.reflectionPrompt3 ?? '');
-  setFieldValue('reflectionImageUrl', defaults.reflectionImageUrl ?? '');
 
   const cards = Array.isArray(defaults.cards) ? defaults.cards : [];
   setFieldValue('cardOneHeading', cards[0]?.heading ?? '');
@@ -6660,7 +6478,6 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   setFieldValue('readingPostTask', readingDefaults.postTask ?? '');
 
   const pronunciationDefaults = defaults.pronunciation ?? {};
-  setFieldValue('pronunciationFocus', pronunciationDefaults.focus ?? '');
   setFieldValue(
     'pronunciationSteps',
     Array.isArray(pronunciationDefaults.drillSteps)
@@ -6775,7 +6592,6 @@ function getBuilderFormState() {
   };
 
   const pronunciation = {
-    focus: trimText(formData.get("pronunciationFocus")),
     drillSteps: splitMultiline(formData.get("pronunciationSteps")),
     minimalPairs: parseMinimalPairs(formData.get("pronunciationMinimalPairs")),
     feedbackTips: splitMultiline(formData.get("pronunciationFeedback")),
@@ -6787,77 +6603,6 @@ function getBuilderFormState() {
     sharePrompts: splitMultiline(formData.get("homeworkSharePrompts")),
     nextSteps: splitMultiline(formData.get("homeworkNextSteps")),
     evidenceChecklist: splitMultiline(formData.get("homeworkEvidenceChecklist")),
-  };
-
-  const learningObjectives = {
-    title: trimText(formData.get("learningTitle")),
-    goals: [
-      trimText(formData.get("learningGoal1")),
-      trimText(formData.get("learningGoal2")),
-      trimText(formData.get("learningGoal3")),
-    ].filter(Boolean),
-    communicative: trimText(formData.get("learningCommunicative")),
-    imageUrl: trimText(formData.get("learningImageUrl")),
-  };
-
-  const modelDialogue = {
-    title: trimText(formData.get("modelTitle")),
-    instructions: trimText(formData.get("modelInstructions")),
-    imageUrl: trimText(formData.get("modelImageUrl")),
-    audioUrl: trimText(formData.get("modelAudioUrl")),
-    speakers: [
-      {
-        name: trimText(formData.get("modelSpeaker1Name")),
-        line: trimText(formData.get("modelSpeaker1Line")),
-      },
-      {
-        name: trimText(formData.get("modelSpeaker2Name")),
-        line: trimText(formData.get("modelSpeaker2Line")),
-      },
-      {
-        name: trimText(formData.get("modelSpeaker3Name")),
-        line: trimText(formData.get("modelSpeaker3Line")),
-      },
-    ].filter((entry) => entry.name || entry.line),
-  };
-
-  const imageSlide = {
-    eyebrow: trimText(formData.get("imageSlideEyebrow")),
-    heading: trimText(formData.get("imageSlideHeading")),
-    body: trimText(formData.get("imageSlideBody")),
-    alignment: trimText(formData.get("imageSlideAlignment")) || "center",
-    theme: trimText(formData.get("imageSlideTheme")) || "dark",
-  };
-
-  const communicativeTask = {
-    title: trimText(formData.get("taskTitle")),
-    imageUrl: trimText(formData.get("taskImageUrl")),
-    preparation: trimText(formData.get("taskPreparation")),
-    performance: trimText(formData.get("taskPerformance")),
-    scaffolding: splitMultiline(formData.get("taskScaffolding")),
-  };
-
-  const pronunciationFocus = {
-    title: trimText(formData.get("pronunciationTitle")),
-    target: trimText(formData.get("pronunciationTarget")),
-    words: [
-      trimText(formData.get("pronunciationWord1")),
-      trimText(formData.get("pronunciationWord2")),
-    ].filter(Boolean),
-    sentence1: trimText(formData.get("pronunciationSentence1")),
-    sentence2: trimText(formData.get("pronunciationSentence2")),
-    instructions: trimText(formData.get("pronunciationInstructions")),
-    imageUrl: trimText(formData.get("pronunciationImageUrl")),
-  };
-
-  const reflection = {
-    title: trimText(formData.get("reflectionTitle")),
-    prompts: [
-      trimText(formData.get("reflectionPrompt1")),
-      trimText(formData.get("reflectionPrompt2")),
-      trimText(formData.get("reflectionPrompt3")),
-    ].filter(Boolean),
-    imageUrl: trimText(formData.get("reflectionImageUrl")),
   };
 
   return {
@@ -6884,12 +6629,6 @@ function getBuilderFormState() {
     reading,
     pronunciation,
     homework,
-    learningObjectives,
-    modelDialogue,
-    imageSlide,
-    communicativeTask,
-    pronunciationFocus,
-    reflection,
   };
 }
 
@@ -6930,7 +6669,7 @@ function updateBuilderJsonPreview() {
           }
         : undefined,
     spotlight:
-      state.layout === "image-spotlight" || state.layout === "full-bleed-image"
+      state.layout === "image-spotlight"
         ? {
             narrative: state.spotlightNarrative,
             imageUrl: state.imageUrl,
@@ -6946,20 +6685,6 @@ function updateBuilderJsonPreview() {
       state.layout === "pronunciation-drill" ? state.pronunciation : undefined,
     homework:
       state.layout === "homework-recap" ? state.homework : undefined,
-    learningObjectives:
-      state.layout === "learning-objectives"
-        ? state.learningObjectives
-        : undefined,
-    modelDialogue:
-      state.layout === "model-dialogue" ? state.modelDialogue : undefined,
-    imageSlide: state.layout === "image-slide" ? state.imageSlide : undefined,
-    communicativeTask:
-      state.layout === "communicative-task" ? state.communicativeTask : undefined,
-    pronunciationFocus:
-      state.layout === "pronunciation-focus"
-        ? state.pronunciationFocus
-        : undefined,
-    reflection: state.layout === "reflection" ? state.reflection : undefined,
   };
   if (state.includeRubric) {
     previewData.rubric = {
@@ -7044,61 +6769,6 @@ function updateBuilderPreview() {
 
   let slide = null;
   switch (state.layout) {
-    case "learning-objectives":
-      slide = createLearningObjectivesSlide({
-        title: state.learningObjectives.title,
-        goals: state.learningObjectives.goals,
-        communicative: state.learningObjectives.communicative,
-        imageUrl: state.learningObjectives.imageUrl || state.imageUrl,
-      });
-      break;
-    case "model-dialogue":
-      slide = createModelDialogueSlide({
-        title: state.modelDialogue.title,
-        instructions: state.modelDialogue.instructions,
-        speakers: state.modelDialogue.speakers,
-        imageUrl: state.modelDialogue.imageUrl || state.imageUrl,
-        audioUrl: state.modelDialogue.audioUrl,
-      });
-      break;
-    case "image-slide":
-      slide = createImageOverlaySlide({
-        eyebrow: state.imageSlide.eyebrow,
-        heading: state.imageSlide.heading,
-        body: state.imageSlide.body,
-        alignment: state.imageSlide.alignment,
-        theme: state.imageSlide.theme,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-      });
-      break;
-    case "communicative-task":
-      slide = createCommunicativeTaskSlide({
-        title: state.communicativeTask.title,
-        preparation: state.communicativeTask.preparation,
-        performance: state.communicativeTask.performance,
-        scaffolding: state.communicativeTask.scaffolding,
-        imageUrl: state.communicativeTask.imageUrl || state.imageUrl,
-      });
-      break;
-    case "pronunciation-focus":
-      slide = createPronunciationFocusSlide({
-        title: state.pronunciationFocus.title,
-        target: state.pronunciationFocus.target,
-        words: state.pronunciationFocus.words,
-        sentence1: state.pronunciationFocus.sentence1,
-        sentence2: state.pronunciationFocus.sentence2,
-        instructions: state.pronunciationFocus.instructions,
-        imageUrl: state.pronunciationFocus.imageUrl || state.imageUrl,
-      });
-      break;
-    case "reflection":
-      slide = createReflectionSlide({
-        title: state.reflection.title,
-        prompts: state.reflection.prompts,
-        imageUrl: state.reflection.imageUrl || state.imageUrl,
-      });
-      break;
     case "rubric-simple":
       slide = createRubricFocusSlide({
         stageLabel: state.stageLabel || "Activity Workshop",
@@ -7134,20 +6804,6 @@ function updateBuilderPreview() {
       slide = createImageSpotlightSlide({
         stageLabel: state.stageLabel || "Activity Workshop",
         title: state.activityTitle || state.slideTitle || "Spotlight",
-        duration: state.duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricPayload,
-        rubricIntro: state.rubricIntro,
-        narrative: state.spotlightNarrative,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    case "full-bleed-image":
-      slide = createFullBleedSlide({
-        stageLabel: state.stageLabel || "Activity Workshop",
-        title: state.activityTitle || state.slideTitle || "Visual reflection",
         duration: state.duration,
         slideTitle: state.slideTitle,
         rubric: rubricPayload,
@@ -7206,7 +6862,6 @@ function updateBuilderPreview() {
     case "homework-recap":
       slide = createHomeworkRecapSlide({
         stageLabel: state.stageLabel || "Homework debrief",
-        title: state.activityTitle || state.slideTitle || "Homework reflections",
         duration: state.duration,
         rubric: rubricPayload,
         rubricIntro: state.rubricIntro,
@@ -7248,19 +6903,6 @@ function ensureBuilderPrompts() {
   }
   const layout = getSelectedLayout();
   if (layout === "blank-canvas") {
-    builderPromptList.innerHTML = "";
-    return;
-  }
-  if (
-    [
-      'learning-objectives',
-      'model-dialogue',
-      'image-slide',
-      'communicative-task',
-      'pronunciation-focus',
-      'reflection',
-    ].includes(layout)
-  ) {
     builderPromptList.innerHTML = "";
     return;
   }
@@ -8278,7 +7920,6 @@ function createRubricColumnSlide({
 } = {}) {
   const resolvedTitle = trimText(title) || "Collaborative discussion";
   const headingTitle = trimText(slideTitle) || "Discussion prompts";
-  const firstHeading = trimText(columnOne.heading) || "Team reflections";
   const secondHeading = trimText(columnTwo.heading) || "Evidence to capture";
 
   const slide = document.createElement("div");
@@ -8462,7 +8103,6 @@ function createImageSpotlightSlide({
   imageAlt,
   rubricEnabled = true,
 } = {}) {
-  const resolvedTitle = trimText(title) || "Spotlight reflection";
   const resolvedHeading = trimText(slideTitle) || "Reflection spotlight";
 
   const slide = document.createElement("div");
@@ -8645,191 +8285,6 @@ function createImageSpotlightSlide({
   return slide;
 }
 
-function createFullBleedSlide({
-  stageLabel = "Activity Workshop",
-  title,
-  duration,
-  slideTitle,
-  rubric = { criteria: [], levels: [] },
-  rubricIntro,
-  narrative = [],
-  imageUrl,
-  imageAlt,
-  rubricEnabled = false,
-} = {}) {
-  const resolvedTitle = trimText(title) || "Visual reflection";
-  const overlayHeading = trimText(slideTitle) || resolvedTitle;
-
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden activity-slide activity-slide--fullbleed";
-  slide.dataset.type = "activity";
-  slide.dataset.activity = "rubric";
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner activity-builder-slide activity-builder-slide--fullbleed";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "activity-slide-header";
-  inner.appendChild(header);
-
-  const pill = document.createElement("span");
-  pill.className = "pill activity-pill";
-  const pillIcon = document.createElement("i");
-  pillIcon.className = "fa-solid fa-chalkboard-user";
-  pillIcon.setAttribute("aria-hidden", "true");
-  pill.appendChild(pillIcon);
-  pill.appendChild(document.createTextNode(` ${stageLabel || "Activity"}`));
-  header.appendChild(pill);
-
-  const titleGroup = document.createElement("div");
-  titleGroup.className = "activity-title-group";
-  header.appendChild(titleGroup);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  titleGroup.appendChild(heading);
-
-  const resolvedDuration = trimText(duration);
-  if (resolvedDuration) {
-    const durationBadge = document.createElement("span");
-    durationBadge.className = "activity-duration";
-    const durationIcon = document.createElement("i");
-    durationIcon.className = "fa-solid fa-clock";
-    durationIcon.setAttribute("aria-hidden", "true");
-    durationBadge.appendChild(durationIcon);
-    durationBadge.appendChild(document.createTextNode(` ${resolvedDuration}`));
-    titleGroup.appendChild(durationBadge);
-  }
-
-  const layout = document.createElement("div");
-  layout.className = "activity-fullbleed-layout";
-  if (!rubricEnabled) {
-    layout.classList.add("activity-fullbleed-layout--no-rubric");
-  }
-  inner.appendChild(layout);
-
-  const figure = document.createElement("figure");
-  figure.className = "activity-fullbleed-figure";
-  layout.appendChild(figure);
-
-  if (imageUrl) {
-    const img = document.createElement("img");
-    img.src = imageUrl;
-    img.alt = imageAlt || "Full-bleed illustration";
-    img.loading = "lazy";
-    img.decoding = "async";
-    figure.appendChild(img);
-  } else {
-    const placeholder = document.createElement("div");
-    placeholder.className = "activity-fullbleed-placeholder";
-    placeholder.innerHTML = `
-      <i class="fa-solid fa-image" aria-hidden="true"></i>
-      <p>Add a full-bleed image to complete this slide.</p>
-    `;
-    figure.appendChild(placeholder);
-  }
-
-  const overlay = document.createElement("figcaption");
-  overlay.className = "activity-fullbleed-overlay";
-  figure.appendChild(overlay);
-
-  const overlayHeadingEl = document.createElement("h3");
-  overlayHeadingEl.textContent = overlayHeading;
-  overlay.appendChild(overlayHeadingEl);
-
-  const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean) : [];
-  if (paragraphs.length) {
-    paragraphs.forEach((paragraph) => {
-      const p = document.createElement("p");
-      p.textContent = paragraph;
-      overlay.appendChild(p);
-    });
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "activity-empty";
-    placeholder.textContent = "Add guiding text to pair with the image.";
-    overlay.appendChild(placeholder);
-  }
-
-  if (rubricEnabled) {
-    const rubricSection = buildRubricSection({
-      heading: "Success criteria",
-      intro: rubricIntro,
-      rubric,
-      className: "activity-rubric activity-rubric--fullbleed",
-    });
-    layout.appendChild(rubricSection);
-  }
-
-  const footer = document.createElement("div");
-  footer.className = "activity-slide-footer";
-  inner.appendChild(footer);
-
-  const statusMessage = document.createElement("p");
-  statusMessage.className = "activity-status-message";
-  statusMessage.dataset.role = "status";
-  statusMessage.setAttribute("aria-live", "polite");
-  footer.appendChild(statusMessage);
-
-  const actionsWrap = document.createElement("div");
-  actionsWrap.className = "activity-actions";
-  footer.appendChild(actionsWrap);
-
-  const copyBtn = document.createElement("button");
-  copyBtn.type = "button";
-  copyBtn.className = "activity-btn";
-  copyBtn.dataset.action = "copy-rubric";
-  const copyIcon = document.createElement("i");
-  copyIcon.className = "fa-solid fa-copy";
-  copyIcon.setAttribute("aria-hidden", "true");
-  copyBtn.appendChild(copyIcon);
-  const copyLabel = document.createElement("span");
-  copyLabel.dataset.role = "label";
-  copyLabel.textContent = "Copy rubric JSON";
-  copyBtn.appendChild(copyLabel);
-  actionsWrap.appendChild(copyBtn);
-
-  const toggleBtn = document.createElement("button");
-  toggleBtn.type = "button";
-  toggleBtn.className = "activity-btn secondary";
-  toggleBtn.dataset.action = "toggle-rubric";
-  const toggleIcon = document.createElement("i");
-  toggleIcon.className = "fa-solid fa-eye-slash";
-  toggleIcon.setAttribute("aria-hidden", "true");
-  toggleBtn.appendChild(toggleIcon);
-  const toggleLabel = document.createElement("span");
-  toggleLabel.dataset.role = "label";
-  toggleLabel.textContent = "Hide descriptions";
-  toggleBtn.appendChild(toggleLabel);
-  actionsWrap.appendChild(toggleBtn);
-
-  const rubricLevels = Array.isArray(rubric?.levels) ? rubric.levels : [];
-  const rubricCriteria = Array.isArray(rubric?.criteria) ? rubric.criteria : [];
-
-  if (!rubricEnabled) {
-    copyBtn.hidden = true;
-    toggleBtn.hidden = true;
-    delete slide.dataset.rubric;
-  } else {
-    try {
-      slide.dataset.rubric = JSON.stringify({
-        title: resolvedTitle,
-        levels: rubricLevels,
-        criteria: rubricCriteria.map((criterion, index) => ({
-          id: `criterion-${index + 1}`,
-          prompt: criterion.prompt,
-          success: criterion.success,
-        })),
-      });
-    } catch (error) {
-      console.warn("Unable to serialise rubric data", error);
-    }
-  }
-
-  slide.dataset.activityTitle = resolvedTitle;
-  return slide;
-}
 
 function createRubricCardSlide({
   stageLabel = "Activity Workshop",
@@ -10064,158 +9519,7 @@ function createHomeworkRecapSlide({
   return slide;
 }
 
-function createLearningObjectivesSlide({
-  title,
-  goals = [],
-  communicative,
-  imageUrl,
-} = {}) {
-  const resolvedTitle = trimText(title) || "Learning Outcomes";
-  const resolvedGoals = Array.isArray(goals) ? goals.filter(Boolean) : [];
 
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden lesson-slide lesson-slide--learning";
-  slide.dataset.type = "learning-objectives";
-
-  if (trimText(imageUrl)) {
-    slide.classList.add("lesson-slide--has-image");
-    slide.style.setProperty("--lesson-bg-image", `url("${imageUrl}")`);
-  }
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner lesson-slide-inner";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "lesson-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const communicativeGoal = trimText(communicative);
-  if (communicativeGoal) {
-    const subtitle = document.createElement("p");
-    subtitle.className = "lesson-communicative";
-    subtitle.innerHTML = `<strong>So you can</strong> ${escapeHtml(communicativeGoal)}`;
-    header.appendChild(subtitle);
-  }
-
-  const body = document.createElement("div");
-  body.className = "lesson-body";
-  inner.appendChild(body);
-
-  if (resolvedGoals.length) {
-    const list = document.createElement("ul");
-    list.className = "lesson-goals";
-    resolvedGoals.forEach((goal) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<span class="lesson-goal-icon">We will</span><span>${escapeHtml(goal)}</span>`;
-      list.appendChild(li);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Add the learning outcomes for this lesson.";
-    body.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createModelDialogueSlide({
-  title,
-  instructions,
-  speakers = [],
-  imageUrl,
-  audioUrl,
-} = {}) {
-  const resolvedTitle = trimText(title) || "Model dialogue";
-  const resolvedSpeakers = Array.isArray(speakers)
-    ? speakers.filter((entry) => entry && (entry.name || entry.line))
-    : [];
-
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden lesson-slide lesson-slide--dialogue";
-  slide.dataset.type = "model-dialogue";
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner lesson-slide-inner";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "lesson-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const instructionText = trimText(instructions);
-  if (instructionText) {
-    const instructionEl = document.createElement("p");
-    instructionEl.className = "lesson-instructions";
-    instructionEl.textContent = instructionText;
-    header.appendChild(instructionEl);
-  }
-
-  const content = document.createElement("div");
-  content.className = "lesson-dialogue";
-  inner.appendChild(content);
-
-  const dialogueWrap = document.createElement("div");
-  dialogueWrap.className = "lesson-dialogue-text";
-  content.appendChild(dialogueWrap);
-
-  if (resolvedSpeakers.length) {
-    resolvedSpeakers.forEach(({ name, line }, index) => {
-      const turn = document.createElement("div");
-      turn.className = "dialogue-turn";
-      const speakerLabel = document.createElement("span");
-      speakerLabel.className = "dialogue-speaker";
-      speakerLabel.textContent = name || `Speaker ${index + 1}`;
-      turn.appendChild(speakerLabel);
-      const lineEl = document.createElement("p");
-      lineEl.className = "dialogue-line";
-      lineEl.textContent = line || "(Add line)";
-      turn.appendChild(lineEl);
-      dialogueWrap.appendChild(turn);
-    });
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Add speaker names and lines to build the dialogue.";
-    dialogueWrap.appendChild(placeholder);
-  }
-
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    const visual = document.createElement("div");
-    visual.className = "lesson-dialogue-visual";
-    const img = document.createElement("img");
-    img.src = resolvedImage;
-    img.alt = "Dialogue context";
-    img.loading = "lazy";
-    img.decoding = "async";
-    visual.appendChild(img);
-    content.appendChild(visual);
-  }
-
-  const resolvedAudio = trimText(audioUrl);
-  if (resolvedAudio) {
-    const audioBlock = document.createElement("div");
-    audioBlock.className = "lesson-audio";
-    const audio = document.createElement("audio");
-    audio.controls = true;
-    audio.src = resolvedAudio;
-    audioBlock.appendChild(audio);
-    inner.appendChild(audioBlock);
-  }
-
-  return slide;
-}
 
 function createInteractivePracticeSlide({
   title,
@@ -10337,340 +9641,9 @@ function createInteractivePracticeSlide({
   return slide;
 }
 
-function createCommunicativeTaskSlide({
-  title,
-  preparation,
-  performance,
-  scaffolding = [],
-  imageUrl,
-} = {}) {
-  const resolvedTitle = trimText(title) || "Communicative task";
-  const prepText = trimText(preparation);
-  const performanceText = trimText(performance);
-  const scaffoldingItems = Array.isArray(scaffolding)
-    ? scaffolding.filter(Boolean)
-    : splitMultiline(scaffolding);
 
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden lesson-slide lesson-slide--task";
-  slide.dataset.type = "communicative-task";
 
-  const inner = document.createElement("div");
-  inner.className = "slide-inner lesson-slide-inner";
-  slide.appendChild(inner);
 
-  const header = document.createElement("header");
-  header.className = "lesson-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const body = document.createElement("div");
-  body.className = "task-body";
-  inner.appendChild(body);
-
-  if (trimText(imageUrl)) {
-    const visual = document.createElement("div");
-    visual.className = "task-visual";
-    const img = document.createElement("img");
-    img.src = imageUrl;
-    img.alt = "Task context";
-    img.loading = "lazy";
-    img.decoding = "async";
-    visual.appendChild(img);
-    body.appendChild(visual);
-  }
-
-  const phases = document.createElement("div");
-  phases.className = "task-phases";
-  body.appendChild(phases);
-
-  const prepSection = document.createElement("section");
-  prepSection.className = "task-phase";
-  prepSection.innerHTML = '<h3>Preparation</h3>';
-  if (prepText) {
-    const p = document.createElement("p");
-    p.textContent = prepText;
-    prepSection.appendChild(p);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Describe how learners should prepare for the task.";
-    prepSection.appendChild(placeholder);
-  }
-  phases.appendChild(prepSection);
-
-  const performanceSection = document.createElement("section");
-  performanceSection.className = "task-phase";
-  performanceSection.innerHTML = '<h3>Performance</h3>';
-  if (performanceText) {
-    const p = document.createElement("p");
-    p.textContent = performanceText;
-    performanceSection.appendChild(p);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Explain what happens during the live task.";
-    performanceSection.appendChild(placeholder);
-  }
-  phases.appendChild(performanceSection);
-
-  if (scaffoldingItems.length) {
-    const scaffSection = document.createElement("section");
-    scaffSection.className = "task-scaffolding";
-    const headingEl = document.createElement("h4");
-    headingEl.textContent = "Scaffolding language";
-    scaffSection.appendChild(headingEl);
-    const list = document.createElement("ul");
-    scaffoldingItems.forEach((item) => {
-      const li = document.createElement("li");
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    scaffSection.appendChild(list);
-    phases.appendChild(scaffSection);
-  }
-
-  return slide;
-}
-
-function createPronunciationFocusSlide({
-  title,
-  target,
-  words = [],
-  sentence1,
-  sentence2,
-  instructions,
-  imageUrl,
-} = {}) {
-  const resolvedTitle = trimText(title) || "Pronunciation focus";
-  const resolvedTarget = trimText(target);
-  const resolvedWords = Array.isArray(words) ? words.filter(Boolean) : [];
-  const exampleOne = trimText(sentence1);
-  const exampleTwo = trimText(sentence2);
-  const practiceNotes = trimText(instructions);
-
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden lesson-slide lesson-slide--pronunciation";
-  slide.dataset.type = "pronunciation-focus";
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner lesson-slide-inner";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "lesson-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const body = document.createElement("div");
-  body.className = "pronunciation-body";
-  inner.appendChild(body);
-
-  if (trimText(imageUrl)) {
-    const visual = document.createElement("div");
-    visual.className = "pronunciation-visual";
-    const img = document.createElement("img");
-    img.src = imageUrl;
-    img.alt = "Pronunciation context";
-    img.loading = "lazy";
-    img.decoding = "async";
-    visual.appendChild(img);
-    body.appendChild(visual);
-  }
-
-  const focusSection = document.createElement("section");
-  focusSection.className = "pronunciation-focus-card";
-  body.appendChild(focusSection);
-
-  if (resolvedTarget) {
-    const targetEl = document.createElement("p");
-    targetEl.className = "pronunciation-target";
-    targetEl.innerHTML = `<span>Target:</span> ${escapeHtml(resolvedTarget)}`;
-    focusSection.appendChild(targetEl);
-  }
-
-  if (resolvedWords.length) {
-    const wordList = document.createElement("ul");
-    wordList.className = "pronunciation-words";
-    resolvedWords.forEach((word) => {
-      const li = document.createElement("li");
-      li.textContent = word;
-      wordList.appendChild(li);
-    });
-    focusSection.appendChild(wordList);
-  }
-
-  if (exampleOne || exampleTwo) {
-    const examples = document.createElement("div");
-    examples.className = "pronunciation-examples";
-    if (exampleOne) {
-      const exampleEl = document.createElement("p");
-      exampleEl.textContent = exampleOne;
-      examples.appendChild(exampleEl);
-    }
-    if (exampleTwo) {
-      const exampleEl = document.createElement("p");
-      exampleEl.textContent = exampleTwo;
-      examples.appendChild(exampleEl);
-    }
-    focusSection.appendChild(examples);
-  }
-
-  const practiceSection = document.createElement("section");
-  practiceSection.className = "pronunciation-practice";
-  body.appendChild(practiceSection);
-
-  if (practiceNotes) {
-    const notes = document.createElement("p");
-    notes.textContent = practiceNotes;
-    practiceSection.appendChild(notes);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Describe how learners will practise and personalise the sound.";
-    practiceSection.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createReflectionSlide({ title, prompts = [], imageUrl } = {}) {
-  const resolvedTitle = trimText(title) || "Reflection";
-  const resolvedPrompts = Array.isArray(prompts) ? prompts.filter(Boolean) : [];
-
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden lesson-slide lesson-slide--reflection";
-  slide.dataset.type = "reflection";
-
-  if (trimText(imageUrl)) {
-    slide.classList.add("lesson-slide--has-image");
-    slide.style.setProperty("--lesson-bg-image", `url("${imageUrl}")`);
-  }
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner lesson-slide-inner";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "lesson-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const body = document.createElement("div");
-  body.className = "reflection-body";
-  inner.appendChild(body);
-
-  if (resolvedPrompts.length) {
-    const list = document.createElement("ul");
-    list.className = "reflection-prompts";
-    resolvedPrompts.forEach((prompt) => {
-      const li = document.createElement("li");
-      li.textContent = prompt;
-      list.appendChild(li);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Add prompts to guide learner reflection.";
-    body.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createImageOverlaySlide({
-  eyebrow,
-  heading,
-  body,
-  alignment = 'center',
-  theme = 'dark',
-  imageUrl,
-  imageAlt,
-} = {}) {
-  const resolvedHeading = trimText(heading) || 'Image spotlight';
-  const resolvedBody = trimText(body);
-  const resolvedEyebrow = trimText(eyebrow);
-  const resolvedTheme = theme === 'light' ? 'light' : 'dark';
-  const resolvedAlignment = ['left', 'right', 'center'].includes(
-    alignment,
-  )
-    ? alignment
-    : 'center';
-
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden full-width-bg image-overlay-slide';
-  slide.dataset.type = 'image-slide';
-  slide.classList.add(`theme-${resolvedTheme}`);
-  slide.classList.add(`align-${resolvedAlignment}`);
-
-  const media = document.createElement('div');
-  media.className = 'bg-media';
-  if (trimText(imageUrl)) {
-    const img = document.createElement('img');
-    img.src = imageUrl;
-    img.alt = imageAlt || '';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    media.appendChild(img);
-  } else {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'bg-media-placeholder';
-    placeholder.textContent = 'Add an inspiring image to this slide.';
-    media.appendChild(placeholder);
-  }
-  slide.appendChild(media);
-
-  const overlay = document.createElement('div');
-  overlay.className = 'img-overlay';
-  overlay.classList.add(`theme-${resolvedTheme}`);
-  slide.appendChild(overlay);
-
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner';
-  slide.appendChild(inner);
-
-  const content = document.createElement('div');
-  content.className = 'bg-content';
-  content.classList.add(`overlay-align-${resolvedAlignment}`);
-  inner.appendChild(content);
-
-  const card = document.createElement('div');
-  card.className = 'overlay-card';
-  if (resolvedTheme === 'light') {
-    card.classList.add('is-light');
-  }
-  content.appendChild(card);
-
-  if (resolvedEyebrow) {
-    const pill = document.createElement('span');
-    pill.className = 'pill overlay-pill';
-    pill.textContent = resolvedEyebrow;
-    card.appendChild(pill);
-  }
-
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedHeading;
-  card.appendChild(headingEl);
-
-  if (resolvedBody) {
-    const bodyEl = document.createElement('p');
-    bodyEl.className = 'deck-subtitle';
-    bodyEl.textContent = resolvedBody;
-    card.appendChild(bodyEl);
-  }
-
-  return slide;
-}
 
 function ensureInteractivePracticeModuleControls(slide) {
   if (!(slide instanceof HTMLElement)) {
@@ -10949,28 +9922,13 @@ function handleBuilderSubmit(event) {
     return;
   }
 
-  const title = state.activityTitle;
-  const requiresActivityTitle = ![
-    'learning-objectives',
-    'model-dialogue',
-    'image-slide',
-    'communicative-task',
-    'pronunciation-focus',
-    'reflection',
-  ].includes(state.layout);
-  if (requiresActivityTitle && !title) {
-    showBuilderStatus("Add a title for your activity before inserting.", "error");
-    const titleInput = builderForm.querySelector('[name="activityTitle"]');
-    titleInput?.focus({ preventScroll: true });
-    return;
-  }
-
   const criteria = state.criteria;
   if (state.includeRubric && !criteria.length) {
     showBuilderStatus("Add at least one rubric criterion.", "error");
     return;
   }
 
+  const title = state.activityTitle;
   const stageLabel = state.stageLabel || "Activity Workshop";
   const duration = state.duration;
   const overview = state.overview;
@@ -10989,110 +9947,6 @@ function handleBuilderSubmit(event) {
 
   let slide = null;
   switch (state.layout) {
-    case "learning-objectives": {
-      const goals = state.learningObjectives.goals;
-      if (!goals.length) {
-        showBuilderStatus("Add at least one instructional goal.", "error");
-        const goalInput = builderForm.querySelector('[name="learningGoal1"]');
-        goalInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createLearningObjectivesSlide({
-        title: state.learningObjectives.title,
-        goals,
-        communicative: state.learningObjectives.communicative,
-        imageUrl: state.learningObjectives.imageUrl || state.imageUrl,
-      });
-      break;
-    }
-    case "model-dialogue": {
-      const speakers = Array.isArray(state.modelDialogue.speakers)
-        ? state.modelDialogue.speakers
-        : [];
-      if (speakers.length < 2) {
-        showBuilderStatus("Add at least two speaker turns.", "error");
-        const speakerInput = builderForm.querySelector('[name="modelSpeaker1Line"]');
-        speakerInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createModelDialogueSlide({
-        title: state.modelDialogue.title,
-        instructions: state.modelDialogue.instructions,
-        speakers,
-        imageUrl: state.modelDialogue.imageUrl || state.imageUrl,
-        audioUrl: state.modelDialogue.audioUrl,
-      });
-      break;
-    }
-    case "image-slide": {
-      if (!trimText(state.imageSlide.heading || "")) {
-        showBuilderStatus("Add a heading for the overlay.", "error");
-        const headingInput = builderForm.querySelector('[name="imageSlideHeading"]');
-        headingInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createImageOverlaySlide({
-        eyebrow: state.imageSlide.eyebrow,
-        heading: state.imageSlide.heading,
-        body: state.imageSlide.body,
-        alignment: state.imageSlide.alignment,
-        theme: state.imageSlide.theme,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-      });
-      break;
-    }
-    case "communicative-task": {
-      if (!trimText(state.communicativeTask.title || "")) {
-        showBuilderStatus("Add a task title before inserting.", "error");
-        const taskTitleInput = builderForm.querySelector('[name="taskTitle"]');
-        taskTitleInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createCommunicativeTaskSlide({
-        title: state.communicativeTask.title,
-        preparation: state.communicativeTask.preparation,
-        performance: state.communicativeTask.performance,
-        scaffolding: state.communicativeTask.scaffolding,
-        imageUrl: state.communicativeTask.imageUrl || state.imageUrl,
-      });
-      break;
-    }
-    case "pronunciation-focus": {
-      if (!trimText(state.pronunciationFocus.target || "")) {
-        showBuilderStatus("Describe the target sound or feature.", "error");
-        const targetInput = builderForm.querySelector('[name="pronunciationTarget"]');
-        targetInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createPronunciationFocusSlide({
-        title: state.pronunciationFocus.title,
-        target: state.pronunciationFocus.target,
-        words: state.pronunciationFocus.words,
-        sentence1: state.pronunciationFocus.sentence1,
-        sentence2: state.pronunciationFocus.sentence2,
-        instructions: state.pronunciationFocus.instructions,
-        imageUrl: state.pronunciationFocus.imageUrl || state.imageUrl,
-      });
-      break;
-    }
-    case "reflection": {
-      const prompts = Array.isArray(state.reflection.prompts)
-        ? state.reflection.prompts
-        : [];
-      if (!prompts.length) {
-        showBuilderStatus("Add at least one reflection prompt.", "error");
-        const promptInput = builderForm.querySelector('[name="reflectionPrompt1"]');
-        promptInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createReflectionSlide({
-        title: state.reflection.title,
-        prompts,
-        imageUrl: state.reflection.imageUrl || state.imageUrl,
-      });
-      break;
-    }
     case "rubric-simple": {
       const resolvedSlideTitle = state.slideTitle || state.activityTitle;
       if (!trimText(resolvedSlideTitle)) {
@@ -11145,28 +9999,7 @@ function handleBuilderSubmit(event) {
         title,
         duration,
         slideTitle: state.slideTitle,
-        rubric: rubricData,
-        rubricIntro: state.rubricIntro,
-        narrative: state.spotlightNarrative,
-        imageUrl: state.imageUrl,
-        imageAlt: state.imageAlt,
-        rubricEnabled: state.includeRubric,
-      });
-      break;
-    }
-    case "full-bleed-image": {
-      if (!trimText(state.imageUrl || "")) {
-        showBuilderStatus("Add an image before inserting this layout.", "error");
-        const imageUrlInput = builderForm.querySelector('[name="imageUrl"]');
-        imageUrlInput?.focus({ preventScroll: true });
-        return;
-      }
-      slide = createFullBleedSlide({
-        stageLabel,
-        title,
-        duration,
-        slideTitle: state.slideTitle,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         narrative: state.spotlightNarrative,
         imageUrl: state.imageUrl,
@@ -11187,7 +10020,7 @@ function handleBuilderSubmit(event) {
         title,
         duration,
         slideTitle: state.slideTitle,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         cards: state.cards,
         rubricEnabled: state.includeRubric,
@@ -11205,7 +10038,7 @@ function handleBuilderSubmit(event) {
         stageLabel,
         title,
         duration,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         vocabulary: state.vocabulary,
         rubricEnabled: state.includeRubric,
@@ -11223,7 +10056,7 @@ function handleBuilderSubmit(event) {
         stageLabel,
         title,
         duration,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         reading: state.reading,
         rubricEnabled: state.includeRubric,
@@ -11241,7 +10074,7 @@ function handleBuilderSubmit(event) {
         stageLabel,
         title,
         duration,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         pronunciation: state.pronunciation,
         rubricEnabled: state.includeRubric,
@@ -11259,27 +10092,28 @@ function handleBuilderSubmit(event) {
         stageLabel,
         title,
         duration,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         rubricIntro: state.rubricIntro,
         homework: state.homework,
         rubricEnabled: state.includeRubric,
       });
       break;
     }
-    default:
+    default: {
       slide = createActivitySlide({
         stageLabel,
-        title,
+        title: state.activityTitle || "Activity",
         duration,
         overview,
         steps,
-        rubric: rubricData,
+        rubric: state.includeRubric ? rubricData : null,
         instructionsHeading: state.slideTitle,
         rubricHeadingText: "Success criteria",
         rubricIntro: state.rubricIntro,
         rubricEnabled: state.includeRubric,
       });
       break;
+    }
   }
 
   if (!(slide instanceof HTMLElement)) {
@@ -11324,7 +10158,7 @@ function initialiseActivityBuilderUI() {
   });
 
   activityBuilderBtn?.addEventListener("click", () => {
-    openForLayout("learning-objectives");
+    openForLayout("facilitation");
   });
 
   builderAddPromptBtn?.addEventListener("click", () => {
@@ -11353,12 +10187,15 @@ function initialiseActivityBuilderUI() {
         updateBuilderPreview();
         const messages = {
           "blank-canvas": "Blank canvas selected.",
-          "learning-objectives": "Learning objectives layout selected.",
-          "model-dialogue": "Model dialogue layout selected.",
-          "image-slide": "Image slide layout selected.",
-          "communicative-task": "Communicative task layout selected.",
-          "pronunciation-focus": "Pronunciation focus layout selected.",
-          reflection: "Reflection layout selected.",
+          facilitation: "Facilitation layout selected.",
+          "rubric-simple": "Rubric spotlight layout selected.",
+          "rubric-columns": "Discussion columns layout selected.",
+          "image-spotlight": "Image spotlight layout selected.",
+          "rubric-cards": "Strategy cards layout selected.",
+          "vocabulary-grid": "Vocabulary grid layout selected.",
+          "reading-comprehension": "Reading comprehension layout selected.",
+          "pronunciation-drill": "Pronunciation drill layout selected.",
+          "homework-recap": "Homework recap layout selected.",
         };
         showBuilderStatus(messages[layoutValue] || "Layout updated.", "info");
       });
