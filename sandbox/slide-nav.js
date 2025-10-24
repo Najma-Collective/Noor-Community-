@@ -12,7 +12,7 @@ export function initSlideNavigator({
 
   const trigger = document.createElement("button");
   trigger.type = "button";
-  trigger.className = "slide-jump-trigger";
+  trigger.className = "stage-utility-btn slide-jump-trigger";
   trigger.innerHTML = `
     <i class="fa-solid fa-table-list" aria-hidden="true"></i>
     <span class="sr-only">Open slide navigator</span>
@@ -851,7 +851,28 @@ export function initSlideNavigator({
     closePanel();
   });
 
-  stageViewport.appendChild(trigger);
+  const ensureUtilityCluster = () => {
+    if (!(stageViewport instanceof HTMLElement)) {
+      return null;
+    }
+    const existing = stageViewport.querySelector('[data-role="stage-utilities"]');
+    if (existing instanceof HTMLElement) {
+      return existing;
+    }
+    const cluster = document.createElement('div');
+    cluster.className = 'stage-utility-cluster';
+    cluster.dataset.role = 'stage-utilities';
+    stageViewport.appendChild(cluster);
+    return cluster;
+  };
+
+  const utilityCluster = ensureUtilityCluster();
+  if (utilityCluster) {
+    utilityCluster.appendChild(trigger);
+  } else {
+    stageViewport.appendChild(trigger);
+  }
+
   stageViewport.appendChild(panel);
 
   return {

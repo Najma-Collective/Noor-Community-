@@ -123,6 +123,17 @@ let moduleBuilderUrl;
 let moduleBuilderUrlPromise;
 let deckToastRoot;
 let deckStatusEl;
+let stageUtilityCluster;
+let blankControlsTrigger;
+let blankControlsPanel;
+let blankControlsActionsHost;
+let blankControlsToolbarHost;
+let blankControlsCloseBtn;
+let blankControlsActiveSlide;
+let blankControlsActiveHome;
+let blankControlsActiveToolbar;
+let blankControlsPanelId;
+let blankControlsListenersReady;
 
 
 const MINDMAP_BRANCH_PRESETS = [
@@ -161,6 +172,281 @@ const MODULE_EMPTY_HTML =
 
 const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
 const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
+
+function ensureStageUtilityCluster() {
+  if (!(stageViewport instanceof HTMLElement)) {
+    return null;
+  }
+  if (stageUtilityCluster instanceof HTMLElement && stageViewport.contains(stageUtilityCluster)) {
+    return stageUtilityCluster;
+  }
+  const existing = stageViewport.querySelector('[data-role="stage-utilities"]');
+  if (existing instanceof HTMLElement) {
+    stageUtilityCluster = existing;
+    return stageUtilityCluster;
+  }
+  const cluster = document.createElement('div');
+  cluster.className = 'stage-utility-cluster';
+  cluster.dataset.role = 'stage-utilities';
+  stageViewport.appendChild(cluster);
+  stageUtilityCluster = cluster;
+  return stageUtilityCluster;
+}
+
+function handleBlankControlsPointerDown(event) {
+  if (!(blankControlsPanel instanceof HTMLElement) || !blankControlsPanel.classList.contains('is-visible')) {
+    return;
+  }
+  const target = event.target;
+  if (target instanceof Node) {
+    if (blankControlsPanel.contains(target)) {
+      return;
+    }
+    if (blankControlsTrigger instanceof HTMLElement && blankControlsTrigger.contains(target)) {
+      return;
+    }
+  }
+  closeBlankControlsPanel({ restoreFocus: false });
+}
+
+function handleBlankControlsKeydown(event) {
+  if (!(blankControlsPanel instanceof HTMLElement) || !blankControlsPanel.classList.contains('is-visible')) {
+    return;
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeBlankControlsPanel();
+  }
+}
+
+function ensureBlankControlsUI() {
+  const cluster = ensureStageUtilityCluster();
+  if (!cluster) {
+    return;
+  }
+
+  if (!blankControlsPanelId) {
+    blankControlsPanelId =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? `blank-controls-${crypto.randomUUID()}`
+        : `blank-controls-${Math.random().toString(16).slice(2, 8)}`;
+  }
+
+  if (!(blankControlsPanel instanceof HTMLElement)) {
+    blankControlsPanel = document.createElement('div');
+    blankControlsPanel.id = blankControlsPanelId;
+    blankControlsPanel.className = 'blank-controls-flyout';
+    blankControlsPanel.setAttribute('role', 'region');
+    blankControlsPanel.setAttribute('aria-label', 'Blank slide controls');
+    blankControlsPanel.setAttribute('aria-hidden', 'true');
+    blankControlsPanel.setAttribute('tabindex', '-1');
+    blankControlsPanel.hidden = true;
+    blankControlsPanel.innerHTML = `
+      <div class="blank-controls-flyout-header">
+        <div>
+          <p class="blank-controls-eyebrow">Blank slide</p>
+          <h2 class="blank-controls-title">Canvas controls</h2>
+          <p class="blank-controls-subtitle">Add new elements or refine the selected item.</p>
+        </div>
+        <button type="button" class="blank-controls-close" aria-label="Close canvas controls">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="blank-controls-flyout-body">
+        <div class="blank-controls-section" data-role="blank-actions-host"></div>
+        <div class="blank-controls-section" data-role="blank-toolbar-host"></div>
+      </div>
+    `;
+    blankControlsActionsHost = blankControlsPanel.querySelector('[data-role="blank-actions-host"]');
+    blankControlsToolbarHost = blankControlsPanel.querySelector('[data-role="blank-toolbar-host"]');
+    blankControlsCloseBtn = blankControlsPanel.querySelector('.blank-controls-close');
+    if (blankControlsCloseBtn instanceof HTMLButtonElement) {
+      blankControlsCloseBtn.addEventListener('click', () => {
+        closeBlankControlsPanel();
+      });
+    }
+  }
+
+  if (!(blankControlsTrigger instanceof HTMLButtonElement)) {
+    blankControlsTrigger = document.createElement('button');
+    blankControlsTrigger.type = 'button';
+    blankControlsTrigger.className = 'stage-utility-btn blank-controls-trigger';
+    blankControlsTrigger.setAttribute('aria-haspopup', 'dialog');
+    blankControlsTrigger.setAttribute('aria-expanded', 'false');
+    blankControlsTrigger.innerHTML = `
+      <i class="fa-solid fa-gear" aria-hidden="true"></i>
+      <span class="sr-only">Toggle blank slide controls</span>
+    `;
+    blankControlsTrigger.title = 'Canvas controls';
+    blankControlsTrigger.hidden = true;
+    blankControlsTrigger.addEventListener('click', () => {
+      if (blankControlsPanel?.classList.contains('is-visible')) {
+        closeBlankControlsPanel({ restoreFocus: false });
+      } else {
+        openBlankControlsPanel();
+      }
+    });
+  }
+
+  blankControlsTrigger.setAttribute('aria-controls', blankControlsPanelId);
+
+  if (!cluster.contains(blankControlsTrigger)) {
+    cluster.appendChild(blankControlsTrigger);
+  }
+
+  if (!(blankControlsPanel instanceof HTMLElement ? stageViewport?.contains(blankControlsPanel) : false)) {
+    stageViewport?.appendChild(blankControlsPanel);
+  }
+
+  if (!blankControlsListenersReady) {
+    document.addEventListener('pointerdown', handleBlankControlsPointerDown);
+    document.addEventListener('keydown', handleBlankControlsKeydown);
+    blankControlsListenersReady = true;
+  }
+}
+
+function moveBlankControlsToPanel(slide) {
+  if (!(blankControlsPanel instanceof HTMLElement) || !(blankControlsActionsHost instanceof HTMLElement) || !(blankControlsToolbarHost instanceof HTMLElement)) {
+    return false;
+  }
+  if (!(slide instanceof HTMLElement)) {
+    return false;
+  }
+  const home = slide.querySelector('[data-role="blank-controls-home"]');
+  if (!(home instanceof HTMLElement)) {
+    return false;
+  }
+
+  const actions = home.querySelector('[data-role="blank-actions"]') ?? home.querySelector('.blank-controls');
+  const toolbar = home.querySelector('[data-role="blank-toolbar"]');
+
+  if (!(actions instanceof HTMLElement) || !(toolbar instanceof HTMLElement)) {
+    return false;
+  }
+
+  blankControlsActionsHost.innerHTML = '';
+  blankControlsToolbarHost.innerHTML = '';
+  blankControlsActionsHost.appendChild(actions);
+  blankControlsToolbarHost.appendChild(toolbar);
+
+  blankControlsActiveSlide = slide;
+  blankControlsActiveHome = home;
+  blankControlsActiveToolbar = toolbar;
+
+  if (typeof toolbar.__deckSetExpanded === 'function') {
+    toolbar.__deckSetExpanded(true);
+  }
+
+  return true;
+}
+
+function returnBlankControlsToHome(targetHome = blankControlsActiveHome) {
+  if (!(targetHome instanceof HTMLElement)) {
+    return;
+  }
+
+  const actions = blankControlsActionsHost?.querySelector('.blank-controls');
+  if (actions instanceof HTMLElement) {
+    targetHome.appendChild(actions);
+  }
+
+  const toolbar = blankControlsToolbarHost?.querySelector('[data-role="blank-toolbar"]');
+  if (toolbar instanceof HTMLElement) {
+    if (typeof toolbar.__deckSetExpanded === 'function') {
+      toolbar.__deckSetExpanded(false);
+    }
+    targetHome.appendChild(toolbar);
+  }
+
+  blankControlsActiveSlide = null;
+  blankControlsActiveHome = null;
+  blankControlsActiveToolbar = null;
+}
+
+function openBlankControlsPanel() {
+  ensureBlankControlsUI();
+  if (!(blankControlsPanel instanceof HTMLElement) || !(blankControlsTrigger instanceof HTMLElement)) {
+    return;
+  }
+  const activeSlide = slides[currentSlideIndex];
+  if (!(activeSlide instanceof HTMLElement) || activeSlide.dataset.type !== 'blank') {
+    return;
+  }
+
+  if (blankControlsPanel.classList.contains('is-visible')) {
+    if (blankControlsActiveSlide === activeSlide) {
+      return;
+    }
+    closeBlankControlsPanel({ restoreFocus: false });
+  }
+
+  const moved = moveBlankControlsToPanel(activeSlide);
+  if (!moved) {
+    return;
+  }
+
+  blankControlsPanel.hidden = false;
+  blankControlsPanel.classList.add('is-visible');
+  blankControlsPanel.setAttribute('aria-hidden', 'false');
+  blankControlsTrigger.setAttribute('aria-expanded', 'true');
+  requestAnimationFrame(() => {
+    try {
+      blankControlsPanel?.focus({ preventScroll: true });
+    } catch (error) {
+      // noop when focus is not allowed
+    }
+  });
+}
+
+function closeBlankControlsPanel({ restoreFocus = true } = {}) {
+  if (!(blankControlsPanel instanceof HTMLElement)) {
+    return;
+  }
+
+  if (blankControlsActiveHome instanceof HTMLElement) {
+    returnBlankControlsToHome(blankControlsActiveHome);
+  }
+
+  blankControlsPanel.classList.remove('is-visible');
+  blankControlsPanel.setAttribute('aria-hidden', 'true');
+  blankControlsPanel.hidden = true;
+
+  if (blankControlsTrigger instanceof HTMLElement) {
+    blankControlsTrigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus && !blankControlsTrigger.hidden) {
+      blankControlsTrigger.focus({ preventScroll: true });
+    }
+  }
+}
+
+function syncBlankControlsAvailability() {
+  ensureBlankControlsUI();
+  if (!(blankControlsTrigger instanceof HTMLButtonElement)) {
+    return;
+  }
+
+  const activeSlide = slides[currentSlideIndex];
+  const isBlank = activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank';
+
+  if (!isBlank) {
+    if (blankControlsPanel?.classList.contains('is-visible')) {
+      closeBlankControlsPanel({ restoreFocus: false });
+    }
+    blankControlsTrigger.hidden = true;
+    blankControlsTrigger.disabled = true;
+    blankControlsTrigger.setAttribute('aria-disabled', 'true');
+    return;
+  }
+
+  blankControlsTrigger.hidden = false;
+  blankControlsTrigger.disabled = false;
+  blankControlsTrigger.setAttribute('aria-disabled', 'false');
+  if (!(blankControlsPanel instanceof HTMLElement)) {
+    return;
+  }
+  const isVisible = blankControlsPanel.classList.contains('is-visible');
+  blankControlsPanel.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+}
 
 const DEFAULT_BUILDER_PROMPTS = [
   {
@@ -1220,6 +1506,10 @@ function cleanupSlide(slide) {
     closeModuleOverlay({ focus: false });
   }
 
+  if (blankControlsActiveSlide === slide) {
+    closeBlankControlsPanel({ restoreFocus: false });
+  }
+
   slide.querySelectorAll(".module-embed").forEach((module) => {
     if (!(module instanceof HTMLElement)) {
       return;
@@ -1242,6 +1532,7 @@ function cleanupSlide(slide) {
 function refreshSlides() {
   slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
   slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
+  syncBlankControlsAvailability();
 }
 
 function updateCounter() {
@@ -1253,12 +1544,21 @@ function updateCounter() {
 
 function showSlide(index) {
   if (!slides.length) return;
+  const previousSlide = slides[currentSlideIndex];
   currentSlideIndex = (index + slides.length) % slides.length;
+  if (
+    blankControlsPanel?.classList.contains('is-visible') &&
+    previousSlide instanceof HTMLElement &&
+    previousSlide !== slides[currentSlideIndex]
+  ) {
+    closeBlankControlsPanel({ restoreFocus: false });
+  }
   slides.forEach((slide, slideIndex) => {
     slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
   });
   updateCounter();
   slideNavigatorController?.setActive(currentSlideIndex);
+  syncBlankControlsAvailability();
 }
 
 function focusSlideAtIndex(index) {
@@ -1712,28 +2012,29 @@ export function createBlankSlide() {
   slide.innerHTML = `
     <div class="slide-inner">
 <div class="blank-slide">
-  <div class="blank-controls">
-    <button class="activity-btn" type="button" data-action="add-textbox">
-      <i class="fa-solid fa-pen-to-square"></i>
-      Add Textbox
-    </button>
-    <button class="activity-btn" type="button" data-action="add-table">
-      <i class="fa-solid fa-table"></i>
-      Create Table
-    </button>
-    <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-      <i class="fa-solid fa-diagram-project"></i>
-      Add Mind Map
-    </button>
-    <button class="activity-btn tertiary" type="button" data-action="add-module">
-      <i class="fa-solid fa-puzzle-piece"></i>
-      Add Module
-    </button>
-  </div>
-  <div class="blank-toolbar" data-role="blank-toolbar">
-    <button
-      class="blank-toolbar-toggle"
-      type="button"
+  <div class="blank-controls-home" data-role="blank-controls-home">
+    <div class="blank-controls" data-role="blank-actions">
+      <button class="activity-btn" type="button" data-action="add-textbox">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Add Textbox
+      </button>
+      <button class="activity-btn" type="button" data-action="add-table">
+        <i class="fa-solid fa-table"></i>
+        Create Table
+      </button>
+      <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+        <i class="fa-solid fa-diagram-project"></i>
+        Add Mind Map
+      </button>
+      <button class="activity-btn tertiary" type="button" data-action="add-module">
+        <i class="fa-solid fa-puzzle-piece"></i>
+        Add Module
+      </button>
+    </div>
+    <div class="blank-toolbar" data-role="blank-toolbar">
+      <button
+        class="blank-toolbar-toggle"
+        type="button"
       data-action="toggle-toolbar"
       aria-expanded="false"
     >
@@ -1996,6 +2297,15 @@ export function attachBlankSlideEvents(slide) {
       toolbarPanel.hidden = !isExpanded;
     }
   };
+
+  if (toolbar instanceof HTMLElement) {
+    toolbar.__deckSetExpanded = (expanded) => {
+      setToolbarExpanded(expanded);
+    };
+    registerCleanup(() => {
+      delete toolbar.__deckSetExpanded;
+    });
+  }
 
   const setActiveToolsType = (type, { force = false } = {}) => {
     if (typeof type !== "string" || !type.trim()) {
@@ -4296,11 +4606,11 @@ export function createModuleEmbed({
         <span class="module-embed-title">${escapeHtml(resolvedTitle)}</span>
       </div>
       <div class="module-embed-actions">
-        <button type="button" class="module-embed-edit" data-action="edit-module">
+        <button type="button" class="module-embed-action module-embed-edit" data-action="edit-module">
           <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
           <span class="sr-only">Edit module</span>
         </button>
-        <button type="button" class="module-embed-remove" data-action="remove-module">
+        <button type="button" class="module-embed-action module-embed-remove" data-action="remove-module">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           <span class="sr-only">Remove module</span>
         </button>
@@ -11174,6 +11484,7 @@ export async function setupInteractiveDeck({
   stageViewport =
     rootElement?.querySelector(stageViewportSelector) ??
     document.querySelector(stageViewportSelector);
+  ensureBlankControlsUI();
   nextBtn =
     stageViewport?.querySelector(nextButtonSelector) ??
     rootElement?.querySelector(nextButtonSelector) ??
