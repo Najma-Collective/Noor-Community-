@@ -135,6 +135,433 @@ let blankControlsActiveToolbar;
 let blankControlsPanelId;
 let blankControlsListenersReady;
 
+const EDITABLE_INLINE_TAGS = new Set([
+  "A",
+  "ABBR",
+  "B",
+  "BDO",
+  "BDI",
+  "BR",
+  "CITE",
+  "CODE",
+  "DATA",
+  "DFN",
+  "EM",
+  "I",
+  "KBD",
+  "MARK",
+  "Q",
+  "S",
+  "SAMP",
+  "SMALL",
+  "SPAN",
+  "STRONG",
+  "SUB",
+  "SUP",
+  "TIME",
+  "U",
+  "VAR",
+  "WBR",
+  "SVG",
+  "USE",
+  "PATH",
+]);
+
+const EDITABLE_EXCLUDED_TAGS = new Set([
+  "BUTTON",
+  "INPUT",
+  "SELECT",
+  "OPTION",
+  "TEXTAREA",
+  "SCRIPT",
+  "STYLE",
+  "IMG",
+  "VIDEO",
+  "AUDIO",
+  "CANVAS",
+  "IFRAME",
+  "OBJECT",
+  "EMBED",
+]);
+
+const editableElements = new Set();
+const editableMutationObservers = new WeakMap();
+const editableListenerMap = new WeakMap();
+let editableResizeObserver = null;
+let editableResizeHandlerAttached = false;
+
+function getEditableResizeObserverCtor() {
+  if (typeof window !== "undefined" && typeof window.ResizeObserver === "function") {
+    return window.ResizeObserver;
+  }
+  return null;
+}
+
+function isEditableInlineElement(element) {
+  return element instanceof HTMLElement && EDITABLE_INLINE_TAGS.has(element.tagName);
+}
+
+function hasOnlyEditableInlineChildren(element) {
+  if (!(element instanceof HTMLElement)) {
+    return false;
+  }
+  return Array.from(element.children).every((child) =>
+    isEditableInlineElement(child) ||
+    child.matches?.("[data-editable-ignore], [contenteditable='false']"),
+  );
+}
+
+function shouldMakeElementEditable(element) {
+  if (!(element instanceof HTMLElement)) {
+    return false;
+  }
+  if (!element.closest(".slide-stage")) {
+    return false;
+  }
+  if (element.closest("[data-editable-ignore]")) {
+    return false;
+  }
+  if (element.dataset.editableProcessed === "true") {
+    return false;
+  }
+  if (EDITABLE_EXCLUDED_TAGS.has(element.tagName)) {
+    return false;
+  }
+  if (
+    element.matches(
+      "button, [role='button'], select, option, textarea, input, a[href]",
+    )
+  ) {
+    return false;
+  }
+  if (element.closest("button, [role='button'], select, option, textarea, input")) {
+    return false;
+  }
+  if (!element.textContent || !element.textContent.trim()) {
+    return false;
+  }
+  if (element.classList.contains("sr-only")) {
+    return false;
+  }
+  if (element.childElementCount > 0 && !hasOnlyEditableInlineChildren(element)) {
+    return false;
+  }
+  return true;
+}
+
+function storeEditableMetrics(element, force = false) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  const style = window.getComputedStyle(element);
+  const baseFont = parseFloat(style.fontSize) || 16;
+  if (force || !element.dataset.baseFontSize) {
+    element.dataset.baseFontSize = baseFont;
+    element.dataset.minFontSize = Math.max(8, Math.round(baseFont * 0.5));
+  }
+
+  const rect = element.getBoundingClientRect();
+  if (
+    (force || !element.dataset.maxWidth || !element.dataset.maxHeight) &&
+    rect.width > 0 &&
+    rect.height > 0
+  ) {
+    element.dataset.maxWidth = rect.width;
+    element.dataset.maxHeight = rect.height;
+  }
+}
+
+function autoFitEditableElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  storeEditableMetrics(element);
+
+  const base =
+    parseFloat(element.dataset.baseFontSize) ||
+    parseFloat(window.getComputedStyle(element).fontSize) ||
+    16;
+  const min = parseFloat(element.dataset.minFontSize) || Math.max(8, Math.round(base * 0.5));
+  let width = parseFloat(element.dataset.maxWidth) || 0;
+  let height = parseFloat(element.dataset.maxHeight) || 0;
+
+  if ((!width || !height) && element.offsetParent) {
+    const rect = element.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      width = rect.width;
+      height = rect.height;
+      element.dataset.maxWidth = width;
+      element.dataset.maxHeight = height;
+    }
+  }
+
+  element.style.fontSize = `${base}px`;
+  element.style.overflow = "hidden";
+
+  if (!width || !height || width < 4 || height < 4) {
+    return;
+  }
+
+  const tolerance = 1;
+  let fontSize = base;
+  let iterations = 0;
+  let overflow =
+    element.scrollHeight > height + tolerance || element.scrollWidth > width + tolerance;
+
+  while (overflow && fontSize > min && iterations < 200) {
+    fontSize -= 0.5;
+    element.style.fontSize = `${fontSize}px`;
+    iterations += 1;
+    overflow =
+      element.scrollHeight > height + tolerance || element.scrollWidth > width + tolerance;
+  }
+
+  if (overflow) {
+    element.dataset.overflow = "true";
+    element.title = "Text truncated to preserve layout.";
+  } else {
+    delete element.dataset.overflow;
+    if (element.title === "Text truncated to preserve layout.") {
+      element.removeAttribute("title");
+    }
+  }
+}
+
+function cleanupEditableElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+  const observer = editableMutationObservers.get(element);
+  if (observer) {
+    try {
+      observer.disconnect();
+    } catch (error) {
+      console.warn("Failed to disconnect editable text observer", error);
+    }
+    editableMutationObservers.delete(element);
+  }
+
+  const listeners = editableListenerMap.get(element);
+  if (listeners) {
+    element.removeEventListener("focus", listeners.focus);
+    element.removeEventListener("input", listeners.input);
+    element.removeEventListener("blur", listeners.blur);
+    editableListenerMap.delete(element);
+  }
+
+  const ResizeObserverCtor = getEditableResizeObserverCtor();
+  if (
+    editableResizeObserver &&
+    ResizeObserverCtor &&
+    editableResizeObserver instanceof ResizeObserverCtor
+  ) {
+    try {
+      editableResizeObserver.unobserve(element);
+    } catch (error) {
+      console.warn("Failed to unobserve editable text element", error);
+    }
+  }
+
+  editableElements.delete(element);
+}
+
+function refreshEditableMetrics(scope = document) {
+  const targets = new Set();
+  if (scope instanceof HTMLElement) {
+    if (scope.classList.contains("editable-text")) {
+      targets.add(scope);
+    }
+    scope.querySelectorAll?.(".editable-text").forEach((element) => targets.add(element));
+  } else if (scope instanceof DocumentFragment) {
+    scope.querySelectorAll?.(".editable-text").forEach((element) => targets.add(element));
+  } else if (scope instanceof Document) {
+    scope.querySelectorAll(".editable-text").forEach((element) => targets.add(element));
+  }
+
+  targets.forEach((element) => {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+    if (!document.contains(element)) {
+      cleanupEditableElement(element);
+      return;
+    }
+    storeEditableMetrics(element, true);
+    autoFitEditableElement(element);
+  });
+}
+
+function handleEditableWindowResize() {
+  refreshEditableMetrics(document);
+}
+
+function registerEditableElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  if (editableElements.has(element)) {
+    storeEditableMetrics(element, true);
+    autoFitEditableElement(element);
+    return;
+  }
+
+  element.dataset.editableProcessed = "true";
+  element.classList.add("editable-text");
+  element.setAttribute("contenteditable", "true");
+  element.setAttribute("spellcheck", "false");
+  if (!element.hasAttribute("tabindex")) {
+    element.setAttribute("tabindex", "0");
+  }
+  element.style.overflow = "hidden";
+
+  const handleFocus = () => {
+    storeEditableMetrics(element, true);
+    autoFitEditableElement(element);
+  };
+  const handleInput = () => {
+    autoFitEditableElement(element);
+  };
+  const handleBlur = () => {
+    autoFitEditableElement(element);
+  };
+
+  element.addEventListener("focus", handleFocus);
+  element.addEventListener("input", handleInput);
+  element.addEventListener("blur", handleBlur);
+  editableListenerMap.set(element, {
+    focus: handleFocus,
+    input: handleInput,
+    blur: handleBlur,
+  });
+
+  const observer = new MutationObserver(() => {
+    autoFitEditableElement(element);
+  });
+  observer.observe(element, {
+    characterData: true,
+    childList: true,
+    subtree: true,
+  });
+  editableMutationObservers.set(element, observer);
+
+  const ResizeObserverCtor = getEditableResizeObserverCtor();
+  if (
+    ResizeObserverCtor &&
+    !(editableResizeObserver instanceof ResizeObserverCtor)
+  ) {
+    editableResizeObserver = new ResizeObserverCtor((entries) => {
+      entries.forEach((entry) => {
+        const target = entry.target;
+        if (!editableElements.has(target)) {
+          return;
+        }
+        storeEditableMetrics(target, true);
+        autoFitEditableElement(target);
+      });
+    });
+  }
+
+  if (
+    editableResizeObserver &&
+    ResizeObserverCtor &&
+    editableResizeObserver instanceof ResizeObserverCtor
+  ) {
+    editableResizeObserver.observe(element);
+  } else if (
+    !editableResizeHandlerAttached &&
+    typeof window !== "undefined" &&
+    typeof window.addEventListener === "function"
+  ) {
+    window.addEventListener("resize", handleEditableWindowResize);
+    editableResizeHandlerAttached = true;
+  }
+
+  editableElements.add(element);
+  storeEditableMetrics(element, true);
+  autoFitEditableElement(element);
+}
+
+function prepareEditableIcons(scope = document) {
+  const selector = ".slide-stage i, .slide-stage .fa";
+  let icons = [];
+  if (scope instanceof HTMLElement || scope instanceof DocumentFragment) {
+    icons = Array.from(scope.querySelectorAll?.(selector) ?? []);
+    if (scope instanceof HTMLElement && scope.matches(selector)) {
+      icons.unshift(scope);
+    }
+  } else if (scope instanceof Document) {
+    icons = Array.from(scope.querySelectorAll(selector));
+  }
+
+  icons.forEach((icon) => {
+    if (!(icon instanceof HTMLElement)) {
+      return;
+    }
+    icon.setAttribute("contenteditable", "false");
+    icon.setAttribute("data-editable-ignore", "true");
+  });
+}
+
+function cleanupDetachedEditableElements() {
+  editableElements.forEach((element) => {
+    if (!(element instanceof HTMLElement) || !document.contains(element)) {
+      cleanupEditableElement(element);
+    }
+  });
+}
+
+function initialiseEditableText(scope = stageViewport ?? document) {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const searchRoots = new Set();
+  if (scope instanceof HTMLElement || scope instanceof DocumentFragment) {
+    searchRoots.add(scope);
+  } else if (scope instanceof Document) {
+    searchRoots.add(scope);
+  } else if (stageViewport instanceof HTMLElement) {
+    searchRoots.add(stageViewport);
+  } else {
+    searchRoots.add(document);
+  }
+
+  searchRoots.forEach((rootNode) => {
+    prepareEditableIcons(rootNode instanceof Document ? stageViewport ?? document : rootNode);
+
+    const candidates = new Set();
+    if (rootNode instanceof HTMLElement && rootNode.classList.contains("slide-stage")) {
+      rootNode.querySelectorAll("*").forEach((element) => candidates.add(element));
+      candidates.add(rootNode);
+    } else if (rootNode instanceof HTMLElement || rootNode instanceof DocumentFragment) {
+      rootNode.querySelectorAll?.(".slide-stage *").forEach((element) => candidates.add(element));
+    } else if (rootNode instanceof Document) {
+      rootNode.querySelectorAll(".slide-stage *").forEach((element) => candidates.add(element));
+    }
+
+    candidates.forEach((element) => {
+      if (shouldMakeElementEditable(element)) {
+        registerEditableElement(element);
+      }
+    });
+  });
+
+  cleanupDetachedEditableElements();
+
+  const refreshTarget =
+    scope instanceof HTMLElement || scope instanceof DocumentFragment ? scope : document;
+
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(() => {
+      refreshEditableMetrics(refreshTarget);
+    });
+  } else {
+    refreshEditableMetrics(refreshTarget);
+  }
+}
+
 
 const MINDMAP_BRANCH_PRESETS = [
   { value: "idea", label: "Idea" },
@@ -1020,12 +1447,17 @@ function cleanupSlide(slide) {
       iframe.src = "about:blank";
     }
   });
+
+  slide.querySelectorAll(".editable-text").forEach((element) => {
+    cleanupEditableElement(element);
+  });
 }
 
 function refreshSlides() {
   slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
   slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
   syncBlankControlsAvailability();
+  initialiseEditableText(stageViewport);
 }
 
 function updateCounter() {
@@ -1052,6 +1484,11 @@ function showSlide(index) {
   updateCounter();
   slideNavigatorController?.setActive(currentSlideIndex);
   syncBlankControlsAvailability();
+  const activeSlide = slides[currentSlideIndex];
+  if (activeSlide instanceof HTMLElement) {
+    initialiseEditableText(activeSlide);
+    refreshEditableMetrics(activeSlide);
+  }
 }
 
 function focusSlideAtIndex(index) {
@@ -1144,6 +1581,7 @@ export function addBlankSlide() {
   const insertionPoint = prevBtn ?? nextBtn ?? null;
   stageViewport.insertBefore(newSlide, insertionPoint);
   attachBlankSlideEvents(newSlide);
+  initialiseEditableText(newSlide);
   refreshSlides();
   showSlide(slides.length - 1);
 }
@@ -1194,6 +1632,17 @@ export function duplicateSlide(index = currentSlideIndex) {
       }
     });
 
+  if (clonedSlide.hasAttribute("data-editable-processed")) {
+    clonedSlide.removeAttribute("data-editable-processed");
+  }
+  clonedSlide
+    .querySelectorAll('[data-editable-processed]')
+    .forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.removeAttribute("data-editable-processed");
+      }
+    });
+
   recalibrateMindMapCounter();
   const mindmapInputs = Array.from(
     clonedSlide.querySelectorAll('.mindmap-form input[id^="mindmap-branch-"]'),
@@ -1237,6 +1686,8 @@ export function duplicateSlide(index = currentSlideIndex) {
 
   const referenceNode = sourceSlide.nextSibling;
   stageViewport.insertBefore(clonedSlide, referenceNode ?? null);
+
+  initialiseEditableText(clonedSlide);
 
   hydrateRemoteImages(clonedSlide).catch((error) => {
     console.warn("Remote image hydration failed after duplicating slide", error);
@@ -4963,6 +5414,13 @@ function applyDeckState(state) {
   stageViewport.innerHTML = "";
   stageViewport.appendChild(fragment);
   sanitiseTextboxesIn(stageViewport);
+  stageViewport
+    .querySelectorAll('[data-editable-processed]')
+    .forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.removeAttribute("data-editable-processed");
+      }
+    });
   navButtons.forEach((button) => stageViewport.appendChild(button));
 
   refreshSlides();
@@ -4999,6 +5457,7 @@ function applyDeckState(state) {
   stageViewport
     ?.querySelectorAll(".module-embed")
     .forEach((module) => initialiseModuleEmbed(module));
+  initialiseEditableText(stageViewport);
   recalibrateMindMapCounter();
 
   if (slides.length) {
@@ -6232,8 +6691,9 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('taskPerformance', defaults.performance ?? '');
       setFieldValue(
         'taskScaffolding',
-        Array.isArray(defaults.scaffolding) ? defaults.scaffolding.join('
-') : defaults.scaffolding ?? '',
+        Array.isArray(defaults.scaffolding)
+          ? defaults.scaffolding.join('\n')
+          : defaults.scaffolding ?? '',
       );
       break;
     }
@@ -9895,7 +10355,7 @@ function initialiseActivityBuilderUI() {
   updateBuilderPreview();
 }
 async function initialiseDeck() {
-  await hydrateRemoteImages().catch((error) => {
+  hydrateRemoteImages().catch((error) => {
     console.warn(
       "Remote imagery could not be hydrated during initialisation",
       error,
@@ -9911,6 +10371,7 @@ async function initialiseDeck() {
   updateCounter();
   initialiseActivities();
   initialiseGeneratedActivitySlides();
+  initialiseEditableText(stageViewport);
   document
     .querySelectorAll('.slide-stage[data-type="blank"]')
     .forEach((slide) => attachBlankSlideEvents(slide));

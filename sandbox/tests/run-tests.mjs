@@ -101,9 +101,46 @@ await setupInteractiveDeck();
 const stageViewport = document.querySelector('.stage-viewport');
 assert.ok(stageViewport, 'stage viewport should exist');
 
+const counterEl = document.getElementById('slide-counter');
+assert.ok(counterEl, 'slide counter should exist');
+
+const nextNavBtn = stageViewport.querySelector('.slide-nav-next');
+const prevNavBtn = stageViewport.querySelector('.slide-nav-prev');
+assert.ok(nextNavBtn, 'next navigation button should exist');
+assert.ok(prevNavBtn, 'previous navigation button should exist');
+
+const initialSlides = Array.from(stageViewport.querySelectorAll('.slide-stage'));
+assert.equal(initialSlides.length, 2, 'fixture should provide two initial slides');
+assert.ok(!initialSlides[0].classList.contains('hidden'), 'first slide should start visible');
+assert.ok(initialSlides[1].classList.contains('hidden'), 'second slide should start hidden');
+assert.equal(counterEl.textContent.trim(), '1 / 2', 'counter should reflect initial slide state');
+
+nextNavBtn.click();
+assert.ok(
+  initialSlides[0].classList.contains('hidden'),
+  'first slide should hide after advancing',
+);
+assert.ok(
+  !initialSlides[1].classList.contains('hidden'),
+  'second slide should show after advancing',
+);
+assert.equal(counterEl.textContent.trim(), '2 / 2', 'counter should update after advancing');
+
+prevNavBtn.click();
+assert.ok(
+  !initialSlides[0].classList.contains('hidden'),
+  'first slide should show again after going back',
+);
+assert.ok(
+  initialSlides[1].classList.contains('hidden'),
+  'second slide should hide again after going back',
+);
+assert.equal(counterEl.textContent.trim(), '1 / 2', 'counter should reset after going back');
+
 const blankSlide = createBlankSlide();
 attachBlankSlideEvents(blankSlide);
-stageViewport.appendChild(blankSlide);
+const navInsertionPoint = prevNavBtn ?? nextNavBtn;
+stageViewport.insertBefore(blankSlide, navInsertionPoint);
 
 const canvas = blankSlide.querySelector('.blank-canvas');
 assert.ok(canvas, 'blank canvas should exist');
@@ -197,7 +234,7 @@ const legacyTextbox = createTextbox();
 legacyTextbox.id = 'legacy-textbox';
 legacyCanvas.appendChild(legacyTextbox);
 
-stageViewport.appendChild(legacySlide);
+stageViewport.insertBefore(legacySlide, navInsertionPoint);
 attachBlankSlideEvents(legacySlide);
 
 assert.ok(
@@ -273,8 +310,12 @@ assert.ok(legacyTextboxPersisted, 'existing legacy textbox should persist after 
 
 addBlankSlide();
 await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const managedBlankSlides = stageViewport.querySelectorAll('.slide-stage[data-type="blank"]');
-const managedBlankSlide = managedBlankSlides[managedBlankSlides.length - 1];
+const managedBlankSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-type="blank"]'),
+);
+const managedBlankSlide =
+  managedBlankSlides.find((slide) => !slide.classList.contains('hidden')) ??
+  managedBlankSlides[managedBlankSlides.length - 1];
 const managedCanvas = managedBlankSlide.querySelector('.blank-canvas');
 const blankControlsTrigger = document.querySelector('.blank-controls-trigger');
 assert.ok(blankControlsTrigger, 'blank controls trigger should exist for managed blank slide');
@@ -317,16 +358,16 @@ addSlideBtn.click();
 await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
 assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open');
 
-const facilitationRadio = builderOverlay.querySelector('input[value="facilitation"]');
-facilitationRadio.checked = true;
-facilitationRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+const communicativeRadio = builderOverlay.querySelector('input[value="communicative-task"]');
+communicativeRadio.checked = true;
+communicativeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
 
 const builderForm = document.getElementById('activity-builder-form');
 builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
 
-const activitySlides = stageViewport.querySelectorAll('.slide-stage.activity-slide');
+const activitySlides = stageViewport.querySelectorAll('.slide-stage.lesson-slide, .slide-stage.activity-slide');
 assert.equal(activitySlides.length, 1, 'activity slide should be added to the deck');
 const insertedSlide = activitySlides[0];
-assert.equal(insertedSlide.dataset.activity, 'rubric', 'inserted slide should include rubric metadata');
+assert.equal(insertedSlide.dataset.type, 'communicative-task', 'inserted slide should be tagged with its layout type');
 
 console.log('All tests passed');

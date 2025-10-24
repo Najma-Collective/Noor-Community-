@@ -9,6 +9,10 @@
     <div id="deck-toast-root"></div>
     <div class="deck-app">
       <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <span>Noor Community</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 2</div>
         <div class="toolbar-actions">
           <div class="highlight-controls">
             <select id="highlight-color">
@@ -25,7 +29,27 @@
         </div>
       </header>
       <main id="lesson-stage" class="deck-workspace">
-        <div class="stage-viewport"></div>
+        <div class="stage-viewport">
+          <div class="slide-stage" data-type="lesson">
+            <div class="slide-inner">
+              <h2 class="editable-text">Welcome to the lesson</h2>
+              <p class="editable-text">
+                Use the navigation controls to move through the content.
+              </p>
+            </div>
+          </div>
+          <div class="slide-stage hidden" data-type="lesson">
+            <div class="slide-inner">
+              <p class="editable-text">Second slide content</p>
+            </div>
+          </div>
+          <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous Slide">
+            Prev
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" aria-label="Next Slide">
+            Next
+          </button>
+        </div>
       </main>
     </div>
 

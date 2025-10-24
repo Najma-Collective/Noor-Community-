@@ -68,6 +68,18 @@ body {
   overflow: auto;
 }
 
+.editable-text {
+  cursor: text;
+  outline: none;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.editable-text:focus {
+  outline: 2px dashed var(--primary-sage, #7aa884);
+  outline-offset: 2px;
+}
+
 .skip-link {
   position: absolute;
   left: -999px;

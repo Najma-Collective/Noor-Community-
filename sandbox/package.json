@@ -6,6 +6,6 @@
     "test": "node tests/run-tests.mjs"
   },
   "devDependencies": {
-    "jsdom": "^23.0.0"
+    "jsdom": "^23.2.0"
   }
 }
