@@ -47,6 +47,25 @@ const DEFAULT_STATES = {
       { label: 'Cost', answers: ['lower', 'higher'] },
       { label: 'Availability', answers: ['limited', 'wide'] }
     ]
+  }),
+  'quiz-show': () => ({
+    title: 'Slide Quiz Showdown',
+    instructions: 'Advance through the slides, reveal the answers when ready, and keep the pace with the countdown.',
+    rubric: 'Award points on the scoreboard whenever a team responds correctly.',
+    defaultTime: 45,
+    questions: [
+      {
+        prompt: 'What is a surprising fact that will kick off the quiz?',
+        answer: 'Share the correct answer here so you can reveal it live.',
+        feedback: 'Add an interesting tidbit or extension question to keep the discussion moving.',
+        image: 'https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg',
+        time: 45
+      }
+    ],
+    teams: [
+      { name: 'Team Aurora', icon: 'fa-solid fa-sun', score: 0 },
+      { name: 'Team Nebula', icon: 'fa-solid fa-meteor', score: 0 }
+    ]
   })
 };
 
@@ -75,6 +94,12 @@ const TYPE_META = {
     accent: 'table',
     helper: 'Build comparison charts where learners supply the missing details.',
   },
+  'quiz-show': {
+    label: 'Slide quiz showdown',
+    icon: 'fa-person-chalkboard',
+    accent: 'quiz',
+    helper: 'Stage a paced quiz with a live scoreboard and revealable answers.',
+  },
   default: {
     label: 'Interactive activity',
     icon: 'fa-shapes',
@@ -99,6 +124,8 @@ const escapeHtml = (unsafe = '') =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+
+const formatMultiline = (value = '') => escapeHtml(value).replace(/\n/g, '<br>');
 
 class ActivityBuilder {
   constructor() {
@@ -742,6 +769,9 @@ class ActivityBuilder {
         case 'option':
           this.updateOptionField(block, target);
           break;
+        case 'quiz-question':
+          this.updateQuizQuestionField(block, target);
+          break;
         case 'category':
           this.updateCategoryField(block, target);
           break;
@@ -753,6 +783,9 @@ class ActivityBuilder {
           break;
         case 'table-header':
           this.updateTableHeaderField(target);
+          break;
+        case 'team':
+          this.updateTeamField(block, target);
           break;
         default:
           break;
@@ -783,6 +816,12 @@ class ActivityBuilder {
           actionBtn.closest('[data-block="option"]').dataset.optionIndex
         );
         break;
+      case 'add-quiz-question':
+        this.addQuizQuestion();
+        break;
+      case 'remove-quiz-question':
+        this.removeQuizQuestion(actionBtn.closest('[data-block="quiz-question"]').dataset.index);
+        break;
       case 'add-category':
         this.addCategory();
         break;
@@ -803,6 +842,12 @@ class ActivityBuilder {
         break;
       case 'remove-row':
         this.removeTableRow(actionBtn.closest('[data-block="table-row"]').dataset.index);
+        break;
+      case 'add-team':
+        this.addTeam();
+        break;
+      case 'remove-team':
+        this.removeTeam(actionBtn.closest('[data-block="team"]').dataset.index);
         break;
       case 'copy-html':
         this.copyHtml();
@@ -828,6 +873,11 @@ class ActivityBuilder {
       this.state.data[field] = target.value;
     } else if (field === 'passage') {
       this.state.data.passage = target.value;
+    } else if (field === 'default-time') {
+      const value = Number(target.value);
+      if (Number.isFinite(value) && value > 0) {
+        this.state.data.defaultTime = value;
+      }
     }
   }
 
@@ -851,6 +901,29 @@ class ActivityBuilder {
       option.text = target.value;
     } else if (field === 'option-correct') {
       option.correct = target.checked;
+    }
+  }
+
+  updateQuizQuestionField(block, target) {
+    const index = Number(block.dataset.index);
+    const question = this.state.data.questions[index];
+    if (!question) {
+      return;
+    }
+    const field = target.dataset.field;
+    if (field === 'question-prompt') {
+      question.prompt = target.value;
+    } else if (field === 'question-answer') {
+      question.answer = target.value;
+    } else if (field === 'question-feedback') {
+      question.feedback = target.value;
+    } else if (field === 'question-image') {
+      question.image = target.value;
+    } else if (field === 'question-time') {
+      const value = Number(target.value);
+      if (Number.isFinite(value) && value > 0) {
+        question.time = value;
+      }
     }
   }
 
@@ -889,6 +962,25 @@ class ActivityBuilder {
     this.state.data.columnHeaders[headerIndex] = target.value;
   }
 
+  updateTeamField(block, target) {
+    const index = Number(block.dataset.index);
+    const team = this.state.data.teams[index];
+    if (!team) {
+      return;
+    }
+    const field = target.dataset.field;
+    if (field === 'team-name') {
+      team.name = target.value;
+    } else if (field === 'team-icon') {
+      team.icon = target.value;
+      const preview = block.querySelector('.team-icon-preview i');
+      if (preview) {
+        const className = target.value.trim() || 'fa-solid fa-people-group';
+        preview.className = className;
+      }
+    }
+  }
+
   addQuestion() {
     this.state.data.questions.push({
       prompt: 'New question prompt',
@@ -923,6 +1015,29 @@ class ActivityBuilder {
     const options = this.state.data.questions[qIdx].options;
     if (options.length <= 2) return;
     options.splice(oIdx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addQuizQuestion() {
+    const defaultTime = Number.isFinite(Number(this.state.data.defaultTime))
+      ? Number(this.state.data.defaultTime)
+      : 45;
+    this.state.data.questions.push({
+      prompt: 'New quiz prompt',
+      answer: 'Add the reveal answer here.',
+      feedback: 'Share an extension, fun fact, or next step.',
+      image: '',
+      time: defaultTime,
+    });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeQuizQuestion(index) {
+    const idx = Number(index);
+    if (this.state.data.questions.length <= 1) return;
+    this.state.data.questions.splice(idx, 1);
     this.renderForm();
     this.updateOutputs();
   }
@@ -970,6 +1085,21 @@ class ActivityBuilder {
     const idx = Number(index);
     if (this.state.data.rows.length <= 1) return;
     this.state.data.rows.splice(idx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addTeam() {
+    const nextIndex = this.state.data.teams.length + 1;
+    this.state.data.teams.push({ name: `Team ${nextIndex}`, icon: 'fa-solid fa-star', score: 0 });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeTeam(index) {
+    const idx = Number(index);
+    if (this.state.data.teams.length <= 1) return;
+    this.state.data.teams.splice(idx, 1);
     this.renderForm();
     this.updateOutputs();
   }
@@ -1105,6 +1235,160 @@ class ActivityBuilder {
         `),
         '</section>'
       ].join('');
+    } else if (type === 'quiz-show') {
+      const defaultTime = Number.isFinite(Number(data.defaultTime)) ? Number(data.defaultTime) : 45;
+      const iconSuggestions = [
+        'fa-solid fa-star',
+        'fa-solid fa-crown',
+        'fa-solid fa-dragon',
+        'fa-solid fa-rocket',
+        'fa-solid fa-meteor',
+        'fa-solid fa-feather-pointed',
+        'fa-solid fa-fire-flame-curved',
+        'fa-solid fa-leaf'
+      ];
+      const datalistId = 'team-icon-options';
+      const teamDatalist = `
+        <datalist id="${datalistId}">
+          ${iconSuggestions.map((icon) => `<option value="${escapeHtml(icon)}"></option>`).join('')}
+        </datalist>
+      `;
+
+      const quizShared = `
+        <section class="form-section">
+          <header class="section-heading">
+            <div>
+              <h2><i class="fa-solid fa-sliders"></i> General settings</h2>
+              <p>Frame the quiz for your learners and set a pacing baseline.</p>
+            </div>
+          </header>
+          <div class="form-grid">
+            <label class="field">
+              <span class="field-label"><i class="fa-solid fa-heading"></i> Activity title</span>
+              <input type="text" value="${escapeHtml(data.title)}" data-field="title" placeholder="Enter a descriptive title" />
+            </label>
+            <label class="field field--span">
+              <span class="field-label"><i class="fa-solid fa-bullseye"></i> Instructions</span>
+              <textarea data-field="instructions" placeholder="Provide learner instructions">${escapeHtml(
+                data.instructions
+              )}</textarea>
+            </label>
+            <label class="field field--span">
+              <span class="field-label"><i class="fa-solid fa-star"></i> Rubric / success criteria</span>
+              <textarea data-field="rubric" placeholder="Describe how the activity is graded">${escapeHtml(data.rubric)}</textarea>
+            </label>
+            <label class="field">
+              <span class="field-label"><i class="fa-solid fa-clock"></i> Default time per question (seconds)</span>
+              <input type="number" min="5" max="600" step="5" value="${escapeHtml(
+                String(defaultTime)
+              )}" data-field="default-time" />
+            </label>
+          </div>
+        </section>
+      `;
+
+      const scoreboardSection = `
+        <section class="form-section">
+          <header class="section-heading">
+            <div>
+              <h2><i class="fa-solid fa-people-group"></i> Scoreboard teams</h2>
+              <p>Pick an icon and label for each team. Scores persist across every slide.</p>
+            </div>
+            <button type="button" class="chip-btn" data-action="add-team"><i class="fa-solid fa-plus"></i> Add team</button>
+          </header>
+          ${teamDatalist}
+          ${data.teams
+            .map(
+              (team, tIndex) => `
+                <article class="team-block" data-block="team" data-index="${tIndex}">
+                  <div class="block-header">
+                    <h3>Team ${tIndex + 1}</h3>
+                    <button type="button" class="subtle-link" data-action="remove-team"><i class="fa-solid fa-trash-can"></i> Remove</button>
+                  </div>
+                  <div class="team-fields">
+                    <label class="field">
+                      <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Team name</span>
+                      <input type="text" data-field="team-name" value="${escapeHtml(team.name || '')}" placeholder="Team name" />
+                    </label>
+                    <label class="field">
+                      <span class="field-label"><i class="fa-solid fa-icons"></i> Font Awesome icon class</span>
+                      <input type="text" list="${datalistId}" data-field="team-icon" value="${escapeHtml(
+                        team.icon || ''
+                      )}" placeholder="e.g. fa-solid fa-rocket" />
+                      <p class="helper-text">Preview updates as you type.</p>
+                    </label>
+                    <div class="team-icon-preview" aria-hidden="true">
+                      <i class="${escapeHtml(team.icon || 'fa-solid fa-people-group')}"></i>
+                    </div>
+                  </div>
+                </article>
+              `
+            )
+            .join('')}
+        </section>
+      `;
+
+      const slidesSection = `
+        <section class="form-section">
+          <header class="section-heading">
+            <div>
+              <h2><i class="fa-solid fa-clapperboard"></i> Slide content</h2>
+              <p>One question per slide. Add imagery and custom timing to pace your session.</p>
+            </div>
+            <button type="button" class="chip-btn" data-action="add-quiz-question"><i class="fa-solid fa-plus"></i> Add slide</button>
+          </header>
+          ${data.questions
+            .map(
+              (question, qIndex) => `
+                <article class="quiz-question-block" data-block="quiz-question" data-index="${qIndex}">
+                  <div class="block-header">
+                    <h3>Slide ${qIndex + 1}</h3>
+                    <button type="button" class="subtle-link" data-action="remove-quiz-question"><i class="fa-solid fa-trash-can"></i> Remove</button>
+                  </div>
+                  <label class="field field--span">
+                    <span class="field-label"><i class="fa-solid fa-question"></i> Question prompt</span>
+                    <textarea data-field="question-prompt" placeholder="Enter the question learners will see">${escapeHtml(
+                      question.prompt || ''
+                    )}</textarea>
+                  </label>
+                  <label class="field field--span">
+                    <span class="field-label"><i class="fa-solid fa-lightbulb"></i> Correct answer</span>
+                    <textarea data-field="question-answer" placeholder="Answer to reveal">${escapeHtml(
+                      question.answer || ''
+                    )}</textarea>
+                  </label>
+                  <label class="field field--span">
+                    <span class="field-label"><i class="fa-solid fa-comment-dots"></i> Feedback or extension</span>
+                    <textarea data-field="question-feedback" placeholder="Add an interesting note or follow-up">${escapeHtml(
+                      question.feedback || ''
+                    )}</textarea>
+                  </label>
+                  <div class="quiz-question-grid">
+                    <label class="field">
+                      <span class="field-label"><i class="fa-solid fa-image"></i> Image URL (optional)</span>
+                      <input type="url" data-field="question-image" value="${escapeHtml(
+                        question.image || ''
+                      )}" placeholder="https://" />
+                    </label>
+                    <label class="field">
+                      <span class="field-label"><i class="fa-solid fa-hourglass"></i> Time limit (seconds)</span>
+                      <input type="number" min="5" max="600" step="5" data-field="question-time" value="${escapeHtml(
+                        String(
+                          Number.isFinite(Number(question.time)) && Number(question.time) > 0
+                            ? Number(question.time)
+                            : defaultTime
+                        )
+                      )}" />
+                    </label>
+                  </div>
+                </article>
+              `
+            )
+            .join('')}
+        </section>
+      `;
+
+      markup = [hero, quizShared, scoreboardSection, slidesSection].join('');
     } else if (type === 'gapfill') {
       markup = `
         ${hero}
@@ -1524,6 +1808,592 @@ const Generators = {
               }
             });
           });
+        })();
+      </script>
+    `);
+  },
+  'quiz-show': (config) => {
+    const fallback = DEFAULT_STATES['quiz-show']();
+    const questions = Array.isArray(config.questions) && config.questions.length ? config.questions : fallback.questions;
+    const teams = Array.isArray(config.teams) && config.teams.length ? config.teams : fallback.teams;
+    const defaultTime = Number.isFinite(Number(config.defaultTime)) && Number(config.defaultTime) > 0
+      ? Math.round(Number(config.defaultTime))
+      : fallback.defaultTime;
+
+    const teamsMarkup = teams
+      .map((team, index) => {
+        const iconClass = team.icon && team.icon.trim() ? team.icon.trim() : 'fa-solid fa-people-group';
+        const teamName = team.name && team.name.trim() ? team.name.trim() : `Team ${index + 1}`;
+        const scoreValue = Number.isFinite(Number(team.score)) ? Number(team.score) : 0;
+        return `
+          <li class="team-card" data-team-index="${index}" data-score="${scoreValue}">
+            <div class="team-icon-shell"><i class="${escapeHtml(iconClass)}" aria-hidden="true"></i></div>
+            <div class="team-meta">
+              <span class="team-name">${escapeHtml(teamName)}</span>
+              <span class="team-score" data-role="score">${scoreValue}</span>
+            </div>
+            <button type="button" class="score-btn" data-action="increment" aria-label="Add a point to ${escapeHtml(teamName)}">
+              <i class="fa-solid fa-arrow-up-long" aria-hidden="true"></i>
+            </button>
+            <span class="burst" aria-hidden="true"></span>
+          </li>
+        `;
+      })
+      .join('');
+
+    const slidesMarkup = questions
+      .map((question, index) => {
+        const slideTime = Number.isFinite(Number(question.time)) && Number(question.time) > 0
+          ? Math.round(Number(question.time))
+          : defaultTime;
+        const prompt = question.prompt ? formatMultiline(question.prompt) : '<em>Add a prompt in the builder.</em>';
+        const answer = question.answer ? formatMultiline(question.answer) : '<em>Add the answer in the builder.</em>';
+        const feedback = question.feedback
+          ? formatMultiline(question.feedback)
+          : '<em>Provide follow-up or feedback.</em>';
+        const imageMarkup = question.image && question.image.trim()
+          ? `
+            <figure class="quiz-visual">
+              <img src="${escapeHtml(question.image)}" alt="${escapeHtml(`Illustration for question ${index + 1}`)}" loading="lazy" />
+            </figure>
+          `
+          : '';
+
+        return `
+          <article class="quiz-slide ${index === 0 ? 'is-active' : ''}" data-slide-index="${index}" data-time="${slideTime}">
+            <header class="quiz-slide-header">
+              <span class="quiz-pill">Question ${index + 1}</span>
+              <span class="quiz-slide-timer" data-slide-timer>${slideTime}s</span>
+            </header>
+            <div class="quiz-slide-body">
+              <div class="quiz-copy">
+                <div class="quiz-question-text">${prompt}</div>
+                <div class="quiz-reveal-content">
+                  <div class="quiz-answer">
+                    <h3><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Answer</h3>
+                    <p>${answer}</p>
+                  </div>
+                  <div class="quiz-feedback">
+                    <h3><i class="fa-solid fa-star" aria-hidden="true"></i> Extension</h3>
+                    <p>${feedback}</p>
+                  </div>
+                </div>
+              </div>
+              ${imageMarkup}
+            </div>
+            <footer class="quiz-slide-footer">
+              <button type="button" class="activity-btn secondary quiz-reveal-btn" data-role="reveal">
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <span>Reveal answer</span>
+              </button>
+            </footer>
+          </article>
+        `;
+      })
+      .join('');
+
+    return wrapInTemplate(config, `
+      <style>
+        .quiz-show {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .quiz-stage {
+          position: relative;
+          padding-top: 1.5rem;
+        }
+
+        .quiz-frame {
+          background: rgba(246, 248, 243, 0.75);
+          border: 1px solid var(--border);
+          border-radius: 20px;
+          padding: 2rem 1.75rem 2.5rem;
+          min-height: 360px;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .quiz-scoreboard {
+          position: absolute;
+          top: -1.5rem;
+          right: -1.5rem;
+          width: min(260px, 80vw);
+          background: #fff;
+          border-radius: 20px;
+          border: 1px solid var(--border);
+          box-shadow: 0 22px 38px rgba(31, 38, 28, 0.12);
+          padding: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          z-index: 5;
+        }
+
+        .scoreboard-header h2 {
+          margin: 0;
+          font-size: 1.1rem;
+          font-family: 'Questrial', sans-serif;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .scoreboard-header p {
+          margin: 0;
+          color: var(--muted);
+          font-size: 0.85rem;
+        }
+
+        .scoreboard-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .team-card {
+          position: relative;
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          gap: 0.75rem;
+          align-items: center;
+          background: rgba(246, 248, 243, 0.65);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          padding: 0.75rem 0.9rem;
+          overflow: hidden;
+        }
+
+        .team-icon-shell {
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          display: grid;
+          place-items: center;
+          background: var(--accent-soft);
+          color: var(--accent);
+          font-size: 1.25rem;
+        }
+
+        .team-name {
+          display: block;
+          font-weight: 700;
+        }
+
+        .team-score {
+          display: block;
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--accent);
+        }
+
+        .score-btn {
+          border: none;
+          background: var(--accent);
+          color: #fff;
+          border-radius: 50%;
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .score-btn:hover,
+        .score-btn:focus-visible {
+          transform: translateY(-1px);
+          box-shadow: 0 12px 28px rgba(61, 111, 93, 0.35);
+          outline: none;
+        }
+
+        .burst {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle, rgba(255, 215, 141, 0.9) 0%, rgba(255, 215, 141, 0) 70%);
+          opacity: 0;
+          transform: scale(0.7);
+          pointer-events: none;
+          border-radius: inherit;
+        }
+
+        .team-card.bursting .burst {
+          animation: quiz-burst 550ms ease-out forwards;
+        }
+
+        @keyframes quiz-burst {
+          0% {
+            opacity: 0.85;
+            transform: scale(0.65);
+          }
+          100% {
+            opacity: 0;
+            transform: scale(1.2);
+          }
+        }
+
+        .quiz-progress {
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--muted);
+        }
+
+        .quiz-slides {
+          position: relative;
+        }
+
+        .quiz-slide {
+          display: none;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .quiz-slide.is-active {
+          display: flex;
+        }
+
+        .quiz-slide-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .quiz-pill {
+          background: var(--accent);
+          color: #fff;
+          border-radius: 999px;
+          padding: 0.35rem 1rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+        }
+
+        .quiz-slide-timer {
+          font-weight: 700;
+          color: var(--accent);
+        }
+
+        .quiz-slide-body {
+          display: grid;
+          gap: 1.25rem;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          align-items: start;
+        }
+
+        .quiz-copy {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .quiz-question-text {
+          font-size: 1.25rem;
+          line-height: 1.7;
+        }
+
+        .quiz-visual {
+          margin: 0;
+          border-radius: 18px;
+          overflow: hidden;
+          box-shadow: 0 18px 36px rgba(31, 38, 28, 0.12);
+          border: 1px solid var(--border);
+        }
+
+        .quiz-visual img {
+          width: 100%;
+          height: auto;
+          display: block;
+          object-fit: cover;
+        }
+
+        .quiz-reveal-content {
+          border-top: 1px dashed var(--border);
+          padding-top: 1rem;
+          display: grid;
+          gap: 0.75rem;
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transition: opacity 0.35s ease, max-height 0.35s ease;
+        }
+
+        .quiz-slide.is-revealed .quiz-reveal-content {
+          opacity: 1;
+          max-height: 640px;
+        }
+
+        .quiz-answer h3,
+        .quiz-feedback h3 {
+          margin: 0 0 0.4rem;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+
+        .quiz-answer p,
+        .quiz-feedback p {
+          margin: 0;
+        }
+
+        .quiz-slide-footer {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .quiz-slide.time-up .quiz-slide-header {
+          animation: pulse-accent 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-accent {
+          0%,
+          100% {
+            color: var(--accent);
+          }
+          50% {
+            color: var(--error);
+          }
+        }
+
+        .quiz-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .quiz-timer {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: var(--accent);
+        }
+
+        .quiz-controls button[disabled] {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 860px) {
+          .quiz-scoreboard {
+            position: static;
+            width: 100%;
+            margin-bottom: 1.5rem;
+          }
+
+          .quiz-stage {
+            padding-top: 0;
+          }
+
+          .quiz-frame {
+            padding: 1.5rem;
+          }
+        }
+      </style>
+      <div class="quiz-show">
+        <div class="quiz-stage" data-default-time="${defaultTime}">
+          <aside class="quiz-scoreboard" aria-label="Scoreboard">
+            <div class="scoreboard-header">
+              <h2><i class="fa-solid fa-trophy" aria-hidden="true"></i> Scoreboard</h2>
+              <p>Tap the arrow to award a point.</p>
+            </div>
+            <ul class="scoreboard-list">
+              ${teamsMarkup}
+            </ul>
+          </aside>
+          <div class="quiz-frame">
+            <div class="quiz-progress" id="quiz-progress" aria-live="polite"></div>
+            <div class="quiz-slides">
+              ${slidesMarkup}
+            </div>
+            <div class="quiz-controls">
+              <button type="button" class="activity-btn secondary" id="quiz-prev">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>Previous</span>
+              </button>
+              <div class="quiz-timer">Time left: <span id="quiz-timer-value">${defaultTime}s</span></div>
+              <button type="button" class="activity-btn" id="quiz-next">
+                <span>Next</span>
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        (() => {
+          const stage = document.querySelector('.quiz-stage');
+          if (!stage) return;
+          const slides = Array.from(stage.querySelectorAll('.quiz-slide'));
+          if (!slides.length) return;
+          const defaultTime = Number(stage.dataset.defaultTime) || ${defaultTime};
+          const prevBtn = document.getElementById('quiz-prev');
+          const nextBtn = document.getElementById('quiz-next');
+          const timerDisplay = document.getElementById('quiz-timer-value');
+          const progressDisplay = document.getElementById('quiz-progress');
+          let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+          if (activeIndex < 0) activeIndex = 0;
+          let timerId = null;
+          let remaining = 0;
+
+          const getSlideTime = (slide) => {
+            const raw = Number(slide.dataset.time);
+            if (Number.isFinite(raw) && raw > 0) {
+              return Math.round(raw);
+            }
+            return defaultTime;
+          };
+
+          const updateButtons = () => {
+            if (prevBtn) {
+              prevBtn.disabled = activeIndex === 0;
+            }
+            if (nextBtn) {
+              const label = nextBtn.querySelector('span');
+              if (label) {
+                label.textContent = activeIndex === slides.length - 1 ? 'Restart' : 'Next';
+              }
+            }
+          };
+
+          const setProgress = () => {
+            if (!progressDisplay) return;
+            progressDisplay.textContent = 'Question ' + (activeIndex + 1) + ' of ' + slides.length;
+          };
+
+          const updateTimerLabel = () => {
+            const value = Math.max(0, Math.ceil(remaining)) + 's';
+            if (timerDisplay) {
+              timerDisplay.textContent = value;
+            }
+            const currentSlide = slides[activeIndex];
+            const slideTimer = currentSlide ? currentSlide.querySelector('[data-slide-timer]') : null;
+            if (slideTimer) {
+              slideTimer.textContent = value;
+            }
+          };
+
+          const clearTimer = () => {
+            if (timerId) {
+              window.clearInterval(timerId);
+              timerId = null;
+            }
+          };
+
+          const startTimer = (duration) => {
+            clearTimer();
+            remaining = duration;
+            updateTimerLabel();
+            timerId = window.setInterval(() => {
+              remaining -= 1;
+              if (remaining <= 0) {
+                remaining = 0;
+                updateTimerLabel();
+                clearTimer();
+                const current = slides[activeIndex];
+                if (current) {
+                  current.classList.add('time-up');
+                }
+              } else {
+                updateTimerLabel();
+              }
+            }, 1000);
+          };
+
+          const activateSlide = (index) => {
+            if (index < 0 || index >= slides.length) return;
+            slides.forEach((slide, idx) => {
+              slide.classList.toggle('is-active', idx === index);
+              if (idx === index) {
+                slide.classList.remove('is-revealed', 'time-up');
+              }
+            });
+            activeIndex = index;
+            setProgress();
+            updateButtons();
+            startTimer(getSlideTime(slides[activeIndex]));
+          };
+
+          if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+              if (activeIndex > 0) {
+                activateSlide(activeIndex - 1);
+              }
+            });
+          }
+
+          if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+              if (activeIndex === slides.length - 1) {
+                activateSlide(0);
+              } else {
+                activateSlide(activeIndex + 1);
+              }
+            });
+          }
+
+          stage.addEventListener('click', (event) => {
+            const revealBtn = event.target.closest('[data-role="reveal"]');
+            if (!revealBtn) return;
+            const slide = revealBtn.closest('.quiz-slide');
+            if (!slide) return;
+            const isRevealed = slide.classList.toggle('is-revealed');
+            const labelSpan = revealBtn.querySelector('span');
+            if (labelSpan) {
+              labelSpan.textContent = isRevealed ? 'Hide answer' : 'Reveal answer';
+            }
+            const icon = revealBtn.querySelector('i');
+            if (icon) {
+              icon.classList.toggle('fa-eye', !isRevealed);
+              icon.classList.toggle('fa-eye-slash', isRevealed);
+            }
+            if (isRevealed) {
+              clearTimer();
+              remaining = 0;
+              updateTimerLabel();
+            } else {
+              startTimer(getSlideTime(slide));
+            }
+          });
+
+          const scoreboard = stage.querySelector('.quiz-scoreboard');
+          if (scoreboard) {
+            scoreboard.addEventListener('click', (event) => {
+              const button = event.target.closest('.score-btn');
+              if (!button) return;
+              const teamCard = button.closest('.team-card');
+              if (!teamCard) return;
+              const teamName = teamCard.querySelector('.team-name')?.textContent || 'team';
+              const scoreEl = teamCard.querySelector('[data-role="score"]');
+              let score = Number(teamCard.dataset.score || '0');
+              score += 1;
+              teamCard.dataset.score = score;
+              if (scoreEl) {
+                scoreEl.textContent = score;
+              }
+              teamCard.classList.remove('bursting');
+              void teamCard.offsetWidth;
+              teamCard.classList.add('bursting');
+              button.setAttribute('aria-label', 'Add a point to ' + teamName + ' (current: ' + score + ')');
+            });
+
+            scoreboard.addEventListener('animationend', (event) => {
+              if (event.target.classList.contains('burst')) {
+                event.target.parentElement?.classList.remove('bursting');
+              }
+            });
+          }
+
+          activateSlide(activeIndex);
         })();
       </script>
     `);
