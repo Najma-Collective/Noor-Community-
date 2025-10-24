@@ -84,8 +84,15 @@ Object.defineProperty(moduleFrame, 'contentWindow', {
 });
 
 const moduleOverlay = document.getElementById('module-builder-overlay');
+const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
 
-const { setupInteractiveDeck, createBlankSlide, attachBlankSlideEvents } = await import(
+const {
+  setupInteractiveDeck,
+  addBlankSlide,
+  createBlankSlide,
+  attachBlankSlideEvents,
+  createTextbox,
+} = await import(
   pathToFileURL(join(__dirname, '../int-mod.js')).href
 );
 
@@ -160,6 +167,149 @@ assert.ok(
   !moduleOverlay.classList.contains('is-visible'),
   'module overlay should close after module insertion',
 );
+
+const legacySlide = document.createElement('div');
+legacySlide.className = 'slide-stage hidden';
+legacySlide.dataset.type = 'blank';
+legacySlide.innerHTML = `
+  <div class="slide-inner">
+    <div class="blank-slide">
+      <div class="blank-controls">
+        <button class="activity-btn" type="button" data-action="add-textbox">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Add Textbox
+        </button>
+        <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+          <i class="fa-solid fa-diagram-project"></i>
+          Add Mind Map
+        </button>
+      </div>
+      <p class="blank-hint" data-role="hint">Legacy hint text.</p>
+      <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
+    </div>
+  </div>
+`;
+
+const legacyCanvas = legacySlide.querySelector('.blank-canvas');
+assert.ok(legacyCanvas, 'legacy blank canvas should exist');
+
+const legacyTextbox = createTextbox();
+legacyTextbox.id = 'legacy-textbox';
+legacyCanvas.appendChild(legacyTextbox);
+
+stageViewport.appendChild(legacySlide);
+attachBlankSlideEvents(legacySlide);
+
+assert.ok(
+  legacySlide.querySelector('[data-role="blank-controls-home"]'),
+  'legacy slide should be upgraded with controls home region',
+);
+assert.ok(
+  legacySlide.querySelector('[data-role="blank-toolbar"]'),
+  'legacy slide should gain toolbar host',
+);
+
+const legacyAddTextboxBtn = legacySlide.querySelector('[data-action="add-textbox"]');
+const legacyAddTableBtn = legacySlide.querySelector('[data-action="add-table"]');
+const legacyAddMindmapBtn = legacySlide.querySelector('[data-action="add-mindmap"]');
+const legacyAddModuleBtn = legacySlide.querySelector('[data-action="add-module"]');
+
+assert.ok(legacyAddTextboxBtn, 'legacy slide should still offer textbox control');
+assert.ok(legacyAddTableBtn, 'legacy slide should expose table control');
+assert.ok(legacyAddMindmapBtn, 'legacy slide should offer mind map control');
+assert.ok(legacyAddModuleBtn, 'legacy slide should expose module control');
+
+legacyAddTextboxBtn.click();
+assert.equal(
+  legacyCanvas.querySelectorAll('.textbox').length,
+  2,
+  'legacy slide should support adding a textbox',
+);
+
+legacyAddTableBtn.click();
+assert.equal(
+  legacyCanvas.querySelectorAll('.canvas-table').length,
+  1,
+  'legacy slide should support adding a table',
+);
+
+legacyAddMindmapBtn.click();
+assert.equal(
+  legacyCanvas.querySelectorAll('.mindmap').length,
+  1,
+  'legacy slide should support adding a mind map',
+);
+
+legacyAddModuleBtn.click();
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+assert.ok(
+  moduleOverlay.classList.contains('is-visible'),
+  'module overlay should open for legacy slide',
+);
+
+window.dispatchEvent(
+  new window.MessageEvent('message', {
+    data: {
+      source: 'noor-activity-builder',
+      type: 'activity-module',
+      html: '<div class="module-body">Legacy Module</div>',
+      config: { type: 'grouping', data: { title: 'Legacy Activity' } },
+    },
+    source: moduleFrame.contentWindow,
+  }),
+);
+assert.equal(
+  legacyCanvas.querySelectorAll('.module-embed').length,
+  1,
+  'legacy slide should insert a module',
+);
+assert.ok(
+  !moduleOverlay.classList.contains('is-visible'),
+  'module overlay should close after inserting into legacy slide',
+);
+
+const legacyTextboxPersisted = legacySlide.querySelector('#legacy-textbox');
+assert.ok(legacyTextboxPersisted, 'existing legacy textbox should persist after upgrade');
+
+addBlankSlide();
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const managedBlankSlides = stageViewport.querySelectorAll('.slide-stage[data-type="blank"]');
+const managedBlankSlide = managedBlankSlides[managedBlankSlides.length - 1];
+const managedCanvas = managedBlankSlide.querySelector('.blank-canvas');
+const blankControlsTrigger = document.querySelector('.blank-controls-trigger');
+assert.ok(blankControlsTrigger, 'blank controls trigger should exist for managed blank slide');
+blankControlsTrigger.click();
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const blankControlsPanel = document.querySelector('.blank-controls-flyout');
+assert.ok(
+  blankControlsPanel?.classList.contains('is-visible'),
+  'blank controls panel should be visible after toggling trigger',
+);
+blankControlsPanel.querySelector('[data-action="add-textbox"]').click();
+assert.equal(
+  managedCanvas.querySelectorAll('.textbox').length,
+  1,
+  'blank controls panel should add a textbox to the managed canvas',
+);
+blankControlsPanel.querySelector('[data-action="add-table"]').click();
+assert.equal(
+  managedCanvas.querySelectorAll('.canvas-table').length,
+  1,
+  'blank controls panel should add a table to the managed canvas',
+);
+blankControlsPanel.querySelector('[data-action="add-mindmap"]').click();
+assert.equal(
+  managedCanvas.querySelectorAll('.mindmap').length,
+  1,
+  'blank controls panel should add a mind map to the managed canvas',
+);
+blankControlsPanel.querySelector('[data-action="add-module"]').click();
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+assert.ok(
+  moduleOverlay.classList.contains('is-visible'),
+  'blank controls panel should open module overlay when adding a module',
+);
+moduleCloseBtn.click();
 
 const builderOverlay = document.getElementById('activity-builder-overlay');
 const addSlideBtn = document.getElementById('add-slide-btn');
