@@ -1,0 +1,11 @@
+{
+  "name": "sandbox-deck-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run-tests.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^23.0.0"
+  }
+}
