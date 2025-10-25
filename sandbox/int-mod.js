@@ -758,69 +758,70 @@ class CanvasInsertController {
 }
 
 class CanvasInsertOverlay {
-  constructor(stage) {
-    this.stage = stage;
-    this.cluster = ensureStageUtilityCluster();
+  constructor(toggle, menu) {
+    this.toggle = toggle;
+    this.menu = menu;
     this.activeController = null;
-    this.panelId =
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? `canvas-insert-${crypto.randomUUID()}`
-        : `canvas-insert-${Math.random().toString(16).slice(2, 8)}`;
+    this.optionsHost = this.ensureOptionsHost();
+    this.options = [];
     this.activeIndex = -1;
     this.isOpen = false;
-    this.createTrigger();
-    this.createPanel();
-    this.syncAvailability();
+    this.handleToggleClick = this.handleToggleClick.bind(this);
+    this.handleToggleKeydown = this.handleToggleKeydown.bind(this);
+    this.handlePanelKeydown = this.handlePanelKeydown.bind(this);
     this.handleDocumentPointerDown = this.handleDocumentPointerDown.bind(this);
     this.handleDocumentKeydown = this.handleDocumentKeydown.bind(this);
+    this.renderOptions();
+    this.bindEvents();
+    this.syncAvailability();
+  }
+
+  ensureOptionsHost() {
+    if (!(this.menu instanceof HTMLElement)) {
+      return null;
+    }
+    let host = this.menu.querySelector('[data-role="canvas-tools-options"]');
+    if (!(host instanceof HTMLElement)) {
+      host = document.createElement('div');
+      host.className = 'canvas-insert-options';
+      host.dataset.role = 'canvas-tools-options';
+      this.menu.appendChild(host);
+    } else {
+      host.classList.add('canvas-insert-options');
+    }
+    return host;
+  }
+
+  bindEvents() {
+    if (this.toggle instanceof HTMLElement) {
+      this.toggle.addEventListener('click', this.handleToggleClick);
+      this.toggle.addEventListener('keydown', this.handleToggleKeydown);
+      this.toggle.setAttribute('aria-haspopup', 'menu');
+      this.toggle.setAttribute('aria-expanded', 'false');
+      if (this.menu?.id) {
+        this.toggle.setAttribute('aria-controls', this.menu.id);
+      }
+    }
+    if (this.menu instanceof HTMLElement) {
+      this.menu.addEventListener('keydown', this.handlePanelKeydown);
+      this.menu.setAttribute('role', 'menu');
+      if (this.toggle?.id) {
+        this.menu.setAttribute('aria-labelledby', this.toggle.id);
+      }
+      this.menu.setAttribute('aria-hidden', 'true');
+    }
     document.addEventListener('pointerdown', this.handleDocumentPointerDown);
     document.addEventListener('keydown', this.handleDocumentKeydown);
+    this.updateAnchorWidth();
   }
 
-  createTrigger() {
-    if (!this.cluster) {
+  renderOptions() {
+    if (!(this.optionsHost instanceof HTMLElement)) {
+      this.options = [];
       return;
     }
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'stage-utility-btn canvas-insert-trigger';
-    trigger.setAttribute('aria-haspopup', 'menu');
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.innerHTML = `
-      <i class="fa-solid fa-plus" aria-hidden="true"></i>
-      <span class="sr-only">Insert canvas item</span>
-    `;
-    trigger.title = 'Insert canvas item';
-    trigger.addEventListener('click', () => {
-      this.toggle();
-    });
-    trigger.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        this.open();
-      } else if (event.key === 'Escape') {
-        this.close({ focusTrigger: true });
-      }
-    });
-    this.cluster.appendChild(trigger);
-    this.trigger = trigger;
-  }
-
-  createPanel() {
-    if (!this.cluster) {
-      return;
-    }
-    const panel = document.createElement('div');
-    panel.className = 'canvas-insert-panel';
-    panel.id = this.panelId;
-    panel.setAttribute('role', 'menu');
-    panel.setAttribute('aria-label', 'Insert canvas items');
-    panel.hidden = true;
-    const list = document.createElement('div');
-    list.className = 'canvas-insert-options';
-    panel.appendChild(list);
-    this.options = [];
-    INSERT_MENU_OPTIONS.forEach((option) => {
+    this.optionsHost.innerHTML = '';
+    this.options = INSERT_MENU_OPTIONS.map((option) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'canvas-insert-option';
@@ -839,26 +840,44 @@ class CanvasInsertOverlay {
       button.addEventListener('click', () => {
         this.handleOptionSelect(option.action, button);
       });
-      this.options.push(button);
-      list.appendChild(button);
+      this.optionsHost.appendChild(button);
+      return button;
     });
-    panel.addEventListener('keydown', (event) => {
-      this.handlePanelKeydown(event);
-    });
-    this.cluster.appendChild(panel);
-    if (this.trigger instanceof HTMLElement) {
-      this.trigger.setAttribute('aria-controls', panel.id);
-    }
-    this.panel = panel;
   }
 
-  handleOptionSelect(action, button) {
-    if (!this.activeController) {
+  updateAnchorWidth() {
+    if (this.menu instanceof HTMLElement && this.toggle instanceof HTMLElement) {
+      const anchorWidth = this.toggle.offsetWidth;
+      this.menu.style.setProperty(
+        '--canvas-tools-anchor-width',
+        Number.isFinite(anchorWidth) ? `${Math.max(anchorWidth, 0)}px` : '0px',
+      );
+    }
+  }
+
+  handleToggleClick(event) {
+    if (this.toggle?.disabled) {
       return;
     }
-    const handled = this.activeController.invoke(action, { source: button });
-    if (handled !== false) {
-      this.close({ focusTrigger: false });
+    if (event) {
+      event.preventDefault();
+    }
+    this.toggleMenu();
+  }
+
+  handleToggleKeydown(event) {
+    if (this.toggle?.disabled) {
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.open({ focus: 0 });
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.open({ focus: this.options.length - 1 });
+    } else if (event.key === 'Escape' && this.isOpen) {
+      event.preventDefault();
+      this.close({ focusTrigger: true });
     }
   }
 
@@ -913,7 +932,7 @@ class CanvasInsertOverlay {
     if (!(target instanceof Node)) {
       return;
     }
-    if (this.panel?.contains(target) || this.trigger?.contains(target)) {
+    if (this.menu?.contains(target) || this.toggle?.contains(target)) {
       return;
     }
     this.close({ focusTrigger: false });
@@ -929,6 +948,16 @@ class CanvasInsertOverlay {
     }
   }
 
+  handleOptionSelect(action, button) {
+    if (!this.activeController) {
+      return;
+    }
+    const handled = this.activeController.invoke(action, { source: button });
+    if (handled !== false) {
+      this.close({ focusTrigger: false });
+    }
+  }
+
   focusOption(index) {
     if (!Array.isArray(this.options) || !this.options.length) {
       return;
@@ -941,17 +970,18 @@ class CanvasInsertOverlay {
     }
   }
 
-  open() {
-    if (!this.activeController || !this.activeController.isAvailable()) {
+  open({ focus = 0 } = {}) {
+    if (!this.activeController || !this.activeController.isAvailable?.()) {
       return;
     }
     if (this.isOpen) {
       return;
     }
     this.isOpen = true;
+    this.updateAnchorWidth();
     this.syncVisibility();
     requestAnimationFrame(() => {
-      this.focusOption(0);
+      this.focusOption(focus);
     });
   }
 
@@ -962,36 +992,37 @@ class CanvasInsertOverlay {
     this.isOpen = false;
     this.activeIndex = -1;
     this.syncVisibility();
-    if (focusTrigger && this.trigger instanceof HTMLElement) {
-      this.trigger.focus({ preventScroll: true });
+    if (focusTrigger && this.toggle instanceof HTMLElement) {
+      this.toggle.focus({ preventScroll: true });
     }
   }
 
-  toggle() {
+  toggleMenu() {
     if (this.isOpen) {
       this.close({ focusTrigger: false });
     } else {
-      this.open();
+      this.open({ focus: 0 });
     }
   }
 
   syncVisibility() {
-    if (!(this.panel instanceof HTMLElement)) {
-      return;
+    if (this.menu instanceof HTMLElement) {
+      this.menu.hidden = !this.isOpen;
+      this.menu.setAttribute('aria-hidden', this.isOpen ? 'false' : 'true');
+      this.menu.classList.toggle('is-open', this.isOpen);
     }
-    this.panel.hidden = !this.isOpen;
-    this.panel.classList.toggle('is-visible', this.isOpen);
-    if (this.trigger instanceof HTMLElement) {
-      this.trigger.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
+    if (this.toggle instanceof HTMLElement) {
+      this.toggle.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
+      this.toggle.classList.toggle('is-expanded', this.isOpen);
     }
   }
 
   syncAvailability() {
     const available = Boolean(this.activeController?.isAvailable?.());
-    if (this.trigger instanceof HTMLButtonElement) {
-      this.trigger.hidden = !available;
-      this.trigger.disabled = !available;
-      this.trigger.setAttribute('aria-disabled', available ? 'false' : 'true');
+    if (this.toggle instanceof HTMLButtonElement) {
+      this.toggle.disabled = !available;
+      this.toggle.setAttribute('aria-disabled', available ? 'false' : 'true');
+      this.toggle.classList.toggle('is-disabled', !available);
     }
     if (!available) {
       this.close({ focusTrigger: false });
@@ -1002,15 +1033,51 @@ class CanvasInsertOverlay {
     this.activeController = controller ?? null;
     this.syncAvailability();
   }
+
+  destroy() {
+    if (this.toggle instanceof HTMLElement) {
+      this.toggle.removeEventListener('click', this.handleToggleClick);
+      this.toggle.removeEventListener('keydown', this.handleToggleKeydown);
+      this.toggle.classList.remove('is-expanded');
+      this.toggle.classList.remove('is-disabled');
+      this.toggle.removeAttribute('aria-disabled');
+    }
+    if (this.menu instanceof HTMLElement) {
+      this.menu.removeEventListener('keydown', this.handlePanelKeydown);
+      this.menu.classList.remove('is-open');
+      this.menu.hidden = true;
+      this.menu.setAttribute('aria-hidden', 'true');
+    }
+    document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
+    document.removeEventListener('keydown', this.handleDocumentKeydown);
+    this.options = [];
+    this.activeController = null;
+    this.isOpen = false;
+    this.activeIndex = -1;
+  }
 }
 
 function ensureCanvasInsertOverlay() {
-  if (!(stageViewport instanceof HTMLElement)) {
+  const toggle = document.getElementById('canvas-tools-toggle');
+  const menu = document.getElementById('canvas-tools-menu');
+
+  if (!(toggle instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) {
+    if (canvasInsertOverlay instanceof CanvasInsertOverlay) {
+      canvasInsertOverlay.destroy();
+      canvasInsertOverlay = null;
+    }
     return null;
   }
-  if (!(canvasInsertOverlay instanceof CanvasInsertOverlay)) {
-    canvasInsertOverlay = new CanvasInsertOverlay(stageViewport);
+
+  if (
+    !(canvasInsertOverlay instanceof CanvasInsertOverlay) ||
+    canvasInsertOverlay.toggle !== toggle ||
+    canvasInsertOverlay.menu !== menu
+  ) {
+    canvasInsertOverlay?.destroy?.();
+    canvasInsertOverlay = new CanvasInsertOverlay(toggle, menu);
   }
+
   return canvasInsertOverlay;
 }
 
@@ -3499,8 +3566,8 @@ export function attachBlankSlideEvents(slide) {
     if (trigger.closest?.('[data-role="blank-actions"]')) {
       return "blank-actions";
     }
-    if (trigger.closest?.('.canvas-insert-panel')) {
-      return "insert-overlay";
+    if (trigger.closest?.('#canvas-tools-menu')) {
+      return "canvas-tools-menu";
     }
     return "direct";
   };

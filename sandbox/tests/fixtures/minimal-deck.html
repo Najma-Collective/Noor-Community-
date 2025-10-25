@@ -19,6 +19,29 @@
           <button id="save-state-btn" type="button">Save</button>
           <button id="load-state-btn" type="button">Load</button>
           <input id="load-state-input" type="file" />
+          <div class="toolbar-menu" data-role="canvas-tools">
+            <button
+              id="canvas-tools-toggle"
+              class="toolbar-btn has-caret"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="canvas-tools-menu"
+              disabled
+            >
+              Canvas Tools
+              <span class="toolbar-caret" aria-hidden="true"></span>
+            </button>
+            <div
+              id="canvas-tools-menu"
+              class="toolbar-dropdown"
+              role="menu"
+              aria-label="Canvas tools"
+              hidden
+            >
+              <div class="toolbar-dropdown-inner" data-role="canvas-tools-options"></div>
+            </div>
+          </div>
         </div>
       </header>
       <main id="lesson-stage" class="deck-workspace">

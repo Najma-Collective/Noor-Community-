@@ -255,24 +255,33 @@ const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
 const legacyActionsCluster = blankSlide.querySelector('[data-role="blank-actions"]');
 assert.ok(!legacyActionsCluster, 'blank slide should not render the legacy actions cluster');
 
-const canvasInsertTrigger = stageViewport.querySelector('.canvas-insert-trigger');
-const canvasInsertPanel = stageViewport.querySelector('.canvas-insert-panel');
-assert.ok(canvasInsertTrigger instanceof window.HTMLButtonElement, 'canvas insert trigger should render near the stage');
-assert.ok(canvasInsertPanel instanceof window.HTMLElement, 'canvas insert panel should be created');
+const canvasToolsToggle = document.getElementById('canvas-tools-toggle');
+const canvasToolsMenu = document.getElementById('canvas-tools-menu');
+assert.ok(canvasToolsToggle instanceof window.HTMLButtonElement, 'canvas tools toggle should render in the toolbar');
+assert.ok(canvasToolsMenu instanceof window.HTMLElement, 'canvas tools menu container should be present');
+assert.equal(
+  canvasToolsToggle.disabled,
+  false,
+  'canvas tools toggle should be enabled when a blank slide is active',
+);
 
-const ensureInsertPanelOpen = () => {
-  if (!canvasInsertPanel.classList.contains('is-visible')) {
-    canvasInsertTrigger.click();
+const ensureCanvasMenuOpen = () => {
+  if (canvasToolsMenu.hidden || !canvasToolsMenu.classList.contains('is-open')) {
+    canvasToolsToggle.click();
   }
 };
 
-ensureInsertPanelOpen();
-assert.ok(canvasInsertPanel.classList.contains('is-visible'), 'canvas insert panel should toggle into view');
+assert.ok(canvasToolsMenu.hidden, 'canvas tools menu should be hidden by default');
+ensureCanvasMenuOpen();
+assert.ok(
+  !canvasToolsMenu.hidden && canvasToolsMenu.classList.contains('is-open'),
+  'canvas tools menu should open from the toolbar',
+);
 
 const selectInsertOption = (action) => {
-  ensureInsertPanelOpen();
-  const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
-  assert.ok(option instanceof window.HTMLButtonElement, `insert panel should list the ${action} option`);
+  ensureCanvasMenuOpen();
+  const option = canvasToolsMenu.querySelector(`[data-action="${action}"]`);
+  assert.ok(option instanceof window.HTMLButtonElement, `canvas tools menu should list the ${action} option`);
   option.click();
 };
 
