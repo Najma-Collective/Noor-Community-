@@ -10914,18 +10914,19 @@ function createBaseLessonSlide(layout, options = {}) {
   return { slide, inner };
 }
 
-function createLearningObjectivesSlide({ title = 'Learning Outcomes', goals = [], communicativeGoal = '', imageUrl = '' } = {}) {
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden lesson-slide';
-  slide.dataset.type = 'lesson';
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    slide.classList.add('lesson-slide--has-image');
-    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
-  }
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner lesson-slide-inner';
-  slide.appendChild(inner);
+function createLearningObjectivesSlide({
+  title = 'Learning Outcomes',
+  goals = [],
+  communicativeGoal = '',
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('learning-objectives', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
 
   const header = document.createElement('header');
   header.className = 'lesson-header';
@@ -10976,19 +10977,22 @@ function createLearningObjectivesSlide({ title = 'Learning Outcomes', goals = []
   return slide;
 }
 
-function createModelDialogueSlide({ title = 'Model dialogue', instructions = '', imageUrl = '', audioUrl = '', turns = [] } = {}) {
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden lesson-slide';
-  slide.dataset.type = 'lesson';
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    slide.classList.add('lesson-slide--has-image');
-    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
-  }
+function createModelDialogueSlide({
+  title = 'Model dialogue',
+  instructions = '',
+  imageUrl = '',
+  audioUrl = '',
+  turns = [],
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('model-dialogue', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
 
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner lesson-slide-inner';
-  slide.appendChild(inner);
+  const resolvedImage = trimText(imageUrl);
 
   const header = document.createElement('header');
   header.className = 'lesson-header';
@@ -11067,19 +11071,21 @@ function createModelDialogueSlide({ title = 'Model dialogue', instructions = '',
   return slide;
 }
 
-function createCommunicativeTaskSlide({ title = 'Communicative task', imageUrl = '', preparation = '', performance = '', scaffolding = [] } = {}) {
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden lesson-slide';
+function createCommunicativeTaskSlide({
+  title = 'Communicative task',
+  imageUrl = '',
+  preparation = '',
+  performance = '',
+  scaffolding = [],
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('communicative-task', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
   slide.dataset.type = 'communicative-task';
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    slide.classList.add('lesson-slide--has-image');
-    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
-  }
-
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner lesson-slide-inner';
-  slide.appendChild(inner);
 
   const header = document.createElement('header');
   header.className = 'lesson-header';
@@ -11143,19 +11149,15 @@ function createPronunciationFocusSlide({
   sentences = [],
   practice = '',
   imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
 } = {}) {
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden lesson-slide';
+  const { slide, inner } = createBaseLessonSlide('pronunciation-focus', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
   slide.dataset.type = 'pronunciation';
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    slide.classList.add('lesson-slide--has-image');
-    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
-  }
-
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner lesson-slide-inner';
-  slide.appendChild(inner);
 
   const header = document.createElement('header');
   header.className = 'lesson-header';
@@ -11212,19 +11214,19 @@ function createPronunciationFocusSlide({
   return slide;
 }
 
-function createReflectionSlide({ title = 'Reflection', prompts = [], imageUrl = '' } = {}) {
-  const slide = document.createElement('div');
-  slide.className = 'slide-stage hidden lesson-slide';
+function createReflectionSlide({
+  title = 'Reflection',
+  prompts = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('reflection', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
   slide.dataset.type = 'reflection';
-  const resolvedImage = trimText(imageUrl);
-  if (resolvedImage) {
-    slide.classList.add('lesson-slide--has-image');
-    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
-  }
-
-  const inner = document.createElement('div');
-  inner.className = 'slide-inner lesson-slide-inner';
-  slide.appendChild(inner);
 
   const header = document.createElement('header');
   header.className = 'lesson-header';
