@@ -2124,32 +2124,6 @@ export function attachBlankSlideEvents(slide) {
       blank.insertBefore(controlsHome, blank.firstChild ?? null);
     }
 
-    if (!controlsHome.querySelector('[data-role="blank-actions"]')) {
-      controlsHome.insertAdjacentHTML(
-        "beforeend",
-        `
-          <div class="blank-controls" data-role="blank-actions" role="group" aria-label="Insert canvas items">
-            <button class="activity-btn" type="button" data-action="add-textbox">
-              <i class="fa-solid fa-pen-to-square"></i>
-              Add Textbox
-            </button>
-            <button class="activity-btn" type="button" data-action="add-table">
-              <i class="fa-solid fa-table"></i>
-              Create Table
-            </button>
-            <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-              <i class="fa-solid fa-diagram-project"></i>
-              Add Mind Map
-            </button>
-            <button class="activity-btn tertiary" type="button" data-action="add-module">
-              <i class="fa-solid fa-puzzle-piece"></i>
-              Add Module
-            </button>
-          </div>
-        `.trim(),
-      );
-    }
-
     if (!controlsHome.querySelector('[data-role="blank-toolbar"]')) {
       controlsHome.insertAdjacentHTML(
         "beforeend",
@@ -2277,11 +2251,6 @@ export function attachBlankSlideEvents(slide) {
 
   const canvas = blank.querySelector(".blank-canvas");
   let hint = blank.querySelector('[data-role="hint"]');
-  const addTextboxBtn = controlsHome.querySelector('[data-action="add-textbox"]');
-  const addTableBtn = controlsHome.querySelector('[data-action="add-table"]');
-  const addMindmapBtn = controlsHome.querySelector('[data-action="add-mindmap"]');
-  const addModuleBtn = controlsHome.querySelector('[data-action="add-module"]');
-
   if (!(canvas instanceof HTMLElement)) {
     delete slide.__deckBlankCleanup;
     return;
@@ -3572,10 +3541,6 @@ export function attachBlankSlideEvents(slide) {
     updateCanvasInsertOverlay();
   });
 
-  if (addTextboxBtn instanceof HTMLElement) {
-    insertController.registerTrigger(addTextboxBtn, "add-textbox");
-  }
-
   registerCreationAction("add-table", ({ origin }) => {
     const table = createCanvasTable();
     canvas.appendChild(table);
@@ -3592,10 +3557,6 @@ export function attachBlankSlideEvents(slide) {
     });
     updateCanvasInsertOverlay();
   });
-
-  if (addTableBtn instanceof HTMLElement) {
-    insertController.registerTrigger(addTableBtn, "add-table");
-  }
 
   registerCreationAction("add-mindmap", ({ origin }) => {
     if (canvas.querySelector(".mindmap")) {
@@ -3620,14 +3581,10 @@ export function attachBlankSlideEvents(slide) {
     updateCanvasInsertOverlay();
   });
 
-  if (addMindmapBtn instanceof HTMLElement) {
-    insertController.registerTrigger(addMindmapBtn, "add-mindmap");
-  }
-
   registerCreationAction("add-module", ({ trigger, origin }) => {
     openModuleOverlay({
       canvas,
-      trigger: trigger ?? addModuleBtn,
+      trigger,
       onInsert: () => {
         updateHintForCanvas();
         updateCanvasInsertOverlay();
@@ -3635,10 +3592,6 @@ export function attachBlankSlideEvents(slide) {
       source: origin,
     });
   });
-
-  if (addModuleBtn instanceof HTMLElement) {
-    insertController.registerTrigger(addModuleBtn, "add-module");
-  }
 
   canvas.querySelectorAll(".textbox").forEach((textbox) => prepareTextbox(textbox));
 
