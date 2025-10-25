@@ -122,6 +122,7 @@ let deckToastRoot;
 let deckStatusEl;
 let stageUtilityCluster;
 let blankToolbarHost;
+let blankToolbarTrigger;
 let canvasInsertOverlay;
 
 const EDITABLE_INLINE_TAGS = new Set([
@@ -614,22 +615,60 @@ function ensureBlankToolbarHost() {
     return null;
   }
   if (blankToolbarHost instanceof HTMLElement && blankToolbarHost.isConnected) {
+    if (!(blankToolbarTrigger instanceof HTMLElement)) {
+      const trigger = blankToolbarHost.querySelector(
+        '[data-role="blank-toolbar-trigger"]',
+      );
+      if (trigger instanceof HTMLButtonElement) {
+        blankToolbarTrigger = trigger;
+      }
+    }
     return blankToolbarHost;
   }
   const existing = stageViewport.querySelector('[data-role="blank-toolbar-host"]');
   if (existing instanceof HTMLElement) {
     blankToolbarHost = existing;
+    const nextControl = stageViewport.querySelector('.slide-nav-next');
+    if (nextControl instanceof HTMLElement) {
+      stageViewport.insertBefore(existing, nextControl);
+    }
+    const trigger = existing.querySelector('[data-role="blank-toolbar-trigger"]');
+    if (trigger instanceof HTMLButtonElement) {
+      blankToolbarTrigger = trigger;
+    } else {
+      blankToolbarTrigger = undefined;
+    }
     return blankToolbarHost;
   }
   const host = document.createElement('div');
   host.className = 'blank-toolbar-host';
   host.dataset.role = 'blank-toolbar-host';
-  const utilities = stageViewport.querySelector('[data-role="stage-utilities"]');
-  if (utilities instanceof HTMLElement) {
-    stageViewport.insertBefore(host, utilities);
+  const nextControl = stageViewport.querySelector('.slide-nav-next');
+  if (nextControl instanceof HTMLElement) {
+    stageViewport.insertBefore(host, nextControl);
   } else {
-    stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
+    const utilities = stageViewport.querySelector('[data-role="stage-utilities"]');
+    if (utilities instanceof HTMLElement) {
+      stageViewport.insertBefore(host, utilities);
+    } else {
+      stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
+    }
   }
+
+  let trigger = host.querySelector('[data-role="blank-toolbar-trigger"]');
+  if (!(trigger instanceof HTMLButtonElement)) {
+    trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'blank-toolbar-trigger';
+    trigger.dataset.role = 'blank-toolbar-trigger';
+    trigger.setAttribute('aria-label', 'Canvas tools');
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = '<i class="fa-solid fa-sliders" aria-hidden="true"></i>';
+    host.insertBefore(trigger, host.firstChild ?? null);
+  }
+
+  blankToolbarTrigger = trigger;
   blankToolbarHost = host;
   return blankToolbarHost;
 }
@@ -2384,6 +2423,7 @@ export function attachBlankSlideEvents(slide) {
   };
 
   const toolbar = ensureToolbar();
+  const toolbarHost = ensureBlankToolbarHost();
 
   blank
     .querySelectorAll('[data-role="hint"], .blank-hint')
@@ -2674,22 +2714,69 @@ export function attachBlankSlideEvents(slide) {
     selection.detail = detail;
   };
 
+  const toolbarTrigger =
+    toolbarHost?.querySelector?.('[data-role="blank-toolbar-trigger"]') ?? null;
+  if (toolbarTrigger instanceof HTMLButtonElement) {
+    blankToolbarTrigger = toolbarTrigger;
+  }
+
+  let toolbarPanelId = null;
+  if (toolbarPanel instanceof HTMLElement) {
+    toolbarPanelId = toolbarPanel.id?.trim() || null;
+    if (!toolbarPanelId) {
+      const baseId = "blank-toolbar-panel";
+      let candidateId = baseId;
+      if (typeof document !== 'undefined') {
+        let suffix = 1;
+        while (
+          document.getElementById(candidateId) &&
+          document.getElementById(candidateId) !== toolbarPanel
+        ) {
+          suffix += 1;
+          candidateId = `${baseId}-${suffix}`;
+        }
+      }
+      toolbarPanelId = candidateId;
+      toolbarPanel.id = toolbarPanelId;
+    }
+  }
+
+  if (toolbarTrigger instanceof HTMLButtonElement && toolbarPanelId) {
+    toolbarTrigger.setAttribute("aria-controls", toolbarPanelId);
+  }
+
   let toolbarExpanded = false;
-  if (toolbarToggle instanceof HTMLElement) {
-    toolbarExpanded = toolbarToggle.getAttribute("aria-expanded") === "true";
+  if (toolbarHost instanceof HTMLElement) {
+    toolbarExpanded = toolbarHost.classList.contains("is-expanded");
   } else if (toolbar instanceof HTMLElement) {
     toolbarExpanded = toolbar.classList.contains("is-expanded");
+  } else if (toolbarPanel instanceof HTMLElement) {
+    toolbarExpanded = !toolbarPanel.hidden;
+  }
+  if (toolbarTrigger instanceof HTMLButtonElement) {
+    const expandedAttr = toolbarTrigger.getAttribute("aria-expanded");
+    if (expandedAttr === "true" || expandedAttr === "false") {
+      toolbarExpanded = expandedAttr === "true";
+    }
   }
 
   const setToolbarExpanded = (expanded) => {
-    if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
+    if (!(toolbar instanceof HTMLElement)) {
       return;
     }
     toolbarExpanded = Boolean(expanded);
     toolbar.classList.toggle("is-expanded", toolbarExpanded);
-    toolbarToggle.setAttribute("aria-expanded", toolbarExpanded ? "true" : "false");
+    if (toolbarHost instanceof HTMLElement) {
+      toolbarHost.classList.toggle("is-expanded", toolbarExpanded);
+    }
     if (toolbarPanel instanceof HTMLElement) {
       toolbarPanel.hidden = !toolbarExpanded;
+    }
+    if (toolbarTrigger instanceof HTMLButtonElement) {
+      toolbarTrigger.setAttribute("aria-expanded", toolbarExpanded ? "true" : "false");
+    }
+    if (toolbarToggle instanceof HTMLElement) {
+      toolbarToggle.setAttribute("aria-expanded", toolbarExpanded ? "true" : "false");
     }
   };
 
@@ -2699,6 +2786,58 @@ export function attachBlankSlideEvents(slide) {
     };
     registerCleanup(() => {
       delete toolbar.__deckSetExpanded;
+    });
+  }
+
+  setToolbarExpanded(toolbarExpanded);
+
+  if (toolbarTrigger instanceof HTMLButtonElement) {
+    const handleToolbarTriggerClick = (event) => {
+      event.preventDefault();
+      setToolbarExpanded(!toolbarExpanded);
+    };
+    toolbarTrigger.addEventListener("click", handleToolbarTriggerClick);
+    registerCleanup(() => {
+      toolbarTrigger.removeEventListener("click", handleToolbarTriggerClick);
+    });
+  }
+
+  if (typeof document !== "undefined") {
+    const handleDocumentPointerDown = (event) => {
+      if (!toolbarExpanded) {
+        return;
+      }
+      const target = event.target;
+      if (
+        typeof Node !== "undefined" &&
+        target instanceof Node &&
+        ((toolbarHost instanceof HTMLElement && toolbarHost.contains(target)) ||
+          (toolbar instanceof HTMLElement && toolbar.contains(target)))
+      ) {
+        return;
+      }
+      setToolbarExpanded(false);
+    };
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+    registerCleanup(() => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+    });
+
+    const handleDocumentKeyDown = (event) => {
+      if (!toolbarExpanded) {
+        return;
+      }
+      if (event.key === "Escape" || event.key === "Esc") {
+        event.preventDefault();
+        setToolbarExpanded(false);
+        if (toolbarTrigger instanceof HTMLButtonElement) {
+          toolbarTrigger.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleDocumentKeyDown);
+    registerCleanup(() => {
+      document.removeEventListener("keydown", handleDocumentKeyDown);
     });
   }
 
@@ -2746,8 +2885,6 @@ export function attachBlankSlideEvents(slide) {
     });
     toolbarTabs.hidden = !hasSelection || visibleCount === 0;
   };
-
-  setToolbarExpanded(toolbarExpanded);
 
   const getToolbarPrompt = () => {
     if (!selection.type) {
@@ -3533,7 +3670,8 @@ export function attachBlankSlideEvents(slide) {
   }
 
   if (toolbarToggle instanceof HTMLElement) {
-    const toggleHandler = () => {
+    const toggleHandler = (event) => {
+      event.preventDefault();
       setToolbarExpanded(!toolbarExpanded);
     };
     toolbarToggle.addEventListener("click", toggleHandler);
