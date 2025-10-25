@@ -81,12 +81,11 @@
         <div class="stage-viewport">
           <!-- Slide 1: Title Slide (Full Bleed) -->
           <div class="slide-stage full-width-bg">
-            <div class="bg-media">
+            <div class="bg-media priority-high">
               <img
                 data-remote-src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
                 alt=""
                 loading="eager"
-                fetchpriority="high"
                 decoding="async"
               />
             </div>
@@ -116,11 +115,8 @@
                 decoding="async"
               />
             </div>
-            <div
-              class="img-overlay"
-              style="background: rgba(0, 0, 0, 0.3)"
-            ></div>
-            <div class="slide-inner" style="justify-content: center">
+            <div class="img-overlay overlay-dark"></div>
+            <div class="slide-inner is-centered">
               <div class="bg-content centered">
                 <div class="overlay-card centered">
                   <span class="pill overlay-pill"
@@ -1075,10 +1071,7 @@
               />
             </div>
             <div class="img-overlay"></div>
-            <div
-              class="slide-inner"
-              style="justify-content: center; align-items: flex-start"
-            >
+            <div class="slide-inner is-centered align-start">
               <div class="bg-content">
                 <div class="overlay-card">
                   <span class="pill overlay-pill"
@@ -2758,6 +2751,11 @@
     </div>
 
 
+    <script type="module">
+      document
+        .querySelectorAll('.bg-media.priority-high img')
+        .forEach((img) => img.setAttribute('fetchpriority', 'high'));
+    </script>
     <script type="module">
       import { setupInteractiveDeck } from "./int-mod.js";
       setupInteractiveDeck();
