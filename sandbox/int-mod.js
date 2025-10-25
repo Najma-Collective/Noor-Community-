@@ -95,6 +95,7 @@ let builderCancelBtn;
 let builderCloseBtn;
 let builderStatusEl;
 let builderLayoutInputs;
+let builderLayoutIconInputs;
 let builderPreview;
 let builderRefreshPreviewBtn;
 let builderLastFocus;
@@ -1133,9 +1134,32 @@ function updateCanvasInsertOverlay() {
   overlay.setActiveController(controller);
 }
 
+const LAYOUT_ICON_DEFAULTS = {
+  'blank-canvas': 'fa-solid fa-border-all',
+  'learning-objectives': 'fa-solid fa-bullseye',
+  'model-dialogue': 'fa-solid fa-comments',
+  'interactive-practice': 'fa-solid fa-list-check',
+  'communicative-task': 'fa-solid fa-people-arrows',
+  'pronunciation-focus': 'fa-solid fa-wave-square',
+  reflection: 'fa-solid fa-moon',
+  'grounding-activity': 'fa-solid fa-leaf',
+  'topic-introduction': 'fa-solid fa-lightbulb',
+  'guided-discovery': 'fa-solid fa-magnifying-glass',
+  'creative-practice': 'fa-solid fa-paintbrush',
+  'task-divider': 'fa-solid fa-flag-checkered',
+  'task-reporting': 'fa-solid fa-bullhorn',
+  'genre-deconstruction': 'fa-solid fa-book-open',
+  'linguistic-feature-hunt': 'fa-solid fa-highlighter',
+  'text-reconstruction': 'fa-solid fa-puzzle-piece',
+  'jumbled-text-sequencing': 'fa-solid fa-shuffle',
+  'scaffolded-joint-construction': 'fa-solid fa-people-group',
+  'independent-construction-checklist': 'fa-solid fa-clipboard-check',
+};
+
 const BUILDER_LAYOUT_DEFAULTS = {
   "blank-canvas": () => ({}),
   "learning-objectives": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['learning-objectives'],
     title: "Learning Outcomes",
     goals: [
       "Learn vocabulary for jobs and places in a city.",
@@ -1148,6 +1172,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 40,
   }),
   "model-dialogue": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['model-dialogue'],
     title: "Get to know people",
     instructions: "In pairs, identify the two main questions and how the speakers answer them.",
     imageUrl: "",
@@ -1160,6 +1185,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     ],
   }),
   "interactive-practice": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['interactive-practice'],
     activityType: "Gap Fill",
     title: "Practice",
     instructions: "Complete each sentence with the best option.",
@@ -1172,6 +1198,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     ],
   }),
   "communicative-task": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['communicative-task'],
     title: "Language exchange introductions",
     imageUrl: "",
     preparation:
@@ -1187,6 +1214,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 30,
   }),
   "pronunciation-focus": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['pronunciation-focus'],
     title: "What does /st/ sound like?",
     target: "/st/ sound",
     words: ["student", "study"],
@@ -1197,6 +1225,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 35,
   }),
   reflection: () => ({
+    icon: LAYOUT_ICON_DEFAULTS.reflection,
     title: "Reflection",
     prompts: ["A classmate’s name", "A place in Palestine", "A job"],
     imageUrl: "",
@@ -1204,6 +1233,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 35,
   }),
   "grounding-activity": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['grounding-activity'],
     title: "Grounding activity",
     subtitle: "Arrive in the room",
     steps: [
@@ -1216,6 +1246,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 45,
   }),
   "topic-introduction": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['topic-introduction'],
     title: "Today we explore",
     hook: "What projects build thriving communities?",
     context: "Learners will connect the lesson theme to local initiatives.",
@@ -1226,6 +1257,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 42,
   }),
   "guided-discovery": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['guided-discovery'],
     title: "Guided discovery",
     context: "Learners examine a short text and notice language patterns.",
     discoveryPrompts: [
@@ -1245,6 +1277,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 36,
   }),
   "creative-practice": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['creative-practice'],
     title: "Creative practice",
     brief: "Teams design a solution prototype using the target language.",
     materials: ["Large paper", "Markers", "Sticky notes"],
@@ -1261,6 +1294,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 38,
   }),
   "task-divider": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['task-divider'],
     title: "Task cycle",
     subtitle: "Before you speak",
     timing: "5 minutes",
@@ -1274,6 +1308,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 28,
   }),
   "task-reporting": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['task-reporting'],
     title: "Task reporting",
     goal: "Share highlights from your conversations.",
     prompts: [
@@ -1290,6 +1325,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 32,
   }),
   "genre-deconstruction": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['genre-deconstruction'],
     title: "Genre deconstruction",
     genre: "Community proposal email",
     purpose: "Notice how writers persuade funders.",
@@ -1304,6 +1340,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 30,
   }),
   "linguistic-feature-hunt": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['linguistic-feature-hunt'],
     title: "Feature hunt",
     sourceText:
       "When we evaluate proposals, we consider feasibility, sustainability, and community voice.",
@@ -1317,6 +1354,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 24,
   }),
   "text-reconstruction": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['text-reconstruction'],
     title: "Text reconstruction",
     context: "Pieces of the mentor text are jumbled.",
     steps: [
@@ -1334,6 +1372,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 34,
   }),
   "jumbled-text-sequencing": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['jumbled-text-sequencing'],
     title: "Sequence the jumbled text",
     instructions: "Work in teams to put the statements back into order.",
     segments: [
@@ -1350,6 +1389,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 26,
   }),
   "scaffolded-joint-construction": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['scaffolded-joint-construction'],
     title: "Scaffolded joint construction",
     mentorFocus: "Mentor text: project proposal introduction",
     sharedOutcome: "Draft the opening paragraph together.",
@@ -1366,6 +1406,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     overlayOpacity: 28,
   }),
   "independent-construction-checklist": () => ({
+    icon: LAYOUT_ICON_DEFAULTS['independent-construction-checklist'],
     title: "Independent construction",
     reminder: "Use the checklist while drafting your text.",
     checklist: [
@@ -7415,6 +7456,81 @@ const setSelectedLayout = (layout = 'blank-canvas') => {
   }
 };
 
+const getLayoutIconInput = (layout) => {
+  if (!Array.isArray(builderLayoutIconInputs)) {
+    return null;
+  }
+  return (
+    builderLayoutIconInputs.find(
+      (input) => input instanceof HTMLInputElement && input.dataset.layoutIcon === layout,
+    ) ?? null
+  );
+};
+
+const resolveLayoutIconClass = (layout) => {
+  const input = getLayoutIconInput(layout);
+  if (!(input instanceof HTMLInputElement)) {
+    return '';
+  }
+  return typeof input.value === 'string' ? input.value.trim() : '';
+};
+
+const updateLayoutOptionIconPreview = (layout, iconClass) => {
+  const resolvedClass = typeof iconClass === 'string'
+    ? iconClass.trim()
+    : resolveLayoutIconClass(layout);
+  const selector = `[data-layout-option="${layout}"] .layout-option-icon`;
+  const iconTarget =
+    builderOverlay?.querySelector(selector) ?? document.querySelector(selector);
+  if (iconTarget instanceof HTMLElement) {
+    iconTarget.innerHTML = '';
+    if (resolvedClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = resolvedClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      iconTarget.appendChild(iconEl);
+    }
+  }
+};
+
+const setLayoutIconValue = (layout, value) => {
+  const input = getLayoutIconInput(layout);
+  if (input instanceof HTMLInputElement) {
+    input.value = value ?? '';
+  }
+  updateLayoutOptionIconPreview(layout, value);
+};
+
+const attachLayoutIconBadge = (slide, iconClass) => {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+  const existing = slide.querySelector('.lesson-layout-icon');
+  if (existing instanceof HTMLElement) {
+    existing.remove();
+  }
+  if (typeof iconClass !== 'string') {
+    slide.removeAttribute('data-layout-icon');
+    return;
+  }
+  const trimmed = iconClass.trim();
+  if (!trimmed) {
+    slide.removeAttribute('data-layout-icon');
+    return;
+  }
+  const badge = document.createElement('span');
+  badge.className = 'lesson-layout-icon';
+  const icon = document.createElement('i');
+  icon.className = trimmed;
+  icon.setAttribute('aria-hidden', 'true');
+  badge.appendChild(icon);
+  slide.appendChild(badge);
+  slide.dataset.layoutIcon = trimmed;
+};
+
+const getEffectiveLayoutIcon = (_layout, iconClass) =>
+  typeof iconClass === 'string' ? iconClass.trim() : '';
+
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
   const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
@@ -7712,6 +7828,14 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
 
   clearFields();
 
+  if (layout in LAYOUT_ICON_DEFAULTS) {
+    const defaultIcon =
+      typeof defaults.icon === 'string' && defaults.icon.trim()
+        ? defaults.icon.trim()
+        : LAYOUT_ICON_DEFAULTS[layout] || '';
+    setLayoutIconValue(layout, defaultIcon);
+  }
+
   switch (layout) {
     case 'learning-objectives': {
       const goals = Array.isArray(defaults.goals) ? defaults.goals : [];
@@ -7991,7 +8115,8 @@ function getBuilderFormState() {
   }
   const formData = new FormData(builderForm);
   const layout = (formData.get('slideLayout') || getSelectedLayout() || 'blank-canvas').toString();
-  const state = { layout };
+  const layoutIcon = resolveLayoutIconClass(layout);
+  const state = { layout, icon: layoutIcon };
   switch (layout) {
     case 'learning-objectives': {
       const goals = [
@@ -8008,6 +8133,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('learningOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8033,6 +8159,7 @@ function getBuilderFormState() {
         ),
         audioUrl: trimText(formData.get('dialogueAudioUrl')),
         turns,
+        layoutIcon,
       };
       break;
     }
@@ -8055,6 +8182,7 @@ function getBuilderFormState() {
         title: trimText(formData.get('practiceTitle')) || 'Practice',
         instructions: trimText(formData.get('practiceInstructions')),
         questions,
+        layoutIcon,
       };
       break;
     }
@@ -8069,6 +8197,7 @@ function getBuilderFormState() {
         preparation: trimText(formData.get('taskPreparation')),
         performance: trimText(formData.get('taskPerformance')),
         scaffolding: splitMultiline(formData.get('taskScaffolding')),
+        layoutIcon,
       };
       break;
     }
@@ -8092,6 +8221,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('pronunciationOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8109,6 +8239,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reflectionOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8122,6 +8253,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('groundingOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8137,6 +8269,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('topicOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8156,6 +8289,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('discoveryOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8173,6 +8307,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('creativeOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8188,6 +8323,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('dividerOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8207,6 +8343,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reportingOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8226,6 +8363,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('genreOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8240,6 +8378,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('featureOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8254,6 +8393,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reconstructionOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8268,6 +8408,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('sequencingOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8283,6 +8424,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('jointOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8297,6 +8439,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('checklistOverlayOpacity'),
         ),
+        layoutIcon,
       };
       break;
     }
@@ -8575,6 +8718,9 @@ function resetBuilderForm() {
   if (builderForm instanceof HTMLFormElement) {
     builderForm.reset();
   }
+  Object.entries(LAYOUT_ICON_DEFAULTS).forEach(([layout, icon]) => {
+    setLayoutIconValue(layout, icon);
+  });
   resetDialogueList([]);
   resetPracticeList([]);
   if (builderImageResults instanceof HTMLElement) {
@@ -10982,6 +11128,7 @@ function applyLessonBackground(
 }
 
 function createBaseLessonSlide(layout, options = {}) {
+  const { iconClass = '', ...backgroundOptions } = options;
   const slide = document.createElement('div');
   slide.className = 'slide-stage hidden lesson-slide';
   slide.dataset.type = 'lesson';
@@ -10989,12 +11136,13 @@ function createBaseLessonSlide(layout, options = {}) {
     slide.dataset.layout = layout;
     slide.classList.add(`lesson-slide--${layout}`);
   }
-  applyLessonBackground(slide, options);
+  applyLessonBackground(slide, backgroundOptions);
   const inner = document.createElement('div');
   inner.className = 'slide-inner lesson-slide-inner';
   if (layout) {
     inner.classList.add(`${layout}-layout`);
   }
+  attachLayoutIconBadge(slide, iconClass);
   slide.appendChild(inner);
   return { slide, inner };
 }
@@ -11006,11 +11154,13 @@ function createLearningObjectivesSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('learning-objectives', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('learning-objectives', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11080,11 +11230,13 @@ function createModelDialogueSlide({
   turns = [],
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('model-dialogue', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('model-dialogue', layoutIcon),
   });
 
   const resolvedImage = trimText(imageUrl);
@@ -11174,11 +11326,13 @@ function createCommunicativeTaskSlide({
   scaffolding = [],
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('communicative-task', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('communicative-task', layoutIcon),
   });
   slide.dataset.type = 'communicative-task';
 
@@ -11313,11 +11467,13 @@ function createPronunciationFocusSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('pronunciation-focus', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('pronunciation-focus', layoutIcon),
   });
   slide.dataset.type = 'pronunciation';
 
@@ -11382,11 +11538,13 @@ function createReflectionSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('reflection', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('reflection', layoutIcon),
   });
   slide.dataset.type = 'reflection';
 
@@ -11429,11 +11587,13 @@ function createGroundingActivitySlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('grounding-activity', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('grounding-activity', layoutIcon),
   });
   const header = document.createElement('header');
   header.className = 'lesson-header grounding-header';
@@ -11490,11 +11650,13 @@ function createTopicIntroductionSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('topic-introduction', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('topic-introduction', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11576,11 +11738,13 @@ function createGuidedDiscoverySlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('guided-discovery', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('guided-discovery', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11690,11 +11854,13 @@ function createCreativePracticeSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('creative-practice', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('creative-practice', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11799,11 +11965,13 @@ function createTaskDividerSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('task-divider', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('task-divider', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11876,11 +12044,13 @@ function createTaskReportingSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('task-reporting', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('task-reporting', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -11995,11 +12165,13 @@ function createGenreDeconstructionSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('genre-deconstruction', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('genre-deconstruction', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12092,11 +12264,13 @@ function createLinguisticFeatureHuntSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('linguistic-feature-hunt', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('linguistic-feature-hunt', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12181,11 +12355,13 @@ function createTextReconstructionSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('text-reconstruction', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('text-reconstruction', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12275,11 +12451,13 @@ function createJumbledTextSequencingSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('jumbled-text-sequencing', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('jumbled-text-sequencing', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12352,11 +12530,13 @@ function createScaffoldedJointConstructionSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('scaffolded-joint-construction', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('scaffolded-joint-construction', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12453,11 +12633,13 @@ function createIndependentConstructionChecklistSlide({
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
   const { slide, inner } = createBaseLessonSlide('independent-construction-checklist', {
     imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('independent-construction-checklist', layoutIcon),
   });
 
   const header = document.createElement('header');
@@ -12540,6 +12722,7 @@ function createInteractivePracticeSlide({
   instructions,
   activityType,
   questions = [],
+  layoutIcon = '',
 } = {}) {
   const resolvedTitle = trimText(title) || "Practice";
   const resolvedInstructions = trimText(instructions);
@@ -12552,6 +12735,8 @@ function createInteractivePracticeSlide({
   slide.className = "slide-stage hidden interactive-practice-slide";
   slide.dataset.type = "interactive-practice";
   slide.dataset.activityType = resolvedType;
+
+  attachLayoutIconBadge(slide, getEffectiveLayoutIcon('interactive-practice', layoutIcon));
 
   const inner = document.createElement("div");
   inner.className = "slide-inner interactive-practice-inner";
@@ -13115,11 +13300,25 @@ function initialiseActivityBuilderUI() {
 
   if (builderForm instanceof HTMLFormElement) {
     builderForm.addEventListener('submit', handleBuilderSubmit);
-    builderForm.addEventListener('input', () => {
+    builderForm.addEventListener('input', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('layout-icon-input')) {
+        const layout = target.dataset.layoutIcon;
+        if (layout) {
+          updateLayoutOptionIconPreview(layout, target.value);
+        }
+      }
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
-    builderForm.addEventListener('change', () => {
+    builderForm.addEventListener('change', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('layout-icon-input')) {
+        const layout = target.dataset.layoutIcon;
+        if (layout) {
+          updateLayoutOptionIconPreview(layout, target.value);
+        }
+      }
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
@@ -13240,6 +13439,21 @@ export async function setupInteractiveDeck({
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
       document.querySelectorAll('input[name="slideLayout"]'),
   );
+  builderLayoutIconInputs = Array.from(
+    builderOverlay?.querySelectorAll('.layout-icon-input') ??
+      document.querySelectorAll('.layout-icon-input'),
+  );
+  if (Array.isArray(builderLayoutIconInputs)) {
+    builderLayoutIconInputs.forEach((input) => {
+      if (!(input instanceof HTMLInputElement)) {
+        return;
+      }
+      const layout = input.dataset.layoutIcon;
+      if (layout) {
+        updateLayoutOptionIconPreview(layout, input.value);
+      }
+    });
+  }
   builderPreview =
     builderOverlay?.querySelector("#builder-preview") ??
     document.querySelector("#builder-preview");

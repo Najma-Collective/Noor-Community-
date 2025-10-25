@@ -1445,232 +1445,479 @@
         >
           <legend class="builder-field-label">Choose a layout</legend>
           <div class="layout-picker-grid">
-            <label class="layout-option" title="Start with an empty slide and build everything yourself.">
+            <label
+              class="layout-option"
+              data-layout-option="blank-canvas"
+              title="Start with an empty slide and build everything yourself."
+            >
               <input type="radio" name="slideLayout" value="blank-canvas" checked />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-border-all"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Blank canvas</span>
                   <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="blank-canvas"
+                  placeholder="fa-solid fa-border-all"
+                  value="fa-solid fa-border-all"
+                  aria-label="Icon class for Blank canvas layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Lead a brief settling or mindfulness routine.">
+            <label
+              class="layout-option"
+              data-layout-option="grounding-activity"
+              title="Lead a brief settling or mindfulness routine."
+            >
               <input type="radio" name="slideLayout" value="grounding-activity" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-leaf"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Grounding activity</span>
                   <span class="layout-option-desc">Script a calm arrival routine with simple prompts.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="grounding-activity"
+                  placeholder="fa-solid fa-leaf"
+                  value="fa-solid fa-leaf"
+                  aria-label="Icon class for Grounding activity layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Introduce the big idea, hook, and vocabulary for the lesson.">
+            <label
+              class="layout-option"
+              data-layout-option="topic-introduction"
+              title="Introduce the big idea, hook, and vocabulary for the lesson."
+            >
               <input type="radio" name="slideLayout" value="topic-introduction" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-lightbulb"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Topic introduction</span>
                   <span class="layout-option-desc">Frame the theme, essential question, and key vocabulary.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="topic-introduction"
+                  placeholder="fa-solid fa-lightbulb"
+                  value="fa-solid fa-lightbulb"
+                  aria-label="Icon class for Topic introduction layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Present the learning focus and communicative outcome.">
+            <label
+              class="layout-option"
+              data-layout-option="learning-objectives"
+              title="Present the learning focus and communicative outcome."
+            >
               <input type="radio" name="slideLayout" value="learning-objectives" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-bullseye"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Learning objectives</span>
                   <span class="layout-option-desc">Highlight lesson goals and the real-world application.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="learning-objectives"
+                  placeholder="fa-solid fa-bullseye"
+                  value="fa-solid fa-bullseye"
+                  aria-label="Icon class for Learning objectives layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Show a short model text or dialogue.">
+            <label
+              class="layout-option"
+              data-layout-option="model-dialogue"
+              title="Show a short model text or dialogue."
+            >
               <input type="radio" name="slideLayout" value="model-dialogue" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-comments"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Model dialogue / text</span>
                   <span class="layout-option-desc">Introduce the target language through a contextualised exchange.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="model-dialogue"
+                  placeholder="fa-solid fa-comments"
+                  value="fa-solid fa-comments"
+                  aria-label="Icon class for Model dialogue / text layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Guide learners to notice patterns in the input.">
+            <label
+              class="layout-option"
+              data-layout-option="guided-discovery"
+              title="Guide learners to notice patterns in the input."
+            >
               <input type="radio" name="slideLayout" value="guided-discovery" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Guided discovery</span>
                   <span class="layout-option-desc">Sequence noticing prompts, questions, and sample language.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="guided-discovery"
+                  placeholder="fa-solid fa-magnifying-glass"
+                  value="fa-solid fa-magnifying-glass"
+                  aria-label="Icon class for Guided discovery layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Break down the genre features in a mentor text.">
+            <label
+              class="layout-option"
+              data-layout-option="genre-deconstruction"
+              title="Break down the genre features in a mentor text."
+            >
               <input type="radio" name="slideLayout" value="genre-deconstruction" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-book-open"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Genre deconstruction</span>
                   <span class="layout-option-desc">Summarise the purpose, key moves, and mentor text excerpt.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="genre-deconstruction"
+                  placeholder="fa-solid fa-book-open"
+                  value="fa-solid fa-book-open"
+                  aria-label="Icon class for Genre deconstruction layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Create a feature hunt for a short text.">
+            <label
+              class="layout-option"
+              data-layout-option="linguistic-feature-hunt"
+              title="Create a feature hunt for a short text."
+            >
               <input type="radio" name="slideLayout" value="linguistic-feature-hunt" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-highlighter"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Feature hunt</span>
                   <span class="layout-option-desc">Share the extract, what to highlight, and reflection prompts.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="linguistic-feature-hunt"
+                  placeholder="fa-solid fa-highlighter"
+                  value="fa-solid fa-highlighter"
+                  aria-label="Icon class for Feature hunt layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Offer sentence strips and steps to rebuild a text.">
+            <label
+              class="layout-option"
+              data-layout-option="text-reconstruction"
+              title="Offer sentence strips and steps to rebuild a text."
+            >
               <input type="radio" name="slideLayout" value="text-reconstruction" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-puzzle-piece"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Text reconstruction</span>
                   <span class="layout-option-desc">List the routine and the strips learners will order.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="text-reconstruction"
+                  placeholder="fa-solid fa-puzzle-piece"
+                  value="fa-solid fa-puzzle-piece"
+                  aria-label="Icon class for Text reconstruction layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Sequence a jumbled set of statements or ideas.">
+            <label
+              class="layout-option"
+              data-layout-option="jumbled-text-sequencing"
+              title="Sequence a jumbled set of statements or ideas."
+            >
               <input type="radio" name="slideLayout" value="jumbled-text-sequencing" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-shuffle"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Jumbled sequencing</span>
                   <span class="layout-option-desc">Provide the segments and tips that support ordering.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="jumbled-text-sequencing"
+                  placeholder="fa-solid fa-shuffle"
+                  value="fa-solid fa-shuffle"
+                  aria-label="Icon class for Jumbled sequencing layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Build a controlled practice task with prompts and answers.">
+            <label
+              class="layout-option"
+              data-layout-option="interactive-practice"
+              title="Build a controlled practice task with prompts and answers."
+            >
               <input type="radio" name="slideLayout" value="interactive-practice" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-list-check"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Interactive practice</span>
                   <span class="layout-option-desc">Collect prompts, answer options, and solutions for quick checks.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="interactive-practice"
+                  placeholder="fa-solid fa-list-check"
+                  value="fa-solid fa-list-check"
+                  aria-label="Icon class for Interactive practice layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Plan a collaborative making task that uses new language.">
+            <label
+              class="layout-option"
+              data-layout-option="creative-practice"
+              title="Plan a collaborative making task that uses new language."
+            >
               <input type="radio" name="slideLayout" value="creative-practice" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-paintbrush"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Creative practice</span>
                   <span class="layout-option-desc">Capture materials, making steps, and sharing options.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="creative-practice"
+                  placeholder="fa-solid fa-paintbrush"
+                  value="fa-solid fa-paintbrush"
+                  aria-label="Icon class for Creative practice layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Prepare learners for a freer speaking task.">
+            <label
+              class="layout-option"
+              data-layout-option="communicative-task"
+              title="Prepare learners for a freer speaking task."
+            >
               <input type="radio" name="slideLayout" value="communicative-task" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-people-arrows"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Communicative task</span>
                   <span class="layout-option-desc">Outline the scenario, preparation notes, and language scaffolding.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="communicative-task"
+                  placeholder="fa-solid fa-people-arrows"
+                  value="fa-solid fa-people-arrows"
+                  aria-label="Icon class for Communicative task layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Insert a divider that names the next task phase.">
+            <label
+              class="layout-option"
+              data-layout-option="task-divider"
+              title="Insert a divider that names the next task phase."
+            >
               <input type="radio" name="slideLayout" value="task-divider" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-flag-checkered"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Task divider</span>
                   <span class="layout-option-desc">Signal timing, focus, and quick actions before moving on.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="task-divider"
+                  placeholder="fa-solid fa-flag-checkered"
+                  value="fa-solid fa-flag-checkered"
+                  aria-label="Icon class for Task divider layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Coordinate share-out roles after a communicative task.">
+            <label
+              class="layout-option"
+              data-layout-option="task-reporting"
+              title="Coordinate share-out roles after a communicative task."
+            >
               <input type="radio" name="slideLayout" value="task-reporting" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-bullhorn"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Task reporting</span>
                   <span class="layout-option-desc">Outline prompts, evidence to gather, and facilitator roles.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="task-reporting"
+                  placeholder="fa-solid fa-bullhorn"
+                  value="fa-solid fa-bullhorn"
+                  aria-label="Icon class for Task reporting layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Plan a joint construction with teacher and learner moves.">
+            <label
+              class="layout-option"
+              data-layout-option="scaffolded-joint-construction"
+              title="Plan a joint construction with teacher and learner moves."
+            >
               <input type="radio" name="slideLayout" value="scaffolded-joint-construction" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-people-group"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Joint construction</span>
                   <span class="layout-option-desc">Map mentor text focus, shared outcome, and move sequences.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="scaffolded-joint-construction"
+                  placeholder="fa-solid fa-people-group"
+                  value="fa-solid fa-people-group"
+                  aria-label="Icon class for Joint construction layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Support independent writing with a checklist.">
+            <label
+              class="layout-option"
+              data-layout-option="independent-construction-checklist"
+              title="Support independent writing with a checklist."
+            >
               <input type="radio" name="slideLayout" value="independent-construction-checklist" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-clipboard-check"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Independent checklist</span>
                   <span class="layout-option-desc">List success criteria and stretch goals for individual drafts.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="independent-construction-checklist"
+                  placeholder="fa-solid fa-clipboard-check"
+                  value="fa-solid fa-clipboard-check"
+                  aria-label="Icon class for Independent checklist layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Focus on a sound or intonation pattern from the lesson.">
+            <label
+              class="layout-option"
+              data-layout-option="pronunciation-focus"
+              title="Focus on a sound or intonation pattern from the lesson."
+            >
               <input type="radio" name="slideLayout" value="pronunciation-focus" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-wave-square"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Pronunciation focus</span>
                   <span class="layout-option-desc">Capture target sounds, example words, and practice tips.</span>
                 </span>
               </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="pronunciation-focus"
+                  placeholder="fa-solid fa-wave-square"
+                  value="fa-solid fa-wave-square"
+                  aria-label="Icon class for Pronunciation focus layout"
+                  autocomplete="off"
+                />
+              </span>
             </label>
-            <label class="layout-option" title="Close the lesson with reflection prompts.">
+            <label
+              class="layout-option"
+              data-layout-option="reflection"
+              title="Close the lesson with reflection prompts."
+            >
               <input type="radio" name="slideLayout" value="reflection" />
               <span class="layout-option-body">
-                <span class="layout-option-icon" aria-hidden="true">
-                  <i class="fa-solid fa-moon"></i>
-                </span>
+                <span class="layout-option-icon" aria-hidden="true"></span>
                 <span class="layout-option-copy">
                   <span class="layout-option-title">Reflection</span>
                   <span class="layout-option-desc">Guide learners to note what they learned and who they connected with.</span>
                 </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="reflection"
+                  placeholder="fa-solid fa-moon"
+                  value="fa-solid fa-moon"
+                  aria-label="Icon class for Reflection layout"
+                  autocomplete="off"
+                />
               </span>
             </label>
           </div>

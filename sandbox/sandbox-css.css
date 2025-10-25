@@ -578,7 +578,8 @@ body {
 
 .layout-option {
   position: relative;
-  display: block;
+  display: grid;
+  gap: var(--space-3);
   border: 1.5px solid var(--border-sage);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.92);
@@ -592,7 +593,7 @@ body {
   position: absolute;
   inset: 0;
   opacity: 0;
-  cursor: pointer;
+  pointer-events: none;
 }
 
 .layout-option-body {
@@ -623,6 +624,36 @@ body {
 
 .layout-option-icon i {
   pointer-events: none;
+}
+
+.layout-icon-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.layout-icon-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--border-sage) 80%, white 20%);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--forest-shadow);
+  box-shadow: inset 0 1px 1px rgba(18, 39, 33, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.layout-icon-input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--primary-forest) 65%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-forest) 20%, transparent);
+}
+
+.layout-icon-input::placeholder {
+  color: rgba(47, 58, 43, 0.5);
 }
 
 .layout-option-title {
@@ -5304,6 +5335,31 @@ ol {
   z-index: 1;
 }
 
+.lesson-layout-icon {
+  position: absolute;
+  top: clamp(18px, 4vw, 32px);
+  left: clamp(18px, 4vw, 32px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--forest-shadow);
+  box-shadow: var(--shadow-1);
+  z-index: 2;
+  font-size: 1.2rem;
+}
+
+.lesson-layout-icon i {
+  pointer-events: none;
+}
+
+.lesson-slide--has-overlay .lesson-layout-icon {
+  background: color-mix(in srgb, rgba(255, 255, 255, 0.92) 88%, transparent);
+}
+
 .lesson-header,
 .practice-header {
   display: flex;
@@ -6004,6 +6060,7 @@ ol {
 }
 
 .interactive-practice-slide {
+  position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(244, 244, 236, 0.92));
   border: 1px solid rgba(122, 132, 113, 0.18);
 }
