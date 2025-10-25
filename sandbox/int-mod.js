@@ -2780,10 +2780,27 @@ export function attachBlankSlideEvents(slide) {
     updateToolbar();
   };
 
-  const registerCanvasItem = (element, type) => {
+  const stampCanvasItem = (element, { type, source } = {}) => {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+    if (typeof type === "string" && type) {
+      element.dataset.canvasItemType = element.dataset.canvasItemType || type;
+    }
+    if (typeof source === "string" && source) {
+      element.dataset.canvasItemSource = source;
+    }
+    if (!element.dataset.canvasItemCreatedAt) {
+      element.dataset.canvasItemCreatedAt = String(Date.now());
+    }
+    element.dataset.canvasItemVersion = "2";
+  };
+
+  const registerCanvasItem = (element, type, { source } = {}) => {
     if (!(element instanceof HTMLElement) || element.__deckCanvasSelectable) {
       return;
     }
+    stampCanvasItem(element, { type, source });
     element.__deckCanvasSelectable = true;
     element.classList.add(CANVAS_ITEM_CLASS);
     const pointerHandler = (event) => {
@@ -2835,7 +2852,7 @@ export function attachBlankSlideEvents(slide) {
     updateToolbar();
   };
 
-  const prepareTextbox = (textbox) => {
+  const prepareTextbox = (textbox, { source } = {}) => {
     if (!(textbox instanceof HTMLElement)) {
       return;
     }
@@ -2847,10 +2864,10 @@ export function attachBlankSlideEvents(slide) {
         updateHintForCanvas();
       },
     });
-    registerCanvasItem(textbox, "textbox");
+    registerCanvasItem(textbox, "textbox", { source });
   };
 
-  const prepareTable = (table) => {
+  const prepareTable = (table, { source } = {}) => {
     if (!(table instanceof HTMLElement)) {
       return;
     }
@@ -2862,13 +2879,40 @@ export function attachBlankSlideEvents(slide) {
         updateHintForCanvas();
       },
     });
-    registerCanvasItem(table, "table");
+    registerCanvasItem(table, "table", { source });
   };
 
-  const prepareImage = (image) => {
+  const applyImageMetadata = (image, metadata = {}) => {
     if (!(image instanceof HTMLElement)) {
       return;
     }
+    const { source, name, type, size, naturalWidth, naturalHeight } = metadata;
+    stampCanvasItem(image, { type: "image", source });
+    if (!image.dataset.imageIngestedAt) {
+      image.dataset.imageIngestedAt = String(Date.now());
+    }
+    if (typeof name === "string" && name.trim()) {
+      image.dataset.imageName = name.trim();
+    }
+    if (typeof type === "string" && type.trim()) {
+      image.dataset.imageType = type.trim();
+    }
+    if (Number.isFinite(size)) {
+      image.dataset.imageSize = String(Math.max(0, Math.round(size)));
+    }
+    if (Number.isFinite(naturalWidth) && naturalWidth > 0) {
+      image.dataset.imageNaturalWidth = String(Math.round(naturalWidth));
+    }
+    if (Number.isFinite(naturalHeight) && naturalHeight > 0) {
+      image.dataset.imageNaturalHeight = String(Math.round(naturalHeight));
+    }
+  };
+
+  const registerCanvasImage = (image, metadata = {}) => {
+    if (!(image instanceof HTMLElement)) {
+      return;
+    }
+    applyImageMetadata(image, metadata);
     initialisePastedImage(image, {
       onRemove: () => {
         if (selectedItem === image) {
@@ -2877,14 +2921,14 @@ export function attachBlankSlideEvents(slide) {
         updateHintForCanvas();
       },
     });
-    registerCanvasItem(image, "image");
+    registerCanvasItem(image, "image", { source: metadata?.source });
   };
 
-  const registerMindmapBranch = (branch) => {
+  const registerMindmapBranch = (branch, { source } = {}) => {
     if (!(branch instanceof HTMLElement)) {
       return;
     }
-    registerCanvasItem(branch, "mindmap");
+    registerCanvasItem(branch, "mindmap", { source });
     const originalChange = branch.__deckMindmapBranchOnChange;
     branch.__deckMindmapBranchOnChange = (payload) => {
       if (typeof originalChange === "function") {
@@ -2905,7 +2949,7 @@ export function attachBlankSlideEvents(slide) {
     };
   };
 
-  const prepareMindmap = (mindmap) => {
+  const prepareMindmap = (mindmap, { source } = {}) => {
     if (!(mindmap instanceof HTMLElement)) {
       return;
     }
@@ -2923,14 +2967,14 @@ export function attachBlankSlideEvents(slide) {
     const branches = Array.from(
       mindmap.querySelectorAll?.(".mindmap-branch") ?? [],
     );
-    branches.forEach((branch) => registerMindmapBranch(branch));
+    branches.forEach((branch) => registerMindmapBranch(branch, { source }));
     const branchContainer = mindmap.querySelector(".mindmap-branches");
     if (branchContainer instanceof HTMLElement && !branchContainer.__deckMindmapObserver) {
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.addedNodes.forEach((node) => {
             if (node instanceof HTMLElement && node.classList.contains("mindmap-branch")) {
-              registerMindmapBranch(node);
+              registerMindmapBranch(node, { source });
             }
           });
           mutation.removedNodes.forEach((node) => {
@@ -3231,49 +3275,102 @@ export function attachBlankSlideEvents(slide) {
     }
   }
 
-  const handleAddTextbox = () => {
-    const textbox = createTextbox();
-    canvas.appendChild(textbox);
-    prepareTextbox(textbox);
-    positionTextbox(textbox, canvas);
-    setSelection(textbox, "textbox");
-    textbox.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-    updateHintForCanvas();
+  const resolveCreationSource = (trigger) => {
+    if (!(trigger instanceof HTMLElement)) {
+      return "programmatic";
+    }
+    if (typeof trigger.dataset.canvasSource === "string") {
+      return trigger.dataset.canvasSource;
+    }
+    if (trigger.closest?.('[data-role="blank-actions"]')) {
+      return "blank-actions";
+    }
+    if (trigger.closest?.('.canvas-insert-panel')) {
+      return "insert-overlay";
+    }
+    return "direct";
   };
 
-  insertController.registerAction("add-textbox", () => {
-    handleAddTextbox();
-    return true;
+  const runAfterFrame = (callback) => {
+    if (typeof callback !== "function") {
+      return;
+    }
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => {
+        callback();
+      });
+      return;
+    }
+    setTimeout(() => {
+      callback();
+    }, 16);
+  };
+
+  const registerCreationAction = (action, handler) => {
+    insertController.registerAction(action, (context = {}) => {
+      const trigger = context.source instanceof HTMLElement ? context.source : null;
+      const origin = resolveCreationSource(trigger);
+      let handled = true;
+      try {
+        const result = handler({ trigger, origin });
+        if (result === false) {
+          handled = false;
+        } else if (result && typeof result.then === "function") {
+          result.catch((error) => {
+            console.warn(`Canvas creation for ${action} failed`, error);
+          });
+        }
+      } catch (error) {
+        console.warn(`Canvas creation for ${action} failed`, error);
+        handled = false;
+      }
+      return handled;
+    });
+  };
+
+  registerCreationAction("add-textbox", ({ origin }) => {
+    const textbox = createTextbox();
+    canvas.appendChild(textbox);
+    prepareTextbox(textbox, { source: origin });
+    positionTextbox(textbox, canvas);
+    setSelection(textbox, "textbox");
+    runAfterFrame(() => {
+      textbox.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+      const body = textbox.querySelector(".textbox-body");
+      if (body instanceof HTMLElement) {
+        body.focus({ preventScroll: true });
+      }
+    });
+    updateHintForCanvas();
+    updateCanvasInsertOverlay();
   });
 
   if (addTextboxBtn instanceof HTMLElement) {
     insertController.registerTrigger(addTextboxBtn, "add-textbox");
   }
 
-  const handleAddTable = () => {
+  registerCreationAction("add-table", ({ origin }) => {
     const table = createCanvasTable();
     canvas.appendChild(table);
-    prepareTable(table);
+    prepareTable(table, { source: origin });
     positionCanvasTable(table, canvas);
     setSelection(table, "table");
     updateHintForCanvas();
-    table.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    const firstEditableCell = table.querySelector("thead th, tbody td");
-    if (firstEditableCell instanceof HTMLElement) {
-      firstEditableCell.focus({ preventScroll: true });
-    }
-  };
-
-  insertController.registerAction("add-table", () => {
-    handleAddTable();
-    return true;
+    runAfterFrame(() => {
+      table.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      const firstEditableCell = table.querySelector("thead th, tbody td");
+      if (firstEditableCell instanceof HTMLElement) {
+        firstEditableCell.focus({ preventScroll: true });
+      }
+    });
+    updateCanvasInsertOverlay();
   });
 
   if (addTableBtn instanceof HTMLElement) {
     insertController.registerTrigger(addTableBtn, "add-table");
   }
 
-  const handleAddMindmap = () => {
+  registerCreationAction("add-mindmap", ({ origin }) => {
     if (canvas.querySelector(".mindmap")) {
       const existing = canvas.querySelector(".mindmap");
       existing?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -3283,36 +3380,33 @@ export function attachBlankSlideEvents(slide) {
       updateHintForCanvas();
     });
     canvas.appendChild(mindmap);
-    prepareMindmap(mindmap);
+    prepareMindmap(mindmap, { source: origin });
     const firstBranch = mindmap.querySelector(".mindmap-branch");
     if (firstBranch instanceof HTMLElement) {
       setSelection(firstBranch, "mindmap");
+      runAfterFrame(() => {
+        firstBranch.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        firstBranch.focus({ preventScroll: true });
+      });
     }
     updateHintForCanvas();
-  };
-
-  insertController.registerAction("add-mindmap", () => {
-    handleAddMindmap();
-    return true;
+    updateCanvasInsertOverlay();
   });
 
   if (addMindmapBtn instanceof HTMLElement) {
     insertController.registerTrigger(addMindmapBtn, "add-mindmap");
   }
 
-  const handleAddModule = ({ trigger } = {}) => {
+  registerCreationAction("add-module", ({ trigger, origin }) => {
     openModuleOverlay({
       canvas,
       trigger: trigger ?? addModuleBtn,
       onInsert: () => {
         updateHintForCanvas();
+        updateCanvasInsertOverlay();
       },
+      source: origin,
     });
-  };
-
-  insertController.registerAction("add-module", ({ source }) => {
-    handleAddModule({ trigger: source });
-    return true;
   });
 
   if (addModuleBtn instanceof HTMLElement) {
@@ -3325,16 +3419,18 @@ export function attachBlankSlideEvents(slide) {
 
   canvas.querySelectorAll(".mindmap").forEach((mindmap) => prepareMindmap(mindmap));
 
-  canvas.querySelectorAll(".pasted-image").forEach((image) => prepareImage(image));
-
   canvas
     .querySelectorAll(".module-embed")
     .forEach((module) => initialiseModuleEmbed(module, { onRemove: updateHintForCanvas }));
 
-  const readFileAsDataUrl = (file) =>
+  canvas
+    .querySelectorAll(".pasted-image")
+    .forEach((image) => registerCanvasImage(image));
+
+  const readBlobAsDataUrl = (blob) =>
     new Promise((resolve, reject) => {
-      if (!(file instanceof Blob)) {
-        reject(new Error("Invalid clipboard data"));
+      if (!(blob instanceof Blob)) {
+        reject(new Error("Invalid image payload"));
         return;
       }
       const reader = new FileReader();
@@ -3342,65 +3438,196 @@ export function attachBlankSlideEvents(slide) {
         resolve(typeof reader.result === "string" ? reader.result : "");
       });
       reader.addEventListener("error", () => {
-        reject(reader.error ?? new Error("Failed to read clipboard image"));
+        reject(reader.error ?? new Error("Failed to read image"));
       });
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(blob);
     });
 
-  async function handleCanvasPaste(event) {
+  const loadImageDimensions = (src) =>
+    new Promise((resolve) => {
+      const image = new Image();
+      image.decoding = "async";
+      image.addEventListener("load", () => {
+        resolve({
+          width: Math.max(0, image.naturalWidth || 0),
+          height: Math.max(0, image.naturalHeight || 0),
+        });
+      });
+      image.addEventListener("error", () => {
+        resolve({ width: 0, height: 0 });
+      });
+      image.src = src;
+    });
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const computeInitialImageDimensions = ({ naturalWidth, naturalHeight, canvasElement }) => {
+    const canvasWidth = canvasElement instanceof HTMLElement ? canvasElement.clientWidth || 0 : 0;
+    const canvasHeight = canvasElement instanceof HTMLElement ? canvasElement.clientHeight || 0 : 0;
+    const fallbackWidth = canvasWidth > 0 ? canvasWidth * 0.6 : 320;
+    const fallbackHeight = canvasHeight > 0 ? canvasHeight * 0.6 : fallbackWidth * 0.75;
+    let width = naturalWidth > 0 ? naturalWidth : fallbackWidth;
+    let height = naturalHeight > 0 ? naturalHeight : fallbackHeight;
+    if (!(width > 0 && height > 0)) {
+      width = fallbackWidth;
+      height = fallbackHeight;
+    }
+    const minWidth = 160;
+    const minHeight = 120;
+    const maxWidth = clamp(canvasWidth * 0.8 || width, 240, 720);
+    const maxHeight = clamp(canvasHeight * 0.8 || height, 180, 540);
+    const downScale = Math.min(maxWidth / width, maxHeight / height, 1);
+    width *= downScale;
+    height *= downScale;
+    const upScale = Math.max(minWidth / width, minHeight / height, 1);
+    width *= upScale;
+    height *= upScale;
+    width = clamp(width, minWidth, maxWidth);
+    height = clamp(height, minHeight, maxHeight);
+    return {
+      width: Math.round(width),
+      height: Math.round(height),
+    };
+  };
+
+  const applyInitialImageSizing = (image, { width, height } = {}) => {
+    if (!(image instanceof HTMLElement)) {
+      return;
+    }
+    if (Number.isFinite(width) && width > 0) {
+      const roundedWidth = Math.round(width);
+      image.style.width = `${roundedWidth}px`;
+      image.dataset.baseWidth = String(roundedWidth);
+    }
+    if (Number.isFinite(height) && height > 0) {
+      const roundedHeight = Math.round(height);
+      image.style.height = `${roundedHeight}px`;
+      image.dataset.baseHeight = String(roundedHeight);
+    }
+  };
+
+  const insertCanvasImage = async ({ dataUrl, metadata }) => {
+    if (typeof dataUrl !== "string" || !dataUrl) {
+      return null;
+    }
+    const { name, type, size, source } = metadata ?? {};
+    let { naturalWidth = 0, naturalHeight = 0 } = metadata ?? {};
+    if (!(naturalWidth > 0 && naturalHeight > 0)) {
+      try {
+        const dims = await loadImageDimensions(dataUrl);
+        naturalWidth = dims.width;
+        naturalHeight = dims.height;
+      } catch (error) {
+        naturalWidth = 0;
+        naturalHeight = 0;
+      }
+    }
+    const pastedImage = createPastedImage({
+      src: dataUrl,
+      label: name,
+    });
+    canvas.appendChild(pastedImage);
+    registerCanvasImage(pastedImage, {
+      source,
+      name,
+      type,
+      size,
+      naturalWidth,
+      naturalHeight,
+    });
+    const initialSize = computeInitialImageDimensions({
+      naturalWidth,
+      naturalHeight,
+      canvasElement: canvas,
+    });
+    applyInitialImageSizing(pastedImage, initialSize);
+    positionPastedImage(pastedImage, canvas);
+    setSelection(pastedImage, "image");
+    runAfterFrame(() => {
+      pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+    updateHintForCanvas();
+    updateCanvasInsertOverlay();
+    canvas.focus({ preventScroll: true });
+    return pastedImage;
+  };
+
+  const ingestImageFromFile = async (file, { source } = {}) => {
+    if (!(file instanceof Blob)) {
+      return null;
+    }
+    const dataUrl = await readBlobAsDataUrl(file);
+    if (!dataUrl) {
+      return null;
+    }
+    return insertCanvasImage({
+      dataUrl,
+      metadata: {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        source: source ?? "file",
+      },
+    });
+  };
+
+  const ingestImageFromDataUrl = async (dataUrl, metadata = {}) =>
+    insertCanvasImage({
+      dataUrl,
+      metadata,
+    });
+
+  const handleCanvasPaste = async (event) => {
     const clipboardData = event.clipboardData;
     if (!clipboardData) {
       return;
     }
-    const items = Array.from(clipboardData.items ?? []).filter((item) =>
-      typeof item.type === "string" && item.type.startsWith("image/"),
-    );
-    if (!items.length) {
+    const files = Array.from(clipboardData.items ?? [])
+      .filter((item) => typeof item.type === "string" && item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .filter((file) => file instanceof Blob);
+    if (!files.length) {
       return;
     }
-
     event.preventDefault();
-
-    for (const item of items) {
-      const file = item.getAsFile();
-      if (!file) {
-        continue;
-      }
-      let dataUrl;
+    for (const file of files) {
       try {
-        dataUrl = await readFileAsDataUrl(file);
+        await ingestImageFromFile(file, { source: "clipboard" });
       } catch (error) {
-        console.warn("Unable to read clipboard image", error);
-        continue;
+        console.warn("Unable to ingest clipboard image", error);
       }
-      if (typeof dataUrl !== "string" || !dataUrl) {
-        continue;
-      }
-
-      const pastedImage = createPastedImage({
-        src: dataUrl,
-        label: file.name,
-      });
-      canvas.appendChild(pastedImage);
-      prepareImage(pastedImage);
-      positionPastedImage(pastedImage, canvas);
-      setSelection(pastedImage, "image");
-      pastedImage.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-
-    updateHintForCanvas();
-    canvas.focus({ preventScroll: true });
-  }
+  };
 
   const handleCanvasPasteEvent = (event) => {
     handleCanvasPaste(event).catch((error) => {
-      console.warn("Image paste failed", error);
+      console.warn("Image ingestion failed", error);
     });
   };
 
   canvas.addEventListener("paste", handleCanvasPasteEvent);
   registerCleanup(() => {
     canvas.removeEventListener("paste", handleCanvasPasteEvent);
+  });
+
+  const imageIngestor = {
+    ingestFile: (file, options = {}) =>
+      ingestImageFromFile(file, options).catch((error) => {
+        console.warn("Image ingestion via API failed", error);
+        return null;
+      }),
+    ingestDataUrl: (dataUrl, metadata = {}) =>
+      ingestImageFromDataUrl(dataUrl, metadata).catch((error) => {
+        console.warn("Image ingestion via API failed", error);
+        return null;
+      }),
+  };
+
+  canvas.__deckImageIngestor = imageIngestor;
+  registerCleanup(() => {
+    if (canvas.__deckImageIngestor === imageIngestor) {
+      delete canvas.__deckImageIngestor;
+    }
   });
 
   const handleCanvasPointerDown = (event) => {
