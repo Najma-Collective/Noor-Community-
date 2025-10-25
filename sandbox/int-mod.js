@@ -1750,6 +1750,26 @@ const parseRubricLevels = (value) =>
         .filter(Boolean)
     : [];
 
+const applyActivitySectionClasses = (element, classNames = [], { includeCard = true } = {}) => {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  const tokens = new Set(["activity-panel"]);
+  if (includeCard) {
+    tokens.add("card");
+  }
+
+  const queue = Array.isArray(classNames) ? classNames : [classNames];
+  queue
+    .flatMap((value) =>
+      typeof value === "string" ? value.split(/\s+/).filter(Boolean) : [],
+    )
+    .forEach((token) => tokens.add(token));
+
+  element.className = Array.from(tokens).join(" ");
+};
+
 const buildRubricSection = ({
   heading = "Success criteria",
   intro,
@@ -1757,7 +1777,7 @@ const buildRubricSection = ({
   className = "activity-rubric",
 } = {}) => {
   const section = document.createElement("section");
-  section.className = className;
+  applyActivitySectionClasses(section, className);
   section.dataset.role = "rubric";
 
   const headingEl = document.createElement("h3");
@@ -9062,7 +9082,7 @@ function createActivitySlide({
   inner.appendChild(bodyGrid);
 
   const instructionsSection = document.createElement("section");
-  instructionsSection.className = "activity-instructions";
+  applyActivitySectionClasses(instructionsSection, "activity-instructions");
   bodyGrid.appendChild(instructionsSection);
 
   const instructionsHeadingEl = document.createElement("h3");
@@ -9235,7 +9255,7 @@ function createRubricFocusSlide({
   }
 
   const body = document.createElement("div");
-  body.className = "activity-body activity-body--simple";
+  applyActivitySectionClasses(body, ["activity-body", "activity-body--simple"]);
   inner.appendChild(body);
 
   if (rubricEnabled) {
@@ -9406,7 +9426,7 @@ function createRubricColumnSlide({
 
   const makeColumn = ({ headingText, items }) => {
     const column = document.createElement("article");
-    column.className = "activity-column-card";
+    applyActivitySectionClasses(column, "activity-column-card");
     const columnHeading = document.createElement("h4");
     columnHeading.textContent = headingText;
     column.appendChild(columnHeading);
@@ -9942,7 +9962,7 @@ function createVocabularyGridSlide({
   layout.appendChild(content);
 
   const focusSection = document.createElement("section");
-  focusSection.className = "activity-vocab-focus";
+  applyActivitySectionClasses(focusSection, "activity-vocab-focus");
   content.appendChild(focusSection);
 
   const focusHeading = document.createElement("h3");
@@ -10020,7 +10040,7 @@ function createVocabularyGridSlide({
   focusSection.appendChild(practiceSection);
 
   const bankSection = document.createElement("section");
-  bankSection.className = "activity-vocab-bank";
+  applyActivitySectionClasses(bankSection, "activity-vocab-bank");
   content.appendChild(bankSection);
 
   const bankHeading = document.createElement("h3");
@@ -10211,7 +10231,7 @@ function createReadingComprehensionSlide({
   layout.appendChild(body);
 
   const excerptSection = document.createElement("article");
-  excerptSection.className = "reading-excerpt";
+  applyActivitySectionClasses(excerptSection, "reading-excerpt");
   body.appendChild(excerptSection);
 
   const excerptHeading = document.createElement("h3");
@@ -10274,7 +10294,7 @@ function createReadingComprehensionSlide({
   excerptSection.appendChild(preSection);
 
   const questionsSection = document.createElement("section");
-  questionsSection.className = "reading-questions";
+  applyActivitySectionClasses(questionsSection, "reading-questions");
   body.appendChild(questionsSection);
 
   const questionsHeading = document.createElement("h3");
@@ -10476,7 +10496,7 @@ function createPronunciationDrillSlide({
   layout.appendChild(content);
 
   const focusSection = document.createElement("section");
-  focusSection.className = "pronunciation-focus";
+  applyActivitySectionClasses(focusSection, "pronunciation-focus");
   content.appendChild(focusSection);
 
   const focusHeading = document.createElement("h3");
@@ -10538,7 +10558,7 @@ function createPronunciationDrillSlide({
   }
 
   const pairsSection = document.createElement("section");
-  pairsSection.className = "pronunciation-pairs";
+  applyActivitySectionClasses(pairsSection, "pronunciation-pairs");
   content.appendChild(pairsSection);
 
   const pairsHeading = document.createElement("h3");
@@ -10749,7 +10769,7 @@ function createHomeworkRecapSlide({
   inner.appendChild(layout);
 
   const recapSection = document.createElement("section");
-  recapSection.className = "homework-summary";
+  applyActivitySectionClasses(recapSection, "homework-summary");
   layout.appendChild(recapSection);
 
   const recapHeading = document.createElement("h3");
@@ -10776,7 +10796,7 @@ function createHomeworkRecapSlide({
     ? homework.sharePrompts.filter(Boolean)
     : [];
   const shareSection = document.createElement("section");
-  shareSection.className = "homework-share";
+  applyActivitySectionClasses(shareSection, "homework-share");
   layout.appendChild(shareSection);
 
   const shareHeading = document.createElement("h3");
@@ -10804,7 +10824,7 @@ function createHomeworkRecapSlide({
   }
 
   const actionSection = document.createElement("section");
-  actionSection.className = "homework-actions";
+  applyActivitySectionClasses(actionSection, "homework-actions");
   layout.appendChild(actionSection);
 
   const nextHeading = document.createElement("h3");

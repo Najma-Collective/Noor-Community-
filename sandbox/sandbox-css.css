@@ -4189,16 +4189,46 @@ ol {
 }
 
 .activity-builder-slide {
+  position: relative;
+  isolation: isolate;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: clamp(28px, 2vw + 18px, 48px);
   padding: clamp(32px, 4vw, 56px);
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  color: var(--forest-shadow);
+}
+
+.activity-builder-slide::after {
+  content: "";
+  position: absolute;
+  inset: -28px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: clamp(36px, 4vw, 54px);
+  background: radial-gradient(
+      circle at 12% 16%,
+      rgba(156, 175, 136, 0.18),
+      rgba(156, 175, 136, 0) 52%
+    ),
+    radial-gradient(
+      circle at 85% 86%,
+      rgba(233, 236, 225, 0.22),
+      rgba(233, 236, 225, 0) 58%
+    );
+  opacity: 0.6;
+}
+
+.activity-builder-slide > * {
+  position: relative;
+  z-index: 1;
 }
 
 .activity-builder-slide--simple {
-  gap: var(--space-5);
-  padding: clamp(28px, 4vw, 48px);
+  gap: clamp(22px, 1.3vw + 18px, 36px);
+  padding: clamp(28px, 3.5vw, 48px);
 }
 
 .activity-builder-slide--columns,
@@ -4209,7 +4239,7 @@ ol {
 .activity-builder-slide--reading,
 .activity-builder-slide--pronunciation,
 .activity-builder-slide--homework {
-  gap: var(--space-5);
+  gap: clamp(24px, 1.4vw + 18px, 40px);
 }
 
 .activity-vocab-layout,
@@ -4217,12 +4247,12 @@ ol {
 .activity-pronunciation-layout,
 .activity-homework-layout {
   display: grid;
-  gap: var(--space-4);
+  gap: clamp(20px, 1.6vw + 12px, 32px);
   align-items: start;
 }
 
 .activity-vocab-layout {
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
 }
 
 .activity-vocab-layout--no-rubric {
@@ -4231,9 +4261,14 @@ ol {
 
 .activity-vocab-content {
   display: grid;
-  gap: var(--space-4);
+  gap: clamp(18px, 1.4vw + 10px, 28px);
 }
 
+.activity-panel,
+.activity-body--simple,
+.activity-instructions,
+.activity-rubric,
+.activity-column-card,
 .activity-vocab-focus,
 .activity-vocab-bank,
 .reading-excerpt,
@@ -4243,32 +4278,66 @@ ol {
 .homework-summary,
 .homework-share,
 .homework-actions {
-  background: rgba(255, 255, 255, 0.85);
+  position: relative;
+  background: var(--soft-white);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(122, 132, 113, 0.18);
+  border: 1px solid rgba(122, 132, 113, 0.2);
   box-shadow: var(--shadow-1);
-  padding: clamp(20px, 3vw, 32px);
+  padding: clamp(22px, 2.9vw, 34px);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: clamp(16px, 1vw + 10px, 26px);
+  overflow: hidden;
 }
 
-.activity-vocab-focus h3,
-.activity-vocab-bank h3,
-.reading-excerpt h3,
-.reading-questions h3,
-.pronunciation-focus h3,
-.pronunciation-pairs h3,
-.homework-summary h3,
-.homework-share h3,
-.homework-actions h3 {
+:is(
+    .activity-panel,
+    .activity-body--simple,
+    .activity-instructions,
+    .activity-rubric,
+    .activity-column-card,
+    .activity-vocab-focus,
+    .activity-vocab-bank,
+    .reading-excerpt,
+    .reading-questions,
+    .pronunciation-focus,
+    .pronunciation-pairs,
+    .homework-summary,
+    .homework-share,
+    .homework-actions
+  )::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  opacity: 0.65;
+}
+
+:is(
+    .activity-panel,
+    .activity-body--simple,
+    .activity-instructions,
+    .activity-rubric,
+    .activity-column-card,
+    .activity-vocab-focus,
+    .activity-vocab-bank,
+    .reading-excerpt,
+    .reading-questions,
+    .pronunciation-focus,
+    .pronunciation-pairs,
+    .homework-summary,
+    .homework-share,
+    .homework-actions
+  ) > h3 {
   margin: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1rem + 0.4vw, 1.45rem);
   color: var(--forest-shadow);
-  font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
 }
 
 .vocab-detail-list,
@@ -4283,7 +4352,7 @@ ol {
   margin: 0;
   padding-left: 1.1rem;
   display: grid;
-  gap: 0.6rem;
+  gap: clamp(10px, 0.8vw + 6px, 18px);
 }
 
 .vocab-detail-list li strong,
@@ -4293,7 +4362,7 @@ ol {
 
 .vocab-grid {
   display: grid;
-  gap: var(--space-3);
+  gap: clamp(16px, 1.2vw + 8px, 24px);
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
@@ -4471,65 +4540,113 @@ ol {
 }
 
 .activity-slide-header {
-  display: grid;
-  gap: 0.75rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 1vw + 12px, 26px);
+  padding: clamp(24px, 3vw, 32px);
+  background: var(--soft-white);
+  border-radius: calc(var(--radius-lg) + 6px);
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+
+.activity-slide-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      135deg,
+      rgba(156, 175, 136, 0.15) 0%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    linear-gradient(
+      45deg,
+      rgba(233, 236, 225, 0.2) 0%,
+      rgba(255, 255, 255, 0) 65%
+    );
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.activity-slide-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 .activity-slide-header--simple {
-  gap: 0.65rem;
+  padding: clamp(20px, 2.4vw, 28px);
+  gap: clamp(12px, 0.85vw + 8px, 20px);
 }
 
 .activity-pill {
-  background: rgba(122, 132, 113, 0.18);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-sage) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 28%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   color: var(--primary-forest);
-  border: 1px solid rgba(122, 132, 113, 0.25);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .activity-title-group {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: clamp(12px, 1vw + 8px, 22px);
 }
 
 .activity-title-group h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 1.3rem + 0.9vw, 2.35rem);
+  font-size: clamp(1.65rem, 1.3rem + 1vw, 2.35rem);
+  letter-spacing: -0.01em;
   color: var(--forest-shadow);
 }
 
 .activity-duration {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.8rem;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
   border-radius: 999px;
-  background: rgba(122, 132, 113, 0.15);
+  background: color-mix(in srgb, var(--primary-sage) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 35%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   color: var(--forest-shadow);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .activity-overview {
   margin: 0;
-  max-width: 60ch;
+  max-width: 68ch;
   color: var(--ink-muted);
   font-size: var(--step-0);
+  line-height: 1.65;
 }
 
 .activity-overview--subtitle {
   font-style: italic;
-  color: color-mix(in srgb, var(--ink-muted) 85%, #000 15%);
+  color: color-mix(in srgb, var(--ink-muted) 80%, var(--forest-shadow) 20%);
 }
 
 .activity-body-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(24px, 4vw, 42px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 1.8vw + 18px, 44px);
+  align-items: start;
 }
+
 .activity-body-grid--single {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -4539,12 +4656,12 @@ ol {
 }
 
 .activity-columns-layout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  display: grid;
+  gap: clamp(20px, 1.5vw + 12px, 32px);
 }
+
 .activity-columns-layout--no-rubric {
-  gap: var(--space-3);
+  gap: clamp(16px, 1.2vw + 8px, 24px);
 }
 
 .activity-rubric--wide {
@@ -4560,85 +4677,51 @@ ol {
 
 .activity-columns {
   display: grid;
-  gap: var(--space-4);
+  gap: clamp(16px, 1.1vw + 10px, 26px);
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .activity-column-card {
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(122, 132, 113, 0.18);
-  box-shadow: var(--shadow-1);
-  padding: clamp(18px, 3vw, 26px);
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+  gap: clamp(12px, 0.9vw + 8px, 20px);
 }
 
 .activity-column-card h4 {
   margin: 0;
   font-family: var(--font-display);
   color: var(--forest-shadow);
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.3rem);
 }
 
 .activity-column-list {
   margin: 0;
   padding-left: 1.1rem;
   display: grid;
-  gap: 0.55rem;
+  gap: clamp(10px, 0.7vw + 6px, 18px);
 }
 
 .activity-column-list li {
-  background: rgba(156, 175, 136, 0.16);
+  background: color-mix(in srgb, var(--primary-sage) 16%, white 84%);
   border-radius: var(--radius);
-  padding: 0.55rem 0.75rem;
+  padding: 0.65rem 0.85rem;
   border: 1px solid rgba(122, 132, 113, 0.2);
   list-style-position: inside;
-}
-
-.activity-body--simple {
-  background: rgba(255, 255, 255, 0.82);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(122, 132, 113, 0.15);
-  padding: clamp(24px, 3vw, 36px);
-  box-shadow: var(--shadow-1);
-}
-
-.activity-instructions,
-.activity-rubric {
-  background: rgba(255, 255, 255, 0.82);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(122, 132, 113, 0.15);
-  padding: clamp(20px, 3vw, 32px);
-  box-shadow: var(--shadow-1);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.activity-instructions h3,
-.activity-rubric h3 {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-display);
-  color: var(--forest-shadow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .activity-step-list {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 1.3rem;
   display: grid;
-  gap: 0.75rem;
+  gap: clamp(12px, 0.9vw + 8px, 20px);
 }
 
 .activity-step-list li {
-  background: rgba(156, 175, 136, 0.15);
-  padding: 0.75rem 0.85rem;
+  background: color-mix(in srgb, var(--primary-sage) 14%, white 86%);
+  padding: 0.85rem 1rem;
   border-radius: var(--radius);
   border: 1px solid rgba(122, 132, 113, 0.22);
   list-style-position: inside;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .activity-step-list li::marker {
@@ -4927,47 +5010,52 @@ ol {
 .rubric-levels {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: clamp(10px, 0.8vw + 6px, 16px);
 }
 
 .level-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  background: rgba(122, 132, 113, 0.18);
+  background: color-mix(in srgb, var(--primary-sage) 22%, white 78%);
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 35%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
   color: var(--forest-shadow);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .rubric-criteria {
   display: grid;
-  gap: var(--space-4);
+  gap: clamp(14px, 1vw + 8px, 24px);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .rubric-card {
   border-radius: var(--radius);
-  border: 1px solid rgba(122, 132, 113, 0.18);
-  padding: var(--space-4);
-  background: rgba(248, 246, 240, 0.65);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  padding: clamp(16px, 1.4vw + 8px, 24px);
+  background: color-mix(in srgb, var(--primary-sage) 14%, white 86%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
   display: grid;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .rubric-card h4 {
   margin: 0;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);
   color: var(--forest-shadow);
 }
 
 .rubric-card p {
   margin: 0;
-  color: var(--ink-muted);
+  color: color-mix(in srgb, var(--forest-shadow) 78%, #000 10%);
+  line-height: 1.55;
 }
 
 .rubric-criteria.is-condensed .rubric-card p {
@@ -4976,30 +5064,64 @@ ol {
 
 .activity-empty {
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 1.25rem;
   border-radius: var(--radius);
-  background: rgba(233, 236, 225, 0.4);
-  border: 1px dashed rgba(122, 132, 113, 0.5);
+  background: color-mix(in srgb, var(--primary-sage) 10%, white 90%);
+  border: 1px dashed rgba(122, 132, 113, 0.45);
   color: var(--ink-muted);
   text-align: center;
+  font-style: italic;
 }
 
 .activity-slide-footer {
+  position: relative;
+  z-index: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4);
+  gap: clamp(12px, 1vw + 8px, 24px);
   margin-top: auto;
-  padding-top: var(--space-4);
-  border-top: 1px solid rgba(122, 132, 113, 0.2);
+  padding: clamp(18px, 2vw, 26px);
+  background: var(--soft-white);
+  border-radius: calc(var(--radius-lg) + 4px);
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  box-shadow: var(--shadow-1);
+  flex-wrap: wrap;
+}
+
+.activity-slide-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.activity-slide-footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    rgba(233, 236, 225, 0.2) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0.6;
+  z-index: -1;
 }
 
 .activity-slide-footer .activity-status-message {
   min-height: 1.2em;
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+  flex: 1 1 240px;
+  margin: 0;
 }
 
 .activity-slide-footer .activity-actions {
   justify-content: flex-end;
+  flex: 1 1 260px;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .activity-slide-footer .activity-btn {
