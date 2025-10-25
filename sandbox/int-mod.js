@@ -125,7 +125,7 @@ let deckToastRoot;
 let deckStatusEl;
 let stageUtilityCluster;
 let blankToolbarHost;
-let activeCanvasInsertController;
+let canvasInsertOverlay;
 
 const EDITABLE_INLINE_TAGS = new Set([
   "A",
@@ -619,19 +619,20 @@ function ensureBlankToolbarHost() {
   if (blankToolbarHost instanceof HTMLElement && blankToolbarHost.isConnected) {
     return blankToolbarHost;
   }
-  const cluster = ensureStageUtilityCluster();
-  if (!(cluster instanceof HTMLElement)) {
-    return null;
-  }
-  const existing = cluster.querySelector('[data-role="blank-toolbar-host"]');
+  const existing = stageViewport.querySelector('[data-role="blank-toolbar-host"]');
   if (existing instanceof HTMLElement) {
     blankToolbarHost = existing;
     return blankToolbarHost;
   }
   const host = document.createElement('div');
-  host.className = 'canvas-tools-host';
+  host.className = 'blank-toolbar-host';
   host.dataset.role = 'blank-toolbar-host';
-  cluster.appendChild(host);
+  const utilities = stageViewport.querySelector('[data-role="stage-utilities"]');
+  if (utilities instanceof HTMLElement) {
+    stageViewport.insertBefore(host, utilities);
+  } else {
+    stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
+  }
   blankToolbarHost = host;
   return blankToolbarHost;
 }
@@ -699,260 +700,12 @@ function getActiveBlankSlide() {
   return null;
 }
 
-function ensureCanvasToolbarMenuState(toolbar) {
-  if (!(toolbar instanceof HTMLElement)) {
-    return null;
-  }
-
-  const existing = toolbar.__deckCanvasMenuState;
-  if (existing) {
-    return existing;
-  }
-
-  const menus = new Map();
-  const triggers = new Map();
-
-  toolbar.querySelectorAll('[data-canvas-menu]').forEach((menu) => {
-    if (!(menu instanceof HTMLElement)) {
-      return;
-    }
-    const menuName = menu.dataset.canvasMenu;
-    if (!menuName || menus.has(menuName)) {
-      return;
-    }
-    menus.set(menuName, menu);
-    menu.hidden = true;
-    menu.setAttribute('data-expanded', 'false');
-  });
-
-  toolbar.querySelectorAll('[data-canvas-menu-trigger]').forEach((trigger) => {
-    if (!(trigger instanceof HTMLButtonElement)) {
-      return;
-    }
-    const menuName = trigger.dataset.canvasMenuTrigger;
-    if (!menuName || triggers.has(menuName)) {
-      return;
-    }
-    triggers.set(menuName, trigger);
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.classList.remove('is-active');
-  });
-
-  const state = { openMenu: null };
-  let activeTrigger = null;
-
-  const syncMenuVisibility = () => {
-    menus.forEach((menu, name) => {
-      const expanded = state.openMenu === name;
-      menu.hidden = !expanded;
-      menu.setAttribute('data-expanded', expanded ? 'true' : 'false');
-      const trigger = triggers.get(name);
-      if (trigger instanceof HTMLButtonElement) {
-        trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        trigger.classList.toggle('is-active', expanded);
-      }
-    });
-    toolbar.classList.toggle('menu-open', Boolean(state.openMenu));
-  };
-
-  const closeMenus = ({ restoreFocus = false } = {}) => {
-    const previousTrigger = activeTrigger;
-    state.openMenu = null;
-    activeTrigger = null;
-    syncMenuVisibility();
-    if (
-      restoreFocus &&
-      previousTrigger instanceof HTMLElement &&
-      typeof previousTrigger.focus === 'function'
-    ) {
-      if (typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(() => {
-          previousTrigger.focus({ preventScroll: true });
-        });
-      } else {
-        previousTrigger.focus();
-      }
-    }
-  };
-
-  const openMenu = (name, trigger) => {
-    if (!menus.has(name)) {
-      return;
-    }
-    state.openMenu = name;
-    activeTrigger = trigger instanceof HTMLElement ? trigger : triggers.get(name) ?? null;
-    syncMenuVisibility();
-  };
-
-  const toggleMenu = (name, trigger) => {
-    if (!name) {
-      return;
-    }
-    if (state.openMenu === name) {
-      closeMenus();
-    } else {
-      openMenu(name, trigger);
-    }
-  };
-
-  const handleTriggerClick = (event) => {
-    const target =
-      event.target instanceof HTMLElement
-        ? event.target.closest('[data-canvas-menu-trigger]')
-        : null;
-    if (!(target instanceof HTMLButtonElement)) {
-      return;
-    }
-    const menuName = target.dataset.canvasMenuTrigger;
-    if (!menuName || target.disabled || target.getAttribute('aria-disabled') === 'true') {
-      return;
-    }
-    event.preventDefault();
-    toggleMenu(menuName, target);
-  };
-
-  const handleToolbarKeyDown = (event) => {
-    if (event.key === 'Escape' && state.openMenu) {
-      event.preventDefault();
-      closeMenus({ restoreFocus: true });
-    }
-  };
-
-  const handleDocumentPointerDown = (event) => {
-    if (!(event.target instanceof Node)) {
-      return;
-    }
-    if (toolbar.contains(event.target)) {
-      return;
-    }
-    const element = event.target instanceof HTMLElement ? event.target : null;
-    if (element?.closest('.blank-toolbar-item')) {
-      return;
-    }
-    closeMenus();
-  };
-
-  const handleDocumentFocusIn = (event) => {
-    if (!(event.target instanceof Node)) {
-      return;
-    }
-    if (toolbar.contains(event.target)) {
-      return;
-    }
-    const element = event.target instanceof HTMLElement ? event.target : null;
-    if (element?.closest('.blank-toolbar-item')) {
-      return;
-    }
-    closeMenus();
-  };
-
-  toolbar.addEventListener('click', handleTriggerClick);
-  toolbar.addEventListener('keydown', handleToolbarKeyDown);
-  if (typeof document !== 'undefined') {
-    document.addEventListener('pointerdown', handleDocumentPointerDown, true);
-    document.addEventListener('focusin', handleDocumentFocusIn);
-  }
-
-  const setExpanded = (value) => {
-    if (!value) {
-      closeMenus();
-    } else if (typeof value === 'string') {
-      openMenu(value);
-    }
-  };
-
-  const menuState = {
-    state,
-    closeMenus,
-    openMenu: (name) => openMenu(name),
-    toggleMenu: (name) => toggleMenu(name),
-    destroy: () => {
-      toolbar.removeEventListener('click', handleTriggerClick);
-      toolbar.removeEventListener('keydown', handleToolbarKeyDown);
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('pointerdown', handleDocumentPointerDown, true);
-        document.removeEventListener('focusin', handleDocumentFocusIn);
-      }
-      if (toolbar.__deckCanvasMenuState === menuState) {
-        delete toolbar.__deckCanvasMenuState;
-      }
-      if (toolbar.__deckSetExpanded === setExpanded) {
-        delete toolbar.__deckSetExpanded;
-      }
-    },
-  };
-
-  toolbar.__deckCanvasMenuState = menuState;
-  toolbar.__deckSetExpanded = setExpanded;
-
-  closeMenus();
-
-  return menuState;
-}
-
 class CanvasInsertController {
-  static initialiseToolbar(toolbar) {
-    const registry = CanvasInsertController._initialisedToolbars;
-    if (!(toolbar instanceof HTMLElement) || registry.has(toolbar)) {
-      return;
-    }
-    registry.add(toolbar);
-
-    ensureCanvasToolbarMenuState(toolbar);
-
-    const insertList = toolbar.querySelector('[data-role="insert-option-list"]');
-    if (insertList instanceof HTMLElement && !insertList.dataset.initialised) {
-      insertList.dataset.initialised = 'true';
-      insertList.innerHTML = INSERT_MENU_OPTIONS.map(
-        (option) => `
-          <button type="button" class="canvas-insert-option" data-insert-action="${option.action}">
-            <span class="canvas-insert-option-icon" aria-hidden="true">
-              <i class="${option.icon}"></i>
-            </span>
-            <span class="canvas-insert-option-content">
-              <span class="canvas-insert-option-label">${option.label}</span>
-              <span class="canvas-insert-option-description">${option.description}</span>
-            </span>
-          </button>
-        `.trim(),
-      ).join('');
-    }
-
-    const handleInsertClick = (event) => {
-      const button =
-        event.target instanceof HTMLElement
-          ? event.target.closest('button[data-insert-action]')
-          : null;
-      if (!(button instanceof HTMLButtonElement)) {
-        return;
-      }
-      const action = button.dataset.insertAction;
-      if (!action) {
-        return;
-      }
-      event.preventDefault();
-      if (activeCanvasInsertController) {
-        const handled = activeCanvasInsertController.invoke(action, {
-          source: button,
-          originalEvent: event,
-        });
-        if (handled !== false) {
-          toolbar.__deckCanvasMenuState?.closeMenus?.();
-        }
-      }
-    };
-
-    toolbar.addEventListener('click', handleInsertClick);
-  }
-
-  constructor(slide, canvas, toolbar) {
+  constructor(slide, canvas) {
     this.slide = slide;
     this.canvas = canvas;
-    this.toolbar = toolbar instanceof HTMLElement ? toolbar : null;
     this.handlers = new Map();
-    if (this.toolbar) {
-      CanvasInsertController.initialiseToolbar(this.toolbar);
-    }
+    this.triggerListeners = new Map();
   }
 
   registerAction(action, handler) {
@@ -960,6 +713,26 @@ class CanvasInsertController {
       return;
     }
     this.handlers.set(action, handler);
+  }
+
+  registerTrigger(element, action) {
+    if (!(element instanceof HTMLElement) || typeof action !== 'string') {
+      return;
+    }
+    const listener = (event) => {
+      event.preventDefault();
+      this.invoke(action, { source: element, originalEvent: event });
+    };
+    element.addEventListener('click', listener);
+    this.triggerListeners.set(element, listener);
+  }
+
+  unregisterTrigger(element) {
+    const listener = this.triggerListeners.get(element);
+    if (listener) {
+      element.removeEventListener('click', listener);
+      this.triggerListeners.delete(element);
+    }
   }
 
   invoke(action, context = {}) {
@@ -979,56 +752,282 @@ class CanvasInsertController {
   }
 
   destroy() {
+    for (const [element, listener] of this.triggerListeners.entries()) {
+      element.removeEventListener('click', listener);
+    }
+    this.triggerListeners.clear();
     this.handlers.clear();
   }
 }
 
-CanvasInsertController._initialisedToolbars = new WeakSet();
+class CanvasInsertOverlay {
+  constructor(stage) {
+    this.stage = stage;
+    this.cluster = ensureStageUtilityCluster();
+    this.activeController = null;
+    this.panelId =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? `canvas-insert-${crypto.randomUUID()}`
+        : `canvas-insert-${Math.random().toString(16).slice(2, 8)}`;
+    this.activeIndex = -1;
+    this.isOpen = false;
+    this.createTrigger();
+    this.createPanel();
+    this.syncAvailability();
+    this.handleDocumentPointerDown = this.handleDocumentPointerDown.bind(this);
+    this.handleDocumentKeydown = this.handleDocumentKeydown.bind(this);
+    document.addEventListener('pointerdown', this.handleDocumentPointerDown);
+    document.addEventListener('keydown', this.handleDocumentKeydown);
+  }
 
-function getCanvasToolsToolbar() {
-  if (blankToolbarHost instanceof HTMLElement && blankToolbarHost.isConnected) {
-    const hostToolbar = blankToolbarHost.querySelector('[data-role="blank-toolbar"]');
-    if (hostToolbar instanceof HTMLElement) {
-      return hostToolbar;
+  createTrigger() {
+    if (!this.cluster) {
+      return;
+    }
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'stage-utility-btn canvas-insert-trigger';
+    trigger.setAttribute('aria-haspopup', 'menu');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = `
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span class="sr-only">Insert canvas item</span>
+    `;
+    trigger.title = 'Insert canvas item';
+    trigger.addEventListener('click', () => {
+      this.toggle();
+    });
+    trigger.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.open();
+      } else if (event.key === 'Escape') {
+        this.close({ focusTrigger: true });
+      }
+    });
+    this.cluster.appendChild(trigger);
+    this.trigger = trigger;
+  }
+
+  createPanel() {
+    if (!this.cluster) {
+      return;
+    }
+    const panel = document.createElement('div');
+    panel.className = 'canvas-insert-panel';
+    panel.id = this.panelId;
+    panel.setAttribute('role', 'menu');
+    panel.setAttribute('aria-label', 'Insert canvas items');
+    panel.hidden = true;
+    const list = document.createElement('div');
+    list.className = 'canvas-insert-options';
+    panel.appendChild(list);
+    this.options = [];
+    INSERT_MENU_OPTIONS.forEach((option) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'canvas-insert-option';
+      button.dataset.action = option.action;
+      button.setAttribute('role', 'menuitem');
+      button.tabIndex = -1;
+      button.innerHTML = `
+        <span class="canvas-insert-option-icon" aria-hidden="true">
+          <i class="${option.icon}"></i>
+        </span>
+        <span class="canvas-insert-option-content">
+          <span class="canvas-insert-option-label">${option.label}</span>
+          <span class="canvas-insert-option-description">${option.description}</span>
+        </span>
+      `;
+      button.addEventListener('click', () => {
+        this.handleOptionSelect(option.action, button);
+      });
+      this.options.push(button);
+      list.appendChild(button);
+    });
+    panel.addEventListener('keydown', (event) => {
+      this.handlePanelKeydown(event);
+    });
+    this.cluster.appendChild(panel);
+    if (this.trigger instanceof HTMLElement) {
+      this.trigger.setAttribute('aria-controls', panel.id);
+    }
+    this.panel = panel;
+  }
+
+  handleOptionSelect(action, button) {
+    if (!this.activeController) {
+      return;
+    }
+    const handled = this.activeController.invoke(action, { source: button });
+    if (handled !== false) {
+      this.close({ focusTrigger: false });
     }
   }
-  return stageViewport?.querySelector?.('[data-role="blank-toolbar"]') ?? null;
+
+  handlePanelKeydown(event) {
+    if (!this.isOpen || !this.options.length) {
+      return;
+    }
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight': {
+        event.preventDefault();
+        this.focusOption((this.activeIndex + 1) % this.options.length);
+        break;
+      }
+      case 'ArrowUp':
+      case 'ArrowLeft': {
+        event.preventDefault();
+        this.focusOption(
+          this.activeIndex > 0 ? this.activeIndex - 1 : this.options.length - 1,
+        );
+        break;
+      }
+      case 'Home': {
+        event.preventDefault();
+        this.focusOption(0);
+        break;
+      }
+      case 'End': {
+        event.preventDefault();
+        this.focusOption(this.options.length - 1);
+        break;
+      }
+      case 'Escape': {
+        event.preventDefault();
+        this.close({ focusTrigger: true });
+        break;
+      }
+      case 'Tab': {
+        this.close({ focusTrigger: false });
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  handleDocumentPointerDown(event) {
+    if (!this.isOpen) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+    if (this.panel?.contains(target) || this.trigger?.contains(target)) {
+      return;
+    }
+    this.close({ focusTrigger: false });
+  }
+
+  handleDocumentKeydown(event) {
+    if (!this.isOpen) {
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.close({ focusTrigger: true });
+    }
+  }
+
+  focusOption(index) {
+    if (!Array.isArray(this.options) || !this.options.length) {
+      return;
+    }
+    const clamped = Math.max(0, Math.min(index, this.options.length - 1));
+    const target = this.options[clamped];
+    if (target instanceof HTMLElement) {
+      this.activeIndex = clamped;
+      target.focus({ preventScroll: true });
+    }
+  }
+
+  open() {
+    if (!this.activeController || !this.activeController.isAvailable()) {
+      return;
+    }
+    if (this.isOpen) {
+      return;
+    }
+    this.isOpen = true;
+    this.syncVisibility();
+    requestAnimationFrame(() => {
+      this.focusOption(0);
+    });
+  }
+
+  close({ focusTrigger = false } = {}) {
+    if (!this.isOpen) {
+      return;
+    }
+    this.isOpen = false;
+    this.activeIndex = -1;
+    this.syncVisibility();
+    if (focusTrigger && this.trigger instanceof HTMLElement) {
+      this.trigger.focus({ preventScroll: true });
+    }
+  }
+
+  toggle() {
+    if (this.isOpen) {
+      this.close({ focusTrigger: false });
+    } else {
+      this.open();
+    }
+  }
+
+  syncVisibility() {
+    if (!(this.panel instanceof HTMLElement)) {
+      return;
+    }
+    this.panel.hidden = !this.isOpen;
+    this.panel.classList.toggle('is-visible', this.isOpen);
+    if (this.trigger instanceof HTMLElement) {
+      this.trigger.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
+    }
+  }
+
+  syncAvailability() {
+    const available = Boolean(this.activeController?.isAvailable?.());
+    if (this.trigger instanceof HTMLButtonElement) {
+      this.trigger.hidden = !available;
+      this.trigger.disabled = !available;
+      this.trigger.setAttribute('aria-disabled', available ? 'false' : 'true');
+    }
+    if (!available) {
+      this.close({ focusTrigger: false });
+    }
+  }
+
+  setActiveController(controller) {
+    this.activeController = controller ?? null;
+    this.syncAvailability();
+  }
+}
+
+function ensureCanvasInsertOverlay() {
+  if (!(stageViewport instanceof HTMLElement)) {
+    return null;
+  }
+  if (!(canvasInsertOverlay instanceof CanvasInsertOverlay)) {
+    canvasInsertOverlay = new CanvasInsertOverlay(stageViewport);
+  }
+  return canvasInsertOverlay;
 }
 
 function updateCanvasInsertOverlay() {
+  const overlay = ensureCanvasInsertOverlay();
+  if (!overlay) {
+    return;
+  }
   const activeSlide = slides?.[currentSlideIndex];
   const controller =
     activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank'
       ? activeSlide.__deckCanvasInsertController ?? null
       : null;
-  activeCanvasInsertController = controller;
-
-  const toolbar = getCanvasToolsToolbar();
-  if (toolbar instanceof HTMLElement) {
-    CanvasInsertController.initialiseToolbar(toolbar);
-  }
-
-  const insertTrigger = toolbar?.querySelector('[data-canvas-menu-trigger="insert"]');
-  const insertMenu = toolbar?.querySelector('[data-canvas-menu="insert"]');
-  const available = Boolean(controller?.isAvailable?.());
-
-  if (insertTrigger instanceof HTMLButtonElement) {
-    insertTrigger.hidden = !available;
-    insertTrigger.disabled = !available;
-    insertTrigger.setAttribute('aria-disabled', available ? 'false' : 'true');
-    if (!available) {
-      insertTrigger.setAttribute('aria-expanded', 'false');
-    }
-  }
-
-  if (!available && toolbar?.__deckCanvasMenuState?.closeMenus) {
-    toolbar.__deckCanvasMenuState.closeMenus();
-  }
-
-  if (!available && insertMenu instanceof HTMLElement) {
-    insertMenu.hidden = true;
-    insertMenu.setAttribute('data-expanded', 'false');
-  }
+  overlay.setActiveController(controller);
 }
 
 const BUILDER_LAYOUT_DEFAULTS = {
@@ -2191,200 +2190,115 @@ export function attachBlankSlideEvents(slide) {
       target.insertAdjacentHTML(
         "beforeend",
         `
-          <div class="canvas-tools blank-toolbar" data-role="blank-toolbar" data-toolbar-version="4">
-            <div class="canvas-tools-bar">
-              <div class="canvas-tools-group canvas-tools-group--insert">
-                <button
-                  class="canvas-tools-trigger"
-                  type="button"
-                  data-canvas-menu-trigger="insert"
-                  aria-expanded="false"
-                >
-                  <span class="canvas-tools-trigger-icon" aria-hidden="true">
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span class="canvas-tools-trigger-label">Add</span>
-                  <span class="canvas-tools-trigger-caret" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </span>
-                </button>
-              </div>
-              <p class="canvas-tools-empty" data-role="toolbar-empty">
+          <div class="blank-toolbar" data-role="blank-toolbar" data-toolbar-version="3">
+            <button
+              class="blank-toolbar-toggle"
+              type="button"
+              data-action="toggle-toolbar"
+              aria-expanded="false"
+            >
+              <span class="blank-toolbar-toggle-icon" aria-hidden="true">
+                <i class="fa-solid fa-sliders"></i>
+              </span>
+              <span class="blank-toolbar-toggle-label">Canvas tools</span>
+              <span class="blank-toolbar-toggle-caret" aria-hidden="true">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </button>
+            <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
+              <p class="blank-toolbar-empty" data-role="toolbar-empty">
                 Select a canvas item to edit its appearance. Choose a tool icon to continue.
               </p>
-              <p class="canvas-tools-selection" data-role="toolbar-selection" hidden>
-                <span class="canvas-tools-selection-summary" data-role="selection-summary"></span>
-                <span class="canvas-tools-selection-detail" data-role="selection-meta"></span>
+              <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden>
+                <span class="blank-toolbar-selection-summary" data-role="selection-summary"></span>
+                <span class="blank-toolbar-selection-detail" data-role="selection-meta"></span>
               </p>
-              <div class="canvas-tools-group canvas-tools-group--format">
-                <button
-                  class="canvas-tools-trigger"
-                  type="button"
-                  data-canvas-menu-trigger="textbox"
-                  aria-expanded="false"
-                  aria-disabled="true"
-                  disabled
-                >
-                  <span class="canvas-tools-trigger-icon" aria-hidden="true">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </span>
-                  <span class="canvas-tools-trigger-label">Textbox</span>
-                  <span class="canvas-tools-trigger-caret" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </span>
-                </button>
-                <button
-                  class="canvas-tools-trigger"
-                  type="button"
-                  data-canvas-menu-trigger="table"
-                  aria-expanded="false"
-                  aria-disabled="true"
-                  disabled
-                >
-                  <span class="canvas-tools-trigger-icon" aria-hidden="true">
-                    <i class="fa-solid fa-table"></i>
-                  </span>
-                  <span class="canvas-tools-trigger-label">Table</span>
-                  <span class="canvas-tools-trigger-caret" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </span>
-                </button>
-                <button
-                  class="canvas-tools-trigger"
-                  type="button"
-                  data-canvas-menu-trigger="mindmap"
-                  aria-expanded="false"
-                  aria-disabled="true"
-                  disabled
-                >
-                  <span class="canvas-tools-trigger-icon" aria-hidden="true">
-                    <i class="fa-solid fa-diagram-project"></i>
-                  </span>
-                  <span class="canvas-tools-trigger-label">Mind map</span>
-                  <span class="canvas-tools-trigger-caret" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </span>
-                </button>
-                <button
-                  class="canvas-tools-trigger"
-                  type="button"
-                  data-canvas-menu-trigger="image"
-                  aria-expanded="false"
-                  aria-disabled="true"
-                  disabled
-                >
-                  <span class="canvas-tools-trigger-icon" aria-hidden="true">
-                    <i class="fa-solid fa-image"></i>
-                  </span>
-                  <span class="canvas-tools-trigger-label">Image</span>
-                  <span class="canvas-tools-trigger-caret" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </span>
-                </button>
-              </div>
-            </div>
-            <div class="canvas-tools-menus">
-              <section class="canvas-tools-menu" data-canvas-menu="insert" hidden>
-                <div class="canvas-tools-menu-body">
-                  <div class="canvas-insert-options" data-role="insert-option-list"></div>
-                </div>
+              <div
+                class="blank-toolbar-tabs"
+                data-role="toolbar-tabs"
+                role="tablist"
+                hidden
+              ></div>
+              <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
+                <h3 class="blank-toolbar-heading">Textbox style</h3>
+                <div
+                  class="blank-toolbar-actions blank-toolbar-actions--tight"
+                  data-role="textbox-formatting"
+                  role="toolbar"
+                  aria-label="Textbox formatting"
+                ></div>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="textbox"
+                ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="textbox-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
               </section>
-              <section class="canvas-tools-menu" data-canvas-menu="textbox" hidden>
-                <div class="canvas-tools-menu-body">
-                  <section class="blank-toolbar-section" data-tools-for="textbox">
-                    <h3 class="blank-toolbar-heading">Textbox style</h3>
-                    <div
-                      class="blank-toolbar-actions blank-toolbar-actions--tight"
-                      data-role="textbox-formatting"
-                      role="toolbar"
-                      aria-label="Textbox formatting"
-                    ></div>
-                    <div
-                      class="blank-toolbar-swatches textbox-color-options"
-                      data-role="toolbar-color-options"
-                      data-tools-for="textbox"
-                    ></div>
-                    <label class="blank-toolbar-checkbox">
-                      <input type="checkbox" data-role="textbox-shadow" />
-                      <span>Add drop shadow</span>
-                    </label>
-                  </section>
+              <section class="blank-toolbar-section" data-tools-for="table" hidden>
+                <h3 class="blank-toolbar-heading">Table style</h3>
+                <div
+                  class="blank-toolbar-actions"
+                  data-role="table-structure"
+                  role="group"
+                  aria-label="Table structure"
+                >
+                  <button type="button" class="blank-toolbar-action" data-action="table-add-column">
+                    <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+                    <span>Add column</span>
+                  </button>
+                  <button type="button" class="blank-toolbar-action" data-action="table-add-row">
+                    <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
+                    <span>Add row</span>
+                  </button>
                 </div>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="table"
+                ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="table-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
               </section>
-              <section class="canvas-tools-menu" data-canvas-menu="table" hidden>
-                <div class="canvas-tools-menu-body">
-                  <section class="blank-toolbar-section" data-tools-for="table">
-                    <h3 class="blank-toolbar-heading">Table style</h3>
-                    <div
-                      class="blank-toolbar-actions"
-                      data-role="table-structure"
-                      role="group"
-                      aria-label="Table structure"
-                    >
-                      <button type="button" class="blank-toolbar-action" data-action="table-add-column">
-                        <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
-                        <span>Add column</span>
-                      </button>
-                      <button type="button" class="blank-toolbar-action" data-action="table-add-row">
-                        <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
-                        <span>Add row</span>
-                      </button>
-                    </div>
-                    <div
-                      class="blank-toolbar-swatches textbox-color-options"
-                      data-role="toolbar-color-options"
-                      data-tools-for="table"
-                    ></div>
-                    <label class="blank-toolbar-checkbox">
-                      <input type="checkbox" data-role="table-shadow" />
-                      <span>Add drop shadow</span>
-                    </label>
-                  </section>
-                </div>
+              <section class="blank-toolbar-section" data-tools-for="mindmap" hidden>
+                <h3 class="blank-toolbar-heading">Branch colour</h3>
+                <p class="blank-toolbar-help">
+                  Changes the colour for the selected branch.
+                </p>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="mindmap"
+                ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="mindmap-shadow" />
+                  <span>Emphasise branch</span>
+                </label>
               </section>
-              <section class="canvas-tools-menu" data-canvas-menu="mindmap" hidden>
-                <div class="canvas-tools-menu-body">
-                  <section class="blank-toolbar-section" data-tools-for="mindmap">
-                    <h3 class="blank-toolbar-heading">Branch colour</h3>
-                    <p class="blank-toolbar-help">
-                      Changes the colour for the selected branch.
-                    </p>
-                    <div
-                      class="blank-toolbar-swatches textbox-color-options"
-                      data-role="toolbar-color-options"
-                      data-tools-for="mindmap"
-                    ></div>
-                    <label class="blank-toolbar-checkbox">
-                      <input type="checkbox" data-role="mindmap-shadow" />
-                      <span>Emphasise branch</span>
-                    </label>
-                  </section>
-                </div>
-              </section>
-              <section class="canvas-tools-menu" data-canvas-menu="image" hidden>
-                <div class="canvas-tools-menu-body">
-                  <section class="blank-toolbar-section" data-tools-for="image">
-                    <h3 class="blank-toolbar-heading">Image adjustments</h3>
-                    <label class="blank-toolbar-range">
-                      <span>Resize</span>
-                      <input
-                        type="range"
-                        min="60"
-                        max="160"
-                        step="10"
-                        value="100"
-                        data-role="image-size"
-                      />
-                      <span class="blank-toolbar-range-value" data-role="image-size-value">
-                        100%
-                      </span>
-                    </label>
-                    <label class="blank-toolbar-checkbox">
-                      <input type="checkbox" data-role="image-shadow" />
-                      <span>Add drop shadow</span>
-                    </label>
-                  </section>
-                </div>
+              <section class="blank-toolbar-section" data-tools-for="image" hidden>
+                <h3 class="blank-toolbar-heading">Image adjustments</h3>
+                <label class="blank-toolbar-range">
+                  <span>Resize</span>
+                  <input
+                    type="range"
+                    min="60"
+                    max="160"
+                    step="10"
+                    value="100"
+                    data-role="image-size"
+                  />
+                  <span class="blank-toolbar-range-value" data-role="image-size-value">
+                    100%
+                  </span>
+                </label>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="image-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
               </section>
             </div>
           </div>
@@ -2421,7 +2335,7 @@ export function attachBlankSlideEvents(slide) {
     return;
   }
 
-  const insertController = new CanvasInsertController(slide, canvas, toolbar);
+  const insertController = new CanvasInsertController(slide, canvas);
   slide.__deckCanvasInsertController = insertController;
 
   const cleanupTasks = [];
@@ -2439,36 +2353,108 @@ export function attachBlankSlideEvents(slide) {
     updateCanvasInsertOverlay();
   });
 
-  const toolbarMenuState = toolbar?.__deckCanvasMenuState ?? null;
-  const toolbarEmpty = toolbar?.querySelector('[data-role="toolbar-empty"]');
-  const toolbarSelectionLabel = toolbar?.querySelector('[data-role="toolbar-selection"]');
-  const toolbarSelectionSummary = toolbar?.querySelector('[data-role="selection-summary"]');
-  const toolbarSelectionDetail = toolbar?.querySelector('[data-role="selection-meta"]');
-  const formatTypes = ["textbox", "table", "mindmap", "image"];
-  const menuTriggers = new Map();
-  if (toolbar instanceof HTMLElement) {
-    formatTypes.forEach((type) => {
-      const trigger = toolbar.querySelector(
-        `[data-canvas-menu-trigger="${type}"]`,
-      );
-      if (trigger instanceof HTMLButtonElement) {
-        menuTriggers.set(type, trigger);
-      }
-    });
-  }
-  const colorContainers = Array.from(
-    toolbar?.querySelectorAll?.('[data-role="toolbar-color-options"]') ?? [],
+  const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
+  const toolbarPanel = toolbar?.querySelector('[data-role="toolbar-panel"]');
+  const toolbarEmpty = toolbarPanel?.querySelector('[data-role="toolbar-empty"]');
+  const toolbarSelectionLabel = toolbarPanel?.querySelector(
+    '[data-role="toolbar-selection"]',
   );
-  const textboxFormattingContainer = toolbar?.querySelector(
+  const toolbarSelectionSummary = toolbarSelectionLabel?.querySelector(
+    '[data-role="selection-summary"]',
+  );
+  const toolbarSelectionDetail = toolbarSelectionLabel?.querySelector(
+    '[data-role="selection-meta"]',
+  );
+  const toolbarTabs = toolbarPanel?.querySelector('[data-role="toolbar-tabs"]');
+  const toolbarSections = Array.from(
+    toolbarPanel?.querySelectorAll?.('.blank-toolbar-section[data-tools-for]') ?? [],
+  );
+  const colorContainers = Array.from(
+    toolbarPanel?.querySelectorAll?.('[data-role="toolbar-color-options"]') ?? [],
+  );
+  const textboxFormattingContainer = toolbarPanel?.querySelector(
     '[data-role="textbox-formatting"]',
   );
-  const tableStructureContainer = toolbar?.querySelector('[data-role="table-structure"]');
-  const textboxShadowToggle = toolbar?.querySelector('[data-role="textbox-shadow"]');
-  const tableShadowToggle = toolbar?.querySelector('[data-role="table-shadow"]');
-  const mindmapShadowToggle = toolbar?.querySelector('[data-role="mindmap-shadow"]');
-  const imageShadowToggle = toolbar?.querySelector('[data-role="image-shadow"]');
-  const imageSizeInput = toolbar?.querySelector('[data-role="image-size"]');
-  const imageSizeValue = toolbar?.querySelector('[data-role="image-size-value"]');
+  const tableStructureContainer = toolbarPanel?.querySelector('[data-role="table-structure"]');
+  const textboxShadowToggle = toolbarPanel?.querySelector('[data-role="textbox-shadow"]');
+  const tableShadowToggle = toolbarPanel?.querySelector('[data-role="table-shadow"]');
+  const mindmapShadowToggle = toolbarPanel?.querySelector('[data-role="mindmap-shadow"]');
+  const imageShadowToggle = toolbarPanel?.querySelector('[data-role="image-shadow"]');
+  const imageSizeInput = toolbarPanel?.querySelector('[data-role="image-size"]');
+  const imageSizeValue = toolbarPanel?.querySelector('[data-role="image-size-value"]');
+
+  const TOOLBAR_TAB_DETAILS = new Map([
+    ["textbox", { icon: "fa-solid fa-pen-to-square", label: "Textbox tools" }],
+    ["table", { icon: "fa-solid fa-table", label: "Table tools" }],
+    [
+      "mindmap",
+      { icon: "fa-solid fa-diagram-project", label: "Mind map tools" },
+    ],
+    ["image", { icon: "fa-solid fa-image", label: "Image tools" }],
+  ]);
+
+  const toolbarInstanceId =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `toolbar-${Math.random().toString(36).slice(2, 11)}`;
+
+  toolbarSections.forEach((section, index) => {
+    if (!(section instanceof HTMLElement)) {
+      return;
+    }
+    const targetType = section.dataset.toolsFor ?? `section-${index}`;
+    if (!section.id) {
+      section.id = `blank-tools-${targetType}-${toolbarInstanceId}`;
+    }
+    section.setAttribute("role", "tabpanel");
+    section.setAttribute("tabindex", "-1");
+    section.setAttribute("aria-hidden", "true");
+  });
+
+  if (toolbarTabs instanceof HTMLElement) {
+    toolbarTabs.innerHTML = "";
+    toolbarTabs.setAttribute("aria-label", "Canvas item tools");
+    const created = new Set();
+    toolbarSections.forEach((section, index) => {
+      if (!(section instanceof HTMLElement)) {
+        return;
+      }
+      const type = section.dataset.toolsFor;
+      if (!type || created.has(type) || !TOOLBAR_TAB_DETAILS.has(type)) {
+        return;
+      }
+      created.add(type);
+      const details = TOOLBAR_TAB_DETAILS.get(type);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "blank-toolbar-tab";
+      button.dataset.toolsTarget = type;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", "false");
+      if (section.id) {
+        button.setAttribute("aria-controls", section.id);
+        const tabId = `${section.id}-tab`;
+        button.id = tabId;
+        section.setAttribute("aria-labelledby", tabId);
+      }
+      if (details?.label) {
+        button.title = details.label;
+      }
+      const iconSpan = document.createElement("span");
+      iconSpan.className = "blank-toolbar-tab-icon";
+      iconSpan.setAttribute("aria-hidden", "true");
+      iconSpan.innerHTML = `<i class="${details?.icon ?? ""}"></i>`;
+      button.appendChild(iconSpan);
+      const labelSpan = document.createElement("span");
+      labelSpan.className = "sr-only";
+      labelSpan.textContent = details?.label ?? type;
+      button.appendChild(labelSpan);
+      toolbarTabs.appendChild(button);
+    });
+    if (!toolbarTabs.children.length) {
+      toolbarTabs.hidden = true;
+    }
+  }
 
   const SELECTED_CLASS = "blank-toolbar-selected";
   const CANVAS_ITEM_CLASS = "blank-toolbar-item";
@@ -2488,6 +2474,7 @@ export function attachBlankSlideEvents(slide) {
     summary: "",
     detail: "",
   };
+  let activeToolsType = null;
   let imageSizeReference = null;
   let storedTextboxRange = null;
 
@@ -2622,6 +2609,81 @@ export function attachBlankSlideEvents(slide) {
     selection.summary = summary;
     selection.detail = detail;
   };
+
+  let toolbarExpanded = false;
+  if (toolbarToggle instanceof HTMLElement) {
+    toolbarExpanded = toolbarToggle.getAttribute("aria-expanded") === "true";
+  } else if (toolbar instanceof HTMLElement) {
+    toolbarExpanded = toolbar.classList.contains("is-expanded");
+  }
+
+  const setToolbarExpanded = (expanded) => {
+    if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
+      return;
+    }
+    toolbarExpanded = Boolean(expanded);
+    toolbar.classList.toggle("is-expanded", toolbarExpanded);
+    toolbarToggle.setAttribute("aria-expanded", toolbarExpanded ? "true" : "false");
+    if (toolbarPanel instanceof HTMLElement) {
+      toolbarPanel.hidden = !toolbarExpanded;
+    }
+  };
+
+  if (toolbar instanceof HTMLElement) {
+    toolbar.__deckSetExpanded = (expanded) => {
+      setToolbarExpanded(expanded);
+    };
+    registerCleanup(() => {
+      delete toolbar.__deckSetExpanded;
+    });
+  }
+
+  const setActiveToolsType = (type, { force = false } = {}) => {
+    if (typeof type !== "string" || !type.trim()) {
+      activeToolsType = null;
+      return;
+    }
+    const targetType = type.trim();
+    if (!force && activeToolsType === targetType) {
+      return;
+    }
+    activeToolsType = targetType;
+  };
+
+  const updateToolbarTabs = () => {
+    if (!(toolbarTabs instanceof HTMLElement)) {
+      return;
+    }
+    const buttons = Array.from(
+      toolbarTabs.querySelectorAll?.('button[data-tools-target]') ?? [],
+    );
+    if (!buttons.length) {
+      toolbarTabs.hidden = true;
+      return;
+    }
+    const hasSelection = Boolean(selection.type);
+    let visibleCount = 0;
+    buttons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const targetType = button.dataset.toolsTarget ?? "";
+      const isRelevant = hasSelection && targetType === selection.type;
+      const isActive = isRelevant && activeToolsType === targetType;
+      button.disabled = !isRelevant;
+      button.tabIndex = isRelevant ? 0 : -1;
+      button.setAttribute("aria-disabled", isRelevant ? "false" : "true");
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.classList.toggle("is-active", isActive);
+      button.hidden = !hasSelection;
+      if (isRelevant) {
+        visibleCount += 1;
+      }
+    });
+    toolbarTabs.hidden = !hasSelection || visibleCount === 0;
+  };
+
+  setToolbarExpanded(toolbarExpanded);
 
   const getToolbarPrompt = () => {
     if (!selection.type) {
@@ -2792,19 +2854,8 @@ export function attachBlankSlideEvents(slide) {
     updateSelectionMetadata();
     const activeElement = getSelectedElement();
     const hasSelection = Boolean(selection.type && activeElement);
-    let openMenuName = toolbarMenuState?.state?.openMenu ?? null;
-
-    if (openMenuName && openMenuName !== "insert" && openMenuName !== selection.type) {
-      toolbarMenuState?.closeMenus?.();
-      openMenuName = toolbarMenuState?.state?.openMenu ?? null;
-    }
-
-    const hasActiveSection =
-      hasSelection && typeof openMenuName === "string" && openMenuName === selection.type;
-
+    const hasActiveSection = hasSelection && Boolean(activeToolsType === selection.type);
     toolbar.classList.toggle("has-selection", hasSelection);
-    toolbar.classList.toggle("menu-open", Boolean(openMenuName));
-
     if (toolbarEmpty instanceof HTMLElement) {
       if (!hasSelection) {
         toolbarEmpty.hidden = false;
@@ -2816,7 +2867,6 @@ export function attachBlankSlideEvents(slide) {
         toolbarEmpty.hidden = true;
       }
     }
-
     if (toolbarSelectionLabel instanceof HTMLElement) {
       if (hasSelection) {
         toolbarSelectionLabel.hidden = false;
@@ -2847,20 +2897,18 @@ export function attachBlankSlideEvents(slide) {
         }
       }
     }
-
-    formatTypes.forEach((type) => {
-      const trigger = menuTriggers.get(type);
-      if (!(trigger instanceof HTMLButtonElement)) {
+    toolbarSections.forEach((section) => {
+      if (!(section instanceof HTMLElement)) {
         return;
       }
-      const isRelevant = hasSelection && selection.type === type;
-      trigger.disabled = !isRelevant;
-      trigger.setAttribute("aria-disabled", isRelevant ? "false" : "true");
-      if (!isRelevant) {
-        trigger.classList.remove("is-active");
-      }
+      const targetType = section.dataset.toolsFor;
+      const isRelevant = hasSelection && targetType === selection.type;
+      const isActive = Boolean(isRelevant && activeToolsType === targetType);
+      section.hidden = !isActive;
+      section.setAttribute("data-active", isActive ? "true" : "false");
+      section.setAttribute("aria-hidden", isActive ? "false" : "true");
     });
-
+    updateToolbarTabs();
     syncColorControls();
     syncEffectControls();
     syncImageSizeControls();
@@ -2877,9 +2925,9 @@ export function attachBlankSlideEvents(slide) {
     selection.type = null;
     selection.summary = "";
     selection.detail = "";
+    setActiveToolsType(null);
     imageSizeReference = null;
     storedTextboxRange = null;
-    toolbarMenuState?.closeMenus?.();
     updateToolbar();
   };
 
@@ -2889,6 +2937,9 @@ export function attachBlankSlideEvents(slide) {
       return;
     }
     if (selection.element === element && selection.type === type) {
+      if (activeToolsType !== type) {
+        setActiveToolsType(type, { force: true });
+      }
       updateToolbar();
       return;
     }
@@ -2898,6 +2949,7 @@ export function attachBlankSlideEvents(slide) {
     }
     selection.element = element;
     selection.type = type;
+    setActiveToolsType(type, { force: true });
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -3394,6 +3446,38 @@ export function attachBlankSlideEvents(slide) {
     });
   }
 
+  if (toolbarTabs instanceof HTMLElement) {
+    const handleToolbarTabClick = (event) => {
+      const button =
+        event.target instanceof HTMLElement
+          ? event.target.closest('button[data-tools-target]')
+          : null;
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const targetType = button.dataset.toolsTarget;
+      if (!targetType || targetType !== selection.type) {
+        return;
+      }
+      setActiveToolsType(targetType);
+      updateToolbar();
+    };
+    toolbarTabs.addEventListener("click", handleToolbarTabClick);
+    registerCleanup(() => {
+      toolbarTabs.removeEventListener("click", handleToolbarTabClick);
+    });
+  }
+
+  if (toolbarToggle instanceof HTMLElement) {
+    const toggleHandler = () => {
+      setToolbarExpanded(!toolbarExpanded);
+    };
+    toolbarToggle.addEventListener("click", toggleHandler);
+    registerCleanup(() => {
+      toolbarToggle.removeEventListener("click", toggleHandler);
+    });
+  }
+
   if (!canvas.hasAttribute("tabindex")) {
     canvas.setAttribute("tabindex", "0");
   }
@@ -3418,8 +3502,8 @@ export function attachBlankSlideEvents(slide) {
     if (trigger.closest?.('[data-role="blank-actions"]')) {
       return "blank-actions";
     }
-    if (trigger.closest?.('[data-canvas-menu="insert"]')) {
-      return "insert-menu";
+    if (trigger.closest?.('.canvas-insert-panel')) {
+      return "insert-overlay";
     }
     return "direct";
   };
@@ -10907,6 +10991,7 @@ export async function setupInteractiveDeck({
   stageViewport =
     rootElement?.querySelector(stageViewportSelector) ??
     document.querySelector(stageViewportSelector);
+  ensureCanvasInsertOverlay();
   nextBtn =
     stageViewport?.querySelector(nextButtonSelector) ??
     rootElement?.querySelector(nextButtonSelector) ??
