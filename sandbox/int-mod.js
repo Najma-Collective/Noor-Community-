@@ -2154,7 +2154,7 @@ export function attachBlankSlideEvents(slide) {
       controlsHome.insertAdjacentHTML(
         "beforeend",
         `
-          <div class="blank-toolbar" data-role="blank-toolbar" data-toolbar-version="2">
+          <div class="blank-toolbar" data-role="blank-toolbar" data-toolbar-version="3">
             <button
               class="blank-toolbar-toggle"
               type="button"
@@ -2173,7 +2173,10 @@ export function attachBlankSlideEvents(slide) {
               <p class="blank-toolbar-empty" data-role="toolbar-empty">
                 Select a canvas item to edit its appearance. Choose a tool icon to continue.
               </p>
-              <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
+              <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden>
+                <span class="blank-toolbar-selection-summary" data-role="selection-summary"></span>
+                <span class="blank-toolbar-selection-detail" data-role="selection-meta"></span>
+              </p>
               <div
                 class="blank-toolbar-tabs"
                 data-role="toolbar-tabs"
@@ -2185,7 +2188,7 @@ export function attachBlankSlideEvents(slide) {
                 <div
                   class="blank-toolbar-actions blank-toolbar-actions--tight"
                   data-role="textbox-formatting"
-                  role="group"
+                  role="toolbar"
                   aria-label="Textbox formatting"
                 ></div>
                 <div
@@ -2220,6 +2223,10 @@ export function attachBlankSlideEvents(slide) {
                   data-role="toolbar-color-options"
                   data-tools-for="table"
                 ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="table-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
               </section>
               <section class="blank-toolbar-section" data-tools-for="mindmap" hidden>
                 <h3 class="blank-toolbar-heading">Branch colour</h3>
@@ -2231,6 +2238,10 @@ export function attachBlankSlideEvents(slide) {
                   data-role="toolbar-color-options"
                   data-tools-for="mindmap"
                 ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="mindmap-shadow" />
+                  <span>Emphasise branch</span>
+                </label>
               </section>
               <section class="blank-toolbar-section" data-tools-for="image" hidden>
                 <h3 class="blank-toolbar-heading">Image adjustments</h3>
@@ -2339,6 +2350,12 @@ export function attachBlankSlideEvents(slide) {
   const toolbarSelectionLabel = toolbarPanel?.querySelector(
     '[data-role="toolbar-selection"]',
   );
+  const toolbarSelectionSummary = toolbarSelectionLabel?.querySelector(
+    '[data-role="selection-summary"]',
+  );
+  const toolbarSelectionDetail = toolbarSelectionLabel?.querySelector(
+    '[data-role="selection-meta"]',
+  );
   const toolbarTabs = toolbarPanel?.querySelector('[data-role="toolbar-tabs"]');
   const toolbarSections = Array.from(
     toolbarPanel?.querySelectorAll?.('.blank-toolbar-section[data-tools-for]') ?? [],
@@ -2351,6 +2368,8 @@ export function attachBlankSlideEvents(slide) {
   );
   const tableStructureContainer = toolbarPanel?.querySelector('[data-role="table-structure"]');
   const textboxShadowToggle = toolbarPanel?.querySelector('[data-role="textbox-shadow"]');
+  const tableShadowToggle = toolbarPanel?.querySelector('[data-role="table-shadow"]');
+  const mindmapShadowToggle = toolbarPanel?.querySelector('[data-role="mindmap-shadow"]');
   const imageShadowToggle = toolbarPanel?.querySelector('[data-role="image-shadow"]');
   const imageSizeInput = toolbarPanel?.querySelector('[data-role="image-size"]');
   const imageSizeValue = toolbarPanel?.querySelector('[data-role="image-size-value"]');
@@ -2440,11 +2459,147 @@ export function attachBlankSlideEvents(slide) {
     image: "Choose a tool icon to adjust this image.",
   };
 
-  let selectedItem = null;
-  let selectedType = null;
+  const selection = {
+    element: null,
+    type: null,
+    summary: "",
+    detail: "",
+  };
   let activeToolsType = null;
   let imageSizeReference = null;
   let storedTextboxRange = null;
+
+  const normaliseText = (value) =>
+    typeof value === "string" ? value.replace(/\s+/g, " ").trim() : "";
+
+  const truncateText = (value, maxLength = 64) => {
+    const text = normaliseText(value);
+    if (!text) {
+      return "";
+    }
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return `${text.slice(0, Math.max(0, maxLength - 1))}\u2026`;
+  };
+
+  const getTextboxColorLabel = (value) => {
+    const fallback = TEXTBOX_COLOR_OPTIONS[0]?.label ?? "";
+    if (typeof value !== "string" || !value) {
+      return fallback;
+    }
+    return TEXTBOX_COLOR_OPTIONS.find((option) => option.value === value)?.label ?? fallback;
+  };
+
+  const getSelectedElement = () =>
+    selection.element instanceof HTMLElement ? selection.element : null;
+
+  const describeSelection = (type, element) => {
+    if (!(element instanceof HTMLElement) || typeof type !== "string") {
+      return { summary: "", detail: "" };
+    }
+
+    switch (type) {
+      case "textbox": {
+        const body = element.querySelector(".textbox-body");
+        const preview = truncateText(body?.textContent ?? "");
+        const colorLabel = getTextboxColorLabel(element.dataset.color);
+        const detailParts = [];
+        if (colorLabel) {
+          detailParts.push(`${colorLabel} style`);
+        }
+        if (preview) {
+          detailParts.push(`“${preview}”`);
+        }
+        return {
+          summary: "Textbox",
+          detail: detailParts.join(" • "),
+        };
+      }
+      case "table": {
+        const bodyRows = element.querySelectorAll("tbody tr").length;
+        const headRows = element.querySelectorAll("thead tr").length;
+        const totalRows = bodyRows + headRows;
+        const firstRow =
+          element.querySelector("tbody tr") ?? element.querySelector("thead tr");
+        const columnCount = firstRow?.children?.length ?? 0;
+        const sizeLabel =
+          totalRows > 0 && columnCount > 0
+            ? `${totalRows} × ${columnCount} grid`
+            : "";
+        const colorLabel = getTextboxColorLabel(element.dataset.color);
+        const detailParts = [];
+        if (sizeLabel) {
+          detailParts.push(sizeLabel);
+        }
+        if (colorLabel) {
+          detailParts.push(`${colorLabel} theme`);
+        }
+        return {
+          summary: "Table",
+          detail: detailParts.join(" • "),
+        };
+      }
+      case "mindmap": {
+        const label = normaliseText(element.dataset.label);
+        const colorLabel = getMindmapColourLabel(element.dataset.color);
+        const notesField = element.querySelector("textarea");
+        const notesPreview = truncateText(
+          notesField instanceof HTMLTextAreaElement ? notesField.value : notesField?.textContent ?? "",
+          56,
+        );
+        const detailParts = [];
+        if (label) {
+          detailParts.push(label);
+        }
+        if (colorLabel) {
+          detailParts.push(colorLabel);
+        }
+        if (notesPreview) {
+          detailParts.push(`“${notesPreview}”`);
+        }
+        return {
+          summary: "Mind map branch",
+          detail: detailParts.join(" • "),
+        };
+      }
+      case "image": {
+        const name = normaliseText(element.dataset.imageName ?? "");
+        const width = Math.round(
+          element.offsetWidth || Number.parseFloat(element.dataset.baseWidth) || 0,
+        );
+        const height = Math.round(
+          element.offsetHeight || Number.parseFloat(element.dataset.baseHeight) || 0,
+        );
+        const dimensionLabel = width > 0 && height > 0 ? `${width} × ${height}px` : "";
+        const detailParts = [];
+        if (name) {
+          detailParts.push(name);
+        }
+        if (dimensionLabel) {
+          detailParts.push(dimensionLabel);
+        }
+        return {
+          summary: "Image",
+          detail: detailParts.join(" • "),
+        };
+      }
+      default:
+        return { summary: "", detail: "" };
+    }
+  };
+
+  const updateSelectionMetadata = () => {
+    const element = getSelectedElement();
+    if (!element || !selection.type) {
+      selection.summary = "";
+      selection.detail = "";
+      return;
+    }
+    const { summary, detail } = describeSelection(selection.type, element);
+    selection.summary = summary;
+    selection.detail = detail;
+  };
 
   const setToolbarExpanded = (expanded) => {
     if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
@@ -2491,14 +2646,14 @@ export function attachBlankSlideEvents(slide) {
       toolbarTabs.hidden = true;
       return;
     }
-    const hasSelection = Boolean(selectedType);
+    const hasSelection = Boolean(selection.type);
     let visibleCount = 0;
     buttons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) {
         return;
       }
       const targetType = button.dataset.toolsTarget ?? "";
-      const isRelevant = hasSelection && targetType === selectedType;
+      const isRelevant = hasSelection && targetType === selection.type;
       const isActive = isRelevant && activeToolsType === targetType;
       button.disabled = !isRelevant;
       button.tabIndex = isRelevant ? 0 : -1;
@@ -2515,40 +2670,18 @@ export function attachBlankSlideEvents(slide) {
 
   setToolbarExpanded(false);
 
-  const getSelectionLabel = () => {
-    if (!(selectedItem instanceof HTMLElement) || !selectedType) {
-      return "";
-    }
-    switch (selectedType) {
-      case "textbox":
-        return "Editing textbox";
-      case "table":
-        return "Editing table";
-      case "mindmap": {
-        const label = selectedItem.dataset.label?.trim();
-        if (label) {
-          return `Editing branch: ${label}`;
-        }
-        return `Editing branch: ${getMindmapColourLabel(selectedItem.dataset.color)}`;
-      }
-      case "image":
-        return "Editing image";
-      default:
-        return "";
-    }
-  };
-
   const getToolbarPrompt = () => {
-    if (!selectedType) {
+    if (!selection.type) {
       return TOOLBAR_EMPTY_PROMPTS.default;
     }
     return (
-      TOOLBAR_EMPTY_PROMPTS[selectedType] ??
-      `Choose a tool icon to adjust this ${selectedType}.`
+      TOOLBAR_EMPTY_PROMPTS[selection.type] ??
+      `Choose a tool icon to adjust this ${selection.type}.`
     );
   };
 
   const syncColorControls = () => {
+    const activeElement = getSelectedElement();
     colorContainers.forEach((container) => {
       if (!(container instanceof HTMLElement)) {
         return;
@@ -2563,9 +2696,9 @@ export function attachBlankSlideEvents(slide) {
         }
         const colorValue = button.dataset.color ?? "";
         const isActive =
-          targetType === selectedType &&
-          selectedItem instanceof HTMLElement &&
-          colorValue === selectedItem.dataset.color;
+          targetType === selection.type &&
+          activeElement instanceof HTMLElement &&
+          colorValue === activeElement.dataset.color;
         button.classList.toggle("is-active", Boolean(isActive));
         button.setAttribute("aria-pressed", isActive ? "true" : "false");
       });
@@ -2573,13 +2706,24 @@ export function attachBlankSlideEvents(slide) {
   };
 
   const syncEffectControls = () => {
-    const effect =
-      selectedItem instanceof HTMLElement ? selectedItem.dataset.effect ?? "" : "";
+    const activeElement = getSelectedElement();
+    const effect = activeElement instanceof HTMLElement ? activeElement.dataset.effect ?? "" : "";
+    const isShadow = effect === "shadow";
     if (textboxShadowToggle instanceof HTMLInputElement) {
-      textboxShadowToggle.checked = selectedType === "textbox" && effect === "shadow";
+      textboxShadowToggle.checked = Boolean(selection.type === "textbox" && isShadow);
+      textboxShadowToggle.disabled = selection.type !== "textbox" || !activeElement;
+    }
+    if (tableShadowToggle instanceof HTMLInputElement) {
+      tableShadowToggle.checked = Boolean(selection.type === "table" && isShadow);
+      tableShadowToggle.disabled = selection.type !== "table" || !activeElement;
+    }
+    if (mindmapShadowToggle instanceof HTMLInputElement) {
+      mindmapShadowToggle.checked = Boolean(selection.type === "mindmap" && isShadow);
+      mindmapShadowToggle.disabled = selection.type !== "mindmap" || !activeElement;
     }
     if (imageShadowToggle instanceof HTMLInputElement) {
-      imageShadowToggle.checked = selectedType === "image" && effect === "shadow";
+      imageShadowToggle.checked = Boolean(selection.type === "image" && isShadow);
+      imageShadowToggle.disabled = selection.type !== "image" || !activeElement;
     }
   };
 
@@ -2587,15 +2731,16 @@ export function attachBlankSlideEvents(slide) {
     if (!(imageSizeInput instanceof HTMLInputElement) || !(imageSizeValue instanceof HTMLElement)) {
       return;
     }
-    if (selectedType !== "image" || !(selectedItem instanceof HTMLElement)) {
+    const activeElement = getSelectedElement();
+    if (selection.type !== "image" || !(activeElement instanceof HTMLElement)) {
       imageSizeInput.disabled = true;
       imageSizeInput.value = "100";
       imageSizeValue.textContent = "100%";
       return;
     }
     imageSizeInput.disabled = false;
-    const baseWidth = imageSizeReference?.width || selectedItem.offsetWidth || 1;
-    const currentWidth = selectedItem.offsetWidth || baseWidth;
+    const baseWidth = imageSizeReference?.width || activeElement.offsetWidth || 1;
+    const currentWidth = activeElement.offsetWidth || baseWidth;
     const percent = Math.max(
       60,
       Math.min(160, Math.round((currentWidth / baseWidth) * 100) || 100),
@@ -2605,10 +2750,11 @@ export function attachBlankSlideEvents(slide) {
   };
 
   const getActiveTextboxBody = () => {
-    if (selectedType !== "textbox" || !(selectedItem instanceof HTMLElement)) {
+    const activeElement = getSelectedElement();
+    if (selection.type !== "textbox" || !(activeElement instanceof HTMLElement)) {
       return null;
     }
-    const body = selectedItem.querySelector(".textbox-body");
+    const body = activeElement.querySelector(".textbox-body");
     return body instanceof HTMLElement ? body : null;
   };
 
@@ -2678,7 +2824,7 @@ export function attachBlankSlideEvents(slide) {
     const buttons = Array.from(
       tableStructureContainer.querySelectorAll?.("button[data-action]") ?? [],
     );
-    const enabled = selectedType === "table" && selectedItem instanceof HTMLElement;
+    const enabled = selection.type === "table" && getSelectedElement() instanceof HTMLElement;
     buttons.forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = !enabled;
@@ -2690,8 +2836,10 @@ export function attachBlankSlideEvents(slide) {
     if (!(toolbar instanceof HTMLElement)) {
       return;
     }
-    const hasSelection = Boolean(selectedType);
-    const hasActiveSection = hasSelection && Boolean(activeToolsType);
+    updateSelectionMetadata();
+    const activeElement = getSelectedElement();
+    const hasSelection = Boolean(selection.type && activeElement);
+    const hasActiveSection = hasSelection && Boolean(activeToolsType === selection.type);
     toolbar.classList.toggle("has-selection", hasSelection);
     if (toolbarEmpty instanceof HTMLElement) {
       if (!hasSelection) {
@@ -2707,10 +2855,31 @@ export function attachBlankSlideEvents(slide) {
     if (toolbarSelectionLabel instanceof HTMLElement) {
       if (hasSelection) {
         toolbarSelectionLabel.hidden = false;
-        toolbarSelectionLabel.textContent = getSelectionLabel();
+        if (toolbarSelectionSummary instanceof HTMLElement) {
+          toolbarSelectionSummary.textContent = selection.summary || "Selected item";
+        } else {
+          toolbarSelectionLabel.textContent = selection.summary || "Selected item";
+        }
+        if (toolbarSelectionDetail instanceof HTMLElement) {
+          if (selection.detail) {
+            toolbarSelectionDetail.hidden = false;
+            toolbarSelectionDetail.textContent = selection.detail;
+          } else {
+            toolbarSelectionDetail.hidden = true;
+            toolbarSelectionDetail.textContent = "";
+          }
+        }
       } else {
         toolbarSelectionLabel.hidden = true;
-        toolbarSelectionLabel.textContent = "";
+        if (toolbarSelectionSummary instanceof HTMLElement) {
+          toolbarSelectionSummary.textContent = "";
+        } else {
+          toolbarSelectionLabel.textContent = "";
+        }
+        if (toolbarSelectionDetail instanceof HTMLElement) {
+          toolbarSelectionDetail.textContent = "";
+          toolbarSelectionDetail.hidden = true;
+        }
       }
     }
     toolbarSections.forEach((section) => {
@@ -2718,7 +2887,7 @@ export function attachBlankSlideEvents(slide) {
         return;
       }
       const targetType = section.dataset.toolsFor;
-      const isRelevant = hasSelection && targetType === selectedType;
+      const isRelevant = hasSelection && targetType === selection.type;
       const isActive = Boolean(isRelevant && activeToolsType === targetType);
       section.hidden = !isActive;
       section.setAttribute("data-active", isActive ? "true" : "false");
@@ -2733,11 +2902,14 @@ export function attachBlankSlideEvents(slide) {
   };
 
   const clearSelection = () => {
-    if (selectedItem instanceof HTMLElement) {
-      selectedItem.classList.remove(SELECTED_CLASS);
+    const activeElement = getSelectedElement();
+    if (activeElement) {
+      activeElement.classList.remove(SELECTED_CLASS);
     }
-    selectedItem = null;
-    selectedType = null;
+    selection.element = null;
+    selection.type = null;
+    selection.summary = "";
+    selection.detail = "";
     setActiveToolsType(null);
     imageSizeReference = null;
     storedTextboxRange = null;
@@ -2749,16 +2921,17 @@ export function attachBlankSlideEvents(slide) {
       clearSelection();
       return;
     }
-    if (selectedItem === element && selectedType === type) {
+    if (selection.element === element && selection.type === type) {
       updateToolbar();
       return;
     }
-    if (selectedItem instanceof HTMLElement) {
-      selectedItem.classList.remove(SELECTED_CLASS);
+    const previousElement = getSelectedElement();
+    if (previousElement) {
+      previousElement.classList.remove(SELECTED_CLASS);
     }
-    const previousType = selectedType;
-    selectedItem = element;
-    selectedType = type;
+    const previousType = selection.type;
+    selection.element = element;
+    selection.type = type;
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -2820,30 +2993,31 @@ export function attachBlankSlideEvents(slide) {
     });
   };
 
-  const applyColor = (value, targetType = selectedType) => {
-    if (!value || !(selectedItem instanceof HTMLElement)) {
+  const applyColor = (value, targetType = selection.type) => {
+    const activeElement = getSelectedElement();
+    if (!value || !(activeElement instanceof HTMLElement)) {
       return;
     }
     switch (targetType) {
       case "textbox":
-        if (typeof selectedItem.__deckTextboxSetColor === "function") {
-          selectedItem.__deckTextboxSetColor(value);
+        if (typeof activeElement.__deckTextboxSetColor === "function") {
+          activeElement.__deckTextboxSetColor(value);
         } else {
-          selectedItem.dataset.color = value;
+          activeElement.dataset.color = value;
         }
         break;
       case "table":
-        if (typeof selectedItem.__deckTableSetColor === "function") {
-          selectedItem.__deckTableSetColor(value);
+        if (typeof activeElement.__deckTableSetColor === "function") {
+          activeElement.__deckTableSetColor(value);
         } else {
-          selectedItem.dataset.color = value;
+          activeElement.dataset.color = value;
         }
         break;
       case "mindmap":
-        if (typeof selectedItem.__deckMindmapBranchSetColor === "function") {
-          selectedItem.__deckMindmapBranchSetColor(value);
+        if (typeof activeElement.__deckMindmapBranchSetColor === "function") {
+          activeElement.__deckMindmapBranchSetColor(value);
         } else {
-          selectedItem.dataset.color = value;
+          activeElement.dataset.color = value;
         }
         break;
       default:
@@ -2858,7 +3032,7 @@ export function attachBlankSlideEvents(slide) {
     }
     initialiseTextbox(textbox, {
       onRemove: () => {
-        if (selectedItem === textbox) {
+        if (selection.element === textbox) {
           clearSelection();
         }
         updateHintForCanvas();
@@ -2873,7 +3047,7 @@ export function attachBlankSlideEvents(slide) {
     }
     initialiseCanvasTable(table, {
       onRemove: () => {
-        if (selectedItem === table) {
+        if (selection.element === table) {
           clearSelection();
         }
         updateHintForCanvas();
@@ -2915,7 +3089,7 @@ export function attachBlankSlideEvents(slide) {
     applyImageMetadata(image, metadata);
     initialisePastedImage(image, {
       onRemove: () => {
-        if (selectedItem === image) {
+        if (selection.element === image) {
           clearSelection();
         }
         updateHintForCanvas();
@@ -2934,13 +3108,13 @@ export function attachBlankSlideEvents(slide) {
       if (typeof originalChange === "function") {
         originalChange(payload);
       }
-      if (selectedItem === branch) {
+      if (selection.element === branch) {
         updateToolbar();
       }
     };
     const originalRemove = branch.__deckMindmapBranchOnRemove;
     branch.__deckMindmapBranchOnRemove = () => {
-      if (selectedItem === branch) {
+      if (selection.element === branch) {
         clearSelection();
       }
       if (typeof originalRemove === "function") {
@@ -2956,8 +3130,8 @@ export function attachBlankSlideEvents(slide) {
     initialiseMindMap(mindmap, {
       onRemove: () => {
         if (
-          selectedItem instanceof HTMLElement &&
-          mindmap.contains(selectedItem)
+          selection.element instanceof HTMLElement &&
+          mindmap.contains(selection.element)
         ) {
           clearSelection();
         }
@@ -2981,7 +3155,7 @@ export function attachBlankSlideEvents(slide) {
             if (
               node instanceof HTMLElement &&
               node.classList.contains("mindmap-branch") &&
-              node === selectedItem
+              node === selection.element
             ) {
               clearSelection();
             }
@@ -3024,7 +3198,7 @@ export function attachBlankSlideEvents(slide) {
       if (!(button instanceof HTMLButtonElement) || !button.dataset.command) {
         return;
       }
-      if (selectedType !== "textbox" || !(selectedItem instanceof HTMLElement)) {
+      if (selection.type !== "textbox" || !(getSelectedElement() instanceof HTMLElement)) {
         return;
       }
       event.preventDefault();
@@ -3086,18 +3260,22 @@ export function attachBlankSlideEvents(slide) {
       if (!(button instanceof HTMLButtonElement)) {
         return;
       }
-      if (selectedType !== "table" || !(selectedItem instanceof HTMLElement)) {
+      const activeElement = getSelectedElement();
+      if (selection.type !== "table" || !(activeElement instanceof HTMLElement)) {
         return;
       }
       event.preventDefault();
       const action = button.dataset.action;
-      if (action === "table-add-column" && typeof selectedItem.__deckTableAddColumn === "function") {
-        selectedItem.__deckTableAddColumn();
+      if (
+        action === "table-add-column" &&
+        typeof activeElement.__deckTableAddColumn === "function"
+      ) {
+        activeElement.__deckTableAddColumn();
       } else if (
         action === "table-add-row" &&
-        typeof selectedItem.__deckTableAddRow === "function"
+        typeof activeElement.__deckTableAddRow === "function"
       ) {
-        selectedItem.__deckTableAddRow();
+        activeElement.__deckTableAddRow();
       }
       updateToolbar();
     };
@@ -3108,7 +3286,7 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const handleDocumentSelectionChange = () => {
-    if (selectedType !== "textbox") {
+    if (selection.type !== "textbox") {
       return;
     }
     const body = getActiveTextboxBody();
@@ -3142,7 +3320,7 @@ export function attachBlankSlideEvents(slide) {
         return;
       }
       const targetType = container.dataset.toolsFor;
-      if (targetType && selectedType === targetType) {
+      if (targetType && selection.type === targetType) {
         applyColor(button.dataset.color, targetType);
       }
     };
@@ -3154,14 +3332,16 @@ export function attachBlankSlideEvents(slide) {
 
   if (textboxShadowToggle instanceof HTMLInputElement) {
     const handleTextboxEffect = () => {
-      if (selectedType === "textbox" && selectedItem instanceof HTMLElement) {
-        if (textboxShadowToggle.checked) {
-          selectedItem.dataset.effect = "shadow";
-        } else {
-          delete selectedItem.dataset.effect;
-        }
-        updateToolbar();
+      const activeElement = getSelectedElement();
+      if (selection.type !== "textbox" || !(activeElement instanceof HTMLElement)) {
+        return;
       }
+      if (textboxShadowToggle.checked) {
+        activeElement.dataset.effect = "shadow";
+      } else {
+        delete activeElement.dataset.effect;
+      }
+      updateToolbar();
     };
     textboxShadowToggle.addEventListener("change", handleTextboxEffect);
     registerCleanup(() => {
@@ -3169,16 +3349,56 @@ export function attachBlankSlideEvents(slide) {
     });
   }
 
+  if (tableShadowToggle instanceof HTMLInputElement) {
+    const handleTableEffect = () => {
+      const activeElement = getSelectedElement();
+      if (selection.type !== "table" || !(activeElement instanceof HTMLElement)) {
+        return;
+      }
+      if (tableShadowToggle.checked) {
+        activeElement.dataset.effect = "shadow";
+      } else {
+        delete activeElement.dataset.effect;
+      }
+      updateToolbar();
+    };
+    tableShadowToggle.addEventListener("change", handleTableEffect);
+    registerCleanup(() => {
+      tableShadowToggle.removeEventListener("change", handleTableEffect);
+    });
+  }
+
+  if (mindmapShadowToggle instanceof HTMLInputElement) {
+    const handleMindmapEffect = () => {
+      const activeElement = getSelectedElement();
+      if (selection.type !== "mindmap" || !(activeElement instanceof HTMLElement)) {
+        return;
+      }
+      if (mindmapShadowToggle.checked) {
+        activeElement.dataset.effect = "shadow";
+      } else {
+        delete activeElement.dataset.effect;
+      }
+      updateToolbar();
+    };
+    mindmapShadowToggle.addEventListener("change", handleMindmapEffect);
+    registerCleanup(() => {
+      mindmapShadowToggle.removeEventListener("change", handleMindmapEffect);
+    });
+  }
+
   if (imageShadowToggle instanceof HTMLInputElement) {
     const handleImageEffect = () => {
-      if (selectedType === "image" && selectedItem instanceof HTMLElement) {
-        if (imageShadowToggle.checked) {
-          selectedItem.dataset.effect = "shadow";
-        } else {
-          delete selectedItem.dataset.effect;
-        }
-        updateToolbar();
+      const activeElement = getSelectedElement();
+      if (selection.type !== "image" || !(activeElement instanceof HTMLElement)) {
+        return;
       }
+      if (imageShadowToggle.checked) {
+        activeElement.dataset.effect = "shadow";
+      } else {
+        delete activeElement.dataset.effect;
+      }
+      updateToolbar();
     };
     imageShadowToggle.addEventListener("change", handleImageEffect);
     registerCleanup(() => {
@@ -3188,20 +3408,22 @@ export function attachBlankSlideEvents(slide) {
 
   if (imageSizeInput instanceof HTMLInputElement) {
     const handleImageScale = () => {
-      if (selectedType !== "image" || !(selectedItem instanceof HTMLElement)) {
+      const activeElement = getSelectedElement();
+      if (selection.type !== "image" || !(activeElement instanceof HTMLElement)) {
         return;
       }
-      const baseWidth = imageSizeReference?.width || selectedItem.offsetWidth || 1;
-      const baseHeight = imageSizeReference?.height || selectedItem.offsetHeight || 1;
+      const baseWidth = imageSizeReference?.width || activeElement.offsetWidth || 1;
+      const baseHeight = imageSizeReference?.height || activeElement.offsetHeight || 1;
       const scale = Number.parseFloat(imageSizeInput.value);
       const factor = Number.isFinite(scale) ? scale / 100 : 1;
       const nextWidth = Math.max(120, Math.round(baseWidth * factor));
       const nextHeight = Math.max(90, Math.round(baseHeight * factor));
-      selectedItem.style.width = `${nextWidth}px`;
-      selectedItem.style.height = `${nextHeight}px`;
+      activeElement.style.width = `${nextWidth}px`;
+      activeElement.style.height = `${nextHeight}px`;
       if (imageSizeValue instanceof HTMLElement) {
         imageSizeValue.textContent = `${Math.round(factor * 100)}%`;
       }
+      updateToolbar();
     };
     imageSizeInput.addEventListener("input", handleImageScale);
     registerCleanup(() => {
@@ -3219,7 +3441,7 @@ export function attachBlankSlideEvents(slide) {
         return;
       }
       const targetType = button.dataset.toolsTarget;
-      if (!targetType || targetType !== selectedType) {
+      if (!targetType || targetType !== selection.type) {
         return;
       }
       setActiveToolsType(targetType);
