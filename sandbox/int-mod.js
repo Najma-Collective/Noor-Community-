@@ -2912,6 +2912,7 @@ export function attachBlankSlideEvents(slide) {
     setActiveToolsType(null);
     imageSizeReference = null;
     storedTextboxRange = null;
+    setToolbarExpanded(false);
     updateToolbar();
   };
 
@@ -2924,6 +2925,7 @@ export function attachBlankSlideEvents(slide) {
       if (activeToolsType !== type) {
         setActiveToolsType(type, { force: true });
       }
+      setToolbarExpanded(true);
       updateToolbar();
       return;
     }
@@ -2934,6 +2936,7 @@ export function attachBlankSlideEvents(slide) {
     selection.element = element;
     selection.type = type;
     setActiveToolsType(type, { force: true });
+    setToolbarExpanded(true);
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
