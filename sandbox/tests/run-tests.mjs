@@ -436,6 +436,41 @@ textboxShadowToggle.checked = true;
 textboxShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(primaryTextbox.dataset.effect, 'shadow', 'textbox shadow toggle should mark the textbox with a shadow effect');
 
+toolbarToggle.click();
+await flushTimers();
+await nextFrame();
+assert.equal(toolbarToggle.getAttribute('aria-expanded'), 'false', 'toolbar should collapse when toggled closed');
+
+primaryTextbox.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
+assert.equal(
+  toolbarToggle.getAttribute('aria-expanded'),
+  'false',
+  'selecting a textbox should not expand the toolbar automatically',
+);
+
+const canvasTable = blankCanvas.querySelector('.canvas-table');
+assert.ok(canvasTable instanceof window.HTMLElement, 'a table should be present for toolbar regressions');
+canvasTable.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
+assert.equal(
+  toolbarToggle.getAttribute('aria-expanded'),
+  'false',
+  'selecting a table should not expand the toolbar automatically',
+);
+
+const mindmapBranch = blankCanvas.querySelector('.mindmap-branch');
+assert.ok(mindmapBranch instanceof window.HTMLElement, 'a mind map branch should be present for toolbar regressions');
+mindmapBranch.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
+assert.equal(
+  toolbarToggle.getAttribute('aria-expanded'),
+  'false',
+  'selecting a mind map branch should not expand the toolbar automatically',
+);
+
+toolbarToggle.click();
+await flushTimers();
+await nextFrame();
+assert.equal(toolbarToggle.getAttribute('aria-expanded'), 'true', 'toolbar should reopen when toggled again');
+
 const imageIngestor = blankCanvas.__deckImageIngestor;
 assert.ok(imageIngestor, 'blank canvas should expose an image ingestion helper');
 
