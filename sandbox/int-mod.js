@@ -2629,7 +2629,6 @@ export function attachBlankSlideEvents(slide) {
     }
     const targetType = type.trim();
     if (!force && activeToolsType === targetType) {
-      activeToolsType = null;
       return;
     }
     activeToolsType = targetType;
@@ -2922,6 +2921,9 @@ export function attachBlankSlideEvents(slide) {
       return;
     }
     if (selection.element === element && selection.type === type) {
+      if (activeToolsType !== type) {
+        setActiveToolsType(type, { force: true });
+      }
       updateToolbar();
       return;
     }
@@ -2929,9 +2931,9 @@ export function attachBlankSlideEvents(slide) {
     if (previousElement) {
       previousElement.classList.remove(SELECTED_CLASS);
     }
-    const previousType = selection.type;
     selection.element = element;
     selection.type = type;
+    setActiveToolsType(type, { force: true });
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -2946,9 +2948,6 @@ export function attachBlankSlideEvents(slide) {
       storedTextboxRange = null;
     } else {
       saveTextboxSelection();
-    }
-    if (previousType !== type) {
-      setActiveToolsType(null);
     }
     updateToolbar();
   };
