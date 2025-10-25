@@ -453,7 +453,8 @@ textarea {
 .quiz-question-block,
 .team-block,
 .category-block,
-.table-row-block {
+.table-row-block,
+.grid-column-block {
   border: 1px solid var(--sage-150);
   border-radius: var(--radius-md);
   padding: 1rem;
@@ -469,6 +470,17 @@ textarea {
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
+}
+
+.block-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.block-actions .subtle-link[disabled] {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .block-header h3 {
@@ -505,6 +517,12 @@ textarea {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.75rem;
+}
+
+.grid-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
 }
 
 .chip-btn {

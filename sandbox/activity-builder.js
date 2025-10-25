@@ -30,6 +30,56 @@ const DEFAULT_STATES = {
       }
     ]
   }),
+  linking: () => ({
+    title: 'Badge Match Relay',
+    instructions:
+      'Review each badge brief, then link it to the headline that best captures its focus.',
+    rubric:
+      'Award one point per correct link. Invite learners to justify any mismatches before revealing the key.',
+    pairs: [
+      {
+        prompt: 'Impact badge',
+        match: 'Highlights measurable outcomes or data gains',
+        hint: 'Look for the badge that quantifies progress.',
+      },
+      {
+        prompt: 'Story badge',
+        match: 'Frames the narrative arc or learner voiceover',
+        hint: 'Pairs with a voice-led reflection.',
+      },
+      {
+        prompt: 'People badge',
+        match: 'Spotlights collaborators, mentors, or partners',
+        hint: 'Focus on relationships and teams.',
+      },
+    ],
+  }),
+  dropdown: () => ({
+    title: 'Select the Slide Move',
+    instructions: 'Read the prompt, then use the dropdown to choose the move that completes the card.',
+    rubric:
+      'Celebrate a point for every accurate dropdown choice. Coach learners to explain why a move fits before revealing answers.',
+    items: [
+      {
+        prompt: 'Slide 2 pairs the scenario pill with the ____ badge to ground the challenge.',
+        options: [
+          { text: 'Impact', correct: false },
+          { text: 'Story', correct: false },
+          { text: 'Context', correct: true },
+        ],
+        feedback: 'The context badge reinforces the scenario so teams align on the brief.',
+      },
+      {
+        prompt: 'During the prototype review we surface evidence with the ____ badge.',
+        options: [
+          { text: 'Progress', correct: true },
+          { text: 'Spark', correct: false },
+          { text: 'People', correct: false },
+        ],
+        feedback: 'Progress keeps attention on iteration wins instead of new prompts.',
+      },
+    ],
+  }),
   gapfill: () => ({
     title: 'Badge Copy Refinement',
     instructions: 'Preview the mentor text pill, then tighten each badge caption with precise C1 language.',
@@ -60,6 +110,42 @@ const DEFAULT_STATES = {
         items: ['Glow/Grow cards', 'Exit ticket mosaic', 'Next steps badge']
       }
     ]
+  }),
+  'multiple-choice-grid': () => ({
+    title: 'Slide Status Grid',
+    instructions: 'Scan each workflow card and choose the column that best describes its current status.',
+    rubric:
+      'Score a point when the selected column aligns with the planning brief. Prompt learners to defend each placement.',
+    columns: ['Ready to launch', 'In iteration', 'Needs support'],
+    rows: [
+      {
+        statement: 'Scenario pill and spark question pair',
+        note: 'Sets the narrative hook for the sprint.',
+        correctIndex: 0,
+      },
+      {
+        statement: 'Prototype gallery slide',
+        note: 'Captures evidence of current builds.',
+        correctIndex: 1,
+      },
+      {
+        statement: 'Reflection badge grid',
+        note: 'Needs more learner voice before sharing.',
+        correctIndex: 2,
+      },
+    ],
+  }),
+  ranking: () => ({
+    title: 'Sequence the Deck Flow',
+    instructions: 'Drag or move each card to order the slide flow from opening to showcase.',
+    rubric:
+      'Award two points for a perfect order. For near misses, ask teams to narrate the rationale before revealing the model.',
+    items: [
+      { text: 'Scenario pill announces the brief', note: 'Hook learners with the real-world problem.' },
+      { text: 'Studio habit carousel introduces practice moves', note: 'Cue the routines learners will rehearse.' },
+      { text: 'Prototype gallery spotlights evidence', note: 'Showcase iterations and celebrate growth.' },
+      { text: 'Reflection grid closes with next steps', note: 'Surface commitments and future experiments.' },
+    ],
   }),
   'table-completion': () => ({
     title: 'Card Composition Planner',
@@ -127,6 +213,18 @@ const TYPE_META = {
     accent: 'mc',
     helper: 'Offer up to four answer choices and mark every correct option.',
   },
+  linking: {
+    label: 'Linking match-up',
+    icon: 'fa-diagram-project',
+    accent: 'link',
+    helper: 'Pair related concepts by matching each prompt with its best headline.',
+  },
+  dropdown: {
+    label: 'Dropdown response',
+    icon: 'fa-square-caret-down',
+    accent: 'drop',
+    helper: 'Swap free-response blanks for dropdown menus learners can select.',
+  },
   gapfill: {
     label: 'Gap fill activity',
     icon: 'fa-i-cursor',
@@ -138,6 +236,18 @@ const TYPE_META = {
     icon: 'fa-layer-group',
     accent: 'group',
     helper: 'Create drag-and-drop cards for learners to sort into categories.',
+  },
+  'multiple-choice-grid': {
+    label: 'Multiple choice grid',
+    icon: 'fa-table-cells-large',
+    accent: 'grid',
+    helper: 'Build a matrix where each prompt aligns with a single correct column.',
+  },
+  ranking: {
+    label: 'Ranking sequence',
+    icon: 'fa-arrow-down-1-9',
+    accent: 'rank',
+    helper: 'Ask learners to reorder items until they match the target sequence.',
   },
   'table-completion': {
     label: 'Table completion',
@@ -823,17 +933,35 @@ class ActivityBuilder {
         case 'quiz-question':
           this.updateQuizQuestionField(block, target);
           break;
+        case 'link-pair':
+          this.updateLinkPairField(block, target);
+          break;
+        case 'dropdown-item':
+          this.updateDropdownItemField(block, target);
+          break;
+        case 'dropdown-option':
+          this.updateDropdownOptionField(block, target);
+          break;
         case 'category':
           this.updateCategoryField(block, target);
           break;
         case 'item':
           this.updateItemField(block, target);
           break;
+        case 'grid-column':
+          this.updateGridColumnField(block, target);
+          break;
+        case 'grid-row':
+          this.updateGridRowField(block, target);
+          break;
         case 'table-row':
           this.updateTableRowField(block, target);
           break;
         case 'table-header':
           this.updateTableHeaderField(target);
+          break;
+        case 'ranking-item':
+          this.updateRankingItemField(block, target);
           break;
         case 'team':
           this.updateTeamField(block, target);
@@ -873,6 +1001,39 @@ class ActivityBuilder {
       case 'remove-quiz-question':
         this.removeQuizQuestion(actionBtn.closest('[data-block="quiz-question"]').dataset.index);
         break;
+      case 'add-link-pair':
+        this.addLinkPair();
+        break;
+      case 'remove-link-pair':
+        this.removeLinkPair(actionBtn.closest('[data-block="link-pair"]').dataset.index);
+        break;
+      case 'add-dropdown-item':
+        this.addDropdownItem();
+        break;
+      case 'remove-dropdown-item':
+        this.removeDropdownItem(actionBtn.closest('[data-block="dropdown-item"]').dataset.index);
+        break;
+      case 'add-dropdown-option':
+        this.addDropdownOption(actionBtn.closest('[data-block="dropdown-item"]').dataset.index);
+        break;
+      case 'remove-dropdown-option':
+        this.removeDropdownOption(
+          actionBtn.closest('[data-block="dropdown-item"]').dataset.index,
+          actionBtn.closest('[data-block="dropdown-option"]').dataset.optionIndex
+        );
+        break;
+      case 'add-grid-column':
+        this.addGridColumn();
+        break;
+      case 'remove-grid-column':
+        this.removeGridColumn(actionBtn.closest('[data-block="grid-column"]').dataset.index);
+        break;
+      case 'add-grid-row':
+        this.addGridRow();
+        break;
+      case 'remove-grid-row':
+        this.removeGridRow(actionBtn.closest('[data-block="grid-row"]').dataset.index);
+        break;
       case 'add-category':
         this.addCategory();
         break;
@@ -887,6 +1048,18 @@ class ActivityBuilder {
           actionBtn.closest('[data-block="category"]').dataset.index,
           actionBtn.closest('[data-block="item"]').dataset.itemIndex
         );
+        break;
+      case 'add-ranking-item':
+        this.addRankingItem();
+        break;
+      case 'remove-ranking-item':
+        this.removeRankingItem(actionBtn.closest('[data-block="ranking-item"]').dataset.index);
+        break;
+      case 'move-ranking-up':
+        this.moveRankingItem(actionBtn.closest('[data-block="ranking-item"]').dataset.index, -1);
+        break;
+      case 'move-ranking-down':
+        this.moveRankingItem(actionBtn.closest('[data-block="ranking-item"]').dataset.index, 1);
         break;
       case 'add-row':
         this.addTableRow();
@@ -978,6 +1151,52 @@ class ActivityBuilder {
     }
   }
 
+  updateLinkPairField(block, target) {
+    const index = Number(block.dataset.index);
+    const pair = this.state.data.pairs?.[index];
+    if (!pair) return;
+    const field = target.dataset.field;
+    if (field === 'pair-prompt') {
+      pair.prompt = target.value;
+    } else if (field === 'pair-match') {
+      pair.match = target.value;
+    } else if (field === 'pair-hint') {
+      pair.hint = target.value;
+    }
+  }
+
+  updateDropdownItemField(block, target) {
+    const index = Number(block.dataset.index);
+    const item = this.state.data.items?.[index];
+    if (!item) return;
+    const field = target.dataset.field;
+    if (field === 'dropdown-prompt') {
+      item.prompt = target.value;
+    } else if (field === 'dropdown-feedback') {
+      item.feedback = target.value;
+    }
+  }
+
+  updateDropdownOptionField(block, target) {
+    const itemIndex = Number(block.closest('[data-block="dropdown-item"]').dataset.index);
+    const optionIndex = Number(block.dataset.optionIndex);
+    const item = this.state.data.items?.[itemIndex];
+    const option = item?.options?.[optionIndex];
+    if (!option) return;
+    const field = target.dataset.field;
+    if (field === 'dropdown-option-text') {
+      option.text = target.value;
+    } else if (field === 'dropdown-option-correct') {
+      if (target.type === 'radio') {
+        item.options.forEach((opt, idx) => {
+          opt.correct = idx === optionIndex ? target.checked : false;
+        });
+      } else {
+        option.correct = target.checked;
+      }
+    }
+  }
+
   updateCategoryField(block, target) {
     const index = Number(block.dataset.index);
     const category = this.state.data.categories[index];
@@ -996,6 +1215,38 @@ class ActivityBuilder {
     items[itemIndex] = target.value;
   }
 
+  updateGridColumnField(block, target) {
+    const index = Number(block.dataset.index);
+    const field = target.dataset.field;
+    if (field === 'grid-column-name') {
+      this.state.data.columns[index] = target.value;
+      const selects = this.formContainer.querySelectorAll('select[data-field="grid-row-correct"]');
+      selects.forEach((select) => {
+        const options = Array.from(select.options);
+        if (options[index]) {
+          options[index].textContent = target.value;
+        }
+      });
+    }
+  }
+
+  updateGridRowField(block, target) {
+    const index = Number(block.dataset.index);
+    const row = this.state.data.rows?.[index];
+    if (!row) return;
+    const field = target.dataset.field;
+    if (field === 'grid-row-statement') {
+      row.statement = target.value;
+    } else if (field === 'grid-row-note') {
+      row.note = target.value;
+    } else if (field === 'grid-row-correct') {
+      const value = Number(target.value);
+      if (Number.isFinite(value)) {
+        row.correctIndex = value;
+      }
+    }
+  }
+
   updateTableRowField(block, target) {
     const rowIndex = Number(block.dataset.index);
     const row = this.state.data.rows[rowIndex];
@@ -1011,6 +1262,18 @@ class ActivityBuilder {
   updateTableHeaderField(target) {
     const headerIndex = Number(target.dataset.headerIndex);
     this.state.data.columnHeaders[headerIndex] = target.value;
+  }
+
+  updateRankingItemField(block, target) {
+    const index = Number(block.dataset.index);
+    const item = this.state.data.items?.[index];
+    if (!item) return;
+    const field = target.dataset.field;
+    if (field === 'ranking-text') {
+      item.text = target.value;
+    } else if (field === 'ranking-note') {
+      item.note = target.value;
+    }
   }
 
   updateTeamField(block, target) {
@@ -1093,6 +1356,103 @@ class ActivityBuilder {
     this.updateOutputs();
   }
 
+  addLinkPair() {
+    this.state.data.pairs.push({
+      prompt: 'New prompt',
+      match: 'Matching headline',
+      hint: '',
+    });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeLinkPair(index) {
+    const idx = Number(index);
+    if (this.state.data.pairs.length <= 2) return;
+    this.state.data.pairs.splice(idx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addDropdownItem() {
+    this.state.data.items.push({
+      prompt: 'New dropdown prompt',
+      feedback: '',
+      options: [
+        { text: 'Option A', correct: false },
+        { text: 'Option B', correct: true },
+      ],
+    });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeDropdownItem(index) {
+    const idx = Number(index);
+    if (this.state.data.items.length <= 1) return;
+    this.state.data.items.splice(idx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addDropdownOption(itemIndex) {
+    const idx = Number(itemIndex);
+    const options = this.state.data.items[idx].options;
+    options.push({ text: 'New option', correct: false });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeDropdownOption(itemIndex, optionIndex) {
+    const iIdx = Number(itemIndex);
+    const oIdx = Number(optionIndex);
+    const options = this.state.data.items[iIdx].options;
+    if (options.length <= 2) return;
+    options.splice(oIdx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addGridColumn() {
+    this.state.data.columns.push('New column');
+    this.state.data.rows.forEach((row) => {
+      if (!Number.isFinite(Number(row.correctIndex))) {
+        row.correctIndex = 0;
+      }
+    });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeGridColumn(index) {
+    const idx = Number(index);
+    if (this.state.data.columns.length <= 2) return;
+    this.state.data.columns.splice(idx, 1);
+    this.state.data.rows.forEach((row) => {
+      if (row.correctIndex === idx) {
+        row.correctIndex = Math.max(0, idx - 1);
+      } else if (row.correctIndex > idx) {
+        row.correctIndex -= 1;
+      }
+    });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addGridRow() {
+    this.state.data.rows.push({ statement: 'New statement', note: '', correctIndex: 0 });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeGridRow(index) {
+    const idx = Number(index);
+    if (this.state.data.rows.length <= 1) return;
+    this.state.data.rows.splice(idx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
   addCategory() {
     this.state.data.categories.push({ name: 'New category', description: '', items: ['New item'] });
     this.renderForm();
@@ -1120,6 +1480,34 @@ class ActivityBuilder {
     const items = this.state.data.categories[cIdx].items;
     if (items.length <= 1) return;
     items.splice(iIdx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  addRankingItem() {
+    this.state.data.items.push({ text: 'New step', note: '' });
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  removeRankingItem(index) {
+    const idx = Number(index);
+    if (this.state.data.items.length <= 2) return;
+    this.state.data.items.splice(idx, 1);
+    this.renderForm();
+    this.updateOutputs();
+  }
+
+  moveRankingItem(index, direction) {
+    const idx = Number(index);
+    const dir = Number(direction);
+    const items = this.state.data.items;
+    const targetIndex = idx + dir;
+    if (targetIndex < 0 || targetIndex >= items.length) {
+      return;
+    }
+    const [item] = items.splice(idx, 1);
+    items.splice(targetIndex, 0, item);
     this.renderForm();
     this.updateOutputs();
   }
@@ -1440,6 +1828,105 @@ class ActivityBuilder {
       `;
 
       markup = [hero, quizShared, scoreboardSection, slidesSection].join('');
+    } else if (type === 'linking') {
+      const pairMarkup = data.pairs
+        .map(
+          (pair, pIndex) => `
+            <article class="question-block" data-block="link-pair" data-index="${pIndex}">
+              <div class="block-header">
+                <h3>Pair ${pIndex + 1}</h3>
+                <button type="button" class="subtle-link" data-action="remove-link-pair"><i class="fa-solid fa-trash-can"></i> Remove</button>
+              </div>
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-arrow-right-arrow-left"></i> Prompt</span>
+                <input type="text" data-field="pair-prompt" value="${escapeHtml(pair.prompt || '')}" placeholder="Left side text" />
+              </label>
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-link"></i> Matching headline</span>
+                <input type="text" data-field="pair-match" value="${escapeHtml(pair.match || '')}" placeholder="Right side text" />
+              </label>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-lightbulb"></i> Hint (optional)</span>
+                <textarea data-field="pair-hint" placeholder="Add a clue learners can use">${escapeHtml(pair.hint || '')}</textarea>
+              </label>
+            </article>
+          `
+        )
+        .join('');
+
+      markup = [
+        hero,
+        shared,
+        `
+          <section class="form-section">
+            <header class="section-heading">
+              <div>
+                <h2><i class="fa-solid fa-diagram-project"></i> Matching pairs</h2>
+                <p>List each prompt and its correct match. Learners will pair them in the activity.</p>
+              </div>
+              <button type="button" class="chip-btn" data-action="add-link-pair"><i class="fa-solid fa-plus"></i> Add pair</button>
+            </header>
+            ${pairMarkup}
+          </section>
+        `,
+      ].join('');
+    } else if (type === 'dropdown') {
+      const dropdownMarkup = data.items
+        .map((item, dIndex) => {
+          const optionMarkup = item.options
+            .map(
+              (option, oIndex) => `
+                <div class="option-row" data-block="dropdown-option" data-option-index="${oIndex}">
+                  <label class="checkbox">
+                    <input type="radio" name="dropdown-${dIndex}-correct" data-field="dropdown-option-correct" ${option.correct ? 'checked' : ''} />
+                    <span>Correct</span>
+                  </label>
+                  <input type="text" data-field="dropdown-option-text" value="${escapeHtml(option.text || '')}" placeholder="Option text" />
+                  <button type="button" class="subtle-link" data-action="remove-dropdown-option" aria-label="Remove option"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+              `
+            )
+            .join('');
+
+          return `
+            <article class="question-block" data-block="dropdown-item" data-index="${dIndex}">
+              <div class="block-header">
+                <h3>Dropdown ${dIndex + 1}</h3>
+                <button type="button" class="subtle-link" data-action="remove-dropdown-item"><i class="fa-solid fa-trash-can"></i> Remove</button>
+              </div>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Prompt</span>
+                <textarea data-field="dropdown-prompt" placeholder="Enter the prompt learners will see">${escapeHtml(item.prompt || '')}</textarea>
+              </label>
+              <div class="option-list">
+                ${optionMarkup}
+              </div>
+              <button type="button" class="chip-btn" data-action="add-dropdown-option"><i class="fa-solid fa-plus"></i> Add option</button>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-comment-dots"></i> Feedback (optional)</span>
+                <textarea data-field="dropdown-feedback" placeholder="Provide feedback shown after checking">${escapeHtml(item.feedback || '')}</textarea>
+              </label>
+            </article>
+          `;
+        })
+        .join('');
+
+      markup = [
+        hero,
+        shared,
+        `
+          <section class="form-section">
+            <header class="section-heading">
+              <div>
+                <h2><i class="fa-solid fa-caret-down"></i> Dropdown items</h2>
+                <p>Create each statement and set the correct dropdown choice.</p>
+              </div>
+              <button type="button" class="chip-btn" data-action="add-dropdown-item"><i class="fa-solid fa-plus"></i> Add dropdown</button>
+            </header>
+            ${dropdownMarkup}
+          </section>
+        `,
+      ].join('');
     } else if (type === 'gapfill') {
       markup = `
         ${hero}
@@ -1506,6 +1993,138 @@ class ActivityBuilder {
           `
         ),
         '</section>'
+      ].join('');
+    } else if (type === 'multiple-choice-grid') {
+      const columnInputs = data.columns
+        .map(
+          (column, cIndex) => `
+            <div class="grid-column-block" data-block="grid-column" data-index="${cIndex}">
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-heading"></i> Column ${cIndex + 1}</span>
+                <input type="text" data-field="grid-column-name" value="${escapeHtml(column)}" placeholder="Column label" />
+              </label>
+              <button type="button" class="subtle-link" data-action="remove-grid-column" ${
+                data.columns.length <= 2 ? 'disabled' : ''
+              }><i class="fa-solid fa-trash-can"></i> Remove</button>
+            </div>
+          `
+        )
+        .join('');
+
+      const rowMarkup = data.rows
+        .map(
+          (row, rIndex) => {
+            const options = data.columns
+              .map(
+                (column, cIndex) => `
+                  <option value="${cIndex}" ${Number(row.correctIndex) === cIndex ? 'selected' : ''}>${escapeHtml(
+                    column
+                  )}</option>
+                `
+              )
+              .join('');
+
+            return `
+            <article class="question-block" data-block="grid-row" data-index="${rIndex}">
+              <div class="block-header">
+                <h3>Row ${rIndex + 1}</h3>
+                <button type="button" class="subtle-link" data-action="remove-grid-row"><i class="fa-solid fa-trash-can"></i> Remove</button>
+              </div>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Statement</span>
+                <textarea data-field="grid-row-statement" placeholder="Enter the row prompt">${escapeHtml(row.statement || '')}</textarea>
+              </label>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-comment"></i> Note (optional)</span>
+                <textarea data-field="grid-row-note" placeholder="Add guidance or rationale">${escapeHtml(row.note || '')}</textarea>
+              </label>
+              <label class="field">
+                <span class="field-label"><i class="fa-solid fa-circle-check"></i> Correct column</span>
+                <select data-field="grid-row-correct">
+                  ${options}
+                </select>
+              </label>
+            </article>
+          `;
+          }
+        )
+        .join('');
+
+      markup = [
+        hero,
+        shared,
+        `
+          <section class="form-section">
+            <header class="section-heading">
+              <div>
+                <h2><i class="fa-solid fa-table-cells-large"></i> Grid columns</h2>
+                <p>Set the column headers learners choose from.</p>
+              </div>
+              <button type="button" class="chip-btn" data-action="add-grid-column"><i class="fa-solid fa-plus"></i> Add column</button>
+            </header>
+            <div class="grid-columns">
+              ${columnInputs}
+            </div>
+          </section>
+          <section class="form-section">
+            <header class="section-heading">
+              <div>
+                <h2><i class="fa-solid fa-list-check"></i> Grid rows</h2>
+                <p>Write each statement and select the matching column.</p>
+              </div>
+              <button type="button" class="chip-btn" data-action="add-grid-row"><i class="fa-solid fa-plus"></i> Add row</button>
+            </header>
+            ${rowMarkup}
+          </section>
+        `,
+      ].join('');
+    } else if (type === 'ranking') {
+      const rankingMarkup = data.items
+        .map(
+          (item, rIndex) => `
+            <article class="question-block" data-block="ranking-item" data-index="${rIndex}">
+              <div class="block-header">
+                <h3>Step ${rIndex + 1}</h3>
+                <div class="block-actions">
+                  <button type="button" class="subtle-link" data-action="move-ranking-up" ${
+                    rIndex === 0 ? 'disabled' : ''
+                  }><i class="fa-solid fa-arrow-up"></i> Up</button>
+                  <button type="button" class="subtle-link" data-action="move-ranking-down" ${
+                    rIndex === data.items.length - 1 ? 'disabled' : ''
+                  }><i class="fa-solid fa-arrow-down"></i> Down</button>
+                  <button type="button" class="subtle-link" data-action="remove-ranking-item" ${
+                    data.items.length <= 2 ? 'disabled' : ''
+                  }><i class="fa-solid fa-trash-can"></i> Remove</button>
+                </div>
+              </div>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-pen"></i> Item text</span>
+                <textarea data-field="ranking-text" placeholder="Describe the step or card">${escapeHtml(item.text || '')}</textarea>
+              </label>
+              <label class="field field--span">
+                <span class="field-label"><i class="fa-solid fa-note-sticky"></i> Note (optional)</span>
+                <textarea data-field="ranking-note" placeholder="Add context or coaching tip">${escapeHtml(item.note || '')}</textarea>
+              </label>
+            </article>
+          `
+        )
+        .join('');
+
+      markup = [
+        hero,
+        shared,
+        `
+          <section class="form-section">
+            <header class="section-heading">
+              <div>
+                <h2><i class="fa-solid fa-arrow-down-1-9"></i> Ranking items</h2>
+                <p>Arrange items in their ideal order. Learners will attempt to recreate it.</p>
+              </div>
+              <button type="button" class="chip-btn" data-action="add-ranking-item"><i class="fa-solid fa-plus"></i> Add item</button>
+            </header>
+            ${rankingMarkup}
+          </section>
+        `,
       ].join('');
     } else if (type === 'table-completion') {
       markup = [
@@ -1859,6 +2478,312 @@ const Generators = {
               }
             });
           });
+        })();
+      </script>
+    `);
+  },
+  linking: (config) => {
+    const fallback = DEFAULT_STATES.linking();
+    const rawPairs = Array.isArray(config.pairs) ? config.pairs : [];
+    let pairs = rawPairs
+      .map((pair) => ({
+        prompt: typeof pair.prompt === 'string' ? pair.prompt.trim() : '',
+        match: typeof pair.match === 'string' ? pair.match.trim() : '',
+        hint: typeof pair.hint === 'string' ? pair.hint.trim() : '',
+      }))
+      .filter((pair) => pair.prompt && pair.match);
+
+    if (!pairs.length) {
+      pairs = fallback.pairs.map((pair) => ({
+        prompt: pair.prompt,
+        match: pair.match,
+        hint: pair.hint || '',
+      }));
+    }
+
+    const rowsMarkup = pairs
+      .map(
+        (pair, index) => `
+          <div class="linking-row" data-index="${index}">
+            <div class="linking-prompt">
+              <span class="linking-pill">${index + 1}</span>
+              <div class="linking-text">
+                <p class="linking-statement">${escapeHtml(pair.prompt)}</p>
+                ${pair.hint ? `<p class="linking-hint">${escapeHtml(pair.hint)}</p>` : ''}
+              </div>
+            </div>
+            <div class="linking-control">
+              <label class="visually-hidden" for="linking-select-${index}">Match for ${escapeHtml(pair.prompt)}</label>
+              <select id="linking-select-${index}" class="linking-select" data-answer aria-label="Match for ${escapeHtml(
+                pair.prompt
+              )}"></select>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+
+    return wrapInTemplate(config, `
+      <div class="linking-activity">
+        ${rowsMarkup}
+        <div class="activity-actions">
+          <button id="linking-check" class="activity-btn">Check links</button>
+          <button id="linking-reset" class="activity-btn secondary">Reset</button>
+        </div>
+        <aside id="linking-feedback" class="linking-feedback" hidden>
+          <h3>Feedback</h3>
+          <p id="linking-summary"></p>
+          <ul id="linking-details" class="feedback-list"></ul>
+          <button id="linking-close" class="activity-btn secondary">Close</button>
+        </aside>
+      </div>
+      <script>
+        (() => {
+          const pairs = ${JSON.stringify(pairs)};
+          const selects = Array.from(document.querySelectorAll('.linking-select'));
+          if (!pairs.length || !selects.length) return;
+          const baseOptions = pairs.map((pair, index) => ({ value: String(index), label: pair.match }));
+          const answerMap = new Map(baseOptions.map((entry) => [entry.value, entry.label]));
+          const shuffle = (items) => {
+            const copy = items.slice();
+            for (let i = copy.length - 1; i > 0; i -= 1) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+          };
+          const buildOptions = (select) => {
+            const current = select.value;
+            select.innerHTML = '';
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Choose match';
+            select.appendChild(placeholder);
+            shuffle(baseOptions).forEach((entry) => {
+              const option = document.createElement('option');
+              option.value = entry.value;
+              option.textContent = entry.label;
+              select.appendChild(option);
+            });
+            if (current && answerMap.has(current)) {
+              select.value = current;
+            }
+          };
+
+          const feedback = document.getElementById('linking-feedback');
+          const summary = document.getElementById('linking-summary');
+          const details = document.getElementById('linking-details');
+          const checkBtn = document.getElementById('linking-check');
+          const resetBtn = document.getElementById('linking-reset');
+          const closeBtn = document.getElementById('linking-close');
+
+          const resetRows = () => {
+            selects.forEach((select) => {
+              buildOptions(select);
+              select.value = '';
+              const row = select.closest('.linking-row');
+              if (row) {
+                row.classList.remove('correct', 'incorrect');
+              }
+            });
+            if (feedback) {
+              feedback.hidden = true;
+            }
+            if (details) {
+              details.innerHTML = '';
+            }
+          };
+
+          resetRows();
+
+          const evaluate = () => {
+            if (!feedback || !summary || !details) return;
+            let score = 0;
+            details.innerHTML = '';
+            selects.forEach((select, index) => {
+              const row = select.closest('.linking-row');
+              if (row) {
+                row.classList.remove('correct', 'incorrect');
+              }
+              const value = select.value;
+              const isCorrect = value && Number(value) === index;
+              if (row) {
+                row.classList.add(isCorrect ? 'correct' : 'incorrect');
+              }
+              if (isCorrect) {
+                score += 1;
+              }
+              const item = document.createElement('li');
+              const prompt = document.createElement('strong');
+              prompt.textContent = pairs[index].prompt;
+              item.appendChild(prompt);
+              const span = document.createElement('span');
+              const chosen = value ? answerMap.get(value) : 'No selection';
+              span.textContent = ' — You chose: ' + chosen + '. Correct: ' + answerMap.get(String(index)) + '.';
+              item.appendChild(span);
+              details.appendChild(item);
+            });
+            summary.textContent = 'You linked ' + score + ' of ' + pairs.length + ' correctly.';
+            feedback.hidden = false;
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          };
+
+          if (checkBtn) {
+            checkBtn.addEventListener('click', evaluate);
+          }
+          if (resetBtn) {
+            resetBtn.addEventListener('click', () => resetRows());
+          }
+          if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+              if (feedback) {
+                feedback.hidden = true;
+              }
+            });
+          }
+        })();
+      </script>
+    `);
+  },
+  dropdown: (config) => {
+    const fallback = DEFAULT_STATES.dropdown();
+    const rawItems = Array.isArray(config.items) ? config.items : [];
+    let items = rawItems
+      .map((item) => {
+        const options = Array.isArray(item.options)
+          ? item.options.map((option) => ({
+              text: typeof option.text === 'string' ? option.text.trim() : '',
+              correct: Boolean(option.correct),
+            }))
+          : [];
+        return {
+          prompt: typeof item.prompt === 'string' ? item.prompt.trim() : '',
+          feedback: typeof item.feedback === 'string' ? item.feedback.trim() : '',
+          options: options.filter((option) => option.text),
+        };
+      })
+      .filter((item) => item.prompt && item.options.length);
+
+    if (!items.length) {
+      items = fallback.items.map((item) => ({
+        prompt: item.prompt,
+        feedback: item.feedback || '',
+        options: item.options.map((option) => ({ text: option.text, correct: Boolean(option.correct) })),
+      }));
+    }
+
+    const itemsMarkup = items
+      .map((item, index) => {
+        const optionMarkup = item.options
+          .map((option, oIndex) => `<option value="${oIndex}">${escapeHtml(option.text)}</option>`)
+          .join('');
+        return `
+          <article class="dropdown-item" data-index="${index}" data-correct="${item.options.findIndex((opt) => opt.correct)}">
+            <p class="dropdown-prompt">${escapeHtml(item.prompt)}</p>
+            <label class="visually-hidden" for="dropdown-select-${index}">Answer for ${escapeHtml(item.prompt)}</label>
+            <select id="dropdown-select-${index}" class="dropdown-select" aria-label="Answer for ${escapeHtml(
+              item.prompt
+            )}">
+              <option value="">Choose answer</option>
+              ${optionMarkup}
+            </select>
+            ${item.feedback ? `<p class="dropdown-hint" data-role="feedback">${escapeHtml(item.feedback)}</p>` : ''}
+          </article>
+        `;
+      })
+      .join('');
+
+    return wrapInTemplate(config, `
+      <div class="dropdown-activity">
+        ${itemsMarkup}
+        <div class="activity-actions">
+          <button id="dropdown-check" class="activity-btn">Check answers</button>
+          <button id="dropdown-reset" class="activity-btn secondary">Reset</button>
+        </div>
+        <aside id="dropdown-feedback" class="dropdown-feedback" hidden>
+          <h3>Feedback</h3>
+          <p id="dropdown-summary"></p>
+          <ul id="dropdown-details" class="feedback-list"></ul>
+          <button id="dropdown-close" class="activity-btn secondary">Close</button>
+        </aside>
+      </div>
+      <script>
+        (() => {
+          const items = ${JSON.stringify(items)};
+          const nodes = Array.from(document.querySelectorAll('.dropdown-item'));
+          if (!items.length || !nodes.length) return;
+          const checkBtn = document.getElementById('dropdown-check');
+          const resetBtn = document.getElementById('dropdown-reset');
+          const closeBtn = document.getElementById('dropdown-close');
+          const feedback = document.getElementById('dropdown-feedback');
+          const summary = document.getElementById('dropdown-summary');
+          const details = document.getElementById('dropdown-details');
+
+          const reset = () => {
+            nodes.forEach((node) => {
+              const select = node.querySelector('select');
+              if (select) {
+                select.value = '';
+              }
+              node.classList.remove('correct', 'incorrect');
+            });
+            if (feedback) {
+              feedback.hidden = true;
+            }
+            if (details) {
+              details.innerHTML = '';
+            }
+          };
+
+          const evaluate = () => {
+            if (!feedback || !summary || !details) return;
+            let score = 0;
+            details.innerHTML = '';
+            nodes.forEach((node, index) => {
+              const select = node.querySelector('select');
+              node.classList.remove('correct', 'incorrect');
+              const correctIndex = items[index].options.findIndex((opt) => opt.correct);
+              const selectedValue = select ? select.value : '';
+              const isCorrect = selectedValue !== '' && Number(selectedValue) === correctIndex;
+              node.classList.add(isCorrect ? 'correct' : 'incorrect');
+              if (isCorrect) {
+                score += 1;
+              }
+              const detail = document.createElement('li');
+              const prompt = document.createElement('strong');
+              prompt.textContent = items[index].prompt;
+              detail.appendChild(prompt);
+              const span = document.createElement('span');
+              const chosen = selectedValue !== '' ? items[index].options[Number(selectedValue)].text : 'No selection';
+              const correctLabel = correctIndex >= 0 ? items[index].options[correctIndex].text : 'Not set';
+              span.textContent = ' — You chose: ' + chosen + '. Correct: ' + correctLabel + '.';
+              detail.appendChild(span);
+              if (items[index].feedback) {
+                const note = document.createElement('p');
+                note.className = 'detail-note';
+                note.textContent = items[index].feedback;
+                detail.appendChild(note);
+              }
+              details.appendChild(detail);
+            });
+            summary.textContent = 'You answered ' + score + ' of ' + items.length + ' correctly.';
+            feedback.hidden = false;
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          };
+
+          if (checkBtn) {
+            checkBtn.addEventListener('click', evaluate);
+          }
+          if (resetBtn) {
+            resetBtn.addEventListener('click', reset);
+          }
+          if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+              if (feedback) {
+                feedback.hidden = true;
+              }
+            });
+          }
         })();
       </script>
     `);
@@ -2697,6 +3622,364 @@ const Generators = {
       </script>
     `);
   },
+  'multiple-choice-grid': (config) => {
+    const fallback = DEFAULT_STATES['multiple-choice-grid']();
+    const columns = Array.isArray(config.columns)
+      ? config.columns.map((column) => (typeof column === 'string' ? column.trim() : '')).filter(Boolean)
+      : [];
+    const safeColumns = columns.length ? columns : fallback.columns;
+
+    const rowsSource = Array.isArray(config.rows) ? config.rows : [];
+    const rows = rowsSource.length
+      ? rowsSource.map((row) => ({
+          statement: typeof row.statement === 'string' ? row.statement.trim() : '',
+          note: typeof row.note === 'string' ? row.note.trim() : '',
+          correctIndex: Number.isFinite(Number(row.correctIndex)) ? Number(row.correctIndex) : 0,
+        }))
+      : fallback.rows;
+
+    const normalisedRows = rows
+      .map((row) => ({
+        statement: row.statement || 'Untitled prompt',
+        note: row.note || '',
+        correctIndex:
+          Number.isFinite(Number(row.correctIndex)) && Number(row.correctIndex) >= 0
+            ? Math.min(Number(row.correctIndex), safeColumns.length - 1)
+            : 0,
+      }))
+      .filter((row) => row.statement);
+
+    const headerCells = safeColumns.map((column) => `<th scope="col">${escapeHtml(column)}</th>`).join('');
+
+    const rowsMarkup = normalisedRows
+      .map((row, rIndex) => {
+        const cells = safeColumns
+          .map(
+            (column, cIndex) => `
+              <td>
+                <label class="grid-choice">
+                  <input type="radio" name="grid-row-${rIndex}" value="${cIndex}" aria-label="${escapeHtml(column)}" />
+                  <span class="grid-choice-indicator" aria-hidden="true"></span>
+                </label>
+              </td>
+            `
+          )
+          .join('');
+
+        const noteMarkup = row.note
+          ? `<p class="grid-row-note">${escapeHtml(row.note)}</p>`
+          : '';
+
+        return `
+          <tr class="grid-row" data-index="${rIndex}" data-correct="${row.correctIndex}">
+            <th scope="row">
+              <div class="grid-row-text">
+                <span class="grid-row-label">${escapeHtml(row.statement)}</span>
+                ${noteMarkup}
+              </div>
+            </th>
+            ${cells}
+          </tr>
+        `;
+      })
+      .join('');
+
+    return wrapInTemplate(config, `
+      <div class="grid-activity">
+        <div class="table-wrapper">
+          <table class="grid-table">
+            <thead>
+              <tr>
+                <th scope="col" class="grid-head">Prompt</th>
+                ${headerCells}
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsMarkup}
+            </tbody>
+          </table>
+        </div>
+        <div class="activity-actions">
+          <button id="grid-check" class="activity-btn">Check grid</button>
+          <button id="grid-reset" class="activity-btn secondary">Reset</button>
+        </div>
+        <aside id="grid-feedback" class="grid-feedback" hidden>
+          <h3>Feedback</h3>
+          <p id="grid-summary"></p>
+          <ul id="grid-details" class="feedback-list"></ul>
+          <button id="grid-close" class="activity-btn secondary">Close</button>
+        </aside>
+      </div>
+      <script>
+        (() => {
+          const rows = Array.from(document.querySelectorAll('.grid-row'));
+          if (!rows.length) return;
+          const columns = ${JSON.stringify(safeColumns)};
+          const checkBtn = document.getElementById('grid-check');
+          const resetBtn = document.getElementById('grid-reset');
+          const closeBtn = document.getElementById('grid-close');
+          const feedback = document.getElementById('grid-feedback');
+          const summary = document.getElementById('grid-summary');
+          const details = document.getElementById('grid-details');
+
+          const reset = () => {
+            rows.forEach((row) => {
+              row.classList.remove('correct', 'incorrect');
+              row.querySelectorAll('input[type="radio"]').forEach((input) => {
+                input.checked = false;
+              });
+            });
+            if (feedback) {
+              feedback.hidden = true;
+            }
+            if (details) {
+              details.innerHTML = '';
+            }
+          };
+
+          const evaluate = () => {
+            if (!feedback || !summary || !details) return;
+            let score = 0;
+            details.innerHTML = '';
+            rows.forEach((row, index) => {
+              const correctIndex = Number(row.dataset.correct);
+              const selected = Array.from(row.querySelectorAll('input[type="radio"]')).find((input) => input.checked);
+              const selectedIndex = selected ? Number(selected.value) : NaN;
+              const isCorrect = Number.isFinite(correctIndex) && selectedIndex === correctIndex;
+              row.classList.toggle('correct', isCorrect);
+              row.classList.toggle('incorrect', !isCorrect);
+              if (isCorrect) {
+                score += 1;
+              }
+              const detail = document.createElement('li');
+              const prompt = row.querySelector('.grid-row-label');
+              const heading = document.createElement('strong');
+              heading.textContent = prompt ? prompt.textContent : 'Row ' + (index + 1);
+              detail.appendChild(heading);
+              const span = document.createElement('span');
+              const chosenLabel = Number.isFinite(selectedIndex) ? columns[selectedIndex] : 'No selection';
+              const correctLabel = Number.isFinite(correctIndex) ? columns[correctIndex] : 'Not set';
+              span.textContent = ' — You chose: ' + chosenLabel + '. Correct: ' + correctLabel + '.';
+              detail.appendChild(span);
+              const note = row.querySelector('.grid-row-note');
+              if (note) {
+                const detailNote = document.createElement('p');
+                detailNote.className = 'detail-note';
+                detailNote.textContent = note.textContent;
+                detail.appendChild(detailNote);
+              }
+              details.appendChild(detail);
+            });
+            summary.textContent = 'You matched ' + score + ' of ' + rows.length + ' correctly.';
+            feedback.hidden = false;
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          };
+
+          if (checkBtn) {
+            checkBtn.addEventListener('click', evaluate);
+          }
+          if (resetBtn) {
+            resetBtn.addEventListener('click', reset);
+          }
+          if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+              if (feedback) {
+                feedback.hidden = true;
+              }
+            });
+          }
+        })();
+      </script>
+    `);
+  },
+  ranking: (config) => {
+    const fallback = DEFAULT_STATES.ranking();
+    const rawItems = Array.isArray(config.items) ? config.items : [];
+    const items = rawItems.length
+      ? rawItems
+          .map((item) => ({
+            text: typeof item.text === 'string' ? item.text.trim() : '',
+            note: typeof item.note === 'string' ? item.note.trim() : '',
+          }))
+          .filter((item) => item.text)
+      : fallback.items;
+
+    const itemsMarkup = items
+      .map(
+        (item, index) => `
+          <li class="ranking-item" data-answer-index="${index}">
+            <div class="ranking-card">
+              <span class="ranking-number">${index + 1}</span>
+              <div class="ranking-body">
+                <p class="ranking-text">${escapeHtml(item.text)}</p>
+                ${item.note ? `<p class="ranking-note">${escapeHtml(item.note)}</p>` : ''}
+              </div>
+              <div class="ranking-controls">
+                <button type="button" data-role="rank-up" aria-label="Move up ${escapeHtml(item.text)}">
+                  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                </button>
+                <button type="button" data-role="rank-down" aria-label="Move down ${escapeHtml(item.text)}">
+                  <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </li>
+        `
+      )
+      .join('');
+
+    return wrapInTemplate(config, `
+      <div class="ranking-activity">
+        <ol class="ranking-list">
+          ${itemsMarkup}
+        </ol>
+        <div class="activity-actions">
+          <button id="ranking-check" class="activity-btn">Check order</button>
+          <button id="ranking-reset" class="activity-btn secondary">Reshuffle</button>
+        </div>
+        <aside id="ranking-feedback" class="ranking-feedback" hidden>
+          <h3>Feedback</h3>
+          <p id="ranking-summary"></p>
+          <ul id="ranking-details" class="feedback-list"></ul>
+          <button id="ranking-close" class="activity-btn secondary">Close</button>
+        </aside>
+      </div>
+      <script>
+        (() => {
+          const list = document.querySelector('.ranking-list');
+          if (!list) return;
+          const items = ${JSON.stringify(items)};
+          const entries = Array.from(list.children);
+          if (!entries.length) return;
+          const checkBtn = document.getElementById('ranking-check');
+          const resetBtn = document.getElementById('ranking-reset');
+          const closeBtn = document.getElementById('ranking-close');
+          const feedback = document.getElementById('ranking-feedback');
+          const summary = document.getElementById('ranking-summary');
+          const details = document.getElementById('ranking-details');
+
+          const shuffle = (array) => {
+            const copy = array.slice();
+            for (let i = copy.length - 1; i > 0; i -= 1) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+          };
+
+          const refreshNumbers = () => {
+            Array.from(list.children).forEach((item, index) => {
+              const badge = item.querySelector('.ranking-number');
+              if (badge) {
+                badge.textContent = index + 1;
+              }
+            });
+          };
+
+          const updateControls = () => {
+            const children = Array.from(list.children);
+            children.forEach((item, index) => {
+              const upBtn = item.querySelector('button[data-role="rank-up"]');
+              const downBtn = item.querySelector('button[data-role="rank-down"]');
+              if (upBtn) {
+                upBtn.disabled = index === 0;
+              }
+              if (downBtn) {
+                downBtn.disabled = index === children.length - 1;
+              }
+            });
+          };
+
+          const reset = () => {
+            const shuffled = shuffle(entries);
+            shuffled.forEach((item) => {
+              item.classList.remove('correct', 'incorrect');
+              list.appendChild(item);
+            });
+            if (feedback) {
+              feedback.hidden = true;
+            }
+            if (details) {
+              details.innerHTML = '';
+            }
+            refreshNumbers();
+            updateControls();
+          };
+
+          list.addEventListener('click', (event) => {
+            const button = event.target.closest('button[data-role]');
+            if (!button) return;
+            const item = button.closest('.ranking-item');
+            if (!item) return;
+            if (button.dataset.role === 'rank-up') {
+              const previous = item.previousElementSibling;
+              if (previous) {
+                list.insertBefore(item, previous);
+              }
+            } else if (button.dataset.role === 'rank-down') {
+              const next = item.nextElementSibling;
+              if (next) {
+                list.insertBefore(next, item);
+              }
+            }
+            refreshNumbers();
+            updateControls();
+          });
+
+          const evaluate = () => {
+            if (!feedback || !summary || !details) return;
+            const ordered = Array.from(list.children);
+            let score = 0;
+            details.innerHTML = '';
+            ordered.forEach((item, position) => {
+              const answerIndex = Number(item.dataset.answerIndex);
+              const isCorrect = answerIndex === position;
+              item.classList.toggle('correct', isCorrect);
+              item.classList.toggle('incorrect', !isCorrect);
+              if (isCorrect) {
+                score += 1;
+              }
+              const detail = document.createElement('li');
+              const title = document.createElement('strong');
+              title.textContent = position + 1 + '. ' + items[answerIndex].text;
+              detail.appendChild(title);
+              if (!isCorrect) {
+                const span = document.createElement('span');
+                span.textContent = ' — Correct position: ' + (answerIndex + 1);
+                detail.appendChild(span);
+              }
+              if (items[answerIndex].note) {
+                const note = document.createElement('p');
+                note.className = 'detail-note';
+                note.textContent = items[answerIndex].note;
+                detail.appendChild(note);
+              }
+              details.appendChild(detail);
+            });
+            summary.textContent = 'You placed ' + score + ' of ' + ordered.length + ' in the correct position.';
+            feedback.hidden = false;
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          };
+
+          if (checkBtn) {
+            checkBtn.addEventListener('click', evaluate);
+          }
+          if (resetBtn) {
+            resetBtn.addEventListener('click', reset);
+          }
+          if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+              if (feedback) {
+                feedback.hidden = true;
+              }
+            });
+          }
+
+          reset();
+        })();
+      </script>
+    `);
+  },
   'table-completion': (config) => {
     const tableMarkup = [`<thead><tr>`, ...config.columnHeaders.map((header) => `<th>${escapeHtml(header)}</th>`), '</tr></thead>'].join('');
     const bodyMarkup = config.rows
@@ -2989,12 +4272,40 @@ const wrapInTemplate = (config, innerMarkup) => `
     .mc-feedback,
     .gap-feedback,
     .group-feedback,
-    .table-feedback {
+    .table-feedback,
+    .linking-feedback,
+    .dropdown-feedback,
+    .grid-feedback,
+    .ranking-feedback {
       background: var(--surface);
       border-radius: 18px;
       border: 1px solid var(--border);
       padding: 1.5rem;
       box-shadow: 0 18px 32px rgba(31, 38, 28, 0.08);
+    }
+
+    .feedback-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .feedback-list li {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .feedback-list li strong {
+      font-size: 0.95rem;
+    }
+
+    .detail-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
     }
 
     .gapfill-text {
@@ -3055,6 +4366,272 @@ const wrapInTemplate = (config, innerMarkup) => `
     .group-targets {
       display: grid;
       gap: 1rem;
+    }
+
+    .linking-activity,
+    .dropdown-activity,
+    .grid-activity,
+    .ranking-activity {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .linking-activity {
+      background: rgba(246, 248, 243, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .linking-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    .linking-row.correct {
+      border-color: var(--success);
+      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.25);
+    }
+
+    .linking-row.incorrect {
+      border-color: var(--error);
+      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
+    }
+
+    .linking-prompt {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .linking-pill {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .linking-text {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .linking-statement {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .linking-hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .linking-select,
+    .dropdown-select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      background: #fff;
+    }
+
+    .dropdown-activity {
+      background: rgba(246, 248, 243, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .dropdown-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      display: grid;
+      gap: 0.75rem;
+      background: #fff;
+    }
+
+    .dropdown-item.correct {
+      border-color: var(--success);
+      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.2);
+    }
+
+    .dropdown-item.incorrect {
+      border-color: var(--error);
+      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
+    }
+
+    .dropdown-prompt {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .dropdown-hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .grid-table th,
+    .grid-table td {
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .grid-table .grid-head {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .grid-row-text {
+      text-align: left;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .grid-row-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .grid-choice {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .grid-choice-indicator {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: inline-block;
+    }
+
+    .grid-choice input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .grid-choice input:checked + .grid-choice-indicator {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .grid-row.correct {
+      background: rgba(61, 132, 88, 0.08);
+    }
+
+    .grid-row.incorrect {
+      background: rgba(199, 92, 92, 0.08);
+    }
+
+    .ranking-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .ranking-item {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #fff;
+      transition: transform 0.2s ease;
+    }
+
+    .ranking-item.correct {
+      border-color: var(--success);
+      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.2);
+    }
+
+    .ranking-item.incorrect {
+      border-color: var(--error);
+      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
+    }
+
+    .ranking-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.9rem 1.1rem;
+    }
+
+    .ranking-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .ranking-text {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .ranking-note {
+      margin: 0.25rem 0 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .ranking-controls {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .ranking-controls button {
+      border: none;
+      background: rgba(61, 111, 93, 0.12);
+      color: var(--accent);
+      border-radius: 10px;
+      padding: 0.35rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .ranking-controls button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .ranking-controls button:not(:disabled):hover,
+    .ranking-controls button:not(:disabled):focus-visible {
+      background: rgba(61, 111, 93, 0.22);
+      outline: none;
     }
 
     .group-target header h3 {
