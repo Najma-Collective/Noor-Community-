@@ -363,8 +363,10 @@ moduleCloseBtn.click();
 await flushTimers();
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close when dismissed');
 
-const toolbar = blankSlide.querySelector('[data-role="blank-toolbar"]');
+const toolbarHost = document.querySelector('[data-role="blank-toolbar-host"]');
+const toolbar = toolbarHost?.querySelector('[data-role="blank-toolbar"]');
 const toolbarToggle = toolbar?.querySelector('.blank-toolbar-toggle');
+assert.ok(toolbarHost instanceof window.HTMLElement, 'blank toolbar host should be present');
 assert.ok(toolbar instanceof window.HTMLElement, 'blank toolbar container should be present');
 assert.ok(toolbarToggle instanceof window.HTMLButtonElement, 'blank toolbar toggle should exist');
 
