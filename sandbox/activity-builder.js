@@ -1,70 +1,121 @@
 const DEFAULT_STATES = {
   'multiple-choice': () => ({
-    title: 'Quick Knowledge Check',
-    instructions: 'Select the best answer for each question before checking your work.',
-    rubric: 'Full credit is earned when all of the correct responses are selected.',
+    title: 'C1 Checkpoint · Climate Solutions Sprint',
+    instructions:
+      'Skim the scenario pill, read the prompt badge, then tap the best response before revealing the feedback card.',
+    rubric:
+      'Learners earn a progress badge for each prompt answered correctly. Discuss any uncertain items before advancing.',
     questions: [
       {
-        prompt: 'Sample question prompt goes here.',
-        explanation: 'Explain why the correct answer is correct or clarify common misconceptions.',
+        prompt:
+          'Which action best represents a low-cost, high-impact climate solution we could prototype this term?',
+        explanation:
+          'Distributed solar kits create an immediate, measurable reduction in emissions while modelling learner agency.',
         options: [
-          { text: 'Correct option', correct: true },
-          { text: 'Distractor A', correct: false },
-          { text: 'Distractor B', correct: false }
+          { text: 'Installing rooftop solar starter kits across the neighbourhood hub', correct: true },
+          { text: 'Hosting weekly awareness assemblies in the auditorium', correct: false },
+          { text: 'Publishing a quarterly sustainability report for stakeholders', correct: false },
+          { text: 'Planting decorative palms around the entrance plaza', correct: false }
+        ]
+      },
+      {
+        prompt: 'Which data badge should pair with the infographic on Slide 4 of this deck?',
+        explanation:
+          'The infographic highlights measurable gains, so we surface the Impact badge rather than narrative or testimonial cues.',
+        options: [
+          { text: 'Impact badge · compares baseline and post-project metrics', correct: true },
+          { text: 'People badge · lifts a learner testimonial or quote', correct: false },
+          { text: 'Story badge · cues the narrative hook for the showcase', correct: false }
         ]
       }
     ]
   }),
   gapfill: () => ({
-    title: 'Complete the Passage',
-    instructions: 'Type the missing words to complete the passage.',
-    rubric: 'Earn one point for each correctly completed blank.',
-    passage: 'Climate change refers to [[long-term]] shifts in temperature and weather patterns, mainly caused by [[human|human-caused|man-made]] activities.'
+    title: 'Badge Copy Refinement',
+    instructions: 'Preview the mentor text pill, then tighten each badge caption with precise C1 language.',
+    rubric: 'Award one point per correctly completed blank; coach for concision before revealing the model answers.',
+    passage:
+      'Each slide opens with a [[scenario|context]] pill that anchors learners in a real brief. ' +
+      'To reinforce the voice and tone, pair every action card with a [[badge|micro-badge]] label that signals the focus. ' +
+      'During the showcase, move from the [[insight|key insight]] badge into the reflection grid so evidence stays visible.'
   }),
   grouping: () => ({
-    title: 'Sort the Concepts',
-    instructions: 'Drag each card into the matching category.',
-    rubric: 'Each card placed in the correct category is worth one point.',
+    title: 'Assemble the Slide Stack',
+    instructions: 'Drag each card into the correct lane to storyboard the updated presentation flow.',
+    rubric: 'Teams earn a collaboration badge for every card sorted into the matching lane.',
     categories: [
       {
-        name: 'Renewable Energy',
-        description: 'Sources that replenish naturally.',
-        items: ['Solar', 'Wind']
+        name: 'Launch Pillars',
+        description: 'Use these to open the deck with momentum and clarity.',
+        items: ['Scenario pill', 'Spark question duo', 'Visual promise badge']
       },
       {
-        name: 'Non-renewable Energy',
-        description: 'Sources that will eventually run out.',
-        items: ['Coal', 'Natural Gas']
+        name: 'Studio Habits',
+        description: 'Mid-deck structures that drive iteration and prototyping.',
+        items: ['Feedback carousel', 'Prototype gallery', 'Coach check-in pill']
+      },
+      {
+        name: 'Reflection Tokens',
+        description: 'Closing structures that surface evidence of learning.',
+        items: ['Glow/Grow cards', 'Exit ticket mosaic', 'Next steps badge']
       }
     ]
   }),
   'table-completion': () => ({
-    title: 'Compare the Options',
-    instructions: 'Complete the table with the correct information.',
-    rubric: 'Each cell that matches the answer key is worth one point.',
-    columnHeaders: ['Feature', 'Option A', 'Option B'],
+    title: 'Card Composition Planner',
+    instructions: 'Complete the matrix to align each slide card with the new visual language.',
+    rubric: 'Assign one point per accurately completed cell. Invite teams to justify their pairings before scoring.',
+    columnHeaders: ['Focus area', 'Learner-facing move', 'Visible artifact'],
     rows: [
-      { label: 'Cost', answers: ['lower', 'higher'] },
-      { label: 'Availability', answers: ['limited', 'wide'] }
+      {
+        label: 'Scenario launch',
+        answers: ['Pose a bold question framed as a pill', 'Hero image with overlay badge']
+      },
+      {
+        label: 'Practice lane',
+        answers: ['Sequence a trio of iterative tasks', 'Card stack with step badges']
+      },
+      {
+        label: 'Reflection close',
+        answers: ['Collect evidence and next steps aloud', 'Dual-column recap with progress chips']
+      }
     ]
   }),
   'quiz-show': () => ({
     title: 'Slide Quiz Showdown',
-    instructions: 'Advance through the slides, reveal the answers when ready, and keep the pace with the countdown.',
-    rubric: 'Award points on the scoreboard whenever a team responds correctly.',
-    defaultTime: 45,
+    instructions:
+      'Run the lightning round: reveal the prompt pill, let teams buzz in, then flip the answer and extension cards.',
+    rubric:
+      'Award two points for accurate responses and one point for strong extensions. Pause between slides to celebrate badges earned.',
+    defaultTime: 35,
     questions: [
       {
-        prompt: 'What is a surprising fact that will kick off the quiz?',
-        answer: 'Share the correct answer here so you can reveal it live.',
-        feedback: 'Add an interesting tidbit or extension question to keep the discussion moving.',
+        prompt:
+          'Which visual cue signals a progress badge has been earned during the reflection slide?',
+        answer: 'A soft green chip with the badge icon pulses beside the learner name.',
+        feedback: 'Invite learners to describe what evidence unlocked that badge to reinforce metacognition.',
         image: 'https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg',
-        time: 45
+        time: 40
+      },
+      {
+        prompt: 'How should we introduce a new studio habit card when time is limited?',
+        answer: 'Use the Story pill to headline the purpose, then anchor the task with a single coaching prompt.',
+        feedback: 'Model a concise demo before inviting teams to rehearse the habit in pairs.',
+        image: 'https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg',
+        time: 30
+      },
+      {
+        prompt: 'What belongs in the recap grid after a prototyping sprint?',
+        answer: 'Three wins, one edge, and next-iteration commitments captured as badges.',
+        feedback: 'Layer the exit ticket mosaic beneath so trends stay visible across teams.',
+        image: 'https://images.pexels.com/photos/1181356/pexels-photo-1181356.jpeg',
+        time: 35
       }
     ],
     teams: [
-      { name: 'Team Aurora', icon: 'fa-solid fa-sun', score: 0 },
-      { name: 'Team Nebula', icon: 'fa-solid fa-meteor', score: 0 }
+      { name: 'Team Catalyst', icon: 'fa-solid fa-bolt', score: 0 },
+      { name: 'Team Atlas', icon: 'fa-solid fa-mountain', score: 0 },
+      { name: 'Team Pulse', icon: 'fa-solid fa-wave-square', score: 0 }
     ]
   })
 };
@@ -3128,36 +3179,40 @@ const parseGapfill = (passage = '') => {
   return { segments, gaps };
 };
 
-window.addEventListener('DOMContentLoaded', () => {
-  const builder = new ActivityBuilder();
-  builder.init();
+export { DEFAULT_STATES, TYPE_META, Generators };
 
-  if (builder.isEmbedded) {
-    const postStatus = (status) => {
-      try {
-        window.parent.postMessage(
-          { source: 'noor-activity-builder', type: 'activity-module', status },
-          '*',
-        );
-      } catch (error) {
-        console.warn(`Unable to notify deck of builder ${status} status`, error);
-      }
-    };
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const builder = new ActivityBuilder();
+    builder.init();
 
-    postStatus('ready');
+    if (builder.isEmbedded) {
+      const postStatus = (status) => {
+        try {
+          window.parent.postMessage(
+            { source: 'noor-activity-builder', type: 'activity-module', status },
+            '*',
+          );
+        } catch (error) {
+          console.warn(`Unable to notify deck of builder ${status} status`, error);
+        }
+      };
 
-    window.addEventListener('message', (event) => {
-      if (event.source !== window.parent) {
-        return;
-      }
-      const message = event.data;
-      if (!message || message.source !== 'noor-deck' || message.type !== 'activity-module-load') {
-        return;
-      }
-      const loaded = builder.loadConfig(message.config);
-      if (loaded) {
-        postStatus('loaded');
-      }
-    });
-  }
-});
+      postStatus('ready');
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== window.parent) {
+          return;
+        }
+        const message = event.data;
+        if (!message || message.source !== 'noor-deck' || message.type !== 'activity-module-load') {
+          return;
+        }
+        const loaded = builder.loadConfig(message.config);
+        if (loaded) {
+          postStatus('loaded');
+        }
+      });
+    }
+  });
+}

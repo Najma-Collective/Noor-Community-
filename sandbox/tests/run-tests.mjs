@@ -3,6 +3,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
+import { DEFAULT_STATES as MODULE_DEFAULTS, Generators as ModuleGenerators } from '../activity-builder.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -156,6 +157,16 @@ global.fetch = async (input, init = {}) => {
     text: async () => '',
   };
 };
+
+const MODULE_TYPES = ['multiple-choice', 'gapfill', 'grouping', 'table-completion', 'quiz-show'];
+const moduleFixtures = MODULE_TYPES.reduce((acc, type) => {
+  const config = MODULE_DEFAULTS[type]();
+  acc[type] = {
+    config,
+    html: ModuleGenerators[type](config),
+  };
+  return acc;
+}, {});
 
 const moduleFrame = document.getElementById('module-builder-frame');
 Object.defineProperty(moduleFrame, 'contentWindow', {
@@ -376,8 +387,11 @@ window.dispatchEvent(
     data: {
       source: 'noor-activity-builder',
       type: 'activity-module',
-      html: '<div class="module-body">Module Content</div>',
-      config: { type: 'multiple-choice', data: { title: 'Quick check' } },
+      html: moduleFixtures['multiple-choice'].html,
+      config: {
+        type: 'multiple-choice',
+        data: JSON.parse(JSON.stringify(moduleFixtures['multiple-choice'].config)),
+      },
     },
     source: moduleFrame.contentWindow,
   }),
@@ -488,8 +502,11 @@ window.dispatchEvent(
     data: {
       source: 'noor-activity-builder',
       type: 'activity-module',
-      html: '<div class="module-body">Module Content Only</div>',
-      config: { type: 'multiple-choice', data: { title: 'Module only slide' } },
+      html: moduleFixtures.gapfill.html,
+      config: {
+        type: 'gapfill',
+        data: JSON.parse(JSON.stringify(moduleFixtures.gapfill.config)),
+      },
     },
     source: moduleFrame.contentWindow,
   }),
@@ -680,6 +697,70 @@ assert.notEqual(scaledWidth, initialWidth, 'image size control should update the
 imageShadowToggle.checked = true;
 imageShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(ingestedImage.dataset.effect, 'shadow', 'image shadow toggle should annotate the image with a shadow effect');
+
+const moduleParser = new window.DOMParser();
+
+MODULE_TYPES.forEach((type) => {
+  const { config, html } = moduleFixtures[type];
+  const moduleDoc = moduleParser.parseFromString(html, 'text/html');
+  const shell = moduleDoc.querySelector('.activity-shell');
+  assert.ok(shell instanceof window.HTMLElement, `${type} module should render the activity shell container`);
+
+  const inlineStyles = Array.from(moduleDoc.querySelectorAll('[style]'));
+  assert.equal(inlineStyles.length, 0, `${type} module should avoid inline style attributes`);
+
+  switch (type) {
+    case 'multiple-choice': {
+      const questions = moduleDoc.querySelectorAll('.mc-question');
+      assert.equal(
+        questions.length,
+        config.questions.length,
+        'multiple-choice module should output a question section for each prompt',
+      );
+      const optionCount = Array.from(moduleDoc.querySelectorAll('.mc-option')).length;
+      const expectedOptions = config.questions.reduce((sum, question) => sum + question.options.length, 0);
+      assert.equal(optionCount, expectedOptions, 'multiple-choice module should list every configured option');
+      break;
+    }
+    case 'gapfill': {
+      const gapInputs = moduleDoc.querySelectorAll('.gapfill-text input');
+      const expectedGaps = (config.passage.match(/\[\[/g) || []).length;
+      assert.equal(gapInputs.length, expectedGaps, 'gapfill module should render an input for each blank');
+      break;
+    }
+    case 'grouping': {
+      const items = moduleDoc.querySelectorAll('.group-item');
+      const expectedItems = config.categories.reduce((sum, category) => sum + category.items.length, 0);
+      assert.equal(items.length, expectedItems, 'grouping module should create a draggable card per item');
+      const targets = moduleDoc.querySelectorAll('.group-target');
+      assert.equal(targets.length, config.categories.length, 'grouping module should render a target column for each category');
+      break;
+    }
+    case 'table-completion': {
+      const table = moduleDoc.querySelector('.table-activity table');
+      assert.ok(table instanceof window.HTMLTableElement, 'table-completion module should render a comparison table');
+      const headerCells = table?.querySelectorAll('thead th') ?? [];
+      assert.equal(headerCells.length, config.columnHeaders.length, 'table-completion module should include header cells for each column');
+      const inputs = table?.querySelectorAll('tbody input') ?? [];
+      const expectedInputs = config.rows.reduce((sum, row) => sum + row.answers.length, 0);
+      assert.equal(inputs.length, expectedInputs, 'table-completion module should expose inputs for all answers');
+      break;
+    }
+    case 'quiz-show': {
+      const quizShell = moduleDoc.querySelector('.quiz-show');
+      assert.ok(quizShell instanceof window.HTMLElement, 'quiz-show module should include the quiz show wrapper');
+      const slides = quizShell?.querySelectorAll('.quiz-slide') ?? [];
+      assert.equal(slides.length, config.questions.length, 'quiz-show module should create a slide per question');
+      const pillCount = quizShell?.querySelectorAll('.quiz-pill') ?? [];
+      assert.equal(pillCount.length, config.questions.length, 'quiz-show module should render a header pill for each slide');
+      const teams = moduleDoc.querySelectorAll('.team-card');
+      assert.equal(teams.length, config.teams.length, 'quiz-show module should display scoreboard cards for all teams');
+      break;
+    }
+    default:
+      break;
+  }
+});
 
 console.log('All tests passed');
 process.exit(0);
