@@ -63,34 +63,33 @@
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
           </button>
-          <div class="toolbar-menu" data-role="canvas-tools">
+        </div>
+      </header>
+      <main id="lesson-stage" class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="stage-utility-cluster" data-role="stage-utilities">
             <button
               id="canvas-tools-toggle"
-              class="toolbar-btn tertiary has-caret"
+              class="stage-utility-btn"
               type="button"
               aria-haspopup="true"
               aria-expanded="false"
               aria-controls="canvas-tools-menu"
               disabled
             >
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              Canvas Tools
-              <span class="toolbar-caret" aria-hidden="true"></span>
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              <span class="sr-only">Open canvas tools</span>
             </button>
-            <div
-              id="canvas-tools-menu"
-              class="toolbar-dropdown"
-              role="menu"
-              aria-label="Canvas tools"
-              hidden
-            >
-              <div class="toolbar-dropdown-inner" data-role="canvas-tools-options"></div>
-            </div>
           </div>
-        </div>
-      </header>
-      <main id="lesson-stage" class="deck-workspace">
-        <div class="stage-viewport">
+          <div
+            id="canvas-tools-menu"
+            class="canvas-tools-popover"
+            role="menu"
+            aria-label="Canvas tools"
+            hidden
+          >
+            <div class="canvas-insert-options" data-role="canvas-tools-options"></div>
+          </div>
           <!-- Slide 1: Title Slide (Full Bleed) -->
           <div class="slide-stage full-width-bg">
             <div class="bg-media">

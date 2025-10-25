@@ -220,6 +220,97 @@ body {
   place-items: center;
 }
 
+.stage-utility-cluster {
+  position: absolute;
+  top: clamp(16px, 3vw, 28px);
+  right: clamp(16px, 3vw, 28px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 0.65rem;
+  z-index: 40;
+}
+
+.stage-utility-cluster > .stage-utility-btn {
+  flex: 0 0 auto;
+}
+
+.stage-utility-btn {
+  --stage-utility-btn-size: 46px;
+  width: var(--stage-utility-btn-size);
+  height: var(--stage-utility-btn-size);
+  border-radius: 50%;
+  border: 1px solid rgba(122, 132, 113, 0.3);
+  background: rgba(254, 252, 247, 0.95);
+  color: var(--deep-forest);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
+}
+
+.stage-utility-btn:hover,
+.stage-utility-btn:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--primary-forest);
+}
+
+.stage-utility-btn.is-expanded {
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--primary-forest);
+  box-shadow: var(--shadow-2);
+}
+
+.stage-utility-btn.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.stage-utility-btn.is-disabled:hover,
+.stage-utility-btn.is-disabled:focus-visible {
+  transform: none;
+  box-shadow: none;
+  background: rgba(254, 252, 247, 0.95);
+  color: var(--primary-forest);
+}
+
+.stage-utility-btn[hidden] {
+  display: none;
+}
+
+.canvas-tools-popover {
+  position: absolute;
+  top: calc(var(--canvas-tools-offset-top, clamp(16px, 3vw, 28px)) + 0.75rem);
+  right: calc(var(--canvas-tools-offset-right, clamp(16px, 3vw, 28px)));
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: min(24rem, calc(100vw - clamp(32px, 6vw, 56px)));
+  min-width: max(16rem, var(--canvas-tools-anchor-width, 0px));
+  padding: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  background: rgba(254, 252, 247, 0.98);
+  box-shadow: var(--shadow-2);
+  z-index: 50;
+}
+
+.canvas-tools-popover[hidden] {
+  display: none;
+}
+
+.canvas-tools-popover.is-open {
+  display: flex;
+}
+
 .slide-stage {
   position: relative;
   border-radius: var(--stage-radius);
