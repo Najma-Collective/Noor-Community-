@@ -838,6 +838,23 @@ body {
   flex: 0 0 auto;
 }
 
+.blank-toolbar-host {
+  position: absolute;
+  top: clamp(16px, 3vw, 28px);
+  left: clamp(16px, 3vw, 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: min(420px, calc(100vw - clamp(32px, 6vw, 56px)));
+  z-index: 38;
+  pointer-events: none;
+}
+
+.blank-toolbar-host > .blank-toolbar {
+  width: 100%;
+  pointer-events: auto;
+}
+
 .stage-utility-btn {
   width: 46px;
   height: 46px;
@@ -2188,9 +2205,12 @@ ol {
 .blank-slide {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   height: 100%;
   position: relative;
+}
+
+.blank-slide > .blank-hint {
+  margin-bottom: 1rem;
 }
 
 .blank-controls {
@@ -2200,10 +2220,6 @@ ol {
 }
 
 .blank-controls-home {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: stretch;
   width: 100%;
 }
 

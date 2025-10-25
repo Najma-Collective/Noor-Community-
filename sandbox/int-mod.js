@@ -124,6 +124,7 @@ let moduleBuilderUrlPromise;
 let deckToastRoot;
 let deckStatusEl;
 let stageUtilityCluster;
+let blankToolbarHost;
 let canvasInsertOverlay;
 
 const EDITABLE_INLINE_TAGS = new Set([
@@ -609,6 +610,31 @@ function ensureStageUtilityCluster() {
   stageViewport.appendChild(cluster);
   stageUtilityCluster = cluster;
   return stageUtilityCluster;
+}
+
+function ensureBlankToolbarHost() {
+  if (!(stageViewport instanceof HTMLElement)) {
+    return null;
+  }
+  if (blankToolbarHost instanceof HTMLElement && blankToolbarHost.isConnected) {
+    return blankToolbarHost;
+  }
+  const existing = stageViewport.querySelector('[data-role="blank-toolbar-host"]');
+  if (existing instanceof HTMLElement) {
+    blankToolbarHost = existing;
+    return blankToolbarHost;
+  }
+  const host = document.createElement('div');
+  host.className = 'blank-toolbar-host';
+  host.dataset.role = 'blank-toolbar-host';
+  const utilities = stageViewport.querySelector('[data-role="stage-utilities"]');
+  if (utilities instanceof HTMLElement) {
+    stageViewport.insertBefore(host, utilities);
+  } else {
+    stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
+  }
+  blankToolbarHost = host;
+  return blankToolbarHost;
 }
 
 const INSERT_MENU_OPTIONS = [
@@ -2115,7 +2141,7 @@ export function attachBlankSlideEvents(slide) {
     return;
   }
 
-  const ensureControlsHome = () => {
+  const ensureToolbar = () => {
     let controlsHome = blank.querySelector('[data-role="blank-controls-home"]');
     if (!(controlsHome instanceof HTMLElement)) {
       controlsHome = document.createElement("div");
@@ -2124,8 +2150,19 @@ export function attachBlankSlideEvents(slide) {
       blank.insertBefore(controlsHome, blank.firstChild ?? null);
     }
 
-    if (!controlsHome.querySelector('[data-role="blank-toolbar"]')) {
-      controlsHome.insertAdjacentHTML(
+    const toolbarHost = ensureBlankToolbarHost();
+    const legacyToolbar =
+      controlsHome.querySelector('[data-role="blank-toolbar"]') ??
+      blank.querySelector('[data-role="blank-toolbar"]');
+    let toolbar =
+      toolbarHost?.querySelector('[data-role="blank-toolbar"]') ?? legacyToolbar;
+
+    if (!(toolbar instanceof HTMLElement)) {
+      const target = toolbarHost ?? controlsHome;
+      if (!(target instanceof HTMLElement)) {
+        return null;
+      }
+      target.insertAdjacentHTML(
         "beforeend",
         `
           <div class="blank-toolbar" data-role="blank-toolbar" data-toolbar-version="3">
@@ -2242,12 +2279,22 @@ export function attachBlankSlideEvents(slide) {
           </div>
         `.trim(),
       );
+      toolbar =
+        (toolbarHost ?? controlsHome)?.querySelector?.('[data-role="blank-toolbar"]') ?? null;
     }
 
-    return controlsHome;
+    if (
+      toolbarHost instanceof HTMLElement &&
+      toolbar instanceof HTMLElement &&
+      toolbar.parentElement !== toolbarHost
+    ) {
+      toolbarHost.appendChild(toolbar);
+    }
+
+    return toolbar instanceof HTMLElement ? toolbar : null;
   };
 
-  const controlsHome = ensureControlsHome();
+  const toolbar = ensureToolbar();
 
   const canvas = blank.querySelector(".blank-canvas");
   let hint = blank.querySelector('[data-role="hint"]');
@@ -2312,7 +2359,6 @@ export function attachBlankSlideEvents(slide) {
     hint = replacementHint;
   }
 
-  const toolbar = controlsHome.querySelector('[data-role="blank-toolbar"]');
   const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
   const toolbarPanel = toolbar?.querySelector('[data-role="toolbar-panel"]');
   const toolbarEmpty = toolbarPanel?.querySelector('[data-role="toolbar-empty"]');
