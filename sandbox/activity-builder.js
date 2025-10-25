@@ -181,28 +181,72 @@ const DEFAULT_STATES = {
         answer: 'A soft green chip with the badge icon pulses beside the learner name.',
         feedback: 'Invite learners to describe what evidence unlocked that badge to reinforce metacognition.',
         image: 'https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg',
-        time: 40
+        time: 40,
+        icons: {
+          prompt: '',
+          answer: '',
+          feedback: '',
+          image: '',
+          time: '',
+        },
       },
       {
         prompt: 'How should we introduce a new studio habit card when time is limited?',
         answer: 'Use the Story pill to headline the purpose, then anchor the task with a single coaching prompt.',
         feedback: 'Model a concise demo before inviting teams to rehearse the habit in pairs.',
         image: 'https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg',
-        time: 30
+        time: 30,
+        icons: {
+          prompt: '',
+          answer: '',
+          feedback: '',
+          image: '',
+          time: '',
+        },
       },
       {
         prompt: 'What belongs in the recap grid after a prototyping sprint?',
         answer: 'Three wins, one edge, and next-iteration commitments captured as badges.',
         feedback: 'Layer the exit ticket mosaic beneath so trends stay visible across teams.',
         image: 'https://images.pexels.com/photos/1181356/pexels-photo-1181356.jpeg',
-        time: 35
+        time: 35,
+        icons: {
+          prompt: '',
+          answer: '',
+          feedback: '',
+          image: '',
+          time: '',
+        },
       }
     ],
     teams: [
-      { name: 'Team Catalyst', icon: 'fa-solid fa-bolt', score: 0 },
-      { name: 'Team Atlas', icon: 'fa-solid fa-mountain', score: 0 },
-      { name: 'Team Pulse', icon: 'fa-solid fa-wave-square', score: 0 }
-    ]
+      { name: 'Team Catalyst', icon: '', score: 0 },
+      { name: 'Team Atlas', icon: '', score: 0 },
+      { name: 'Team Pulse', icon: '', score: 0 }
+    ],
+    iconSettings: {
+      general: {
+        title: '',
+        instructions: '',
+        rubric: '',
+        defaultTime: '',
+      },
+      scoreboard: {
+        heading: '',
+        increment: '',
+      },
+      controls: {
+        previous: '',
+        next: '',
+      },
+      reveal: {
+        button: '',
+      },
+      slides: {
+        answerHeading: '',
+        extensionHeading: '',
+      },
+    },
   })
 };
 
@@ -917,6 +961,11 @@ class ActivityBuilder {
     if (target.id === 'preset-select') {
       return;
     }
+    if (target.dataset.iconField) {
+      this.updateIconField(target);
+      this.updateOutputs();
+      return;
+    }
     if (!target.closest('[data-block]')) {
       // high-level fields
       this.updateGlobalField(target);
@@ -1103,6 +1152,55 @@ class ActivityBuilder {
         this.state.data.defaultTime = value;
       }
     }
+  }
+
+  ensureQuizIconStructure() {
+    if (!this.state.data.iconSettings || typeof this.state.data.iconSettings !== 'object') {
+      this.state.data.iconSettings = {};
+    }
+    const { iconSettings } = this.state.data;
+    ['general', 'scoreboard', 'controls', 'reveal', 'slides'].forEach((section) => {
+      if (!iconSettings[section] || typeof iconSettings[section] !== 'object') {
+        iconSettings[section] = {};
+      }
+    });
+  }
+
+  updateIconField(target) {
+    if (this.state.type !== 'quiz-show') {
+      return;
+    }
+    const keyPath = target.dataset.iconField;
+    if (!keyPath) {
+      return;
+    }
+    const value = typeof target.value === 'string' ? target.value.trim() : '';
+    if (keyPath.startsWith('question:')) {
+      const [, indexStr, fieldKey] = keyPath.split(':');
+      const index = Number(indexStr);
+      if (!Number.isInteger(index) || !fieldKey) {
+        return;
+      }
+      const question = Array.isArray(this.state.data.questions) ? this.state.data.questions[index] : null;
+      if (!question) {
+        return;
+      }
+      if (!question.icons || typeof question.icons !== 'object') {
+        question.icons = { prompt: '', answer: '', feedback: '', image: '', time: '' };
+      }
+      question.icons[fieldKey] = value;
+      return;
+    }
+    const [section, fieldKey] = keyPath.split(':');
+    if (!section || !fieldKey) {
+      return;
+    }
+    this.ensureQuizIconStructure();
+    const sectionStore = this.state.data.iconSettings[section];
+    if (!sectionStore) {
+      return;
+    }
+    sectionStore[fieldKey] = value;
   }
 
   updateQuestionField(block, target) {
@@ -1343,6 +1441,13 @@ class ActivityBuilder {
       feedback: 'Share an extension, fun fact, or next step.',
       image: '',
       time: defaultTime,
+      icons: {
+        prompt: '',
+        answer: '',
+        feedback: '',
+        image: '',
+        time: '',
+      },
     });
     this.renderForm();
     this.updateOutputs();
@@ -1676,6 +1781,42 @@ class ActivityBuilder {
       ].join('');
     } else if (type === 'quiz-show') {
       const defaultTime = Number.isFinite(Number(data.defaultTime)) ? Number(data.defaultTime) : 45;
+      const mergeIconSection = (source, defaults) => ({
+        ...defaults,
+        ...(source && typeof source === 'object' ? source : {}),
+      });
+
+      const iconSettings = data.iconSettings && typeof data.iconSettings === 'object' ? data.iconSettings : {};
+      const generalIcons = mergeIconSection(iconSettings.general, {
+        title: '',
+        instructions: '',
+        rubric: '',
+        defaultTime: '',
+      });
+      const scoreboardIcons = mergeIconSection(iconSettings.scoreboard, {
+        heading: '',
+        increment: '',
+      });
+      const controlsIcons = mergeIconSection(iconSettings.controls, {
+        previous: '',
+        next: '',
+      });
+      const revealIcons = mergeIconSection(iconSettings.reveal, {
+        button: '',
+      });
+      const slideIcons = mergeIconSection(iconSettings.slides, {
+        answerHeading: '',
+        extensionHeading: '',
+      });
+
+      this.state.data.iconSettings = {
+        general: generalIcons,
+        scoreboard: scoreboardIcons,
+        controls: controlsIcons,
+        reveal: revealIcons,
+        slides: slideIcons,
+      };
+
       const iconSuggestions = [
         'fa-solid fa-star',
         'fa-solid fa-crown',
@@ -1693,31 +1834,81 @@ class ActivityBuilder {
         </datalist>
       `;
 
+      const renderIconInput = (section, key, label, placeholder) => {
+        const sections = {
+          general: generalIcons,
+          scoreboard: scoreboardIcons,
+          controls: controlsIcons,
+          reveal: revealIcons,
+          slides: slideIcons,
+        };
+        const value = sections[section]?.[key] ?? '';
+        const resolvedPlaceholder = placeholder || 'fa-solid fa-star';
+        return `<input type="text" class="icon-code-input" data-icon-field="${section}:${key}" value="${escapeHtml(
+          value
+        )}" placeholder="${escapeHtml(resolvedPlaceholder)}" aria-label="${escapeHtml(label)}" />`;
+      };
+
+      const scoreboardIconControls = `
+        <div class="icon-input-row">
+          <label class="icon-field">
+            <span>Scoreboard heading icon</span>
+            ${renderIconInput('scoreboard', 'heading', 'Icon class for the scoreboard heading', 'fa-solid fa-trophy')}
+          </label>
+          <label class="icon-field">
+            <span>Point button icon</span>
+            ${renderIconInput('scoreboard', 'increment', 'Icon class for awarding points', 'fa-solid fa-arrow-up-long')}
+          </label>
+        </div>
+      `;
+
+      const controlIconControls = `
+        <div class="icon-input-row">
+          <label class="icon-field">
+            <span>Previous button icon</span>
+            ${renderIconInput('controls', 'previous', 'Icon class for the previous slide button', 'fa-solid fa-arrow-left')}
+          </label>
+          <label class="icon-field">
+            <span>Next button icon</span>
+            ${renderIconInput('controls', 'next', 'Icon class for the next slide button', 'fa-solid fa-arrow-right')}
+          </label>
+          <label class="icon-field">
+            <span>Reveal button icon</span>
+            ${renderIconInput('reveal', 'button', 'Icon class for the reveal answer button', 'fa-solid fa-eye')}
+          </label>
+        </div>
+      `;
+
+      const renderQuestionIconInput = (qIndex, icons, key, label, placeholder) =>
+        `<input type="text" class="icon-code-input" data-icon-field="question:${qIndex}:${key}" value="${escapeHtml(
+          icons[key] || ''
+        )}" placeholder="${escapeHtml(placeholder)}" aria-label="${escapeHtml(label)}" />`;
+
       const quizShared = `
         <section class="form-section">
           <header class="section-heading">
             <div>
-              <h2><i class="fa-solid fa-sliders"></i> General settings</h2>
+              <h2>General settings</h2>
               <p>Frame the quiz for your learners and set a pacing baseline.</p>
             </div>
           </header>
           <div class="form-grid">
             <label class="field">
-              <span class="field-label"><i class="fa-solid fa-heading"></i> Activity title</span>
+              <span class="field-label">Activity title</span>
               <input type="text" value="${escapeHtml(data.title)}" data-field="title" placeholder="Enter a descriptive title" />
             </label>
             <label class="field field--span">
-              <span class="field-label"><i class="fa-solid fa-bullseye"></i> Instructions</span>
+              <span class="field-label">Instructions</span>
               <textarea data-field="instructions" placeholder="Provide learner instructions">${escapeHtml(
                 data.instructions
               )}</textarea>
             </label>
             <label class="field field--span">
-              <span class="field-label"><i class="fa-solid fa-star"></i> Rubric / success criteria</span>
+              <span class="field-label">Rubric / success criteria</span>
               <textarea data-field="rubric" placeholder="Describe how the activity is graded">${escapeHtml(data.rubric)}</textarea>
             </label>
             <label class="field">
-              <span class="field-label"><i class="fa-solid fa-clock"></i> Default time per question (seconds)</span>
+              <span class="field-label">Default time per question (seconds)</span>
               <input type="number" min="5" max="600" step="5" value="${escapeHtml(
                 String(defaultTime)
               )}" data-field="default-time" />
@@ -1730,11 +1921,12 @@ class ActivityBuilder {
         <section class="form-section">
           <header class="section-heading">
             <div>
-              <h2><i class="fa-solid fa-people-group"></i> Scoreboard teams</h2>
+              <h2>Scoreboard teams</h2>
               <p>Pick an icon and label for each team. Scores persist across every slide.</p>
             </div>
-            <button type="button" class="chip-btn" data-action="add-team"><i class="fa-solid fa-plus"></i> Add team</button>
+            <button type="button" class="chip-btn" data-action="add-team">Add team</button>
           </header>
+          ${scoreboardIconControls}
           ${teamDatalist}
           ${data.teams
             .map(
@@ -1742,22 +1934,22 @@ class ActivityBuilder {
                 <article class="team-block" data-block="team" data-index="${tIndex}">
                   <div class="block-header">
                     <h3>Team ${tIndex + 1}</h3>
-                    <button type="button" class="subtle-link" data-action="remove-team"><i class="fa-solid fa-trash-can"></i> Remove</button>
+                    <button type="button" class="subtle-link" data-action="remove-team">Remove</button>
                   </div>
                   <div class="team-fields">
                     <label class="field">
-                      <span class="field-label"><i class="fa-solid fa-pen-to-square"></i> Team name</span>
+                      <span class="field-label">Team name</span>
                       <input type="text" data-field="team-name" value="${escapeHtml(team.name || '')}" placeholder="Team name" />
                     </label>
                     <label class="field">
-                      <span class="field-label"><i class="fa-solid fa-icons"></i> Font Awesome icon class</span>
+                      <span class="field-label">Font Awesome icon class</span>
                       <input type="text" list="${datalistId}" data-field="team-icon" value="${escapeHtml(
                         team.icon || ''
                       )}" placeholder="e.g. fa-solid fa-rocket" />
                       <p class="helper-text">Preview updates as you type.</p>
                     </label>
                     <div class="team-icon-preview" aria-hidden="true">
-                      <i class="${escapeHtml(team.icon || 'fa-solid fa-people-group')}"></i>
+                      ${team.icon ? `<code>${escapeHtml(team.icon)}</code>` : '<span class="icon-placeholder">No icon set</span>'}
                     </div>
                   </div>
                 </article>
@@ -1771,46 +1963,74 @@ class ActivityBuilder {
         <section class="form-section">
           <header class="section-heading">
             <div>
-              <h2><i class="fa-solid fa-clapperboard"></i> Slide content</h2>
+              <h2>Slide content</h2>
               <p>One question per slide. Add imagery and custom timing to pace your session.</p>
             </div>
-            <button type="button" class="chip-btn" data-action="add-quiz-question"><i class="fa-solid fa-plus"></i> Add slide</button>
+            <button type="button" class="chip-btn" data-action="add-quiz-question">Add slide</button>
           </header>
+          ${controlIconControls}
           ${data.questions
             .map(
-              (question, qIndex) => `
+              (question, qIndex) => {
+                const questionIcons = mergeIconSection(question.icons, {
+                  prompt: '',
+                  answer: '',
+                  feedback: '',
+                  image: '',
+                  time: '',
+                });
+                this.state.data.questions[qIndex].icons = questionIcons;
+                return `
                 <article class="quiz-question-block" data-block="quiz-question" data-index="${qIndex}">
                   <div class="block-header">
                     <h3>Slide ${qIndex + 1}</h3>
-                    <button type="button" class="subtle-link" data-action="remove-quiz-question"><i class="fa-solid fa-trash-can"></i> Remove</button>
+                    <button type="button" class="subtle-link" data-action="remove-quiz-question">Remove</button>
                   </div>
                   <label class="field field--span">
-                    <span class="field-label"><i class="fa-solid fa-question"></i> Question prompt</span>
+                    <span class="field-label">Question prompt</span>
                     <textarea data-field="question-prompt" placeholder="Enter the question learners will see">${escapeHtml(
                       question.prompt || ''
                     )}</textarea>
                   </label>
                   <label class="field field--span">
-                    <span class="field-label"><i class="fa-solid fa-lightbulb"></i> Correct answer</span>
+                    <div class="field-label-row">
+                      <span class="field-label">Correct answer</span>
+                      ${renderQuestionIconInput(
+                        qIndex,
+                        questionIcons,
+                        'answer',
+                        `Icon class for the answer heading on slide ${qIndex + 1}`,
+                        slideIcons.answerHeading || 'fa-solid fa-circle-check'
+                      )}
+                    </div>
                     <textarea data-field="question-answer" placeholder="Answer to reveal">${escapeHtml(
                       question.answer || ''
                     )}</textarea>
                   </label>
                   <label class="field field--span">
-                    <span class="field-label"><i class="fa-solid fa-comment-dots"></i> Feedback or extension</span>
+                    <div class="field-label-row">
+                      <span class="field-label">Feedback or extension</span>
+                      ${renderQuestionIconInput(
+                        qIndex,
+                        questionIcons,
+                        'feedback',
+                        `Icon class for the extension heading on slide ${qIndex + 1}`,
+                        slideIcons.extensionHeading || 'fa-solid fa-star'
+                      )}
+                    </div>
                     <textarea data-field="question-feedback" placeholder="Add an interesting note or follow-up">${escapeHtml(
                       question.feedback || ''
                     )}</textarea>
                   </label>
                   <div class="quiz-question-grid">
                     <label class="field">
-                      <span class="field-label"><i class="fa-solid fa-image"></i> Image URL (optional)</span>
+                      <span class="field-label">Image URL (optional)</span>
                       <input type="url" data-field="question-image" value="${escapeHtml(
                         question.image || ''
                       )}" placeholder="https://" />
                     </label>
                     <label class="field">
-                      <span class="field-label"><i class="fa-solid fa-hourglass"></i> Time limit (seconds)</span>
+                      <span class="field-label">Time limit (seconds)</span>
                       <input type="number" min="5" max="600" step="5" data-field="question-time" value="${escapeHtml(
                         String(
                           Number.isFinite(Number(question.time)) && Number(question.time) > 0
@@ -1821,7 +2041,8 @@ class ActivityBuilder {
                     </label>
                   </div>
                 </article>
-              `
+              `;
+              }
             )
             .join('')}
         </section>
@@ -2796,20 +3017,39 @@ const Generators = {
       ? Math.round(Number(config.defaultTime))
       : fallback.defaultTime;
 
+    const mergeIconSection = (source, defaults) => ({
+      ...defaults,
+      ...(source && typeof source === 'object' ? source : {}),
+    });
+
+    const iconSettings = config.iconSettings && typeof config.iconSettings === 'object' ? config.iconSettings : {};
+    const scoreboardIcons = mergeIconSection(iconSettings.scoreboard, fallback.iconSettings.scoreboard);
+    const controlsIcons = mergeIconSection(iconSettings.controls, fallback.iconSettings.controls);
+    const revealIcons = mergeIconSection(iconSettings.reveal, fallback.iconSettings.reveal);
+    const slideIcons = mergeIconSection(iconSettings.slides, fallback.iconSettings.slides);
+
+    const renderIcon = (className) => {
+      const trimmed = typeof className === 'string' ? className.trim() : '';
+      return trimmed ? `<i class="${escapeHtml(trimmed)}" aria-hidden="true"></i>` : '';
+    };
+
     const teamsMarkup = teams
       .map((team, index) => {
-        const iconClass = team.icon && team.icon.trim() ? team.icon.trim() : 'fa-solid fa-people-group';
+        const iconClass = team.icon && team.icon.trim() ? team.icon.trim() : '';
         const teamName = team.name && team.name.trim() ? team.name.trim() : `Team ${index + 1}`;
         const scoreValue = Number.isFinite(Number(team.score)) ? Number(team.score) : 0;
+        const iconMarkup = renderIcon(iconClass);
+        const incrementIcon = renderIcon(scoreboardIcons.increment);
+        const incrementContent = incrementIcon || '<span aria-hidden="true">+1</span>';
         return `
           <li class="team-card" data-team-index="${index}" data-score="${scoreValue}">
-            <div class="team-icon-shell"><i class="${escapeHtml(iconClass)}" aria-hidden="true"></i></div>
+            <div class="team-icon-shell${iconMarkup ? '' : ' team-icon-shell--empty'}" aria-hidden="true">${iconMarkup}</div>
             <div class="team-meta">
               <span class="team-name">${escapeHtml(teamName)}</span>
               <span class="team-score" data-role="score">${scoreValue}</span>
             </div>
             <button type="button" class="score-btn" data-action="increment" aria-label="Add a point to ${escapeHtml(teamName)}">
-              <i class="fa-solid fa-arrow-up-long" aria-hidden="true"></i>
+              ${incrementContent}
             </button>
             <span class="burst" aria-hidden="true"></span>
           </li>
@@ -2827,6 +3067,10 @@ const Generators = {
         const feedback = question.feedback
           ? formatMultiline(question.feedback)
           : '<em>Provide follow-up or feedback.</em>';
+        const questionIcons = mergeIconSection(question.icons, fallback.questions[index]?.icons || fallback.questions[0].icons);
+        const answerIcon = renderIcon(questionIcons.answer || slideIcons.answerHeading);
+        const feedbackIcon = renderIcon(questionIcons.feedback || slideIcons.extensionHeading);
+        const revealIcon = renderIcon(revealIcons.button);
         const imageMarkup = question.image && question.image.trim()
           ? `
             <figure class="quiz-visual">
@@ -2846,11 +3090,11 @@ const Generators = {
                 <div class="quiz-question-text">${prompt}</div>
                 <div class="quiz-reveal-content">
                   <div class="quiz-answer">
-                    <h3><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Answer</h3>
+                    <h3>${answerIcon ? `${answerIcon} ` : ''}Answer</h3>
                     <p>${answer}</p>
                   </div>
                   <div class="quiz-feedback">
-                    <h3><i class="fa-solid fa-star" aria-hidden="true"></i> Extension</h3>
+                    <h3>${feedbackIcon ? `${feedbackIcon} ` : ''}Extension</h3>
                     <p>${feedback}</p>
                   </div>
                 </div>
@@ -2859,8 +3103,7 @@ const Generators = {
             </div>
             <footer class="quiz-slide-footer">
               <button type="button" class="activity-btn secondary quiz-reveal-btn" data-role="reveal">
-                <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                <span>Reveal answer</span>
+                ${revealIcon ? `${revealIcon} ` : ''}<span>Reveal answer</span>
               </button>
             </footer>
           </article>
@@ -2957,6 +3200,13 @@ const Generators = {
           font-size: 1.25rem;
         }
 
+        .team-icon-shell.team-icon-shell--empty {
+          background: rgba(255, 255, 255, 0.6);
+          color: var(--muted);
+          border: 1px dashed var(--border);
+          font-size: 0.75rem;
+        }
+
         .team-name {
           display: block;
           font-weight: 700;
@@ -2980,6 +3230,8 @@ const Generators = {
           place-items: center;
           cursor: pointer;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
+          font-weight: 700;
+          font-size: 1rem;
         }
 
         .score-btn:hover,
@@ -3179,8 +3431,8 @@ const Generators = {
         <div class="quiz-stage" data-default-time="${defaultTime}">
           <aside class="quiz-scoreboard" aria-label="Scoreboard">
             <div class="scoreboard-header">
-              <h2><i class="fa-solid fa-trophy" aria-hidden="true"></i> Scoreboard</h2>
-              <p>Tap the arrow to award a point.</p>
+              <h2>${renderIcon(scoreboardIcons.heading) ? `${renderIcon(scoreboardIcons.heading)} ` : ''}Scoreboard</h2>
+              <p>Use the control to award a point.</p>
             </div>
             <ul class="scoreboard-list">
               ${teamsMarkup}
@@ -3193,13 +3445,12 @@ const Generators = {
             </div>
             <div class="quiz-controls">
               <button type="button" class="activity-btn secondary" id="quiz-prev">
-                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                <span>Previous</span>
+                ${renderIcon(controlsIcons.previous) ? `${renderIcon(controlsIcons.previous)} ` : ''}<span>Previous</span>
               </button>
               <div class="quiz-timer">Time left: <span id="quiz-timer-value">${defaultTime}s</span></div>
               <button type="button" class="activity-btn" id="quiz-next">
                 <span>Next</span>
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                ${renderIcon(controlsIcons.next) ? ` ${renderIcon(controlsIcons.next)}` : ''}
               </button>
             </div>
           </div>
