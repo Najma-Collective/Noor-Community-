@@ -11170,39 +11170,101 @@ function createCommunicativeTaskSlide({
   heading.textContent = trimText(title) || 'Communicative task';
   header.appendChild(heading);
 
+  const splitPreparationText = (text) => {
+    const value = trimText(text);
+    if (!value) {
+      return { scenario: '', remainder: '' };
+    }
+    const newlineIndex = value.indexOf('\n');
+    if (newlineIndex !== -1) {
+      const scenario = trimText(value.slice(0, newlineIndex));
+      const remainder = trimText(value.slice(newlineIndex + 1));
+      if (scenario && remainder) {
+        return { scenario, remainder };
+      }
+    }
+    const sentenceMatch = value.match(/^(.+?[.!?])\s+([\s\S]+)$/);
+    if (sentenceMatch) {
+      const [, scenario, remainder] = sentenceMatch;
+      const trimmedScenario = trimText(scenario);
+      const trimmedRemainder = trimText(remainder);
+      if (trimmedScenario && trimmedRemainder) {
+        return { scenario: trimmedScenario, remainder: trimmedRemainder };
+      }
+    }
+    return { scenario: '', remainder: value };
+  };
+
   const body = document.createElement('div');
   body.className = 'task-body';
   inner.appendChild(body);
 
-  const prepSection = document.createElement('section');
-  prepSection.className = 'task-phase';
-  const prepHeading = document.createElement('h3');
-  prepHeading.textContent = 'Preparation';
-  const prepText = document.createElement('p');
-  prepText.textContent = trimText(preparation) || 'Describe the scenario learners should prepare for.';
-  prepSection.appendChild(prepHeading);
-  prepSection.appendChild(prepText);
-  body.appendChild(prepSection);
+  const mainCard = document.createElement('div');
+  mainCard.className = 'card communicative-task-card';
+  body.appendChild(mainCard);
 
-  const performanceSection = document.createElement('section');
-  performanceSection.className = 'task-phase';
-  const perfHeading = document.createElement('h3');
-  perfHeading.textContent = 'Performance';
-  const perfText = document.createElement('p');
-  perfText.textContent = trimText(performance) || 'Explain how learners will carry out the task.';
-  performanceSection.appendChild(perfHeading);
-  performanceSection.appendChild(perfText);
-  body.appendChild(performanceSection);
+  const { scenario: scenarioText, remainder: preparationRemainder } = splitPreparationText(
+    preparation,
+  );
+
+  if (scenarioText) {
+    const scenarioCard = document.createElement('div');
+    scenarioCard.className = 'column-card task-scenario';
+    const scenarioHeading = document.createElement('h3');
+    scenarioHeading.textContent = 'Scenario';
+    const scenarioParagraph = document.createElement('p');
+    scenarioParagraph.textContent = scenarioText;
+    scenarioCard.appendChild(scenarioHeading);
+    scenarioCard.appendChild(scenarioParagraph);
+    mainCard.appendChild(scenarioCard);
+  }
+
+  const instructionList = document.createElement('ul');
+  instructionList.className = 'instruction-list task-instruction-list';
+  mainCard.appendChild(instructionList);
+
+  const steps = [
+    {
+      label: 'Preparation',
+      icon: 'fa-solid fa-list-check',
+      text: trimText(preparationRemainder) || 'Describe how learners should get ready together.',
+    },
+    {
+      label: 'Performance',
+      icon: 'fa-solid fa-people-group',
+      text: trimText(performance) || 'Explain how learners will carry out the task.',
+    },
+  ];
+
+  steps
+    .filter((step) => Boolean(step.text))
+    .forEach(({ label, icon, text }) => {
+      const item = document.createElement('li');
+      const iconEl = document.createElement('i');
+      iconEl.className = icon;
+      iconEl.setAttribute('aria-hidden', 'true');
+      item.appendChild(iconEl);
+      const content = document.createElement('div');
+      content.className = 'instruction-content';
+      const stepHeading = document.createElement('h4');
+      stepHeading.textContent = label;
+      const stepText = document.createElement('p');
+      stepText.textContent = text;
+      content.appendChild(stepHeading);
+      content.appendChild(stepText);
+      item.appendChild(content);
+      instructionList.appendChild(item);
+    });
 
   const scaffoldingItems = Array.isArray(scaffolding)
     ? scaffolding.map((item) => trimText(item)).filter(Boolean)
     : [];
+  const scaffoldingCard = document.createElement('div');
+  scaffoldingCard.className = 'column-card task-scaffolding';
+  const scaffoldHeading = document.createElement('h3');
+  scaffoldHeading.textContent = 'Language support';
+  scaffoldingCard.appendChild(scaffoldHeading);
   if (scaffoldingItems.length) {
-    const scaffoldSection = document.createElement('section');
-    scaffoldSection.className = 'task-scaffolding';
-    const scaffoldHeading = document.createElement('h4');
-    scaffoldHeading.textContent = 'Language support';
-    scaffoldSection.appendChild(scaffoldHeading);
     const list = document.createElement('ul');
     list.className = 'task-scaffolding-list';
     scaffoldingItems.forEach((item) => {
@@ -11210,9 +11272,14 @@ function createCommunicativeTaskSlide({
       li.textContent = item;
       list.appendChild(li);
     });
-    scaffoldSection.appendChild(list);
-    body.appendChild(scaffoldSection);
+    scaffoldingCard.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add sentence stems or prompts to support learners during the task.';
+    scaffoldingCard.appendChild(placeholder);
   }
+  body.appendChild(scaffoldingCard);
 
   return slide;
 }
