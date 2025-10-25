@@ -23,6 +23,11 @@ body {
   overflow: auto;
 }
 
+/* Default slide background should match global deck standard */
+.slide-stage {
+  background-color: #fefcf7;
+}
+
 /* Utility helpers */
 .mt-0 {
   margin-top: 0 !important;
