@@ -249,40 +249,55 @@ assert.ok(!blankSlide.classList.contains('hidden'), 'blank slide should become t
 const blankCanvas = blankSlide.querySelector('.blank-canvas');
 assert.ok(blankCanvas instanceof window.HTMLElement, 'blank canvas should be available');
 
-const blankActions = blankSlide.querySelector('[data-role="blank-actions"]');
-assert.ok(blankActions, 'blank slide actions cluster should exist');
+const moduleOverlay = document.getElementById('module-builder-overlay');
+const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
 
-const clickBlankAction = (action) => {
-  const button = blankActions.querySelector(`[data-action="${action}"]`);
-  assert.ok(button instanceof window.HTMLButtonElement, `blank slide should expose the ${action} action`);
-  button.click();
+const legacyActionsCluster = blankSlide.querySelector('[data-role="blank-actions"]');
+assert.ok(!legacyActionsCluster, 'blank slide should not render the legacy actions cluster');
+
+const canvasInsertTrigger = stageViewport.querySelector('.canvas-insert-trigger');
+const canvasInsertPanel = stageViewport.querySelector('.canvas-insert-panel');
+assert.ok(canvasInsertTrigger instanceof window.HTMLButtonElement, 'canvas insert trigger should render near the stage');
+assert.ok(canvasInsertPanel instanceof window.HTMLElement, 'canvas insert panel should be created');
+
+const ensureInsertPanelOpen = () => {
+  if (!canvasInsertPanel.classList.contains('is-visible')) {
+    canvasInsertTrigger.click();
+  }
 };
 
-clickBlankAction('add-textbox');
+ensureInsertPanelOpen();
+assert.ok(canvasInsertPanel.classList.contains('is-visible'), 'canvas insert panel should toggle into view');
+
+const selectInsertOption = (action) => {
+  ensureInsertPanelOpen();
+  const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
+  assert.ok(option instanceof window.HTMLButtonElement, `insert panel should list the ${action} option`);
+  option.click();
+};
+
+selectInsertOption('add-textbox');
 await flushTimers();
 let textboxes = Array.from(blankCanvas.querySelectorAll('.textbox'));
-assert.equal(textboxes.length, 1, 'blank slide should add a textbox from the primary controls');
+assert.equal(textboxes.length, 1, 'canvas insert overlay should add a textbox to the blank slide');
 
-clickBlankAction('add-table');
+selectInsertOption('add-table');
 await flushTimers();
 assert.equal(
   blankCanvas.querySelectorAll('.canvas-table').length,
   1,
-  'blank slide should add a table from the primary controls',
+  'canvas insert overlay should add a table to the blank slide',
 );
 
-clickBlankAction('add-mindmap');
+selectInsertOption('add-mindmap');
 await flushTimers();
 assert.equal(
   blankCanvas.querySelectorAll('.mindmap').length,
   1,
-  'blank slide should add a mind map from the primary controls',
+  'canvas insert overlay should add a mind map to the blank slide',
 );
 
-const moduleOverlay = document.getElementById('module-builder-overlay');
-const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
-
-clickBlankAction('add-module');
+selectInsertOption('add-module');
 await flushTimers();
 await nextFrame();
 assert.ok(moduleOverlay.classList.contains('is-visible'), 'module overlay should open when adding a module');
@@ -313,27 +328,6 @@ assert.equal(
   'module embed should be inserted onto the canvas',
 );
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close after inserting a module');
-
-const canvasInsertTrigger = stageViewport.querySelector('.canvas-insert-trigger');
-const canvasInsertPanel = stageViewport.querySelector('.canvas-insert-panel');
-assert.ok(canvasInsertTrigger instanceof window.HTMLButtonElement, 'canvas insert trigger should render near the stage');
-assert.ok(canvasInsertPanel instanceof window.HTMLElement, 'canvas insert panel should be created');
-
-const ensureInsertPanelOpen = () => {
-  if (!canvasInsertPanel.classList.contains('is-visible')) {
-    canvasInsertTrigger.click();
-  }
-};
-
-ensureInsertPanelOpen();
-assert.ok(canvasInsertPanel.classList.contains('is-visible'), 'canvas insert panel should toggle into view');
-
-const selectInsertOption = (action) => {
-  ensureInsertPanelOpen();
-  const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
-  assert.ok(option instanceof window.HTMLButtonElement, `insert panel should list the ${action} option`);
-  option.click();
-};
 
 const initialTextboxCount = textboxes.length;
 selectInsertOption('add-textbox');
