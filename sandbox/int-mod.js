@@ -11018,20 +11018,30 @@ function createLearningObjectivesSlide({
 
   const cleanedGoals = Array.isArray(goals) ? goals.map((goal) => trimText(goal)).filter(Boolean) : [];
   if (cleanedGoals.length) {
+    const card = document.createElement('div');
+    card.className = 'card lesson-goals-card';
     const list = document.createElement('ul');
     list.className = 'lesson-goals';
     cleanedGoals.forEach((goal, index) => {
       const item = document.createElement('li');
       const icon = document.createElement('span');
       icon.className = 'lesson-goal-icon';
-      icon.textContent = `Goal ${index + 1}`;
+      const iconGlyph = document.createElement('i');
+      iconGlyph.className = 'fas fa-bullseye';
+      iconGlyph.setAttribute('aria-hidden', 'true');
+      const iconLabel = document.createElement('span');
+      iconLabel.className = 'sr-only';
+      iconLabel.textContent = `Goal ${index + 1}`;
+      icon.appendChild(iconGlyph);
+      icon.appendChild(iconLabel);
       const text = document.createElement('p');
       text.textContent = goal;
       item.appendChild(icon);
       item.appendChild(text);
       list.appendChild(item);
     });
-    body.appendChild(list);
+    card.appendChild(list);
+    body.appendChild(card);
   } else {
     const placeholder = document.createElement('p');
     placeholder.className = 'lesson-empty';
