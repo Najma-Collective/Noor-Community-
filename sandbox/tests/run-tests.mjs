@@ -352,6 +352,95 @@ assert.ok(
 );
 moduleCloseBtn.click();
 
+addBlankSlide();
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const insertSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-type="blank"]'),
+);
+const insertTargetSlide =
+  insertSlides.find((slide) => !slide.classList.contains('hidden')) ?? insertSlides[insertSlides.length - 1];
+const insertCanvas = insertTargetSlide.querySelector('.blank-canvas');
+assert.ok(insertCanvas, 'insert target canvas should exist');
+
+const insertTrigger = document.querySelector('.insert-controls-trigger');
+const insertMenu = document.querySelector('.insert-controls-menu');
+assert.ok(insertTrigger, 'insert trigger should exist for active blank slide');
+assert.ok(insertMenu, 'insert menu should be rendered');
+assert.equal(
+  insertTrigger.getAttribute('aria-haspopup'),
+  'menu',
+  'insert trigger should announce a menu relationship',
+);
+
+const openInsertMenu = () => {
+  if (!insertMenu.classList.contains('is-visible')) {
+    insertTrigger.click();
+  }
+};
+
+const selectInsertOption = (action) => {
+  openInsertMenu();
+  const option = insertMenu.querySelector(`[data-action="${action}"]`);
+  assert.ok(option, `insert menu should provide the ${action} option`);
+  option.click();
+};
+
+selectInsertOption('add-textbox');
+assert.equal(
+  insertCanvas.querySelectorAll('.textbox').length,
+  1,
+  'insert menu should add a textbox to the canvas',
+);
+
+selectInsertOption('add-table');
+assert.equal(
+  insertCanvas.querySelectorAll('.canvas-table').length,
+  1,
+  'insert menu should add a table to the canvas',
+);
+
+selectInsertOption('add-mindmap');
+assert.equal(
+  insertCanvas.querySelectorAll('.mindmap').length,
+  1,
+  'insert menu should add a mind map to the canvas',
+);
+
+selectInsertOption('add-module');
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+assert.ok(
+  moduleOverlay.classList.contains('is-visible'),
+  'insert menu should open the module overlay when adding a module',
+);
+
+window.dispatchEvent(
+  new window.MessageEvent('message', {
+    data: { source: 'noor-activity-builder', type: 'activity-module', status: 'ready' },
+    source: moduleFrame.contentWindow,
+  }),
+);
+
+window.dispatchEvent(
+  new window.MessageEvent('message', {
+    data: {
+      source: 'noor-activity-builder',
+      type: 'activity-module',
+      html: '<div class="module-body">Insert Menu Module</div>',
+      config: { type: 'sorting', data: { title: 'Insert Menu Activity' } },
+    },
+    source: moduleFrame.contentWindow,
+  }),
+);
+assert.equal(
+  insertCanvas.querySelectorAll('.module-embed').length,
+  1,
+  'insert menu should add a module embed to the canvas',
+);
+assert.ok(
+  !moduleOverlay.classList.contains('is-visible'),
+  'module overlay should close after inserting via the insert menu',
+);
+
 const builderOverlay = document.getElementById('activity-builder-overlay');
 const addSlideBtn = document.getElementById('add-slide-btn');
 addSlideBtn.click();

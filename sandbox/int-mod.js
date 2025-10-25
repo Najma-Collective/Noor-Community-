@@ -134,6 +134,11 @@ let blankControlsActiveHome;
 let blankControlsActiveToolbar;
 let blankControlsPanelId;
 let blankControlsListenersReady;
+let insertControlsTrigger;
+let insertControlsMenu;
+let insertControlsMenuId;
+let insertControlsListenersReady;
+let insertControlsActiveIndex = -1;
 
 const EDITABLE_INLINE_TAGS = new Set([
   "A",
@@ -646,6 +651,209 @@ function handleBlankControlsKeydown(event) {
   }
 }
 
+const INSERT_MENU_OPTIONS = [
+  {
+    action: 'add-textbox',
+    icon: 'fa-solid fa-pen-to-square',
+    label: 'Add textbox',
+    description: 'Insert a textbox onto the canvas.',
+  },
+  {
+    action: 'add-table',
+    icon: 'fa-solid fa-table',
+    label: 'Create table',
+    description: 'Insert a table onto the canvas.',
+  },
+  {
+    action: 'add-mindmap',
+    icon: 'fa-solid fa-diagram-project',
+    label: 'Add mind map',
+    description: 'Insert a mind map onto the canvas.',
+  },
+  {
+    action: 'add-module',
+    icon: 'fa-solid fa-puzzle-piece',
+    label: 'Add module',
+    description: 'Insert an activity module onto the canvas.',
+  },
+];
+
+function getActiveBlankSlide() {
+  const activeSlide = slides?.[currentSlideIndex];
+  if (activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank') {
+    return activeSlide;
+  }
+  return null;
+}
+
+function getInsertMenuOptionsElements() {
+  if (!(insertControlsMenu instanceof HTMLElement)) {
+    return [];
+  }
+  return Array.from(
+    insertControlsMenu.querySelectorAll?.('[data-role="insert-option"]') ?? [],
+  ).filter((option) => option instanceof HTMLElement);
+}
+
+function focusInsertMenuOption(index) {
+  const options = getInsertMenuOptionsElements();
+  if (!options.length) {
+    return;
+  }
+  const maxIndex = options.length - 1;
+  const targetIndex = Math.min(Math.max(index, 0), maxIndex);
+  const target = options[targetIndex];
+  if (target instanceof HTMLElement) {
+    insertControlsActiveIndex = targetIndex;
+    target.focus({ preventScroll: true });
+  }
+}
+
+function isInsertMenuOpen() {
+  return insertControlsMenu instanceof HTMLElement
+    ? insertControlsMenu.classList.contains('is-visible')
+    : false;
+}
+
+function closeInsertMenu({ restoreFocus = true } = {}) {
+  if (!(insertControlsMenu instanceof HTMLElement)) {
+    return;
+  }
+  insertControlsMenu.classList.remove('is-visible');
+  insertControlsMenu.hidden = true;
+  insertControlsMenu.setAttribute('aria-hidden', 'true');
+  insertControlsActiveIndex = -1;
+  if (insertControlsTrigger instanceof HTMLElement) {
+    insertControlsTrigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus && !insertControlsTrigger.hidden) {
+      insertControlsTrigger.focus({ preventScroll: true });
+    }
+  }
+}
+
+function openInsertMenu({ focusFirst = true } = {}) {
+  ensureBlankControlsUI();
+  if (!(insertControlsMenu instanceof HTMLElement) || !(insertControlsTrigger instanceof HTMLElement)) {
+    return;
+  }
+  if (!getActiveBlankSlide()) {
+    return;
+  }
+  insertControlsMenu.hidden = false;
+  insertControlsMenu.classList.add('is-visible');
+  insertControlsMenu.setAttribute('aria-hidden', 'false');
+  insertControlsTrigger.setAttribute('aria-expanded', 'true');
+  if (focusFirst) {
+    requestAnimationFrame(() => {
+      focusInsertMenuOption(0);
+    });
+  }
+}
+
+function toggleInsertMenu() {
+  if (isInsertMenuOpen()) {
+    closeInsertMenu();
+  } else {
+    openInsertMenu();
+  }
+}
+
+function findBlankActionButton(action) {
+  if (typeof action !== 'string' || !action.trim()) {
+    return null;
+  }
+  const targetAction = action.trim();
+  const activeSlide = getActiveBlankSlide();
+  const hosts = [];
+  if (blankControlsActionsHost instanceof HTMLElement) {
+    hosts.push(blankControlsActionsHost);
+  }
+  if (blankControlsActiveHome instanceof HTMLElement) {
+    hosts.push(blankControlsActiveHome);
+  }
+  if (activeSlide instanceof HTMLElement) {
+    hosts.push(activeSlide);
+  }
+  for (const host of hosts) {
+    const button = host.querySelector?.(`[data-action="${targetAction}"]`);
+    if (button instanceof HTMLButtonElement) {
+      return button;
+    }
+  }
+  return null;
+}
+
+function performInsertAction(action) {
+  const button = findBlankActionButton(action);
+  if (button instanceof HTMLButtonElement) {
+    button.click();
+    return true;
+  }
+  return false;
+}
+
+function handleInsertMenuPointerDown(event) {
+  if (!isInsertMenuOpen()) {
+    return;
+  }
+  const target = event.target;
+  if (!(target instanceof Node)) {
+    return;
+  }
+  if (
+    (insertControlsMenu instanceof HTMLElement && insertControlsMenu.contains(target)) ||
+    (insertControlsTrigger instanceof HTMLElement && insertControlsTrigger.contains(target))
+  ) {
+    return;
+  }
+  closeInsertMenu({ restoreFocus: false });
+}
+
+function handleInsertMenuKeydown(event) {
+  if (!isInsertMenuOpen()) {
+    return;
+  }
+  const options = getInsertMenuOptionsElements();
+  if (!options.length) {
+    return;
+  }
+  switch (event.key) {
+    case 'ArrowDown': {
+      event.preventDefault();
+      const nextIndex = insertControlsActiveIndex >= 0 ? insertControlsActiveIndex + 1 : 0;
+      focusInsertMenuOption(nextIndex >= options.length ? 0 : nextIndex);
+      break;
+    }
+    case 'ArrowUp': {
+      event.preventDefault();
+      const prevIndex = insertControlsActiveIndex >= 0 ? insertControlsActiveIndex - 1 : options.length - 1;
+      focusInsertMenuOption(prevIndex < 0 ? options.length - 1 : prevIndex);
+      break;
+    }
+    case 'Home': {
+      event.preventDefault();
+      focusInsertMenuOption(0);
+      break;
+    }
+    case 'End': {
+      event.preventDefault();
+      focusInsertMenuOption(options.length - 1);
+      break;
+    }
+    case 'Escape': {
+      event.preventDefault();
+      closeInsertMenu();
+      break;
+    }
+    case 'Tab': {
+      closeInsertMenu({ restoreFocus: false });
+      break;
+    }
+    default:
+      break;
+  }
+}
+
 function ensureBlankControlsUI() {
   const cluster = ensureStageUtilityCluster();
   if (!cluster) {
@@ -657,6 +865,13 @@ function ensureBlankControlsUI() {
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
         ? `blank-controls-${crypto.randomUUID()}`
         : `blank-controls-${Math.random().toString(16).slice(2, 8)}`;
+  }
+
+  if (!insertControlsMenuId) {
+    insertControlsMenuId =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? `insert-controls-${crypto.randomUUID()}`
+        : `insert-controls-${Math.random().toString(16).slice(2, 8)}`;
   }
 
   if (!(blankControlsPanel instanceof HTMLElement)) {
@@ -694,6 +909,77 @@ function ensureBlankControlsUI() {
     }
   }
 
+  if (!(insertControlsMenu instanceof HTMLElement)) {
+    insertControlsMenu = document.createElement('div');
+    insertControlsMenu.className = 'insert-controls-menu';
+    insertControlsMenu.id = insertControlsMenuId;
+    insertControlsMenu.setAttribute('role', 'menu');
+    insertControlsMenu.setAttribute('aria-label', 'Insert canvas items');
+    insertControlsMenu.setAttribute('aria-hidden', 'true');
+    insertControlsMenu.hidden = true;
+  }
+
+  if (insertControlsMenu instanceof HTMLElement) {
+    insertControlsMenu.innerHTML = '';
+    INSERT_MENU_OPTIONS.forEach((option) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'insert-controls-option';
+      button.dataset.role = 'insert-option';
+      button.dataset.action = option.action;
+      button.setAttribute('role', 'menuitem');
+      button.tabIndex = -1;
+      button.innerHTML = `
+        <span class="insert-controls-option-icon" aria-hidden="true">
+          <i class="${option.icon}"></i>
+        </span>
+        <span class="insert-controls-option-label">${option.label}</span>
+        <span class="insert-controls-option-description">${option.description}</span>
+      `;
+      button.addEventListener('click', () => {
+        const handled = performInsertAction(option.action);
+        if (handled) {
+          closeInsertMenu();
+        }
+      });
+      insertControlsMenu.appendChild(button);
+    });
+  }
+
+  if (!(insertControlsTrigger instanceof HTMLButtonElement)) {
+    insertControlsTrigger = document.createElement('button');
+    insertControlsTrigger.type = 'button';
+    insertControlsTrigger.className = 'stage-utility-btn insert-controls-trigger';
+    insertControlsTrigger.setAttribute('aria-haspopup', 'menu');
+    insertControlsTrigger.setAttribute('aria-expanded', 'false');
+    insertControlsTrigger.innerHTML = `
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span class="sr-only">Insert canvas item</span>
+    `;
+    insertControlsTrigger.title = 'Insert canvas item';
+    insertControlsTrigger.hidden = true;
+    insertControlsTrigger.disabled = true;
+    insertControlsTrigger.setAttribute('aria-disabled', 'true');
+    insertControlsTrigger.addEventListener('click', () => {
+      toggleInsertMenu();
+    });
+    insertControlsTrigger.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openInsertMenu();
+      }
+      if (event.key === 'Escape') {
+        closeInsertMenu();
+      }
+    });
+  }
+
+  insertControlsTrigger.setAttribute('aria-controls', insertControlsMenuId);
+
+  if (!cluster.contains(insertControlsTrigger)) {
+    cluster.appendChild(insertControlsTrigger);
+  }
+
   if (!(blankControlsTrigger instanceof HTMLButtonElement)) {
     blankControlsTrigger = document.createElement('button');
     blankControlsTrigger.type = 'button';
@@ -717,6 +1003,10 @@ function ensureBlankControlsUI() {
 
   blankControlsTrigger.setAttribute('aria-controls', blankControlsPanelId);
 
+  if (insertControlsMenu instanceof HTMLElement && !cluster.contains(insertControlsMenu)) {
+    cluster.appendChild(insertControlsMenu);
+  }
+
   if (!cluster.contains(blankControlsTrigger)) {
     cluster.appendChild(blankControlsTrigger);
   }
@@ -729,6 +1019,12 @@ function ensureBlankControlsUI() {
     document.addEventListener('pointerdown', handleBlankControlsPointerDown);
     document.addEventListener('keydown', handleBlankControlsKeydown);
     blankControlsListenersReady = true;
+  }
+
+  if (!insertControlsListenersReady) {
+    document.addEventListener('pointerdown', handleInsertMenuPointerDown);
+    document.addEventListener('keydown', handleInsertMenuKeydown);
+    insertControlsListenersReady = true;
   }
 }
 
@@ -800,6 +1096,8 @@ function openBlankControlsPanel() {
     return;
   }
 
+  closeInsertMenu({ restoreFocus: false });
+
   if (blankControlsPanel.classList.contains('is-visible')) {
     if (blankControlsActiveSlide === activeSlide) {
       return;
@@ -859,15 +1157,26 @@ function syncBlankControlsAvailability() {
     if (blankControlsPanel?.classList.contains('is-visible')) {
       closeBlankControlsPanel({ restoreFocus: false });
     }
+    closeInsertMenu({ restoreFocus: false });
     blankControlsTrigger.hidden = true;
     blankControlsTrigger.disabled = true;
     blankControlsTrigger.setAttribute('aria-disabled', 'true');
+    if (insertControlsTrigger instanceof HTMLButtonElement) {
+      insertControlsTrigger.hidden = true;
+      insertControlsTrigger.disabled = true;
+      insertControlsTrigger.setAttribute('aria-disabled', 'true');
+    }
     return;
   }
 
   blankControlsTrigger.hidden = false;
   blankControlsTrigger.disabled = false;
   blankControlsTrigger.setAttribute('aria-disabled', 'false');
+  if (insertControlsTrigger instanceof HTMLButtonElement) {
+    insertControlsTrigger.hidden = false;
+    insertControlsTrigger.disabled = false;
+    insertControlsTrigger.setAttribute('aria-disabled', 'false');
+  }
   if (!(blankControlsPanel instanceof HTMLElement)) {
     return;
   }
@@ -1957,7 +2266,7 @@ export function createBlankSlide() {
     <div class="slide-inner">
 <div class="blank-slide">
   <div class="blank-controls-home" data-role="blank-controls-home">
-    <div class="blank-controls" data-role="blank-actions">
+    <div class="blank-controls" data-role="blank-actions" role="group" aria-label="Insert canvas items">
       <button class="activity-btn" type="button" data-action="add-textbox">
         <i class="fa-solid fa-pen-to-square"></i>
         Add Textbox
