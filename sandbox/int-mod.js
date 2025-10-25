@@ -1144,11 +1144,15 @@ const BUILDER_LAYOUT_DEFAULTS = {
     ],
     communicativeGoal: "get to know a new person.",
     imageUrl: "",
+    overlayColor: "#152a41",
+    overlayOpacity: 40,
   }),
   "model-dialogue": () => ({
     title: "Get to know people",
     instructions: "In pairs, identify the two main questions and how the speakers answer them.",
     imageUrl: "",
+    overlayColor: "#283142",
+    overlayOpacity: 35,
     audioUrl: "",
     turns: [
       { speaker: "Amina", line: "Hi! I'm Amina. Nice to meet you." },
@@ -1179,6 +1183,8 @@ const BUILDER_LAYOUT_DEFAULTS = {
       "B: I live in ____. What do you do?",
       "A: I work as a ____ because ____.",
     ],
+    overlayColor: "#1f2d3a",
+    overlayOpacity: 30,
   }),
   "pronunciation-focus": () => ({
     title: "What does /st/ sound like?",
@@ -1187,11 +1193,15 @@ const BUILDER_LAYOUT_DEFAULTS = {
     sentences: ["Are you a student? ↗", "We start at six o'clock. ↘"],
     practice: "Invite 3-4 learners to say the sentences, then personalise with their own ideas.",
     imageUrl: "",
+    overlayColor: "#4b1f2c",
+    overlayOpacity: 35,
   }),
   reflection: () => ({
     title: "Reflection",
     prompts: ["A classmate’s name", "A place in Palestine", "A job"],
     imageUrl: "",
+    overlayColor: "#2a3b2c",
+    overlayOpacity: 35,
   }),
   "grounding-activity": () => ({
     title: "Grounding activity",
@@ -7550,15 +7560,21 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'learningGoalThree',
       'learningCommunicativeGoal',
       'learningImageUrl',
+      'learningOverlayColor',
+      'learningOverlayOpacity',
       'dialogueTitle',
       'dialogueInstructions',
       'dialogueImageUrl',
+      'dialogueOverlayColor',
+      'dialogueOverlayOpacity',
       'dialogueAudioUrl',
       'practiceTitle',
       'practiceInstructions',
       'practiceActivityType',
       'taskTitle',
       'taskImageUrl',
+      'taskOverlayColor',
+      'taskOverlayOpacity',
       'taskPreparation',
       'taskPerformance',
       'taskScaffolding',
@@ -7570,11 +7586,15 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'pronunciationSentenceTwo',
       'pronunciationPractice',
       'pronunciationImageUrl',
+      'pronunciationOverlayColor',
+      'pronunciationOverlayOpacity',
       'reflectionTitle',
       'reflectionPromptOne',
       'reflectionPromptTwo',
       'reflectionPromptThree',
       'reflectionImageUrl',
+      'reflectionOverlayColor',
+      'reflectionOverlayOpacity',
       'groundingTitle',
       'groundingSubtitle',
       'groundingSteps',
@@ -7681,12 +7701,22 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('learningGoalThree', goals[2] ?? '');
       setFieldValue('learningCommunicativeGoal', defaults.communicativeGoal ?? '');
       setFieldValue('learningImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('learningOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'learningOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       break;
     }
     case 'model-dialogue': {
       setFieldValue('dialogueTitle', defaults.title ?? '');
       setFieldValue('dialogueInstructions', defaults.instructions ?? '');
       setFieldValue('dialogueImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('dialogueOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'dialogueOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       setFieldValue('dialogueAudioUrl', defaults.audioUrl ?? '');
       resetDialogueList(defaults.turns);
       break;
@@ -7701,6 +7731,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'communicative-task': {
       setFieldValue('taskTitle', defaults.title ?? '');
       setFieldValue('taskImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('taskOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'taskOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       setFieldValue('taskPreparation', defaults.preparation ?? '');
       setFieldValue('taskPerformance', defaults.performance ?? '');
       setFieldValue(
@@ -7722,6 +7757,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('pronunciationSentenceTwo', sentences[1] ?? '');
       setFieldValue('pronunciationPractice', defaults.practice ?? '');
       setFieldValue('pronunciationImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('pronunciationOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'pronunciationOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       break;
     }
     case 'reflection': {
@@ -7731,6 +7771,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('reflectionPromptTwo', prompts[1] ?? '');
       setFieldValue('reflectionPromptThree', prompts[2] ?? '');
       setFieldValue('reflectionImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('reflectionOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reflectionOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       break;
     }
     case 'grounding-activity': {
@@ -7939,6 +7984,10 @@ function getBuilderFormState() {
         goals,
         communicativeGoal: trimText(formData.get('learningCommunicativeGoal')),
         imageUrl: trimText(formData.get('learningImageUrl')),
+        overlayColor: trimText(formData.get('learningOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('learningOverlayOpacity'),
+        ),
       };
       break;
     }
@@ -7958,6 +8007,10 @@ function getBuilderFormState() {
         title: trimText(formData.get('dialogueTitle')) || 'Model dialogue',
         instructions: trimText(formData.get('dialogueInstructions')),
         imageUrl: trimText(formData.get('dialogueImageUrl')),
+        overlayColor: trimText(formData.get('dialogueOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('dialogueOverlayOpacity'),
+        ),
         audioUrl: trimText(formData.get('dialogueAudioUrl')),
         turns,
       };
@@ -7989,6 +8042,10 @@ function getBuilderFormState() {
       state.data = {
         title: trimText(formData.get('taskTitle')) || 'Communicative task',
         imageUrl: trimText(formData.get('taskImageUrl')),
+        overlayColor: trimText(formData.get('taskOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('taskOverlayOpacity'),
+        ),
         preparation: trimText(formData.get('taskPreparation')),
         performance: trimText(formData.get('taskPerformance')),
         scaffolding: splitMultiline(formData.get('taskScaffolding')),
@@ -8011,6 +8068,10 @@ function getBuilderFormState() {
         sentences,
         practice: trimText(formData.get('pronunciationPractice')),
         imageUrl: trimText(formData.get('pronunciationImageUrl')),
+        overlayColor: trimText(formData.get('pronunciationOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('pronunciationOverlayOpacity'),
+        ),
       };
       break;
     }
@@ -8024,6 +8085,10 @@ function getBuilderFormState() {
         title: trimText(formData.get('reflectionTitle')) || 'Reflection',
         prompts,
         imageUrl: trimText(formData.get('reflectionImageUrl')),
+        overlayColor: trimText(formData.get('reflectionOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reflectionOverlayOpacity'),
+        ),
       };
       break;
     }
