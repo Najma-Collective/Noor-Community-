@@ -2446,13 +2446,13 @@ export function attachBlankSlideEvents(slide) {
   }
 
   const canvas = slide.querySelector(".blank-canvas");
-  const hint = slide.querySelector('[data-role="hint"]');
+  let hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
   const addTableBtn = slide.querySelector('[data-action="add-table"]');
   const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
   const addModuleBtn = slide.querySelector('[data-action="add-module"]');
 
-  if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+  if (!(canvas instanceof HTMLElement)) {
     delete slide.__deckBlankCleanup;
     return;
   }
@@ -2463,6 +2463,44 @@ export function attachBlankSlideEvents(slide) {
       cleanupTasks.push(callback);
     }
   };
+
+  const DEFAULT_HINT =
+    "Add textboxes, paste images, or build a mind map to capture relationships.";
+  const TEXTBOX_HINT =
+    "Drag your textboxes into place, double-click to edit, and use the toolbar to organise ideas.";
+  const IMAGE_HINT =
+    "Paste images to bring ideas to life. Drag to move them and adjust size or effects from the toolbar.";
+  const MIXED_HINT =
+    "Combine textboxes and images to map your ideas visually and style them from the toolbar.";
+  const TABLE_HINT =
+    "Table ready. Add rows, columns, and colour-code cells from the toolbar to organise information.";
+  const TABLE_COMBINATION_HINT =
+    "Tables pair well with your notes, visuals, or maps to compare ideas.";
+  const MINDMAP_HINT =
+    "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
+  const MODULE_HINT =
+    "Module ready. Facilitate it inside the frame or add another to compare activities.";
+  const MODULE_COMBINATION_HINT =
+    "Combine modules with your notes, visuals, or maps to scaffold the activity.";
+
+  if (!(hint instanceof HTMLElement)) {
+    const blankContainer = slide.querySelector(".blank-slide");
+    const replacementHint = document.createElement("p");
+    replacementHint.className = "blank-hint";
+    replacementHint.dataset.role = "hint";
+    replacementHint.textContent = DEFAULT_HINT;
+    const canvasRegion = blankContainer?.querySelector?.(".blank-canvas") ?? null;
+    const insertionParent =
+      canvasRegion?.parentElement ?? blankContainer ?? slide;
+    if (canvasRegion instanceof HTMLElement && insertionParent?.contains(canvasRegion)) {
+      insertionParent.insertBefore(replacementHint, canvasRegion);
+    } else if (insertionParent instanceof HTMLElement) {
+      insertionParent.appendChild(replacementHint);
+    } else {
+      slide.appendChild(replacementHint);
+    }
+    hint = replacementHint;
+  }
 
   const toolbar = slide.querySelector('[data-role="blank-toolbar"]');
   const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
@@ -3329,25 +3367,6 @@ export function attachBlankSlideEvents(slide) {
       toolbarToggle.removeEventListener("click", toggleHandler);
     });
   }
-
-  const DEFAULT_HINT =
-    "Add textboxes, paste images, or build a mind map to capture relationships.";
-  const TEXTBOX_HINT =
-    "Drag your textboxes into place, double-click to edit, and use the toolbar to organise ideas.";
-  const IMAGE_HINT =
-    "Paste images to bring ideas to life. Drag to move them and adjust size or effects from the toolbar.";
-  const MIXED_HINT =
-    "Combine textboxes and images to map your ideas visually and style them from the toolbar.";
-  const TABLE_HINT =
-    "Table ready. Add rows, columns, and colour-code cells from the toolbar to organise information.";
-  const TABLE_COMBINATION_HINT =
-    "Tables pair well with your notes, visuals, or maps to compare ideas.";
-  const MINDMAP_HINT =
-    "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
-  const MODULE_HINT =
-    "Module ready. Facilitate it inside the frame or add another to compare activities.";
-  const MODULE_COMBINATION_HINT =
-    "Combine modules with your notes, visuals, or maps to scaffold the activity.";
 
   if (!canvas.hasAttribute("tabindex")) {
     canvas.setAttribute("tabindex", "0");

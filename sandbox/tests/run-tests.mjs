@@ -441,6 +441,27 @@ assert.ok(
   'module overlay should close after inserting via the insert menu',
 );
 
+const hintlessSlide = createBlankSlide();
+const hintlessCanvas = hintlessSlide.querySelector('.blank-canvas');
+const hintlessHint = hintlessSlide.querySelector('[data-role="hint"]');
+hintlessHint?.remove();
+stageViewport.appendChild(hintlessSlide);
+attachBlankSlideEvents(hintlessSlide);
+await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const restoredHint = hintlessSlide.querySelector('[data-role="hint"]');
+assert.ok(
+  restoredHint instanceof HTMLElement,
+  'blank slide without a hint should receive a replacement hint',
+);
+const hintlessTextboxBtn = hintlessSlide.querySelector('[data-action="add-textbox"]');
+hintlessTextboxBtn?.click();
+assert.equal(
+  hintlessCanvas?.querySelectorAll?.('.textbox').length ?? 0,
+  1,
+  'blank slide should still add textboxes when the hint is missing',
+);
+hintlessSlide.remove();
+
 const builderOverlay = document.getElementById('activity-builder-overlay');
 const addSlideBtn = document.getElementById('add-slide-btn');
 addSlideBtn.click();
@@ -460,3 +481,4 @@ const insertedSlide = activitySlides[0];
 assert.equal(insertedSlide.dataset.type, 'communicative-task', 'inserted slide should be tagged with its layout type');
 
 console.log('All tests passed');
+process.exit(0);
