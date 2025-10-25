@@ -5132,35 +5132,46 @@ ol {
   justify-content: center;
 }
 
+.lesson-goals-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 246, 240, 0.96) 100%);
+  border: 1px solid color-mix(in srgb, var(--border-sage) 80%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
 .lesson-goals {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-4);
 }
 
 .lesson-goals li {
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: start;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.82);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-1);
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.lesson-goals li p {
+  margin: 0;
 }
 
 .lesson-goal-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
-  font-weight: 700;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--secondary-sage) 28%, white 72%);
   color: var(--primary-forest);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: var(--step--1);
+  box-shadow: var(--shadow-0);
+}
+
+.lesson-goal-icon i {
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .lesson-empty {
