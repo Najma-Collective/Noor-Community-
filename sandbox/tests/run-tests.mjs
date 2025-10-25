@@ -317,38 +317,46 @@ const managedBlankSlide =
   managedBlankSlides.find((slide) => !slide.classList.contains('hidden')) ??
   managedBlankSlides[managedBlankSlides.length - 1];
 const managedCanvas = managedBlankSlide.querySelector('.blank-canvas');
-const blankControlsTrigger = document.querySelector('.blank-controls-trigger');
-assert.ok(blankControlsTrigger, 'blank controls trigger should exist for managed blank slide');
-blankControlsTrigger.click();
+const canvasInsertTrigger = document.querySelector('.canvas-insert-trigger');
+assert.ok(canvasInsertTrigger, 'canvas insert trigger should exist for managed blank slide');
+canvasInsertTrigger.click();
 await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const blankControlsPanel = document.querySelector('.blank-controls-flyout');
+const canvasInsertPanel = document.querySelector('.canvas-insert-panel');
 assert.ok(
-  blankControlsPanel?.classList.contains('is-visible'),
-  'blank controls panel should be visible after toggling trigger',
+  canvasInsertPanel?.classList.contains('is-visible'),
+  'canvas insert panel should be visible after toggling trigger',
 );
-blankControlsPanel.querySelector('[data-action="add-textbox"]').click();
+const selectPanelOption = (action) => {
+  if (!canvasInsertPanel.classList.contains('is-visible')) {
+    canvasInsertTrigger.click();
+  }
+  const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
+  assert.ok(option, `canvas insert panel should provide the ${action} option`);
+  option.click();
+};
+selectPanelOption('add-textbox');
 assert.equal(
   managedCanvas.querySelectorAll('.textbox').length,
   1,
-  'blank controls panel should add a textbox to the managed canvas',
+  'canvas insert panel should add a textbox to the managed canvas',
 );
-blankControlsPanel.querySelector('[data-action="add-table"]').click();
+selectPanelOption('add-table');
 assert.equal(
   managedCanvas.querySelectorAll('.canvas-table').length,
   1,
-  'blank controls panel should add a table to the managed canvas',
+  'canvas insert panel should add a table to the managed canvas',
 );
-blankControlsPanel.querySelector('[data-action="add-mindmap"]').click();
+selectPanelOption('add-mindmap');
 assert.equal(
   managedCanvas.querySelectorAll('.mindmap').length,
   1,
-  'blank controls panel should add a mind map to the managed canvas',
+  'canvas insert panel should add a mind map to the managed canvas',
 );
-blankControlsPanel.querySelector('[data-action="add-module"]').click();
+selectPanelOption('add-module');
 await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
 assert.ok(
   moduleOverlay.classList.contains('is-visible'),
-  'blank controls panel should open module overlay when adding a module',
+  'canvas insert panel should open module overlay when adding a module',
 );
 moduleCloseBtn.click();
 
@@ -362,55 +370,55 @@ const insertTargetSlide =
 const insertCanvas = insertTargetSlide.querySelector('.blank-canvas');
 assert.ok(insertCanvas, 'insert target canvas should exist');
 
-const insertTrigger = document.querySelector('.insert-controls-trigger');
-const insertMenu = document.querySelector('.insert-controls-menu');
-assert.ok(insertTrigger, 'insert trigger should exist for active blank slide');
-assert.ok(insertMenu, 'insert menu should be rendered');
+const overlayTrigger = document.querySelector('.canvas-insert-trigger');
+const overlayPanel = document.querySelector('.canvas-insert-panel');
+assert.ok(overlayTrigger, 'canvas insert trigger should exist for active blank slide');
+assert.ok(overlayPanel, 'canvas insert panel should be rendered');
 assert.equal(
-  insertTrigger.getAttribute('aria-haspopup'),
+  overlayTrigger.getAttribute('aria-haspopup'),
   'menu',
-  'insert trigger should announce a menu relationship',
+  'canvas insert trigger should announce a menu relationship',
 );
 
-const openInsertMenu = () => {
-  if (!insertMenu.classList.contains('is-visible')) {
-    insertTrigger.click();
+const ensurePanelOpen = () => {
+  if (!overlayPanel.classList.contains('is-visible')) {
+    overlayTrigger.click();
   }
 };
 
-const selectInsertOption = (action) => {
-  openInsertMenu();
-  const option = insertMenu.querySelector(`[data-action="${action}"]`);
-  assert.ok(option, `insert menu should provide the ${action} option`);
+const chooseInsertOption = (action) => {
+  ensurePanelOpen();
+  const option = overlayPanel.querySelector(`[data-action="${action}"]`);
+  assert.ok(option, `canvas insert panel should provide the ${action} option`);
   option.click();
 };
 
-selectInsertOption('add-textbox');
+chooseInsertOption('add-textbox');
 assert.equal(
   insertCanvas.querySelectorAll('.textbox').length,
   1,
-  'insert menu should add a textbox to the canvas',
+  'canvas insert panel should add a textbox to the canvas',
 );
 
-selectInsertOption('add-table');
+chooseInsertOption('add-table');
 assert.equal(
   insertCanvas.querySelectorAll('.canvas-table').length,
   1,
-  'insert menu should add a table to the canvas',
+  'canvas insert panel should add a table to the canvas',
 );
 
-selectInsertOption('add-mindmap');
+chooseInsertOption('add-mindmap');
 assert.equal(
   insertCanvas.querySelectorAll('.mindmap').length,
   1,
-  'insert menu should add a mind map to the canvas',
+  'canvas insert panel should add a mind map to the canvas',
 );
 
-selectInsertOption('add-module');
+chooseInsertOption('add-module');
 await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
 assert.ok(
   moduleOverlay.classList.contains('is-visible'),
-  'insert menu should open the module overlay when adding a module',
+  'canvas insert panel should open the module overlay when adding a module',
 );
 
 window.dispatchEvent(

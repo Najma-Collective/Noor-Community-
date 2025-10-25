@@ -866,6 +866,89 @@ body {
   display: none;
 }
 
+.canvas-insert-panel {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  width: min(420px, 82vw);
+  padding: 0.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  background: rgba(254, 252, 247, 0.98);
+  box-shadow: var(--shadow-2);
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 45;
+}
+
+.canvas-insert-panel.is-visible {
+  display: flex;
+}
+
+.canvas-insert-options {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.canvas-insert-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--deep-forest);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.canvas-insert-option:hover,
+.canvas-insert-option:focus-visible {
+  border-color: rgba(122, 132, 113, 0.35);
+  box-shadow: var(--shadow-1);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.canvas-insert-option:focus-visible {
+  box-shadow: 0 0 0 3px rgba(122, 132, 113, 0.3);
+}
+
+.canvas-insert-option-icon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  background: rgba(156, 175, 136, 0.18);
+  display: grid;
+  place-items: center;
+  color: var(--primary-forest);
+  font-size: 1.1rem;
+}
+
+.canvas-insert-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.canvas-insert-option-label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.canvas-insert-option-description {
+  font-size: 0.85rem;
+  color: rgba(34, 41, 32, 0.68);
+}
+
 .slide-stage {
   position: relative;
   border-radius: var(--stage-radius);
