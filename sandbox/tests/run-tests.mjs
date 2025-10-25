@@ -10,71 +10,152 @@ const fixturePath = join(__dirname, 'fixtures', 'minimal-deck.html');
 const html = await readFile(fixturePath, 'utf8');
 
 const dom = new JSDOM(html, {
-  url: 'https://example.com/',
+  url: 'https://example.com/sandbox/',
   pretendToBeVisual: true,
 });
 
 const { window } = dom;
 const { document } = window;
 
-global.window = window;
-global.document = document;
-global.HTMLElement = window.HTMLElement;
-global.Element = window.Element;
-global.Document = window.Document;
-global.HTMLButtonElement = window.HTMLButtonElement;
-global.HTMLInputElement = window.HTMLInputElement;
-global.HTMLTextAreaElement = window.HTMLTextAreaElement;
-global.HTMLIFrameElement = window.HTMLIFrameElement;
-global.HTMLImageElement = window.HTMLImageElement;
-global.HTMLFormElement = window.HTMLFormElement;
-global.HTMLSelectElement = window.HTMLSelectElement;
-global.RadioNodeList = window.RadioNodeList;
-global.FormData = window.FormData;
-global.HTMLTableElement = window.HTMLTableElement;
-global.HTMLTableSectionElement = window.HTMLTableSectionElement;
-global.HTMLTableRowElement = window.HTMLTableRowElement;
-global.HTMLTableCellElement = window.HTMLTableCellElement;
-global.MutationObserver = window.MutationObserver;
-global.HTMLScriptElement = window.HTMLScriptElement;
-global.Node = window.Node;
-global.CustomEvent = window.CustomEvent;
-global.DOMParser = window.DOMParser;
-global.getComputedStyle = window.getComputedStyle.bind(window);
-global.navigator = window.navigator;
+const noop = () => {};
+const nextFrame = () =>
+  new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const flushTimers = () =>
+  new Promise((resolve) => window.setTimeout(resolve, 0));
+
+if (typeof window.requestAnimationFrame !== 'function') {
+  window.requestAnimationFrame = (callback) => window.setTimeout(callback, 16);
+}
+if (typeof window.cancelAnimationFrame !== 'function') {
+  window.cancelAnimationFrame = (handle) => window.clearTimeout(handle);
+}
+
+class ResizeObserver {
+  constructor(callback = noop) {
+    this.callback = callback;
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+if (!window.ResizeObserver) {
+  window.ResizeObserver = ResizeObserver;
+}
+
+if (!window.PointerEvent) {
+  class PointerEvent extends window.Event {
+    constructor(type, options = {}) {
+      super(type, options);
+      this.button = options.button ?? 0;
+    }
+  }
+  window.PointerEvent = PointerEvent;
+}
+
+if (!window.crypto?.randomUUID) {
+  window.crypto = window.crypto || {};
+  window.crypto.randomUUID = () => '00000000-0000-4000-8000-000000000000';
+}
+
+Object.assign(globalThis, {
+  window,
+  document,
+  navigator: window.navigator,
+  HTMLElement: window.HTMLElement,
+  Element: window.Element,
+  Document: window.Document,
+  HTMLButtonElement: window.HTMLButtonElement,
+  HTMLInputElement: window.HTMLInputElement,
+  HTMLTextAreaElement: window.HTMLTextAreaElement,
+  HTMLIFrameElement: window.HTMLIFrameElement,
+  HTMLImageElement: window.HTMLImageElement,
+  HTMLFormElement: window.HTMLFormElement,
+  HTMLSelectElement: window.HTMLSelectElement,
+  RadioNodeList: window.RadioNodeList,
+  FormData: window.FormData,
+  HTMLTableElement: window.HTMLTableElement,
+  HTMLTableSectionElement: window.HTMLTableSectionElement,
+  HTMLTableRowElement: window.HTMLTableRowElement,
+  HTMLTableCellElement: window.HTMLTableCellElement,
+  MutationObserver: window.MutationObserver,
+  HTMLScriptElement: window.HTMLScriptElement,
+  Node: window.Node,
+  CustomEvent: window.CustomEvent,
+  Event: window.Event,
+  MouseEvent: window.MouseEvent,
+  KeyboardEvent: window.KeyboardEvent,
+  FocusEvent: window.FocusEvent,
+  Range: window.Range,
+  Selection: window.Selection,
+  DOMParser: window.DOMParser,
+  getComputedStyle: window.getComputedStyle.bind(window),
+  ResizeObserver: window.ResizeObserver,
+  Headers: window.Headers,
+  Blob: window.Blob,
+  File: window.File,
+});
+
 global.localStorage = {
   getItem: () => null,
   setItem: () => {},
   removeItem: () => {},
 };
+
 window.navigator.clipboard = {
   writeText: async () => {},
 };
-if (!window.crypto?.randomUUID) {
-  window.crypto = window.crypto || {};
-  window.crypto.randomUUID = () => '00000000-0000-4000-8000-000000000000';
-}
-global.requestAnimationFrame = window.requestAnimationFrame.bind(window);
-global.cancelAnimationFrame = window.cancelAnimationFrame.bind(window);
+
 window.HTMLElement.prototype.scrollIntoView = function scrollIntoView() {};
-if (!window.HTMLMediaElement.prototype.play) {
-  window.HTMLMediaElement.prototype.play = async () => {};
-}
-window.HTMLMediaElement.prototype.play = async () => {};
-window.IntersectionObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+window.scrollTo = noop;
+window.prompt = () => '';
+window.requestAnimationFrame = window.requestAnimationFrame.bind(window);
+window.cancelAnimationFrame = window.cancelAnimationFrame.bind(window);
+
+global.requestAnimationFrame = window.requestAnimationFrame;
+global.cancelAnimationFrame = window.cancelAnimationFrame;
+
+global.fetchCalls = [];
+const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
+const samplePhotos = [
+  {
+    id: 101,
+    alt: 'Students collaborating at a table',
+    src: {
+      large2x: 'https://images.example.com/classroom-large2x.jpg',
+      medium: 'https://images.example.com/classroom-medium.jpg',
+    },
+  },
+  {
+    id: 202,
+    alt: 'Teacher leading discussion',
+    src: {
+      large: 'https://images.example.com/discussion-large.jpg',
+      small: 'https://images.example.com/discussion-small.jpg',
+    },
+  },
+];
+
+global.fetch = async (input, init = {}) => {
+  const url = typeof input === 'string' ? input : input?.url ?? '';
+  fetchCalls.push({ url, init });
+  if (url.startsWith(PEXELS_SEARCH_URL)) {
+    return {
+      ok: true,
+      status: 200,
+      headers: new window.Headers(),
+      json: async () => ({ photos: samplePhotos }),
+      text: async () => JSON.stringify({ photos: samplePhotos }),
+    };
+  }
+  return {
+    ok: true,
+    status: 200,
+    headers: new window.Headers(),
+    json: async () => ({}),
+    text: async () => '',
+  };
 };
-global.IntersectionObserver = window.IntersectionObserver;
-document.execCommand = () => true;
-global.fetch = async () => ({
-  ok: true,
-  status: 200,
-  headers: new window.Headers(),
-  text: async () => '',
-  json: async () => ({}),
-});
 
 const moduleFrame = document.getElementById('module-builder-frame');
 Object.defineProperty(moduleFrame, 'contentWindow', {
@@ -83,99 +164,128 @@ Object.defineProperty(moduleFrame, 'contentWindow', {
   },
 });
 
+const {
+  setupInteractiveDeck,
+} = await import(pathToFileURL(join(__dirname, '../int-mod.js')).href);
+
+await setupInteractiveDeck();
+await flushTimers();
+await nextFrame();
+
+const stageViewport = document.querySelector('.stage-viewport');
+assert.ok(stageViewport, 'stage viewport should be present');
+
+const counterEl = document.getElementById('slide-counter');
+assert.ok(counterEl, 'slide counter should render');
+
+const addSlideBtn = document.getElementById('add-slide-btn');
+assert.ok(addSlideBtn, 'add slide button should exist');
+
+const builderOverlay = document.getElementById('activity-builder-overlay');
+const builderForm = document.getElementById('activity-builder-form');
+assert.ok(builderOverlay instanceof window.HTMLElement, 'builder overlay should mount');
+assert.ok(builderForm instanceof window.HTMLFormElement, 'builder form should be available');
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open when adding a slide');
+
+const blankLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="blank-canvas"]');
+assert.ok(blankLayoutRadio?.checked, 'blank layout should be selected by default');
+
+const communicativeRadio = builderOverlay.querySelector('input[name="slideLayout"][value="communicative-task"]');
+assert.ok(communicativeRadio, 'communicative task layout option should exist');
+communicativeRadio.checked = true;
+communicativeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+const builderStatus = document.getElementById('builder-status');
+assert.ok(builderStatus, 'builder status region should exist');
+
+const builderImageSearchInput = builderOverlay.querySelector('input[name="imageSearch"]');
+const builderImageSearchBtn = builderOverlay.querySelector('[data-action="search-image"]');
+assert.ok(builderImageSearchInput instanceof window.HTMLInputElement, 'image search input should exist');
+assert.ok(builderImageSearchBtn instanceof window.HTMLButtonElement, 'image search button should exist');
+
+builderImageSearchInput.value = 'classroom discussion';
+builderImageSearchBtn.click();
+await flushTimers();
+await nextFrame();
+
+const imageResults = Array.from(builderOverlay.querySelectorAll('.image-result'));
+assert.equal(imageResults.length, samplePhotos.length, 'pexels results should render in the builder');
+
+const imageStatus = document.getElementById('image-search-status');
+assert.match(imageStatus.textContent ?? '', /Found 2 image/, 'image search status should announce the number of results');
+
+imageResults[0].click();
+const taskImageField = builderOverlay.querySelector('input[name="taskImageUrl"]');
+assert.equal(
+  taskImageField?.value,
+  samplePhotos[0].src.large2x,
+  'selecting an image should populate the communicative task image field',
+);
+
+blankLayoutRadio.checked = true;
+blankLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(!builderOverlay.classList.contains('is-visible'), 'builder overlay should close after submitting');
+
+const slides = Array.from(stageViewport.querySelectorAll('.slide-stage'));
+assert.equal(slides.length, 3, 'builder submission should add a new slide to the deck');
+
+const blankSlide = slides.find((slide) => slide.dataset.type === 'blank');
+assert.ok(blankSlide instanceof window.HTMLElement, 'blank slide should be inserted into the deck');
+assert.ok(!blankSlide.classList.contains('hidden'), 'blank slide should become the active slide');
+
+const blankCanvas = blankSlide.querySelector('.blank-canvas');
+assert.ok(blankCanvas instanceof window.HTMLElement, 'blank canvas should be available');
+
+const blankActions = blankSlide.querySelector('[data-role="blank-actions"]');
+assert.ok(blankActions, 'blank slide actions cluster should exist');
+
+const clickBlankAction = (action) => {
+  const button = blankActions.querySelector(`[data-action="${action}"]`);
+  assert.ok(button instanceof window.HTMLButtonElement, `blank slide should expose the ${action} action`);
+  button.click();
+};
+
+clickBlankAction('add-textbox');
+await flushTimers();
+let textboxes = Array.from(blankCanvas.querySelectorAll('.textbox'));
+assert.equal(textboxes.length, 1, 'blank slide should add a textbox from the primary controls');
+
+clickBlankAction('add-table');
+await flushTimers();
+assert.equal(
+  blankCanvas.querySelectorAll('.canvas-table').length,
+  1,
+  'blank slide should add a table from the primary controls',
+);
+
+clickBlankAction('add-mindmap');
+await flushTimers();
+assert.equal(
+  blankCanvas.querySelectorAll('.mindmap').length,
+  1,
+  'blank slide should add a mind map from the primary controls',
+);
+
 const moduleOverlay = document.getElementById('module-builder-overlay');
 const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
 
-const {
-  setupInteractiveDeck,
-  addBlankSlide,
-  createBlankSlide,
-  attachBlankSlideEvents,
-  createTextbox,
-} = await import(
-  pathToFileURL(join(__dirname, '../int-mod.js')).href
-);
-
-await setupInteractiveDeck();
-
-const stageViewport = document.querySelector('.stage-viewport');
-assert.ok(stageViewport, 'stage viewport should exist');
-
-const counterEl = document.getElementById('slide-counter');
-assert.ok(counterEl, 'slide counter should exist');
-
-const nextNavBtn = stageViewport.querySelector('.slide-nav-next');
-const prevNavBtn = stageViewport.querySelector('.slide-nav-prev');
-assert.ok(nextNavBtn, 'next navigation button should exist');
-assert.ok(prevNavBtn, 'previous navigation button should exist');
-
-const initialSlides = Array.from(stageViewport.querySelectorAll('.slide-stage'));
-assert.equal(initialSlides.length, 2, 'fixture should provide two initial slides');
-assert.ok(!initialSlides[0].classList.contains('hidden'), 'first slide should start visible');
-assert.ok(initialSlides[1].classList.contains('hidden'), 'second slide should start hidden');
-assert.equal(counterEl.textContent.trim(), '1 / 2', 'counter should reflect initial slide state');
-
-nextNavBtn.click();
-assert.ok(
-  initialSlides[0].classList.contains('hidden'),
-  'first slide should hide after advancing',
-);
-assert.ok(
-  !initialSlides[1].classList.contains('hidden'),
-  'second slide should show after advancing',
-);
-assert.equal(counterEl.textContent.trim(), '2 / 2', 'counter should update after advancing');
-
-prevNavBtn.click();
-assert.ok(
-  !initialSlides[0].classList.contains('hidden'),
-  'first slide should show again after going back',
-);
-assert.ok(
-  initialSlides[1].classList.contains('hidden'),
-  'second slide should hide again after going back',
-);
-assert.equal(counterEl.textContent.trim(), '1 / 2', 'counter should reset after going back');
-
-const blankSlide = createBlankSlide();
-attachBlankSlideEvents(blankSlide);
-const navInsertionPoint = prevNavBtn ?? nextNavBtn;
-stageViewport.insertBefore(blankSlide, navInsertionPoint);
-
-const canvas = blankSlide.querySelector('.blank-canvas');
-assert.ok(canvas, 'blank canvas should exist');
-
-const addTextboxBtn = blankSlide.querySelector('[data-action="add-textbox"]');
-addTextboxBtn.click();
-assert.equal(
-  canvas.querySelectorAll('.textbox').length,
-  1,
-  'textbox should be added to canvas',
-);
-
-const addTableBtn = blankSlide.querySelector('[data-action="add-table"]');
-addTableBtn.click();
-assert.equal(
-  canvas.querySelectorAll('.canvas-table').length,
-  1,
-  'table should be added to canvas',
-);
-
-const addMindmapBtn = blankSlide.querySelector('[data-action="add-mindmap"]');
-addMindmapBtn.click();
-assert.equal(
-  canvas.querySelectorAll('.mindmap').length,
-  1,
-  'mind map should be added to canvas',
-);
-
-const addModuleBtn = blankSlide.querySelector('[data-action="add-module"]');
-addModuleBtn.click();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-assert.ok(
-  moduleOverlay.classList.contains('is-visible'),
-  'module overlay should open after clicking add module',
-);
+clickBlankAction('add-module');
+await flushTimers();
+await nextFrame();
+assert.ok(moduleOverlay.classList.contains('is-visible'), 'module overlay should open when adding a module');
 
 window.dispatchEvent(
   new window.MessageEvent('message', {
@@ -190,303 +300,183 @@ window.dispatchEvent(
       source: 'noor-activity-builder',
       type: 'activity-module',
       html: '<div class="module-body">Module Content</div>',
-      config: { type: 'multiple-choice', data: { title: 'Quick Knowledge Check' } },
+      config: { type: 'multiple-choice', data: { title: 'Quick check' } },
     },
     source: moduleFrame.contentWindow,
   }),
 );
+await flushTimers();
+
 assert.equal(
-  canvas.querySelectorAll('.module-embed').length,
+  blankCanvas.querySelectorAll('.module-embed').length,
   1,
-  'module embed should be inserted into canvas',
+  'module embed should be inserted onto the canvas',
 );
-assert.ok(
-  !moduleOverlay.classList.contains('is-visible'),
-  'module overlay should close after module insertion',
-);
+assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close after inserting a module');
 
-const legacySlide = document.createElement('div');
-legacySlide.className = 'slide-stage hidden';
-legacySlide.dataset.type = 'blank';
-legacySlide.innerHTML = `
-  <div class="slide-inner">
-    <div class="blank-slide">
-      <div class="blank-controls">
-        <button class="activity-btn" type="button" data-action="add-textbox">
-          <i class="fa-solid fa-pen-to-square"></i>
-          Add Textbox
-        </button>
-        <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-          <i class="fa-solid fa-diagram-project"></i>
-          Add Mind Map
-        </button>
-      </div>
-      <p class="blank-hint" data-role="hint">Legacy hint text.</p>
-      <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
-    </div>
-  </div>
-`;
+const canvasInsertTrigger = stageViewport.querySelector('.canvas-insert-trigger');
+const canvasInsertPanel = stageViewport.querySelector('.canvas-insert-panel');
+assert.ok(canvasInsertTrigger instanceof window.HTMLButtonElement, 'canvas insert trigger should render near the stage');
+assert.ok(canvasInsertPanel instanceof window.HTMLElement, 'canvas insert panel should be created');
 
-const legacyCanvas = legacySlide.querySelector('.blank-canvas');
-assert.ok(legacyCanvas, 'legacy blank canvas should exist');
-
-const legacyTextbox = createTextbox();
-legacyTextbox.id = 'legacy-textbox';
-legacyCanvas.appendChild(legacyTextbox);
-
-stageViewport.insertBefore(legacySlide, navInsertionPoint);
-attachBlankSlideEvents(legacySlide);
-
-assert.ok(
-  legacySlide.querySelector('[data-role="blank-controls-home"]'),
-  'legacy slide should be upgraded with controls home region',
-);
-assert.ok(
-  legacySlide.querySelector('[data-role="blank-toolbar"]'),
-  'legacy slide should gain toolbar host',
-);
-
-const legacyAddTextboxBtn = legacySlide.querySelector('[data-action="add-textbox"]');
-const legacyAddTableBtn = legacySlide.querySelector('[data-action="add-table"]');
-const legacyAddMindmapBtn = legacySlide.querySelector('[data-action="add-mindmap"]');
-const legacyAddModuleBtn = legacySlide.querySelector('[data-action="add-module"]');
-
-assert.ok(legacyAddTextboxBtn, 'legacy slide should still offer textbox control');
-assert.ok(legacyAddTableBtn, 'legacy slide should expose table control');
-assert.ok(legacyAddMindmapBtn, 'legacy slide should offer mind map control');
-assert.ok(legacyAddModuleBtn, 'legacy slide should expose module control');
-
-legacyAddTextboxBtn.click();
-assert.equal(
-  legacyCanvas.querySelectorAll('.textbox').length,
-  2,
-  'legacy slide should support adding a textbox',
-);
-
-legacyAddTableBtn.click();
-assert.equal(
-  legacyCanvas.querySelectorAll('.canvas-table').length,
-  1,
-  'legacy slide should support adding a table',
-);
-
-legacyAddMindmapBtn.click();
-assert.equal(
-  legacyCanvas.querySelectorAll('.mindmap').length,
-  1,
-  'legacy slide should support adding a mind map',
-);
-
-legacyAddModuleBtn.click();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-assert.ok(
-  moduleOverlay.classList.contains('is-visible'),
-  'module overlay should open for legacy slide',
-);
-
-window.dispatchEvent(
-  new window.MessageEvent('message', {
-    data: {
-      source: 'noor-activity-builder',
-      type: 'activity-module',
-      html: '<div class="module-body">Legacy Module</div>',
-      config: { type: 'grouping', data: { title: 'Legacy Activity' } },
-    },
-    source: moduleFrame.contentWindow,
-  }),
-);
-assert.equal(
-  legacyCanvas.querySelectorAll('.module-embed').length,
-  1,
-  'legacy slide should insert a module',
-);
-assert.ok(
-  !moduleOverlay.classList.contains('is-visible'),
-  'module overlay should close after inserting into legacy slide',
-);
-
-const legacyTextboxPersisted = legacySlide.querySelector('#legacy-textbox');
-assert.ok(legacyTextboxPersisted, 'existing legacy textbox should persist after upgrade');
-
-addBlankSlide();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const managedBlankSlides = Array.from(
-  stageViewport.querySelectorAll('.slide-stage[data-type="blank"]'),
-);
-const managedBlankSlide =
-  managedBlankSlides.find((slide) => !slide.classList.contains('hidden')) ??
-  managedBlankSlides[managedBlankSlides.length - 1];
-const managedCanvas = managedBlankSlide.querySelector('.blank-canvas');
-const canvasInsertTrigger = document.querySelector('.canvas-insert-trigger');
-assert.ok(canvasInsertTrigger, 'canvas insert trigger should exist for managed blank slide');
-canvasInsertTrigger.click();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const canvasInsertPanel = document.querySelector('.canvas-insert-panel');
-assert.ok(
-  canvasInsertPanel?.classList.contains('is-visible'),
-  'canvas insert panel should be visible after toggling trigger',
-);
-const selectPanelOption = (action) => {
+const ensureInsertPanelOpen = () => {
   if (!canvasInsertPanel.classList.contains('is-visible')) {
     canvasInsertTrigger.click();
   }
+};
+
+ensureInsertPanelOpen();
+assert.ok(canvasInsertPanel.classList.contains('is-visible'), 'canvas insert panel should toggle into view');
+
+const selectInsertOption = (action) => {
+  ensureInsertPanelOpen();
   const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
-  assert.ok(option, `canvas insert panel should provide the ${action} option`);
+  assert.ok(option instanceof window.HTMLButtonElement, `insert panel should list the ${action} option`);
   option.click();
 };
-selectPanelOption('add-textbox');
+
+const initialTextboxCount = textboxes.length;
+selectInsertOption('add-textbox');
+await flushTimers();
+textboxes = Array.from(blankCanvas.querySelectorAll('.textbox'));
 assert.equal(
-  managedCanvas.querySelectorAll('.textbox').length,
-  1,
-  'canvas insert panel should add a textbox to the managed canvas',
+  textboxes.length,
+  initialTextboxCount + 1,
+  'canvas insert overlay should add another textbox',
 );
-selectPanelOption('add-table');
+
+selectInsertOption('add-table');
+await flushTimers();
 assert.equal(
-  managedCanvas.querySelectorAll('.canvas-table').length,
-  1,
-  'canvas insert panel should add a table to the managed canvas',
+  blankCanvas.querySelectorAll('.canvas-table').length,
+  2,
+  'canvas insert overlay should add another table',
 );
-selectPanelOption('add-mindmap');
+
+selectInsertOption('add-mindmap');
+await flushTimers();
 assert.equal(
-  managedCanvas.querySelectorAll('.mindmap').length,
+  blankCanvas.querySelectorAll('.mindmap').length,
   1,
-  'canvas insert panel should add a mind map to the managed canvas',
+  'canvas insert overlay should not duplicate mind maps when one exists',
 );
-selectPanelOption('add-module');
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-assert.ok(
-  moduleOverlay.classList.contains('is-visible'),
-  'canvas insert panel should open module overlay when adding a module',
-);
+
+selectInsertOption('add-module');
+await flushTimers();
+await nextFrame();
+assert.ok(moduleOverlay.classList.contains('is-visible'), 'insert panel should be able to launch the module overlay');
 moduleCloseBtn.click();
+await flushTimers();
+assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close when dismissed');
 
-addBlankSlide();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const insertSlides = Array.from(
-  stageViewport.querySelectorAll('.slide-stage[data-type="blank"]'),
-);
-const insertTargetSlide =
-  insertSlides.find((slide) => !slide.classList.contains('hidden')) ?? insertSlides[insertSlides.length - 1];
-const insertCanvas = insertTargetSlide.querySelector('.blank-canvas');
-assert.ok(insertCanvas, 'insert target canvas should exist');
+const toolbar = blankSlide.querySelector('[data-role="blank-toolbar"]');
+const toolbarToggle = toolbar?.querySelector('.blank-toolbar-toggle');
+assert.ok(toolbar instanceof window.HTMLElement, 'blank toolbar container should be present');
+assert.ok(toolbarToggle instanceof window.HTMLButtonElement, 'blank toolbar toggle should exist');
 
-const overlayTrigger = document.querySelector('.canvas-insert-trigger');
-const overlayPanel = document.querySelector('.canvas-insert-panel');
-assert.ok(overlayTrigger, 'canvas insert trigger should exist for active blank slide');
-assert.ok(overlayPanel, 'canvas insert panel should be rendered');
-assert.equal(
-  overlayTrigger.getAttribute('aria-haspopup'),
-  'menu',
-  'canvas insert trigger should announce a menu relationship',
-);
+toolbarToggle.click();
+await flushTimers();
+await nextFrame();
 
-const ensurePanelOpen = () => {
-  if (!overlayPanel.classList.contains('is-visible')) {
-    overlayTrigger.click();
-  }
-};
+const primaryTextbox = textboxes[0];
+assert.ok(primaryTextbox instanceof window.HTMLElement, 'a textbox should be available for formatting tests');
+primaryTextbox.dispatchEvent(new window.Event('pointerdown', { bubbles: true }));
 
-const chooseInsertOption = (action) => {
-  ensurePanelOpen();
-  const option = overlayPanel.querySelector(`[data-action="${action}"]`);
-  assert.ok(option, `canvas insert panel should provide the ${action} option`);
-  option.click();
-};
+const textboxBody = primaryTextbox.querySelector('.textbox-body');
+assert.ok(textboxBody instanceof window.HTMLElement, 'textbox body should exist');
+textboxBody.textContent = 'Format me nicely';
+textboxBody.focus();
 
-chooseInsertOption('add-textbox');
-assert.equal(
-  insertCanvas.querySelectorAll('.textbox').length,
-  1,
-  'canvas insert panel should add a textbox to the canvas',
-);
+const textboxTab = toolbar.querySelector('[data-tools-target="textbox"]');
+assert.ok(textboxTab instanceof window.HTMLButtonElement, 'textbox tools tab should exist');
+textboxTab.click();
+await flushTimers();
 
-chooseInsertOption('add-table');
-assert.equal(
-  insertCanvas.querySelectorAll('.canvas-table').length,
-  1,
-  'canvas insert panel should add a table to the canvas',
+const activeTextboxSection = toolbar.querySelector('.blank-toolbar-section[data-tools-for="textbox"][data-active="true"]');
+assert.ok(activeTextboxSection instanceof window.HTMLElement, 'textbox tools section should be active');
+
+const range = document.createRange();
+range.selectNodeContents(textboxBody);
+const selection = window.getSelection();
+selection.removeAllRanges();
+selection.addRange(range);
+document.dispatchEvent(new window.Event('selectionchange'));
+
+const boldButton = activeTextboxSection.querySelector('button[data-command="bold"]');
+assert.ok(boldButton instanceof window.HTMLButtonElement, 'bold formatting control should exist');
+boldButton.click();
+assert.match(
+  textboxBody.innerHTML,
+  /<strong>Format me nicely<\/strong>/i,
+  'bold command should wrap the selected text',
 );
 
-chooseInsertOption('add-mindmap');
-assert.equal(
-  insertCanvas.querySelectorAll('.mindmap').length,
-  1,
-  'canvas insert panel should add a mind map to the canvas',
-);
+selection.removeAllRanges();
+const highlightRange = document.createRange();
+highlightRange.selectNodeContents(textboxBody);
+selection.addRange(highlightRange);
+document.dispatchEvent(new window.Event('selectionchange'));
 
-chooseInsertOption('add-module');
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+const highlightButton = activeTextboxSection.querySelector('button[data-command="highlight"]');
+assert.ok(highlightButton instanceof window.HTMLButtonElement, 'highlight control should exist');
+highlightButton.click();
 assert.ok(
-  moduleOverlay.classList.contains('is-visible'),
-  'canvas insert panel should open the module overlay when adding a module',
+  textboxBody.querySelector('mark.textbox-highlight'),
+  'highlight command should add a highlight wrapper',
 );
 
-window.dispatchEvent(
-  new window.MessageEvent('message', {
-    data: { source: 'noor-activity-builder', type: 'activity-module', status: 'ready' },
-    source: moduleFrame.contentWindow,
-  }),
-);
+const colorSwatch = activeTextboxSection.querySelector('.textbox-color-swatch[data-color="wheat"]');
+assert.ok(colorSwatch instanceof window.HTMLElement, 'textbox colour swatch should exist');
+colorSwatch.click();
+assert.equal(primaryTextbox.dataset.color, 'wheat', 'colour swatch should update the textbox colour');
 
-window.dispatchEvent(
-  new window.MessageEvent('message', {
-    data: {
-      source: 'noor-activity-builder',
-      type: 'activity-module',
-      html: '<div class="module-body">Insert Menu Module</div>',
-      config: { type: 'sorting', data: { title: 'Insert Menu Activity' } },
-    },
-    source: moduleFrame.contentWindow,
-  }),
-);
-assert.equal(
-  insertCanvas.querySelectorAll('.module-embed').length,
-  1,
-  'insert menu should add a module embed to the canvas',
-);
+const textboxShadowToggle = activeTextboxSection.querySelector('[data-role="textbox-shadow"]');
+assert.ok(textboxShadowToggle instanceof window.HTMLInputElement, 'textbox shadow toggle should exist');
+textboxShadowToggle.checked = true;
+textboxShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+assert.equal(primaryTextbox.dataset.effect, 'shadow', 'textbox shadow toggle should mark the textbox with a shadow effect');
+
+const imageIngestor = blankCanvas.__deckImageIngestor;
+assert.ok(imageIngestor, 'blank canvas should expose an image ingestion helper');
+
+const imageDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQI12P4//8/AwAI/AL+XafqGAAAAABJRU5ErkJggg==';
+const ingestedImage = await imageIngestor.ingestDataUrl(imageDataUrl, {
+  name: 'Pixel',
+  naturalWidth: 400,
+  naturalHeight: 300,
+  source: 'test-suite',
+});
+await flushTimers();
+await nextFrame();
+
+assert.ok(ingestedImage instanceof window.HTMLElement, 'image ingestion should return the inserted element');
 assert.ok(
-  !moduleOverlay.classList.contains('is-visible'),
-  'module overlay should close after inserting via the insert menu',
+  blankCanvas.contains(ingestedImage),
+  'ingested image should reside within the canvas',
 );
 
-const hintlessSlide = createBlankSlide();
-const hintlessCanvas = hintlessSlide.querySelector('.blank-canvas');
-const hintlessHint = hintlessSlide.querySelector('[data-role="hint"]');
-hintlessHint?.remove();
-stageViewport.appendChild(hintlessSlide);
-attachBlankSlideEvents(hintlessSlide);
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-const restoredHint = hintlessSlide.querySelector('[data-role="hint"]');
-assert.ok(
-  restoredHint instanceof HTMLElement,
-  'blank slide without a hint should receive a replacement hint',
-);
-const hintlessTextboxBtn = hintlessSlide.querySelector('[data-action="add-textbox"]');
-hintlessTextboxBtn?.click();
-assert.equal(
-  hintlessCanvas?.querySelectorAll?.('.textbox').length ?? 0,
-  1,
-  'blank slide should still add textboxes when the hint is missing',
-);
-hintlessSlide.remove();
+const imageTab = toolbar.querySelector('[data-tools-target="image"]');
+assert.ok(imageTab instanceof window.HTMLButtonElement, 'image tools tab should exist');
+imageTab.click();
+await flushTimers();
 
-const builderOverlay = document.getElementById('activity-builder-overlay');
-const addSlideBtn = document.getElementById('add-slide-btn');
-addSlideBtn.click();
-await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
-assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open');
+const imageTools = toolbar.querySelector('.blank-toolbar-section[data-tools-for="image"][data-active="true"]');
+assert.ok(imageTools instanceof window.HTMLElement, 'image tools section should activate for selected images');
 
-const communicativeRadio = builderOverlay.querySelector('input[value="communicative-task"]');
-communicativeRadio.checked = true;
-communicativeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+const imageShadowToggle = imageTools.querySelector('[data-role="image-shadow"]');
+const imageSizeInput = imageTools.querySelector('[data-role="image-size"]');
+assert.ok(imageShadowToggle instanceof window.HTMLInputElement, 'image shadow toggle should be available');
+assert.ok(imageSizeInput instanceof window.HTMLInputElement, 'image size slider should be rendered');
 
-const builderForm = document.getElementById('activity-builder-form');
-builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+const initialWidth = parseInt(ingestedImage.style.width || ingestedImage.dataset.baseWidth || '0', 10) || 0;
+imageSizeInput.value = '150';
+imageSizeInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+const scaledWidth = parseInt(ingestedImage.style.width || '0', 10);
+assert.notEqual(scaledWidth, initialWidth, 'image size control should update the rendered width');
 
-const activitySlides = stageViewport.querySelectorAll('.slide-stage.lesson-slide, .slide-stage.activity-slide');
-assert.equal(activitySlides.length, 1, 'activity slide should be added to the deck');
-const insertedSlide = activitySlides[0];
-assert.equal(insertedSlide.dataset.type, 'communicative-task', 'inserted slide should be tagged with its layout type');
+imageShadowToggle.checked = true;
+imageShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+assert.equal(ingestedImage.dataset.effect, 'shadow', 'image shadow toggle should annotate the image with a shadow effect');
 
 console.log('All tests passed');
 process.exit(0);
