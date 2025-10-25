@@ -2045,130 +2045,13 @@ export function createBlankSlide() {
   slide.dataset.type = "blank";
   slide.innerHTML = `
     <div class="slide-inner">
-<div class="blank-slide">
-  <div class="blank-controls-home" data-role="blank-controls-home">
-    <div class="blank-controls" data-role="blank-actions" role="group" aria-label="Insert canvas items">
-      <button class="activity-btn" type="button" data-action="add-textbox">
-        <i class="fa-solid fa-pen-to-square"></i>
-        Add Textbox
-      </button>
-      <button class="activity-btn" type="button" data-action="add-table">
-        <i class="fa-solid fa-table"></i>
-        Create Table
-      </button>
-      <button class="activity-btn secondary" type="button" data-action="add-mindmap">
-        <i class="fa-solid fa-diagram-project"></i>
-        Add Mind Map
-      </button>
-      <button class="activity-btn tertiary" type="button" data-action="add-module">
-        <i class="fa-solid fa-puzzle-piece"></i>
-        Add Module
-      </button>
-    </div>
-    <div class="blank-toolbar" data-role="blank-toolbar">
-      <button
-        class="blank-toolbar-toggle"
-        type="button"
-      data-action="toggle-toolbar"
-      aria-expanded="false"
-    >
-      <span class="blank-toolbar-toggle-icon" aria-hidden="true">
-        <i class="fa-solid fa-sliders"></i>
-      </span>
-      <span class="blank-toolbar-toggle-label">Canvas tools</span>
-      <span class="blank-toolbar-toggle-caret" aria-hidden="true">
-        <i class="fa-solid fa-chevron-down"></i>
-      </span>
-    </button>
-    <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
-      <p class="blank-toolbar-empty" data-role="toolbar-empty">
-        Select a canvas item to edit its appearance. Choose a tool icon to continue.
-      </p>
-      <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
-      <div
-        class="blank-toolbar-tabs"
-        data-role="toolbar-tabs"
-        role="tablist"
-        hidden
-      ></div>
-      <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
-        <h3 class="blank-toolbar-heading">Textbox style</h3>
-        <div
-          class="blank-toolbar-actions blank-toolbar-actions--tight"
-          data-role="textbox-formatting"
-          role="group"
-          aria-label="Textbox formatting"
-        ></div>
-        <div
-          class="blank-toolbar-swatches textbox-color-options"
-          data-role="toolbar-color-options"
-          data-tools-for="textbox"
-        ></div>
-        <label class="blank-toolbar-checkbox">
-          <input type="checkbox" data-role="textbox-shadow" />
-          <span>Add drop shadow</span>
-        </label>
-      </section>
-      <section class="blank-toolbar-section" data-tools-for="table" hidden>
-        <h3 class="blank-toolbar-heading">Table style</h3>
-        <div
-          class="blank-toolbar-actions"
-          data-role="table-structure"
-          role="group"
-          aria-label="Table structure"
-        >
-          <button type="button" class="blank-toolbar-action" data-action="table-add-column">
-            <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
-            <span>Add column</span>
-          </button>
-          <button type="button" class="blank-toolbar-action" data-action="table-add-row">
-            <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
-            <span>Add row</span>
-          </button>
-        </div>
-        <div
-          class="blank-toolbar-swatches textbox-color-options"
-          data-role="toolbar-color-options"
-          data-tools-for="table"
-        ></div>
-      </section>
-      <section class="blank-toolbar-section" data-tools-for="mindmap" hidden>
-        <h3 class="blank-toolbar-heading">Branch colour</h3>
-        <p class="blank-toolbar-help">
-          Changes the colour for the selected branch.
+      <div class="blank-slide" data-blank-version="2">
+        <div class="blank-controls-home" data-role="blank-controls-home"></div>
+        <p class="blank-hint" data-role="hint">
+          Add textboxes, paste images, or build a mind map to capture relationships.
         </p>
-        <div
-          class="blank-toolbar-swatches textbox-color-options"
-          data-role="toolbar-color-options"
-          data-tools-for="mindmap"
-        ></div>
-      </section>
-      <section class="blank-toolbar-section" data-tools-for="image" hidden>
-        <h3 class="blank-toolbar-heading">Image adjustments</h3>
-        <label class="blank-toolbar-range">
-          <span>Resize</span>
-          <input
-            type="range"
-            min="60"
-            max="160"
-            step="10"
-            value="100"
-            data-role="image-size"
-          />
-          <span class="blank-toolbar-range-value" data-role="image-size-value">
-            100%
-          </span>
-        </label>
-        <label class="blank-toolbar-checkbox">
-          <input type="checkbox" data-role="image-shadow" />
-          <span>Add drop shadow</span>
-        </label>
-      </section>
-    </div>
-  </div>
-  <p class="blank-hint" data-role="hint">Add textboxes, paste images, or build a mind map to capture relationships.</p>
-  <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
-</div>
+        <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
+      </div>
     </div>
   `;
   return slide;
@@ -2226,12 +2109,167 @@ export function attachBlankSlideEvents(slide) {
     }
   }
 
-  const canvas = slide.querySelector(".blank-canvas");
-  let hint = slide.querySelector('[data-role="hint"]');
-  const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
-  const addTableBtn = slide.querySelector('[data-action="add-table"]');
-  const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
-  const addModuleBtn = slide.querySelector('[data-action="add-module"]');
+  const blank = slide.querySelector(".blank-slide");
+  if (!(blank instanceof HTMLElement)) {
+    delete slide.__deckBlankCleanup;
+    return;
+  }
+
+  const ensureControlsHome = () => {
+    let controlsHome = blank.querySelector('[data-role="blank-controls-home"]');
+    if (!(controlsHome instanceof HTMLElement)) {
+      controlsHome = document.createElement("div");
+      controlsHome.className = "blank-controls-home";
+      controlsHome.dataset.role = "blank-controls-home";
+      blank.insertBefore(controlsHome, blank.firstChild ?? null);
+    }
+
+    if (!controlsHome.querySelector('[data-role="blank-actions"]')) {
+      controlsHome.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="blank-controls" data-role="blank-actions" role="group" aria-label="Insert canvas items">
+            <button class="activity-btn" type="button" data-action="add-textbox">
+              <i class="fa-solid fa-pen-to-square"></i>
+              Add Textbox
+            </button>
+            <button class="activity-btn" type="button" data-action="add-table">
+              <i class="fa-solid fa-table"></i>
+              Create Table
+            </button>
+            <button class="activity-btn secondary" type="button" data-action="add-mindmap">
+              <i class="fa-solid fa-diagram-project"></i>
+              Add Mind Map
+            </button>
+            <button class="activity-btn tertiary" type="button" data-action="add-module">
+              <i class="fa-solid fa-puzzle-piece"></i>
+              Add Module
+            </button>
+          </div>
+        `.trim(),
+      );
+    }
+
+    if (!controlsHome.querySelector('[data-role="blank-toolbar"]')) {
+      controlsHome.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="blank-toolbar" data-role="blank-toolbar" data-toolbar-version="2">
+            <button
+              class="blank-toolbar-toggle"
+              type="button"
+              data-action="toggle-toolbar"
+              aria-expanded="false"
+            >
+              <span class="blank-toolbar-toggle-icon" aria-hidden="true">
+                <i class="fa-solid fa-sliders"></i>
+              </span>
+              <span class="blank-toolbar-toggle-label">Canvas tools</span>
+              <span class="blank-toolbar-toggle-caret" aria-hidden="true">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </button>
+            <div class="blank-toolbar-panel" data-role="toolbar-panel" hidden>
+              <p class="blank-toolbar-empty" data-role="toolbar-empty">
+                Select a canvas item to edit its appearance. Choose a tool icon to continue.
+              </p>
+              <p class="blank-toolbar-selection" data-role="toolbar-selection" hidden></p>
+              <div
+                class="blank-toolbar-tabs"
+                data-role="toolbar-tabs"
+                role="tablist"
+                hidden
+              ></div>
+              <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
+                <h3 class="blank-toolbar-heading">Textbox style</h3>
+                <div
+                  class="blank-toolbar-actions blank-toolbar-actions--tight"
+                  data-role="textbox-formatting"
+                  role="group"
+                  aria-label="Textbox formatting"
+                ></div>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="textbox"
+                ></div>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="textbox-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
+              </section>
+              <section class="blank-toolbar-section" data-tools-for="table" hidden>
+                <h3 class="blank-toolbar-heading">Table style</h3>
+                <div
+                  class="blank-toolbar-actions"
+                  data-role="table-structure"
+                  role="group"
+                  aria-label="Table structure"
+                >
+                  <button type="button" class="blank-toolbar-action" data-action="table-add-column">
+                    <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+                    <span>Add column</span>
+                  </button>
+                  <button type="button" class="blank-toolbar-action" data-action="table-add-row">
+                    <i class="fa-solid fa-table-rows" aria-hidden="true"></i>
+                    <span>Add row</span>
+                  </button>
+                </div>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="table"
+                ></div>
+              </section>
+              <section class="blank-toolbar-section" data-tools-for="mindmap" hidden>
+                <h3 class="blank-toolbar-heading">Branch colour</h3>
+                <p class="blank-toolbar-help">
+                  Changes the colour for the selected branch.
+                </p>
+                <div
+                  class="blank-toolbar-swatches textbox-color-options"
+                  data-role="toolbar-color-options"
+                  data-tools-for="mindmap"
+                ></div>
+              </section>
+              <section class="blank-toolbar-section" data-tools-for="image" hidden>
+                <h3 class="blank-toolbar-heading">Image adjustments</h3>
+                <label class="blank-toolbar-range">
+                  <span>Resize</span>
+                  <input
+                    type="range"
+                    min="60"
+                    max="160"
+                    step="10"
+                    value="100"
+                    data-role="image-size"
+                  />
+                  <span class="blank-toolbar-range-value" data-role="image-size-value">
+                    100%
+                  </span>
+                </label>
+                <label class="blank-toolbar-checkbox">
+                  <input type="checkbox" data-role="image-shadow" />
+                  <span>Add drop shadow</span>
+                </label>
+              </section>
+            </div>
+          </div>
+        `.trim(),
+      );
+    }
+
+    return controlsHome;
+  };
+
+  const controlsHome = ensureControlsHome();
+
+  const canvas = blank.querySelector(".blank-canvas");
+  let hint = blank.querySelector('[data-role="hint"]');
+  const addTextboxBtn = controlsHome.querySelector('[data-action="add-textbox"]');
+  const addTableBtn = controlsHome.querySelector('[data-action="add-table"]');
+  const addMindmapBtn = controlsHome.querySelector('[data-action="add-mindmap"]');
+  const addModuleBtn = controlsHome.querySelector('[data-action="add-module"]');
 
   if (!(canvas instanceof HTMLElement)) {
     delete slide.__deckBlankCleanup;
@@ -2294,7 +2332,7 @@ export function attachBlankSlideEvents(slide) {
     hint = replacementHint;
   }
 
-  const toolbar = slide.querySelector('[data-role="blank-toolbar"]');
+  const toolbar = controlsHome.querySelector('[data-role="blank-toolbar"]');
   const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
   const toolbarPanel = toolbar?.querySelector('[data-role="toolbar-panel"]');
   const toolbarEmpty = toolbarPanel?.querySelector('[data-role="toolbar-empty"]');
