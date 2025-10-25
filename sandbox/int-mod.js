@@ -124,21 +124,7 @@ let moduleBuilderUrlPromise;
 let deckToastRoot;
 let deckStatusEl;
 let stageUtilityCluster;
-let blankControlsTrigger;
-let blankControlsPanel;
-let blankControlsActionsHost;
-let blankControlsToolbarHost;
-let blankControlsCloseBtn;
-let blankControlsActiveSlide;
-let blankControlsActiveHome;
-let blankControlsActiveToolbar;
-let blankControlsPanelId;
-let blankControlsListenersReady;
-let insertControlsTrigger;
-let insertControlsMenu;
-let insertControlsMenuId;
-let insertControlsListenersReady;
-let insertControlsActiveIndex = -1;
+let canvasInsertOverlay;
 
 const EDITABLE_INLINE_TAGS = new Set([
   "A",
@@ -625,32 +611,6 @@ function ensureStageUtilityCluster() {
   return stageUtilityCluster;
 }
 
-function handleBlankControlsPointerDown(event) {
-  if (!(blankControlsPanel instanceof HTMLElement) || !blankControlsPanel.classList.contains('is-visible')) {
-    return;
-  }
-  const target = event.target;
-  if (target instanceof Node) {
-    if (blankControlsPanel.contains(target)) {
-      return;
-    }
-    if (blankControlsTrigger instanceof HTMLElement && blankControlsTrigger.contains(target)) {
-      return;
-    }
-  }
-  closeBlankControlsPanel({ restoreFocus: false });
-}
-
-function handleBlankControlsKeydown(event) {
-  if (!(blankControlsPanel instanceof HTMLElement) || !blankControlsPanel.classList.contains('is-visible')) {
-    return;
-  }
-  if (event.key === 'Escape') {
-    event.preventDefault();
-    closeBlankControlsPanel();
-  }
-}
-
 const INSERT_MENU_OPTIONS = [
   {
     action: 'add-textbox',
@@ -686,502 +646,334 @@ function getActiveBlankSlide() {
   return null;
 }
 
-function getInsertMenuOptionsElements() {
-  if (!(insertControlsMenu instanceof HTMLElement)) {
-    return [];
+class CanvasInsertController {
+  constructor(slide, canvas) {
+    this.slide = slide;
+    this.canvas = canvas;
+    this.handlers = new Map();
+    this.triggerListeners = new Map();
   }
-  return Array.from(
-    insertControlsMenu.querySelectorAll?.('[data-role="insert-option"]') ?? [],
-  ).filter((option) => option instanceof HTMLElement);
-}
 
-function focusInsertMenuOption(index) {
-  const options = getInsertMenuOptionsElements();
-  if (!options.length) {
-    return;
-  }
-  const maxIndex = options.length - 1;
-  const targetIndex = Math.min(Math.max(index, 0), maxIndex);
-  const target = options[targetIndex];
-  if (target instanceof HTMLElement) {
-    insertControlsActiveIndex = targetIndex;
-    target.focus({ preventScroll: true });
-  }
-}
-
-function isInsertMenuOpen() {
-  return insertControlsMenu instanceof HTMLElement
-    ? insertControlsMenu.classList.contains('is-visible')
-    : false;
-}
-
-function closeInsertMenu({ restoreFocus = true } = {}) {
-  if (!(insertControlsMenu instanceof HTMLElement)) {
-    return;
-  }
-  insertControlsMenu.classList.remove('is-visible');
-  insertControlsMenu.hidden = true;
-  insertControlsMenu.setAttribute('aria-hidden', 'true');
-  insertControlsActiveIndex = -1;
-  if (insertControlsTrigger instanceof HTMLElement) {
-    insertControlsTrigger.setAttribute('aria-expanded', 'false');
-    if (restoreFocus && !insertControlsTrigger.hidden) {
-      insertControlsTrigger.focus({ preventScroll: true });
+  registerAction(action, handler) {
+    if (typeof action !== 'string' || typeof handler !== 'function') {
+      return;
     }
+    this.handlers.set(action, handler);
   }
-}
 
-function openInsertMenu({ focusFirst = true } = {}) {
-  ensureBlankControlsUI();
-  if (!(insertControlsMenu instanceof HTMLElement) || !(insertControlsTrigger instanceof HTMLElement)) {
-    return;
-  }
-  if (!getActiveBlankSlide()) {
-    return;
-  }
-  insertControlsMenu.hidden = false;
-  insertControlsMenu.classList.add('is-visible');
-  insertControlsMenu.setAttribute('aria-hidden', 'false');
-  insertControlsTrigger.setAttribute('aria-expanded', 'true');
-  if (focusFirst) {
-    requestAnimationFrame(() => {
-      focusInsertMenuOption(0);
-    });
-  }
-}
-
-function toggleInsertMenu() {
-  if (isInsertMenuOpen()) {
-    closeInsertMenu();
-  } else {
-    openInsertMenu();
-  }
-}
-
-function findBlankActionButton(action) {
-  if (typeof action !== 'string' || !action.trim()) {
-    return null;
-  }
-  const targetAction = action.trim();
-  const activeSlide = getActiveBlankSlide();
-  const hosts = [];
-  if (blankControlsActionsHost instanceof HTMLElement) {
-    hosts.push(blankControlsActionsHost);
-  }
-  if (blankControlsActiveHome instanceof HTMLElement) {
-    hosts.push(blankControlsActiveHome);
-  }
-  if (activeSlide instanceof HTMLElement) {
-    hosts.push(activeSlide);
-  }
-  for (const host of hosts) {
-    const button = host.querySelector?.(`[data-action="${targetAction}"]`);
-    if (button instanceof HTMLButtonElement) {
-      return button;
+  registerTrigger(element, action) {
+    if (!(element instanceof HTMLElement) || typeof action !== 'string') {
+      return;
     }
-  }
-  return null;
-}
-
-function performInsertAction(action) {
-  const button = findBlankActionButton(action);
-  if (button instanceof HTMLButtonElement) {
-    button.click();
-    return true;
-  }
-  return false;
-}
-
-function handleInsertMenuPointerDown(event) {
-  if (!isInsertMenuOpen()) {
-    return;
-  }
-  const target = event.target;
-  if (!(target instanceof Node)) {
-    return;
-  }
-  if (
-    (insertControlsMenu instanceof HTMLElement && insertControlsMenu.contains(target)) ||
-    (insertControlsTrigger instanceof HTMLElement && insertControlsTrigger.contains(target))
-  ) {
-    return;
-  }
-  closeInsertMenu({ restoreFocus: false });
-}
-
-function handleInsertMenuKeydown(event) {
-  if (!isInsertMenuOpen()) {
-    return;
-  }
-  const options = getInsertMenuOptionsElements();
-  if (!options.length) {
-    return;
-  }
-  switch (event.key) {
-    case 'ArrowDown': {
+    const listener = (event) => {
       event.preventDefault();
-      const nextIndex = insertControlsActiveIndex >= 0 ? insertControlsActiveIndex + 1 : 0;
-      focusInsertMenuOption(nextIndex >= options.length ? 0 : nextIndex);
-      break;
+      this.invoke(action, { source: element, originalEvent: event });
+    };
+    element.addEventListener('click', listener);
+    this.triggerListeners.set(element, listener);
+  }
+
+  unregisterTrigger(element) {
+    const listener = this.triggerListeners.get(element);
+    if (listener) {
+      element.removeEventListener('click', listener);
+      this.triggerListeners.delete(element);
     }
-    case 'ArrowUp': {
-      event.preventDefault();
-      const prevIndex = insertControlsActiveIndex >= 0 ? insertControlsActiveIndex - 1 : options.length - 1;
-      focusInsertMenuOption(prevIndex < 0 ? options.length - 1 : prevIndex);
-      break;
+  }
+
+  invoke(action, context = {}) {
+    const handler = this.handlers.get(action);
+    if (typeof handler !== 'function') {
+      return false;
     }
-    case 'Home': {
-      event.preventDefault();
-      focusInsertMenuOption(0);
-      break;
+    return handler(context) !== false;
+  }
+
+  isAvailable() {
+    return (
+      this.slide instanceof HTMLElement &&
+      this.slide.isConnected &&
+      this.slide.dataset.type === 'blank'
+    );
+  }
+
+  destroy() {
+    for (const [element, listener] of this.triggerListeners.entries()) {
+      element.removeEventListener('click', listener);
     }
-    case 'End': {
-      event.preventDefault();
-      focusInsertMenuOption(options.length - 1);
-      break;
-    }
-    case 'Escape': {
-      event.preventDefault();
-      closeInsertMenu();
-      break;
-    }
-    case 'Tab': {
-      closeInsertMenu({ restoreFocus: false });
-      break;
-    }
-    default:
-      break;
+    this.triggerListeners.clear();
+    this.handlers.clear();
   }
 }
 
-function ensureBlankControlsUI() {
-  const cluster = ensureStageUtilityCluster();
-  if (!cluster) {
-    return;
-  }
-
-  if (!blankControlsPanelId) {
-    blankControlsPanelId =
+class CanvasInsertOverlay {
+  constructor(stage) {
+    this.stage = stage;
+    this.cluster = ensureStageUtilityCluster();
+    this.activeController = null;
+    this.panelId =
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? `blank-controls-${crypto.randomUUID()}`
-        : `blank-controls-${Math.random().toString(16).slice(2, 8)}`;
+        ? `canvas-insert-${crypto.randomUUID()}`
+        : `canvas-insert-${Math.random().toString(16).slice(2, 8)}`;
+    this.activeIndex = -1;
+    this.isOpen = false;
+    this.createTrigger();
+    this.createPanel();
+    this.syncAvailability();
+    this.handleDocumentPointerDown = this.handleDocumentPointerDown.bind(this);
+    this.handleDocumentKeydown = this.handleDocumentKeydown.bind(this);
+    document.addEventListener('pointerdown', this.handleDocumentPointerDown);
+    document.addEventListener('keydown', this.handleDocumentKeydown);
   }
 
-  if (!insertControlsMenuId) {
-    insertControlsMenuId =
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? `insert-controls-${crypto.randomUUID()}`
-        : `insert-controls-${Math.random().toString(16).slice(2, 8)}`;
-  }
-
-  if (!(blankControlsPanel instanceof HTMLElement)) {
-    blankControlsPanel = document.createElement('div');
-    blankControlsPanel.id = blankControlsPanelId;
-    blankControlsPanel.className = 'blank-controls-flyout';
-    blankControlsPanel.setAttribute('role', 'region');
-    blankControlsPanel.setAttribute('aria-label', 'Blank slide controls');
-    blankControlsPanel.setAttribute('aria-hidden', 'true');
-    blankControlsPanel.setAttribute('tabindex', '-1');
-    blankControlsPanel.hidden = true;
-    blankControlsPanel.innerHTML = `
-      <div class="blank-controls-flyout-header">
-        <div>
-          <p class="blank-controls-eyebrow">Blank slide</p>
-          <h2 class="blank-controls-title">Canvas controls</h2>
-          <p class="blank-controls-subtitle">Add new elements or refine the selected item.</p>
-        </div>
-        <button type="button" class="blank-controls-close" aria-label="Close canvas controls">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div class="blank-controls-flyout-body">
-        <div class="blank-controls-section" data-role="blank-actions-host"></div>
-        <div class="blank-controls-section" data-role="blank-toolbar-host"></div>
-      </div>
+  createTrigger() {
+    if (!this.cluster) {
+      return;
+    }
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'stage-utility-btn canvas-insert-trigger';
+    trigger.setAttribute('aria-haspopup', 'menu');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = `
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span class="sr-only">Insert canvas item</span>
     `;
-    blankControlsActionsHost = blankControlsPanel.querySelector('[data-role="blank-actions-host"]');
-    blankControlsToolbarHost = blankControlsPanel.querySelector('[data-role="blank-toolbar-host"]');
-    blankControlsCloseBtn = blankControlsPanel.querySelector('.blank-controls-close');
-    if (blankControlsCloseBtn instanceof HTMLButtonElement) {
-      blankControlsCloseBtn.addEventListener('click', () => {
-        closeBlankControlsPanel();
-      });
+    trigger.title = 'Insert canvas item';
+    trigger.addEventListener('click', () => {
+      this.toggle();
+    });
+    trigger.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.open();
+      } else if (event.key === 'Escape') {
+        this.close({ focusTrigger: true });
+      }
+    });
+    this.cluster.appendChild(trigger);
+    this.trigger = trigger;
+  }
+
+  createPanel() {
+    if (!this.cluster) {
+      return;
     }
-  }
-
-  if (!(insertControlsMenu instanceof HTMLElement)) {
-    insertControlsMenu = document.createElement('div');
-    insertControlsMenu.className = 'insert-controls-menu';
-    insertControlsMenu.id = insertControlsMenuId;
-    insertControlsMenu.setAttribute('role', 'menu');
-    insertControlsMenu.setAttribute('aria-label', 'Insert canvas items');
-    insertControlsMenu.setAttribute('aria-hidden', 'true');
-    insertControlsMenu.hidden = true;
-  }
-
-  if (insertControlsMenu instanceof HTMLElement) {
-    insertControlsMenu.innerHTML = '';
+    const panel = document.createElement('div');
+    panel.className = 'canvas-insert-panel';
+    panel.id = this.panelId;
+    panel.setAttribute('role', 'menu');
+    panel.setAttribute('aria-label', 'Insert canvas items');
+    panel.hidden = true;
+    const list = document.createElement('div');
+    list.className = 'canvas-insert-options';
+    panel.appendChild(list);
+    this.options = [];
     INSERT_MENU_OPTIONS.forEach((option) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'insert-controls-option';
-      button.dataset.role = 'insert-option';
+      button.className = 'canvas-insert-option';
       button.dataset.action = option.action;
       button.setAttribute('role', 'menuitem');
       button.tabIndex = -1;
       button.innerHTML = `
-        <span class="insert-controls-option-icon" aria-hidden="true">
+        <span class="canvas-insert-option-icon" aria-hidden="true">
           <i class="${option.icon}"></i>
         </span>
-        <span class="insert-controls-option-label">${option.label}</span>
-        <span class="insert-controls-option-description">${option.description}</span>
+        <span class="canvas-insert-option-content">
+          <span class="canvas-insert-option-label">${option.label}</span>
+          <span class="canvas-insert-option-description">${option.description}</span>
+        </span>
       `;
       button.addEventListener('click', () => {
-        const handled = performInsertAction(option.action);
-        if (handled) {
-          closeInsertMenu();
-        }
+        this.handleOptionSelect(option.action, button);
       });
-      insertControlsMenu.appendChild(button);
+      this.options.push(button);
+      list.appendChild(button);
     });
-  }
-
-  if (!(insertControlsTrigger instanceof HTMLButtonElement)) {
-    insertControlsTrigger = document.createElement('button');
-    insertControlsTrigger.type = 'button';
-    insertControlsTrigger.className = 'stage-utility-btn insert-controls-trigger';
-    insertControlsTrigger.setAttribute('aria-haspopup', 'menu');
-    insertControlsTrigger.setAttribute('aria-expanded', 'false');
-    insertControlsTrigger.innerHTML = `
-      <i class="fa-solid fa-plus" aria-hidden="true"></i>
-      <span class="sr-only">Insert canvas item</span>
-    `;
-    insertControlsTrigger.title = 'Insert canvas item';
-    insertControlsTrigger.hidden = true;
-    insertControlsTrigger.disabled = true;
-    insertControlsTrigger.setAttribute('aria-disabled', 'true');
-    insertControlsTrigger.addEventListener('click', () => {
-      toggleInsertMenu();
+    panel.addEventListener('keydown', (event) => {
+      this.handlePanelKeydown(event);
     });
-    insertControlsTrigger.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openInsertMenu();
-      }
-      if (event.key === 'Escape') {
-        closeInsertMenu();
-      }
-    });
-  }
-
-  insertControlsTrigger.setAttribute('aria-controls', insertControlsMenuId);
-
-  if (!cluster.contains(insertControlsTrigger)) {
-    cluster.appendChild(insertControlsTrigger);
-  }
-
-  if (!(blankControlsTrigger instanceof HTMLButtonElement)) {
-    blankControlsTrigger = document.createElement('button');
-    blankControlsTrigger.type = 'button';
-    blankControlsTrigger.className = 'stage-utility-btn blank-controls-trigger';
-    blankControlsTrigger.setAttribute('aria-haspopup', 'dialog');
-    blankControlsTrigger.setAttribute('aria-expanded', 'false');
-    blankControlsTrigger.innerHTML = `
-      <i class="fa-solid fa-gear" aria-hidden="true"></i>
-      <span class="sr-only">Toggle blank slide controls</span>
-    `;
-    blankControlsTrigger.title = 'Canvas controls';
-    blankControlsTrigger.hidden = true;
-    blankControlsTrigger.addEventListener('click', () => {
-      if (blankControlsPanel?.classList.contains('is-visible')) {
-        closeBlankControlsPanel({ restoreFocus: false });
-      } else {
-        openBlankControlsPanel();
-      }
-    });
-  }
-
-  blankControlsTrigger.setAttribute('aria-controls', blankControlsPanelId);
-
-  if (insertControlsMenu instanceof HTMLElement && !cluster.contains(insertControlsMenu)) {
-    cluster.appendChild(insertControlsMenu);
-  }
-
-  if (!cluster.contains(blankControlsTrigger)) {
-    cluster.appendChild(blankControlsTrigger);
-  }
-
-  if (!(blankControlsPanel instanceof HTMLElement ? stageViewport?.contains(blankControlsPanel) : false)) {
-    stageViewport?.appendChild(blankControlsPanel);
-  }
-
-  if (!blankControlsListenersReady) {
-    document.addEventListener('pointerdown', handleBlankControlsPointerDown);
-    document.addEventListener('keydown', handleBlankControlsKeydown);
-    blankControlsListenersReady = true;
-  }
-
-  if (!insertControlsListenersReady) {
-    document.addEventListener('pointerdown', handleInsertMenuPointerDown);
-    document.addEventListener('keydown', handleInsertMenuKeydown);
-    insertControlsListenersReady = true;
-  }
-}
-
-function moveBlankControlsToPanel(slide) {
-  if (!(blankControlsPanel instanceof HTMLElement) || !(blankControlsActionsHost instanceof HTMLElement) || !(blankControlsToolbarHost instanceof HTMLElement)) {
-    return false;
-  }
-  if (!(slide instanceof HTMLElement)) {
-    return false;
-  }
-  const home = slide.querySelector('[data-role="blank-controls-home"]');
-  if (!(home instanceof HTMLElement)) {
-    return false;
-  }
-
-  const actions = home.querySelector('[data-role="blank-actions"]') ?? home.querySelector('.blank-controls');
-  const toolbar = home.querySelector('[data-role="blank-toolbar"]');
-
-  if (!(actions instanceof HTMLElement) || !(toolbar instanceof HTMLElement)) {
-    return false;
-  }
-
-  blankControlsActionsHost.innerHTML = '';
-  blankControlsToolbarHost.innerHTML = '';
-  blankControlsActionsHost.appendChild(actions);
-  blankControlsToolbarHost.appendChild(toolbar);
-
-  blankControlsActiveSlide = slide;
-  blankControlsActiveHome = home;
-  blankControlsActiveToolbar = toolbar;
-
-  if (typeof toolbar.__deckSetExpanded === 'function') {
-    toolbar.__deckSetExpanded(true);
-  }
-
-  return true;
-}
-
-function returnBlankControlsToHome(targetHome = blankControlsActiveHome) {
-  if (!(targetHome instanceof HTMLElement)) {
-    return;
-  }
-
-  const actions = blankControlsActionsHost?.querySelector('.blank-controls');
-  if (actions instanceof HTMLElement) {
-    targetHome.appendChild(actions);
-  }
-
-  const toolbar = blankControlsToolbarHost?.querySelector('[data-role="blank-toolbar"]');
-  if (toolbar instanceof HTMLElement) {
-    if (typeof toolbar.__deckSetExpanded === 'function') {
-      toolbar.__deckSetExpanded(false);
+    this.cluster.appendChild(panel);
+    if (this.trigger instanceof HTMLElement) {
+      this.trigger.setAttribute('aria-controls', panel.id);
     }
-    targetHome.appendChild(toolbar);
+    this.panel = panel;
   }
 
-  blankControlsActiveSlide = null;
-  blankControlsActiveHome = null;
-  blankControlsActiveToolbar = null;
-}
-
-function openBlankControlsPanel() {
-  ensureBlankControlsUI();
-  if (!(blankControlsPanel instanceof HTMLElement) || !(blankControlsTrigger instanceof HTMLElement)) {
-    return;
-  }
-  const activeSlide = slides[currentSlideIndex];
-  if (!(activeSlide instanceof HTMLElement) || activeSlide.dataset.type !== 'blank') {
-    return;
-  }
-
-  closeInsertMenu({ restoreFocus: false });
-
-  if (blankControlsPanel.classList.contains('is-visible')) {
-    if (blankControlsActiveSlide === activeSlide) {
+  handleOptionSelect(action, button) {
+    if (!this.activeController) {
       return;
     }
-    closeBlankControlsPanel({ restoreFocus: false });
-  }
-
-  const moved = moveBlankControlsToPanel(activeSlide);
-  if (!moved) {
-    return;
-  }
-
-  blankControlsPanel.hidden = false;
-  blankControlsPanel.classList.add('is-visible');
-  blankControlsPanel.setAttribute('aria-hidden', 'false');
-  blankControlsTrigger.setAttribute('aria-expanded', 'true');
-  requestAnimationFrame(() => {
-    try {
-      blankControlsPanel?.focus({ preventScroll: true });
-    } catch (error) {
-      // noop when focus is not allowed
+    const handled = this.activeController.invoke(action, { source: button });
+    if (handled !== false) {
+      this.close({ focusTrigger: false });
     }
-  });
+  }
+
+  handlePanelKeydown(event) {
+    if (!this.isOpen || !this.options.length) {
+      return;
+    }
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight': {
+        event.preventDefault();
+        this.focusOption((this.activeIndex + 1) % this.options.length);
+        break;
+      }
+      case 'ArrowUp':
+      case 'ArrowLeft': {
+        event.preventDefault();
+        this.focusOption(
+          this.activeIndex > 0 ? this.activeIndex - 1 : this.options.length - 1,
+        );
+        break;
+      }
+      case 'Home': {
+        event.preventDefault();
+        this.focusOption(0);
+        break;
+      }
+      case 'End': {
+        event.preventDefault();
+        this.focusOption(this.options.length - 1);
+        break;
+      }
+      case 'Escape': {
+        event.preventDefault();
+        this.close({ focusTrigger: true });
+        break;
+      }
+      case 'Tab': {
+        this.close({ focusTrigger: false });
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  handleDocumentPointerDown(event) {
+    if (!this.isOpen) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+    if (this.panel?.contains(target) || this.trigger?.contains(target)) {
+      return;
+    }
+    this.close({ focusTrigger: false });
+  }
+
+  handleDocumentKeydown(event) {
+    if (!this.isOpen) {
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.close({ focusTrigger: true });
+    }
+  }
+
+  focusOption(index) {
+    if (!Array.isArray(this.options) || !this.options.length) {
+      return;
+    }
+    const clamped = Math.max(0, Math.min(index, this.options.length - 1));
+    const target = this.options[clamped];
+    if (target instanceof HTMLElement) {
+      this.activeIndex = clamped;
+      target.focus({ preventScroll: true });
+    }
+  }
+
+  open() {
+    if (!this.activeController || !this.activeController.isAvailable()) {
+      return;
+    }
+    if (this.isOpen) {
+      return;
+    }
+    this.isOpen = true;
+    this.syncVisibility();
+    requestAnimationFrame(() => {
+      this.focusOption(0);
+    });
+  }
+
+  close({ focusTrigger = false } = {}) {
+    if (!this.isOpen) {
+      return;
+    }
+    this.isOpen = false;
+    this.activeIndex = -1;
+    this.syncVisibility();
+    if (focusTrigger && this.trigger instanceof HTMLElement) {
+      this.trigger.focus({ preventScroll: true });
+    }
+  }
+
+  toggle() {
+    if (this.isOpen) {
+      this.close({ focusTrigger: false });
+    } else {
+      this.open();
+    }
+  }
+
+  syncVisibility() {
+    if (!(this.panel instanceof HTMLElement)) {
+      return;
+    }
+    this.panel.hidden = !this.isOpen;
+    this.panel.classList.toggle('is-visible', this.isOpen);
+    if (this.trigger instanceof HTMLElement) {
+      this.trigger.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
+    }
+  }
+
+  syncAvailability() {
+    const available = Boolean(this.activeController?.isAvailable?.());
+    if (this.trigger instanceof HTMLButtonElement) {
+      this.trigger.hidden = !available;
+      this.trigger.disabled = !available;
+      this.trigger.setAttribute('aria-disabled', available ? 'false' : 'true');
+    }
+    if (!available) {
+      this.close({ focusTrigger: false });
+    }
+  }
+
+  setActiveController(controller) {
+    this.activeController = controller ?? null;
+    this.syncAvailability();
+  }
 }
 
-function closeBlankControlsPanel({ restoreFocus = true } = {}) {
-  if (!(blankControlsPanel instanceof HTMLElement)) {
-    return;
+function ensureCanvasInsertOverlay() {
+  if (!(stageViewport instanceof HTMLElement)) {
+    return null;
   }
-
-  if (blankControlsActiveHome instanceof HTMLElement) {
-    returnBlankControlsToHome(blankControlsActiveHome);
+  if (!(canvasInsertOverlay instanceof CanvasInsertOverlay)) {
+    canvasInsertOverlay = new CanvasInsertOverlay(stageViewport);
   }
-
-  blankControlsPanel.classList.remove('is-visible');
-  blankControlsPanel.setAttribute('aria-hidden', 'true');
-  blankControlsPanel.hidden = true;
-
-  if (blankControlsTrigger instanceof HTMLElement) {
-    blankControlsTrigger.setAttribute('aria-expanded', 'false');
-    if (restoreFocus && !blankControlsTrigger.hidden) {
-      blankControlsTrigger.focus({ preventScroll: true });
-    }
-  }
+  return canvasInsertOverlay;
 }
 
-function syncBlankControlsAvailability() {
-  ensureBlankControlsUI();
-  if (!(blankControlsTrigger instanceof HTMLButtonElement)) {
+function updateCanvasInsertOverlay() {
+  const overlay = ensureCanvasInsertOverlay();
+  if (!overlay) {
     return;
   }
-
-  const activeSlide = slides[currentSlideIndex];
-  const isBlank = activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank';
-
-  if (!isBlank) {
-    if (blankControlsPanel?.classList.contains('is-visible')) {
-      closeBlankControlsPanel({ restoreFocus: false });
-    }
-    closeInsertMenu({ restoreFocus: false });
-    blankControlsTrigger.hidden = true;
-    blankControlsTrigger.disabled = true;
-    blankControlsTrigger.setAttribute('aria-disabled', 'true');
-    if (insertControlsTrigger instanceof HTMLButtonElement) {
-      insertControlsTrigger.hidden = true;
-      insertControlsTrigger.disabled = true;
-      insertControlsTrigger.setAttribute('aria-disabled', 'true');
-    }
-    return;
-  }
-
-  blankControlsTrigger.hidden = false;
-  blankControlsTrigger.disabled = false;
-  blankControlsTrigger.setAttribute('aria-disabled', 'false');
-  if (insertControlsTrigger instanceof HTMLButtonElement) {
-    insertControlsTrigger.hidden = false;
-    insertControlsTrigger.disabled = false;
-    insertControlsTrigger.setAttribute('aria-disabled', 'false');
-  }
-  if (!(blankControlsPanel instanceof HTMLElement)) {
-    return;
-  }
-  const isVisible = blankControlsPanel.classList.contains('is-visible');
-  blankControlsPanel.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+  const activeSlide = slides?.[currentSlideIndex];
+  const controller =
+    activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank'
+      ? activeSlide.__deckCanvasInsertController ?? null
+      : null;
+  overlay.setActiveController(controller);
 }
 
 const BUILDER_LAYOUT_DEFAULTS = {
@@ -1735,10 +1527,6 @@ function cleanupSlide(slide) {
     closeModuleOverlay({ focus: false });
   }
 
-  if (blankControlsActiveSlide === slide) {
-    closeBlankControlsPanel({ restoreFocus: false });
-  }
-
   slide.querySelectorAll(".module-embed").forEach((module) => {
     if (!(module instanceof HTMLElement)) {
       return;
@@ -1765,7 +1553,7 @@ function cleanupSlide(slide) {
 function refreshSlides() {
   slides = Array.from(stageViewport?.querySelectorAll(".slide-stage") ?? []);
   slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
-  syncBlankControlsAvailability();
+  updateCanvasInsertOverlay();
   initialiseEditableText(stageViewport);
 }
 
@@ -1780,19 +1568,12 @@ function showSlide(index) {
   if (!slides.length) return;
   const previousSlide = slides[currentSlideIndex];
   currentSlideIndex = (index + slides.length) % slides.length;
-  if (
-    blankControlsPanel?.classList.contains('is-visible') &&
-    previousSlide instanceof HTMLElement &&
-    previousSlide !== slides[currentSlideIndex]
-  ) {
-    closeBlankControlsPanel({ restoreFocus: false });
-  }
   slides.forEach((slide, slideIndex) => {
     slide.classList.toggle("hidden", slideIndex !== currentSlideIndex);
   });
   updateCounter();
   slideNavigatorController?.setActive(currentSlideIndex);
-  syncBlankControlsAvailability();
+  updateCanvasInsertOverlay();
   const activeSlide = slides[currentSlideIndex];
   if (activeSlide instanceof HTMLElement) {
     initialiseEditableText(activeSlide);
@@ -2457,12 +2238,23 @@ export function attachBlankSlideEvents(slide) {
     return;
   }
 
+  const insertController = new CanvasInsertController(slide, canvas);
+  slide.__deckCanvasInsertController = insertController;
+
   const cleanupTasks = [];
   const registerCleanup = (callback) => {
     if (typeof callback === "function") {
       cleanupTasks.push(callback);
     }
   };
+
+  registerCleanup(() => {
+    insertController.destroy();
+    if (slide.__deckCanvasInsertController === insertController) {
+      delete slide.__deckCanvasInsertController;
+    }
+    updateCanvasInsertOverlay();
+  });
 
   const DEFAULT_HINT =
     "Add textboxes, paste images, or build a mind map to capture relationships.";
@@ -3411,11 +3203,13 @@ export function attachBlankSlideEvents(slide) {
     updateHintForCanvas();
   };
 
+  insertController.registerAction("add-textbox", () => {
+    handleAddTextbox();
+    return true;
+  });
+
   if (addTextboxBtn instanceof HTMLElement) {
-    addTextboxBtn.addEventListener("click", handleAddTextbox);
-    registerCleanup(() => {
-      addTextboxBtn.removeEventListener("click", handleAddTextbox);
-    });
+    insertController.registerTrigger(addTextboxBtn, "add-textbox");
   }
 
   const handleAddTable = () => {
@@ -3432,11 +3226,13 @@ export function attachBlankSlideEvents(slide) {
     }
   };
 
+  insertController.registerAction("add-table", () => {
+    handleAddTable();
+    return true;
+  });
+
   if (addTableBtn instanceof HTMLElement) {
-    addTableBtn.addEventListener("click", handleAddTable);
-    registerCleanup(() => {
-      addTableBtn.removeEventListener("click", handleAddTable);
-    });
+    insertController.registerTrigger(addTableBtn, "add-table");
   }
 
   const handleAddMindmap = () => {
@@ -3457,28 +3253,32 @@ export function attachBlankSlideEvents(slide) {
     updateHintForCanvas();
   };
 
+  insertController.registerAction("add-mindmap", () => {
+    handleAddMindmap();
+    return true;
+  });
+
   if (addMindmapBtn instanceof HTMLElement) {
-    addMindmapBtn.addEventListener("click", handleAddMindmap);
-    registerCleanup(() => {
-      addMindmapBtn.removeEventListener("click", handleAddMindmap);
-    });
+    insertController.registerTrigger(addMindmapBtn, "add-mindmap");
   }
 
-  const handleAddModule = () => {
+  const handleAddModule = ({ trigger } = {}) => {
     openModuleOverlay({
       canvas,
-      trigger: addModuleBtn,
+      trigger: trigger ?? addModuleBtn,
       onInsert: () => {
         updateHintForCanvas();
       },
     });
   };
 
+  insertController.registerAction("add-module", ({ source }) => {
+    handleAddModule({ trigger: source });
+    return true;
+  });
+
   if (addModuleBtn instanceof HTMLElement) {
-    addModuleBtn.addEventListener("click", handleAddModule);
-    registerCleanup(() => {
-      addModuleBtn.removeEventListener("click", handleAddModule);
-    });
+    insertController.registerTrigger(addModuleBtn, "add-module");
   }
 
   canvas.querySelectorAll(".textbox").forEach((textbox) => prepareTextbox(textbox));
@@ -3589,6 +3389,7 @@ export function attachBlankSlideEvents(slide) {
 
   updateToolbar();
   updateHintForCanvas();
+  updateCanvasInsertOverlay();
 }
 
 export function positionTextbox(textbox, canvas) {
@@ -10744,7 +10545,7 @@ export async function setupInteractiveDeck({
   stageViewport =
     rootElement?.querySelector(stageViewportSelector) ??
     document.querySelector(stageViewportSelector);
-  ensureBlankControlsUI();
+  ensureCanvasInsertOverlay();
   nextBtn =
     stageViewport?.querySelector(nextButtonSelector) ??
     rootElement?.querySelector(nextButtonSelector) ??
