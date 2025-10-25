@@ -1,0 +1,4 @@
+:root {
+  /* Sandbox-specific elevation tokens */
+  --shadow-0: 0 1px 2px rgba(34, 41, 32, 0.05);
+}
