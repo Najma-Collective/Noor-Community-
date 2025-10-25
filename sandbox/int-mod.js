@@ -2601,15 +2601,22 @@ export function attachBlankSlideEvents(slide) {
     selection.detail = detail;
   };
 
+  let toolbarExpanded = false;
+  if (toolbarToggle instanceof HTMLElement) {
+    toolbarExpanded = toolbarToggle.getAttribute("aria-expanded") === "true";
+  } else if (toolbar instanceof HTMLElement) {
+    toolbarExpanded = toolbar.classList.contains("is-expanded");
+  }
+
   const setToolbarExpanded = (expanded) => {
     if (!(toolbar instanceof HTMLElement) || !(toolbarToggle instanceof HTMLElement)) {
       return;
     }
-    const isExpanded = Boolean(expanded);
-    toolbar.classList.toggle("is-expanded", isExpanded);
-    toolbarToggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+    toolbarExpanded = Boolean(expanded);
+    toolbar.classList.toggle("is-expanded", toolbarExpanded);
+    toolbarToggle.setAttribute("aria-expanded", toolbarExpanded ? "true" : "false");
     if (toolbarPanel instanceof HTMLElement) {
-      toolbarPanel.hidden = !isExpanded;
+      toolbarPanel.hidden = !toolbarExpanded;
     }
   };
 
@@ -2667,7 +2674,7 @@ export function attachBlankSlideEvents(slide) {
     toolbarTabs.hidden = !hasSelection || visibleCount === 0;
   };
 
-  setToolbarExpanded(false);
+  setToolbarExpanded(toolbarExpanded);
 
   const getToolbarPrompt = () => {
     if (!selection.type) {
@@ -2912,7 +2919,6 @@ export function attachBlankSlideEvents(slide) {
     setActiveToolsType(null);
     imageSizeReference = null;
     storedTextboxRange = null;
-    setToolbarExpanded(false);
     updateToolbar();
   };
 
@@ -2925,7 +2931,6 @@ export function attachBlankSlideEvents(slide) {
       if (activeToolsType !== type) {
         setActiveToolsType(type, { force: true });
       }
-      setToolbarExpanded(true);
       updateToolbar();
       return;
     }
@@ -2936,7 +2941,6 @@ export function attachBlankSlideEvents(slide) {
     selection.element = element;
     selection.type = type;
     setActiveToolsType(type, { force: true });
-    setToolbarExpanded(true);
     element.classList.add(SELECTED_CLASS);
     if (type === "image") {
       const width = Math.max(1, element.offsetWidth || 1);
@@ -3457,8 +3461,7 @@ export function attachBlankSlideEvents(slide) {
 
   if (toolbarToggle instanceof HTMLElement) {
     const toggleHandler = () => {
-      const expanded = toolbarToggle.getAttribute("aria-expanded") === "true";
-      setToolbarExpanded(!expanded);
+      setToolbarExpanded(!toolbarExpanded);
     };
     toolbarToggle.addEventListener("click", toggleHandler);
     registerCleanup(() => {
