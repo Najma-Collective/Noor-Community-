@@ -86,9 +86,6 @@ let addSlideBtn;
 let saveStateBtn;
 let loadStateBtn;
 let loadStateInput;
-let highlightBtn;
-let highlightColorSelect;
-let removeHighlightBtn;
 let slideNavigatorController;
 let activityBuilderBtn;
 let builderOverlay;
@@ -6111,114 +6108,6 @@ function handleStateFileSelection(event) {
   reader.readAsText(file);
 }
 
-function findSlideForNode(node) {
-  if (!node) return null;
-  if (node instanceof HTMLElement) {
-    return node.closest(".slide-stage");
-  }
-  if (node instanceof Text) {
-    return node.parentElement?.closest(".slide-stage") ?? null;
-  }
-  return null;
-}
-
-function applyHighlight(color) {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-    showDeckToast("Select some text in a slide before applying a highlight.", {
-      icon: "fa-highlighter",
-    });
-    return;
-  }
-
-  const range = selection.getRangeAt(0);
-  const startSlide = findSlideForNode(range.startContainer);
-  const endSlide = findSlideForNode(range.endContainer);
-
-  if (!startSlide || !endSlide || startSlide !== endSlide) {
-    showDeckToast("Highlights must stay within a single slide.", {
-      icon: "fa-highlighter",
-    });
-    return;
-  }
-
-  if (!stageViewport?.contains(startSlide)) {
-    showDeckToast("Please highlight text within the slide area.", {
-      icon: "fa-highlighter",
-    });
-    return;
-  }
-
-  try {
-    const contents = range.extractContents();
-    const textSample = contents.textContent?.trim();
-    if (!textSample) {
-      showDeckToast("Select some text to highlight first.", {
-        icon: "fa-highlighter",
-      });
-      range.insertNode(contents);
-      return;
-    }
-
-    const highlight = document.createElement("mark");
-    highlight.className = "text-highlight";
-    highlight.dataset.color = color;
-    highlight.style.setProperty("--highlight-color", color);
-    highlight.appendChild(contents);
-    range.insertNode(highlight);
-
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.selectNodeContents(highlight);
-    selection.addRange(newRange);
-  } catch (error) {
-    console.error("Failed to apply highlight", error);
-    showDeckToast(
-      "Sorry, that selection couldn't be highlighted. Try selecting a smaller section of text.",
-      { icon: "fa-triangle-exclamation" },
-    );
-  }
-}
-
-function removeHighlight() {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) {
-    showDeckToast("Place your cursor inside a highlight to clear it.", {
-      icon: "fa-highlighter",
-    });
-    return;
-  }
-
-  let container = selection.anchorNode;
-  if (container instanceof Text) {
-    container = container.parentElement;
-  }
-
-  const highlight =
-    container instanceof HTMLElement ? container.closest(".text-highlight") : null;
-
-  if (!highlight || !stageViewport?.contains(highlight)) {
-    showDeckToast("Place your cursor inside a highlight to clear it.", {
-      icon: "fa-highlighter",
-    });
-    return;
-  }
-
-  const parent = highlight.parentNode;
-  if (!parent) {
-    return;
-  }
-
-  while (highlight.firstChild) {
-    parent.insertBefore(highlight.firstChild, highlight);
-  }
-  highlight.remove();
-  if (parent instanceof HTMLElement) {
-    parent.normalize();
-  }
-  selection.removeAllRanges();
-}
-
 function setupClickPlacement(activityEl) {
   const tokens = Array.from(activityEl.querySelectorAll('.click-token'));
   const dropZones = Array.from(activityEl.querySelectorAll('.drop-zone'));
@@ -10955,13 +10844,6 @@ async function initialiseDeck() {
     loadStateInput?.click();
   });
   loadStateInput?.addEventListener("change", handleStateFileSelection);
-  highlightBtn?.addEventListener("click", () => {
-    const selectedColor = highlightColorSelect?.value || "#F9E27D";
-    applyHighlight(selectedColor);
-  });
-  removeHighlightBtn?.addEventListener("click", () => {
-    removeHighlight();
-  });
   recalibrateMindMapCounter();
   showDeckToast("Deck ready to explore.", {
     icon: "fa-seedling",
@@ -10981,9 +10863,6 @@ export async function setupInteractiveDeck({
   saveStateButtonSelector = "#save-state-btn",
   loadStateButtonSelector = "#load-state-btn",
   loadStateInputSelector = "#load-state-input",
-  highlightButtonSelector = "#highlight-btn",
-  highlightColorSelectSelector = "#highlight-color",
-  removeHighlightButtonSelector = "#remove-highlight-btn",
 } = {}) {
   const rootElement =
     typeof root === "string" ? document.querySelector(root) : root ?? document;
@@ -11013,15 +10892,6 @@ export async function setupInteractiveDeck({
   loadStateInput =
     rootElement?.querySelector(loadStateInputSelector) ??
     document.querySelector(loadStateInputSelector);
-  highlightBtn =
-    rootElement?.querySelector(highlightButtonSelector) ??
-    document.querySelector(highlightButtonSelector);
-  highlightColorSelect =
-    rootElement?.querySelector(highlightColorSelectSelector) ??
-    document.querySelector(highlightColorSelectSelector);
-  removeHighlightBtn =
-    rootElement?.querySelector(removeHighlightButtonSelector) ??
-    document.querySelector(removeHighlightButtonSelector);
   activityBuilderBtn =
     rootElement?.querySelector("#activity-builder-btn") ??
     document.querySelector("#activity-builder-btn");
