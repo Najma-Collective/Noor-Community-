@@ -2335,8 +2335,7 @@ export function attachBlankSlideEvents(slide) {
     "Tables pair well with your notes, visuals, or maps to compare ideas.";
   const MINDMAP_HINT =
     "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
-  const MODULE_HINT =
-    "Module ready. Facilitate it inside the frame or add another to compare activities.";
+  const MODULE_HINT = "";
   const MODULE_COMBINATION_HINT =
     "Combine modules with your notes, visuals, or maps to scaffold the activity.";
 
