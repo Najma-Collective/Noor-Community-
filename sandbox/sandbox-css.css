@@ -166,6 +166,75 @@ body {
   justify-content: flex-end;
 }
 
+.toolbar-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.toolbar-btn.has-caret {
+  padding-right: 1.4rem;
+}
+
+.toolbar-btn.has-caret .toolbar-caret {
+  width: 0;
+  height: 0;
+  border-left: 0.35rem solid transparent;
+  border-right: 0.35rem solid transparent;
+  border-top: 0.45rem solid currentColor;
+  transition: transform 0.2s ease;
+  margin-left: 0.25rem;
+}
+
+.toolbar-btn.is-expanded .toolbar-caret {
+  transform: rotate(180deg);
+}
+
+.toolbar-btn.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.toolbar-btn.is-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.toolbar-dropdown {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  right: 0;
+  display: none;
+  width: min(24rem, calc(100vw - 1.5rem));
+  min-width: max(16rem, var(--canvas-tools-anchor-width, 0px));
+  padding: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  background: rgba(254, 252, 247, 0.98);
+  box-shadow: var(--shadow-2);
+  z-index: 60;
+}
+
+.toolbar-dropdown.is-open {
+  display: block;
+}
+
+.toolbar-dropdown-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+@media (max-width: 720px) {
+  .toolbar-menu {
+    width: 100%;
+  }
+
+  .toolbar-dropdown {
+    width: min(100%, calc(100vw - 1.25rem));
+  }
+}
+
 .toolbar-btn {
   border: none;
   border-radius: 999px;
@@ -860,28 +929,9 @@ body {
   display: none;
 }
 
-.canvas-insert-panel {
-  position: absolute;
-  top: calc(100% + 0.75rem);
-  right: 0;
-  width: min(420px, 82vw);
-  padding: 0.75rem;
-  border-radius: 18px;
-  border: 1px solid rgba(122, 132, 113, 0.22);
-  background: rgba(254, 252, 247, 0.98);
-  box-shadow: var(--shadow-2);
-  display: none;
-  flex-direction: column;
-  gap: 0.6rem;
-  z-index: 45;
-}
-
-.canvas-insert-panel.is-visible {
-  display: flex;
-}
-
 .canvas-insert-options {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
@@ -893,7 +943,7 @@ body {
   padding: 0.75rem 0.85rem;
   border-radius: 16px;
   border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   color: var(--deep-forest);
   font-family: inherit;
   font-size: 0.95rem;
@@ -901,7 +951,8 @@ body {
   text-align: left;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease,
-    background 0.2s ease;
+    background 0.2s ease, color 0.2s ease;
+  width: 100%;
 }
 
 .canvas-insert-option:hover,
@@ -910,6 +961,7 @@ body {
   box-shadow: var(--shadow-1);
   transform: translateY(-1px);
   outline: none;
+  background: #fff;
 }
 
 .canvas-insert-option:focus-visible {
