@@ -637,6 +637,34 @@ function ensureBlankToolbarHost() {
   return blankToolbarHost;
 }
 
+function syncBlankToolbarVisibility() {
+  const host =
+    blankToolbarHost instanceof HTMLElement
+      ? blankToolbarHost
+      : stageViewport?.querySelector?.('[data-role="blank-toolbar-host"]') ?? null;
+
+  if (!(host instanceof HTMLElement)) {
+    return;
+  }
+
+  const activeSlide = slides?.[currentSlideIndex];
+  const isBlankSlide =
+    activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank';
+
+  host.hidden = !isBlankSlide;
+
+  const toolbar = host.querySelector('[data-role="blank-toolbar"]');
+  if (toolbar instanceof HTMLElement) {
+    toolbar.hidden = !isBlankSlide;
+    if (isBlankSlide) {
+      toolbar.removeAttribute('aria-hidden');
+    } else {
+      toolbar.setAttribute('aria-hidden', 'true');
+      toolbar.__deckSetExpanded?.(false);
+    }
+  }
+}
+
 const INSERT_MENU_OPTIONS = [
   {
     action: 'add-textbox',
@@ -1581,6 +1609,7 @@ function refreshSlides() {
   slideNavigatorController?.updateSlides(buildSlideNavigatorMeta());
   updateCanvasInsertOverlay();
   initialiseEditableText(stageViewport);
+  syncBlankToolbarVisibility();
 }
 
 function updateCounter() {
@@ -1605,6 +1634,7 @@ function showSlide(index) {
     initialiseEditableText(activeSlide);
     refreshEditableMetrics(activeSlide);
   }
+  syncBlankToolbarVisibility();
 }
 
 function focusSlideAtIndex(index) {
@@ -1700,6 +1730,7 @@ export function addBlankSlide() {
   initialiseEditableText(newSlide);
   refreshSlides();
   showSlide(slides.length - 1);
+  syncBlankToolbarVisibility();
 }
 
 export function duplicateSlide(index = currentSlideIndex) {
@@ -1816,6 +1847,7 @@ export function duplicateSlide(index = currentSlideIndex) {
   showSlide(resolvedIndex);
   clonedSlide.scrollIntoView({ behavior: "smooth", block: "center" });
   showDeckToast("Slide duplicated.", { icon: "fa-clone" });
+  syncBlankToolbarVisibility();
   return resolvedIndex;
 }
 
@@ -1876,6 +1908,7 @@ function moveSlide(fromIndex, toIndex) {
   showSlide(targetIndex);
   focusSlideAtIndex(targetIndex);
   recalibrateMindMapCounter();
+  syncBlankToolbarVisibility();
 
   const descriptor = getSlideTitle(slide, targetIndex);
   const humanIndex = targetIndex + 1;
@@ -1977,6 +2010,7 @@ export function moveSlidesToSection(indices, targetSection) {
   } else if (slides.length) {
     showSlide(currentSlideIndex);
   }
+  syncBlankToolbarVisibility();
 
   const movedCount = movedNodes.length;
   const plural = movedCount === 1 ? "slide" : "slides";
@@ -2053,12 +2087,14 @@ export function deleteSlide(index = currentSlideIndex) {
     showDeckToast(`Deleted “${descriptor}”. Deck is now empty.`, {
       icon: "fa-trash-can",
     });
+    syncBlankToolbarVisibility();
     return 0;
   }
 
   const nextIndex = Math.min(targetIndex, slides.length - 1);
   showSlide(nextIndex);
   focusSlideAtIndex(nextIndex);
+  syncBlankToolbarVisibility();
   showDeckToast(`Deleted “${descriptor}”.`, {
     icon: "fa-trash-can",
   });
