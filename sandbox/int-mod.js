@@ -2109,9 +2109,6 @@ export function createBlankSlide() {
     <div class="slide-inner">
       <div class="blank-slide" data-blank-version="2">
         <div class="blank-controls-home" data-role="blank-controls-home"></div>
-        <p class="blank-hint" data-role="hint">
-          Add textboxes, paste images, or build a mind map to capture relationships.
-        </p>
         <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
       </div>
     </div>
@@ -2140,17 +2137,9 @@ function upgradeLegacyBlankSlide(slide) {
   }
 
   const legacyCanvas = blank.querySelector(".blank-canvas");
-  const legacyHint =
-    blank.querySelector('[data-role="hint"], .blank-hint') ?? null;
-
   const newCanvas = templateBlank.querySelector(".blank-canvas");
   if (legacyCanvas instanceof HTMLElement && newCanvas instanceof HTMLElement) {
     newCanvas.replaceWith(legacyCanvas);
-  }
-
-  const newHint = templateBlank.querySelector('[data-role="hint"]');
-  if (legacyHint instanceof HTMLElement && newHint instanceof HTMLElement) {
-    newHint.replaceWith(legacyHint);
   }
 
   blank.replaceWith(templateBlank);
@@ -2332,8 +2321,15 @@ export function attachBlankSlideEvents(slide) {
 
   const toolbar = ensureToolbar();
 
+  blank
+    .querySelectorAll('[data-role="hint"], .blank-hint')
+    .forEach((existingHint) => {
+      if (existingHint instanceof HTMLElement) {
+        existingHint.remove();
+      }
+    });
+
   const canvas = blank.querySelector(".blank-canvas");
-  let hint = blank.querySelector('[data-role="hint"]');
   if (!(canvas instanceof HTMLElement)) {
     delete slide.__deckBlankCleanup;
     return;
@@ -2356,43 +2352,6 @@ export function attachBlankSlideEvents(slide) {
     }
     updateCanvasInsertOverlay();
   });
-
-  const DEFAULT_HINT =
-    "Add textboxes, paste images, or build a mind map to capture relationships.";
-  const TEXTBOX_HINT =
-    "Drag your textboxes into place, double-click to edit, and use the toolbar to organise ideas.";
-  const IMAGE_HINT =
-    "Paste images to bring ideas to life. Drag to move them and adjust size or effects from the toolbar.";
-  const MIXED_HINT =
-    "Combine textboxes and images to map your ideas visually and style them from the toolbar.";
-  const TABLE_HINT =
-    "Table ready. Add rows, columns, and colour-code cells from the toolbar to organise information.";
-  const TABLE_COMBINATION_HINT =
-    "Tables pair well with your notes, visuals, or maps to compare ideas.";
-  const MINDMAP_HINT =
-    "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
-  const MODULE_HINT = "";
-  const MODULE_COMBINATION_HINT =
-    "Combine modules with your notes, visuals, or maps to scaffold the activity.";
-
-  if (!(hint instanceof HTMLElement)) {
-    const blankContainer = slide.querySelector(".blank-slide");
-    const replacementHint = document.createElement("p");
-    replacementHint.className = "blank-hint";
-    replacementHint.dataset.role = "hint";
-    replacementHint.textContent = DEFAULT_HINT;
-    const canvasRegion = blankContainer?.querySelector?.(".blank-canvas") ?? null;
-    const insertionParent =
-      canvasRegion?.parentElement ?? blankContainer ?? slide;
-    if (canvasRegion instanceof HTMLElement && insertionParent?.contains(canvasRegion)) {
-      insertionParent.insertBefore(replacementHint, canvasRegion);
-    } else if (insertionParent instanceof HTMLElement) {
-      insertionParent.appendChild(replacementHint);
-    } else {
-      slide.appendChild(replacementHint);
-    }
-    hint = replacementHint;
-  }
 
   const toolbarToggle = toolbar?.querySelector('[data-action="toggle-toolbar"]');
   const toolbarPanel = toolbar?.querySelector('[data-role="toolbar-panel"]');
@@ -3524,32 +3483,13 @@ export function attachBlankSlideEvents(slide) {
   }
 
   function updateHintForCanvas() {
-    if (!(hint instanceof HTMLElement)) return;
-    const hasMindmap = Boolean(canvas.querySelector(".mindmap"));
-    const hasTextbox = Boolean(canvas.querySelector(".textbox"));
-    const hasImage = Boolean(canvas.querySelector(".pasted-image"));
-    const hasTable = Boolean(canvas.querySelector(".canvas-table"));
-    const hasModule = Boolean(canvas.querySelector(".module-embed"));
-
-    if (hasModule && (hasTextbox || hasImage || hasMindmap || hasTable)) {
-      hint.textContent = MODULE_COMBINATION_HINT;
-    } else if (hasModule) {
-      hint.textContent = MODULE_HINT;
-    } else if (hasTable && (hasTextbox || hasImage || hasMindmap)) {
-      hint.textContent = TABLE_COMBINATION_HINT;
-    } else if (hasMindmap) {
-      hint.textContent = MINDMAP_HINT;
-    } else if (hasTable) {
-      hint.textContent = TABLE_HINT;
-    } else if (hasTextbox && hasImage) {
-      hint.textContent = MIXED_HINT;
-    } else if (hasTextbox) {
-      hint.textContent = TEXTBOX_HINT;
-    } else if (hasImage) {
-      hint.textContent = IMAGE_HINT;
-    } else {
-      hint.textContent = DEFAULT_HINT;
-    }
+    blank
+      .querySelectorAll('[data-role="hint"], .blank-hint')
+      .forEach((existingHint) => {
+        if (existingHint instanceof HTMLElement) {
+          existingHint.remove();
+        }
+      });
   }
 
   const resolveCreationSource = (trigger) => {
@@ -10542,12 +10482,6 @@ function createInteractivePracticeSlide({
   moduleArea.dataset.role = "practice-module-area";
   inner.appendChild(moduleArea);
 
-  const moduleHint = document.createElement("p");
-  moduleHint.className = "practice-module-hint";
-  moduleHint.dataset.role = "practice-module-hint";
-  moduleHint.textContent = "Drop in an interactive module to make this practice task live.";
-  moduleArea.appendChild(moduleHint);
-
   const moduleHost = document.createElement("div");
   moduleHost.className = "practice-module-host";
   moduleHost.dataset.role = "practice-module-host";
@@ -10572,7 +10506,6 @@ function ensureInteractivePracticeModuleControls(slide) {
     return {
       moduleArea: null,
       host: null,
-      hint: null,
       addBtn: null,
     };
   }
@@ -10585,7 +10518,6 @@ function ensureInteractivePracticeModuleControls(slide) {
     return {
       moduleArea: null,
       host: null,
-      hint: null,
       addBtn: null,
     };
   }
@@ -10601,22 +10533,13 @@ function ensureInteractivePracticeModuleControls(slide) {
     moduleArea.dataset.role = 'practice-module-area';
   }
 
-  let hint = moduleArea.querySelector('[data-role="practice-module-hint"]');
-  if (!(hint instanceof HTMLElement)) {
-    hint = document.createElement('p');
-    hint.className = 'practice-module-hint';
-    hint.dataset.role = 'practice-module-hint';
-    hint.textContent =
-      'Drop in an interactive module to make this practice task live.';
-    moduleArea.insertBefore(hint, moduleArea.firstChild);
-  } else {
-    hint.classList.add('practice-module-hint');
-    hint.dataset.role = 'practice-module-hint';
-    if (!hint.textContent || !hint.textContent.trim()) {
-      hint.textContent =
-        'Drop in an interactive module to make this practice task live.';
-    }
-  }
+  moduleArea
+    .querySelectorAll('[data-role="practice-module-hint"], .practice-module-hint')
+    .forEach((existingHint) => {
+      if (existingHint instanceof HTMLElement) {
+        existingHint.remove();
+      }
+    });
 
   let host = moduleArea.querySelector('[data-role="practice-module-host"]');
   if (!(host instanceof HTMLElement)) {
@@ -10647,18 +10570,15 @@ function ensureInteractivePracticeModuleControls(slide) {
     }
   }
 
-  return { moduleArea, host, hint, addBtn };
+  return { moduleArea, host, addBtn };
 }
 
 function refreshInteractivePracticeModuleState(slide) {
-  const { host, hint, addBtn } = ensureInteractivePracticeModuleControls(slide);
+  const { host, addBtn } = ensureInteractivePracticeModuleControls(slide);
   if (!(host instanceof HTMLElement)) {
     return;
   }
   const hasModule = host.querySelector('.module-embed');
-  if (hint instanceof HTMLElement) {
-    hint.hidden = Boolean(hasModule);
-  }
   if (addBtn instanceof HTMLElement) {
     addBtn.hidden = Boolean(hasModule);
   }

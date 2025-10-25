@@ -363,6 +363,107 @@ moduleCloseBtn.click();
 await flushTimers();
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close when dismissed');
 
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen when adding another slide for hint assertions',
+);
+
+blankLayoutRadio.checked = true;
+blankLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+const blankSlides = Array.from(stageViewport.querySelectorAll('.slide-stage[data-type="blank"]'));
+const moduleOnlyBlankSlide = blankSlides.find((slide) => {
+  if (!(slide instanceof window.HTMLElement)) {
+    return false;
+  }
+  const canvas = slide.querySelector('.blank-canvas');
+  if (!(canvas instanceof window.HTMLElement)) {
+    return false;
+  }
+  return (
+    !canvas.querySelector('.textbox') &&
+    !canvas.querySelector('.pasted-image') &&
+    !canvas.querySelector('.canvas-table') &&
+    !canvas.querySelector('.mindmap') &&
+    !canvas.querySelector('.module-embed')
+  );
+});
+
+assert.ok(moduleOnlyBlankSlide, 'submitting the builder should insert another blank slide for module hint regression tests');
+assert.ok(
+  !moduleOnlyBlankSlide.classList.contains('hidden'),
+  'newly added blank slide should become the active slide for module-only hint checks',
+);
+
+const moduleOnlyCanvas = moduleOnlyBlankSlide.querySelector('.blank-canvas');
+assert.ok(moduleOnlyCanvas instanceof window.HTMLElement, 'module-only blank slide should provide a canvas');
+
+selectInsertOption('add-module');
+await flushTimers();
+await nextFrame();
+assert.ok(moduleOverlay.classList.contains('is-visible'), 'module overlay should open when adding a module to an otherwise empty blank slide');
+
+window.dispatchEvent(
+  new window.MessageEvent('message', {
+    data: { source: 'noor-activity-builder', type: 'activity-module', status: 'ready' },
+    source: moduleFrame.contentWindow,
+  }),
+);
+
+window.dispatchEvent(
+  new window.MessageEvent('message', {
+    data: {
+      source: 'noor-activity-builder',
+      type: 'activity-module',
+      html: '<div class="module-body">Module Content Only</div>',
+      config: { type: 'multiple-choice', data: { title: 'Module only slide' } },
+    },
+    source: moduleFrame.contentWindow,
+  }),
+);
+await flushTimers();
+
+assert.equal(
+  moduleOnlyBlankSlide.querySelector('[data-role="hint"], .blank-hint'),
+  null,
+  'module-only blank slide should not render a hint element',
+);
+
+assert.equal(
+  moduleOnlyCanvas.querySelectorAll('.module-embed').length,
+  1,
+  'module overlay should insert a module into the module-only blank slide',
+);
+assert.ok(
+  !moduleOverlay.classList.contains('is-visible'),
+  'module overlay should close after inserting a module onto the new blank slide',
+);
+
+selectInsertOption('add-textbox');
+await flushTimers();
+
+assert.equal(
+  moduleOnlyCanvas.querySelectorAll('.textbox').length,
+  1,
+  'module slide should still accept additional canvas content like textboxes',
+);
+assert.equal(
+  moduleOnlyBlankSlide.querySelector('[data-role="hint"], .blank-hint'),
+  null,
+  'module blank slide should continue to omit hint elements after adding other content',
+);
+
 const toolbarHost = document.querySelector('[data-role="blank-toolbar-host"]');
 const toolbar = toolbarHost?.querySelector('[data-role="blank-toolbar"]');
 const toolbarToggle = toolbar?.querySelector('.blank-toolbar-toggle');

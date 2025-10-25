@@ -851,7 +851,6 @@ export function createBlankSlide() {
       Add Mind Map
     </button>
   </div>
-  <p class="blank-hint" data-role="hint">Add textboxes, paste images, or build a mind map to capture relationships.</p>
   <div class="blank-canvas" role="region" aria-label="Blank slide workspace"></div>
 </div>
     </div>
@@ -861,47 +860,34 @@ export function createBlankSlide() {
 
 export function attachBlankSlideEvents(slide) {
   const canvas = slide.querySelector(".blank-canvas");
-  const hint = slide.querySelector('[data-role="hint"]');
   const addTextboxBtn = slide.querySelector('[data-action="add-textbox"]');
   const addMindmapBtn = slide.querySelector('[data-action="add-mindmap"]');
   const readOnly = isReadOnlyMode();
 
-  if (!(canvas instanceof HTMLElement) || !(hint instanceof HTMLElement)) {
+  slide
+    .querySelectorAll('[data-role="hint"], .blank-hint')
+    .forEach((existingHint) => {
+      if (existingHint instanceof HTMLElement) {
+        existingHint.remove();
+      }
+    });
+
+  if (!(canvas instanceof HTMLElement)) {
     return;
   }
-
-  const DEFAULT_HINT =
-    "Add textboxes, paste images, or build a mind map to capture relationships.";
-  const TEXTBOX_HINT =
-    "Drag your textboxes into place, double-click to edit, and use the colour dots to organise ideas.";
-  const IMAGE_HINT =
-    "Paste images to bring ideas to life. Drag to move them and use the corner handle to resize.";
-  const MIXED_HINT =
-    "Combine textboxes and images to map your ideas visually.";
-  const MINDMAP_HINT =
-    "Mind map ready. Categorise branches, sort ideas, or copy a summary with the toolbar.";
 
   if (!canvas.hasAttribute("tabindex")) {
     canvas.setAttribute("tabindex", "0");
   }
 
   function updateHintForCanvas() {
-    if (!(hint instanceof HTMLElement)) return;
-    const hasMindmap = Boolean(canvas.querySelector(".mindmap"));
-    const hasTextbox = Boolean(canvas.querySelector(".textbox"));
-    const hasImage = Boolean(canvas.querySelector(".pasted-image"));
-
-    if (hasMindmap) {
-      hint.textContent = MINDMAP_HINT;
-    } else if (hasTextbox && hasImage) {
-      hint.textContent = MIXED_HINT;
-    } else if (hasTextbox) {
-      hint.textContent = TEXTBOX_HINT;
-    } else if (hasImage) {
-      hint.textContent = IMAGE_HINT;
-    } else {
-      hint.textContent = DEFAULT_HINT;
-    }
+    slide
+      .querySelectorAll('[data-role="hint"], .blank-hint')
+      .forEach((existingHint) => {
+        if (existingHint instanceof HTMLElement) {
+          existingHint.remove();
+        }
+      });
   }
 
   if (readOnly) {
