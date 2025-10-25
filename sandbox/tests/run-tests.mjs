@@ -257,8 +257,19 @@ assert.ok(!legacyActionsCluster, 'blank slide should not render the legacy actio
 
 const canvasToolsToggle = document.getElementById('canvas-tools-toggle');
 const canvasToolsMenu = document.getElementById('canvas-tools-menu');
-assert.ok(canvasToolsToggle instanceof window.HTMLButtonElement, 'canvas tools toggle should render in the toolbar');
+assert.ok(
+  canvasToolsToggle instanceof window.HTMLButtonElement,
+  'canvas tools toggle should render within the stage viewport',
+);
 assert.ok(canvasToolsMenu instanceof window.HTMLElement, 'canvas tools menu container should be present');
+assert.ok(
+  canvasToolsToggle.closest('.stage-utility-cluster'),
+  'canvas tools toggle should be grouped inside the stage utility cluster',
+);
+assert.ok(
+  stageViewport.contains(canvasToolsMenu),
+  'canvas tools menu should be housed inside the stage viewport',
+);
 assert.equal(
   canvasToolsToggle.disabled,
   false,
