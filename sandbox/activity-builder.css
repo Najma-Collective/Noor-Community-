@@ -381,6 +381,46 @@ body::before {
   gap: 0.35rem;
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.icon-code-input {
+  min-width: 160px;
+  max-width: 220px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--sage-300);
+  padding: 0.35rem 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sage-700);
+}
+
+.icon-code-input::placeholder {
+  color: var(--sage-300);
+  font-weight: 500;
+}
+
+.icon-input-row {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.icon-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sage-500);
+}
+
 .field--span {
   grid-column: 1 / -1;
 }
@@ -562,10 +602,21 @@ textarea {
   background: #fff;
   color: var(--sage-600);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
-.team-icon-preview i {
-  font-size: 1.8rem;
+.team-icon-preview code {
+  background: transparent;
+  padding: 0;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: inherit;
+}
+
+.icon-placeholder {
+  color: var(--sage-300);
 }
 
 .team-block .helper-text {
