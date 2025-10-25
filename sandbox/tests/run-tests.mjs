@@ -191,13 +191,40 @@ await flushTimers();
 await nextFrame();
 assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open when adding a slide');
 
+const expectedLayouts = [
+  'blank-canvas',
+  'learning-objectives',
+  'model-dialogue',
+  'interactive-practice',
+  'communicative-task',
+  'pronunciation-focus',
+  'reflection',
+  'grounding-activity',
+  'topic-introduction',
+  'guided-discovery',
+  'creative-practice',
+  'task-divider',
+  'task-reporting',
+  'genre-deconstruction',
+  'linguistic-feature-hunt',
+  'text-reconstruction',
+  'jumbled-text-sequencing',
+  'scaffolded-joint-construction',
+  'independent-construction-checklist',
+];
+
+expectedLayouts.forEach((value) => {
+  const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
+  assert.ok(option instanceof window.HTMLInputElement, `${value} layout option should exist`);
+});
+
 const blankLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="blank-canvas"]');
 assert.ok(blankLayoutRadio?.checked, 'blank layout should be selected by default');
 
-const communicativeRadio = builderOverlay.querySelector('input[name="slideLayout"][value="communicative-task"]');
-assert.ok(communicativeRadio, 'communicative task layout option should exist');
-communicativeRadio.checked = true;
-communicativeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+const groundingRadio = builderOverlay.querySelector('input[name="slideLayout"][value="grounding-activity"]');
+assert.ok(groundingRadio, 'grounding activity layout option should exist');
+groundingRadio.checked = true;
+groundingRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
 await flushTimers();
 
 const builderStatus = document.getElementById('builder-status');
@@ -220,11 +247,37 @@ const imageStatus = document.getElementById('image-search-status');
 assert.match(imageStatus.textContent ?? '', /Found 2 image/, 'image search status should announce the number of results');
 
 imageResults[0].click();
-const taskImageField = builderOverlay.querySelector('input[name="taskImageUrl"]');
+const groundingImageField = builderOverlay.querySelector('input[name="groundingBackgroundImage"]');
 assert.equal(
-  taskImageField?.value,
+  groundingImageField?.value,
   samplePhotos[0].src.large2x,
-  'selecting an image should populate the communicative task image field',
+  'selecting an image should populate the grounding activity image field',
+);
+
+const topicLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="topic-introduction"]');
+topicLayoutRadio.checked = true;
+topicLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+imageResults[1].click();
+const topicImageField = builderOverlay.querySelector('input[name="topicBackgroundImage"]');
+assert.equal(
+  topicImageField?.value,
+  samplePhotos[1].src.large,
+  'image picker should populate the topic introduction background field',
+);
+
+const creativeLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="creative-practice"]');
+creativeLayoutRadio.checked = true;
+creativeLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+imageResults[0].click();
+const creativeImageField = builderOverlay.querySelector('input[name="creativeBackgroundImage"]');
+assert.equal(
+  creativeImageField?.value,
+  samplePhotos[0].src.large2x,
+  'image picker should update the creative practice background field',
 );
 
 blankLayoutRadio.checked = true;
@@ -542,7 +595,16 @@ textboxShadowToggle.checked = true;
 textboxShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(primaryTextbox.dataset.effect, 'shadow', 'textbox shadow toggle should mark the textbox with a shadow effect');
 
+if (toolbarToggle.getAttribute('aria-expanded') !== 'true') {
+  toolbarToggle.click();
+  await flushTimers();
+  await nextFrame();
+  await flushTimers();
+  await nextFrame();
+}
 toolbarToggle.click();
+await flushTimers();
+await nextFrame();
 await flushTimers();
 await nextFrame();
 assert.equal(toolbarToggle.getAttribute('aria-expanded'), 'false', 'toolbar should collapse when toggled closed');

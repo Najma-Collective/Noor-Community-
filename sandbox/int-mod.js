@@ -1193,6 +1193,181 @@ const BUILDER_LAYOUT_DEFAULTS = {
     prompts: ["A classmate’s name", "A place in Palestine", "A job"],
     imageUrl: "",
   }),
+  "grounding-activity": () => ({
+    title: "Grounding activity",
+    subtitle: "Arrive in the room",
+    steps: [
+      "Take a steady breath in for four counts.",
+      "Hold gently for two counts, then exhale for six.",
+      "Name one thing you can see, hear, and feel right now.",
+    ],
+    imageUrl: "",
+    overlayColor: "#10352c",
+    overlayOpacity: 45,
+  }),
+  "topic-introduction": () => ({
+    title: "Today we explore",
+    hook: "What projects build thriving communities?",
+    context: "Learners will connect the lesson theme to local initiatives.",
+    essentialQuestion: "How can communities design projects that last?",
+    keyVocabulary: ["sustainable", "stakeholders", "implementation"],
+    imageUrl: "",
+    overlayColor: "#152a41",
+    overlayOpacity: 42,
+  }),
+  "guided-discovery": () => ({
+    title: "Guided discovery",
+    context: "Learners examine a short text and notice language patterns.",
+    discoveryPrompts: [
+      "Read the exchange twice. Underline what the speakers are doing.",
+      "Circle verbs that come directly after reporting verbs.",
+    ],
+    noticingQuestions: [
+      "What tense do the reporting verbs take?",
+      "How does the writer show uncertainty or hesitation?",
+    ],
+    sampleLanguage: [
+      "They suggested starting with a community survey.",
+      "We might consider inviting local youth groups.",
+    ],
+    imageUrl: "",
+    overlayColor: "#2b293f",
+    overlayOpacity: 36,
+  }),
+  "creative-practice": () => ({
+    title: "Creative practice",
+    brief: "Teams design a solution prototype using the target language.",
+    materials: ["Large paper", "Markers", "Sticky notes"],
+    makingSteps: [
+      "Sketch your idea and label key features in English.",
+      "Write a short pitch sentence using the lesson language.",
+    ],
+    sharingOptions: [
+      "Gallery walk with peer feedback.",
+      "Quick 60-second pitch to another team.",
+    ],
+    imageUrl: "",
+    overlayColor: "#4b1f2c",
+    overlayOpacity: 38,
+  }),
+  "task-divider": () => ({
+    title: "Task cycle",
+    subtitle: "Before you speak",
+    timing: "5 minutes",
+    focus: "Plan the approach with your partner.",
+    actions: [
+      "Skim the prompt together and clarify unknown words.",
+      "Agree on who will start and how you will share the time.",
+    ],
+    imageUrl: "",
+    overlayColor: "#1f2d3a",
+    overlayOpacity: 28,
+  }),
+  "task-reporting": () => ({
+    title: "Task reporting",
+    goal: "Share highlights from your conversations.",
+    prompts: [
+      "What solution did your partner propose?",
+      "Which detail surprised you and why?",
+    ],
+    roles: [
+      { label: "Facilitator", value: "Keep the share-out moving and invite quieter voices." },
+      { label: "Notetaker", value: "Capture one quote per speaker." },
+    ],
+    evidence: ["Summaries on sticky notes", "Group reflection photo"],
+    imageUrl: "",
+    overlayColor: "#2a3b2c",
+    overlayOpacity: 32,
+  }),
+  "genre-deconstruction": () => ({
+    title: "Genre deconstruction",
+    genre: "Community proposal email",
+    purpose: "Notice how writers persuade funders.",
+    features: [
+      { label: "Opening move", value: "Warm greeting plus appreciation." },
+      { label: "Problem framing", value: "Connect to a specific local need." },
+      { label: "Call to action", value: "Invite next steps with a clear ask." },
+    ],
+    mentorText: "Dear team...",
+    imageUrl: "",
+    overlayColor: "#3b2b2a",
+    overlayOpacity: 30,
+  }),
+  "linguistic-feature-hunt": () => ({
+    title: "Feature hunt",
+    sourceText:
+      "When we evaluate proposals, we consider feasibility, sustainability, and community voice.",
+    features: [
+      "Underline hedging phrases (e.g. might, could).",
+      "Highlight cause-and-effect connectors.",
+    ],
+    reflection: ["Which feature appears most often?", "How does it shape the tone?"],
+    imageUrl: "",
+    overlayColor: "#1f2d28",
+    overlayOpacity: 24,
+  }),
+  "text-reconstruction": () => ({
+    title: "Text reconstruction",
+    context: "Pieces of the mentor text are jumbled.",
+    steps: [
+      "Read each strip aloud once.",
+      "Arrange them into a logical order.",
+      "Compare with the original for cohesion devices.",
+    ],
+    segments: [
+      "First, introduce the challenge the community faces.",
+      "Next, propose your solution with supporting evidence.",
+      "Finally, invite partners to collaborate on the rollout.",
+    ],
+    imageUrl: "",
+    overlayColor: "#263141",
+    overlayOpacity: 34,
+  }),
+  "jumbled-text-sequencing": () => ({
+    title: "Sequence the jumbled text",
+    instructions: "Work in teams to put the statements back into order.",
+    segments: [
+      "The youth group surveyed families about local needs.",
+      "They prioritised safe transport to after-school programmes.",
+      "Volunteers mapped routes and scheduled drivers.",
+    ],
+    supportTips: [
+      "Look for time connectives that give clues.",
+      "Check pronoun references before finalising.",
+    ],
+    imageUrl: "",
+    overlayColor: "#2f233c",
+    overlayOpacity: 26,
+  }),
+  "scaffolded-joint-construction": () => ({
+    title: "Scaffolded joint construction",
+    mentorFocus: "Mentor text: project proposal introduction",
+    sharedOutcome: "Draft the opening paragraph together.",
+    teacherMoves: [
+      "Think aloud to model paragraph planning.",
+      "Invite learners to suggest precise vocabulary.",
+    ],
+    learnerMoves: [
+      "Offer phrases that mirror the mentor text.",
+      "Negotiate sentence order with your group.",
+    ],
+    imageUrl: "",
+    overlayColor: "#213329",
+    overlayOpacity: 28,
+  }),
+  "independent-construction-checklist": () => ({
+    title: "Independent construction",
+    reminder: "Use the checklist while drafting your text.",
+    checklist: [
+      "State the community challenge clearly.",
+      "Reference at least one stakeholder perspective.",
+      "Close with a hopeful call to action.",
+    ],
+    stretchGoals: ["Add a compelling statistic.", "Include a direct learner quote."],
+    imageUrl: "",
+    overlayColor: "#2a2f27",
+    overlayOpacity: 22,
+  }),
 };
 
 
@@ -1427,6 +1602,66 @@ const splitMultiline = (value) =>
     .split(/\r?\n+/)
     .map((line) => line.trim())
     .filter(Boolean);
+
+const joinMultiline = (values) =>
+  Array.isArray(values) ? values.map((entry) => trimText(entry)).filter(Boolean).join("\n") : trimText(values);
+
+const formatKeyValuePairs = (
+  entries = [],
+  { key = "label", value = "value", separator = " | " } = {},
+) =>
+  entries
+    .map((entry) => {
+      const keyValue = trimText(entry?.[key]);
+      const valueText = trimText(entry?.[value]);
+      if (!keyValue && !valueText) {
+        return "";
+      }
+      return [keyValue, valueText].filter(Boolean).join(separator);
+    })
+    .filter(Boolean)
+    .join("\n");
+
+const parseKeyValuePairs = (
+  value,
+  { key = "label", valueKey = "value", delimiter = "|" } = {},
+) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [rawKey = "", rawValue = ""] = line
+        .split(delimiter)
+        .map((part) => part.trim());
+      return {
+        [key]: rawKey,
+        [valueKey]: rawValue,
+      };
+    })
+    .filter((entry) => trimText(entry[key]) || trimText(entry[valueKey]));
+
+const normaliseOverlayPercent = (value) => {
+  if (typeof value === "number" && !Number.isNaN(value)) {
+    if (value <= 1 && value >= 0) {
+      return Math.round(value * 100);
+    }
+    return Math.min(Math.max(Math.round(value), 0), 100);
+  }
+  const parsed = Number.parseFloat(value);
+  if (Number.isNaN(parsed)) {
+    return 0;
+  }
+  if (parsed <= 1 && parsed >= 0) {
+    return Math.round(parsed * 100);
+  }
+  return Math.min(Math.max(Math.round(parsed), 0), 100);
+};
+
+const resolveOverlayOpacity = (percent) => {
+  const numeric = normaliseOverlayPercent(percent);
+  if (numeric <= 0) {
+    return 0;
+  }
+  return Math.min(Math.max(numeric / 100, 0), 0.92);
+};
 
 const formatVocabularyItems = (items = []) =>
   items
@@ -7340,6 +7575,96 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'reflectionPromptTwo',
       'reflectionPromptThree',
       'reflectionImageUrl',
+      'groundingTitle',
+      'groundingSubtitle',
+      'groundingSteps',
+      'groundingBackgroundImage',
+      'groundingOverlayColor',
+      'groundingOverlayOpacity',
+      'topicTitle',
+      'topicHook',
+      'topicContext',
+      'topicQuestion',
+      'topicKeyVocabulary',
+      'topicBackgroundImage',
+      'topicOverlayColor',
+      'topicOverlayOpacity',
+      'discoveryTitle',
+      'discoveryContext',
+      'discoveryPrompts',
+      'discoveryNoticingQuestions',
+      'discoveryLanguageSamples',
+      'discoveryBackgroundImage',
+      'discoveryOverlayColor',
+      'discoveryOverlayOpacity',
+      'creativeTitle',
+      'creativeBrief',
+      'creativeMaterials',
+      'creativeMakingSteps',
+      'creativeSharingOptions',
+      'creativeBackgroundImage',
+      'creativeOverlayColor',
+      'creativeOverlayOpacity',
+      'dividerTitle',
+      'dividerSubtitle',
+      'dividerTiming',
+      'dividerFocus',
+      'dividerActions',
+      'dividerBackgroundImage',
+      'dividerOverlayColor',
+      'dividerOverlayOpacity',
+      'reportingTitle',
+      'reportingGoal',
+      'reportingPrompts',
+      'reportingRoles',
+      'reportingEvidence',
+      'reportingBackgroundImage',
+      'reportingOverlayColor',
+      'reportingOverlayOpacity',
+      'genreTitle',
+      'genreType',
+      'genrePurpose',
+      'genreFeatures',
+      'genreMentorText',
+      'genreBackgroundImage',
+      'genreOverlayColor',
+      'genreOverlayOpacity',
+      'featureTitle',
+      'featureSourceText',
+      'featureTargets',
+      'featureReflection',
+      'featureBackgroundImage',
+      'featureOverlayColor',
+      'featureOverlayOpacity',
+      'reconstructionTitle',
+      'reconstructionContext',
+      'reconstructionSteps',
+      'reconstructionSegments',
+      'reconstructionBackgroundImage',
+      'reconstructionOverlayColor',
+      'reconstructionOverlayOpacity',
+      'sequencingTitle',
+      'sequencingInstructions',
+      'sequencingSegments',
+      'sequencingSupportTips',
+      'sequencingBackgroundImage',
+      'sequencingOverlayColor',
+      'sequencingOverlayOpacity',
+      'jointTitle',
+      'jointMentor',
+      'jointSharedOutcome',
+      'jointTeacherMoves',
+      'jointLearnerMoves',
+      'jointBackgroundImage',
+      'jointOverlayColor',
+      'jointOverlayOpacity',
+      'checklistTitle',
+      'checklistReminder',
+      'checklistItems',
+      'checklistStretch',
+      'checklistBackgroundImage',
+      'checklistOverlayColor',
+      'checklistOverlayOpacity',
     ].forEach((name) => setFieldValue(name, ''));
     resetDialogueList([]);
     resetPracticeList([]);
@@ -7406,6 +7731,183 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('reflectionPromptTwo', prompts[1] ?? '');
       setFieldValue('reflectionPromptThree', prompts[2] ?? '');
       setFieldValue('reflectionImageUrl', defaults.imageUrl ?? '');
+      break;
+    }
+    case 'grounding-activity': {
+      setFieldValue('groundingTitle', defaults.title ?? '');
+      setFieldValue('groundingSubtitle', defaults.subtitle ?? '');
+      setFieldValue('groundingSteps', joinMultiline(defaults.steps));
+      setFieldValue('groundingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('groundingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'groundingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'topic-introduction': {
+      setFieldValue('topicTitle', defaults.title ?? '');
+      setFieldValue('topicHook', defaults.hook ?? '');
+      setFieldValue('topicContext', defaults.context ?? '');
+      setFieldValue('topicQuestion', defaults.essentialQuestion ?? '');
+      setFieldValue('topicKeyVocabulary', joinMultiline(defaults.keyVocabulary));
+      setFieldValue('topicBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('topicOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'topicOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'guided-discovery': {
+      setFieldValue('discoveryTitle', defaults.title ?? '');
+      setFieldValue('discoveryContext', defaults.context ?? '');
+      setFieldValue('discoveryPrompts', joinMultiline(defaults.discoveryPrompts));
+      setFieldValue(
+        'discoveryNoticingQuestions',
+        joinMultiline(defaults.noticingQuestions),
+      );
+      setFieldValue(
+        'discoveryLanguageSamples',
+        joinMultiline(defaults.sampleLanguage),
+      );
+      setFieldValue('discoveryBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('discoveryOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'discoveryOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'creative-practice': {
+      setFieldValue('creativeTitle', defaults.title ?? '');
+      setFieldValue('creativeBrief', defaults.brief ?? '');
+      setFieldValue('creativeMaterials', joinMultiline(defaults.materials));
+      setFieldValue('creativeMakingSteps', joinMultiline(defaults.makingSteps));
+      setFieldValue(
+        'creativeSharingOptions',
+        joinMultiline(defaults.sharingOptions),
+      );
+      setFieldValue('creativeBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('creativeOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'creativeOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'task-divider': {
+      setFieldValue('dividerTitle', defaults.title ?? '');
+      setFieldValue('dividerSubtitle', defaults.subtitle ?? '');
+      setFieldValue('dividerTiming', defaults.timing ?? '');
+      setFieldValue('dividerFocus', defaults.focus ?? '');
+      setFieldValue('dividerActions', joinMultiline(defaults.actions));
+      setFieldValue('dividerBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('dividerOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'dividerOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'task-reporting': {
+      setFieldValue('reportingTitle', defaults.title ?? '');
+      setFieldValue('reportingGoal', defaults.goal ?? '');
+      setFieldValue('reportingPrompts', joinMultiline(defaults.prompts));
+      setFieldValue(
+        'reportingRoles',
+        formatKeyValuePairs(defaults.roles, { key: 'label', value: 'value' }),
+      );
+      setFieldValue('reportingEvidence', joinMultiline(defaults.evidence));
+      setFieldValue('reportingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('reportingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reportingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'genre-deconstruction': {
+      setFieldValue('genreTitle', defaults.title ?? '');
+      setFieldValue('genreType', defaults.genre ?? '');
+      setFieldValue('genrePurpose', defaults.purpose ?? '');
+      setFieldValue(
+        'genreFeatures',
+        formatKeyValuePairs(defaults.features, { key: 'label', value: 'value' }),
+      );
+      setFieldValue('genreMentorText', defaults.mentorText ?? '');
+      setFieldValue('genreBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('genreOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'genreOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'linguistic-feature-hunt': {
+      setFieldValue('featureTitle', defaults.title ?? '');
+      setFieldValue('featureSourceText', defaults.sourceText ?? '');
+      setFieldValue('featureTargets', joinMultiline(defaults.features));
+      setFieldValue('featureReflection', joinMultiline(defaults.reflection));
+      setFieldValue('featureBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('featureOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'featureOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'text-reconstruction': {
+      setFieldValue('reconstructionTitle', defaults.title ?? '');
+      setFieldValue('reconstructionContext', defaults.context ?? '');
+      setFieldValue('reconstructionSteps', joinMultiline(defaults.steps));
+      setFieldValue('reconstructionSegments', joinMultiline(defaults.segments));
+      setFieldValue('reconstructionBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('reconstructionOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reconstructionOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'jumbled-text-sequencing': {
+      setFieldValue('sequencingTitle', defaults.title ?? '');
+      setFieldValue('sequencingInstructions', defaults.instructions ?? '');
+      setFieldValue('sequencingSegments', joinMultiline(defaults.segments));
+      setFieldValue('sequencingSupportTips', joinMultiline(defaults.supportTips));
+      setFieldValue('sequencingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('sequencingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'sequencingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'scaffolded-joint-construction': {
+      setFieldValue('jointTitle', defaults.title ?? '');
+      setFieldValue('jointMentor', defaults.mentorFocus ?? '');
+      setFieldValue('jointSharedOutcome', defaults.sharedOutcome ?? '');
+      setFieldValue('jointTeacherMoves', joinMultiline(defaults.teacherMoves));
+      setFieldValue('jointLearnerMoves', joinMultiline(defaults.learnerMoves));
+      setFieldValue('jointBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('jointOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'jointOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'independent-construction-checklist': {
+      setFieldValue('checklistTitle', defaults.title ?? '');
+      setFieldValue('checklistReminder', defaults.reminder ?? '');
+      setFieldValue('checklistItems', joinMultiline(defaults.checklist));
+      setFieldValue('checklistStretch', joinMultiline(defaults.stretchGoals));
+      setFieldValue('checklistBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('checklistOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'checklistOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
       break;
     }
     default:
@@ -7525,6 +8027,194 @@ function getBuilderFormState() {
       };
       break;
     }
+    case 'grounding-activity': {
+      state.data = {
+        title: trimText(formData.get('groundingTitle')) || 'Grounding activity',
+        subtitle: trimText(formData.get('groundingSubtitle')),
+        steps: splitMultiline(formData.get('groundingSteps')),
+        imageUrl: trimText(formData.get('groundingBackgroundImage')),
+        overlayColor: trimText(formData.get('groundingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('groundingOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'topic-introduction': {
+      state.data = {
+        title: trimText(formData.get('topicTitle')) || 'Today we explore',
+        hook: trimText(formData.get('topicHook')),
+        context: trimText(formData.get('topicContext')),
+        essentialQuestion: trimText(formData.get('topicQuestion')),
+        keyVocabulary: splitMultiline(formData.get('topicKeyVocabulary')),
+        imageUrl: trimText(formData.get('topicBackgroundImage')),
+        overlayColor: trimText(formData.get('topicOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('topicOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'guided-discovery': {
+      state.data = {
+        title: trimText(formData.get('discoveryTitle')) || 'Guided discovery',
+        context: trimText(formData.get('discoveryContext')),
+        discoveryPrompts: splitMultiline(formData.get('discoveryPrompts')),
+        noticingQuestions: splitMultiline(
+          formData.get('discoveryNoticingQuestions'),
+        ),
+        sampleLanguage: splitMultiline(
+          formData.get('discoveryLanguageSamples'),
+        ),
+        imageUrl: trimText(formData.get('discoveryBackgroundImage')),
+        overlayColor: trimText(formData.get('discoveryOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('discoveryOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'creative-practice': {
+      state.data = {
+        title: trimText(formData.get('creativeTitle')) || 'Creative practice',
+        brief: trimText(formData.get('creativeBrief')),
+        materials: splitMultiline(formData.get('creativeMaterials')),
+        makingSteps: splitMultiline(formData.get('creativeMakingSteps')),
+        sharingOptions: splitMultiline(
+          formData.get('creativeSharingOptions'),
+        ),
+        imageUrl: trimText(formData.get('creativeBackgroundImage')),
+        overlayColor: trimText(formData.get('creativeOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('creativeOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'task-divider': {
+      state.data = {
+        title: trimText(formData.get('dividerTitle')) || 'Task cycle',
+        subtitle: trimText(formData.get('dividerSubtitle')),
+        timing: trimText(formData.get('dividerTiming')),
+        focus: trimText(formData.get('dividerFocus')),
+        actions: splitMultiline(formData.get('dividerActions')),
+        imageUrl: trimText(formData.get('dividerBackgroundImage')),
+        overlayColor: trimText(formData.get('dividerOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('dividerOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'task-reporting': {
+      state.data = {
+        title: trimText(formData.get('reportingTitle')) || 'Task reporting',
+        goal: trimText(formData.get('reportingGoal')),
+        prompts: splitMultiline(formData.get('reportingPrompts')),
+        roles: parseKeyValuePairs(formData.get('reportingRoles'), {
+          key: 'label',
+          valueKey: 'value',
+          delimiter: '|',
+        }),
+        evidence: splitMultiline(formData.get('reportingEvidence')),
+        imageUrl: trimText(formData.get('reportingBackgroundImage')),
+        overlayColor: trimText(formData.get('reportingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reportingOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'genre-deconstruction': {
+      state.data = {
+        title: trimText(formData.get('genreTitle')) || 'Genre deconstruction',
+        genre: trimText(formData.get('genreType')),
+        purpose: trimText(formData.get('genrePurpose')),
+        features: parseKeyValuePairs(formData.get('genreFeatures'), {
+          key: 'label',
+          valueKey: 'value',
+          delimiter: '|',
+        }),
+        mentorText: trimText(formData.get('genreMentorText')),
+        imageUrl: trimText(formData.get('genreBackgroundImage')),
+        overlayColor: trimText(formData.get('genreOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('genreOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'linguistic-feature-hunt': {
+      state.data = {
+        title: trimText(formData.get('featureTitle')) || 'Feature hunt',
+        sourceText: trimText(formData.get('featureSourceText')),
+        features: splitMultiline(formData.get('featureTargets')),
+        reflection: splitMultiline(formData.get('featureReflection')),
+        imageUrl: trimText(formData.get('featureBackgroundImage')),
+        overlayColor: trimText(formData.get('featureOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('featureOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'text-reconstruction': {
+      state.data = {
+        title: trimText(formData.get('reconstructionTitle')) || 'Text reconstruction',
+        context: trimText(formData.get('reconstructionContext')),
+        steps: splitMultiline(formData.get('reconstructionSteps')),
+        segments: splitMultiline(formData.get('reconstructionSegments')),
+        imageUrl: trimText(formData.get('reconstructionBackgroundImage')),
+        overlayColor: trimText(formData.get('reconstructionOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reconstructionOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'jumbled-text-sequencing': {
+      state.data = {
+        title: trimText(formData.get('sequencingTitle')) || 'Sequence the text',
+        instructions: trimText(formData.get('sequencingInstructions')),
+        segments: splitMultiline(formData.get('sequencingSegments')),
+        supportTips: splitMultiline(formData.get('sequencingSupportTips')),
+        imageUrl: trimText(formData.get('sequencingBackgroundImage')),
+        overlayColor: trimText(formData.get('sequencingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('sequencingOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'scaffolded-joint-construction': {
+      state.data = {
+        title: trimText(formData.get('jointTitle')) || 'Scaffolded joint construction',
+        mentorFocus: trimText(formData.get('jointMentor')),
+        sharedOutcome: trimText(formData.get('jointSharedOutcome')),
+        teacherMoves: splitMultiline(formData.get('jointTeacherMoves')),
+        learnerMoves: splitMultiline(formData.get('jointLearnerMoves')),
+        imageUrl: trimText(formData.get('jointBackgroundImage')),
+        overlayColor: trimText(formData.get('jointOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('jointOverlayOpacity'),
+        ),
+      };
+      break;
+    }
+    case 'independent-construction-checklist': {
+      state.data = {
+        title: trimText(formData.get('checklistTitle')) || 'Independent construction',
+        reminder: trimText(formData.get('checklistReminder')),
+        checklist: splitMultiline(formData.get('checklistItems')),
+        stretchGoals: splitMultiline(formData.get('checklistStretch')),
+        imageUrl: trimText(formData.get('checklistBackgroundImage')),
+        overlayColor: trimText(formData.get('checklistOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('checklistOverlayOpacity'),
+        ),
+      };
+      break;
+    }
     default:
       break;
   }
@@ -7622,6 +8312,42 @@ function updateBuilderPreview() {
     case 'reflection':
       slide = createReflectionSlide(state.data);
       break;
+    case 'grounding-activity':
+      slide = createGroundingActivitySlide(state.data);
+      break;
+    case 'topic-introduction':
+      slide = createTopicIntroductionSlide(state.data);
+      break;
+    case 'guided-discovery':
+      slide = createGuidedDiscoverySlide(state.data);
+      break;
+    case 'creative-practice':
+      slide = createCreativePracticeSlide(state.data);
+      break;
+    case 'task-divider':
+      slide = createTaskDividerSlide(state.data);
+      break;
+    case 'task-reporting':
+      slide = createTaskReportingSlide(state.data);
+      break;
+    case 'genre-deconstruction':
+      slide = createGenreDeconstructionSlide(state.data);
+      break;
+    case 'linguistic-feature-hunt':
+      slide = createLinguisticFeatureHuntSlide(state.data);
+      break;
+    case 'text-reconstruction':
+      slide = createTextReconstructionSlide(state.data);
+      break;
+    case 'jumbled-text-sequencing':
+      slide = createJumbledTextSequencingSlide(state.data);
+      break;
+    case 'scaffolded-joint-construction':
+      slide = createScaffoldedJointConstructionSlide(state.data);
+      break;
+    case 'independent-construction-checklist':
+      slide = createIndependentConstructionChecklistSlide(state.data);
+      break;
     default:
       break;
   }
@@ -7695,6 +8421,18 @@ function selectImageResult(button) {
     'communicative-task': 'taskImageUrl',
     'pronunciation-focus': 'pronunciationImageUrl',
     reflection: 'reflectionImageUrl',
+    'grounding-activity': 'groundingBackgroundImage',
+    'topic-introduction': 'topicBackgroundImage',
+    'guided-discovery': 'discoveryBackgroundImage',
+    'creative-practice': 'creativeBackgroundImage',
+    'task-divider': 'dividerBackgroundImage',
+    'task-reporting': 'reportingBackgroundImage',
+    'genre-deconstruction': 'genreBackgroundImage',
+    'linguistic-feature-hunt': 'featureBackgroundImage',
+    'text-reconstruction': 'reconstructionBackgroundImage',
+    'jumbled-text-sequencing': 'sequencingBackgroundImage',
+    'scaffolded-joint-construction': 'jointBackgroundImage',
+    'independent-construction-checklist': 'checklistBackgroundImage',
   };
   const targetName = fieldMap[layout];
   if (targetName) {
@@ -10133,6 +10871,49 @@ function createHomeworkRecapSlide({
 
 
 
+function applyLessonBackground(
+  slide,
+  { imageUrl = '', overlayColor = '', overlayOpacity = 0 } = {},
+) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+  const resolvedImage = trimText(imageUrl);
+  if (resolvedImage) {
+    slide.classList.add('lesson-slide--has-image');
+    slide.style.setProperty('--lesson-bg-image', `url("${resolvedImage}")`);
+  }
+  const resolvedColor = trimText(overlayColor);
+  const resolvedOpacity = resolveOverlayOpacity(overlayOpacity);
+  if (resolvedColor) {
+    slide.style.setProperty('--lesson-overlay-color', resolvedColor);
+  }
+  if (resolvedOpacity > 0) {
+    slide.classList.add('lesson-slide--has-overlay');
+    slide.style.setProperty('--lesson-overlay-opacity', String(resolvedOpacity));
+  } else {
+    slide.style.removeProperty('--lesson-overlay-opacity');
+  }
+}
+
+function createBaseLessonSlide(layout, options = {}) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden lesson-slide';
+  slide.dataset.type = 'lesson';
+  if (layout) {
+    slide.dataset.layout = layout;
+    slide.classList.add(`lesson-slide--${layout}`);
+  }
+  applyLessonBackground(slide, options);
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner lesson-slide-inner';
+  if (layout) {
+    inner.classList.add(`${layout}-layout`);
+  }
+  slide.appendChild(inner);
+  return { slide, inner };
+}
+
 function createLearningObjectivesSlide({ title = 'Learning Outcomes', goals = [], communicativeGoal = '', imageUrl = '' } = {}) {
   const slide = document.createElement('div');
   slide.className = 'slide-stage hidden lesson-slide';
@@ -10472,6 +11253,1119 @@ function createReflectionSlide({ title = 'Reflection', prompts = [], imageUrl = 
     placeholder.className = 'lesson-empty';
     placeholder.textContent = 'Add reflection prompts to guide learners.';
     body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createGroundingActivitySlide({
+  title = 'Grounding activity',
+  subtitle = '',
+  steps = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('grounding-activity', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+  const header = document.createElement('header');
+  header.className = 'lesson-header grounding-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Grounding activity';
+  header.appendChild(heading);
+
+  const subtitleText = trimText(subtitle);
+  if (subtitleText) {
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'grounding-subtitle';
+    subtitleEl.textContent = subtitleText;
+    header.appendChild(subtitleEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'grounding-body';
+  inner.appendChild(body);
+
+  const stepsList = Array.isArray(steps) ? steps.map((step) => trimText(step)).filter(Boolean) : [];
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'grounding-steps';
+    stepsList.forEach((step, index) => {
+      const item = document.createElement('li');
+      const badge = document.createElement('span');
+      badge.className = 'grounding-step-badge';
+      badge.textContent = index + 1;
+      item.appendChild(badge);
+      const text = document.createElement('p');
+      text.textContent = step;
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add a short grounding script or sequence.';
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createTopicIntroductionSlide({
+  title = 'Today we explore',
+  hook = '',
+  context = '',
+  essentialQuestion = '',
+  keyVocabulary = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('topic-introduction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header topic-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Today we explore';
+  header.appendChild(heading);
+
+  const hookText = trimText(hook);
+  if (hookText) {
+    const hookEl = document.createElement('p');
+    hookEl.className = 'topic-hook';
+    hookEl.textContent = hookText;
+    header.appendChild(hookEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'topic-body';
+  inner.appendChild(body);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'topic-context';
+    contextEl.textContent = contextText;
+    body.appendChild(contextEl);
+  }
+
+  const questionText = trimText(essentialQuestion);
+  if (questionText) {
+    const question = document.createElement('div');
+    question.className = 'topic-question-card';
+    const label = document.createElement('span');
+    label.className = 'topic-question-label';
+    label.textContent = 'Essential question';
+    question.appendChild(label);
+    const text = document.createElement('p');
+    text.textContent = questionText;
+    question.appendChild(text);
+    body.appendChild(question);
+  }
+
+  const vocabList = Array.isArray(keyVocabulary)
+    ? keyVocabulary.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  const vocabSection = document.createElement('section');
+  vocabSection.className = 'topic-vocabulary';
+  const vocabHeading = document.createElement('h3');
+  vocabHeading.textContent = 'Key vocabulary';
+  vocabSection.appendChild(vocabHeading);
+  if (vocabList.length) {
+    const list = document.createElement('ul');
+    list.className = 'topic-vocabulary-list';
+    vocabList.forEach((term) => {
+      const item = document.createElement('li');
+      item.textContent = term;
+      list.appendChild(item);
+    });
+    vocabSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List 3-5 terms learners should notice today.';
+    vocabSection.appendChild(placeholder);
+  }
+  body.appendChild(vocabSection);
+
+  return slide;
+}
+
+function createGuidedDiscoverySlide({
+  title = 'Guided discovery',
+  context = '',
+  discoveryPrompts = [],
+  noticingQuestions = [],
+  sampleLanguage = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('guided-discovery', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header discovery-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Guided discovery';
+  header.appendChild(heading);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'discovery-context';
+    contextEl.textContent = contextText;
+    header.appendChild(contextEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'discovery-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(discoveryPrompts)
+    ? discoveryPrompts.map((prompt) => trimText(prompt)).filter(Boolean)
+    : [];
+  const promptsSection = document.createElement('section');
+  promptsSection.className = 'discovery-section';
+  const promptsHeading = document.createElement('h3');
+  promptsHeading.textContent = 'Explore the text';
+  promptsSection.appendChild(promptsHeading);
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-prompt-list';
+    promptList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    promptsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add a short sequence of noticing tasks.';
+    promptsSection.appendChild(placeholder);
+  }
+  body.appendChild(promptsSection);
+
+  const noticingSection = document.createElement('section');
+  noticingSection.className = 'discovery-section';
+  const noticingHeading = document.createElement('h3');
+  noticingHeading.textContent = 'What do you notice?';
+  noticingSection.appendChild(noticingHeading);
+  const questionList = Array.isArray(noticingQuestions)
+    ? noticingQuestions.map((question) => trimText(question)).filter(Boolean)
+    : [];
+  if (questionList.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-question-list';
+    questionList.forEach((question) => {
+      const item = document.createElement('li');
+      item.textContent = question;
+      list.appendChild(item);
+    });
+    noticingSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add questions that guide pattern noticing.';
+    noticingSection.appendChild(placeholder);
+  }
+  body.appendChild(noticingSection);
+
+  const sampleSection = document.createElement('section');
+  sampleSection.className = 'discovery-section';
+  const sampleHeading = document.createElement('h3');
+  sampleHeading.textContent = 'Sample language';
+  sampleSection.appendChild(sampleHeading);
+  const languageItems = Array.isArray(sampleLanguage)
+    ? sampleLanguage.map((sample) => trimText(sample)).filter(Boolean)
+    : [];
+  if (languageItems.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-language-list';
+    languageItems.forEach((sample) => {
+      const item = document.createElement('li');
+      item.textContent = sample;
+      list.appendChild(item);
+    });
+    sampleSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Collect two lines that model the target language.';
+    sampleSection.appendChild(placeholder);
+  }
+  body.appendChild(sampleSection);
+
+  return slide;
+}
+
+function createCreativePracticeSlide({
+  title = 'Creative practice',
+  brief = '',
+  materials = [],
+  makingSteps = [],
+  sharingOptions = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('creative-practice', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header creative-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Creative practice';
+  header.appendChild(heading);
+
+  const briefText = trimText(brief);
+  if (briefText) {
+    const briefEl = document.createElement('p');
+    briefEl.className = 'creative-brief';
+    briefEl.textContent = briefText;
+    header.appendChild(briefEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'creative-body';
+  inner.appendChild(body);
+
+  const materialsList = Array.isArray(materials)
+    ? materials.map((material) => trimText(material)).filter(Boolean)
+    : [];
+  if (materialsList.length) {
+    const materialsSection = document.createElement('section');
+    materialsSection.className = 'creative-section materials-section';
+    const materialsHeading = document.createElement('h3');
+    materialsHeading.textContent = 'Gather your materials';
+    materialsSection.appendChild(materialsHeading);
+    const chips = document.createElement('ul');
+    chips.className = 'creative-materials';
+    materialsList.forEach((material) => {
+      const item = document.createElement('li');
+      item.textContent = material;
+      chips.appendChild(item);
+    });
+    materialsSection.appendChild(chips);
+    body.appendChild(materialsSection);
+  }
+
+  const stepsList = Array.isArray(makingSteps)
+    ? makingSteps.map((step) => trimText(step)).filter(Boolean)
+    : [];
+  const stepsSection = document.createElement('section');
+  stepsSection.className = 'creative-section';
+  const stepsHeading = document.createElement('h3');
+  stepsHeading.textContent = 'Make together';
+  stepsSection.appendChild(stepsHeading);
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'creative-steps';
+    stepsList.forEach((step) => {
+      const item = document.createElement('li');
+      item.textContent = step;
+      list.appendChild(item);
+    });
+    stepsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Outline the creative steps learners follow.';
+    stepsSection.appendChild(placeholder);
+  }
+  body.appendChild(stepsSection);
+
+  const sharingList = Array.isArray(sharingOptions)
+    ? sharingOptions.map((option) => trimText(option)).filter(Boolean)
+    : [];
+  const sharingSection = document.createElement('section');
+  sharingSection.className = 'creative-section';
+  const sharingHeading = document.createElement('h3');
+  sharingHeading.textContent = 'Share your work';
+  sharingSection.appendChild(sharingHeading);
+  if (sharingList.length) {
+    const list = document.createElement('ul');
+    list.className = 'creative-sharing';
+    sharingList.forEach((option) => {
+      const item = document.createElement('li');
+      item.textContent = option;
+      list.appendChild(item);
+    });
+    sharingSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Suggest how learners will present their creations.';
+    sharingSection.appendChild(placeholder);
+  }
+  body.appendChild(sharingSection);
+
+  return slide;
+}
+
+function createTaskDividerSlide({
+  title = 'Task cycle',
+  subtitle = '',
+  timing = '',
+  focus = '',
+  actions = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('task-divider', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header divider-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Task cycle';
+  header.appendChild(heading);
+
+  const subtitleText = trimText(subtitle);
+  if (subtitleText) {
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'divider-subtitle';
+    subtitleEl.textContent = subtitleText;
+    header.appendChild(subtitleEl);
+  }
+
+  const focusText = trimText(focus);
+  if (focusText || trimText(timing)) {
+    const banner = document.createElement('div');
+    banner.className = 'divider-banner';
+    const timeText = trimText(timing);
+    if (timeText) {
+      const timeEl = document.createElement('span');
+      timeEl.className = 'divider-timing';
+      timeEl.textContent = timeText;
+      banner.appendChild(timeEl);
+    }
+    if (focusText) {
+      const focusEl = document.createElement('p');
+      focusEl.textContent = focusText;
+      banner.appendChild(focusEl);
+    }
+    inner.appendChild(banner);
+  }
+
+  const actionsList = Array.isArray(actions)
+    ? actions.map((action) => trimText(action)).filter(Boolean)
+    : [];
+  const body = document.createElement('div');
+  body.className = 'divider-body';
+  inner.appendChild(body);
+
+  if (actionsList.length) {
+    const list = document.createElement('ul');
+    list.className = 'divider-actions';
+    actionsList.forEach((action) => {
+      const item = document.createElement('li');
+      item.textContent = action;
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Outline what learners should do during this phase.';
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createTaskReportingSlide({
+  title = 'Task reporting',
+  goal = '',
+  prompts = [],
+  roles = [],
+  evidence = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('task-reporting', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header reporting-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Task reporting';
+  header.appendChild(heading);
+
+  const goalText = trimText(goal);
+  if (goalText) {
+    const goalEl = document.createElement('p');
+    goalEl.className = 'reporting-goal';
+    goalEl.textContent = goalText;
+    header.appendChild(goalEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'reporting-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(prompts)
+    ? prompts.map((prompt) => trimText(prompt)).filter(Boolean)
+    : [];
+  const promptsSection = document.createElement('section');
+  promptsSection.className = 'reporting-section';
+  const promptsHeading = document.createElement('h3');
+  promptsHeading.textContent = 'Share this';
+  promptsSection.appendChild(promptsHeading);
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reporting-prompts';
+    promptList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    promptsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add 2-3 reporting prompts or questions.';
+    promptsSection.appendChild(placeholder);
+  }
+  body.appendChild(promptsSection);
+
+  const rolesSection = document.createElement('section');
+  rolesSection.className = 'reporting-section';
+  const rolesHeading = document.createElement('h3');
+  rolesHeading.textContent = 'Roles';
+  rolesSection.appendChild(rolesHeading);
+  const roleEntries = Array.isArray(roles)
+    ? roles
+        .map((role) => ({ label: trimText(role?.label), value: trimText(role?.value) }))
+        .filter((role) => role.label || role.value)
+    : [];
+  if (roleEntries.length) {
+    const table = document.createElement('table');
+    table.className = 'reporting-role-table';
+    const tbody = document.createElement('tbody');
+    roleEntries.forEach((role) => {
+      const row = document.createElement('tr');
+      const roleCell = document.createElement('th');
+      roleCell.scope = 'row';
+      roleCell.textContent = role.label || 'Role';
+      row.appendChild(roleCell);
+      const valueCell = document.createElement('td');
+      valueCell.textContent = role.value || '';
+      row.appendChild(valueCell);
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    rolesSection.appendChild(table);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Define who facilitates, records, or shares back.';
+    rolesSection.appendChild(placeholder);
+  }
+  body.appendChild(rolesSection);
+
+  const evidenceList = Array.isArray(evidence)
+    ? evidence.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (evidenceList.length) {
+    const evidenceSection = document.createElement('section');
+    evidenceSection.className = 'reporting-section';
+    const evidenceHeading = document.createElement('h3');
+    evidenceHeading.textContent = 'Capture evidence';
+    evidenceSection.appendChild(evidenceHeading);
+    const list = document.createElement('ul');
+    list.className = 'reporting-evidence';
+    evidenceList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    evidenceSection.appendChild(list);
+    body.appendChild(evidenceSection);
+  }
+
+  return slide;
+}
+
+function createGenreDeconstructionSlide({
+  title = 'Genre deconstruction',
+  genre = '',
+  purpose = '',
+  features = [],
+  mentorText = '',
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('genre-deconstruction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header genre-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Genre deconstruction';
+  header.appendChild(heading);
+
+  if (trimText(genre) || trimText(purpose)) {
+    const meta = document.createElement('p');
+    meta.className = 'genre-meta';
+    const genreText = trimText(genre);
+    if (genreText) {
+      const genreSpan = document.createElement('span');
+      genreSpan.className = 'genre-type';
+      genreSpan.textContent = genreText;
+      meta.appendChild(genreSpan);
+    }
+    const purposeText = trimText(purpose);
+    if (purposeText) {
+      const purposeSpan = document.createElement('span');
+      purposeSpan.textContent = purposeText;
+      meta.appendChild(purposeSpan);
+    }
+    header.appendChild(meta);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'genre-body';
+  inner.appendChild(body);
+
+  const featuresSection = document.createElement('section');
+  featuresSection.className = 'genre-section';
+  const featuresHeading = document.createElement('h3');
+  featuresHeading.textContent = 'Text moves to notice';
+  featuresSection.appendChild(featuresHeading);
+  const featureEntries = Array.isArray(features)
+    ? features
+        .map((feature) => ({ label: trimText(feature?.label), value: trimText(feature?.value) }))
+        .filter((feature) => feature.label || feature.value)
+    : [];
+  if (featureEntries.length) {
+    const list = document.createElement('ul');
+    list.className = 'genre-feature-list';
+    featureEntries.forEach((feature) => {
+      const item = document.createElement('li');
+      const label = document.createElement('strong');
+      label.textContent = feature.label || 'Feature';
+      item.appendChild(label);
+      if (feature.value) {
+        const text = document.createElement('p');
+        text.textContent = feature.value;
+        item.appendChild(text);
+      }
+      list.appendChild(item);
+    });
+    featuresSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the structural moves in this genre.';
+    featuresSection.appendChild(placeholder);
+  }
+  body.appendChild(featuresSection);
+
+  const mentorTextValue = trimText(mentorText);
+  if (mentorTextValue) {
+    const mentorSection = document.createElement('section');
+    mentorSection.className = 'genre-section';
+    const mentorHeading = document.createElement('h3');
+    mentorHeading.textContent = 'Mentor text excerpt';
+    mentorSection.appendChild(mentorHeading);
+    const block = document.createElement('blockquote');
+    block.className = 'genre-mentor-text';
+    block.textContent = mentorTextValue;
+    mentorSection.appendChild(block);
+    body.appendChild(mentorSection);
+  }
+
+  return slide;
+}
+
+function createLinguisticFeatureHuntSlide({
+  title = 'Feature hunt',
+  sourceText = '',
+  features = [],
+  reflection = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('linguistic-feature-hunt', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header feature-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Feature hunt';
+  header.appendChild(heading);
+
+  const body = document.createElement('div');
+  body.className = 'feature-body';
+  inner.appendChild(body);
+
+  const textValue = trimText(sourceText);
+  if (textValue) {
+    const excerpt = document.createElement('div');
+    excerpt.className = 'feature-source';
+    const label = document.createElement('span');
+    label.className = 'feature-source-label';
+    label.textContent = 'Text excerpt';
+    excerpt.appendChild(label);
+    const paragraph = document.createElement('p');
+    paragraph.textContent = textValue;
+    excerpt.appendChild(paragraph);
+    body.appendChild(excerpt);
+  }
+
+  const featureList = Array.isArray(features)
+    ? features.map((feature) => trimText(feature)).filter(Boolean)
+    : [];
+  const huntSection = document.createElement('section');
+  huntSection.className = 'feature-section';
+  const huntHeading = document.createElement('h3');
+  huntHeading.textContent = 'Hunt for';
+  huntSection.appendChild(huntHeading);
+  if (featureList.length) {
+    const list = document.createElement('ul');
+    list.className = 'feature-targets';
+    featureList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    huntSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List two features learners should highlight.';
+    huntSection.appendChild(placeholder);
+  }
+  body.appendChild(huntSection);
+
+  const reflectionList = Array.isArray(reflection)
+    ? reflection.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (reflectionList.length) {
+    const reflectionSection = document.createElement('section');
+    reflectionSection.className = 'feature-section';
+    const reflectionHeading = document.createElement('h3');
+    reflectionHeading.textContent = 'Reflect together';
+    reflectionSection.appendChild(reflectionHeading);
+    const list = document.createElement('ul');
+    list.className = 'feature-reflection';
+    reflectionList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    reflectionSection.appendChild(list);
+    body.appendChild(reflectionSection);
+  }
+
+  return slide;
+}
+
+function createTextReconstructionSlide({
+  title = 'Text reconstruction',
+  context = '',
+  steps = [],
+  segments = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('text-reconstruction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header reconstruction-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Text reconstruction';
+  header.appendChild(heading);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'reconstruction-context';
+    contextEl.textContent = contextText;
+    header.appendChild(contextEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'reconstruction-body';
+  inner.appendChild(body);
+
+  const stepsList = Array.isArray(steps)
+    ? steps.map((step) => trimText(step)).filter(Boolean)
+    : [];
+  const stepsSection = document.createElement('section');
+  stepsSection.className = 'reconstruction-section';
+  const stepsHeading = document.createElement('h3');
+  stepsHeading.textContent = 'Follow these steps';
+  stepsSection.appendChild(stepsHeading);
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'reconstruction-steps';
+    stepsList.forEach((step) => {
+      const item = document.createElement('li');
+      item.textContent = step;
+      list.appendChild(item);
+    });
+    stepsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the routine learners should follow.';
+    stepsSection.appendChild(placeholder);
+  }
+  body.appendChild(stepsSection);
+
+  const segmentList = Array.isArray(segments)
+    ? segments.map((segment) => trimText(segment)).filter(Boolean)
+    : [];
+  const segmentsSection = document.createElement('section');
+  segmentsSection.className = 'reconstruction-section';
+  const segmentsHeading = document.createElement('h3');
+  segmentsHeading.textContent = 'Sentence strips';
+  segmentsSection.appendChild(segmentsHeading);
+  if (segmentList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reconstruction-segments';
+    segmentList.forEach((segment, index) => {
+      const item = document.createElement('li');
+      const badge = document.createElement('span');
+      badge.className = 'reconstruction-badge';
+      badge.textContent = index + 1;
+      item.appendChild(badge);
+      const text = document.createElement('p');
+      text.textContent = segment;
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    segmentsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Paste the strips or clues learners will reorder.';
+    segmentsSection.appendChild(placeholder);
+  }
+  body.appendChild(segmentsSection);
+
+  return slide;
+}
+
+function createJumbledTextSequencingSlide({
+  title = 'Sequence the text',
+  instructions = '',
+  segments = [],
+  supportTips = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('jumbled-text-sequencing', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header sequencing-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Sequence the text';
+  header.appendChild(heading);
+
+  const instructionsText = trimText(instructions);
+  if (instructionsText) {
+    const instructionsEl = document.createElement('p');
+    instructionsEl.className = 'sequencing-instructions';
+    instructionsEl.textContent = instructionsText;
+    header.appendChild(instructionsEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'sequencing-body';
+  inner.appendChild(body);
+
+  const segmentList = Array.isArray(segments)
+    ? segments.map((segment) => trimText(segment)).filter(Boolean)
+    : [];
+  if (segmentList.length) {
+    const list = document.createElement('ol');
+    list.className = 'sequencing-segments';
+    segmentList.forEach((segment) => {
+      const item = document.createElement('li');
+      item.textContent = segment;
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the jumbled statements learners will order.';
+    body.appendChild(placeholder);
+  }
+
+  const supportList = Array.isArray(supportTips)
+    ? supportTips.map((tip) => trimText(tip)).filter(Boolean)
+    : [];
+  if (supportList.length) {
+    const supportSection = document.createElement('section');
+    supportSection.className = 'sequencing-support';
+    const supportHeading = document.createElement('h3');
+    supportHeading.textContent = 'Support tips';
+    supportSection.appendChild(supportHeading);
+    const list = document.createElement('ul');
+    supportList.forEach((tip) => {
+      const item = document.createElement('li');
+      item.textContent = tip;
+      list.appendChild(item);
+    });
+    supportSection.appendChild(list);
+    body.appendChild(supportSection);
+  }
+
+  return slide;
+}
+
+function createScaffoldedJointConstructionSlide({
+  title = 'Scaffolded joint construction',
+  mentorFocus = '',
+  sharedOutcome = '',
+  teacherMoves = [],
+  learnerMoves = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('scaffolded-joint-construction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header joint-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Scaffolded joint construction';
+  header.appendChild(heading);
+
+  if (trimText(mentorFocus) || trimText(sharedOutcome)) {
+    const meta = document.createElement('p');
+    meta.className = 'joint-meta';
+    const mentorText = trimText(mentorFocus);
+    if (mentorText) {
+      const mentorSpan = document.createElement('span');
+      mentorSpan.className = 'joint-mentor';
+      mentorSpan.textContent = mentorText;
+      meta.appendChild(mentorSpan);
+    }
+    const outcomeText = trimText(sharedOutcome);
+    if (outcomeText) {
+      const outcomeSpan = document.createElement('span');
+      outcomeSpan.textContent = outcomeText;
+      meta.appendChild(outcomeSpan);
+    }
+    header.appendChild(meta);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'joint-body';
+  inner.appendChild(body);
+
+  const columns = document.createElement('div');
+  columns.className = 'joint-columns';
+  body.appendChild(columns);
+
+  const teacherList = Array.isArray(teacherMoves)
+    ? teacherMoves.map((move) => trimText(move)).filter(Boolean)
+    : [];
+  const teacherColumn = document.createElement('section');
+  teacherColumn.className = 'joint-column';
+  const teacherHeading = document.createElement('h3');
+  teacherHeading.textContent = 'Teacher moves';
+  teacherColumn.appendChild(teacherHeading);
+  if (teacherList.length) {
+    const list = document.createElement('ul');
+    teacherList.forEach((move) => {
+      const item = document.createElement('li');
+      item.textContent = move;
+      list.appendChild(item);
+    });
+    teacherColumn.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Note how you will model and guide the text.';
+    teacherColumn.appendChild(placeholder);
+  }
+  columns.appendChild(teacherColumn);
+
+  const learnerList = Array.isArray(learnerMoves)
+    ? learnerMoves.map((move) => trimText(move)).filter(Boolean)
+    : [];
+  const learnerColumn = document.createElement('section');
+  learnerColumn.className = 'joint-column';
+  const learnerHeading = document.createElement('h3');
+  learnerHeading.textContent = 'Learner moves';
+  learnerColumn.appendChild(learnerHeading);
+  if (learnerList.length) {
+    const list = document.createElement('ul');
+    learnerList.forEach((move) => {
+      const item = document.createElement('li');
+      item.textContent = move;
+      list.appendChild(item);
+    });
+    learnerColumn.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Describe what learners contribute together.';
+    learnerColumn.appendChild(placeholder);
+  }
+  columns.appendChild(learnerColumn);
+
+  return slide;
+}
+
+function createIndependentConstructionChecklistSlide({
+  title = 'Independent construction',
+  reminder = '',
+  checklist = [],
+  stretchGoals = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('independent-construction-checklist', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header checklist-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Independent construction';
+  header.appendChild(heading);
+
+  const reminderText = trimText(reminder);
+  if (reminderText) {
+    const reminderEl = document.createElement('p');
+    reminderEl.className = 'checklist-reminder';
+    reminderEl.textContent = reminderText;
+    header.appendChild(reminderEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'checklist-body';
+  inner.appendChild(body);
+
+  const checklistItems = Array.isArray(checklist)
+    ? checklist.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  const checklistSection = document.createElement('section');
+  checklistSection.className = 'checklist-section';
+  const checklistHeading = document.createElement('h3');
+  checklistHeading.textContent = 'Before you submit';
+  checklistSection.appendChild(checklistHeading);
+  if (checklistItems.length) {
+    const list = document.createElement('ul');
+    list.className = 'checklist-items';
+    checklistItems.forEach((item) => {
+      const li = document.createElement('li');
+      const icon = document.createElement('span');
+      icon.className = 'checklist-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = '☑';
+      li.appendChild(icon);
+      const text = document.createElement('span');
+      text.textContent = item;
+      li.appendChild(text);
+      list.appendChild(li);
+    });
+    checklistSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List success criteria learners can self-check.';
+    checklistSection.appendChild(placeholder);
+  }
+  body.appendChild(checklistSection);
+
+  const stretchList = Array.isArray(stretchGoals)
+    ? stretchGoals.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (stretchList.length) {
+    const stretchSection = document.createElement('section');
+    stretchSection.className = 'checklist-section';
+    const stretchHeading = document.createElement('h3');
+    stretchHeading.textContent = 'Stretch goals';
+    stretchSection.appendChild(stretchHeading);
+    const list = document.createElement('ul');
+    list.className = 'checklist-stretch';
+    stretchList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    stretchSection.appendChild(list);
+    body.appendChild(stretchSection);
   }
 
   return slide;
@@ -10874,6 +12768,42 @@ function handleBuilderSubmit(event) {
     case 'reflection':
       slide = createReflectionSlide(state.data);
       break;
+    case 'grounding-activity':
+      slide = createGroundingActivitySlide(state.data);
+      break;
+    case 'topic-introduction':
+      slide = createTopicIntroductionSlide(state.data);
+      break;
+    case 'guided-discovery':
+      slide = createGuidedDiscoverySlide(state.data);
+      break;
+    case 'creative-practice':
+      slide = createCreativePracticeSlide(state.data);
+      break;
+    case 'task-divider':
+      slide = createTaskDividerSlide(state.data);
+      break;
+    case 'task-reporting':
+      slide = createTaskReportingSlide(state.data);
+      break;
+    case 'genre-deconstruction':
+      slide = createGenreDeconstructionSlide(state.data);
+      break;
+    case 'linguistic-feature-hunt':
+      slide = createLinguisticFeatureHuntSlide(state.data);
+      break;
+    case 'text-reconstruction':
+      slide = createTextReconstructionSlide(state.data);
+      break;
+    case 'jumbled-text-sequencing':
+      slide = createJumbledTextSequencingSlide(state.data);
+      break;
+    case 'scaffolded-joint-construction':
+      slide = createScaffoldedJointConstructionSlide(state.data);
+      break;
+    case 'independent-construction-checklist':
+      slide = createIndependentConstructionChecklistSlide(state.data);
+      break;
     default:
       showBuilderStatus('Choose a slide layout to continue.', 'error');
       return;
@@ -10953,6 +12883,18 @@ function initialiseActivityBuilderUI() {
       'communicative-task': 'Communicative task layout selected.',
       'pronunciation-focus': 'Pronunciation focus layout selected.',
       reflection: 'Reflection layout selected.',
+      'grounding-activity': 'Grounding activity layout selected.',
+      'topic-introduction': 'Topic introduction layout selected.',
+      'guided-discovery': 'Guided discovery layout selected.',
+      'creative-practice': 'Creative practice layout selected.',
+      'task-divider': 'Task divider layout selected.',
+      'task-reporting': 'Task reporting layout selected.',
+      'genre-deconstruction': 'Genre deconstruction layout selected.',
+      'linguistic-feature-hunt': 'Feature hunt layout selected.',
+      'text-reconstruction': 'Text reconstruction layout selected.',
+      'jumbled-text-sequencing': 'Sequencing layout selected.',
+      'scaffolded-joint-construction': 'Joint construction layout selected.',
+      'independent-construction-checklist': 'Independent checklist layout selected.',
     };
     builderLayoutInputs.forEach((input) => {
       input.addEventListener('change', (event) => {
