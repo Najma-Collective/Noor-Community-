@@ -255,34 +255,48 @@ const moduleCloseBtn = moduleOverlay.querySelector('.module-builder-close');
 const legacyActionsCluster = blankSlide.querySelector('[data-role="blank-actions"]');
 assert.ok(!legacyActionsCluster, 'blank slide should not render the legacy actions cluster');
 
-const canvasInsertTrigger = stageViewport.querySelector('.canvas-insert-trigger');
-const canvasInsertPanel = stageViewport.querySelector('.canvas-insert-panel');
-assert.ok(canvasInsertTrigger instanceof window.HTMLButtonElement, 'canvas insert trigger should render near the stage');
-assert.ok(canvasInsertPanel instanceof window.HTMLElement, 'canvas insert panel should be created');
+const canvasTools = stageViewport.querySelector('[data-role="blank-toolbar"]');
+assert.ok(canvasTools instanceof window.HTMLElement, 'canvas tools toolbar should be present');
+assert.ok(canvasTools.__deckCanvasMenuState, 'canvas tools should initialise menu state');
 
-const ensureInsertPanelOpen = () => {
-  if (!canvasInsertPanel.classList.contains('is-visible')) {
-    canvasInsertTrigger.click();
+const insertTrigger = canvasTools.querySelector('[data-canvas-menu-trigger="insert"]');
+const insertMenu = canvasTools.querySelector('[data-canvas-menu="insert"]');
+assert.ok(insertTrigger instanceof window.HTMLButtonElement, 'insert trigger should render inside the canvas tools');
+assert.ok(insertMenu instanceof window.HTMLElement, 'insert menu container should exist');
+
+const ensureInsertMenuOpen = () => {
+  if (insertMenu.hidden) {
+    insertTrigger.click();
   }
 };
 
-ensureInsertPanelOpen();
-assert.ok(canvasInsertPanel.classList.contains('is-visible'), 'canvas insert panel should toggle into view');
+const expectInsertMenuCollapsed = (message) => {
+  assert.ok(insertMenu.hidden, message);
+  assert.equal(
+    insertTrigger.getAttribute('aria-expanded'),
+    'false',
+    'insert trigger should reflect the collapsed state',
+  );
+  const openMenu = canvasTools.querySelector('[data-canvas-menu]:not([hidden])');
+  assert.equal(openMenu, null, 'no canvas menu should remain expanded when collapsed');
+};
 
 const selectInsertOption = (action) => {
-  ensureInsertPanelOpen();
-  const option = canvasInsertPanel.querySelector(`[data-action="${action}"]`);
-  assert.ok(option instanceof window.HTMLButtonElement, `insert panel should list the ${action} option`);
+  ensureInsertMenuOpen();
+  const option = insertMenu.querySelector(`[data-insert-action="${action}"]`);
+  assert.ok(option instanceof window.HTMLButtonElement, `insert menu should list the ${action} option`);
   option.click();
 };
 
 selectInsertOption('add-textbox');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after adding a textbox');
 let textboxes = Array.from(blankCanvas.querySelectorAll('.textbox'));
 assert.equal(textboxes.length, 1, 'canvas insert overlay should add a textbox to the blank slide');
 
 selectInsertOption('add-table');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after adding a table');
 assert.equal(
   blankCanvas.querySelectorAll('.canvas-table').length,
   1,
@@ -291,6 +305,7 @@ assert.equal(
 
 selectInsertOption('add-mindmap');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after adding a mind map');
 assert.equal(
   blankCanvas.querySelectorAll('.mindmap').length,
   1,
@@ -300,6 +315,7 @@ assert.equal(
 selectInsertOption('add-module');
 await flushTimers();
 await nextFrame();
+expectInsertMenuCollapsed('insert menu should remain hidden while the module overlay is open');
 assert.ok(moduleOverlay.classList.contains('is-visible'), 'module overlay should open when adding a module');
 
 window.dispatchEvent(
@@ -328,10 +344,12 @@ assert.equal(
   'module embed should be inserted onto the canvas',
 );
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close after inserting a module');
+expectInsertMenuCollapsed('insert menu should stay collapsed after completing module insertion');
 
 const initialTextboxCount = textboxes.length;
 selectInsertOption('add-textbox');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after inserting an additional textbox');
 textboxes = Array.from(blankCanvas.querySelectorAll('.textbox'));
 assert.equal(
   textboxes.length,
@@ -341,6 +359,7 @@ assert.equal(
 
 selectInsertOption('add-table');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after inserting an additional table');
 assert.equal(
   blankCanvas.querySelectorAll('.canvas-table').length,
   2,
@@ -349,6 +368,7 @@ assert.equal(
 
 selectInsertOption('add-mindmap');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should stay collapsed when attempting to add a second mind map');
 assert.equal(
   blankCanvas.querySelectorAll('.mindmap').length,
   1,
@@ -358,6 +378,7 @@ assert.equal(
 selectInsertOption('add-module');
 await flushTimers();
 await nextFrame();
+expectInsertMenuCollapsed('insert menu should stay collapsed when launching the module overlay again');
 assert.ok(moduleOverlay.classList.contains('is-visible'), 'insert panel should be able to launch the module overlay');
 moduleCloseBtn.click();
 await flushTimers();
@@ -412,6 +433,7 @@ assert.ok(moduleOnlyCanvas instanceof window.HTMLElement, 'module-only blank sli
 selectInsertOption('add-module');
 await flushTimers();
 await nextFrame();
+expectInsertMenuCollapsed('insert menu should stay collapsed while preparing the module-only slide');
 assert.ok(moduleOverlay.classList.contains('is-visible'), 'module overlay should open when adding a module to an otherwise empty blank slide');
 
 window.dispatchEvent(
@@ -449,9 +471,11 @@ assert.ok(
   !moduleOverlay.classList.contains('is-visible'),
   'module overlay should close after inserting a module onto the new blank slide',
 );
+expectInsertMenuCollapsed('insert menu should stay collapsed after inserting into the module-only slide');
 
 selectInsertOption('add-textbox');
 await flushTimers();
+expectInsertMenuCollapsed('insert menu should close after adding a textbox to the module-only slide');
 
 assert.equal(
   moduleOnlyCanvas.querySelectorAll('.textbox').length,
@@ -466,31 +490,48 @@ assert.equal(
 
 const toolbarHost = document.querySelector('[data-role="blank-toolbar-host"]');
 const toolbar = toolbarHost?.querySelector('[data-role="blank-toolbar"]');
-const toolbarToggle = toolbar?.querySelector('.blank-toolbar-toggle');
 assert.ok(toolbarHost instanceof window.HTMLElement, 'blank toolbar host should be present');
 assert.ok(toolbar instanceof window.HTMLElement, 'blank toolbar container should be present');
-assert.ok(toolbarToggle instanceof window.HTMLButtonElement, 'blank toolbar toggle should exist');
 
-toolbarToggle.click();
+const textboxTrigger = toolbar.querySelector('[data-canvas-menu-trigger="textbox"]');
+const tableTrigger = toolbar.querySelector('[data-canvas-menu-trigger="table"]');
+const mindmapTrigger = toolbar.querySelector('[data-canvas-menu-trigger="mindmap"]');
+const imageTrigger = toolbar.querySelector('[data-canvas-menu-trigger="image"]');
+const textboxMenu = toolbar.querySelector('[data-canvas-menu="textbox"]');
+const tableMenu = toolbar.querySelector('[data-canvas-menu="table"]');
+const mindmapMenu = toolbar.querySelector('[data-canvas-menu="mindmap"]');
+const imageMenu = toolbar.querySelector('[data-canvas-menu="image"]');
+assert.ok(textboxTrigger instanceof window.HTMLButtonElement, 'textbox trigger should exist in the toolbar');
+assert.ok(tableTrigger instanceof window.HTMLButtonElement, 'table trigger should exist in the toolbar');
+assert.ok(mindmapTrigger instanceof window.HTMLButtonElement, 'mind map trigger should exist in the toolbar');
+assert.ok(imageTrigger instanceof window.HTMLButtonElement, 'image trigger should exist in the toolbar');
+assert.ok(textboxMenu instanceof window.HTMLElement, 'textbox menu should be rendered');
+assert.ok(textboxMenu.hidden, 'textbox menu should be collapsed by default');
+assert.ok(tableMenu instanceof window.HTMLElement, 'table menu should be rendered');
+assert.ok(tableMenu.hidden, 'table menu should be collapsed by default');
+assert.ok(mindmapMenu instanceof window.HTMLElement, 'mind map menu should be rendered');
+assert.ok(mindmapMenu.hidden, 'mind map menu should be collapsed by default');
+assert.ok(imageMenu instanceof window.HTMLElement, 'image menu should be rendered');
+assert.ok(imageMenu.hidden, 'image menu should be collapsed by default');
+
+blankCanvas.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
 await flushTimers();
-await nextFrame();
 
 const primaryTextbox = textboxes[0];
 assert.ok(primaryTextbox instanceof window.HTMLElement, 'a textbox should be available for formatting tests');
-primaryTextbox.dispatchEvent(new window.Event('pointerdown', { bubbles: true }));
+assert.ok(textboxTrigger.disabled, 'textbox trigger should be disabled before selecting a textbox');
+primaryTextbox.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
 
 const textboxBody = primaryTextbox.querySelector('.textbox-body');
 assert.ok(textboxBody instanceof window.HTMLElement, 'textbox body should exist');
 textboxBody.textContent = 'Format me nicely';
 textboxBody.focus();
 
-const textboxTab = toolbar.querySelector('[data-tools-target="textbox"]');
-assert.ok(textboxTab instanceof window.HTMLButtonElement, 'textbox tools tab should exist');
-textboxTab.click();
+assert.ok(!textboxTrigger.disabled, 'textbox trigger should enable once a textbox is selected');
+textboxTrigger.click();
 await flushTimers();
-
-const activeTextboxSection = toolbar.querySelector('.blank-toolbar-section[data-tools-for="textbox"][data-active="true"]');
-assert.ok(activeTextboxSection instanceof window.HTMLElement, 'textbox tools section should be active');
+await nextFrame();
+assert.equal(textboxMenu.hidden, false, 'textbox menu should open when the trigger is activated');
 
 const range = document.createRange();
 range.selectNodeContents(textboxBody);
@@ -499,7 +540,7 @@ selection.removeAllRanges();
 selection.addRange(range);
 document.dispatchEvent(new window.Event('selectionchange'));
 
-const boldButton = activeTextboxSection.querySelector('button[data-command="bold"]');
+const boldButton = textboxMenu.querySelector('button[data-command="bold"]');
 assert.ok(boldButton instanceof window.HTMLButtonElement, 'bold formatting control should exist');
 boldButton.click();
 assert.match(
@@ -514,7 +555,7 @@ highlightRange.selectNodeContents(textboxBody);
 selection.addRange(highlightRange);
 document.dispatchEvent(new window.Event('selectionchange'));
 
-const highlightButton = activeTextboxSection.querySelector('button[data-command="highlight"]');
+const highlightButton = textboxMenu.querySelector('button[data-command="highlight"]');
 assert.ok(highlightButton instanceof window.HTMLButtonElement, 'highlight control should exist');
 highlightButton.click();
 assert.ok(
@@ -522,51 +563,50 @@ assert.ok(
   'highlight command should add a highlight wrapper',
 );
 
-const colorSwatch = activeTextboxSection.querySelector('.textbox-color-swatch[data-color="wheat"]');
+const colorSwatch = textboxMenu.querySelector('.textbox-color-swatch[data-color="wheat"]');
 assert.ok(colorSwatch instanceof window.HTMLElement, 'textbox colour swatch should exist');
 colorSwatch.click();
 assert.equal(primaryTextbox.dataset.color, 'wheat', 'colour swatch should update the textbox colour');
 
-const textboxShadowToggle = activeTextboxSection.querySelector('[data-role="textbox-shadow"]');
+const textboxShadowToggle = textboxMenu.querySelector('[data-role="textbox-shadow"]');
 assert.ok(textboxShadowToggle instanceof window.HTMLInputElement, 'textbox shadow toggle should exist');
 textboxShadowToggle.checked = true;
 textboxShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(primaryTextbox.dataset.effect, 'shadow', 'textbox shadow toggle should mark the textbox with a shadow effect');
 
-toolbarToggle.click();
+textboxTrigger.click();
 await flushTimers();
 await nextFrame();
-assert.equal(toolbarToggle.getAttribute('aria-expanded'), 'false', 'toolbar should collapse when toggled closed');
+assert.ok(textboxMenu.hidden, 'textbox menu should collapse when toggled closed');
+assert.ok(!toolbar.classList.contains('menu-open'), 'toolbar should not remain expanded after closing the menu');
+expectInsertMenuCollapsed('closing the textbox menu should leave the insert menu collapsed');
 
 primaryTextbox.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
 assert.equal(
-  toolbarToggle.getAttribute('aria-expanded'),
+  textboxTrigger.getAttribute('aria-expanded'),
   'false',
-  'selecting a textbox should not expand the toolbar automatically',
+  'reselecting a textbox should not reopen the menu automatically',
 );
 
 const canvasTable = blankCanvas.querySelector('.canvas-table');
 assert.ok(canvasTable instanceof window.HTMLElement, 'a table should be present for toolbar regressions');
 canvasTable.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
 assert.equal(
-  toolbarToggle.getAttribute('aria-expanded'),
+  tableTrigger.getAttribute('aria-expanded'),
   'false',
-  'selecting a table should not expand the toolbar automatically',
+  'selecting a table should not open its menu until requested',
 );
+assert.ok(tableMenu.hidden, 'table menu should remain collapsed until its trigger is used');
 
 const mindmapBranch = blankCanvas.querySelector('.mindmap-branch');
 assert.ok(mindmapBranch instanceof window.HTMLElement, 'a mind map branch should be present for toolbar regressions');
 mindmapBranch.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
 assert.equal(
-  toolbarToggle.getAttribute('aria-expanded'),
+  mindmapTrigger.getAttribute('aria-expanded'),
   'false',
-  'selecting a mind map branch should not expand the toolbar automatically',
+  'selecting a mind map branch should not open its menu automatically',
 );
-
-toolbarToggle.click();
-await flushTimers();
-await nextFrame();
-assert.equal(toolbarToggle.getAttribute('aria-expanded'), 'true', 'toolbar should reopen when toggled again');
+assert.ok(mindmapMenu.hidden, 'mind map menu should remain collapsed until its trigger is used');
 
 const imageIngestor = blankCanvas.__deckImageIngestor;
 assert.ok(imageIngestor, 'blank canvas should expose an image ingestion helper');
@@ -587,16 +627,15 @@ assert.ok(
   'ingested image should reside within the canvas',
 );
 
-const imageTab = toolbar.querySelector('[data-tools-target="image"]');
-assert.ok(imageTab instanceof window.HTMLButtonElement, 'image tools tab should exist');
-imageTab.click();
+ingestedImage.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true }));
+assert.ok(!imageTrigger.disabled, 'image trigger should enable after selecting an image');
+imageTrigger.click();
 await flushTimers();
+await nextFrame();
+assert.equal(imageMenu.hidden, false, 'image menu should open when requested');
 
-const imageTools = toolbar.querySelector('.blank-toolbar-section[data-tools-for="image"][data-active="true"]');
-assert.ok(imageTools instanceof window.HTMLElement, 'image tools section should activate for selected images');
-
-const imageShadowToggle = imageTools.querySelector('[data-role="image-shadow"]');
-const imageSizeInput = imageTools.querySelector('[data-role="image-size"]');
+const imageShadowToggle = imageMenu.querySelector('[data-role="image-shadow"]');
+const imageSizeInput = imageMenu.querySelector('[data-role="image-size"]');
 assert.ok(imageShadowToggle instanceof window.HTMLInputElement, 'image shadow toggle should be available');
 assert.ok(imageSizeInput instanceof window.HTMLInputElement, 'image size slider should be rendered');
 
@@ -609,6 +648,12 @@ assert.notEqual(scaledWidth, initialWidth, 'image size control should update the
 imageShadowToggle.checked = true;
 imageShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(ingestedImage.dataset.effect, 'shadow', 'image shadow toggle should annotate the image with a shadow effect');
+
+imageTrigger.click();
+await flushTimers();
+await nextFrame();
+assert.ok(imageMenu.hidden, 'image menu should close after toggling the trigger again');
+expectInsertMenuCollapsed('closing the image menu should not reopen the insert menu');
 
 console.log('All tests passed');
 process.exit(0);
