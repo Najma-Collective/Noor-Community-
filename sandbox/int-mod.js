@@ -771,7 +771,6 @@ class CanvasInsertOverlay {
     this.handlePanelKeydown = this.handlePanelKeydown.bind(this);
     this.handleDocumentPointerDown = this.handleDocumentPointerDown.bind(this);
     this.handleDocumentKeydown = this.handleDocumentKeydown.bind(this);
-    this.handleWindowResize = this.updateAnchorMetrics.bind(this);
     this.renderOptions();
     this.bindEvents();
     this.syncAvailability();
@@ -809,17 +808,11 @@ class CanvasInsertOverlay {
       if (this.toggle?.id) {
         this.menu.setAttribute('aria-labelledby', this.toggle.id);
       }
-      if (!this.menu.hasAttribute('aria-label')) {
-        this.menu.setAttribute('aria-label', 'Canvas tools');
-      }
       this.menu.setAttribute('aria-hidden', 'true');
     }
     document.addEventListener('pointerdown', this.handleDocumentPointerDown);
     document.addEventListener('keydown', this.handleDocumentKeydown);
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', this.handleWindowResize, { passive: true });
-    }
-    this.updateAnchorMetrics();
+    this.updateAnchorWidth();
   }
 
   renderOptions() {
@@ -852,29 +845,13 @@ class CanvasInsertOverlay {
     });
   }
 
-  updateAnchorMetrics() {
-    if (!(this.menu instanceof HTMLElement) || !(this.toggle instanceof HTMLElement)) {
-      return;
-    }
-
-    const anchorWidth = this.toggle.offsetWidth;
-    this.menu.style.setProperty(
-      '--canvas-tools-anchor-width',
-      Number.isFinite(anchorWidth) ? `${Math.max(anchorWidth, 0)}px` : '0px',
-    );
-
-    const stageElement =
-      stageViewport instanceof HTMLElement && stageViewport.isConnected
-        ? stageViewport
-        : this.menu.closest?.('.stage-viewport') ?? document.querySelector('.stage-viewport');
-
-    if (stageElement instanceof HTMLElement) {
-      const toggleRect = this.toggle.getBoundingClientRect();
-      const stageRect = stageElement.getBoundingClientRect();
-      const offsetTop = Math.max(0, toggleRect.bottom - stageRect.top);
-      const offsetRight = Math.max(0, stageRect.right - toggleRect.right);
-      this.menu.style.setProperty('--canvas-tools-offset-top', `${offsetTop}px`);
-      this.menu.style.setProperty('--canvas-tools-offset-right', `${offsetRight}px`);
+  updateAnchorWidth() {
+    if (this.menu instanceof HTMLElement && this.toggle instanceof HTMLElement) {
+      const anchorWidth = this.toggle.offsetWidth;
+      this.menu.style.setProperty(
+        '--canvas-tools-anchor-width',
+        Number.isFinite(anchorWidth) ? `${Math.max(anchorWidth, 0)}px` : '0px',
+      );
     }
   }
 
@@ -1001,7 +978,7 @@ class CanvasInsertOverlay {
       return;
     }
     this.isOpen = true;
-    this.updateAnchorMetrics();
+    this.updateAnchorWidth();
     this.syncVisibility();
     requestAnimationFrame(() => {
       this.focusOption(focus);
@@ -1073,9 +1050,6 @@ class CanvasInsertOverlay {
     }
     document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
     document.removeEventListener('keydown', this.handleDocumentKeydown);
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.handleWindowResize);
-    }
     this.options = [];
     this.activeController = null;
     this.isOpen = false;
@@ -1084,71 +1058,8 @@ class CanvasInsertOverlay {
 }
 
 function ensureCanvasInsertOverlay() {
-  const stageElement =
-    stageViewport instanceof HTMLElement && stageViewport.isConnected
-      ? stageViewport
-      : document.querySelector('.stage-viewport');
-
-  const utilityCluster = ensureStageUtilityCluster();
-
-  let toggle =
-    stageElement?.querySelector('#canvas-tools-toggle') ??
-    document.getElementById('canvas-tools-toggle');
-  let menu =
-    stageElement?.querySelector('#canvas-tools-menu') ??
-    document.getElementById('canvas-tools-menu');
-
-  if (toggle instanceof HTMLButtonElement) {
-    toggle.classList.add('stage-utility-btn');
-    toggle.classList.remove('toolbar-btn', 'tertiary', 'has-caret');
-    const caret = toggle.querySelector('.toolbar-caret');
-    caret?.remove?.();
-    const icon =
-      toggle.querySelector('i.fa-wand-magic-sparkles') ??
-      (() => {
-        const element = document.createElement('i');
-        element.className = 'fa-solid fa-wand-magic-sparkles';
-        return element;
-      })();
-    icon.classList.add('fa-solid', 'fa-wand-magic-sparkles');
-    icon.setAttribute('aria-hidden', 'true');
-    let srLabel = toggle.querySelector('.sr-only');
-    if (!(srLabel instanceof HTMLElement)) {
-      srLabel = document.createElement('span');
-      srLabel.className = 'sr-only';
-    }
-    srLabel.textContent = 'Open canvas tools';
-    toggle.replaceChildren(icon, srLabel);
-    if (utilityCluster instanceof HTMLElement && !utilityCluster.contains(toggle)) {
-      utilityCluster.appendChild(toggle);
-    } else if (stageElement instanceof HTMLElement && !stageElement.contains(toggle)) {
-      stageElement.appendChild(toggle);
-    }
-  }
-
-  if (!(menu instanceof HTMLElement) && stageElement instanceof HTMLElement) {
-    menu = document.createElement('div');
-    menu.id = 'canvas-tools-menu';
-    menu.hidden = true;
-    stageElement.appendChild(menu);
-  }
-
-  if (menu instanceof HTMLElement) {
-    menu.classList.add('canvas-tools-popover');
-    menu.classList.remove('toolbar-dropdown');
-    if (!menu.dataset.role) {
-      menu.dataset.role = 'canvas-tools-menu';
-    }
-    if (stageElement instanceof HTMLElement && menu.parentElement !== stageElement) {
-      stageElement.appendChild(menu);
-    }
-    if (stageElement instanceof HTMLElement && utilityCluster instanceof HTMLElement) {
-      const nextSibling = utilityCluster.nextSibling;
-      if (nextSibling !== menu) {
-        stageElement.insertBefore(menu, nextSibling);
-      }
-    }
-  }
+  const toggle = document.getElementById('canvas-tools-toggle');
+  const menu = document.getElementById('canvas-tools-menu');
 
   if (!(toggle instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) {
     if (canvasInsertOverlay instanceof CanvasInsertOverlay) {
