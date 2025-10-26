@@ -1,25 +1,25 @@
 :root {
-  --sage-950: #1b2218;
-  --sage-900: #273323;
-  --sage-700: #3d4a39;
-  --sage-600: #55644f;
-  --sage-500: #6f7d66;
-  --sage-300: #b9c2b2;
-  --sage-150: #e6ece2;
-  --sage-70: rgba(246, 248, 243, 0.7);
-  --sage-50: #f6f8f3;
-  --cream: #fffaf0;
-  --accent: #ef8354;
-  --accent-soft: rgba(239, 131, 84, 0.12);
+  --sage-950: var(--deep-forest);
+  --sage-900: var(--primary-forest);
+  --sage-700: var(--ink);
+  --sage-600: color-mix(in srgb, var(--ink) 85%, white 15%);
+  --sage-500: var(--ink-muted);
+  --sage-300: var(--border-strong);
+  --sage-150: var(--surface-muted);
+  --sage-70: color-mix(in srgb, var(--surface-muted) 70%, transparent);
+  --sage-50: var(--surface-base);
+  --cream: var(--soft-white);
+  --accent: var(--accent-amber);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
   --error: #d64550;
-  --radius-lg: 18px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --shadow-soft: 0 18px 32px rgba(39, 51, 35, 0.08);
-  --shadow-lift: 0 32px 48px rgba(39, 51, 35, 0.12);
-  --shadow-border: 0 0 0 1px rgba(63, 79, 57, 0.06);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --shadow-soft: var(--shadow-2);
+  --shadow-lift: var(--shadow-3);
+  --shadow-border: 0 0 0 1px var(--border-soft);
   --focus-outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
-  font-family: 'Nunito', 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
 }
 
 html,
@@ -29,8 +29,12 @@ body {
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top right, rgba(239, 131, 84, 0.08), transparent 48%),
-    linear-gradient(160deg, var(--sage-50) 0%, #ffffff 75%);
+  background: radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(160deg, var(--sage-50) 0%, var(--soft-white) 75%);
   color: var(--sage-900);
   min-height: 100dvh;
   display: flex;
@@ -40,6 +44,7 @@ body {
   overflow-y: auto;
   scroll-padding-top: 88px;
   padding-bottom: 3rem;
+  font-family: var(--font-body);
 }
 
 body::before {
@@ -47,8 +52,16 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 20% 15%, rgba(111, 125, 102, 0.12), transparent 45%),
-    radial-gradient(circle at 85% 10%, rgba(239, 131, 84, 0.08), transparent 40%);
+  background: radial-gradient(
+      circle at 20% 15%,
+      color-mix(in srgb, var(--primary-sage) 28%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 10%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 40%
+    );
   opacity: 0.9;
   z-index: -1;
 }
@@ -104,7 +117,7 @@ body::before {
 
 .builder-header h1 {
   margin: 0;
-  font-family: 'Questrial', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
   font-size: 2rem;
 }
@@ -160,7 +173,7 @@ body::before {
   gap: 1.5rem;
   position: relative;
   overflow: visible;
-  border: 1px solid rgba(63, 79, 57, 0.08);
+  border: 1px solid var(--border-soft);
 }
 
 .preview-panel::after {
@@ -168,7 +181,11 @@ body::before {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(160deg, transparent 0%, rgba(239, 131, 84, 0.05) 100%);
+  background: linear-gradient(
+    160deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 14%, transparent) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -205,7 +222,7 @@ body::before {
 .export-header h2 {
   margin: 0;
   font-size: 1.25rem;
-  font-family: 'Questrial', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.01em;
 }
 
@@ -215,15 +232,23 @@ body::before {
   border: 1px solid var(--sage-300);
   border: 1px solid color-mix(in srgb, var(--sage-300) 70%, white);
   overflow: hidden;
-  box-shadow: var(--shadow-border), 0 20px 40px rgba(39, 51, 35, 0.12);
-  background: linear-gradient(135deg, rgba(239, 131, 84, 0.06), transparent 55%);
+  box-shadow: var(--shadow-border), var(--shadow-lift);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    transparent 55%
+  );
 }
 
 .preview-shell::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(239, 131, 84, 0.1), transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 24%, transparent),
+    transparent
+  );
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -258,9 +283,9 @@ body::before {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.9rem;
   line-height: 1.45;
-  background: #101418;
-  color: #f2f5f1;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 12px 24px rgba(16, 20, 24, 0.25);
+  background: var(--surface-overlay-light);
+  color: var(--sage-900);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), var(--shadow-soft);
 }
 
 .ghost-btn {
@@ -309,8 +334,8 @@ body::before {
   padding: 1.5rem 1.75rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(111, 125, 102, 0.18);
+  background: color-mix(in srgb, var(--surface-card) 92%, white);
+  border: 1px solid var(--border-soft);
   margin-bottom: 1.5rem;
 }
 
@@ -322,12 +347,12 @@ body::before {
   place-items: center;
   font-size: 1.8rem;
   color: var(--sage-900);
-  background: rgba(175, 189, 166, 0.2);
+  background: color-mix(in srgb, var(--secondary-sage) 28%, transparent);
 }
 
 .form-hero-copy h2 {
   margin: 0.15rem 0 0.35rem;
-  font-family: 'Questrial', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.01em;
 }
 
@@ -345,28 +370,28 @@ body::before {
 }
 
 .accent-mc .form-hero-icon {
-  background: var(--accent-soft);
-  color: #cf5f31;
+  background: color-mix(in srgb, var(--accent-amber) 24%, transparent);
+  color: color-mix(in srgb, var(--accent-amber) 78%, #1f1400);
 }
 
 .accent-gap .form-hero-icon {
-  background: rgba(126, 162, 205, 0.18);
-  color: #3763a5;
+  background: color-mix(in srgb, var(--accent-sky) 24%, transparent);
+  color: color-mix(in srgb, var(--accent-sky) 80%, #0a2230);
 }
 
 .accent-group .form-hero-icon {
-  background: rgba(145, 196, 175, 0.2);
-  color: #2f7f62;
+  background: color-mix(in srgb, var(--accent-rose) 24%, transparent);
+  color: color-mix(in srgb, var(--accent-rose) 78%, #2b0b08);
 }
 
 .accent-table .form-hero-icon {
-  background: rgba(176, 165, 203, 0.2);
-  color: #5c4f93;
+  background: color-mix(in srgb, var(--accent-lilac) 24%, transparent);
+  color: color-mix(in srgb, var(--accent-lilac) 78%, #141329);
 }
 
 .accent-quiz .form-hero-icon {
-  background: rgba(255, 205, 141, 0.22);
-  color: #c86f1d;
+  background: color-mix(in srgb, var(--primary-sage) 26%, transparent);
+  color: color-mix(in srgb, var(--primary-sage) 85%, #121c12);
 }
 
 .form-grid {
@@ -446,7 +471,7 @@ body::before {
 .section-heading h2 {
   margin: 0;
   font-size: 1.15rem;
-  font-family: 'Questrial', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.01em;
   display: inline-flex;
   align-items: center;
@@ -483,7 +508,7 @@ textarea {
 }
 
 .section-title {
-  font-family: 'Questrial', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.01em;
   font-size: 1.1rem;
   margin: 0;
