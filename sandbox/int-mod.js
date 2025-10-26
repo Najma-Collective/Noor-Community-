@@ -13737,6 +13737,8 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
+  const allowedBuilderLayouts = ['blank-canvas', 'interactive-practice'];
+  const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
       document.querySelectorAll('input[name="slideLayout"]'),
@@ -13746,22 +13748,35 @@ export async function setupInteractiveDeck({
       if (!(input instanceof HTMLInputElement)) {
         return;
       }
-      if (input.value !== 'blank-canvas') {
+      if (!allowedBuilderLayoutSet.has(input.value)) {
         const option = input.closest('.layout-option');
         option?.remove();
-      } else {
-        input.checked = true;
       }
     });
     builderLayoutInputs = builderLayoutInputs.filter(
-      (input) => input instanceof HTMLInputElement && input.value === 'blank-canvas',
+      (input) =>
+        input instanceof HTMLInputElement && allowedBuilderLayoutSet.has(input.value),
     );
+    if (
+      builderLayoutInputs.length &&
+      !builderLayoutInputs.some((input) => input instanceof HTMLInputElement && input.checked)
+    ) {
+      const blankOption = builderLayoutInputs.find(
+        (input) => input instanceof HTMLInputElement && input.value === 'blank-canvas',
+      );
+      if (blankOption instanceof HTMLInputElement) {
+        blankOption.checked = true;
+      }
+    }
   }
   builderLayoutIconInputs = Array.from(
     builderOverlay?.querySelectorAll('.layout-icon-input') ??
       document.querySelectorAll('.layout-icon-input'),
   ).filter(
-    (input) => input instanceof HTMLInputElement && input.dataset.layoutIcon === 'blank-canvas',
+    (input) =>
+      input instanceof HTMLInputElement &&
+      input.dataset.layoutIcon &&
+      allowedBuilderLayoutSet.has(input.dataset.layoutIcon),
   );
   const layoutBlocks = Array.from(
     builderOverlay?.querySelectorAll('[data-layouts]') ??
@@ -13778,21 +13793,22 @@ export async function setupInteractiveDeck({
     if (!layouts.length) {
       return;
     }
-    if (!layouts.includes('blank-canvas')) {
+    const filteredLayouts = layouts.filter((value) => allowedBuilderLayoutSet.has(value));
+    if (!filteredLayouts.length) {
       if (block.querySelector('.image-search')) {
-        block.dataset.layouts = 'blank-canvas';
+        block.dataset.layouts = allowedBuilderLayouts.join(',');
         return;
       }
       block.remove();
       return;
     }
-    block.dataset.layouts = 'blank-canvas';
+    block.dataset.layouts = filteredLayouts.join(',');
   });
   const layoutPickerFieldset =
     builderOverlay?.querySelector('.layout-picker') ??
     document.querySelector('.layout-picker');
   if (layoutPickerFieldset instanceof HTMLElement) {
-    layoutPickerFieldset.dataset.layouts = 'blank-canvas';
+    layoutPickerFieldset.dataset.layouts = allowedBuilderLayouts.join(',');
   }
   if (Array.isArray(builderLayoutIconInputs)) {
     builderLayoutIconInputs.forEach((input) => {
