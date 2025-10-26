@@ -1,13 +1,13 @@
 /* =====================================================================
-   Noor Community Activities — Slide-aligned UI System
-   Shares the Organic Sage visual language used in CSS-slides.
+   Noor Community Activities — Enhanced UI System
+   Refined version of the Organic Sage visual language.
    ===================================================================== */
 
 /* -------------------------------
-   Design tokens
+   Design Tokens
 ----------------------------------*/
 :root {
-  /* Core palette */
+  /* Core Palette */
   --primary-sage: #7a8471;
   --secondary-sage: #9caf88;
   --tertiary-sage: #b8c5a6;
@@ -19,11 +19,9 @@
   --border-sage: rgba(122, 132, 113, 0.2);
   --hover-sage: rgba(156, 175, 136, 0.15);
 
-  /* Extended palette */
+  /* Extended Palette */
   --deep-forest: #3e4a3a;
   --moss: #6e7a67;
-  --fern: #8fa081;
-  --dried-clay: #d9cdb4;
   --amber: #c6aa77;
 
   /* Typography */
@@ -37,7 +35,7 @@
   --step-3:  calc(clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem) + var(--font-size-adjustment));
   --step-4:  calc(clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem) + var(--font-size-adjustment));
 
-  /* Rhythm */
+  /* Rhythm & Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -48,7 +46,7 @@
   --space-8: 2.5rem;
   --space-9: 3rem;
 
-  /* Shape + elevation */
+  /* Shape & Elevation */
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 20px;
@@ -60,18 +58,18 @@
            0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #2f3a2b 15%);
 
   /* Motion */
-  --ease-ambient: cubic-bezier(.2,.8,.2,1);
-  --dur-1: 120ms;
-  --dur-2: 200ms;
-  --dur-3: 320ms;
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+  --transition-fast: 150ms var(--ease-out);
+  --transition-std: 250ms var(--ease-out);
 
   /* Layout */
   --target-min: 44px;
   --container-max: clamp(320px, 92vw, 940px);
+  --container-padding: clamp(1.25rem, 5vw, 3rem);
 }
 
 /* -------------------------------
-   Global reset / mobile stability
+   Global Reset & Base Styles
 ----------------------------------*/
 *,
 *::before,
@@ -80,59 +78,46 @@
 }
 
 html {
-  -webkit-text-size-adjust: 100%; /* iOS font scaling fix */
+  -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   hanging-punctuation: first last;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain; /* Prevent scroll chaining on iOS */
 }
 
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100dvh; /* mobile address bar safe */
+  min-height: 100dvh;
   font-family: var(--font-body);
   font-size: var(--step-0);
   line-height: 1.6;
-  color: var(--forest-shadow);
-  background:
-    radial-gradient(1200px 1200px at -10% -10%, #FFFFFF 0%, transparent 50%),
-    radial-gradient(1200px 1000px at 110% 10%, #FFF8F0 0%, transparent 50%),
-    linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+  color: var(--ink);
+  background: var(--warm-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html { scroll-behavior: smooth; }
-}
-
-/* Better text wrapping on small screens */
 :where(p, h1, h2, h3, h4, h5, h6) {
   text-wrap: pretty;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
+:where(h1, h2, h3) { text-wrap: balance; }
 
-/* Media defaults */
-img, svg, video, canvas, audio, iframe {
+img, svg, video, canvas {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-/* Links */
 a {
   color: var(--primary-sage);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
-  transition: color var(--dur-1) var(--ease-ambient);
+  transition: color var(--transition-fast);
 }
-
-a:hover {
-  color: var(--deep-forest);
-}
-
+a:hover { color: var(--deep-forest); }
 a:focus-visible {
   outline: none;
   border-radius: 6px;
@@ -140,7 +125,6 @@ a:focus-visible {
   color: var(--deep-forest);
 }
 
-/* Utility: hide but readable for screen readers */
 .visually-hidden {
   position: absolute !important;
   height: 1px; width: 1px;
@@ -149,70 +133,75 @@ a:focus-visible {
 }
 
 /* -------------------------------
-   App shell
+   App Shell & Layout
 ----------------------------------*/
 #app-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
   gap: clamp(var(--space-5), 4vw, var(--space-7));
-  padding-block-start: max(clamp(24px, 6vw, 64px), env(safe-area-inset-top));
-  padding-block-end: clamp(48px, 10vw, 96px);
-  padding-inline: clamp(18px, 6vw, 56px);
+  padding-block: max(3vh, env(safe-area-inset-top)) clamp(48px, 10vw, 96px);
+  padding-inline: clamp(1rem, 4vw, 2rem);
   width: 100%;
   min-height: 100dvh;
   background:
-    radial-gradient(1200px 650px at 12% -5%, rgba(156, 175, 136, 0.12) 0%, transparent 65%),
-    radial-gradient(900px 700px at 88% 105%, rgba(90, 107, 82, 0.08) 0%, transparent 70%);
+    radial-gradient(1200px 650px at 12% -5%, rgba(156, 175, 136, 0.12), transparent 65%),
+    radial-gradient(900px 700px at 88% 105%, rgba(90, 107, 82, 0.08), transparent 70%),
+    linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
 }
 
-/* Container gets subtle translucency on capable browsers */
+/* NEW: Header for logos */
+.app-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.app-header img {
+  height: clamp(40px, 10vw, 60px); /* Adjust size as needed */
+  width: auto;
+}
+
 #activity-container {
   width: 100%;
   max-width: var(--container-max);
   display: flex;
   flex-direction: column;
   gap: clamp(var(--space-5), 3vw, var(--space-7));
-  align-items: stretch;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--soft-white) 90%, #ffffff 10%), color-mix(in srgb, var(--warm-cream) 85%, #fff 15%));
-  padding: clamp(24px, 5vw, 48px);
+  background: color-mix(in srgb, var(--soft-white) 80%, transparent);
+  padding: var(--container-padding);
   border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--border-sage) 70%, transparent 30%);
+  border: 1px solid var(--border-sage);
   box-shadow: var(--shadow-2);
   position: relative;
   isolation: isolate;
   scroll-margin-top: var(--space-7);
-  container-type: inline-size; /* enables container queries where supported */
-  transition: box-shadow var(--dur-2) var(--ease-ambient), border-color var(--dur-2) var(--ease-ambient);
+  transition: box-shadow var(--transition-std), border-color var(--transition-std);
 }
 
-@supports (backdrop-filter: blur(6px)) {
+@supports (backdrop-filter: blur(10px)) {
   #activity-container {
-    background: color-mix(in srgb, var(--soft-white) 76%, white 24%);
-    backdrop-filter: blur(6px) saturate(1.02);
+    background: color-mix(in srgb, var(--soft-white) 70%, transparent);
+    backdrop-filter: blur(10px) saturate(1.1);
   }
 }
 
-/* Decorative organic edge glow (soft + subtle) */
 #activity-container::before {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: inherit;
   background:
-    radial-gradient(1200px 200px at 50% -5%, rgba(156,175,136,0.12), transparent 60%),
-    radial-gradient(800px 1000px at 50% 110%, rgba(122,132,113,0.08), transparent 70%);
+    radial-gradient(1000px 150px at 50% -2%, rgba(156,175,136,0.15), transparent 60%);
   z-index: -1;
   pointer-events: none;
 }
 
-/* Hide screens when needed */
 .screen.hidden { display: none !important; }
 
 /* -------------------------------
-   Headings / text
+   Typography
 ----------------------------------*/
 h1 {
   font-family: var(--font-display);
@@ -221,8 +210,7 @@ h1 {
   color: var(--forest-shadow);
   text-align: center;
   line-height: 1.1;
-  margin-block: 0;
-  margin-bottom: var(--space-3);
+  margin: 0 0 var(--space-3);
 }
 
 h2.rubric {
@@ -230,7 +218,7 @@ h2.rubric {
   font-size: var(--step-0);
   font-weight: 600;
   color: var(--secondary-sage);
-  margin: 0 0 var(--space-6) 0;
+  margin: 0 0 var(--space-6);
   text-align: center;
   line-height: 1.5;
   letter-spacing: 0.08em;
@@ -241,7 +229,7 @@ h3 {
   font-family: var(--font-display);
   font-size: var(--step-2);
   color: var(--forest-shadow);
-  margin: var(--space-6) 0 var(--space-3) 0;
+  margin: var(--space-6) 0 var(--space-3);
   letter-spacing: 0.02em;
 }
 
@@ -252,12 +240,8 @@ h3 {
   min-height: var(--target-min);
   padding: 0.75rem clamp(1.2rem, 4vw, 1.75rem);
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--primary-sage) 65%, #ffffff 35%);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--primary-sage) 92%, #ffffff 8%),
-    color-mix(in srgb, var(--primary-sage) 75%, var(--deep-forest) 25%)
-  );
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 65%, #fff 35%);
+  background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest));
   color: #fff;
   font-weight: 700;
   font-size: var(--step-0);
@@ -272,41 +256,29 @@ h3 {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
-  transition:
-    transform var(--dur-1) var(--ease-ambient),
-    box-shadow var(--dur-2) var(--ease-ambient),
-    background var(--dur-2) var(--ease-ambient),
-    border-color var(--dur-2) var(--ease-ambient),
-    opacity var(--dur-1) var(--ease-ambient);
+  transition: transform var(--transition-fast), box-shadow var(--transition-std), background var(--transition-std);
   box-shadow: var(--shadow-1);
 }
 
 .activity-btn:hover {
-  transform: translateY(-1px);
+  transform: scale(1.02);
   box-shadow: var(--shadow-2);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--forest-shadow) 92%, #ffffff 8%),
-    color-mix(in srgb, var(--forest-shadow) 70%, var(--deep-forest) 30%)
-  );
+  background: linear-gradient(180deg, var(--moss), var(--deep-forest));
 }
-
 .activity-btn:active {
-  transform: translateY(0);
+  transform: scale(0.98);
   box-shadow: var(--shadow-1);
 }
-
 .activity-btn:focus-visible {
   outline: none;
   box-shadow: var(--ring), var(--shadow-2);
-  transform: translateY(-1px);
+  transform: scale(1.02);
 }
 
-.activity-btn:disabled,
-.activity-btn[disabled] {
-  background: linear-gradient(180deg, var(--tertiary-sage), color-mix(in srgb, var(--tertiary-sage) 70%, #ffffff 30%));
-  border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #ffffff 20%);
-  color: color-mix(in srgb, #ffffff 85%, var(--soft-white) 15%);
+.activity-btn:disabled {
+  background: var(--tertiary-sage);
+  border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #fff 20%);
+  color: color-mix(in srgb, #fff 85%, var(--soft-white) 15%);
   cursor: not-allowed;
   opacity: 0.85;
   transform: none;
@@ -317,24 +289,17 @@ h3 {
 .activity-btn.secondary {
   background: var(--soft-white);
   color: var(--primary-sage);
-  border-color: color-mix(in srgb, var(--border-sage) 70%, transparent 30%);
+  border-color: var(--border-sage);
   box-shadow: none;
 }
-
 .activity-btn.secondary:hover {
-  background: color-mix(in srgb, var(--soft-white) 70%, var(--hover-sage) 30%);
+  background: var(--hover-sage);
   color: var(--deep-forest);
 }
+.activity-btn.secondary:focus-visible { box-shadow: var(--ring); }
 
-.activity-btn.secondary:focus-visible {
-  outline: none;
-  box-shadow: var(--ring);
-}
-
-/* Button group alignment on small screens */
 .controls {
   margin-top: var(--space-7);
-  text-align: center;
   display: grid;
   width: 100%;
   gap: var(--space-3);
@@ -343,10 +308,9 @@ h3 {
 }
 
 /* -------------------------------
-   Forms / inputs
+   Forms & Inputs
 ----------------------------------*/
 .input-group { margin: var(--space-6) 0; }
-
 .input-group label {
   display: block;
   font-weight: 700;
@@ -365,118 +329,66 @@ select {
   min-height: var(--target-min);
   padding: 0.75rem 1rem;
   border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--border-sage) 80%, transparent 20%);
-  background: linear-gradient(180deg, color-mix(in srgb, #ffffff 90%, var(--warm-cream) 10%), #ffffff);
+  border: 1px solid var(--border-sage);
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%), #fff);
   font-size: var(--step-0);
   font-family: var(--font-body);
   color: var(--ink);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
   appearance: none;
   -webkit-appearance: none;
-  transition: border-color var(--dur-2) var(--ease-ambient), box-shadow var(--dur-2) var(--ease-ambient), background var(--dur-2) var(--ease-ambient);
+  transition: border-color var(--transition-std), box-shadow var(--transition-std), background var(--transition-std);
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: color-mix(in srgb, var(--ink-muted) 60%, #fff 40%);
-  opacity: 0.9;
+input::placeholder, textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.8;
 }
 
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
+input:focus-visible, textarea:focus-visible, select:focus-visible {
   outline: none;
   border-color: var(--secondary-sage);
   box-shadow: var(--ring);
   background: color-mix(in srgb, #fff 92%, var(--warm-cream) 8%);
 }
 
-input:disabled,
-textarea:disabled,
-select:disabled {
-  background: color-mix(in srgb, #fff 85%, var(--warm-cream) 15%);
-  color: var(--ink-muted);
-  cursor: not-allowed;
+/* Custom select arrow */
+.select-wrapper {
+  position: relative;
+}
+select {
+  padding-right: 2.5rem; /* Space for arrow */
+}
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  color: var(--primary-sage);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color var(--transition-std);
+}
+.select-wrapper:has(select:focus-visible)::after {
+  color: var(--deep-forest);
 }
 
-/* Date input caret/tap stability on iOS */
-input[type="date"] {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Textareas */
-textarea {
-  resize: vertical;
-}
-
-/* Accent color for native radios/checkboxes (fallback when custom not active) */
-:root { accent-color: var(--primary-sage); }
-
-/* -------------------------------
-   System Check Screen
-----------------------------------*/
-.system-check-step { margin-bottom: var(--space-7); }
-
-#code-display-area {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-  flex-wrap: wrap; /* safer on mobile */
-}
-
-#generated-code {
-  width: 100%;
-  min-height: 100px;
-  height: 120px;
-  resize: vertical;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--tertiary-sage);
-  background: #fff;
-  color: var(--ink);
-}
-
-#paste-target { margin-top: var(--space-3); }
-
-#paste-success-msg {
-  color: #2E7D32;
-  font-weight: 800;
-  margin-top: var(--space-2);
-}
-
-/* -------------------------------
-   Level Select Screen
-----------------------------------*/
-.level-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-4);
-  margin-top: var(--space-7);
-}
-
-/* Nice tactile card-y buttons inside level grid (opt-in via .activity-btn) */
-.level-buttons .activity-btn {
-  width: 100%;
-}
+textarea { resize: vertical; min-height: 120px; }
 
 /* -------------------------------
    Test Screen
 ----------------------------------*/
 .test-header {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin-bottom: var(--space-4);
   font-weight: 700;
 }
-
 #current-level { color: var(--secondary-sage); }
-#timer { font-size: 1.1rem; color: var(--primary-sage); }
+#timer { font-size: 1.1rem; color: var(--primary-sage); justify-self: end; }
 
 .progress-bar-container {
   width: 100%;
@@ -485,14 +397,12 @@ textarea {
   border-radius: 999px;
   overflow: hidden;
 }
-
 #progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--primary-sage), color-mix(in srgb, var(--secondary-sage) 60%, var(--primary-sage) 40%));
-  transition: width var(--dur-3) var(--ease-ambient);
+  background: linear-gradient(90deg, var(--primary-sage), var(--secondary-sage));
+  transition: width 350ms var(--ease-out);
 }
-
 #progress-text {
   text-align: right;
   font-size: 0.9rem;
@@ -502,33 +412,26 @@ textarea {
 }
 
 .mc-question {
-  padding: clamp(20px, 4vw, 28px);
+  padding: clamp(1.25rem, 4vw, 1.75rem);
   border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, var(--border-sage) 75%, transparent 25%);
-  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, #ffffff 90%, var(--warm-cream) 10%));
+  border: 1px solid var(--border-sage);
+  background: linear-gradient(180deg, #fff, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%));
   box-shadow: var(--shadow-1);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
-
-.mc-question-header { margin-bottom: var(--space-4); }
-
 .mc-question-text {
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--step-1);
   color: var(--forest-shadow);
   line-height: 1.45;
+  margin-bottom: var(--space-5);
 }
-
-/* Options */
 .mc-options-container {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.mc-option-item input { display: none; }
+.mc-option-item input { display: none; } /* Hide native radio/checkbox */
 
 .mc-option-label {
   display: flex;
@@ -537,84 +440,55 @@ textarea {
   cursor: pointer;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
-  border: 1px solid color-mix(in srgb, var(--border-sage) 70%, transparent 30%);
-  transition:
-    background-color var(--dur-2) var(--ease-ambient),
-    border-color var(--dur-2) var(--ease-ambient),
-    transform var(--dur-1) var(--ease-ambient),
-    box-shadow var(--dur-2) var(--ease-ambient);
+  border: 1px solid var(--border-sage);
+  background: color-mix(in srgb, var(--soft-white) 92%, #fff 8%);
+  transition: background-color var(--transition-std), border-color var(--transition-std), box-shadow var(--transition-std);
   -webkit-tap-highlight-color: transparent;
-  background: color-mix(in srgb, var(--soft-white) 92%, #ffffff 8%);
 }
-
 .mc-option-label:hover {
-  background: color-mix(in srgb, var(--soft-white) 75%, var(--hover-sage) 25%);
+  background: var(--hover-sage);
+  border-color: color-mix(in srgb, var(--secondary-sage) 50%, transparent);
 }
 
-.mc-option-item .option-control {
+.mc-option-label .option-control {
   flex-shrink: 0;
-  inline-size: 24px;
-  block-size: 24px;
+  width: 24px;
+  height: 24px;
   border: 2px solid var(--tertiary-sage);
   background-color: var(--soft-white);
-  transition: all var(--dur-2) var(--ease-ambient);
+  transition: all var(--transition-std);
   position: relative;
   border-radius: 50%;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
-.mc-option-item input[type="radio"]:checked + .option-control,
-.mc-option-item input[type="checkbox"]:checked + .option-control {
+.mc-option-item input:checked + .option-control {
   border-color: var(--primary-sage);
+  background-color: var(--primary-sage);
 }
-
-.mc-option-item input[type="radio"]:checked + .option-control::after {
+.mc-option-item input:checked + .option-control::after {
   content: '';
   position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-  width: 14px;
-  height: 14px;
+  inset: 4px;
   border-radius: 50%;
-  background-color: var(--primary-sage);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+  background-color: #fff;
 }
 
-.mc-option-item input[type="checkbox"]:checked + .option-control::after {
-  content: '\2713';
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -60%);
-  font-size: 0.95rem;
-  color: #fff;
-}
-
-.mc-option-text {
-  color: var(--forest-shadow);
-  line-height: 1.45;
-  font-size: var(--step-0);
-}
-
-.mc-option-item input[type="radio"]:focus-visible + .option-control,
-.mc-option-item input[type="checkbox"]:focus-visible + .option-control,
-.mc-option-label:focus-visible,
+.mc-option-item input:focus-visible + .option-control,
 .mc-option-label:focus-within {
   outline: none;
   box-shadow: var(--ring);
 }
 
-.mc-option-item input:checked ~ .mc-option-text {
-  color: var(--primary-sage);
-  font-weight: 700;
-}
-
 .mc-option-label:has(input:checked) {
-  border-color: color-mix(in srgb, var(--primary-sage) 65%, transparent 35%);
-  background: color-mix(in srgb, var(--hover-sage) 25%, #ffffff 75%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-sage) 25%, transparent 75%);
+  border-color: var(--primary-sage);
+  background: color-mix(in srgb, var(--hover-sage) 30%, #fff 70%);
+}
+.mc-option-label:has(input:checked) .mc-option-text {
+  color: var(--deep-forest);
+  font-weight: 600;
 }
 
-/* Slide controls */
 .mc-slide-student-controls {
   margin-top: var(--space-7);
   display: flex;
@@ -624,125 +498,27 @@ textarea {
 }
 
 /* -------------------------------
-   Submission Screen
+   Responsive Breakpoints
 ----------------------------------*/
-.submission-steps { margin-top: var(--space-7); }
-
-#submission-code {
-  width: 100%;
-  height: 260px;
-  box-sizing: border-box;
-  margin: var(--space-3) 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 0.95rem;
-  padding: 12px 14px;
-  border: 1px solid var(--tertiary-sage);
-  border-radius: 10px;
-  background: #fff;
-  color: var(--ink);
-}
-
-#copy-submission-btn { margin-bottom: var(--space-6); }
-
-/* -------------------------------
-   Responsive / container queries
-----------------------------------*/
-
-/* Small screens default (mobile-first) already applied above */
-
-/* Narrow phones ≤ 360px: tighten paddings slightly */
-@media (max-width: 360px) {
-  #activity-container { padding: clamp(18px, 8vw, 22px); }
-  .activity-btn { padding-inline: clamp(14px, 6vw, 18px); }
-}
-
-/* Tablets and up */
 @media (min-width: 768px) {
-  #app-wrapper {
-    padding-inline: clamp(56px, 8vw, 120px);
-    gap: clamp(var(--space-6), 4vw, var(--space-8));
-  }
-
-  #activity-container {
-    padding: clamp(32px, 5vw, 56px);
-  }
-
   .controls {
     grid-auto-flow: column;
     justify-content: center;
-    justify-items: center;
   }
-
   .test-header {
     grid-template-columns: 1fr auto auto;
   }
 }
 
-/* Desktops */
 @media (min-width: 1024px) {
   #activity-container {
     box-shadow: var(--shadow-3);
   }
-
-  h1 {
-    letter-spacing: 0.05em;
-  }
-}
-
-/* Container-aware tweaks (progressive enhancement) */
-@container (min-width: 520px) {
-  .mc-question { padding: clamp(24px, 4vw, 32px); }
-  .mc-option-label { padding: 0.85rem 1.2rem; }
-}
-
-@container (min-width: 760px) {
-  h1 { font-size: clamp(2rem, 2.2vw + 1rem, 2.75rem); }
-  .mc-question-text { font-size: clamp(1.1rem, 0.6vw + 0.9rem, 1.35rem); }
+  h1 { letter-spacing: 0.05em; }
 }
 
 /* -------------------------------
-   Accessibility / motion / scroll
-----------------------------------*/
-:focus-visible {
-  outline: none;
-  box-shadow: var(--ring);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-::selection {
-  background: color-mix(in srgb, var(--secondary-sage) 30%, #fff 70%);
-  color: var(--deep-forest);
-}
-
-/* Prevent overscroll chaining on iOS */
-html, body { overscroll-behavior-y: none; }
-
-/* -------------------------------
-   Scrollbars (subtle, optional)
-----------------------------------*/
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--primary-sage) 50%, var(--tertiary-sage) 50%);
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* -------------------------------
-   Dark mode (gentle, earthy)
+   Dark Mode
 ----------------------------------*/
 @media (prefers-color-scheme: dark) {
   :root {
@@ -751,37 +527,37 @@ html, body { overscroll-behavior-y: none; }
     --forest-shadow: #DDE6D4;
     --ink: #E9EFE5;
     --ink-muted: #AEB9AA;
-    --border-sage: rgba(184, 197, 166, 0.25);
+    --border-sage: rgba(184, 197, 166, 0.2);
+    --hover-sage: rgba(184, 197, 166, 0.1);
   }
 
-  html, body {
+  body {
     background:
       radial-gradient(1100px 900px at 15% 10%, rgba(156,175,136,0.06), transparent 60%),
-      radial-gradient(900px 900px at 85% 90%, rgba(122,132,113,0.08), transparent 65%),
       linear-gradient(135deg, #191D18 0%, #1B1E19 100%);
   }
 
   #activity-container {
     background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
-    border-color: rgba(184, 197, 166, 0.18);
+    border-color: rgba(184, 197, 166, 0.15);
     box-shadow: 0 12px 36px rgba(0,0,0,0.35);
   }
 
-  a { color: color-mix(in srgb, var(--secondary-sage) 80%, #C7D3C0 20%); }
+  a { color: var(--secondary-sage); }
+  a:hover { color: var(--tertiary-sage); }
 
   .mc-question {
-    background: linear-gradient(180deg, #20241E 0%, #191D18 100%);
-    border-color: rgba(184, 197, 166, 0.20);
+    background: linear-gradient(180deg, #20241E, #191D18);
+    border-color: rgba(184, 197, 166, 0.18);
     box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.35);
   }
 
   .activity-btn {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--primary-sage) 80%, #0F120E 20%), var(--primary-sage));
+    background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest));
     box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 18px rgba(0,0,0,0.35);
   }
-
   .activity-btn:hover {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--forest-shadow) 80%, #0F120E 20%), var(--forest-shadow));
+    background: linear-gradient(180deg, var(--moss), var(--deep-forest));
   }
 
   input, textarea, select {
@@ -789,37 +565,14 @@ html, body { overscroll-behavior-y: none; }
     border-color: rgba(184, 197, 166, 0.25);
     color: var(--ink);
   }
+  input::placeholder, textarea::placeholder { color: var(--ink-muted); }
 
-  #progress-bar {
-    background: linear-gradient(90deg, var(--secondary-sage), color-mix(in srgb, var(--primary-sage) 70%, #000 30%));
+  .activity-btn.secondary {
+    background: #2a2e27;
+    color: var(--tertiary-sage);
   }
-}
-
-/* -------------------------------
-   Original responsive tweaks, refined
-----------------------------------*/
-@media (max-width: 767px) {
-  #app-wrapper {
-    padding: clamp(20px, 6vw, 32px) clamp(16px, 6vw, 28px) clamp(40px, 10vw, 72px);
-    gap: var(--space-5);
-  }
-
-  #activity-container {
-    padding: clamp(20px, 6vw, 32px);
-  }
-
-  h1 {
-    font-size: clamp(1.85rem, 6vw, 2.15rem);
-    letter-spacing: 0.03em;
-  }
-
-  h2.rubric {
-    font-size: var(--step--1);
-    margin-bottom: var(--space-5);
-    letter-spacing: 0.06em;
-  }
-
-  .mc-question-text {
-    font-size: clamp(1.05rem, 3vw, 1.2rem);
+  .activity-btn.secondary:hover {
+    background: var(--hover-sage);
+    color: #fff;
   }
 }
