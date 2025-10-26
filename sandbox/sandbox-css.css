@@ -5740,6 +5740,7 @@ ol {
   background: rgba(255, 255, 255, 0.7);
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
+  white-space: nowrap;
   width: fit-content;
 }
 
