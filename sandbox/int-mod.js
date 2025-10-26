@@ -1159,10 +1159,92 @@ const LAYOUT_ICON_DEFAULTS = {
 const LAYOUT_FIELD_ICON_DEFAULTS = {
   'learning-objectives': {
     learningGoalIcon: 'fa-solid fa-bullseye',
+    learningCommunicativeGoalIcon: 'fa-solid fa-comments',
+  },
+  'model-dialogue': {
+    dialogueInstructionsIcon: 'fa-solid fa-person-chalkboard',
+  },
+  'guided-discovery': {
+    discoveryContextIcon: 'fa-solid fa-circle-info',
+    discoveryPromptsIcon: 'fa-solid fa-list-ul',
+    discoveryNoticingQuestionsIcon: 'fa-solid fa-eye',
+    discoveryLanguageSamplesIcon: 'fa-solid fa-quote-right',
+  },
+  'creative-practice': {
+    creativeBriefIcon: 'fa-solid fa-lightbulb',
+    creativeMaterialsIcon: 'fa-solid fa-toolbox',
+    creativeMakingStepsIcon: 'fa-solid fa-gears',
+    creativeSharingOptionsIcon: 'fa-solid fa-people-arrows',
+  },
+  'interactive-practice': {
+    practiceInstructionsIcon: 'fa-solid fa-clipboard-check',
+    practiceActivityTypeIcon: 'fa-solid fa-shapes',
   },
   'communicative-task': {
     taskPreparationIcon: 'fa-solid fa-list-check',
     taskPerformanceIcon: 'fa-solid fa-people-group',
+    taskScaffoldingIcon: 'fa-solid fa-lightbulb',
+  },
+  'pronunciation-focus': {
+    pronunciationTargetIcon: 'fa-solid fa-wave-square',
+    pronunciationWordsIcon: 'fa-solid fa-font',
+    pronunciationSentencesIcon: 'fa-solid fa-quote-right',
+    pronunciationPracticeIcon: 'fa-solid fa-microphone-lines',
+  },
+  reflection: {
+    reflectionPromptsIcon: 'fa-solid fa-comment-dots',
+  },
+  'grounding-activity': {
+    groundingStepsIcon: 'fa-solid fa-shoe-prints',
+  },
+  'topic-introduction': {
+    topicHookIcon: 'fa-solid fa-hand-pointer',
+    topicContextIcon: 'fa-solid fa-circle-info',
+    topicQuestionIcon: 'fa-solid fa-circle-question',
+    topicKeyVocabularyIcon: 'fa-solid fa-spell-check',
+  },
+  'task-divider': {
+    dividerTimingIcon: 'fa-solid fa-stopwatch',
+    dividerFocusIcon: 'fa-solid fa-bullseye',
+    dividerActionsIcon: 'fa-solid fa-list-check',
+  },
+  'task-reporting': {
+    reportingGoalIcon: 'fa-solid fa-flag-checkered',
+    reportingPromptsIcon: 'fa-solid fa-comments',
+    reportingRolesIcon: 'fa-solid fa-user-group',
+    reportingEvidenceIcon: 'fa-solid fa-magnifying-glass',
+  },
+  'genre-deconstruction': {
+    genreTypeIcon: 'fa-solid fa-book-open',
+    genrePurposeIcon: 'fa-solid fa-bullseye',
+    genreFeaturesIcon: 'fa-solid fa-list',
+    genreMentorTextIcon: 'fa-solid fa-feather',
+  },
+  'linguistic-feature-hunt': {
+    featureSourceTextIcon: 'fa-solid fa-book',
+    featureTargetsIcon: 'fa-solid fa-highlighter',
+    featureReflectionIcon: 'fa-solid fa-lightbulb',
+  },
+  'text-reconstruction': {
+    reconstructionContextIcon: 'fa-solid fa-circle-info',
+    reconstructionStepsIcon: 'fa-solid fa-list-ol',
+    reconstructionSegmentsIcon: 'fa-solid fa-table-columns',
+  },
+  'jumbled-text-sequencing': {
+    sequencingInstructionsIcon: 'fa-solid fa-circle-play',
+    sequencingSegmentsIcon: 'fa-solid fa-bars',
+    sequencingSupportTipsIcon: 'fa-solid fa-lightbulb',
+  },
+  'scaffolded-joint-construction': {
+    jointMentorIcon: 'fa-solid fa-chalkboard-user',
+    jointSharedOutcomeIcon: 'fa-solid fa-people-group',
+    jointTeacherMovesIcon: 'fa-solid fa-person-chalkboard',
+    jointLearnerMovesIcon: 'fa-solid fa-people-line',
+  },
+  'independent-construction-checklist': {
+    checklistReminderIcon: 'fa-solid fa-bell',
+    checklistItemsIcon: 'fa-solid fa-square-check',
+    checklistStretchIcon: 'fa-solid fa-mountain',
   },
 };
 
@@ -1192,6 +1274,10 @@ const BUILDER_LAYOUT_DEFAULTS = {
     ],
     goalIcon: getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon'),
     communicativeGoal: "get to know a new person.",
+    communicativeGoalIcon: getLayoutFieldIconDefault(
+      'learning-objectives',
+      'learningCommunicativeGoalIcon',
+    ),
     imageUrl: "",
     overlayColor: "#152a41",
     overlayOpacity: 40,
@@ -1200,6 +1286,10 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['model-dialogue'],
     title: "Get to know people",
     instructions: "In pairs, identify the two main questions and how the speakers answer them.",
+    instructionsIcon: getLayoutFieldIconDefault(
+      'model-dialogue',
+      'dialogueInstructionsIcon',
+    ),
     imageUrl: "",
     overlayColor: "#283142",
     overlayOpacity: 35,
@@ -1212,8 +1302,16 @@ const BUILDER_LAYOUT_DEFAULTS = {
   "interactive-practice": () => ({
     icon: LAYOUT_ICON_DEFAULTS['interactive-practice'],
     activityType: "Gap Fill",
+    activityTypeIcon: getLayoutFieldIconDefault(
+      'interactive-practice',
+      'practiceActivityTypeIcon',
+    ),
     title: "Practice",
     instructions: "Complete each sentence with the best option.",
+    instructionsIcon: getLayoutFieldIconDefault(
+      'interactive-practice',
+      'practiceInstructionsIcon',
+    ),
     questions: [
       {
         prompt: "I live ____ a flat ___ Ramallah.",
@@ -1237,6 +1335,10 @@ const BUILDER_LAYOUT_DEFAULTS = {
       "B: I live in ____. What do you do?",
       "A: I work as a ____ because ____.",
     ],
+    scaffoldingIcon: getLayoutFieldIconDefault(
+      'communicative-task',
+      'taskScaffoldingIcon',
+    ),
     overlayColor: "#1f2d3a",
     overlayOpacity: 30,
   }),
@@ -1244,9 +1346,25 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['pronunciation-focus'],
     title: "What does /st/ sound like?",
     target: "/st/ sound",
+    targetIcon: getLayoutFieldIconDefault(
+      'pronunciation-focus',
+      'pronunciationTargetIcon',
+    ),
     words: ["student", "study"],
+    wordsIcon: getLayoutFieldIconDefault(
+      'pronunciation-focus',
+      'pronunciationWordsIcon',
+    ),
     sentences: ["Are you a student? ↗", "We start at six o'clock. ↘"],
+    sentencesIcon: getLayoutFieldIconDefault(
+      'pronunciation-focus',
+      'pronunciationSentencesIcon',
+    ),
     practice: "Invite 3-4 learners to say the sentences, then personalise with their own ideas.",
+    practiceIcon: getLayoutFieldIconDefault(
+      'pronunciation-focus',
+      'pronunciationPracticeIcon',
+    ),
     imageUrl: "",
     overlayColor: "#4b1f2c",
     overlayOpacity: 35,
@@ -1255,6 +1373,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS.reflection,
     title: "Reflection",
     prompts: ["A classmate’s name", "A place in Palestine", "A job"],
+    promptsIcon: getLayoutFieldIconDefault('reflection', 'reflectionPromptsIcon'),
     imageUrl: "",
     overlayColor: "#2a3b2c",
     overlayOpacity: 35,
@@ -1268,6 +1387,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
       "Hold gently for two counts, then exhale for six.",
       "Name one thing you can see, hear, and feel right now.",
     ],
+    stepsIcon: getLayoutFieldIconDefault('grounding-activity', 'groundingStepsIcon'),
     imageUrl: "",
     overlayColor: "#10352c",
     overlayOpacity: 45,
@@ -1276,9 +1396,19 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['topic-introduction'],
     title: "Today we explore",
     hook: "What projects build thriving communities?",
+    hookIcon: getLayoutFieldIconDefault('topic-introduction', 'topicHookIcon'),
     context: "Learners will connect the lesson theme to local initiatives.",
+    contextIcon: getLayoutFieldIconDefault('topic-introduction', 'topicContextIcon'),
     essentialQuestion: "How can communities design projects that last?",
+    essentialQuestionIcon: getLayoutFieldIconDefault(
+      'topic-introduction',
+      'topicQuestionIcon',
+    ),
     keyVocabulary: ["sustainable", "stakeholders", "implementation"],
+    keyVocabularyIcon: getLayoutFieldIconDefault(
+      'topic-introduction',
+      'topicKeyVocabularyIcon',
+    ),
     imageUrl: "",
     overlayColor: "#152a41",
     overlayOpacity: 42,
@@ -1287,18 +1417,31 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['guided-discovery'],
     title: "Guided discovery",
     context: "Learners examine a short text and notice language patterns.",
+    contextIcon: getLayoutFieldIconDefault('guided-discovery', 'discoveryContextIcon'),
     discoveryPrompts: [
       "Read the exchange twice. Underline what the speakers are doing.",
       "Circle verbs that come directly after reporting verbs.",
     ],
+    discoveryPromptsIcon: getLayoutFieldIconDefault(
+      'guided-discovery',
+      'discoveryPromptsIcon',
+    ),
     noticingQuestions: [
       "What tense do the reporting verbs take?",
       "How does the writer show uncertainty or hesitation?",
     ],
+    noticingQuestionsIcon: getLayoutFieldIconDefault(
+      'guided-discovery',
+      'discoveryNoticingQuestionsIcon',
+    ),
     sampleLanguage: [
       "They suggested starting with a community survey.",
       "We might consider inviting local youth groups.",
     ],
+    sampleLanguageIcon: getLayoutFieldIconDefault(
+      'guided-discovery',
+      'discoveryLanguageSamplesIcon',
+    ),
     imageUrl: "",
     overlayColor: "#2b293f",
     overlayOpacity: 36,
@@ -1307,15 +1450,28 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['creative-practice'],
     title: "Creative practice",
     brief: "Teams design a solution prototype using the target language.",
+    briefIcon: getLayoutFieldIconDefault('creative-practice', 'creativeBriefIcon'),
     materials: ["Large paper", "Markers", "Sticky notes"],
+    materialsIcon: getLayoutFieldIconDefault(
+      'creative-practice',
+      'creativeMaterialsIcon',
+    ),
     makingSteps: [
       "Sketch your idea and label key features in English.",
       "Write a short pitch sentence using the lesson language.",
     ],
+    makingStepsIcon: getLayoutFieldIconDefault(
+      'creative-practice',
+      'creativeMakingStepsIcon',
+    ),
     sharingOptions: [
       "Gallery walk with peer feedback.",
       "Quick 60-second pitch to another team.",
     ],
+    sharingOptionsIcon: getLayoutFieldIconDefault(
+      'creative-practice',
+      'creativeSharingOptionsIcon',
+    ),
     imageUrl: "",
     overlayColor: "#4b1f2c",
     overlayOpacity: 38,
@@ -1325,11 +1481,14 @@ const BUILDER_LAYOUT_DEFAULTS = {
     title: "Task cycle",
     subtitle: "Before you speak",
     timing: "5 minutes",
+    timingIcon: getLayoutFieldIconDefault('task-divider', 'dividerTimingIcon'),
     focus: "Plan the approach with your partner.",
+    focusIcon: getLayoutFieldIconDefault('task-divider', 'dividerFocusIcon'),
     actions: [
       "Skim the prompt together and clarify unknown words.",
       "Agree on who will start and how you will share the time.",
     ],
+    actionsIcon: getLayoutFieldIconDefault('task-divider', 'dividerActionsIcon'),
     imageUrl: "",
     overlayColor: "#1f2d3a",
     overlayOpacity: 28,
@@ -1338,15 +1497,19 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['task-reporting'],
     title: "Task reporting",
     goal: "Share highlights from your conversations.",
+    goalIcon: getLayoutFieldIconDefault('task-reporting', 'reportingGoalIcon'),
     prompts: [
       "What solution did your partner propose?",
       "Which detail surprised you and why?",
     ],
+    promptsIcon: getLayoutFieldIconDefault('task-reporting', 'reportingPromptsIcon'),
     roles: [
       { label: "Facilitator", value: "Keep the share-out moving and invite quieter voices." },
       { label: "Notetaker", value: "Capture one quote per speaker." },
     ],
+    rolesIcon: getLayoutFieldIconDefault('task-reporting', 'reportingRolesIcon'),
     evidence: ["Summaries on sticky notes", "Group reflection photo"],
+    evidenceIcon: getLayoutFieldIconDefault('task-reporting', 'reportingEvidenceIcon'),
     imageUrl: "",
     overlayColor: "#2a3b2c",
     overlayOpacity: 32,
@@ -1355,13 +1518,17 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['genre-deconstruction'],
     title: "Genre deconstruction",
     genre: "Community proposal email",
+    genreIcon: getLayoutFieldIconDefault('genre-deconstruction', 'genreTypeIcon'),
     purpose: "Notice how writers persuade funders.",
+    purposeIcon: getLayoutFieldIconDefault('genre-deconstruction', 'genrePurposeIcon'),
     features: [
       { label: "Opening move", value: "Warm greeting plus appreciation." },
       { label: "Problem framing", value: "Connect to a specific local need." },
       { label: "Call to action", value: "Invite next steps with a clear ask." },
     ],
+    featuresIcon: getLayoutFieldIconDefault('genre-deconstruction', 'genreFeaturesIcon'),
     mentorText: "Dear team...",
+    mentorTextIcon: getLayoutFieldIconDefault('genre-deconstruction', 'genreMentorTextIcon'),
     imageUrl: "",
     overlayColor: "#3b2b2a",
     overlayOpacity: 30,
@@ -1371,11 +1538,23 @@ const BUILDER_LAYOUT_DEFAULTS = {
     title: "Feature hunt",
     sourceText:
       "When we evaluate proposals, we consider feasibility, sustainability, and community voice.",
+    sourceTextIcon: getLayoutFieldIconDefault(
+      'linguistic-feature-hunt',
+      'featureSourceTextIcon',
+    ),
     features: [
       "Underline hedging phrases (e.g. might, could).",
       "Highlight cause-and-effect connectors.",
     ],
+    featuresIcon: getLayoutFieldIconDefault(
+      'linguistic-feature-hunt',
+      'featureTargetsIcon',
+    ),
     reflection: ["Which feature appears most often?", "How does it shape the tone?"],
+    reflectionIcon: getLayoutFieldIconDefault(
+      'linguistic-feature-hunt',
+      'featureReflectionIcon',
+    ),
     imageUrl: "",
     overlayColor: "#1f2d28",
     overlayOpacity: 24,
@@ -1384,16 +1563,19 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['text-reconstruction'],
     title: "Text reconstruction",
     context: "Pieces of the mentor text are jumbled.",
+    contextIcon: getLayoutFieldIconDefault('text-reconstruction', 'reconstructionContextIcon'),
     steps: [
       "Read each strip aloud once.",
       "Arrange them into a logical order.",
       "Compare with the original for cohesion devices.",
     ],
+    stepsIcon: getLayoutFieldIconDefault('text-reconstruction', 'reconstructionStepsIcon'),
     segments: [
       "First, introduce the challenge the community faces.",
       "Next, propose your solution with supporting evidence.",
       "Finally, invite partners to collaborate on the rollout.",
     ],
+    segmentsIcon: getLayoutFieldIconDefault('text-reconstruction', 'reconstructionSegmentsIcon'),
     imageUrl: "",
     overlayColor: "#263141",
     overlayOpacity: 34,
@@ -1402,15 +1584,27 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['jumbled-text-sequencing'],
     title: "Sequence the jumbled text",
     instructions: "Work in teams to put the statements back into order.",
+    instructionsIcon: getLayoutFieldIconDefault(
+      'jumbled-text-sequencing',
+      'sequencingInstructionsIcon',
+    ),
     segments: [
       "The youth group surveyed families about local needs.",
       "They prioritised safe transport to after-school programmes.",
       "Volunteers mapped routes and scheduled drivers.",
     ],
+    segmentsIcon: getLayoutFieldIconDefault(
+      'jumbled-text-sequencing',
+      'sequencingSegmentsIcon',
+    ),
     supportTips: [
       "Look for time connectives that give clues.",
       "Check pronoun references before finalising.",
     ],
+    supportTipsIcon: getLayoutFieldIconDefault(
+      'jumbled-text-sequencing',
+      'sequencingSupportTipsIcon',
+    ),
     imageUrl: "",
     overlayColor: "#2f233c",
     overlayOpacity: 26,
@@ -1419,15 +1613,31 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['scaffolded-joint-construction'],
     title: "Scaffolded joint construction",
     mentorFocus: "Mentor text: project proposal introduction",
+    mentorFocusIcon: getLayoutFieldIconDefault(
+      'scaffolded-joint-construction',
+      'jointMentorIcon',
+    ),
     sharedOutcome: "Draft the opening paragraph together.",
+    sharedOutcomeIcon: getLayoutFieldIconDefault(
+      'scaffolded-joint-construction',
+      'jointSharedOutcomeIcon',
+    ),
     teacherMoves: [
       "Think aloud to model paragraph planning.",
       "Invite learners to suggest precise vocabulary.",
     ],
+    teacherMovesIcon: getLayoutFieldIconDefault(
+      'scaffolded-joint-construction',
+      'jointTeacherMovesIcon',
+    ),
     learnerMoves: [
       "Offer phrases that mirror the mentor text.",
       "Negotiate sentence order with your group.",
     ],
+    learnerMovesIcon: getLayoutFieldIconDefault(
+      'scaffolded-joint-construction',
+      'jointLearnerMovesIcon',
+    ),
     imageUrl: "",
     overlayColor: "#213329",
     overlayOpacity: 28,
@@ -1436,12 +1646,24 @@ const BUILDER_LAYOUT_DEFAULTS = {
     icon: LAYOUT_ICON_DEFAULTS['independent-construction-checklist'],
     title: "Independent construction",
     reminder: "Use the checklist while drafting your text.",
+    reminderIcon: getLayoutFieldIconDefault(
+      'independent-construction-checklist',
+      'checklistReminderIcon',
+    ),
     checklist: [
       "State the community challenge clearly.",
       "Reference at least one stakeholder perspective.",
       "Close with a hopeful call to action.",
     ],
+    checklistIcon: getLayoutFieldIconDefault(
+      'independent-construction-checklist',
+      'checklistItemsIcon',
+    ),
     stretchGoals: ["Add a compelling statistic.", "Include a direct learner quote."],
+    stretchGoalsIcon: getLayoutFieldIconDefault(
+      'independent-construction-checklist',
+      'checklistStretchIcon',
+    ),
     imageUrl: "",
     overlayColor: "#2a2f27",
     overlayOpacity: 22,
@@ -7735,18 +7957,22 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'learningGoalThree',
       'learningGoalIcon',
       'learningCommunicativeGoal',
+      'learningCommunicativeGoalIcon',
       'learningImageUrl',
       'learningOverlayColor',
       'learningOverlayOpacity',
       'dialogueTitle',
       'dialogueInstructions',
+      'dialogueInstructionsIcon',
       'dialogueImageUrl',
       'dialogueOverlayColor',
       'dialogueOverlayOpacity',
       'dialogueAudioUrl',
       'practiceTitle',
       'practiceInstructions',
+      'practiceInstructionsIcon',
       'practiceActivityType',
+      'practiceActivityTypeIcon',
       'taskTitle',
       'taskImageUrl',
       'taskOverlayColor',
@@ -7756,13 +7982,18 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'taskPerformanceIcon',
       'taskPerformance',
       'taskScaffolding',
+      'taskScaffoldingIcon',
       'pronunciationTitle',
       'pronunciationTarget',
+      'pronunciationTargetIcon',
       'pronunciationWordOne',
       'pronunciationWordTwo',
+      'pronunciationWordsIcon',
       'pronunciationSentenceOne',
       'pronunciationSentenceTwo',
+      'pronunciationSentencesIcon',
       'pronunciationPractice',
+      'pronunciationPracticeIcon',
       'pronunciationImageUrl',
       'pronunciationOverlayColor',
       'pronunciationOverlayOpacity',
@@ -7770,96 +8001,137 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'reflectionPromptOne',
       'reflectionPromptTwo',
       'reflectionPromptThree',
+      'reflectionPromptsIcon',
       'reflectionImageUrl',
       'reflectionOverlayColor',
       'reflectionOverlayOpacity',
       'groundingTitle',
       'groundingSubtitle',
       'groundingSteps',
+      'groundingStepsIcon',
       'groundingBackgroundImage',
       'groundingOverlayColor',
       'groundingOverlayOpacity',
       'topicTitle',
       'topicHook',
+      'topicHookIcon',
       'topicContext',
+      'topicContextIcon',
       'topicQuestion',
+      'topicQuestionIcon',
       'topicKeyVocabulary',
+      'topicKeyVocabularyIcon',
       'topicBackgroundImage',
       'topicOverlayColor',
       'topicOverlayOpacity',
       'discoveryTitle',
       'discoveryContext',
+      'discoveryContextIcon',
       'discoveryPrompts',
+      'discoveryPromptsIcon',
       'discoveryNoticingQuestions',
+      'discoveryNoticingQuestionsIcon',
       'discoveryLanguageSamples',
+      'discoveryLanguageSamplesIcon',
       'discoveryBackgroundImage',
       'discoveryOverlayColor',
       'discoveryOverlayOpacity',
       'creativeTitle',
       'creativeBrief',
+      'creativeBriefIcon',
       'creativeMaterials',
+      'creativeMaterialsIcon',
       'creativeMakingSteps',
+      'creativeMakingStepsIcon',
       'creativeSharingOptions',
+      'creativeSharingOptionsIcon',
       'creativeBackgroundImage',
       'creativeOverlayColor',
       'creativeOverlayOpacity',
       'dividerTitle',
       'dividerSubtitle',
       'dividerTiming',
+      'dividerTimingIcon',
       'dividerFocus',
+      'dividerFocusIcon',
       'dividerActions',
+      'dividerActionsIcon',
       'dividerBackgroundImage',
       'dividerOverlayColor',
       'dividerOverlayOpacity',
       'reportingTitle',
       'reportingGoal',
+      'reportingGoalIcon',
       'reportingPrompts',
+      'reportingPromptsIcon',
       'reportingRoles',
+      'reportingRolesIcon',
       'reportingEvidence',
+      'reportingEvidenceIcon',
       'reportingBackgroundImage',
       'reportingOverlayColor',
       'reportingOverlayOpacity',
       'genreTitle',
       'genreType',
+      'genreTypeIcon',
       'genrePurpose',
+      'genrePurposeIcon',
       'genreFeatures',
+      'genreFeaturesIcon',
       'genreMentorText',
+      'genreMentorTextIcon',
       'genreBackgroundImage',
       'genreOverlayColor',
       'genreOverlayOpacity',
       'featureTitle',
       'featureSourceText',
+      'featureSourceTextIcon',
       'featureTargets',
+      'featureTargetsIcon',
       'featureReflection',
+      'featureReflectionIcon',
       'featureBackgroundImage',
       'featureOverlayColor',
       'featureOverlayOpacity',
       'reconstructionTitle',
       'reconstructionContext',
+      'reconstructionContextIcon',
       'reconstructionSteps',
+      'reconstructionStepsIcon',
       'reconstructionSegments',
+      'reconstructionSegmentsIcon',
       'reconstructionBackgroundImage',
       'reconstructionOverlayColor',
       'reconstructionOverlayOpacity',
       'sequencingTitle',
       'sequencingInstructions',
+      'sequencingInstructionsIcon',
       'sequencingSegments',
+      'sequencingSegmentsIcon',
       'sequencingSupportTips',
+      'sequencingSupportTipsIcon',
       'sequencingBackgroundImage',
       'sequencingOverlayColor',
       'sequencingOverlayOpacity',
       'jointTitle',
       'jointMentor',
+      'jointMentorIcon',
       'jointSharedOutcome',
+      'jointSharedOutcomeIcon',
       'jointTeacherMoves',
+      'jointTeacherMovesIcon',
       'jointLearnerMoves',
+      'jointLearnerMovesIcon',
       'jointBackgroundImage',
       'jointOverlayColor',
       'jointOverlayOpacity',
       'checklistTitle',
       'checklistReminder',
+      'checklistReminderIcon',
       'checklistItems',
+      'checklistItemsIcon',
       'checklistStretch',
+      'checklistStretchIcon',
       'checklistBackgroundImage',
       'checklistOverlayColor',
       'checklistOverlayOpacity',
@@ -7887,6 +8159,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('learningGoalThree', goals[2] ?? '');
       setIconField('learningGoalIcon', 'learning-objectives', defaults.goalIcon);
       setFieldValue('learningCommunicativeGoal', defaults.communicativeGoal ?? '');
+      setIconField(
+        'learningCommunicativeGoalIcon',
+        'learning-objectives',
+        defaults.communicativeGoalIcon,
+      );
       setFieldValue('learningImageUrl', defaults.imageUrl ?? '');
       setFieldValue('learningOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7898,6 +8175,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'model-dialogue': {
       setFieldValue('dialogueTitle', defaults.title ?? '');
       setFieldValue('dialogueInstructions', defaults.instructions ?? '');
+      setIconField(
+        'dialogueInstructionsIcon',
+        'model-dialogue',
+        defaults.instructionsIcon,
+      );
       setFieldValue('dialogueImageUrl', defaults.imageUrl ?? '');
       setFieldValue('dialogueOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7911,7 +8193,17 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'interactive-practice': {
       setFieldValue('practiceTitle', defaults.title ?? '');
       setFieldValue('practiceInstructions', defaults.instructions ?? '');
+      setIconField(
+        'practiceInstructionsIcon',
+        'interactive-practice',
+        defaults.instructionsIcon,
+      );
       setFieldValue('practiceActivityType', defaults.activityType ?? '');
+      setIconField(
+        'practiceActivityTypeIcon',
+        'interactive-practice',
+        defaults.activityTypeIcon,
+      );
       resetPracticeList(defaults.questions);
       break;
     }
@@ -7933,18 +8225,35 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
           ? defaults.scaffolding.join('\n')
           : defaults.scaffolding ?? '',
       );
+      setIconField('taskScaffoldingIcon', 'communicative-task', defaults.scaffoldingIcon);
       break;
     }
     case 'pronunciation-focus': {
       setFieldValue('pronunciationTitle', defaults.title ?? '');
       setFieldValue('pronunciationTarget', defaults.target ?? '');
+      setIconField(
+        'pronunciationTargetIcon',
+        'pronunciation-focus',
+        defaults.targetIcon,
+      );
       const words = Array.isArray(defaults.words) ? defaults.words : [];
       setFieldValue('pronunciationWordOne', words[0] ?? '');
       setFieldValue('pronunciationWordTwo', words[1] ?? '');
+      setIconField('pronunciationWordsIcon', 'pronunciation-focus', defaults.wordsIcon);
       const sentences = Array.isArray(defaults.sentences) ? defaults.sentences : [];
       setFieldValue('pronunciationSentenceOne', sentences[0] ?? '');
       setFieldValue('pronunciationSentenceTwo', sentences[1] ?? '');
+      setIconField(
+        'pronunciationSentencesIcon',
+        'pronunciation-focus',
+        defaults.sentencesIcon,
+      );
       setFieldValue('pronunciationPractice', defaults.practice ?? '');
+      setIconField(
+        'pronunciationPracticeIcon',
+        'pronunciation-focus',
+        defaults.practiceIcon,
+      );
       setFieldValue('pronunciationImageUrl', defaults.imageUrl ?? '');
       setFieldValue('pronunciationOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7959,6 +8268,7 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('reflectionPromptOne', prompts[0] ?? '');
       setFieldValue('reflectionPromptTwo', prompts[1] ?? '');
       setFieldValue('reflectionPromptThree', prompts[2] ?? '');
+      setIconField('reflectionPromptsIcon', 'reflection', defaults.promptsIcon);
       setFieldValue('reflectionImageUrl', defaults.imageUrl ?? '');
       setFieldValue('reflectionOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7971,6 +8281,7 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('groundingTitle', defaults.title ?? '');
       setFieldValue('groundingSubtitle', defaults.subtitle ?? '');
       setFieldValue('groundingSteps', joinMultiline(defaults.steps));
+      setIconField('groundingStepsIcon', 'grounding-activity', defaults.stepsIcon);
       setFieldValue('groundingBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('groundingOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7982,9 +8293,21 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'topic-introduction': {
       setFieldValue('topicTitle', defaults.title ?? '');
       setFieldValue('topicHook', defaults.hook ?? '');
+      setIconField('topicHookIcon', 'topic-introduction', defaults.hookIcon);
       setFieldValue('topicContext', defaults.context ?? '');
+      setIconField('topicContextIcon', 'topic-introduction', defaults.contextIcon);
       setFieldValue('topicQuestion', defaults.essentialQuestion ?? '');
+      setIconField(
+        'topicQuestionIcon',
+        'topic-introduction',
+        defaults.essentialQuestionIcon,
+      );
       setFieldValue('topicKeyVocabulary', joinMultiline(defaults.keyVocabulary));
+      setIconField(
+        'topicKeyVocabularyIcon',
+        'topic-introduction',
+        defaults.keyVocabularyIcon,
+      );
       setFieldValue('topicBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('topicOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -7996,14 +8319,30 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'guided-discovery': {
       setFieldValue('discoveryTitle', defaults.title ?? '');
       setFieldValue('discoveryContext', defaults.context ?? '');
+      setIconField('discoveryContextIcon', 'guided-discovery', defaults.contextIcon);
       setFieldValue('discoveryPrompts', joinMultiline(defaults.discoveryPrompts));
+      setIconField(
+        'discoveryPromptsIcon',
+        'guided-discovery',
+        defaults.discoveryPromptsIcon,
+      );
       setFieldValue(
         'discoveryNoticingQuestions',
         joinMultiline(defaults.noticingQuestions),
       );
+      setIconField(
+        'discoveryNoticingQuestionsIcon',
+        'guided-discovery',
+        defaults.noticingQuestionsIcon,
+      );
       setFieldValue(
         'discoveryLanguageSamples',
         joinMultiline(defaults.sampleLanguage),
+      );
+      setIconField(
+        'discoveryLanguageSamplesIcon',
+        'guided-discovery',
+        defaults.sampleLanguageIcon,
       );
       setFieldValue('discoveryBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('discoveryOverlayColor', defaults.overlayColor ?? '');
@@ -8016,11 +8355,19 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'creative-practice': {
       setFieldValue('creativeTitle', defaults.title ?? '');
       setFieldValue('creativeBrief', defaults.brief ?? '');
+      setIconField('creativeBriefIcon', 'creative-practice', defaults.briefIcon);
       setFieldValue('creativeMaterials', joinMultiline(defaults.materials));
+      setIconField('creativeMaterialsIcon', 'creative-practice', defaults.materialsIcon);
       setFieldValue('creativeMakingSteps', joinMultiline(defaults.makingSteps));
+      setIconField('creativeMakingStepsIcon', 'creative-practice', defaults.makingStepsIcon);
       setFieldValue(
         'creativeSharingOptions',
         joinMultiline(defaults.sharingOptions),
+      );
+      setIconField(
+        'creativeSharingOptionsIcon',
+        'creative-practice',
+        defaults.sharingOptionsIcon,
       );
       setFieldValue('creativeBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('creativeOverlayColor', defaults.overlayColor ?? '');
@@ -8034,8 +8381,11 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('dividerTitle', defaults.title ?? '');
       setFieldValue('dividerSubtitle', defaults.subtitle ?? '');
       setFieldValue('dividerTiming', defaults.timing ?? '');
+      setIconField('dividerTimingIcon', 'task-divider', defaults.timingIcon);
       setFieldValue('dividerFocus', defaults.focus ?? '');
+      setIconField('dividerFocusIcon', 'task-divider', defaults.focusIcon);
       setFieldValue('dividerActions', joinMultiline(defaults.actions));
+      setIconField('dividerActionsIcon', 'task-divider', defaults.actionsIcon);
       setFieldValue('dividerBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('dividerOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8047,12 +8397,16 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'task-reporting': {
       setFieldValue('reportingTitle', defaults.title ?? '');
       setFieldValue('reportingGoal', defaults.goal ?? '');
+      setIconField('reportingGoalIcon', 'task-reporting', defaults.goalIcon);
       setFieldValue('reportingPrompts', joinMultiline(defaults.prompts));
+      setIconField('reportingPromptsIcon', 'task-reporting', defaults.promptsIcon);
       setFieldValue(
         'reportingRoles',
         formatKeyValuePairs(defaults.roles, { key: 'label', value: 'value' }),
       );
+      setIconField('reportingRolesIcon', 'task-reporting', defaults.rolesIcon);
       setFieldValue('reportingEvidence', joinMultiline(defaults.evidence));
+      setIconField('reportingEvidenceIcon', 'task-reporting', defaults.evidenceIcon);
       setFieldValue('reportingBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('reportingOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8064,12 +8418,16 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'genre-deconstruction': {
       setFieldValue('genreTitle', defaults.title ?? '');
       setFieldValue('genreType', defaults.genre ?? '');
+      setIconField('genreTypeIcon', 'genre-deconstruction', defaults.genreIcon);
       setFieldValue('genrePurpose', defaults.purpose ?? '');
+      setIconField('genrePurposeIcon', 'genre-deconstruction', defaults.purposeIcon);
       setFieldValue(
         'genreFeatures',
         formatKeyValuePairs(defaults.features, { key: 'label', value: 'value' }),
       );
+      setIconField('genreFeaturesIcon', 'genre-deconstruction', defaults.featuresIcon);
       setFieldValue('genreMentorText', defaults.mentorText ?? '');
+      setIconField('genreMentorTextIcon', 'genre-deconstruction', defaults.mentorTextIcon);
       setFieldValue('genreBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('genreOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8081,8 +8439,19 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'linguistic-feature-hunt': {
       setFieldValue('featureTitle', defaults.title ?? '');
       setFieldValue('featureSourceText', defaults.sourceText ?? '');
+      setIconField(
+        'featureSourceTextIcon',
+        'linguistic-feature-hunt',
+        defaults.sourceTextIcon,
+      );
       setFieldValue('featureTargets', joinMultiline(defaults.features));
+      setIconField('featureTargetsIcon', 'linguistic-feature-hunt', defaults.featuresIcon);
       setFieldValue('featureReflection', joinMultiline(defaults.reflection));
+      setIconField(
+        'featureReflectionIcon',
+        'linguistic-feature-hunt',
+        defaults.reflectionIcon,
+      );
       setFieldValue('featureBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('featureOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8094,8 +8463,23 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'text-reconstruction': {
       setFieldValue('reconstructionTitle', defaults.title ?? '');
       setFieldValue('reconstructionContext', defaults.context ?? '');
+      setIconField(
+        'reconstructionContextIcon',
+        'text-reconstruction',
+        defaults.contextIcon,
+      );
       setFieldValue('reconstructionSteps', joinMultiline(defaults.steps));
+      setIconField(
+        'reconstructionStepsIcon',
+        'text-reconstruction',
+        defaults.stepsIcon,
+      );
       setFieldValue('reconstructionSegments', joinMultiline(defaults.segments));
+      setIconField(
+        'reconstructionSegmentsIcon',
+        'text-reconstruction',
+        defaults.segmentsIcon,
+      );
       setFieldValue('reconstructionBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('reconstructionOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8107,8 +8491,23 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'jumbled-text-sequencing': {
       setFieldValue('sequencingTitle', defaults.title ?? '');
       setFieldValue('sequencingInstructions', defaults.instructions ?? '');
+      setIconField(
+        'sequencingInstructionsIcon',
+        'jumbled-text-sequencing',
+        defaults.instructionsIcon,
+      );
       setFieldValue('sequencingSegments', joinMultiline(defaults.segments));
+      setIconField(
+        'sequencingSegmentsIcon',
+        'jumbled-text-sequencing',
+        defaults.segmentsIcon,
+      );
       setFieldValue('sequencingSupportTips', joinMultiline(defaults.supportTips));
+      setIconField(
+        'sequencingSupportTipsIcon',
+        'jumbled-text-sequencing',
+        defaults.supportTipsIcon,
+      );
       setFieldValue('sequencingBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('sequencingOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8120,9 +8519,25 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'scaffolded-joint-construction': {
       setFieldValue('jointTitle', defaults.title ?? '');
       setFieldValue('jointMentor', defaults.mentorFocus ?? '');
+      setIconField('jointMentorIcon', 'scaffolded-joint-construction', defaults.mentorFocusIcon);
       setFieldValue('jointSharedOutcome', defaults.sharedOutcome ?? '');
+      setIconField(
+        'jointSharedOutcomeIcon',
+        'scaffolded-joint-construction',
+        defaults.sharedOutcomeIcon,
+      );
       setFieldValue('jointTeacherMoves', joinMultiline(defaults.teacherMoves));
+      setIconField(
+        'jointTeacherMovesIcon',
+        'scaffolded-joint-construction',
+        defaults.teacherMovesIcon,
+      );
       setFieldValue('jointLearnerMoves', joinMultiline(defaults.learnerMoves));
+      setIconField(
+        'jointLearnerMovesIcon',
+        'scaffolded-joint-construction',
+        defaults.learnerMovesIcon,
+      );
       setFieldValue('jointBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('jointOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8134,8 +8549,23 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     case 'independent-construction-checklist': {
       setFieldValue('checklistTitle', defaults.title ?? '');
       setFieldValue('checklistReminder', defaults.reminder ?? '');
+      setIconField(
+        'checklistReminderIcon',
+        'independent-construction-checklist',
+        defaults.reminderIcon,
+      );
       setFieldValue('checklistItems', joinMultiline(defaults.checklist));
+      setIconField(
+        'checklistItemsIcon',
+        'independent-construction-checklist',
+        defaults.checklistIcon,
+      );
       setFieldValue('checklistStretch', joinMultiline(defaults.stretchGoals));
+      setIconField(
+        'checklistStretchIcon',
+        'independent-construction-checklist',
+        defaults.stretchGoalsIcon,
+      );
       setFieldValue('checklistBackgroundImage', defaults.imageUrl ?? '');
       setFieldValue('checklistOverlayColor', defaults.overlayColor ?? '');
       setFieldValue(
@@ -8174,6 +8604,11 @@ function getBuilderFormState() {
         'learningGoalIcon',
         formData.get('learningGoalIcon'),
       );
+      const communicativeGoalIcon = resolveLayoutIconField(
+        'learning-objectives',
+        'learningCommunicativeGoalIcon',
+        formData.get('learningCommunicativeGoalIcon'),
+      );
       state.data = {
         title: trimText(formData.get('learningTitle')) || 'Learning Outcomes',
         goals,
@@ -8184,6 +8619,7 @@ function getBuilderFormState() {
           formData.get('learningOverlayOpacity'),
         ),
         goalIcon,
+        communicativeGoalIcon,
         layoutIcon,
       };
       break;
@@ -8200,6 +8636,11 @@ function getBuilderFormState() {
           turns.push({ speaker, line });
         }
       }
+      const instructionsIcon = resolveLayoutIconField(
+        'model-dialogue',
+        'dialogueInstructionsIcon',
+        formData.get('dialogueInstructionsIcon'),
+      );
       state.data = {
         title: trimText(formData.get('dialogueTitle')) || 'Model dialogue',
         instructions: trimText(formData.get('dialogueInstructions')),
@@ -8210,6 +8651,7 @@ function getBuilderFormState() {
         ),
         audioUrl: trimText(formData.get('dialogueAudioUrl')),
         turns,
+        instructionsIcon,
         layoutIcon,
       };
       break;
@@ -8228,11 +8670,23 @@ function getBuilderFormState() {
           questions.push({ prompt, options, answer });
         }
       }
+      const instructionsIcon = resolveLayoutIconField(
+        'interactive-practice',
+        'practiceInstructionsIcon',
+        formData.get('practiceInstructionsIcon'),
+      );
+      const activityTypeIcon = resolveLayoutIconField(
+        'interactive-practice',
+        'practiceActivityTypeIcon',
+        formData.get('practiceActivityTypeIcon'),
+      );
       state.data = {
         activityType: trimText(formData.get('practiceActivityType')),
         title: trimText(formData.get('practiceTitle')) || 'Practice',
         instructions: trimText(formData.get('practiceInstructions')),
         questions,
+        instructionsIcon,
+        activityTypeIcon,
         layoutIcon,
       };
       break;
@@ -8248,6 +8702,11 @@ function getBuilderFormState() {
         'taskPerformanceIcon',
         formData.get('taskPerformanceIcon'),
       );
+      const scaffoldingIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskScaffoldingIcon',
+        formData.get('taskScaffoldingIcon'),
+      );
       state.data = {
         title: trimText(formData.get('taskTitle')) || 'Communicative task',
         imageUrl: trimText(formData.get('taskImageUrl')),
@@ -8260,6 +8719,7 @@ function getBuilderFormState() {
         scaffolding: splitMultiline(formData.get('taskScaffolding')),
         preparationIcon,
         performanceIcon,
+        scaffoldingIcon,
         layoutIcon,
       };
       break;
@@ -8273,6 +8733,26 @@ function getBuilderFormState() {
         trimText(formData.get('pronunciationSentenceOne')),
         trimText(formData.get('pronunciationSentenceTwo')),
       ].filter(Boolean);
+      const targetIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationTargetIcon',
+        formData.get('pronunciationTargetIcon'),
+      );
+      const wordsIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationWordsIcon',
+        formData.get('pronunciationWordsIcon'),
+      );
+      const sentencesIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationSentencesIcon',
+        formData.get('pronunciationSentencesIcon'),
+      );
+      const practiceIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationPracticeIcon',
+        formData.get('pronunciationPracticeIcon'),
+      );
       state.data = {
         title: trimText(formData.get('pronunciationTitle')) || 'Pronunciation focus',
         target: trimText(formData.get('pronunciationTarget')),
@@ -8284,6 +8764,10 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('pronunciationOverlayOpacity'),
         ),
+        targetIcon,
+        wordsIcon,
+        sentencesIcon,
+        practiceIcon,
         layoutIcon,
       };
       break;
@@ -8294,6 +8778,11 @@ function getBuilderFormState() {
         trimText(formData.get('reflectionPromptTwo')),
         trimText(formData.get('reflectionPromptThree')),
       ].filter(Boolean);
+      const promptsIcon = resolveLayoutIconField(
+        'reflection',
+        'reflectionPromptsIcon',
+        formData.get('reflectionPromptsIcon'),
+      );
       state.data = {
         title: trimText(formData.get('reflectionTitle')) || 'Reflection',
         prompts,
@@ -8302,11 +8791,17 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reflectionOverlayOpacity'),
         ),
+        promptsIcon,
         layoutIcon,
       };
       break;
     }
     case 'grounding-activity': {
+      const stepsIcon = resolveLayoutIconField(
+        'grounding-activity',
+        'groundingStepsIcon',
+        formData.get('groundingStepsIcon'),
+      );
       state.data = {
         title: trimText(formData.get('groundingTitle')) || 'Grounding activity',
         subtitle: trimText(formData.get('groundingSubtitle')),
@@ -8316,11 +8811,32 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('groundingOverlayOpacity'),
         ),
+        stepsIcon,
         layoutIcon,
       };
       break;
     }
     case 'topic-introduction': {
+      const hookIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicHookIcon',
+        formData.get('topicHookIcon'),
+      );
+      const contextIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicContextIcon',
+        formData.get('topicContextIcon'),
+      );
+      const essentialQuestionIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicQuestionIcon',
+        formData.get('topicQuestionIcon'),
+      );
+      const keyVocabularyIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicKeyVocabularyIcon',
+        formData.get('topicKeyVocabularyIcon'),
+      );
       state.data = {
         title: trimText(formData.get('topicTitle')) || 'Today we explore',
         hook: trimText(formData.get('topicHook')),
@@ -8332,11 +8848,35 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('topicOverlayOpacity'),
         ),
+        hookIcon,
+        contextIcon,
+        essentialQuestionIcon,
+        keyVocabularyIcon,
         layoutIcon,
       };
       break;
     }
     case 'guided-discovery': {
+      const contextIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryContextIcon',
+        formData.get('discoveryContextIcon'),
+      );
+      const discoveryPromptsIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryPromptsIcon',
+        formData.get('discoveryPromptsIcon'),
+      );
+      const noticingQuestionsIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryNoticingQuestionsIcon',
+        formData.get('discoveryNoticingQuestionsIcon'),
+      );
+      const sampleLanguageIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryLanguageSamplesIcon',
+        formData.get('discoveryLanguageSamplesIcon'),
+      );
       state.data = {
         title: trimText(formData.get('discoveryTitle')) || 'Guided discovery',
         context: trimText(formData.get('discoveryContext')),
@@ -8352,11 +8892,35 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('discoveryOverlayOpacity'),
         ),
+        contextIcon,
+        discoveryPromptsIcon,
+        noticingQuestionsIcon,
+        sampleLanguageIcon,
         layoutIcon,
       };
       break;
     }
     case 'creative-practice': {
+      const briefIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeBriefIcon',
+        formData.get('creativeBriefIcon'),
+      );
+      const materialsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeMaterialsIcon',
+        formData.get('creativeMaterialsIcon'),
+      );
+      const makingStepsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeMakingStepsIcon',
+        formData.get('creativeMakingStepsIcon'),
+      );
+      const sharingOptionsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeSharingOptionsIcon',
+        formData.get('creativeSharingOptionsIcon'),
+      );
       state.data = {
         title: trimText(formData.get('creativeTitle')) || 'Creative practice',
         brief: trimText(formData.get('creativeBrief')),
@@ -8370,11 +8934,30 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('creativeOverlayOpacity'),
         ),
+        briefIcon,
+        materialsIcon,
+        makingStepsIcon,
+        sharingOptionsIcon,
         layoutIcon,
       };
       break;
     }
     case 'task-divider': {
+      const timingIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerTimingIcon',
+        formData.get('dividerTimingIcon'),
+      );
+      const focusIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerFocusIcon',
+        formData.get('dividerFocusIcon'),
+      );
+      const actionsIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerActionsIcon',
+        formData.get('dividerActionsIcon'),
+      );
       state.data = {
         title: trimText(formData.get('dividerTitle')) || 'Task cycle',
         subtitle: trimText(formData.get('dividerSubtitle')),
@@ -8386,6 +8969,9 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('dividerOverlayOpacity'),
         ),
+        timingIcon,
+        focusIcon,
+        actionsIcon,
         layoutIcon,
       };
       break;
@@ -8405,6 +8991,26 @@ function getBuilderFormState() {
         overlayColor: trimText(formData.get('reportingOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reportingOverlayOpacity'),
+        ),
+        goalIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingGoalIcon',
+          formData.get('reportingGoalIcon'),
+        ),
+        promptsIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingPromptsIcon',
+          formData.get('reportingPromptsIcon'),
+        ),
+        rolesIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingRolesIcon',
+          formData.get('reportingRolesIcon'),
+        ),
+        evidenceIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingEvidenceIcon',
+          formData.get('reportingEvidenceIcon'),
         ),
         layoutIcon,
       };
@@ -8426,6 +9032,26 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('genreOverlayOpacity'),
         ),
+        genreIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreTypeIcon',
+          formData.get('genreTypeIcon'),
+        ),
+        purposeIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genrePurposeIcon',
+          formData.get('genrePurposeIcon'),
+        ),
+        featuresIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreFeaturesIcon',
+          formData.get('genreFeaturesIcon'),
+        ),
+        mentorTextIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreMentorTextIcon',
+          formData.get('genreMentorTextIcon'),
+        ),
         layoutIcon,
       };
       break;
@@ -8440,6 +9066,21 @@ function getBuilderFormState() {
         overlayColor: trimText(formData.get('featureOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('featureOverlayOpacity'),
+        ),
+        sourceTextIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureSourceTextIcon',
+          formData.get('featureSourceTextIcon'),
+        ),
+        featuresIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureTargetsIcon',
+          formData.get('featureTargetsIcon'),
+        ),
+        reflectionIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureReflectionIcon',
+          formData.get('featureReflectionIcon'),
         ),
         layoutIcon,
       };
@@ -8456,6 +9097,21 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reconstructionOverlayOpacity'),
         ),
+        contextIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionContextIcon',
+          formData.get('reconstructionContextIcon'),
+        ),
+        stepsIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionStepsIcon',
+          formData.get('reconstructionStepsIcon'),
+        ),
+        segmentsIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionSegmentsIcon',
+          formData.get('reconstructionSegmentsIcon'),
+        ),
         layoutIcon,
       };
       break;
@@ -8470,6 +9126,21 @@ function getBuilderFormState() {
         overlayColor: trimText(formData.get('sequencingOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('sequencingOverlayOpacity'),
+        ),
+        instructionsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingInstructionsIcon',
+          formData.get('sequencingInstructionsIcon'),
+        ),
+        segmentsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingSegmentsIcon',
+          formData.get('sequencingSegmentsIcon'),
+        ),
+        supportTipsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingSupportTipsIcon',
+          formData.get('sequencingSupportTipsIcon'),
         ),
         layoutIcon,
       };
@@ -8487,6 +9158,26 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('jointOverlayOpacity'),
         ),
+        mentorFocusIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointMentorIcon',
+          formData.get('jointMentorIcon'),
+        ),
+        sharedOutcomeIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointSharedOutcomeIcon',
+          formData.get('jointSharedOutcomeIcon'),
+        ),
+        teacherMovesIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointTeacherMovesIcon',
+          formData.get('jointTeacherMovesIcon'),
+        ),
+        learnerMovesIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointLearnerMovesIcon',
+          formData.get('jointLearnerMovesIcon'),
+        ),
         layoutIcon,
       };
       break;
@@ -8501,6 +9192,21 @@ function getBuilderFormState() {
         overlayColor: trimText(formData.get('checklistOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('checklistOverlayOpacity'),
+        ),
+        reminderIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistReminderIcon',
+          formData.get('checklistReminderIcon'),
+        ),
+        checklistIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistItemsIcon',
+          formData.get('checklistItemsIcon'),
+        ),
+        stretchGoalsIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistStretchIcon',
+          formData.get('checklistStretchIcon'),
         ),
         layoutIcon,
       };
