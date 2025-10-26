@@ -5446,6 +5446,27 @@ export function initialiseModuleEmbed(module, { onRemove } = {}) {
   if (!(module instanceof HTMLElement)) {
     return module;
   }
+  const storedConfig = getModuleConfigFromElement(module);
+  if (
+    storedConfig &&
+    typeof storedConfig === "object" &&
+    typeof storedConfig.html === "string" &&
+    storedConfig.html.trim()
+  ) {
+    const frame = module.querySelector(".module-embed-frame");
+    const existingSrcdoc =
+      frame instanceof HTMLIFrameElement && typeof frame.srcdoc === "string"
+        ? frame.srcdoc.trim()
+        : "";
+    if (!existingSrcdoc || existingSrcdoc === MODULE_EMPTY_HTML) {
+      updateModuleEmbedContent(module, {
+        html: storedConfig.html,
+        config: storedConfig,
+        title: storedConfig?.data?.title,
+        activityType: storedConfig?.type,
+      });
+    }
+  }
   module.__deckModuleOnRemove = onRemove ?? module.__deckModuleOnRemove ?? null;
 
   if (typeof module.__deckModuleCleanup === "function") {
