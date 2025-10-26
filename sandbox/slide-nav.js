@@ -10,134 +10,78 @@ export function initSlideNavigator({
     return null;
   }
 
-  const trigger = document.createElement("button");
-  trigger.type = "button";
-  trigger.className = "stage-utility-btn slide-jump-trigger";
-  trigger.innerHTML = `
-    <i class="fa-solid fa-table-list" aria-hidden="true"></i>
-    <span class="sr-only">Open slide navigator</span>
+  const tray = document.createElement("div");
+  tray.className = "slide-nav-tray";
+  tray.dataset.state = "collapsed";
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "slide-nav-toggle";
+  toggle.innerHTML = `
+    <span class="slide-nav-toggle-icon" aria-hidden="true">
+      <i class="fa-solid fa-table-list"></i>
+    </span>
+    <span class="sr-only">Toggle slide navigator</span>
   `;
-  trigger.setAttribute("aria-haspopup", "dialog");
-  trigger.setAttribute("aria-expanded", "false");
+  toggle.setAttribute("aria-expanded", "false");
 
-  const panel = document.createElement("div");
-  panel.className = "slide-jump-panel";
-  panel.setAttribute("role", "dialog");
-  panel.setAttribute("aria-modal", "false");
-  panel.setAttribute("aria-hidden", "true");
-  panel.setAttribute("tabindex", "-1");
+  const panelId = `slide-nav-list-${Math.random().toString(16).slice(2, 8)}`;
+  toggle.setAttribute("aria-controls", panelId);
 
-  const panelId = `slide-jump-panel-${Math.random().toString(16).slice(2, 8)}`;
-  panel.id = panelId;
-  trigger.setAttribute("aria-controls", panelId);
+  const shelf = document.createElement("div");
+  shelf.className = "slide-nav-shelf";
 
-  const titleId = "slide-jump-title";
-  const sectionSelectId = `${titleId}-move-section`;
-  panel.innerHTML = `
-    <div class="slide-jump-header">
-      <h2 id="${titleId}">Jump to a slide</h2>
-      <button type="button" class="slide-jump-close" aria-label="Close slide navigator">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-    <div class="slide-jump-body">
-      <div class="slide-jump-search-group">
-        <label class="sr-only" for="${titleId}-search">Search slides</label>
-        <input
-          type="search"
-          id="${titleId}-search"
-          class="slide-jump-search"
-          placeholder="Search by stage or title"
-        />
-      </div>
-      <p class="slide-jump-status sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
-      <div class="slide-jump-toolbar" data-role="selection-toolbar">
-        <label class="slide-jump-select-all">
-          <input type="checkbox" class="slide-jump-select-all-input" />
-          <span>Select all</span>
-        </label>
-        <span class="slide-jump-toolbar-count" aria-live="polite">No slides selected</span>
-        <div class="slide-jump-toolbar-actions">
-          <button type="button" class="slide-jump-toolbar-btn" data-action="duplicate">
-            <i class="fa-solid fa-clone" aria-hidden="true"></i>
-            <span>Duplicate</span>
-          </button>
-          <button type="button" class="slide-jump-toolbar-btn slide-jump-toolbar-btn--danger" data-action="delete">
-            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-            <span>Delete</span>
-          </button>
-          <div class="slide-jump-move-group">
-            <label class="sr-only" for="${sectionSelectId}">Choose a section</label>
-            <select id="${sectionSelectId}" class="slide-jump-section-select">
-              <option value="" disabled selected>Choose section</option>
-            </select>
-            <button type="button" class="slide-jump-toolbar-btn" data-action="move-section">
-              <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i>
-              <span>Move to section</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <ul class="slide-jump-list"></ul>
-    </div>
-  `;
-  panel.setAttribute("aria-labelledby", titleId);
+  const statusRegion = document.createElement("p");
+  statusRegion.className = "sr-only slide-nav-status";
+  statusRegion.setAttribute("role", "status");
+  statusRegion.setAttribute("aria-live", "polite");
+  statusRegion.setAttribute("aria-atomic", "true");
 
-  const list = panel.querySelector(".slide-jump-list");
-  const closeBtn = panel.querySelector(".slide-jump-close");
-  const searchInput = panel.querySelector(".slide-jump-search");
-  const statusRegion = panel.querySelector(".slide-jump-status");
-  const toolbar = panel.querySelector(".slide-jump-toolbar");
-  const selectAllInput = panel.querySelector(".slide-jump-select-all-input");
-  const selectionCountEl = panel.querySelector(".slide-jump-toolbar-count");
-  const duplicateBtn = panel.querySelector('[data-action="duplicate"]');
-  const deleteBtn = panel.querySelector('[data-action="delete"]');
-  const moveSectionBtn = panel.querySelector('[data-action="move-section"]');
-  const sectionSelect = panel.querySelector(".slide-jump-section-select");
-  const externalStatus = document.getElementById("deck-status");
+  const list = document.createElement("ul");
+  list.className = "slide-nav-list";
+  list.id = panelId;
+  list.setAttribute("role", "list");
 
-  if (
-    !list ||
-    !closeBtn ||
-    !searchInput ||
-    !statusRegion ||
-    !toolbar ||
-    !selectAllInput ||
-    !selectionCountEl ||
-    !duplicateBtn ||
-    !deleteBtn ||
-    !moveSectionBtn ||
-    !sectionSelect
-  ) {
-    return null;
-  }
+  shelf.appendChild(list);
+  shelf.appendChild(statusRegion);
+
+  tray.appendChild(toggle);
+  tray.appendChild(shelf);
+
+  stageViewport.appendChild(tray);
 
   const focusableSelectors = [
-    "a[href]",
     "button:not([disabled])",
-    "input:not([disabled])",
     "select:not([disabled])",
-    "textarea:not([disabled])",
     '[tabindex]:not([tabindex="-1"])',
   ].join(",");
 
-  const RENDER_CHUNK_SIZE = 36;
-  const SEARCH_THROTTLE_MS = 160;
-
-  const announceTargets = [statusRegion, externalStatus].filter(Boolean);
+  const announceTargets = [statusRegion, document.getElementById("deck-status")].filter(
+    Boolean,
+  );
 
   let slidesMeta = [];
-  let filteredSlides = [];
   let availableSections = [];
   let activeIndex = 0;
   let isOpen = false;
-  let searchTerm = "";
-  let renderOffset = 0;
-  let sentinel = null;
-  let chunkObserver = null;
-  let searchTimeout = 0;
 
-  const selectedIndices = new Set();
+  const enforceFocus = (event) => {
+    if (!isOpen) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    if (tray.contains(target)) {
+      return;
+    }
+    const focusables = getFocusableElements();
+    const fallback = focusables[0] ?? toggle;
+    fallback?.focus({ preventScroll: true });
+  };
+
+  tray.__slideNavFocusHandler = enforceFocus;
 
   function announce(message = "") {
     announceTargets.forEach((target) => {
@@ -146,15 +90,12 @@ export function initSlideNavigator({
   }
 
   function getFocusableElements() {
-    return Array.from(panel.querySelectorAll(focusableSelectors)).filter((element) => {
-      if (!(element instanceof HTMLElement)) {
-        return false;
-      }
-      if (element.hasAttribute("disabled")) {
-        return false;
-      }
-      return element.offsetParent !== null || element === document.activeElement;
-    });
+    return Array.from(tray.querySelectorAll(focusableSelectors)).filter(
+      (element) =>
+        element instanceof HTMLElement &&
+        !element.hasAttribute("disabled") &&
+        (element.offsetParent !== null || element === document.activeElement),
+    );
   }
 
   function normaliseThumbnailDescriptor(descriptor) {
@@ -193,165 +134,12 @@ export function initSlideNavigator({
     return null;
   }
 
-  function applyFilter() {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) {
-      filteredSlides = slidesMeta.slice();
-      return;
-    }
-    filteredSlides = slidesMeta.filter(({ stage, title }) => {
-      const stageText = String(stage ?? "").toLowerCase();
-      const titleText = String(title ?? "").toLowerCase();
-      return stageText.includes(term) || titleText.includes(term);
-    });
-  }
-
-  function announceSearchResults() {
-    const total = filteredSlides.length;
-    const term = searchTerm.trim();
-    let message = "";
-    if (total === 0) {
-      message = term
-        ? `No slides match “${term}”.`
-        : "No slides are currently available.";
-    } else {
-      const plural = total === 1 ? "slide" : "slides";
-      message = term
-        ? `Showing ${total} ${plural} for “${term}”.`
-        : `Showing all ${total} ${plural}.`;
-    }
-    announce(message);
-  }
-
-  function focusItemByOffset(currentIndex, offset) {
-    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
-    if (!items.length) {
-      return;
-    }
-    const boundedIndex = ((currentIndex + offset) % items.length + items.length) % items.length;
-    const target = items[boundedIndex];
-    if (target instanceof HTMLElement) {
-      target.focus({ preventScroll: true });
-    }
-  }
-
-  function focusItemAt(index) {
-    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
-    if (!items.length) {
-      return;
-    }
-    const clamped = Math.max(0, Math.min(index, items.length - 1));
-    const target = items[clamped];
-    if (target instanceof HTMLElement) {
-      target.focus({ preventScroll: true });
-    }
-  }
-
-  function applyActiveState() {
-    const items = list.querySelectorAll(".slide-jump-item");
-    items.forEach((item) => {
-      const itemIndex = Number(item.dataset.index);
-      const isActiveItem = itemIndex === activeIndex;
-      item.classList.toggle("is-active", isActiveItem);
-      item.setAttribute("aria-current", isActiveItem ? "true" : "false");
-    });
-  }
-
-  function cleanupVirtualObserver() {
-    if (chunkObserver && sentinel) {
-      chunkObserver.unobserve(sentinel);
-    }
-    chunkObserver = null;
-  }
-
-  function destroySentinel() {
-    if (sentinel) {
-      sentinel.remove();
-      sentinel = null;
-    }
-  }
-
-  function handleSelectionAnnouncement(total) {
-    if (total === 0) {
-      announce("No slides selected.");
-      return;
-    }
-    const plural = total === 1 ? "slide" : "slides";
-    announce(`${total} ${plural} selected.`);
-  }
-
-  function updateToolbarAvailability() {
-    const totalSelected = selectedIndices.size;
-    const hasSelection = totalSelected > 0;
-    const hasDuplicateAction = typeof onDuplicateSlide === "function";
-    const hasDeleteAction = typeof onDeleteSlide === "function";
-    const hasMoveToSection = typeof onMoveSlidesToSection === "function";
-    duplicateBtn.disabled = !hasSelection || !hasDuplicateAction;
-    deleteBtn.disabled = !hasSelection || !hasDeleteAction;
-
-    const hasSectionTarget = Boolean(sectionSelect.value);
-    moveSectionBtn.disabled = !hasSelection || !hasMoveToSection || !hasSectionTarget;
-
-    const filteredIndices = filteredSlides.map((slide) => slide.originalIndex);
-    const selectedInFiltered = filteredIndices.filter((index) => selectedIndices.has(index));
-    if (filteredIndices.length === 0) {
-      selectAllInput.checked = false;
-      selectAllInput.indeterminate = false;
-      selectAllInput.disabled = true;
-    } else {
-      selectAllInput.disabled = false;
-      selectAllInput.checked = selectedInFiltered.length === filteredIndices.length && filteredIndices.length > 0;
-      selectAllInput.indeterminate =
-        selectedInFiltered.length > 0 && selectedInFiltered.length < filteredIndices.length;
-    }
-
-    let summary = "No slides selected";
-    if (totalSelected > 0) {
-      const plural = totalSelected === 1 ? "slide" : "slides";
-      summary = `${totalSelected} ${plural} selected`;
-    }
-    selectionCountEl.textContent = summary;
-  }
-
-  function clearSelection({ announceChange = true } = {}) {
-    if (!selectedIndices.size) {
-      return;
-    }
-    selectedIndices.clear();
-    if (announceChange) {
-      handleSelectionAnnouncement(0);
-    }
-    updateToolbarAvailability();
-    list.querySelectorAll('.slide-jump-select').forEach((checkbox) => {
-      if (checkbox instanceof HTMLInputElement) {
-        checkbox.checked = false;
-      }
-    });
-  }
-
-  function toggleSelection(index, shouldSelect) {
-    if (!Number.isInteger(index)) {
-      return;
-    }
-    if (shouldSelect) {
-      selectedIndices.add(index);
-    } else {
-      selectedIndices.delete(index);
-    }
-    handleSelectionAnnouncement(selectedIndices.size);
-    updateToolbarAvailability();
-  }
-
-  function getSelectedIndicesSorted() {
-    return Array.from(selectedIndices).filter((index) => Number.isInteger(index)).sort((a, b) => a - b);
-  }
-
   function createThumbnailElement(thumbnail) {
     if (!thumbnail) {
       return null;
     }
     const container = document.createElement("div");
-    container.className = "slide-jump-thumbnail";
+    container.className = "slide-nav-thumbnail";
     switch (thumbnail.type) {
       case "html":
         container.innerHTML = thumbnail.value;
@@ -364,178 +152,293 @@ export function initSlideNavigator({
         container.appendChild(img);
         break;
       }
-      case "node": {
+      case "node":
         container.appendChild(thumbnail.value.cloneNode(true));
         break;
-      }
       default:
         return null;
     }
     return container.childElementCount || container.textContent ? container : null;
   }
 
-  function createSlideRow(meta, filteredIndex) {
-    const { stage, title, originalIndex, thumbnail } = meta;
-    const item = document.createElement("li");
-    item.className = "slide-jump-row";
-    item.dataset.filteredIndex = String(filteredIndex);
-
-    const selectWrap = document.createElement("label");
-    selectWrap.className = "slide-jump-select-wrap";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.className = "slide-jump-select";
-    checkbox.dataset.index = String(originalIndex);
-    checkbox.checked = selectedIndices.has(originalIndex);
-    checkbox.addEventListener("change", (event) => {
-      event.stopPropagation();
-      const isChecked = Boolean(event.target?.checked);
-      toggleSelection(originalIndex, isChecked);
-    });
-
-    const fauxBox = document.createElement("span");
-    fauxBox.className = "slide-jump-select-box";
-
-    const srLabel = document.createElement("span");
-    srLabel.className = "sr-only";
-    const titleText = String(title ?? "");
-    const stageText = String(stage ?? "");
-    srLabel.textContent = stageText && titleText
-      ? `Select slide ${stageText} – ${titleText}`
-      : `Select slide ${titleText || stageText || originalIndex + 1}`;
-
-    selectWrap.appendChild(checkbox);
-    selectWrap.appendChild(fauxBox);
-    selectWrap.appendChild(srLabel);
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "slide-jump-item";
-    button.dataset.index = String(originalIndex);
-
-    const content = document.createElement("div");
-    content.className = "slide-jump-content";
-
-    const thumbnailEl = createThumbnailElement(thumbnail);
-    if (thumbnailEl) {
-      content.appendChild(thumbnailEl);
+  function describeSlide(meta) {
+    const titleText = String(meta?.title ?? "").trim();
+    const stageText = String(meta?.stage ?? "").trim();
+    if (stageText && titleText) {
+      return `${stageText} – ${titleText}`;
     }
-
-    const metaWrap = document.createElement("div");
-    metaWrap.className = "slide-jump-meta";
-
-    const stageEl = document.createElement("span");
-    stageEl.className = "slide-jump-stage";
-    stageEl.textContent = stage;
-
-    const titleEl = document.createElement("span");
-    titleEl.className = "slide-jump-title";
-    titleEl.textContent = title;
-
-    metaWrap.appendChild(stageEl);
-    metaWrap.appendChild(titleEl);
-    content.appendChild(metaWrap);
-
-    button.appendChild(content);
-    button.addEventListener("click", () => {
-      if (typeof onSelectSlide === "function") {
-        onSelectSlide(originalIndex);
-      }
-      closePanel();
-    });
-
-    item.appendChild(selectWrap);
-    item.appendChild(button);
-
-    return item;
+    return titleText || stageText || `Slide ${Number(meta?.originalIndex ?? 0) + 1}`;
   }
 
-  function appendChunk() {
-    if (!filteredSlides.length || renderOffset >= filteredSlides.length) {
+  function handleSelectSlide(index) {
+    if (typeof onSelectSlide !== "function") {
       return;
     }
-    const end = Math.min(renderOffset + RENDER_CHUNK_SIZE, filteredSlides.length);
-    for (let i = renderOffset; i < end; i += 1) {
-      const row = createSlideRow(filteredSlides[i], i);
-      if (sentinel) {
-        list.insertBefore(row, sentinel);
-      } else {
-        list.appendChild(row);
-      }
-    }
-    renderOffset = end;
-    applyActiveState();
-
-    if (renderOffset >= filteredSlides.length) {
-      cleanupVirtualObserver();
-      destroySentinel();
+    try {
+      onSelectSlide(index);
+    } catch (error) {
+      console.warn("Slide selection callback failed", error);
     }
   }
 
-  function ensureActiveRendered() {
-    const filteredIndex = filteredSlides.findIndex((slide) => slide.originalIndex === activeIndex);
-    if (filteredIndex === -1) {
+  async function handleDuplicateSlide(index, meta) {
+    if (typeof onDuplicateSlide !== "function") {
       return;
     }
-    while (filteredIndex >= renderOffset && renderOffset < filteredSlides.length) {
-      appendChunk();
+    try {
+      const result = onDuplicateSlide(index);
+      await Promise.resolve(result);
+      announce(`Duplicated ${describeSlide(meta)}.`);
+    } catch (error) {
+      console.warn("Slide duplicate callback failed", error);
     }
-    const activeItem = list.querySelector(`.slide-jump-item[data-index="${activeIndex}"]`);
+  }
+
+  async function handleDeleteSlide(index, meta) {
+    if (typeof onDeleteSlide !== "function") {
+      return;
+    }
+    try {
+      const result = onDeleteSlide(index);
+      await Promise.resolve(result);
+      announce(`Deleted ${describeSlide(meta)}.`);
+    } catch (error) {
+      console.warn("Slide delete callback failed", error);
+    }
+  }
+
+  async function handleMoveSlide(fromIndex, toIndex, meta, direction) {
+    if (typeof onMoveSlide !== "function") {
+      return;
+    }
+    try {
+      const result = onMoveSlide(fromIndex, toIndex);
+      const resolved = await Promise.resolve(result);
+      if (resolved !== false) {
+        const directionText = direction === "forward" ? "after" : "before";
+        const targetMeta = slidesMeta.find((item) => item.originalIndex === toIndex);
+        const targetText = targetMeta ? describeSlide(targetMeta) : `slide ${toIndex + 1}`;
+        announce(`Moved ${describeSlide(meta)} ${directionText} ${targetText}.`);
+      }
+    } catch (error) {
+      console.warn("Slide move callback failed", error);
+    }
+  }
+
+  async function handleMoveToSection(index, section, meta) {
+    if (!section || typeof onMoveSlidesToSection !== "function") {
+      return;
+    }
+    try {
+      const result = onMoveSlidesToSection([index], section);
+      const resolved = await Promise.resolve(result);
+      if (resolved !== false) {
+        announce(`Moved ${describeSlide(meta)} to ${section}.`);
+      }
+    } catch (error) {
+      console.warn("Slide move-to-section callback failed", error);
+    }
+  }
+
+  function applyActiveState() {
+    const items = list.querySelectorAll(".slide-nav-card");
+    items.forEach((item) => {
+      if (!(item instanceof HTMLElement)) {
+        return;
+      }
+      const itemIndex = Number(item.dataset.index);
+      const isActive = itemIndex === activeIndex;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-current", isActive ? "true" : "false");
+    });
+  }
+
+  function scrollActiveIntoView({ smooth } = { smooth: true }) {
+    const activeItem = list.querySelector(
+      `.slide-nav-card[data-index="${activeIndex}"] .slide-nav-card-button`,
+    );
     if (activeItem instanceof HTMLElement) {
-      activeItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      activeItem.scrollIntoView({
+        behavior: smooth ? "smooth" : "auto",
+        block: "nearest",
+        inline: "center",
+      });
     }
+  }
+
+  function buildSectionOptions(select) {
+    if (!(select instanceof HTMLSelectElement)) {
+      return;
+    }
+    select.innerHTML = "";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Move to section…";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
+
+    availableSections.forEach((label) => {
+      const option = document.createElement("option");
+      option.value = label;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+
+    select.disabled = availableSections.length === 0;
   }
 
   function renderSlides() {
-    cleanupVirtualObserver();
-    destroySentinel();
     list.innerHTML = "";
-    renderOffset = 0;
 
-    if (!filteredSlides.length) {
+    if (!slidesMeta.length) {
       const emptyItem = document.createElement("li");
-      emptyItem.className = "slide-jump-empty";
-      emptyItem.textContent = "No slides match your search.";
+      emptyItem.className = "slide-nav-empty";
+      emptyItem.textContent = "No slides yet.";
       list.appendChild(emptyItem);
-      updateToolbarAvailability();
       return;
     }
 
-    sentinel = document.createElement("li");
-    sentinel.className = "slide-jump-sentinel";
-    list.appendChild(sentinel);
+    slidesMeta.forEach((meta, orderIndex) => {
+      const { stage, title, originalIndex, thumbnail } = meta;
 
-    appendChunk();
+      const item = document.createElement("li");
+      item.className = "slide-nav-card";
+      item.dataset.index = String(originalIndex);
 
-    if (renderOffset < filteredSlides.length) {
-      chunkObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            appendChunk();
+      const cardButton = document.createElement("button");
+      cardButton.type = "button";
+      cardButton.className = "slide-nav-card-button";
+      cardButton.addEventListener("click", () => {
+        handleSelectSlide(originalIndex);
+        activeIndex = originalIndex;
+        applyActiveState();
+      });
+
+      const thumb = createThumbnailElement(thumbnail);
+      if (thumb) {
+        cardButton.appendChild(thumb);
+      }
+
+      const metaWrap = document.createElement("div");
+      metaWrap.className = "slide-nav-meta";
+
+      const stageEl = document.createElement("span");
+      stageEl.className = "slide-nav-stage";
+      stageEl.textContent = stage;
+
+      const titleEl = document.createElement("span");
+      titleEl.className = "slide-nav-title";
+      titleEl.textContent = title;
+
+      metaWrap.appendChild(stageEl);
+      metaWrap.appendChild(titleEl);
+      cardButton.appendChild(metaWrap);
+
+      const actions = document.createElement("div");
+      actions.className = "slide-nav-actions";
+
+      if (typeof onMoveSlide === "function") {
+        const moveBack = document.createElement("button");
+        moveBack.type = "button";
+        moveBack.className = "slide-nav-action-btn";
+        moveBack.innerHTML = '<i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span class="sr-only">Move slide left</span>';
+        moveBack.disabled = orderIndex === 0;
+        moveBack.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (orderIndex === 0) {
+            return;
+          }
+          const previous = slidesMeta[orderIndex - 1];
+          if (previous) {
+            handleMoveSlide(originalIndex, previous.originalIndex, meta, "back");
           }
         });
-      }, {
-        root: list,
-        threshold: 0.25,
-      });
-      if (sentinel) {
-        chunkObserver.observe(sentinel);
-      }
-    }
+        actions.appendChild(moveBack);
 
-    updateToolbarAvailability();
+        const moveForward = document.createElement("button");
+        moveForward.type = "button";
+        moveForward.className = "slide-nav-action-btn";
+        moveForward.innerHTML = '<i class="fa-solid fa-arrow-right" aria-hidden="true"></i><span class="sr-only">Move slide right</span>';
+        moveForward.disabled = orderIndex === slidesMeta.length - 1;
+        moveForward.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (orderIndex >= slidesMeta.length - 1) {
+            return;
+          }
+          const next = slidesMeta[orderIndex + 1];
+          if (next) {
+            handleMoveSlide(originalIndex, next.originalIndex, meta, "forward");
+          }
+        });
+        actions.appendChild(moveForward);
+      }
+
+      if (typeof onDuplicateSlide === "function") {
+        const duplicateBtn = document.createElement("button");
+        duplicateBtn.type = "button";
+        duplicateBtn.className = "slide-nav-action-btn";
+        duplicateBtn.innerHTML = '<i class="fa-solid fa-clone" aria-hidden="true"></i><span class="sr-only">Duplicate slide</span>';
+        duplicateBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          handleDuplicateSlide(originalIndex, meta);
+        });
+        actions.appendChild(duplicateBtn);
+      }
+
+      if (typeof onDeleteSlide === "function") {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "slide-nav-action-btn slide-nav-action-btn--danger";
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can" aria-hidden="true"></i><span class="sr-only">Delete slide</span>';
+        deleteBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          handleDeleteSlide(originalIndex, meta);
+        });
+        actions.appendChild(deleteBtn);
+      }
+
+      if (typeof onMoveSlidesToSection === "function") {
+        const sectionWrap = document.createElement("div");
+        sectionWrap.className = "slide-nav-section";
+
+        const sectionLabel = document.createElement("label");
+        sectionLabel.className = "sr-only";
+        sectionLabel.setAttribute("for", `${panelId}-section-${originalIndex}`);
+        sectionLabel.textContent = `Move ${describeSlide(meta)} to section`;
+
+        const sectionSelect = document.createElement("select");
+        sectionSelect.className = "slide-nav-section-select";
+        sectionSelect.id = `${panelId}-section-${originalIndex}`;
+        buildSectionOptions(sectionSelect);
+        sectionSelect.addEventListener("change", (event) => {
+          event.stopPropagation();
+          const value = event.target?.value ?? "";
+          if (!value) {
+            return;
+          }
+          handleMoveToSection(originalIndex, value, meta);
+          buildSectionOptions(sectionSelect);
+        });
+
+        sectionWrap.appendChild(sectionLabel);
+        sectionWrap.appendChild(sectionSelect);
+        actions.appendChild(sectionWrap);
+      }
+
+      item.appendChild(cardButton);
+      if (actions.childElementCount > 0) {
+        item.appendChild(actions);
+      }
+
+      list.appendChild(item);
+    });
+
+    applyActiveState();
   }
 
-  function rebuildSectionOptions() {
-    const previousValue = sectionSelect.value;
-    sectionSelect.innerHTML = "";
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = "Choose section";
-    placeholder.disabled = true;
-    sectionSelect.appendChild(placeholder);
-
+  function refreshSections() {
     const seen = new Set();
     availableSections = [];
     slidesMeta.forEach(({ stage }) => {
@@ -545,335 +448,98 @@ export function initSlideNavigator({
       }
       seen.add(label);
       availableSections.push(label);
-      const option = document.createElement("option");
-      option.value = label;
-      option.textContent = label;
-      sectionSelect.appendChild(option);
-    });
-
-    if (availableSections.includes(previousValue)) {
-      sectionSelect.value = previousValue;
-    } else {
-      sectionSelect.value = "";
-    }
-
-    sectionSelect.disabled =
-      availableSections.length === 0 || typeof onMoveSlidesToSection !== "function";
-    updateToolbarAvailability();
-  }
-
-  function syncSelectionWithSlides() {
-    const availableIndices = new Set(slidesMeta.map((slide) => slide.originalIndex));
-    Array.from(selectedIndices).forEach((index) => {
-      if (!availableIndices.has(index)) {
-        selectedIndices.delete(index);
-      }
     });
   }
 
-  async function runSequentialAction(indices, callback, { onSuccessMessage } = {}) {
-    if (typeof callback !== "function") {
-      return;
-    }
-    const uniqueIndices = Array.from(new Set(indices)).filter((index) => Number.isInteger(index));
-    if (!uniqueIndices.length) {
-      return;
-    }
-
-    let successCount = 0;
-    for (const index of uniqueIndices) {
-      try {
-        const result = callback(index, { bulk: true, indices: uniqueIndices.slice() });
-        const resolved = await Promise.resolve(result);
-        if (resolved !== false) {
-          successCount += 1;
-        }
-      } catch (error) {
-        console.warn("Slide navigator bulk action failed", error);
-      }
-    }
-
-    if (successCount && onSuccessMessage) {
-      const plural = successCount === 1 ? "slide" : "slides";
-      announce(onSuccessMessage.replace("{count}", `${successCount} ${plural}`));
-    }
-  }
-
-  async function handleBulkDuplicate() {
-    const indices = getSelectedIndicesSorted();
-    if (!indices.length) {
-      return;
-    }
-    await runSequentialAction(indices, onDuplicateSlide, {
-      onSuccessMessage: "{count} duplicated.",
-    });
-    clearSelection({ announceChange: false });
-    updateToolbarAvailability();
-  }
-
-  async function handleBulkDelete() {
-    const indices = getSelectedIndicesSorted().sort((a, b) => b - a);
-    if (!indices.length) {
-      return;
-    }
-    await runSequentialAction(indices, onDeleteSlide, {
-      onSuccessMessage: "{count} deleted.",
-    });
-    clearSelection({ announceChange: false });
-    updateToolbarAvailability();
-  }
-
-  async function handleBulkMoveToSection() {
-    const indices = getSelectedIndicesSorted();
-    const targetSection = sectionSelect.value;
-    if (!indices.length || !targetSection) {
-      return;
-    }
-    if (typeof onMoveSlidesToSection !== "function") {
-      announce("Move to section is not available in this deck.");
-      return;
-    }
-    try {
-      const result = onMoveSlidesToSection(indices, targetSection);
-      await Promise.resolve(result);
-      announce(`Moved ${indices.length === 1 ? "slide" : "slides"} to ${targetSection}.`);
-      clearSelection({ announceChange: false });
-      updateToolbarAvailability();
-    } catch (error) {
-      console.warn("Moving slides to section failed", error);
-      announce("We couldn’t move those slides. Try again.");
-    }
-  }
-
-  function handlePanelKeydown(event) {
-    if (event.key === "Tab") {
-      const focusable = getFocusableElements();
-      if (!focusable.length) {
-        event.preventDefault();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const current = document.activeElement;
-
-      if (event.shiftKey) {
-        if (current === first || !panel.contains(current)) {
-          event.preventDefault();
-          last.focus({ preventScroll: true });
-        }
-      } else if (current === last) {
-        event.preventDefault();
-        first.focus({ preventScroll: true });
-      }
-      return;
-    }
-
-    const items = Array.from(list.querySelectorAll(".slide-jump-item"));
-    if (!items.length) {
-      return;
-    }
-
-    const currentIndex = items.indexOf(document.activeElement);
-
-    switch (event.key) {
-      case "ArrowDown":
-        event.preventDefault();
-        focusItemByOffset(currentIndex >= 0 ? currentIndex : 0, 1);
-        break;
-      case "ArrowUp":
-        event.preventDefault();
-        focusItemByOffset(currentIndex >= 0 ? currentIndex : 0, -1);
-        break;
-      case "Home":
-        event.preventDefault();
-        focusItemAt(0);
-        break;
-      case "End":
-        event.preventDefault();
-        focusItemAt(items.length - 1);
-        break;
-      default:
-        break;
-    }
-  }
-
-  function openPanel() {
-    if (isOpen) return;
-    isOpen = true;
-    panel.classList.add("is-visible");
-    panel.setAttribute("aria-hidden", "false");
-    panel.setAttribute("aria-modal", "true");
-    trigger.setAttribute("aria-expanded", "true");
-
-    const handleOutsideClick = (event) => {
-      if (!panel.contains(event.target) && event.target !== trigger) {
-        closePanel();
-      }
-    };
-
-    const handleKeydown = (event) => {
-      if (event.key === "Escape") {
-        closePanel();
-      }
-    };
-
-    panel.__deckOutsideListener = handleOutsideClick;
-    panel.__deckKeyListener = handleKeydown;
-
-    window.addEventListener("pointerdown", handleOutsideClick);
-    window.addEventListener("keydown", handleKeydown);
-
-    announceSearchResults();
-    announce("Slide navigator opened." + (statusRegion.textContent ? ` ${statusRegion.textContent}` : ""));
-
-    requestAnimationFrame(() => {
-      const activeItem = list.querySelector(".slide-jump-item.is-active");
-      if (activeItem instanceof HTMLElement) {
-        activeItem.focus({ preventScroll: true });
-        activeItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      } else {
-        const firstItem = list.querySelector(".slide-jump-item");
-        firstItem?.focus({ preventScroll: true });
-      }
-    });
-  }
-
-  function closePanel() {
-    if (!isOpen) return;
-    announce("Slide navigator closed.");
-    isOpen = false;
-    panel.classList.remove("is-visible");
-    panel.setAttribute("aria-hidden", "true");
-    panel.setAttribute("aria-modal", "false");
-    trigger.setAttribute("aria-expanded", "false");
-    trigger.focus({ preventScroll: true });
-
-    if (panel.__deckOutsideListener) {
-      window.removeEventListener("pointerdown", panel.__deckOutsideListener);
-      delete panel.__deckOutsideListener;
-    }
-    if (panel.__deckKeyListener) {
-      window.removeEventListener("keydown", panel.__deckKeyListener);
-      delete panel.__deckKeyListener;
-    }
-  }
-
-  function queueSearch(value) {
-    const term = typeof value === "string" ? value : "";
-    window.clearTimeout(searchTimeout);
-    searchTimeout = window.setTimeout(() => {
-      searchTerm = term;
-      applyFilter();
-      renderSlides();
-      announceSearchResults();
-    }, SEARCH_THROTTLE_MS);
-  }
-
-  searchInput.addEventListener("input", (event) => {
-    queueSearch(event.target?.value ?? "");
-  });
-
-  searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowDown") {
-      const firstItem = list.querySelector(".slide-jump-item");
-      if (firstItem instanceof HTMLElement) {
-        event.preventDefault();
-        firstItem.focus({ preventScroll: true });
-      }
-    }
-    if (event.key === "ArrowUp") {
-      const items = list.querySelectorAll(".slide-jump-item");
-      const lastItem = items[items.length - 1];
-      if (lastItem instanceof HTMLElement) {
-        event.preventDefault();
-        lastItem.focus({ preventScroll: true });
-      }
-    }
-  });
-
-  selectAllInput.addEventListener("change", (event) => {
-    const isChecked = Boolean(event.target?.checked);
-    if (isChecked) {
-      filteredSlides.forEach(({ originalIndex }) => {
-        selectedIndices.add(originalIndex);
-      });
-      handleSelectionAnnouncement(selectedIndices.size);
-    } else {
-      filteredSlides.forEach(({ originalIndex }) => {
-        selectedIndices.delete(originalIndex);
-      });
-      handleSelectionAnnouncement(selectedIndices.size);
-    }
-    list.querySelectorAll('.slide-jump-select').forEach((checkbox) => {
-      if (checkbox instanceof HTMLInputElement) {
-        const index = Number(checkbox.dataset.index);
-        checkbox.checked = selectedIndices.has(index);
-      }
-    });
-    updateToolbarAvailability();
-  });
-
-  duplicateBtn.addEventListener("click", () => {
-    handleBulkDuplicate();
-  });
-
-  deleteBtn.addEventListener("click", () => {
-    handleBulkDelete();
-  });
-
-  moveSectionBtn.addEventListener("click", () => {
-    handleBulkMoveToSection();
-  });
-
-  sectionSelect.addEventListener("change", () => {
-    updateToolbarAvailability();
-  });
-
-  trigger.addEventListener("click", () => {
+  function openTray() {
     if (isOpen) {
-      closePanel();
-    } else {
-      openPanel();
+      return;
     }
-  });
+    isOpen = true;
+    tray.dataset.state = "expanded";
+    toggle.setAttribute("aria-expanded", "true");
+    document.addEventListener("focusin", enforceFocus);
+    announce("Slide navigator expanded.");
+    requestAnimationFrame(() => {
+      const activeButton = list.querySelector(
+        ".slide-nav-card.is-active .slide-nav-card-button",
+      );
+      const fallback =
+        (activeButton instanceof HTMLElement && activeButton) ||
+        list.querySelector(".slide-nav-card-button");
+      if (fallback instanceof HTMLElement) {
+        fallback.focus({ preventScroll: true });
+        fallback.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    });
+  }
 
-  trigger.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowDown" && !isOpen) {
+  function closeTray({ focusToggle = true } = {}) {
+    if (!isOpen) {
+      return;
+    }
+    isOpen = false;
+    tray.dataset.state = "collapsed";
+    toggle.setAttribute("aria-expanded", "false");
+    document.removeEventListener("focusin", enforceFocus);
+    announce("Slide navigator collapsed.");
+    if (focusToggle) {
+      toggle.focus({ preventScroll: true });
+    }
+  }
+
+  function handleTrayKeydown(event) {
+    if (!isOpen) {
+      return;
+    }
+    if (event.key === "Escape") {
       event.preventDefault();
-      openPanel();
+      closeTray();
+      return;
     }
-  });
-
-  panel.addEventListener("keydown", handlePanelKeydown);
-
-  closeBtn.addEventListener("click", () => {
-    closePanel();
-  });
-
-  const ensureUtilityCluster = () => {
-    if (!(stageViewport instanceof HTMLElement)) {
-      return null;
+    if (event.key !== "Tab") {
+      return;
     }
-    const existing = stageViewport.querySelector('[data-role="stage-utilities"]');
-    if (existing instanceof HTMLElement) {
-      return existing;
+
+    const focusables = getFocusableElements();
+    if (!focusables.length) {
+      return;
     }
-    const cluster = document.createElement('div');
-    cluster.className = 'stage-utility-cluster';
-    cluster.dataset.role = 'stage-utilities';
-    stageViewport.appendChild(cluster);
-    return cluster;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const activeElement = document.activeElement;
+
+    if (event.shiftKey) {
+      if (activeElement === first || !tray.contains(activeElement)) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+      }
+    } else if (activeElement === last) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    }
+  }
+
+  const handleToggleClick = (event) => {
+    if (isOpen) {
+      const shouldRestoreFocus = event?.detail === 0;
+      closeTray({ focusToggle: shouldRestoreFocus });
+    } else {
+      openTray();
+    }
   };
 
-  const utilityCluster = ensureUtilityCluster();
-  if (utilityCluster) {
-    utilityCluster.appendChild(trigger);
-  } else {
-    stageViewport.appendChild(trigger);
-  }
+  const handleToggleKeydown = (event) => {
+    if (event.key === "ArrowUp" && !isOpen) {
+      event.preventDefault();
+      openTray();
+    }
+  };
 
-  stageViewport.appendChild(panel);
+  toggle.addEventListener("click", handleToggleClick);
+  toggle.addEventListener("keydown", handleToggleKeydown);
+
+  tray.addEventListener("keydown", handleTrayKeydown);
 
   return {
     updateSlides(meta = []) {
@@ -885,29 +551,32 @@ export function initSlideNavigator({
               typeof item?.originalIndex === "number" && Number.isFinite(item.originalIndex)
                 ? item.originalIndex
                 : index,
-            thumbnail: normaliseThumbnailDescriptor(item?.thumbnail ?? item?.thumbnailHtml ?? item?.thumbnailUrl),
+            thumbnail: normaliseThumbnailDescriptor(
+              item?.thumbnail ?? item?.thumbnailHtml ?? item?.thumbnailUrl,
+            ),
           }))
         : [];
-      syncSelectionWithSlides();
-      applyFilter();
-      rebuildSectionOptions();
+      refreshSections();
       renderSlides();
       if (isOpen) {
-        announceSearchResults();
+        scrollActiveIntoView({ smooth: false });
       }
     },
     setActive(index = 0) {
       activeIndex = typeof index === "number" ? index : 0;
       applyActiveState();
-      ensureActiveRendered();
+      if (isOpen) {
+        scrollActiveIntoView();
+      }
     },
     destroy() {
-      window.clearTimeout(searchTimeout);
-      cleanupVirtualObserver();
-      destroySentinel();
-      closePanel();
-      trigger.remove();
-      panel.remove();
+      closeTray({ focusToggle: false });
+      document.removeEventListener("focusin", enforceFocus);
+      tray.removeEventListener("keydown", handleTrayKeydown);
+      toggle.removeEventListener("click", handleToggleClick);
+      toggle.removeEventListener("keydown", handleToggleKeydown);
+      delete tray.__slideNavFocusHandler;
+      tray.remove();
     },
   };
 }
