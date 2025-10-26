@@ -6642,3 +6642,90 @@ ol {
   font-weight: 600;
   color: rgba(47, 58, 43, 0.9);
 }
+.matching-connect-grid {
+  --match-gap-block: clamp(var(--space-4), 2.4vw, var(--space-5));
+  --match-gap-inline: clamp(var(--space-6), 4vw, var(--space-7));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--match-gap-block) var(--match-gap-inline);
+  align-items: start;
+}
+
+.match-column {
+  display: grid;
+  gap: clamp(0.6rem, 1.6vw, 0.9rem);
+}
+
+.match-item {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+  padding: clamp(0.75rem, 1.8vw, 1rem);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-sage);
+  background: color-mix(in srgb, var(--soft-white) 88%, transparent);
+  color: var(--forest-shadow);
+  font-weight: 600;
+  text-align: left;
+  box-shadow: var(--shadow-1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease,
+    background 0.2s ease;
+}
+
+.match-item:hover,
+.match-item:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: color-mix(in srgb, var(--secondary-sage) 45%, transparent);
+}
+
+.match-item:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--secondary-sage) 50%, transparent);
+  outline-offset: 2px;
+}
+
+.match-item.active {
+  border-color: color-mix(in srgb, var(--secondary-sage) 65%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondary-sage) 28%, transparent);
+  background: color-mix(in srgb, var(--hover-sage) 45%, var(--soft-white));
+}
+
+.match-item.paired {
+  border-color: color-mix(in srgb, var(--secondary-sage) 55%, transparent);
+  background: color-mix(in srgb, var(--secondary-sage) 28%, var(--soft-white));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--secondary-sage) 25%, transparent);
+}
+
+.match-item.correct {
+  border-color: rgba(46, 125, 50, 0.7);
+  background: color-mix(in srgb, rgba(46, 125, 50, 0.18) 40%, var(--soft-white));
+}
+
+.match-item.incorrect {
+  border-color: rgba(198, 40, 40, 0.65);
+  background: color-mix(in srgb, rgba(198, 40, 40, 0.18) 45%, var(--soft-white));
+  box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.2);
+}
+
+.match-item .match-assignment {
+  font-weight: 500;
+  font-size: var(--step--1);
+  color: color-mix(in srgb, var(--forest-shadow) 75%, transparent);
+}
+
+.match-answer {
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--soft-white) 95%, transparent) 0%,
+    color-mix(in srgb, var(--tertiary-sage) 35%, var(--soft-white)) 100%
+  );
+}
+
+@media (max-width: 680px) {
+  .matching-connect-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(var(--space-4), 4vw, var(--space-5));
+  }
+}
+
