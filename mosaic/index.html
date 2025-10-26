@@ -194,6 +194,77 @@
       </div>
     </script>
 
+    <script id="inline-module-template" type="text/x-handlebars-template">
+      <div class="slide-inner">
+        <div class="inline-module-layout">
+          <section class="inline-module-main" aria-label="Module walkthrough">
+            <header class="module-header">
+              <h2>{{title}}</h2>
+              {{#if summary}}
+                <p class="module-summary">{{summary}}</p>
+              {{/if}}
+            </header>
+            {{#if description}}
+              <p class="module-description">{{description}}</p>
+            {{/if}}
+            {{#if facilitationStrategies}}
+              <div class="module-facilitation-card" aria-label="Facilitation strategies">
+                <h3 class="module-subheading">
+                  <i class="fa-solid fa-person-chalkboard icon" aria-hidden="true"></i>
+                  <span>Facilitation strategies</span>
+                </h3>
+                <ul class="module-facilitation-list">
+                  {{#each facilitationStrategies}}
+                    <li>{{this}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+            <div class="inline-module-demo">
+              {{{moduleHTML}}}
+            </div>
+          </section>
+          <aside class="inline-module-sidebar" aria-label="Design guidance">
+            {{#if whenToUse}}
+              <div class="module-sidebar-card">
+                <div class="module-badge">
+                  <i class="fa-solid fa-hourglass-half icon" aria-hidden="true"></i>
+                  <span>When to deploy</span>
+                </div>
+                <p>{{whenToUse}}</p>
+              </div>
+            {{/if}}
+            {{#if customizations}}
+              <div class="module-sidebar-card">
+                <div class="module-badge">
+                  <i class="fa-solid fa-sliders icon" aria-hidden="true"></i>
+                  <span>Customization ideas</span>
+                </div>
+                <ul>
+                  {{#each customizations}}
+                    <li>{{this}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+            {{#if troubleshooting}}
+              <div class="module-sidebar-card">
+                <div class="module-badge">
+                  <i class="fa-solid fa-life-ring icon" aria-hidden="true"></i>
+                  <span>Troubleshooting</span>
+                </div>
+                <ul>
+                  {{#each troubleshooting}}
+                    <li>{{this}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+          </aside>
+        </div>
+      </div>
+    </script>
+
     <script id="matching-task-vertical-template" type="text/x-handlebars-template">
       <div class="slide-inner">
         <div class="grid-container">
@@ -631,6 +702,7 @@
     <script src="presentations/givingDirections.js" defer></script>
     <script src="presentations/strategicPlanningNgo.js" defer></script>
     <script src="presentations/pitchingNewProjects.js" defer></script>
+    <script src="presentations/inlineModulesShowcase.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>
