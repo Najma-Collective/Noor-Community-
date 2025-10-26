@@ -641,13 +641,21 @@ const MINDMAP_CATEGORY_COLOR_MAP = {
 const BUILDER_STATUS_TIMEOUT = 3200;
 
 const MODULE_TYPE_LABELS = {
-  'multiple-choice': 'Multiple choice',
-  gapfill: 'Gap fill',
-  grouping: 'Grouping',
+  'multiple-choice': 'Multiple choice quiz',
+  linking: 'Linking match-up',
+  dropdown: 'Dropdown response',
+  gapfill: 'Gap fill activity',
+  grouping: 'Grouping challenge',
+  'multiple-choice-grid': 'Multiple choice grid',
+  ranking: 'Ranking sequence',
   'table-completion': 'Table completion',
-  matching: 'Matching',
-  'error-correction': 'Error correction',
+  'quiz-show': 'Slide quiz showdown',
+  matching: 'Matching activity',
+  'error-correction': 'Error correction drill',
+  default: 'Interactive activity',
 };
+
+const getModuleTypeLabel = (type) => MODULE_TYPE_LABELS[type] || MODULE_TYPE_LABELS.default;
 
 const DECK_TOAST_TIMEOUT = 3600;
 
@@ -5423,7 +5431,7 @@ function updateModuleEmbedContent(
 
   const pill = module.querySelector(".module-embed-pill");
   if (pill instanceof HTMLElement) {
-    pill.textContent = MODULE_TYPE_LABELS[resolvedType] || "Interactive activity";
+    pill.textContent = getModuleTypeLabel(resolvedType);
   }
 
   const titleEl = module.querySelector(".module-embed-title");
@@ -5468,7 +5476,7 @@ export function createModuleEmbed({
   }
   module.dataset.activityTitle = resolvedTitle;
 
-  const typeLabel = MODULE_TYPE_LABELS[resolvedType] || "Interactive activity";
+  const typeLabel = getModuleTypeLabel(resolvedType);
 
   module.innerHTML = `
     <div class="module-embed-header">
@@ -9139,7 +9147,7 @@ function sendModuleConfigToBuilder(config) {
   }
 }
 
-function openModuleOverlay({ canvas, trigger, module, onInsert } = {}) {
+function openModuleOverlay({ canvas, trigger, module, onInsert, config } = {}) {
   if (!(moduleOverlay instanceof HTMLElement)) {
     console.warn("Module builder overlay is unavailable.");
     return false;
@@ -9165,6 +9173,8 @@ function openModuleOverlay({ canvas, trigger, module, onInsert } = {}) {
   moduleEditTarget = module instanceof HTMLElement ? module : null;
   modulePendingConfig = moduleEditTarget
     ? cloneModuleConfig(getModuleConfigFromElement(moduleEditTarget))
+    : config
+    ? cloneModuleConfig(config)
     : null;
   moduleLastFocus =
     trigger instanceof HTMLElement
@@ -9182,7 +9192,7 @@ function openModuleOverlay({ canvas, trigger, module, onInsert } = {}) {
   });
   document.addEventListener("keydown", handleModuleOverlayKeydown);
 
-  if (moduleEditTarget && moduleBuilderReady && modulePendingConfig) {
+  if (modulePendingConfig && moduleBuilderReady) {
     sendModuleConfigToBuilder(modulePendingConfig);
   }
 
@@ -9254,6 +9264,12 @@ function handleModuleBuilderMessage(event) {
       title: config?.data?.title,
       activityType: config?.type,
     });
+    if (config?.type) {
+      const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+      if (practiceSlide instanceof HTMLElement) {
+        applyInteractivePracticeType(practiceSlide, config.type);
+      }
+    }
     moduleEditTarget.scrollIntoView({ behavior: "smooth", block: "center" });
     afterInsert?.();
     moduleInsertCallback = null;
@@ -9282,6 +9298,12 @@ function handleModuleBuilderMessage(event) {
   });
 
   moduleTargetCanvas.appendChild(moduleElement);
+  if (config?.type) {
+    const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+    if (practiceSlide instanceof HTMLElement) {
+      applyInteractivePracticeType(practiceSlide, config.type);
+    }
+  }
   moduleElement.scrollIntoView({ behavior: "smooth", block: "center" });
   afterInsert?.();
   moduleInsertCallback = null;
@@ -13045,6 +13067,18 @@ function createIndependentConstructionChecklistSlide({
   return slide;
 }
 
+function applyInteractivePracticeType(slide, type) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+  const resolvedType = trimText(type) || 'multiple-choice';
+  slide.dataset.activityType = resolvedType;
+  const typeBadge = slide.querySelector('.practice-type');
+  if (typeBadge instanceof HTMLElement) {
+    typeBadge.textContent = getModuleTypeLabel(resolvedType);
+  }
+}
+
 function createInteractivePracticeSlide({
   title,
   instructions,
@@ -13062,7 +13096,6 @@ function createInteractivePracticeSlide({
   const slide = document.createElement("div");
   slide.className = "slide-stage hidden interactive-practice-slide";
   slide.dataset.type = "interactive-practice";
-  slide.dataset.activityType = resolvedType;
 
   attachLayoutIconBadge(slide, getEffectiveLayoutIcon('interactive-practice', layoutIcon));
 
@@ -13080,7 +13113,6 @@ function createInteractivePracticeSlide({
 
   const typeBadge = document.createElement("span");
   typeBadge.className = "practice-type";
-  typeBadge.textContent = MODULE_TYPE_LABELS[resolvedType] || resolvedType;
   header.appendChild(typeBadge);
 
   const body = document.createElement("div");
@@ -13158,6 +13190,8 @@ function createInteractivePracticeSlide({
   addBtn.dataset.action = "add-module";
   addBtn.innerHTML = '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
   moduleArea.appendChild(addBtn);
+
+  applyInteractivePracticeType(slide, resolvedType);
 
   return slide;
 }
@@ -13270,13 +13304,24 @@ function initialiseInteractivePracticeSlide(slide) {
 
   if (addBtn instanceof HTMLButtonElement && host instanceof HTMLElement) {
     addBtn.addEventListener('click', () => {
+      const practiceSlide = addBtn.closest('.interactive-practice-slide');
+      const presetType =
+        practiceSlide instanceof HTMLElement && practiceSlide.dataset.activityType
+          ? practiceSlide.dataset.activityType
+          : 'multiple-choice';
+      const config = presetType ? { type: presetType } : null;
       openModuleOverlay({
         canvas: host,
         trigger: addBtn,
+        config,
         onInsert: () => {
           const module = host.querySelector('.module-embed');
           if (module instanceof HTMLElement) {
             initialiseModuleEmbed(module, { onRemove: updateState });
+            if (practiceSlide instanceof HTMLElement) {
+              const moduleType = module.dataset.activityType || presetType;
+              applyInteractivePracticeType(practiceSlide, moduleType);
+            }
           }
           updateState();
         },

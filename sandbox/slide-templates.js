@@ -34,4 +34,8 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
 
 export const BUILDER_LAYOUT_DEFAULTS = {
   'blank-canvas': () => ({}),
+  'interactive-practice': () => ({
+    activityType: 'multiple-choice',
+    questions: [{}],
+  }),
 };

@@ -438,7 +438,7 @@ const practiceTitleInput = builderOverlay.querySelector('input[name="practiceTit
 const practiceInstructionsInput = builderOverlay.querySelector(
   'textarea[name="practiceInstructions"]',
 );
-const practiceTypeInput = builderOverlay.querySelector('input[name="practiceActivityType"]');
+const practiceTypeInput = builderOverlay.querySelector('select[name="practiceActivityType"]');
 assert.ok(
   practiceTitleInput instanceof window.HTMLInputElement,
   'interactive practice title field should exist',
@@ -448,12 +448,13 @@ assert.ok(
   'interactive practice instructions field should exist',
 );
 assert.ok(
-  practiceTypeInput instanceof window.HTMLInputElement,
-  'interactive practice activity type field should exist',
+  practiceTypeInput instanceof window.HTMLSelectElement,
+  'interactive practice activity type selector should exist',
 );
 practiceTitleInput.value = 'Check understanding';
 practiceInstructionsInput.value = 'Select the best response for each prompt.';
-practiceTypeInput.value = 'Multiple choice';
+practiceTypeInput.value = 'multiple-choice';
+practiceTypeInput.dispatchEvent(new window.Event('change', { bubbles: true }));
 
 const addPracticeBtn = builderOverlay.querySelector('#builder-add-practice');
 assert.ok(
