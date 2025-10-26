@@ -2042,6 +2042,17 @@
             <span class="builder-field-label">Goal 3</span>
             <input type="text" name="learningGoalThree" placeholder="Optional extra focus" />
           </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Goal icon class</span>
+            <input
+              type="text"
+              name="learningGoalIcon"
+              data-field="learningGoalIcon"
+              placeholder="fa-solid fa-bullseye"
+              autocomplete="off"
+            />
+            <span class="builder-field-hint">Font Awesome class applied to each goal bullet.</span>
+          </label>
           <label class="builder-field builder-field--full">
             <span class="builder-field-label">Communicative goal</span>
             <textarea
@@ -2531,6 +2542,30 @@
               placeholder="Describe how learners will carry out the task"
             ></textarea>
           </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Preparation icon class</span>
+              <input
+                type="text"
+                name="taskPreparationIcon"
+                data-field="taskPreparationIcon"
+                placeholder="fa-solid fa-list-check"
+                autocomplete="off"
+              />
+              <span class="builder-field-hint">Icon displayed beside the preparation step.</span>
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Performance icon class</span>
+              <input
+                type="text"
+                name="taskPerformanceIcon"
+                data-field="taskPerformanceIcon"
+                placeholder="fa-solid fa-people-group"
+                autocomplete="off"
+              />
+              <span class="builder-field-hint">Icon displayed beside the performance step.</span>
+            </label>
+          </div>
           <label class="builder-field builder-field--full">
             <span class="builder-field-label">Scaffolding language (one per line)</span>
             <textarea
