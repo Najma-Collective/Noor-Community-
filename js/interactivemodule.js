@@ -2121,6 +2121,12 @@ function applyDeckState(state) {
   stageViewport.appendChild(fragment);
   navButtons.forEach((button) => stageViewport.appendChild(button));
 
+  slideNavigatorController =
+    initSlideNavigator({
+      stageViewport,
+      onSelectSlide: (index) => showSlide(index),
+    }) ?? null;
+
   refreshSlides();
   slides
     .filter((slide) => slide.dataset.type === "blank")
