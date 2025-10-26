@@ -1,39 +1,9 @@
-const LAYOUT_ICON_DEFAULTS = {
-  'learning-objectives': 'fa-solid fa-bullseye',
-  'model-dialogue': 'fa-solid fa-comments',
-  'interactive-practice': 'fa-solid fa-list-check',
-  'communicative-task': 'fa-solid fa-people-arrows',
-  'pronunciation-focus': 'fa-solid fa-wave-square',
-  reflection: 'fa-solid fa-moon',
-};
-
-const LAYOUT_FIELD_ICON_DEFAULTS = {
-  'learning-objectives': {
-    learningGoalIcon: 'fa-solid fa-bullseye',
-    learningCommunicativeGoalIcon: 'fa-solid fa-comments',
-  },
-  'model-dialogue': {
-    dialogueInstructionsIcon: 'fa-solid fa-person-chalkboard',
-  },
-  'interactive-practice': {
-    practiceInstructionsIcon: 'fa-solid fa-clipboard-check',
-    practiceActivityTypeIcon: 'fa-solid fa-shapes',
-  },
-  'communicative-task': {
-    taskPreparationIcon: 'fa-solid fa-list-check',
-    taskPerformanceIcon: 'fa-solid fa-people-group',
-    taskScaffoldingIcon: 'fa-solid fa-lightbulb',
-  },
-  'pronunciation-focus': {
-    pronunciationTargetIcon: 'fa-solid fa-wave-square',
-    pronunciationWordsIcon: 'fa-solid fa-font',
-    pronunciationSentencesIcon: 'fa-solid fa-quote-right',
-    pronunciationPracticeIcon: 'fa-solid fa-microphone-lines',
-  },
-  reflection: {
-    reflectionPromptsIcon: 'fa-solid fa-comment-dots',
-  },
-};
+import {
+  BUILDER_LAYOUT_DEFAULTS,
+  LAYOUT_FIELD_ICON_DEFAULTS,
+  LAYOUT_ICON_DEFAULTS,
+  getLayoutFieldIconDefault,
+} from './slide-templates.js';
 
 const MODULE_TYPE_LABELS = {
   'multiple-choice': 'Multiple choice',
@@ -46,12 +16,6 @@ const MODULE_TYPE_LABELS = {
 
 const trimText = (value) => (typeof value === 'string' ? value.trim() : '');
 const normaliseIconClass = (value) => (typeof value === 'string' ? value.trim() : '');
-
-const getLayoutFieldIconDefault = (layout, field) => {
-  const layoutDefaults = LAYOUT_FIELD_ICON_DEFAULTS[layout];
-  const defaultClass = layoutDefaults?.[field];
-  return typeof defaultClass === 'string' ? defaultClass : '';
-};
 
 const normaliseOverlayPercent = (value) => {
   if (typeof value === 'number' && !Number.isNaN(value)) {
@@ -151,114 +115,6 @@ const createBaseLessonSlide = (layout, options = {}) => {
   attachLayoutIconBadge(slide, iconClass);
   slide.appendChild(inner);
   return { slide, inner };
-};
-
-const BUILDER_LAYOUT_DEFAULTS = {
-  'learning-objectives': () => ({
-    icon: LAYOUT_ICON_DEFAULTS['learning-objectives'],
-    title: 'Learning Outcomes',
-    goals: [
-      'Learn vocabulary for jobs and places in a city.',
-      "Practise asking and answering questions with 'do'.",
-      'Focus on blending the /st/ sound.',
-    ],
-    goalIcon: getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon'),
-    communicativeGoal: 'get to know a new person.',
-    communicativeGoalIcon: getLayoutFieldIconDefault(
-      'learning-objectives',
-      'learningCommunicativeGoalIcon',
-    ),
-    imageUrl:
-      'https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    overlayColor: 'color-mix(in srgb, var(--deep-forest) 82%, transparent)',
-    overlayOpacity: 45,
-  }),
-  'model-dialogue': () => ({
-    icon: LAYOUT_ICON_DEFAULTS['model-dialogue'],
-    title: 'Get to know people',
-    instructions: "In pairs, identify the two main questions and how the speakers answer them.",
-    instructionsIcon: getLayoutFieldIconDefault('model-dialogue', 'dialogueInstructionsIcon'),
-    imageUrl:
-      'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    overlayColor: 'color-mix(in srgb, var(--primary-sage) 55%, var(--deep-forest) 45%)',
-    overlayOpacity: 38,
-    audioUrl: '',
-    turns: [
-      { speaker: "Amina", line: "Hi! I'm Amina. Nice to meet you." },
-      { speaker: "Sara", line: "Hi Amina! I'm Sara. Where are you from?" },
-      { speaker: "Amina", line: "I'm from Nablus. Do you live nearby?" },
-      { speaker: "Sara", line: "Yes, I live in Ramallah. What do you do?" },
-    ],
-  }),
-  'interactive-practice': () => ({
-    icon: LAYOUT_ICON_DEFAULTS['interactive-practice'],
-    activityType: 'gapfill',
-    activityTypeIcon: getLayoutFieldIconDefault('interactive-practice', 'practiceActivityTypeIcon'),
-    title: 'Practice',
-    instructions: 'Complete each sentence with the best option.',
-    instructionsIcon: getLayoutFieldIconDefault('interactive-practice', 'practiceInstructionsIcon'),
-    questions: [
-      {
-        prompt: 'I live ____ a flat ___ Ramallah.',
-        options: ['in / on', 'in / in', 'on / in'],
-        answer: 'in / in',
-      },
-      {
-        prompt: 'My sister works ___ a nurse.',
-        options: ['at', 'as', 'for'],
-        answer: 'as',
-      },
-    ],
-    imageUrl:
-      'https://images.pexels.com/photos/1181711/pexels-photo-1181711.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    overlayColor: 'color-mix(in srgb, var(--secondary-sage) 65%, var(--deep-forest) 35%)',
-    overlayOpacity: 42,
-  }),
-  'communicative-task': () => ({
-    icon: LAYOUT_ICON_DEFAULTS['communicative-task'],
-    title: 'Language exchange introductions',
-    imageUrl:
-      'https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    preparation:
-      'You are at a language exchange event. Decide who you will meet and note two follow-up questions you want to ask.',
-    performance:
-      'Move to breakout rooms. Take turns introducing yourselves and asking the follow-up questions you prepared.',
-    preparationIcon: getLayoutFieldIconDefault('communicative-task', 'taskPreparationIcon'),
-    performanceIcon: getLayoutFieldIconDefault('communicative-task', 'taskPerformanceIcon'),
-    scaffolding: [
-      'A: Where do you live, ____?',
-      'B: I live in ____. What do you do?',
-      "A: I work as a ____ because ____.",
-    ],
-    overlayColor: 'color-mix(in srgb, var(--deep-forest) 78%, transparent)',
-    overlayOpacity: 36,
-  }),
-  'pronunciation-focus': () => ({
-    icon: LAYOUT_ICON_DEFAULTS['pronunciation-focus'],
-    title: 'What does /st/ sound like?',
-    target: '/st/ sound',
-    targetIcon: getLayoutFieldIconDefault('pronunciation-focus', 'pronunciationTargetIcon'),
-    words: ['student', 'study'],
-    wordsIcon: getLayoutFieldIconDefault('pronunciation-focus', 'pronunciationWordsIcon'),
-    sentences: ['Are you a student? ↗', "We start at six o'clock. ↘"],
-    sentencesIcon: getLayoutFieldIconDefault('pronunciation-focus', 'pronunciationSentencesIcon'),
-    practice: 'Invite 3-4 learners to say the sentences, then personalise with their own ideas.',
-    practiceIcon: getLayoutFieldIconDefault('pronunciation-focus', 'pronunciationPracticeIcon'),
-    imageUrl:
-      'https://images.pexels.com/photos/5905711/pexels-photo-5905711.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    overlayColor: 'color-mix(in srgb, var(--primary-sage) 35%, var(--deep-forest) 65%)',
-    overlayOpacity: 40,
-  }),
-  reflection: () => ({
-    icon: LAYOUT_ICON_DEFAULTS.reflection,
-    title: 'Reflection',
-    prompts: ["A classmate’s name", 'A place in Palestine', 'A job'],
-    promptsIcon: getLayoutFieldIconDefault('reflection', 'reflectionPromptsIcon'),
-    imageUrl:
-      'https://images.pexels.com/photos/4144226/pexels-photo-4144226.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    overlayColor: 'color-mix(in srgb, var(--deep-forest) 70%, transparent)',
-    overlayOpacity: 38,
-  }),
 };
 
 function createLearningObjectivesSlide({
