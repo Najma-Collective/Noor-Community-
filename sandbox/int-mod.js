@@ -13902,19 +13902,12 @@ export async function setupInteractiveDeck({
   mindMapId = 0;
 
   stageViewport
-    ?.querySelectorAll(".slide-jump-trigger, .slide-jump-panel")
+    ?.querySelectorAll(".slide-nav-tray")
     .forEach((el) => {
-      if (el instanceof HTMLElement && el.classList.contains("slide-jump-panel")) {
-        const panel = el;
-        const outsideListener = panel.__deckOutsideListener;
-        const keyListener = panel.__deckKeyListener;
-        if (outsideListener) {
-          window.removeEventListener("pointerdown", outsideListener);
-          delete panel.__deckOutsideListener;
-        }
-        if (keyListener) {
-          window.removeEventListener("keydown", keyListener);
-          delete panel.__deckKeyListener;
+      if (el instanceof HTMLElement) {
+        const focusHandler = el.__slideNavFocusHandler;
+        if (typeof focusHandler === "function") {
+          document.removeEventListener("focusin", focusHandler);
         }
       }
       el.remove();
