@@ -189,6 +189,25 @@ let editableResizeObserver = null;
 let editableResizeHandlerAttached = false;
 const fallbackAddSlideListeners = new WeakMap();
 
+const AUTO_FIT_EXCLUSION_SELECTORS = [
+  "h1",
+  "h2",
+  "h3",
+  ".slide-title",
+  ".pill",
+  ".overlay-pill",
+];
+
+function shouldAutoFitEditableElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return false;
+  }
+
+  return !AUTO_FIT_EXCLUSION_SELECTORS.some((selector) =>
+    element.matches(selector),
+  );
+}
+
 function ensureFallbackAddSlideListener() {
   if (!(addSlideBtn instanceof HTMLElement)) {
     return;
@@ -303,6 +322,16 @@ function storeEditableMetrics(element, force = false) {
 
 function autoFitEditableElement(element) {
   if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  if (!shouldAutoFitEditableElement(element)) {
+    element.style.removeProperty("font-size");
+    element.style.removeProperty("overflow");
+    delete element.dataset.overflow;
+    if (element.title === "Text truncated to preserve layout.") {
+      element.removeAttribute("title");
+    }
     return;
   }
 
