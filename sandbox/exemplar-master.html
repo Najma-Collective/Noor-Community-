@@ -31,7 +31,7 @@
           </div>
           <span>Noor Community</span>
         </div>
-        <div id="slide-counter" class="slide-counter">1 / 19</div>
+        <div id="slide-counter" class="slide-counter">1 / 20</div>
         <div class="toolbar-actions">
           <button id="save-state-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-floppy-disk"></i>
@@ -83,32 +83,36 @@
           <div class="slide-stage full-width-bg">
             <div class="bg-media priority-high">
               <img
-                data-remote-src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
-                alt=""
+                data-remote-src="https://images.pexels.com/photos/3130320/pexels-photo-3130320.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Designers planning a presentation around a table"
                 loading="eager"
                 decoding="async"
               />
             </div>
-            <div class="img-overlay"></div>
+            <div class="img-overlay overlay-dark"></div>
             <div class="slide-inner">
               <div class="bg-content">
                 <div class="overlay-card">
-                  <h1>Sandbox Exemplar Deck</h1>
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-compass"></i> Exemplar Orientation</span
+                  >
+                  <h1>Welcome to the Sandbox Exemplar Deck</h1>
                   <p class="deck-subtitle">
-                    A reference lesson experience for building interactive
-                    Sandbox presentations
+                    Explore how each layout behaves, then use the Skip to lesson
+                    workspace link and toolbar actions to move quickly between
+                    slides, save states, or add new canvases while you design.
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Slide 2: Grounding Activity -->
+          <!-- Slide 2: Builder Guidance -->
           <div class="slide-stage hidden full-width-bg">
             <div class="bg-media">
               <img
-                data-remote-src="https://images.pexels.com/photos/33109/fall-autumn-red-season.jpg"
-                alt=""
+                data-remote-src="https://images.pexels.com/photos/3861962/pexels-photo-3861962.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900"
+                alt="Hands duplicating sticky notes during a workshop"
                 loading="lazy"
                 decoding="async"
               />
@@ -117,20 +121,61 @@
             <div class="slide-inner is-centered">
               <div class="bg-content centered">
                 <div class="overlay-card centered">
-                  <span class="pill overlay-pill"
-                    ><i class="fa-solid fa-leaf"></i> Grounding Activity</span
-                  >
-                  <p class="deck-subtitle text-step-1">
-                    Take a deep breath in, hold for a moment, and slowly
-                    release. Let's bring our full attention to the present
-                    moment and prepare for our learning today.
-                  </p>
+                  <h2 class="text-step-3">Building with Confidence</h2>
+                  <ul class="instruction-list text-step-1">
+                    <li>
+                      Use the toolbar's <strong>Duplicate Slide</strong> command
+                      (via the slide menu) to clone any layout, then adjust copy
+                      and components without rebuilding.
+                    </li>
+                    <li>
+                      Swap imagery by selecting a background block and updating
+                      its <code>data-remote-src</code>—the preview refreshes as
+                      soon as the new asset loads.
+                    </li>
+                    <li>
+                      Remember the <strong>Skip to lesson workspace</strong>
+                      link for quick keyboard access to the stage, and rely on
+                      the toolbar tools to save, load, or add blank slides while
+                      iterating.
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Slide 3: Lesson Aims -->
+          <!-- Slide 3: Remote Media & Alt Text Notes -->
+          <div class="slide-stage hidden">
+            <div class="slide-inner">
+              <span class="pill"
+                ><i class="fa-solid fa-image"></i> Media Best Practices</span
+              >
+              <div class="card">
+                <h2>Remote imagery and accessibility tips</h2>
+                <ul class="instruction-list">
+                  <li>
+                    <strong>Hydration lifecycle:</strong> Background images load
+                    asynchronously from their <code>data-remote-src</code>
+                    values. If a request fails, the deck keeps the space reserved
+                    so designers can spot issues quickly.
+                  </li>
+                  <li>
+                    <strong>Fallback messaging:</strong> Provide meaningful
+                    alt-text so screen readers communicate intent even when the
+                    remote asset never appears.
+                  </li>
+                  <li>
+                    <strong>Local testing:</strong> Use browser dev tools to
+                    throttle or block networks—if the image fails to hydrate,
+                    confirm your copy still describes the slide experience.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Lesson Aims -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
               <span class="pill"
