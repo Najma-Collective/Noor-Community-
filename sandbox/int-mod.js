@@ -8888,33 +8888,8 @@ function selectImageResult(button) {
   button.classList.add('is-selected');
   button.setAttribute('aria-selected', 'true');
   const layout = getSelectedLayout();
-  const fieldMap = {
-    'learning-objectives': 'learningImageUrl',
-    'model-dialogue': 'dialogueImageUrl',
-    'interactive-practice': null,
-    'communicative-task': 'taskImageUrl',
-    'pronunciation-focus': 'pronunciationImageUrl',
-    reflection: 'reflectionImageUrl',
-    'grounding-activity': 'groundingBackgroundImage',
-    'topic-introduction': 'topicBackgroundImage',
-    'guided-discovery': 'discoveryBackgroundImage',
-    'creative-practice': 'creativeBackgroundImage',
-    'task-divider': 'dividerBackgroundImage',
-    'task-reporting': 'reportingBackgroundImage',
-    'genre-deconstruction': 'genreBackgroundImage',
-    'linguistic-feature-hunt': 'featureBackgroundImage',
-    'text-reconstruction': 'reconstructionBackgroundImage',
-    'jumbled-text-sequencing': 'sequencingBackgroundImage',
-    'scaffolded-joint-construction': 'jointBackgroundImage',
-    'independent-construction-checklist': 'checklistBackgroundImage',
-  };
-  const targetName = fieldMap[layout];
-  if (targetName) {
-    const targetField = builderForm?.elements.namedItem?.(targetName);
-    if (targetField instanceof HTMLInputElement) {
-      targetField.value = url;
-      targetField.dispatchEvent(new Event('input', { bubbles: true }));
-    }
+  if (layout !== 'blank-canvas') {
+    return;
   }
 }
 
@@ -13709,10 +13684,59 @@ export async function setupInteractiveDeck({
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
       document.querySelectorAll('input[name="slideLayout"]'),
   );
+  if (Array.isArray(builderLayoutInputs) && builderLayoutInputs.length) {
+    builderLayoutInputs.forEach((input) => {
+      if (!(input instanceof HTMLInputElement)) {
+        return;
+      }
+      if (input.value !== 'blank-canvas') {
+        const option = input.closest('.layout-option');
+        option?.remove();
+      } else {
+        input.checked = true;
+      }
+    });
+    builderLayoutInputs = builderLayoutInputs.filter(
+      (input) => input instanceof HTMLInputElement && input.value === 'blank-canvas',
+    );
+  }
   builderLayoutIconInputs = Array.from(
     builderOverlay?.querySelectorAll('.layout-icon-input') ??
       document.querySelectorAll('.layout-icon-input'),
+  ).filter(
+    (input) => input instanceof HTMLInputElement && input.dataset.layoutIcon === 'blank-canvas',
   );
+  const layoutBlocks = Array.from(
+    builderOverlay?.querySelectorAll('[data-layouts]') ??
+      document.querySelectorAll('[data-layouts]'),
+  );
+  layoutBlocks.forEach((block) => {
+    if (!(block instanceof HTMLElement)) {
+      return;
+    }
+    const layouts = (block.dataset.layouts || '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (!layouts.length) {
+      return;
+    }
+    if (!layouts.includes('blank-canvas')) {
+      if (block.querySelector('.image-search')) {
+        block.dataset.layouts = 'blank-canvas';
+        return;
+      }
+      block.remove();
+      return;
+    }
+    block.dataset.layouts = 'blank-canvas';
+  });
+  const layoutPickerFieldset =
+    builderOverlay?.querySelector('.layout-picker') ??
+    document.querySelector('.layout-picker');
+  if (layoutPickerFieldset instanceof HTMLElement) {
+    layoutPickerFieldset.dataset.layouts = 'blank-canvas';
+  }
   if (Array.isArray(builderLayoutIconInputs)) {
     builderLayoutIconInputs.forEach((input) => {
       if (!(input instanceof HTMLInputElement)) {
