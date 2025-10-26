@@ -197,12 +197,36 @@ const builderForm = document.getElementById('activity-builder-form');
 assert.ok(builderOverlay instanceof window.HTMLElement, 'builder overlay should mount');
 assert.ok(builderForm instanceof window.HTMLFormElement, 'builder form should be available');
 
+const layoutPickerFieldset = builderOverlay.querySelector('.layout-picker');
+assert.ok(
+  layoutPickerFieldset instanceof window.HTMLElement,
+  'layout picker fieldset should exist in the builder',
+);
+assert.equal(
+  layoutPickerFieldset.dataset.layouts,
+  'blank-canvas,interactive-practice',
+  'layout picker should offer blank and interactive practice layouts',
+);
+
+const imageSearchSection = builderOverlay
+  .querySelector('.image-search')
+  ?.closest('[data-layouts]');
+assert.ok(
+  imageSearchSection instanceof window.HTMLElement,
+  'image search section should be present in the builder',
+);
+assert.equal(
+  imageSearchSection.dataset.layouts,
+  'blank-canvas,interactive-practice',
+  'image search tools should remain available to blank and interactive practice layouts',
+);
+
 addSlideBtn.click();
 await flushTimers();
 await nextFrame();
 assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open when adding a slide');
 
-const expectedLayouts = ['blank-canvas'];
+const expectedLayouts = ['blank-canvas', 'interactive-practice'];
 
 expectedLayouts.forEach((value) => {
   const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
@@ -389,6 +413,126 @@ assert.ok(moduleOverlay.classList.contains('is-visible'), 'insert panel should b
 moduleCloseBtn.click();
 await flushTimers();
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close when dismissed');
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for additional layout selections',
+);
+
+const interactivePracticeRadio = builderOverlay.querySelector(
+  'input[name="slideLayout"][value="interactive-practice"]',
+);
+assert.ok(
+  interactivePracticeRadio instanceof window.HTMLInputElement,
+  'interactive practice layout option should be available',
+);
+interactivePracticeRadio.checked = true;
+interactivePracticeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+
+const practiceTitleInput = builderOverlay.querySelector('input[name="practiceTitle"]');
+const practiceInstructionsInput = builderOverlay.querySelector(
+  'textarea[name="practiceInstructions"]',
+);
+const practiceTypeInput = builderOverlay.querySelector('input[name="practiceActivityType"]');
+assert.ok(
+  practiceTitleInput instanceof window.HTMLInputElement,
+  'interactive practice title field should exist',
+);
+assert.ok(
+  practiceInstructionsInput instanceof window.HTMLTextAreaElement,
+  'interactive practice instructions field should exist',
+);
+assert.ok(
+  practiceTypeInput instanceof window.HTMLInputElement,
+  'interactive practice activity type field should exist',
+);
+practiceTitleInput.value = 'Check understanding';
+practiceInstructionsInput.value = 'Select the best response for each prompt.';
+practiceTypeInput.value = 'Multiple choice';
+
+const addPracticeBtn = builderOverlay.querySelector('#builder-add-practice');
+assert.ok(
+  addPracticeBtn instanceof window.HTMLButtonElement,
+  'interactive practice add prompt button should exist',
+);
+addPracticeBtn.click();
+await flushTimers();
+
+const practiceItem = builderOverlay.querySelector('.builder-practice-item');
+assert.ok(
+  practiceItem instanceof window.HTMLElement,
+  'interactive practice prompt item should render after adding',
+);
+const practicePromptInput = practiceItem.querySelector('input[name="practicePrompt"]');
+const practiceOptionsTextarea = practiceItem.querySelector('textarea[name="practiceOptions"]');
+const practiceAnswerInput = practiceItem.querySelector('input[name="practiceAnswer"]');
+assert.ok(
+  practicePromptInput instanceof window.HTMLInputElement,
+  'interactive practice prompt field should exist',
+);
+assert.ok(
+  practiceOptionsTextarea instanceof window.HTMLTextAreaElement,
+  'interactive practice options field should exist',
+);
+assert.ok(
+  practiceAnswerInput instanceof window.HTMLInputElement,
+  'interactive practice answer field should exist',
+);
+practicePromptInput.value = 'What does Noor mean?';
+practiceOptionsTextarea.value = 'Light\nCommunity\nJourney';
+practiceAnswerInput.value = 'Light';
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting an interactive practice slide',
+);
+
+const practiceSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-type="interactive-practice"]'),
+);
+assert.ok(
+  practiceSlides.length >= 1,
+  'interactive practice submission should add a practice slide to the deck',
+);
+const practiceSlide = practiceSlides[practiceSlides.length - 1];
+assert.ok(practiceSlide instanceof window.HTMLElement, 'interactive practice slide should be present');
+assert.ok(!practiceSlide.classList.contains('hidden'), 'interactive practice slide should become the active slide');
+
+const practiceModuleHost = practiceSlide.querySelector('[data-role="practice-module-host"]');
+const practiceAddModuleBtn = practiceSlide.querySelector('[data-action="add-module"]');
+assert.ok(
+  practiceModuleHost instanceof window.HTMLElement,
+  'practice slide should provide a module host container',
+);
+assert.ok(
+  practiceAddModuleBtn instanceof window.HTMLButtonElement,
+  'practice slide should provide an Add interactive module button',
+);
+
+practiceAddModuleBtn.click();
+await flushTimers();
+await nextFrame();
+assert.ok(
+  moduleOverlay.classList.contains('is-visible'),
+  'Add interactive module button should launch the module overlay from practice slides',
+);
+moduleCloseBtn.click();
+await flushTimers();
+assert.ok(
+  !moduleOverlay.classList.contains('is-visible'),
+  'module overlay should close after returning from practice slide',
+);
 
 addSlideBtn.click();
 await flushTimers();
