@@ -187,6 +187,38 @@ const editableMutationObservers = new WeakMap();
 const editableListenerMap = new WeakMap();
 let editableResizeObserver = null;
 let editableResizeHandlerAttached = false;
+const fallbackAddSlideListeners = new WeakMap();
+
+function ensureFallbackAddSlideListener() {
+  if (!(addSlideBtn instanceof HTMLElement)) {
+    return;
+  }
+
+  if (fallbackAddSlideListeners.has(addSlideBtn)) {
+    return;
+  }
+
+  const handler = (event) => {
+    event.preventDefault();
+    addBlankSlide();
+    showDeckToast('Added a blank slide.', { icon: 'fa-plus' });
+  };
+
+  addSlideBtn.addEventListener('click', handler);
+  fallbackAddSlideListeners.set(addSlideBtn, handler);
+}
+
+function removeFallbackAddSlideListener() {
+  if (!(addSlideBtn instanceof HTMLElement)) {
+    return;
+  }
+
+  const handler = fallbackAddSlideListeners.get(addSlideBtn);
+  if (typeof handler === 'function') {
+    addSlideBtn.removeEventListener('click', handler);
+    fallbackAddSlideListeners.delete(addSlideBtn);
+  }
+}
 
 function getEditableResizeObserverCtor() {
   if (typeof window !== "undefined" && typeof window.ResizeObserver === "function") {
@@ -7153,24 +7185,28 @@ async function copyTextToClipboard(text) {
 }
 
 function showBuilderStatus(message = "", tone) {
-  if (!(builderStatusEl instanceof HTMLElement)) {
+  const statusEl = builderStatusEl;
+  if (!(statusEl instanceof HTMLElement)) {
     return;
   }
-  if (builderStatusEl.__deckStatusTimer) {
-    window.clearTimeout(builderStatusEl.__deckStatusTimer);
-    builderStatusEl.__deckStatusTimer = undefined;
+  if (statusEl.__deckStatusTimer) {
+    window.clearTimeout(statusEl.__deckStatusTimer);
+    statusEl.__deckStatusTimer = undefined;
   }
-  builderStatusEl.textContent = message;
+  statusEl.textContent = message;
   if (tone) {
-    builderStatusEl.dataset.tone = tone;
+    statusEl.dataset.tone = tone;
   } else {
-    builderStatusEl.removeAttribute("data-tone");
+    statusEl.removeAttribute("data-tone");
   }
   if (message) {
-    builderStatusEl.__deckStatusTimer = window.setTimeout(() => {
-      builderStatusEl.textContent = "";
-      builderStatusEl.removeAttribute("data-tone");
-      builderStatusEl.__deckStatusTimer = undefined;
+    statusEl.__deckStatusTimer = window.setTimeout(() => {
+      if (!(statusEl instanceof HTMLElement)) {
+        return;
+      }
+      statusEl.textContent = "";
+      statusEl.removeAttribute("data-tone");
+      statusEl.__deckStatusTimer = undefined;
     }, BUILDER_STATUS_TIMEOUT);
   }
 }
@@ -13439,8 +13475,11 @@ function handleBuilderSubmit(event) {
 }
 function initialiseActivityBuilderUI() {
   if (!(builderOverlay instanceof HTMLElement) || !(builderForm instanceof HTMLFormElement)) {
+    ensureFallbackAddSlideListener();
     return;
   }
+
+  removeFallbackAddSlideListener();
   if (builderOverlay.__deckBuilderInitialised) {
     updateBuilderJsonPreview();
     updateBuilderPreview();

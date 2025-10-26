@@ -649,6 +649,77 @@ imageShadowToggle.checked = true;
 imageShadowToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
 assert.equal(ingestedImage.dataset.effect, 'shadow', 'image shadow toggle should annotate the image with a shadow effect');
 
+const toastRoot = document.getElementById('deck-toast-root');
+assert.ok(toastRoot instanceof window.HTMLElement, 'deck toast root should exist for fallback assertions');
+
+const detachedBuilderOverlay = document.getElementById('activity-builder-overlay');
+detachedBuilderOverlay?.remove();
+assert.equal(
+  document.getElementById('activity-builder-overlay'),
+  null,
+  'builder overlay should be removable for fallback scenarios',
+);
+assert.equal(
+  document.getElementById('activity-builder-form'),
+  null,
+  'builder form should be absent once the overlay markup is removed',
+);
+
+const originalAddSlideButton = document.getElementById('add-slide-btn');
+const fallbackAddSlideBtn = originalAddSlideButton.cloneNode(true);
+originalAddSlideButton.replaceWith(fallbackAddSlideBtn);
+
+await setupInteractiveDeck();
+await flushTimers();
+await nextFrame();
+
+const slideCountBeforeFallback = stageViewport.querySelectorAll('.slide-stage').length;
+fallbackAddSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+let slideCountAfterFallback = stageViewport.querySelectorAll('.slide-stage').length;
+assert.equal(
+  slideCountAfterFallback,
+  slideCountBeforeFallback + 1,
+  'fallback add slide button should insert a blank slide when the builder overlay is absent',
+);
+
+let fallbackToast = toastRoot.lastElementChild;
+assert.ok(fallbackToast instanceof window.HTMLElement, 'fallback add slide should create a toast notification');
+assert.match(
+  fallbackToast.textContent ?? '',
+  /Added a blank slide/i,
+  'fallback add slide toast should describe the inserted slide',
+);
+
+await setupInteractiveDeck();
+await flushTimers();
+await nextFrame();
+
+const slideCountBeforeRepeat = stageViewport.querySelectorAll('.slide-stage').length;
+fallbackAddSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+slideCountAfterFallback = stageViewport.querySelectorAll('.slide-stage').length;
+assert.equal(
+  slideCountAfterFallback,
+  slideCountBeforeRepeat + 1,
+  'reinitialising without the overlay should not duplicate the fallback add slide listener',
+);
+
+fallbackToast = toastRoot.lastElementChild;
+assert.ok(
+  fallbackToast instanceof window.HTMLElement,
+  'fallback add slide should continue to emit toast notifications after reinitialisation',
+);
+assert.match(
+  fallbackToast.textContent ?? '',
+  /Added a blank slide/i,
+  'fallback toast should remain consistent across reinitialisations',
+);
+
 const moduleParser = new window.DOMParser();
 
 MODULE_TYPES.forEach((type) => {
