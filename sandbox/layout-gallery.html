@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Noor Layout Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../CSS-slides.css" />
+    <link rel="stylesheet" href="sandbox-css.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeuk+q60N5pGIG3G1X1p1K9O7C6Cs5p5Ew5yhjYlKQ9M7Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8f6f0 0%, #ebe5d9 100%);
+      }
+
+      .gallery-shell {
+        padding: clamp(2rem, 4vw, 4rem);
+        display: grid;
+        gap: clamp(2rem, 3vw, 3.5rem);
+      }
+
+      .gallery-header {
+        max-width: 60ch;
+      }
+
+      .gallery-header h1 {
+        font-size: var(--step-3);
+        color: var(--deep-forest);
+        margin-bottom: 0.35em;
+      }
+
+      .gallery-header p {
+        margin: 0.4em 0 0;
+        color: var(--forest-shadow);
+      }
+
+      .layout-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: clamp(2rem, 3vw, 3.5rem);
+      }
+
+      .layout-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .layout-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: var(--step-1);
+        font-weight: 600;
+        color: var(--deep-forest);
+      }
+
+      .layout-label i {
+        font-size: 1.4em;
+        color: var(--secondary-sage);
+      }
+
+      .layout-description {
+        margin: 0;
+        color: var(--forest-shadow);
+        font-size: var(--step--1);
+      }
+
+      .layout-card .slide-stage {
+        transform: scale(0.92);
+        transform-origin: top left;
+      }
+
+      .teacher-callout {
+        margin-top: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        background: rgba(248, 246, 240, 0.85);
+        border: 1px solid rgba(122, 132, 113, 0.25);
+        color: var(--ink);
+        font-size: 0.95rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+
+      .teacher-callout i {
+        color: var(--secondary-sage);
+        flex-shrink: 0;
+        margin-top: 0.2em;
+      }
+
+      .teacher-callout strong {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="gallery-shell">
+      <header class="gallery-header">
+        <p class="gallery-eyebrow">Layout reference</p>
+        <h1>Lesson slide gallery</h1>
+        <p>
+          Each slide uses the default copy and iconography defined in the builder so designers can see how
+          imagery, overlays, and instructional callouts play together across layout variants.
+        </p>
+      </header>
+      <section class="layout-grid" data-layout-gallery></section>
+    </main>
+    <script type="module" src="./layout-gallery.js"></script>
+  </body>
+</html>
