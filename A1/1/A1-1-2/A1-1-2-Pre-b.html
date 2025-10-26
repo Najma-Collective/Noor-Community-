@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Palestinian Museum Membership Worksheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-1P7ZKb9liFos5m+TYoMj76xWkiFdumlaJ8ZdE4PUeOP8raHhlwTsbEOP+iLU8N8n0FZcTvi9QBYT0Sxq16YGmw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./CSS" />
+    <style>
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body, 'Nunito', sans-serif);
+        background: linear-gradient(160deg, var(--warm-cream, #f8f6f0), var(--soft-white, #fefcf7));
+        color: var(--ink, #2f3a2b);
+      }
+
+      #app-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+
+      header.hero {
+        position: relative;
+        border-radius: 28px;
+        overflow: hidden;
+        min-height: 320px;
+        display: grid;
+        align-items: center;
+        padding: clamp(1.75rem, 2vw + 1rem, 3rem);
+        color: #fff;
+        box-shadow: 0 25px 60px rgba(36, 46, 35, 0.2);
+        background: linear-gradient(135deg, #3e4a3a, #7a8471);
+      }
+
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(39, 55, 43, 0.62);
+      }
+
+      .hero-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 1;
+      }
+
+      .hero-kicker {
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--tertiary-sage, #b8c5a6);
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: clamp(2rem, 2.2rem + 1vw, 3rem);
+        font-family: var(--font-display, 'Questrial', sans-serif);
+      }
+
+      .hero-subtitle {
+        margin: 0;
+        max-width: 48ch;
+        line-height: 1.6;
+        font-size: clamp(1.05rem, 1rem + 0.4vw, 1.2rem);
+      }
+
+      .hero-meta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        font-weight: 600;
+      }
+
+      .hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(6px);
+      }
+
+      .content-card {
+        background: var(--soft-white, #fefcf7);
+        border-radius: 24px;
+        padding: clamp(1.5rem, 1.5rem + 0.8vw, 2.5rem);
+        box-shadow: 0 18px 40px rgba(77, 91, 70, 0.12);
+        border: 1px solid rgba(122, 132, 113, 0.18);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        font-family: var(--font-display, 'Questrial', sans-serif);
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 1.5rem + 0.6vw, 2rem);
+      }
+
+      .dialogue-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .dialogue-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 16px;
+        background: rgba(156, 175, 136, 0.12);
+        border: 1px solid rgba(156, 175, 136, 0.25);
+      }
+
+      .dialogue-speaker {
+        font-weight: 700;
+        min-width: 130px;
+      }
+
+      #activities {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .activity-card {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .activity-body {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .activity-btn {
+        align-self: start;
+        padding: 0.8rem 1.5rem;
+        border-radius: 999px;
+        border: 1px solid var(--primary-sage, #7a8471);
+        background: var(--primary-sage, #7a8471);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .activity-btn.secondary {
+        background: transparent;
+        color: var(--primary-sage, #7a8471);
+      }
+
+      .activity-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .activity-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .feedback-banner {
+        display: none;
+        border-radius: 16px;
+        padding: 1rem 1.25rem;
+        background: rgba(122, 132, 113, 0.15);
+        border: 1px solid rgba(122, 132, 113, 0.3);
+        line-height: 1.6;
+      }
+
+      .feedback-banner[data-visible="true"] {
+        display: block;
+      }
+
+      .mc-fieldset {
+        margin: 0;
+        border: none;
+        display: grid;
+        gap: 0.75rem;
+        padding: 0;
+      }
+
+      .mc-question {
+        font-weight: 700;
+      }
+
+      .mc-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 132, 113, 0.25);
+        background: rgba(248, 246, 240, 0.6);
+        cursor: pointer;
+      }
+
+      .mc-options {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .mc-option-key {
+        font-weight: 700;
+        color: var(--primary-sage, #7a8471);
+      }
+
+      .mc-feedback {
+        margin: 0.35rem 0 0;
+        font-size: 0.95rem;
+        color: var(--ink-muted, #5a6b52);
+      }
+
+      .mc-option.correct {
+        border-color: rgba(67, 138, 94, 0.6);
+        background: rgba(67, 138, 94, 0.12);
+      }
+
+      .mc-option.incorrect {
+        border-color: rgba(185, 66, 66, 0.45);
+        background: rgba(185, 66, 66, 0.1);
+      }
+
+      .mc-option.selected {
+        border-color: var(--secondary-sage, #9caf88);
+        background: rgba(156, 175, 136, 0.16);
+      }
+
+      .matching-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .matching-item {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .dropdown-item {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .dropdown-item select,
+      .matching-item select {
+        padding: 0.6rem 0.75rem;
+        border-radius: 12px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        font-size: 1rem;
+      }
+
+      select[data-state='correct'] {
+        border-color: rgba(67, 138, 94, 0.7);
+        background: rgba(67, 138, 94, 0.14);
+      }
+
+      select[data-state='incorrect'] {
+        border-color: rgba(185, 66, 66, 0.6);
+        background: rgba(185, 66, 66, 0.12);
+      }
+
+      select[data-state='empty'] {
+        border-color: rgba(255, 180, 77, 0.7);
+        background: rgba(255, 180, 77, 0.12);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      .ranking-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 14px;
+        background: rgba(248, 246, 240, 0.7);
+        border: 1px solid rgba(122, 132, 113, 0.25);
+      }
+
+      .ranking-controls {
+        display: inline-flex;
+        gap: 0.35rem;
+      }
+
+      .ranking-btn {
+        border: 1px solid rgba(122, 132, 113, 0.4);
+        background: #fff;
+        color: var(--primary-sage, #7a8471);
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .ranking-btn i {
+        color: inherit;
+        font-size: 1rem;
+      }
+
+      .ranking-btn:hover,
+      .ranking-btn:focus-visible {
+        background: var(--primary-sage, #7a8471);
+        color: #fff;
+        box-shadow: 0 0 0 3px rgba(122, 132, 113, 0.2);
+        outline: none;
+      }
+
+      @media (max-width: 720px) {
+        .dialogue-item {
+          flex-direction: column;
+        }
+
+        .dialogue-speaker {
+          min-width: auto;
+        }
+
+        header.hero {
+          min-height: 260px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-wrapper">
+      <header class="hero" id="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <p class="hero-kicker"><i class="fa-solid fa-passport"></i> Museum Access</p>
+          <h1 id="hero-title" class="hero-title">Getting a Museum Membership</h1>
+          <p class="hero-subtitle">
+            Explore a friendly dialogue between the receptionist at the Palestinian Museum and the new member, Yousef.
+            Then work through four activities inspired by the Noor Community Templates collection.
+          </p>
+          <div class="hero-meta">
+            <span><i class="fa-solid fa-chart-simple"></i> A1</span>
+            <span><i class="fa-solid fa-layer-group"></i> Module 1</span>
+            <span><i class="fa-solid fa-book-open"></i> Lesson 2</span>
+            <span><i class="fa-solid fa-id-card"></i> Personal Identity &amp; Introductions</span>
+          </div>
+        </div>
+      </header>
+
+      <main id="content">
+        <section class="content-card" aria-labelledby="dialogue-title">
+          <div class="section-heading">
+            <i class="fa-solid fa-comments"></i>
+            <h2 id="dialogue-title">Model Dialogue</h2>
+          </div>
+          <ul class="dialogue-list" id="dialogue-list"></ul>
+        </section>
+
+        <section id="activities"></section>
+      </main>
+    </div>
+
+    <template id="activity-template">
+      <section class="content-card activity-card" data-activity>
+        <header>
+          <div class="section-heading">
+            <i class="fa-solid fa-seedling"></i>
+            <h2 class="activity-title"></h2>
+          </div>
+          <p class="activity-instruction"></p>
+        </header>
+        <div class="activity-body"></div>
+        <div class="feedback-banner" role="status"></div>
+        <footer class="activity-footer">
+          <button class="activity-btn check-btn" type="button">
+            <i class="fa-solid fa-circle-check"></i>
+            Check Answers
+          </button>
+          <button class="activity-btn secondary reset-btn" type="button">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Try Again
+          </button>
+        </footer>
+      </section>
+    </template>
+
+    <template id="multiple-choice-option">
+      <label class="mc-option">
+        <input type="radio" hidden />
+        <span class="mc-option-key"></span>
+        <span class="mc-option-text"></span>
+      </label>
+    </template>
+
+    <template id="matching-select">
+      <div class="matching-item">
+        <p class="matching-question"></p>
+        <label>
+          <span class="sr-only">Choose a match</span>
+          <select></select>
+        </label>
+      </div>
+    </template>
+
+    <template id="dropdown-item">
+      <div class="dropdown-item">
+        <p class="dropdown-sentence"></p>
+        <label>
+          <span class="sr-only">Select the missing word</span>
+          <select></select>
+        </label>
+      </div>
+    </template>
+
+    <template id="ranking-item">
+      <li class="ranking-item">
+        <span class="ranking-text"></span>
+        <div class="ranking-controls">
+          <button class="ranking-btn move-up" type="button" aria-label="Move up">
+            <i class="fa-solid fa-chevron-up"></i>
+          </button>
+          <button class="ranking-btn move-down" type="button" aria-label="Move down">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+      </li>
+    </template>
+
+    <script type="module">
+      const worksheetData = {
+        model: {
+          lines: [
+            { speaker: 'Receptionist', text: 'Hello. Welcome to the Palestinian Museum.' },
+            { speaker: 'Yousef', text: "Hello. I'd like a membership card, please." },
+            { speaker: 'Receptionist', text: "Of course. I can help with that. First, what's your name?" },
+            { speaker: 'Yousef', text: 'My name is Yousef Khalil.' },
+            { speaker: 'Receptionist', text: 'And where are you from, Yousef?' },
+            { speaker: 'Yousef', text: "I'm from Palestine." },
+            { speaker: 'Receptionist', text: "Great. And what's your email address?" },
+            { speaker: 'Yousef', text: "It's yousef.khalil@email.com." },
+            { speaker: 'Receptionist', text: "OK. Finally, what's your phone number?" },
+            { speaker: 'Yousef', text: "It's 059-123-4567." },
+            { speaker: 'Receptionist', text: 'Perfect. Here is your membership card.' },
+            { speaker: 'Yousef', text: 'Thank you very much!' }
+          ]
+        },
+        activities: [
+          {
+            number: 1,
+            name: 'Check Your Understanding',
+            instruction: 'Read the dialogue and choose the correct answer for each question.',
+            type: 'multiple-choice',
+            items: [
+              {
+                question: '1. Where is Yousef?',
+                options: [
+                  { key: 'a', label: 'At a school' },
+                  { key: 'b', label: 'At the Palestinian Museum' },
+                  { key: 'c', label: 'At his home' }
+                ],
+                answer: 'b',
+                feedback: {
+                  a: "Not quite. The dialogue does not mention a school. Re-read the receptionist's welcome.",
+                  c: 'Try again. He is requesting a membership card from the receptionist at the museum.'
+                }
+              },
+              {
+                question: '2. What does Yousef want?',
+                options: [
+                  { key: 'a', label: 'A ticket to the museum' },
+                  { key: 'b', label: "The receptionist's phone number" },
+                  { key: 'c', label: 'A membership card' }
+                ],
+                answer: 'c',
+                feedback: {
+                  a: "Close! Read his first line again—he asks for something else.",
+                  b: "Not quite. The receptionist asks for Yousef's phone number, not the other way around."
+                }
+              }
+            ]
+          },
+          {
+            number: 2,
+            name: 'Vocabulary: Questions and Details',
+            instruction: "Match the receptionist's questions with Yousef's answers.",
+            type: 'matching',
+            items: {
+              questions: [
+                { id: '1', prompt: "1. What's your name?", answer: 'd' },
+                { id: '2', prompt: '2. Where are you from?', answer: 'a' },
+                { id: '3', prompt: "3. What's your email address?", answer: 'b' },
+                { id: '4', prompt: "4. What's your phone number?", answer: 'c' }
+              ],
+              options: [
+                { key: 'a', label: 'a) Palestine (Nationality)' },
+                { key: 'b', label: 'b) yousef.khalil@email.com (Email)' },
+                { key: 'c', label: 'c) 059-123-4567 (Phone Number)' },
+                { key: 'd', label: 'd) Yousef Khalil (Name)' }
+              ],
+              feedback: 'Read the dialogue carefully. Each answer comes right after the matching question.'
+            }
+          },
+          {
+            number: 3,
+            name: 'Grammar: Complete the Conversation',
+            instruction: 'Complete the sentences from the dialogue by choosing the correct words from the dropdown list.',
+            type: 'dropdown',
+            items: [
+              {
+                sentence:
+                  '1. Receptionist: Hello. I can help you with a membership card. First, [_______] your name?',
+                options: ["What's", 'Where are', "It's"],
+                answer: "What's",
+                feedback: {
+                  'Where are': 'We ask "Where are" about places, not names.',
+                  "It's": '"It\'s" is used in answers, not questions about names.'
+                }
+              },
+              {
+                sentence: '2. Yousef: [_______] is Yousef Khalil.',
+                options: ['My name', "I'm from", "It's"],
+                answer: 'My name',
+                feedback: {
+                  "I'm from": 'Use "I\'m from" for places like countries or cities.',
+                  "It's": 'Use "It\'s" to share an email or phone number instead of a name.'
+                }
+              },
+              {
+                sentence: '3. Receptionist: And [_______] you from, Yousef?',
+                options: ['where are', "what's", "it's"],
+                answer: 'where are',
+                feedback: {
+                  "what's": 'We use "What\'s" for information such as names or emails.',
+                  "it's": '"It\'s" is part of an answer, not a question word.'
+                }
+              },
+              {
+                sentence: '4. Yousef: [_______] Palestine.',
+                options: ["I'm from", 'My name is', "It's"],
+                answer: "I'm from",
+                feedback: {
+                  'My name is': 'We use "My name is" to give a name.',
+                  "It's": 'Use "It\'s" to share contact details like email or phone number.'
+                }
+              },
+              {
+                sentence: '5. Yousef: [_______] yousef.khalil@email.com.',
+                options: ["It's", "I'm from", 'My name is'],
+                answer: "It's",
+                feedback: {
+                  "I'm from": '"I\'m from" introduces your country or city.',
+                  'My name is': 'Use "My name is" to share your full name.'
+                }
+              }
+            ]
+          },
+          {
+            number: 4,
+            name: 'Build the Conversation',
+            instruction: 'The conversation is mixed up. Put the lines in the correct order from 1 to 6.',
+            type: 'ranking',
+            items: {
+              lines: [
+                { id: 'A', text: 'A. My name is Yousef Khalil.' },
+                { id: 'B', text: "B. Hello. I'd like a membership card, please." },
+                { id: 'C', text: "C. I'm from Palestine." },
+                { id: 'D', text: "D. Of course. I can help with that. First, what's your name?" },
+                { id: 'E', text: 'E. And where are you from, Yousef?' },
+                { id: 'F', text: "F. Great. And what's your email address?" }
+              ],
+              correctOrder: ['B', 'D', 'A', 'E', 'C', 'F'],
+              feedback: 'Think about a normal conversation: greeting, request, questions, and answers.'
+            }
+          }
+        ]
+      };
+
+      const PEXELS_API_KEY = 'ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd';
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initWorksheet().catch(error => console.error('Worksheet failed to initialise', error));
+      });
+
+      async function initWorksheet() {
+        const data = await loadWorksheetData();
+        renderModelDialogue(data.model);
+        renderActivities(data.activities);
+        await loadHeroImage();
+      }
+
+      async function loadWorksheetData() {
+        await new Promise(resolve => setTimeout(resolve, 150));
+        return cloneData(worksheetData);
+      }
+
+      function renderModelDialogue(model) {
+        const list = document.getElementById('dialogue-list');
+        list.innerHTML = '';
+
+        model.lines.forEach(line => {
+          const item = document.createElement('li');
+          item.className = 'dialogue-item';
+
+          const speaker = document.createElement('span');
+          speaker.className = 'dialogue-speaker';
+          speaker.textContent = `${line.speaker}:`;
+
+          const text = document.createElement('span');
+          text.textContent = line.text;
+
+          item.append(speaker, text);
+          list.appendChild(item);
+        });
+      }
+
+      function renderActivities(activities) {
+        const container = document.getElementById('activities');
+        container.innerHTML = '';
+
+        activities.forEach(activity => {
+          const section = buildActivitySection(activity);
+          container.appendChild(section);
+        });
+      }
+
+      function buildActivitySection(activity) {
+        const template = document.getElementById('activity-template');
+        const section = template.content.firstElementChild.cloneNode(true);
+        section.querySelector('.activity-title').textContent = `${activity.number}. ${activity.name}`;
+        section.querySelector('.activity-instruction').textContent = activity.instruction;
+
+        const body = section.querySelector('.activity-body');
+        const feedback = section.querySelector('.feedback-banner');
+        const checkBtn = section.querySelector('.check-btn');
+        const resetBtn = section.querySelector('.reset-btn');
+
+        const controllerFactory = activityControllers[activity.type];
+        if (typeof controllerFactory !== 'function') {
+          throw new Error(`Unsupported activity type: ${activity.type}`);
+        }
+
+        const controller = controllerFactory(activity, body, feedback);
+
+        checkBtn.addEventListener('click', () => controller.check());
+        resetBtn.addEventListener('click', () => controller.reset());
+
+        return section;
+      }
+
+      // Activity controller patterns are adapted from the interactive behaviours showcased
+      // in the Noor Community Templates (see Templates/multiple-choice.html, dropdown.html, ranking.html).
+      const activityControllers = {
+        'multiple-choice': (activity, body, feedbackEl) => {
+          const optionTemplate = document.getElementById('multiple-choice-option');
+          const questionStates = activity.items.map((item, index) => {
+            const fieldset = document.createElement('fieldset');
+            fieldset.className = 'mc-fieldset';
+
+            const question = document.createElement('p');
+            question.className = 'mc-question';
+            question.textContent = item.question;
+
+            const optionsWrapper = document.createElement('div');
+            optionsWrapper.className = 'mc-options';
+
+            const feedbackNote = document.createElement('p');
+            feedbackNote.className = 'mc-feedback';
+            feedbackNote.hidden = true;
+
+            item.options.forEach(option => {
+              const optionNode = optionTemplate.content.firstElementChild.cloneNode(true);
+              const input = optionNode.querySelector('input');
+              const keyEl = optionNode.querySelector('.mc-option-key');
+              const textEl = optionNode.querySelector('.mc-option-text');
+
+              const inputName = `mc-${activity.number}-${index}`;
+              input.name = inputName;
+              input.value = option.key;
+              keyEl.textContent = `${option.key})`;
+              textEl.textContent = option.label;
+
+              optionNode.addEventListener('click', () => {
+                input.checked = true;
+                optionNode.parentElement
+                  .querySelectorAll('.mc-option')
+                  .forEach(label => label.classList.remove('selected'));
+                optionNode.classList.add('selected');
+              });
+
+              optionsWrapper.appendChild(optionNode);
+            });
+
+            fieldset.append(question, optionsWrapper, feedbackNote);
+            body.appendChild(fieldset);
+
+            return {
+              inputs: fieldset.querySelectorAll('input[type="radio"]'),
+              labels: fieldset.querySelectorAll('.mc-option'),
+              feedbackEl: feedbackNote,
+              correctAnswer: item.answer,
+              feedbackMap: item.feedback || {}
+            };
+          });
+
+          return {
+            check() {
+              let correctCount = 0;
+
+              questionStates.forEach(state => {
+                let chosenValue = null;
+                state.inputs.forEach(input => {
+                  if (input.checked) {
+                    chosenValue = input.value;
+                  }
+                });
+
+                state.labels.forEach(label => label.classList.remove('correct', 'incorrect'));
+                state.feedbackEl.hidden = true;
+
+                if (!chosenValue) {
+                  state.feedbackEl.textContent = 'Choose an option before checking.';
+                  state.feedbackEl.hidden = false;
+                  return;
+                }
+
+                if (chosenValue === state.correctAnswer) {
+                  correctCount += 1;
+                  const label = [...state.labels].find(l => l.querySelector('input').value === chosenValue);
+                  if (label) label.classList.add('correct');
+                  state.feedbackEl.textContent = 'Great! That matches the dialogue.';
+                } else {
+                  const label = [...state.labels].find(l => l.querySelector('input').value === chosenValue);
+                  if (label) label.classList.add('incorrect');
+                  const incorrectMsg = state.feedbackMap[chosenValue] || 'Check the dialogue again and try once more.';
+                  state.feedbackEl.textContent = incorrectMsg;
+                }
+
+                state.feedbackEl.hidden = false;
+              });
+
+              feedbackEl.dataset.visible = 'true';
+              feedbackEl.textContent = buildScoreMessage(correctCount, questionStates.length);
+            },
+            reset() {
+              questionStates.forEach(state => {
+                state.inputs.forEach(input => {
+                  input.checked = false;
+                });
+                state.labels.forEach(label => label.classList.remove('correct', 'incorrect', 'selected'));
+                state.feedbackEl.hidden = true;
+                state.feedbackEl.textContent = '';
+              });
+              feedbackEl.dataset.visible = 'false';
+              feedbackEl.textContent = '';
+            }
+          };
+        },
+
+        matching: (activity, body, feedbackEl) => {
+          const grid = document.createElement('div');
+          grid.className = 'matching-grid';
+
+          const optionsList = document.createElement('ul');
+          optionsList.className = 'dialogue-list';
+          activity.items.options.forEach(option => {
+            const li = document.createElement('li');
+            li.className = 'dialogue-item';
+            li.innerHTML = `<span class="dialogue-speaker">${option.key.toUpperCase()}.</span><span>${option.label}</span>`;
+            optionsList.appendChild(li);
+          });
+
+          const selectTemplate = document.getElementById('matching-select');
+          const questionStates = activity.items.questions.map(question => {
+            const node = selectTemplate.content.firstElementChild.cloneNode(true);
+            node.querySelector('.matching-question').textContent = question.prompt;
+            const select = node.querySelector('select');
+
+            select.innerHTML = '<option value="">Select an option</option>';
+            activity.items.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option.key;
+              opt.textContent = option.label;
+              select.appendChild(opt);
+            });
+
+            grid.appendChild(node);
+            return { select, answer: question.answer };
+          });
+
+          body.append(optionsList, grid);
+
+          return {
+            check() {
+              let correct = 0;
+              questionStates.forEach(({ select, answer }) => {
+                updateSelectState(select, null);
+                if (!select.value) {
+                  updateSelectState(select, 'empty');
+                  return;
+                }
+                if (select.value === answer) {
+                  correct += 1;
+                  updateSelectState(select, 'correct');
+                } else {
+                  updateSelectState(select, 'incorrect');
+                }
+              });
+
+              const completed = questionStates.every(state => state.select.value);
+              feedbackEl.dataset.visible = 'true';
+              if (correct === questionStates.length && completed) {
+                feedbackEl.textContent = 'Excellent! Every match mirrors the conversation.';
+              } else if (!completed) {
+                feedbackEl.textContent = 'Make sure you have chosen an option for every question before checking.';
+              } else {
+                feedbackEl.textContent = `${activity.items.feedback} Keep adjusting until all four matches are correct.`;
+              }
+            },
+            reset() {
+              questionStates.forEach(({ select }) => {
+                select.value = '';
+                updateSelectState(select, null);
+              });
+              feedbackEl.dataset.visible = 'false';
+              feedbackEl.textContent = '';
+            }
+          };
+        },
+
+        dropdown: (activity, body, feedbackEl) => {
+          const template = document.getElementById('dropdown-item');
+          const states = activity.items.map(item => {
+            const node = template.content.firstElementChild.cloneNode(true);
+            node.querySelector('.dropdown-sentence').textContent = item.sentence;
+            const select = node.querySelector('select');
+
+            select.innerHTML = '<option value="">Select an answer</option>';
+            item.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option;
+              opt.textContent = option;
+              select.appendChild(opt);
+            });
+
+            body.appendChild(node);
+            return { select, answer: item.answer, feedback: item.feedback };
+          });
+
+          return {
+            check() {
+              let correct = 0;
+              let completed = true;
+
+              states.forEach(state => {
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+                if (!state.select.value) {
+                  completed = false;
+                  updateSelectState(state.select, 'empty');
+                  return;
+                }
+
+                if (state.select.value === state.answer) {
+                  correct += 1;
+                  updateSelectState(state.select, 'correct');
+                } else {
+                  updateSelectState(state.select, 'incorrect');
+                  const message = state.feedback?.[state.select.value];
+                  if (message) {
+                    state.select.setAttribute('title', message);
+                  } else {
+                    state.select.removeAttribute('title');
+                  }
+                }
+              });
+
+              feedbackEl.dataset.visible = 'true';
+              if (!completed) {
+                feedbackEl.textContent = 'Choose an answer for every sentence before checking.';
+              } else if (correct === states.length) {
+                feedbackEl.textContent = 'Perfect! Your grammar choices match the original dialogue.';
+              } else {
+                feedbackEl.textContent = 'Some answers need attention. Hover each dropdown to read a tip from the dialogue.';
+              }
+            },
+            reset() {
+              states.forEach(state => {
+                state.select.value = '';
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+              });
+              feedbackEl.dataset.visible = 'false';
+              feedbackEl.textContent = '';
+            }
+          };
+        },
+
+        ranking: (activity, body, feedbackEl) => {
+          const template = document.getElementById('ranking-item');
+          const list = document.createElement('ul');
+          list.className = 'ranking-list';
+
+          const initialOrder = activity.items.lines.map(line => ({ ...line }));
+          let currentOrder = [...initialOrder];
+
+          function renderList() {
+            list.innerHTML = '';
+            currentOrder.forEach((line, index) => {
+              const node = template.content.firstElementChild.cloneNode(true);
+              node.querySelector('.ranking-text').textContent = line.text;
+              const upBtn = node.querySelector('.move-up');
+              const downBtn = node.querySelector('.move-down');
+              upBtn.disabled = index === 0;
+              downBtn.disabled = index === currentOrder.length - 1;
+              upBtn.addEventListener('click', () => moveItem(index, index - 1));
+              downBtn.addEventListener('click', () => moveItem(index, index + 1));
+              list.appendChild(node);
+            });
+          }
+
+          function moveItem(from, to) {
+            if (to < 0 || to >= currentOrder.length) return;
+            const updated = [...currentOrder];
+            const [moved] = updated.splice(from, 1);
+            updated.splice(to, 0, moved);
+            currentOrder = updated;
+            renderList();
+          }
+
+          renderList();
+          body.appendChild(list);
+
+          return {
+            check() {
+              const userOrder = currentOrder.map(line => line.id);
+              const correct = arraysEqual(userOrder, activity.items.correctOrder);
+              feedbackEl.dataset.visible = 'true';
+              if (correct) {
+                feedbackEl.textContent = 'Brilliant sequencing! You rebuilt the conversation in the exact order.';
+              } else {
+                feedbackEl.textContent = `${activity.items.feedback} Use the arrows to continue arranging the lines.`;
+              }
+            },
+            reset() {
+              currentOrder = [...initialOrder];
+              renderList();
+              feedbackEl.dataset.visible = 'false';
+              feedbackEl.textContent = '';
+            }
+          };
+        }
+      };
+
+      function buildScoreMessage(correct, total) {
+        if (correct === total) {
+          return 'Excellent! Every answer matches the dialogue.';
+        }
+        if (correct === 0) {
+          return 'Not quite yet. Re-read the model dialogue and try once more.';
+        }
+        return `You answered ${correct} out of ${total} correctly. Review the feedback and adjust your choices.`;
+      }
+
+      function arraysEqual(a, b) {
+        return a.length === b.length && a.every((value, index) => value === b[index]);
+      }
+
+      function cloneData(value) {
+        if (typeof structuredClone === 'function') {
+          return structuredClone(value);
+        }
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function updateSelectState(select, state) {
+        if (!state) {
+          select.removeAttribute('data-state');
+        } else {
+          select.dataset.state = state;
+        }
+      }
+
+      async function loadHeroImage() {
+        const hero = document.getElementById('hero');
+        if (!hero) return;
+
+        const endpoint = new URL('https://api.pexels.com/v1/search');
+        endpoint.searchParams.set('query', 'Palestinian museum membership desk');
+        endpoint.searchParams.set('orientation', 'landscape');
+        endpoint.searchParams.set('per_page', '1');
+
+        try {
+          const response = await fetch(endpoint, {
+            headers: {
+              Authorization: PEXELS_API_KEY
+            }
+          });
+
+          if (!response.ok) throw new Error(`Pexels request failed: ${response.status}`);
+
+          const payload = await response.json();
+          const photo = payload.photos?.[0];
+          if (photo?.src?.landscape) {
+            hero.style.backgroundImage = `url(${photo.src.landscape})`;
+            hero.style.backgroundSize = 'cover';
+            hero.style.backgroundPosition = 'center';
+          }
+        } catch (error) {
+          console.warn('Unable to load Pexels image:', error);
+          hero.style.background = 'linear-gradient(135deg, #3e4a3a, #7a8471)';
+        }
+      }
+    </script>
+  </body>
+</html>
