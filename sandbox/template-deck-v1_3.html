@@ -2240,11 +2240,21 @@
             />
           </label>
           <label class="builder-field">
-            <span class="builder-field-label">Activity type</span>
-            <input type="text" name="practiceActivityType" placeholder="e.g. Multiple choice" />
+            <span class="builder-field-label">Activity template</span>
+            <select name="practiceActivityType">
+              <option value="multiple-choice">Multiple choice quiz</option>
+              <option value="linking">Linking match-up</option>
+              <option value="dropdown">Dropdown response</option>
+              <option value="gapfill">Gap fill activity</option>
+              <option value="grouping">Grouping challenge</option>
+              <option value="multiple-choice-grid">Multiple choice grid</option>
+              <option value="ranking">Ranking sequence</option>
+              <option value="table-completion">Table completion</option>
+              <option value="quiz-show">Slide quiz showdown</option>
+            </select>
           </label>
           <label class="builder-field">
-            <span class="builder-field-label">Activity type icon class</span>
+            <span class="builder-field-label">Activity template icon class</span>
             <input
               type="text"
               name="practiceActivityTypeIcon"
