@@ -1156,6 +1156,30 @@ const LAYOUT_ICON_DEFAULTS = {
   'independent-construction-checklist': 'fa-solid fa-clipboard-check',
 };
 
+const LAYOUT_FIELD_ICON_DEFAULTS = {
+  'learning-objectives': {
+    learningGoalIcon: 'fa-solid fa-bullseye',
+  },
+  'communicative-task': {
+    taskPreparationIcon: 'fa-solid fa-list-check',
+    taskPerformanceIcon: 'fa-solid fa-people-group',
+  },
+};
+
+const normaliseIconClass = (value) =>
+  (typeof value === 'string' ? value.trim() : '');
+
+const getLayoutFieldIconDefault = (layout, field) => {
+  const layoutDefaults = LAYOUT_FIELD_ICON_DEFAULTS[layout];
+  const defaultClass = layoutDefaults?.[field];
+  return typeof defaultClass === 'string' ? defaultClass : '';
+};
+
+const resolveLayoutIconField = (layout, field, value) => {
+  const trimmed = normaliseIconClass(value);
+  return trimmed || getLayoutFieldIconDefault(layout, field) || '';
+};
+
 const BUILDER_LAYOUT_DEFAULTS = {
   "blank-canvas": () => ({}),
   "learning-objectives": () => ({
@@ -1166,6 +1190,7 @@ const BUILDER_LAYOUT_DEFAULTS = {
       "Practise asking and answering questions with 'do'.",
       "Focus on blending the /st/ sound.",
     ],
+    goalIcon: getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon'),
     communicativeGoal: "get to know a new person.",
     imageUrl: "",
     overlayColor: "#152a41",
@@ -1205,6 +1230,8 @@ const BUILDER_LAYOUT_DEFAULTS = {
       "You are at a language exchange event. Decide who you will meet and note two follow-up questions you want to ask.",
     performance:
       "Move to breakout rooms. Take turns introducing yourselves and asking the follow-up questions you prepared.",
+    preparationIcon: getLayoutFieldIconDefault('communicative-task', 'taskPreparationIcon'),
+    performanceIcon: getLayoutFieldIconDefault('communicative-task', 'taskPerformanceIcon'),
     scaffolding: [
       "A: Where do you live, ____?",
       "B: I live in ____. What do you do?",
@@ -7688,12 +7715,25 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     }
   };
 
+  const setIconField = (fieldName, layoutKey, providedValue) => {
+    const resolved = resolveLayoutIconField(layoutKey, fieldName, providedValue);
+    setFieldValue(fieldName, resolved);
+    const input = builderForm.elements.namedItem?.(fieldName);
+    if (input instanceof HTMLInputElement) {
+      const placeholder = getLayoutFieldIconDefault(layoutKey, fieldName);
+      if (placeholder) {
+        input.placeholder = placeholder;
+      }
+    }
+  };
+
   const clearFields = () => {
     [
       'learningTitle',
       'learningGoalOne',
       'learningGoalTwo',
       'learningGoalThree',
+      'learningGoalIcon',
       'learningCommunicativeGoal',
       'learningImageUrl',
       'learningOverlayColor',
@@ -7711,7 +7751,9 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'taskImageUrl',
       'taskOverlayColor',
       'taskOverlayOpacity',
+      'taskPreparationIcon',
       'taskPreparation',
+      'taskPerformanceIcon',
       'taskPerformance',
       'taskScaffolding',
       'pronunciationTitle',
@@ -7843,6 +7885,7 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       setFieldValue('learningGoalOne', goals[0] ?? '');
       setFieldValue('learningGoalTwo', goals[1] ?? '');
       setFieldValue('learningGoalThree', goals[2] ?? '');
+      setIconField('learningGoalIcon', 'learning-objectives', defaults.goalIcon);
       setFieldValue('learningCommunicativeGoal', defaults.communicativeGoal ?? '');
       setFieldValue('learningImageUrl', defaults.imageUrl ?? '');
       setFieldValue('learningOverlayColor', defaults.overlayColor ?? '');
@@ -7880,7 +7923,9 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
         'taskOverlayOpacity',
         String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
       );
+      setIconField('taskPreparationIcon', 'communicative-task', defaults.preparationIcon);
       setFieldValue('taskPreparation', defaults.preparation ?? '');
+      setIconField('taskPerformanceIcon', 'communicative-task', defaults.performanceIcon);
       setFieldValue('taskPerformance', defaults.performance ?? '');
       setFieldValue(
         'taskScaffolding',
@@ -8124,6 +8169,11 @@ function getBuilderFormState() {
         trimText(formData.get('learningGoalTwo')),
         trimText(formData.get('learningGoalThree')),
       ].filter(Boolean);
+      const goalIcon = resolveLayoutIconField(
+        'learning-objectives',
+        'learningGoalIcon',
+        formData.get('learningGoalIcon'),
+      );
       state.data = {
         title: trimText(formData.get('learningTitle')) || 'Learning Outcomes',
         goals,
@@ -8133,6 +8183,7 @@ function getBuilderFormState() {
         overlayOpacity: normaliseOverlayPercent(
           formData.get('learningOverlayOpacity'),
         ),
+        goalIcon,
         layoutIcon,
       };
       break;
@@ -8187,6 +8238,16 @@ function getBuilderFormState() {
       break;
     }
     case 'communicative-task': {
+      const preparationIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskPreparationIcon',
+        formData.get('taskPreparationIcon'),
+      );
+      const performanceIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskPerformanceIcon',
+        formData.get('taskPerformanceIcon'),
+      );
       state.data = {
         title: trimText(formData.get('taskTitle')) || 'Communicative task',
         imageUrl: trimText(formData.get('taskImageUrl')),
@@ -8197,6 +8258,8 @@ function getBuilderFormState() {
         preparation: trimText(formData.get('taskPreparation')),
         performance: trimText(formData.get('taskPerformance')),
         scaffolding: splitMultiline(formData.get('taskScaffolding')),
+        preparationIcon,
+        performanceIcon,
         layoutIcon,
       };
       break;
@@ -8717,6 +8780,14 @@ async function searchPexelsImages(query) {
 function resetBuilderForm() {
   if (builderForm instanceof HTMLFormElement) {
     builderForm.reset();
+    Object.values(LAYOUT_FIELD_ICON_DEFAULTS).forEach((fields = {}) => {
+      Object.entries(fields).forEach(([fieldName, iconClass]) => {
+        const input = builderForm.elements.namedItem?.(fieldName);
+        if (input instanceof HTMLInputElement && iconClass) {
+          input.placeholder = iconClass;
+        }
+      });
+    });
   }
   Object.entries(LAYOUT_ICON_DEFAULTS).forEach(([layout, icon]) => {
     setLayoutIconValue(layout, icon);
@@ -11151,6 +11222,7 @@ function createLearningObjectivesSlide({
   title = 'Learning Outcomes',
   goals = [],
   communicativeGoal = '',
+  goalIcon = '',
   imageUrl = '',
   overlayColor = '',
   overlayOpacity = 0,
@@ -11187,6 +11259,10 @@ function createLearningObjectivesSlide({
   inner.appendChild(body);
 
   const cleanedGoals = Array.isArray(goals) ? goals.map((goal) => trimText(goal)).filter(Boolean) : [];
+  const goalIconClass =
+    normaliseIconClass(goalIcon) ||
+    getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon') ||
+    'fas fa-bullseye';
   if (cleanedGoals.length) {
     const card = document.createElement('div');
     card.className = 'card lesson-goals-card';
@@ -11197,7 +11273,7 @@ function createLearningObjectivesSlide({
       const icon = document.createElement('span');
       icon.className = 'lesson-goal-icon';
       const iconGlyph = document.createElement('i');
-      iconGlyph.className = 'fas fa-bullseye';
+      iconGlyph.className = goalIconClass;
       iconGlyph.setAttribute('aria-hidden', 'true');
       const iconLabel = document.createElement('span');
       iconLabel.className = 'sr-only';
@@ -11324,6 +11400,8 @@ function createCommunicativeTaskSlide({
   preparation = '',
   performance = '',
   scaffolding = [],
+  preparationIcon = '',
+  performanceIcon = '',
   overlayColor = '',
   overlayOpacity = 0,
   layoutIcon = '',
@@ -11397,15 +11475,24 @@ function createCommunicativeTaskSlide({
   instructionList.className = 'instruction-list task-instruction-list';
   mainCard.appendChild(instructionList);
 
+  const preparationIconClass =
+    normaliseIconClass(preparationIcon) ||
+    getLayoutFieldIconDefault('communicative-task', 'taskPreparationIcon') ||
+    'fa-solid fa-list-check';
+  const performanceIconClass =
+    normaliseIconClass(performanceIcon) ||
+    getLayoutFieldIconDefault('communicative-task', 'taskPerformanceIcon') ||
+    'fa-solid fa-people-group';
+
   const steps = [
     {
       label: 'Preparation',
-      icon: 'fa-solid fa-list-check',
+      icon: preparationIconClass,
       text: trimText(preparationRemainder) || 'Describe how learners should get ready together.',
     },
     {
       label: 'Performance',
-      icon: 'fa-solid fa-people-group',
+      icon: performanceIconClass,
       text: trimText(performance) || 'Explain how learners will carry out the task.',
     },
   ];
