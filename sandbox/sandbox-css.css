@@ -1597,20 +1597,33 @@ body {
   box-shadow: inset 0 0 0 1px rgba(253, 251, 245, 0.28);
 }
 
-.pill {
+:where(.pill, .module-embed-pill, .activity-pill) {
+  --pill-min-width: clamp(7.25rem, 5.5vw, 9rem);
+  --pill-padding-block: clamp(0.32rem, 0.29rem + 0.1vw, 0.45rem);
+  --pill-padding-inline: clamp(0.85rem, 0.75rem + 0.25vw, 1.1rem);
+  --pill-font-size: clamp(0.7rem, 0.66rem + 0.18vw, 0.85rem);
+  --pill-gap: var(--space-2, 0.5rem);
+  --pill-font-size-adjust: 0px;
+}
+
+:where(.pill, .module-embed-pill, .activity-pill) {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 0.35rem var(--space-4);
+  gap: var(--pill-gap);
+  min-width: var(--pill-min-width);
+  padding: var(--pill-padding-block) var(--pill-padding-inline);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--primary-sage) 22%, transparent);
-  font-size: var(--step--1);
+  font-size: calc(var(--pill-font-size) + var(--pill-font-size-adjust));
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-weight: 700;
+  line-height: 1;
+}
+
+.pill {
+  background: color-mix(in srgb, var(--primary-sage) 22%, transparent);
   color: var(--deep-forest);
   width: fit-content;
-  line-height: 1;
   box-shadow: var(--shadow-0);
 }
 
@@ -3186,14 +3199,9 @@ ol {
 }
 
 .module-embed-pill {
+  --pill-font-size-adjust: var(--font-size-adjustment, 0px);
   background: color-mix(in srgb, var(--primary-sage) 24%, var(--soft-white) 76%);
   color: var(--primary-forest);
-  border-radius: 999px;
-  padding: 0.3rem 0.85rem;
-  font-size: calc(0.75rem + var(--font-size-adjustment, 0px));
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-sage) 45%, transparent);
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -4946,18 +4954,11 @@ ol {
 }
 
 .activity-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
+  --pill-gap: clamp(0.35rem, 0.3rem + 0.15vw, 0.5rem);
   background: color-mix(in srgb, var(--primary-sage) 18%, transparent);
   border: 1px solid color-mix(in srgb, var(--primary-sage) 28%, transparent);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   color: var(--primary-forest);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .activity-title-group {
