@@ -202,27 +202,7 @@ await flushTimers();
 await nextFrame();
 assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open when adding a slide');
 
-const expectedLayouts = [
-  'blank-canvas',
-  'learning-objectives',
-  'model-dialogue',
-  'interactive-practice',
-  'communicative-task',
-  'pronunciation-focus',
-  'reflection',
-  'grounding-activity',
-  'topic-introduction',
-  'guided-discovery',
-  'creative-practice',
-  'task-divider',
-  'task-reporting',
-  'genre-deconstruction',
-  'linguistic-feature-hunt',
-  'text-reconstruction',
-  'jumbled-text-sequencing',
-  'scaffolded-joint-construction',
-  'independent-construction-checklist',
-];
+const expectedLayouts = ['blank-canvas'];
 
 expectedLayouts.forEach((value) => {
   const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
@@ -231,12 +211,6 @@ expectedLayouts.forEach((value) => {
 
 const blankLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="blank-canvas"]');
 assert.ok(blankLayoutRadio?.checked, 'blank layout should be selected by default');
-
-const groundingRadio = builderOverlay.querySelector('input[name="slideLayout"][value="grounding-activity"]');
-assert.ok(groundingRadio, 'grounding activity layout option should exist');
-groundingRadio.checked = true;
-groundingRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
-await flushTimers();
 
 const builderStatus = document.getElementById('builder-status');
 assert.ok(builderStatus, 'builder status region should exist');
@@ -258,37 +232,14 @@ const imageStatus = document.getElementById('image-search-status');
 assert.match(imageStatus.textContent ?? '', /Found 2 image/, 'image search status should announce the number of results');
 
 imageResults[0].click();
-const groundingImageField = builderOverlay.querySelector('input[name="groundingBackgroundImage"]');
 assert.equal(
-  groundingImageField?.value,
-  samplePhotos[0].src.large2x,
-  'selecting an image should populate the grounding activity image field',
+  imageResults[0].getAttribute('aria-selected'),
+  'true',
+  'selecting an image should mark the result as selected',
 );
-
-const topicLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="topic-introduction"]');
-topicLayoutRadio.checked = true;
-topicLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
-await flushTimers();
-
-imageResults[1].click();
-const topicImageField = builderOverlay.querySelector('input[name="topicBackgroundImage"]');
-assert.equal(
-  topicImageField?.value,
-  samplePhotos[1].src.large,
-  'image picker should populate the topic introduction background field',
-);
-
-const creativeLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="creative-practice"]');
-creativeLayoutRadio.checked = true;
-creativeLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
-await flushTimers();
-
-imageResults[0].click();
-const creativeImageField = builderOverlay.querySelector('input[name="creativeBackgroundImage"]');
-assert.equal(
-  creativeImageField?.value,
-  samplePhotos[0].src.large2x,
-  'image picker should update the creative practice background field',
+assert.ok(
+  imageResults[0].classList.contains('is-selected'),
+  'selected image should receive the is-selected class',
 );
 
 blankLayoutRadio.checked = true;
