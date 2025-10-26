@@ -654,7 +654,11 @@ function ensureBlankToolbarHost() {
   if (!(stageViewport instanceof HTMLElement)) {
     return null;
   }
+  const utilities = ensureStageUtilityCluster();
   if (blankToolbarHost instanceof HTMLElement && blankToolbarHost.isConnected) {
+    if (utilities instanceof HTMLElement && blankToolbarHost.parentElement !== utilities) {
+      utilities.append(blankToolbarHost);
+    }
     if (!(blankToolbarTrigger instanceof HTMLElement)) {
       const trigger = blankToolbarHost.querySelector(
         '[data-role="blank-toolbar-trigger"]',
@@ -668,9 +672,8 @@ function ensureBlankToolbarHost() {
   const existing = stageViewport.querySelector('[data-role="blank-toolbar-host"]');
   if (existing instanceof HTMLElement) {
     blankToolbarHost = existing;
-    const nextControl = stageViewport.querySelector('.slide-nav-next');
-    if (nextControl instanceof HTMLElement) {
-      stageViewport.insertBefore(existing, nextControl);
+    if (utilities instanceof HTMLElement) {
+      utilities.append(existing);
     }
     const trigger = existing.querySelector('[data-role="blank-toolbar-trigger"]');
     if (trigger instanceof HTMLButtonElement) {
@@ -683,16 +686,10 @@ function ensureBlankToolbarHost() {
   const host = document.createElement('div');
   host.className = 'blank-toolbar-host';
   host.dataset.role = 'blank-toolbar-host';
-  const nextControl = stageViewport.querySelector('.slide-nav-next');
-  if (nextControl instanceof HTMLElement) {
-    stageViewport.insertBefore(host, nextControl);
+  if (utilities instanceof HTMLElement) {
+    utilities.append(host);
   } else {
-    const utilities = stageViewport.querySelector('[data-role="stage-utilities"]');
-    if (utilities instanceof HTMLElement) {
-      stageViewport.insertBefore(host, utilities);
-    } else {
-      stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
-    }
+    stageViewport.insertBefore(host, stageViewport.firstChild ?? null);
   }
 
   let trigger = host.querySelector('[data-role="blank-toolbar-trigger"]');
