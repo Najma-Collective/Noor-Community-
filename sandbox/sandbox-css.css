@@ -1625,7 +1625,6 @@ body {
 .pill {
   background: color-mix(in srgb, var(--primary-sage) 22%, transparent);
   color: var(--deep-forest);
-  inline-size: var(--pill-min-width);
   justify-content: center;
   box-shadow: var(--shadow-0);
 }
