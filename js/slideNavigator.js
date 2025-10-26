@@ -6,6 +6,9 @@ export function initSlideNavigator({
     return null;
   }
 
+  const footer = document.createElement("div");
+  footer.className = "slide-jump-footer";
+
   const trigger = document.createElement("button");
   trigger.type = "button";
   trigger.className = "slide-jump-trigger";
@@ -22,24 +25,26 @@ export function initSlideNavigator({
   panel.setAttribute("aria-modal", "false");
   panel.setAttribute("aria-hidden", "true");
 
-  const titleId = "slide-jump-title";
-  panel.innerHTML = `
-    <div class="slide-jump-header">
-      <h2 id="${titleId}">Jump to a slide</h2>
-      <button type="button" class="slide-jump-close" aria-label="Close slide navigator">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-    <div class="slide-jump-body">
-      <ul class="slide-jump-list"></ul>
-    </div>
-  `;
+  const panelId = `slide-jump-panel-${Math.random().toString(36).slice(2)}`;
+  const titleId = `${panelId}-title`;
+  const title = document.createElement("h2");
+  title.id = titleId;
+  title.className = "sr-only";
+  title.textContent = "Jump to a slide";
+
+  const list = document.createElement("ul");
+  list.className = "slide-jump-list";
+
+  panel.id = panelId;
   panel.setAttribute("aria-labelledby", titleId);
+  trigger.setAttribute("aria-controls", panelId);
 
-  const list = panel.querySelector(".slide-jump-list");
-  const closeBtn = panel.querySelector(".slide-jump-close");
+  panel.appendChild(title);
+  panel.appendChild(list);
+  footer.appendChild(panel);
+  footer.appendChild(trigger);
 
-  if (!list || !closeBtn) {
+  if (!list) {
     return null;
   }
 
@@ -50,8 +55,9 @@ export function initSlideNavigator({
   function applyActiveState() {
     const items = list.querySelectorAll(".slide-jump-item");
     items.forEach((item, index) => {
-      item.classList.toggle("is-active", index === activeIndex);
-      item.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+      const isActive = index === activeIndex;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-current", isActive ? "true" : "false");
     });
   }
 
@@ -59,6 +65,7 @@ export function initSlideNavigator({
     list.innerHTML = "";
     slidesMeta.forEach(({ stage, title }, index) => {
       const item = document.createElement("li");
+      item.className = "slide-jump-entry";
       const button = document.createElement("button");
       button.type = "button";
       button.className = "slide-jump-item";
@@ -108,7 +115,11 @@ export function initSlideNavigator({
       const activeItem = list.querySelector(".slide-jump-item.is-active");
       if (activeItem instanceof HTMLElement) {
         activeItem.focus({ preventScroll: true });
-        activeItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        activeItem.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
       } else {
         const firstItem = list.querySelector(".slide-jump-item");
         firstItem?.focus({ preventScroll: true });
@@ -142,12 +153,7 @@ export function initSlideNavigator({
     }
   });
 
-  closeBtn.addEventListener("click", () => {
-    closePanel();
-  });
-
-  stageViewport.appendChild(trigger);
-  stageViewport.appendChild(panel);
+  stageViewport.appendChild(footer);
 
   return {
     updateSlides(meta = []) {
