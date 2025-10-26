@@ -2103,7 +2103,6 @@ function applyDeckState(state) {
   }
 
   const navButtons = Array.from(stageViewport.querySelectorAll(".slide-nav"));
-  const slideJumpFooter = stageViewport.querySelector(".slide-jump-footer");
   const fragment = document.createDocumentFragment();
 
   state.slides.forEach((slideHTML) => {
@@ -2121,9 +2120,6 @@ function applyDeckState(state) {
   stageViewport.innerHTML = "";
   stageViewport.appendChild(fragment);
   navButtons.forEach((button) => stageViewport.appendChild(button));
-  if (slideJumpFooter) {
-    stageViewport.appendChild(slideJumpFooter);
-  }
 
   refreshSlides();
   slides
