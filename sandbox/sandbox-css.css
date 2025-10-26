@@ -3018,28 +3018,31 @@ ol {
 
 .module-embed {
   position: relative;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(122, 132, 113, 0.22);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 246, 240, 0.88) 100%);
-  box-shadow: var(--shadow-2);
-  padding: clamp(1.1rem, 1rem + 0.5vw, 1.6rem);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(var(--space-3, 0.75rem), 1.6vw, var(--space-4, 1.15rem));
+  padding: clamp(var(--space-5, 1.35rem), 3vw, var(--space-6, 2rem));
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--border-sage) 80%, transparent);
+  background: var(--soft-white);
+  box-shadow: var(--shadow-1);
   overflow: hidden;
   isolation: isolate;
+  color: var(--forest-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .module-embed::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at top right,
-    color-mix(in srgb, var(--secondary-sage) 18%, transparent) 0%,
-    transparent 58%
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--primary-sage) 18%, transparent) 0%,
+    color-mix(in srgb, var(--secondary-sage) 12%, transparent) 45%,
+    transparent 80%
   );
-  opacity: 0.85;
+  opacity: 0.55;
   pointer-events: none;
   z-index: -1;
 }
@@ -3049,26 +3052,27 @@ ol {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.85rem;
+  gap: clamp(var(--space-3, 0.75rem), 1.4vw, var(--space-4, 1rem));
 }
 
 .module-embed-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.55rem;
+  gap: var(--space-2, 0.5rem);
 }
 
 .module-embed-pill {
-  background: color-mix(in srgb, var(--secondary-sage) 70%, white 30%);
-  color: var(--deep-forest);
+  background: color-mix(in srgb, var(--primary-sage) 24%, var(--soft-white) 76%);
+  color: var(--primary-forest);
   border-radius: 999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.3rem 0.85rem;
+  font-size: calc(0.75rem + var(--font-size-adjustment, 0px));
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  box-shadow: var(--shadow-0);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-sage) 45%, transparent);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .module-embed-title {
@@ -3081,11 +3085,11 @@ ol {
 .module-embed-actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-2, 0.5rem);
 }
 
 .module-embed-action {
-  border: none;
+  border: 1px solid color-mix(in srgb, var(--border-sage) 75%, transparent);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -3094,40 +3098,47 @@ ol {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
-    color 0.2s ease;
-  background: rgba(255, 255, 255, 0.92);
+    color 0.2s ease, border-color 0.2s ease;
+  background: color-mix(in srgb, var(--soft-white) 92%, var(--primary-sage) 8%);
   color: var(--forest-shadow);
   box-shadow: var(--shadow-1);
 }
 
 .module-embed-action:hover,
 .module-embed-action:focus-visible {
-  outline: none;
   transform: translateY(-1px);
   box-shadow: var(--shadow-2);
   color: var(--primary-forest);
+  background: color-mix(in srgb, var(--primary-sage) 22%, var(--soft-white) 78%);
+  border-color: color-mix(in srgb, var(--primary-sage) 55%, transparent);
+}
+
+.module-embed-action:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary-forest) 55%, transparent);
+  outline-offset: 2px;
 }
 
 .module-embed-edit {
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--soft-white) 95%, var(--primary-sage) 5%);
 }
 
 .module-embed-remove {
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--soft-white) 95%, var(--primary-sage) 5%);
 }
 
 .module-embed-remove:hover,
 .module-embed-remove:focus-visible {
-  background: rgba(122, 132, 113, 0.16);
+  background: color-mix(in srgb, var(--primary-sage) 28%, var(--soft-white) 72%);
 }
 
 .module-embed-frame {
   width: 100%;
   min-height: 420px;
-  border: none;
+  border: 1px solid color-mix(in srgb, var(--border-sage) 75%, transparent);
   border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 1px rgba(122, 132, 113, 0.25), var(--shadow-0);
-  background: #fff;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border-sage) 55%, transparent);
+  background: color-mix(in srgb, var(--soft-white) 96%, white 4%);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .blank-canvas textarea {
