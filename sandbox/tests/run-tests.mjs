@@ -186,6 +186,13 @@ await nextFrame();
 const stageViewport = document.querySelector('.stage-viewport');
 assert.ok(stageViewport, 'stage viewport should be present');
 
+const deckWorkspace = document.querySelector('.deck-workspace');
+assert.ok(deckWorkspace, 'deck workspace should be present');
+assert.ok(
+  !deckWorkspace.classList.contains('is-blank-active'),
+  'workspace should not start in the blank-active state',
+);
+
 const counterEl = document.getElementById('slide-counter');
 assert.ok(counterEl, 'slide counter should render');
 
@@ -284,6 +291,11 @@ assert.equal(slides.length, 3, 'builder submission should add a new slide to the
 const blankSlide = slides.find((slide) => slide.dataset.type === 'blank');
 assert.ok(blankSlide instanceof window.HTMLElement, 'blank slide should be inserted into the deck');
 assert.ok(!blankSlide.classList.contains('hidden'), 'blank slide should become the active slide');
+
+assert.ok(
+  deckWorkspace.classList.contains('is-blank-active'),
+  'workspace should reflect blank slide activation',
+);
 
 const blankCanvas = blankSlide.querySelector('.blank-canvas');
 assert.ok(blankCanvas instanceof window.HTMLElement, 'blank canvas should be available');
@@ -509,6 +521,11 @@ assert.ok(
 const practiceSlide = practiceSlides[practiceSlides.length - 1];
 assert.ok(practiceSlide instanceof window.HTMLElement, 'interactive practice slide should be present');
 assert.ok(!practiceSlide.classList.contains('hidden'), 'interactive practice slide should become the active slide');
+
+assert.ok(
+  !deckWorkspace.classList.contains('is-blank-active'),
+  'workspace should clear blank state after leaving the blank slide',
+);
 
 const practiceModuleHost = practiceSlide.querySelector('[data-role="practice-module-host"]');
 const practiceAddModuleBtn = practiceSlide.querySelector('[data-action="add-module"]');

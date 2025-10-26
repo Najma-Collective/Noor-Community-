@@ -748,6 +748,18 @@ function ensureBlankToolbarHost() {
 }
 
 function syncBlankToolbarVisibility() {
+  const activeSlide = slides?.[currentSlideIndex];
+  const isBlankSlide =
+    activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank';
+
+  const workspace =
+    stageViewport?.closest?.('.deck-workspace') ??
+    document.querySelector('.deck-workspace');
+
+  if (workspace instanceof HTMLElement) {
+    workspace.classList.toggle('is-blank-active', isBlankSlide);
+  }
+
   const host =
     blankToolbarHost instanceof HTMLElement
       ? blankToolbarHost
@@ -756,10 +768,6 @@ function syncBlankToolbarVisibility() {
   if (!(host instanceof HTMLElement)) {
     return;
   }
-
-  const activeSlide = slides?.[currentSlideIndex];
-  const isBlankSlide =
-    activeSlide instanceof HTMLElement && activeSlide.dataset.type === 'blank';
 
   host.hidden = !isBlankSlide;
 
