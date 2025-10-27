@@ -365,48 +365,51 @@
                 Pre-task B · Semi-controlled Practice · 7 minutes
               </span>
               <h2>Analyzing the Negotiation</h2>
-              <div class="card" data-activity="dropdown">
-                <div class="activity-header">
-                  <h3>
-                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
-                    Dialogue insight check
-                  </h3>
-                  <p>Select the communicative function for each highlighted phrase.</p>
+              <div class="dialogue-insight-layout">
+                <div class="card soft dialogue-transcript" role="group" aria-label="Dialogue transcript">
+                  <div class="dialogue-card">
+                    <p>
+                      Dana: Hi Kareem, thanks for meeting. I&apos;ve reviewed the partner feedback. It’s tough.
+                      <mark>If we had anticipated the connectivity issues in the West Bank hubs, we would be in a better position now.</mark>
+                    </p>
+                    <p>
+                      Kareem: I know, Dana. Hindsight is 20/20. They are suggesting we change our entire delivery platform.
+                      <mark>If we were to change suppliers, we would need to have a good contingency plan.</mark> It could delay us by months.
+                    </p>
+                    <p>
+                      Dana: Exactly. <mark>I agree, but we need to think about the long-term implications of a major pivot.</mark>
+                      We can&apos;t afford to get this wrong.
+                    </p>
+                    <p>
+                      Kareem: Okay, let&apos;s find a way forward. I think
+                      <mark>if we just focused on the curriculum, we could find some common ground.</mark>
+                      Perhaps we can offer more offline resources as a <mark>trade-off</mark>?
+                    </p>
+                    <p>
+                      Dana: That&apos;s a good starting point. Perhaps we can make <mark>a small concession on the timeline</mark>
+                      to allow for that development?
+                    </p>
+                    <p>
+                      Kareem: I think that&apos;s a reasonable compromise. I’m glad we talked this through.
+                      <mark>If we hadn&apos;t scheduled this call, we might have reached a deadlock.</mark>
+                    </p>
+                  </div>
                 </div>
-                <div class="dialogue-card">
-                  <p>
-                    Dana: Hi Kareem, thanks for meeting. I&apos;ve reviewed the partner feedback. It’s tough.
-                    <mark>If we had anticipated the connectivity issues in the West Bank hubs, we would be in a better position now.</mark>
-                  </p>
-                  <p>
-                    Kareem: I know, Dana. Hindsight is 20/20. They are suggesting we change our entire delivery platform.
-                    <mark>If we were to change suppliers, we would need to have a good contingency plan.</mark> It could delay us by months.
-                  </p>
-                  <p>
-                    Dana: Exactly. <mark>I agree, but we need to think about the long-term implications of a major pivot.</mark>
-                    We can&apos;t afford to get this wrong.
-                  </p>
-                  <p>
-                    Kareem: Okay, let&apos;s find a way forward. I think
-                    <mark>if we just focused on the curriculum, we could find some common ground.</mark>
-                    Perhaps we can offer more offline resources as a <mark>trade-off</mark>?
-                  </p>
-                  <p>
-                    Dana: That&apos;s a good starting point. Perhaps we can make <mark>a small concession on the timeline</mark>
-                    to allow for that development?
-                  </p>
-                  <p>
-                    Kareem: I think that&apos;s a reasonable compromise. I’m glad we talked this through.
-                    <mark>If we hadn&apos;t scheduled this call, we might have reached a deadlock.</mark>
-                  </p>
-                </div>
-                <div class="dropdown-grid">
-                  <div class="dropdown-item">
-                    <label for="dropdown-1">“If we had anticipated the connectivity issues..., we would be in a better position now.”</label>
-                    <select id="dropdown-1" data-answer="Expressing hypothetical regret">
-                      <option value="">Choose...</option>
-                      <option>Expressing hypothetical regret</option>
-                      <option>Identifying a future risk</option>
+                <div class="card" data-activity="dropdown">
+                  <div class="activity-header">
+                    <h3>
+                      <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                      Dialogue insight check
+                    </h3>
+                    <p>Select the communicative function for each highlighted phrase.</p>
+                  </div>
+                  <div class="dropdown-grid">
+                    <div class="dropdown-item">
+                      <label for="dropdown-1">“If we had anticipated the connectivity issues..., we would be in a better position now.”</label>
+                      <select id="dropdown-1" class="dropdown-select" data-answer="Expressing hypothetical regret">
+                        <option value="">Choose...</option>
+                        <option>Expressing hypothetical regret</option>
+                        <option>Identifying a future risk</option>
                       <option>Urging caution and foresight</option>
                       <option>Proposing a point of agreement</option>
                       <option>Suggesting a specific compromise</option>
@@ -416,7 +419,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-2">“If we were to change suppliers..., we would need to have a good contingency plan.”</label>
-                    <select id="dropdown-2" data-answer="Identifying a future risk">
+                    <select id="dropdown-2" class="dropdown-select" data-answer="Identifying a future risk">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -429,7 +432,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-3">“...we need to think about the long-term implications of a major pivot.”</label>
-                    <select id="dropdown-3" data-answer="Urging caution and foresight">
+                    <select id="dropdown-3" class="dropdown-select" data-answer="Urging caution and foresight">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -442,7 +445,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-4">“...if we just focused on the curriculum, we could find some common ground.”</label>
-                    <select id="dropdown-4" data-answer="Proposing a point of agreement">
+                    <select id="dropdown-4" class="dropdown-select" data-answer="Proposing a point of agreement">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -455,7 +458,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-5">“Perhaps we can offer more offline resources as a trade-off?”</label>
-                    <select id="dropdown-5" data-answer="Suggesting a specific compromise">
+                    <select id="dropdown-5" class="dropdown-select" data-answer="Suggesting a specific compromise">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -468,7 +471,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-6">“...we can make a small concession on the timeline...”</label>
-                    <select id="dropdown-6" data-answer="Offering a specific concession">
+                    <select id="dropdown-6" class="dropdown-select" data-answer="Offering a specific concession">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -481,7 +484,7 @@
                   </div>
                   <div class="dropdown-item">
                     <label for="dropdown-7">“If we hadn&apos;t scheduled this call, we might have reached a deadlock.”</label>
-                    <select id="dropdown-7" data-answer="Highlighting a negative outcome avoided">
+                    <select id="dropdown-7" class="dropdown-select" data-answer="Highlighting a negative outcome avoided">
                       <option value="">Choose...</option>
                       <option>Expressing hypothetical regret</option>
                       <option>Identifying a future risk</option>
@@ -493,11 +496,12 @@
                     </select>
                   </div>
                 </div>
-                <div class="activity-actions">
-                  <button class="activity-btn" data-action="check">Check</button>
-                  <button class="activity-btn secondary" data-action="reset">Reset</button>
+                  <div class="activity-actions">
+                    <button class="activity-btn" data-action="check">Check</button>
+                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                  </div>
+                  <div class="feedback-msg" aria-live="polite"></div>
                 </div>
-                <div class="feedback-msg" aria-live="polite"></div>
               </div>
             </div>
           </div>
