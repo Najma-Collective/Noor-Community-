@@ -175,6 +175,16 @@ body {
   font-style: italic;
 }
 
+.inline-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(var(--space-2), 1vw, var(--space-3));
+}
+
+.inline-icon > i {
+  flex-shrink: 0;
+}
+
 .w-100 {
   width: 100%;
 }
