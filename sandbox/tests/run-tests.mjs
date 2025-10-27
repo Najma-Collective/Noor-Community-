@@ -185,7 +185,9 @@ global.fetch = async (input, init = {}) => {
   };
 };
 
-const MODULE_TYPES = ['multiple-choice', 'gapfill', 'grouping', 'table-completion', 'quiz-show'];
+const MODULE_TYPES = Object.keys(MODULE_DEFAULTS);
+const moduleSnapshotPath = join(__dirname, 'fixtures', 'module-markup-snapshots.json');
+const moduleSnapshots = JSON.parse(await readFile(moduleSnapshotPath, 'utf8'));
 const moduleFixtures = MODULE_TYPES.reduce((acc, type) => {
   const config = MODULE_DEFAULTS[type]();
   acc[type] = {
@@ -194,6 +196,18 @@ const moduleFixtures = MODULE_TYPES.reduce((acc, type) => {
   };
   return acc;
 }, {});
+
+MODULE_TYPES.forEach((type) => {
+  assert.ok(
+    type in moduleSnapshots,
+    `module snapshot fixture should provide markup for the ${type} activity`,
+  );
+  assert.equal(
+    moduleFixtures[type].html,
+    moduleSnapshots[type],
+    `${type} module markup should match the snapshot fixture`,
+  );
+});
 
 const moduleFrame = document.getElementById('module-builder-frame');
 Object.defineProperty(moduleFrame, 'contentWindow', {
@@ -1170,6 +1184,40 @@ MODULE_TYPES.forEach((type) => {
       assert.equal(items.length, expectedItems, 'grouping module should create a draggable card per item');
       const targets = moduleDoc.querySelectorAll('.group-target');
       assert.equal(targets.length, config.categories.length, 'grouping module should render a target column for each category');
+      break;
+    }
+    case 'linking': {
+      const rows = moduleDoc.querySelectorAll('.linking-row');
+      assert.equal(rows.length, config.pairs.length, 'linking module should output a row for each badge prompt');
+      const selects = moduleDoc.querySelectorAll('.linking-select');
+      assert.equal(selects.length, config.pairs.length, 'linking module should render a select control per prompt');
+      break;
+    }
+    case 'dropdown': {
+      const dropdownItems = moduleDoc.querySelectorAll('.dropdown-item');
+      assert.equal(dropdownItems.length, config.items.length, 'dropdown module should create an item for each prompt');
+      const optionTotal = Array.from(moduleDoc.querySelectorAll('.dropdown-select')).reduce((sum, select) => {
+        const choices = Array.from(select.querySelectorAll('option'));
+        return sum + Math.max(choices.length - 1, 0);
+      }, 0);
+      const expectedOptions = config.items.reduce((sum, item) => sum + item.options.length, 0);
+      assert.equal(optionTotal, expectedOptions, 'dropdown module should surface all configured options');
+      break;
+    }
+    case 'multiple-choice-grid': {
+      const table = moduleDoc.querySelector('.grid-table');
+      assert.ok(table instanceof window.HTMLTableElement, 'multiple choice grid should render a comparison table');
+      const gridRows = moduleDoc.querySelectorAll('.grid-row');
+      assert.equal(gridRows.length, config.rows.length, 'grid module should provide a row for each prompt');
+      const inputsPerRow = gridRows[0]?.querySelectorAll('input[type="radio"]').length ?? 0;
+      assert.equal(inputsPerRow, config.columns.length, 'grid module should offer one choice per column');
+      break;
+    }
+    case 'ranking': {
+      const rankingList = moduleDoc.querySelector('.ranking-list');
+      assert.ok(rankingList instanceof window.HTMLOListElement, 'ranking module should render an ordered list');
+      const cards = rankingList?.querySelectorAll('li');
+      assert.equal(cards.length, config.items.length, 'ranking module should create a card for each entry');
       break;
     }
     case 'table-completion': {

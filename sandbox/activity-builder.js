@@ -1,194 +1,314 @@
-const DEFAULT_STATES = {
-  'multiple-choice': () => ({
-    title: 'C1 Checkpoint · Climate Solutions Sprint',
+const COPY_FIELD = Symbol('copy-field');
+
+const createCopyField = ({ title, tone, rules = {}, template, fallback = '' }) => ({
+  title,
+  tone,
+  rules,
+  template,
+  fallback,
+  __type: COPY_FIELD,
+});
+
+const isCopyField = (value) => value && value.__type === COPY_FIELD;
+
+const cloneMetaValue = (value) => {
+  if (value === undefined) {
+    return value;
+  }
+  return JSON.parse(JSON.stringify(value));
+};
+
+const deepMergeMeta = (base = {}, override = {}) => {
+  const result = Array.isArray(base) ? base.map((item) => cloneMetaValue(item)) : { ...base };
+  Object.entries(override || {}).forEach(([key, value]) => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      const existing = base?.[key];
+      result[key] = deepMergeMeta(
+        existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {},
+        value,
+      );
+    } else if (Array.isArray(value)) {
+      result[key] = value.map((item) => cloneMetaValue(item));
+    } else {
+      result[key] = value;
+    }
+  });
+  return result;
+};
+
+const resolveCopyField = (field, meta) => {
+  const generated = typeof field.template === 'function' ? field.template(meta) : field.fallback;
+  if (generated === null || generated === undefined) {
+    return '';
+  }
+  return typeof generated === 'string' ? generated : String(generated);
+};
+
+const compileSchemaWithMeta = (schema, meta) => {
+  if (isCopyField(schema)) {
+    return resolveCopyField(schema, meta);
+  }
+  if (Array.isArray(schema)) {
+    return schema.map((entry) => compileSchemaWithMeta(entry, meta));
+  }
+  if (schema && typeof schema === 'object') {
+    return Object.entries(schema).reduce((acc, [key, value]) => {
+      if (key === '__type') {
+        return acc;
+      }
+      acc[key] = compileSchemaWithMeta(value, meta);
+      return acc;
+    }, {});
+  }
+  return schema;
+};
+
+const DEFAULT_COPY_META = {
+  shared: {
+    sprintName: 'Climate Solutions Sprint',
+    checkpointLabel: 'C1 Checkpoint',
+    sprintFocus: 'low-cost, high-impact climate solution',
+    heroAction: 'Distributed solar kits',
+    heroImpact: 'an immediate, measurable reduction in emissions',
+    heroAngle: 'modelling learner agency',
+    scenarioPill: 'scenario pill',
+    promptBadge: 'prompt badge',
+    feedbackCard: 'feedback card',
+    progressBadge: 'progress badge',
+    dataBadgeSlide: 4,
+    infographicFocus: 'measurable gains',
+    badges: {
+      impact: 'Impact badge',
+      story: 'Story badge',
+      people: 'People badge',
+      context: 'Context badge',
+      progress: 'Progress badge',
+      impactLabel: 'Impact',
+      storyLabel: 'Story',
+      peopleLabel: 'People',
+      contextLabel: 'Context',
+      progressLabel: 'Progress',
+      sparkLabel: 'Spark',
+    },
+    badgeDescriptions: {
+      impact: 'Highlights measurable outcomes or data gains',
+      story: 'Frames the narrative arc or learner voiceover',
+      people: 'Spotlights collaborators, mentors, or partners',
+    },
+    structures: {
+      launchPillars: 'Launch Pillars',
+      studioHabits: 'Studio Habits',
+      reflectionTokens: 'Reflection Tokens',
+      scenarioPill: 'Scenario pill',
+      sparkQuestionDuo: 'Spark question duo',
+      visualPromiseBadge: 'Visual promise badge',
+      feedbackCarousel: 'Feedback carousel',
+      prototypeGallery: 'Prototype gallery',
+      coachCheckInPill: 'Coach check-in pill',
+      glowGrowCards: 'Glow/Grow cards',
+      exitTicketMosaic: 'Exit ticket mosaic',
+      nextStepsBadge: 'Next steps badge',
+      scenarioPillPrompt: 'Scenario pill and spark question pair',
+      prototypeGallerySlide: 'Prototype gallery slide',
+      reflectionBadgeGrid: 'Reflection badge grid',
+      studioHabitCarousel: 'Studio habit carousel introduces practice moves',
+    },
+    notes: {
+      launchDescription: 'Use these to open the deck with momentum and clarity.',
+      studioDescription: 'Mid-deck structures that drive iteration and prototyping.',
+      reflectionDescription: 'Closing structures that surface evidence of learning.',
+      scenarioNote: 'Sets the narrative hook for the sprint.',
+      prototypeNote: 'Captures evidence of current builds.',
+      reflectionNote: 'Needs more learner voice before sharing.',
+      rankingIntro: 'Hook learners with the real-world problem.',
+      rankingHabit: 'Cue the routines learners will rehearse.',
+      rankingShowcase: 'Showcase iterations and celebrate growth.',
+      rankingClose: 'Surface commitments and future experiments.',
+    },
+    tableHeaders: ['Focus area', 'Learner-facing move', 'Visible artifact'],
+    table: {
+      scenarioFocus: 'Scenario launch',
+      scenarioMove: 'Pose a bold question framed as a pill',
+      scenarioArtifact: 'Hero image with overlay badge',
+      practiceFocus: 'Practice lane',
+      practiceMove: 'Sequence a trio of iterative tasks',
+      practiceArtifact: 'Card stack with step badges',
+      reflectionFocus: 'Reflection close',
+      reflectionMove: 'Collect evidence and next steps aloud',
+      reflectionArtifact: 'Dual-column recap with progress chips',
+    },
+    dropdown: {
+      scenarioFeedback: 'The context badge reinforces the scenario so teams align on the brief.',
+      prototypeFeedback: 'Progress keeps attention on iteration wins instead of new prompts.',
+      scenarioSlide: 2,
+    },
+    grouping: {
+      categories: [
+        {
+          name: 'Launch Pillars',
+          description: 'Use these to open the deck with momentum and clarity.',
+          items: ['Scenario pill', 'Spark question duo', 'Visual promise badge'],
+        },
+        {
+          name: 'Studio Habits',
+          description: 'Mid-deck structures that drive iteration and prototyping.',
+          items: ['Feedback carousel', 'Prototype gallery', 'Coach check-in pill'],
+        },
+        {
+          name: 'Reflection Tokens',
+          description: 'Closing structures that surface evidence of learning.',
+          items: ['Glow/Grow cards', 'Exit ticket mosaic', 'Next steps badge'],
+        },
+      ],
+    },
+    grid: {
+      columns: ['Ready to launch', 'In iteration', 'Needs support'],
+      rows: [
+        {
+          statement: 'Scenario pill and spark question pair',
+          note: 'Sets the narrative hook for the sprint.',
+          correctIndex: 0,
+        },
+        {
+          statement: 'Prototype gallery slide',
+          note: 'Captures evidence of current builds.',
+          correctIndex: 1,
+        },
+        {
+          statement: 'Reflection badge grid',
+          note: 'Needs more learner voice before sharing.',
+          correctIndex: 2,
+        },
+      ],
+    },
+    ranking: [
+      {
+        text: 'Scenario pill announces the brief',
+        note: 'Hook learners with the real-world problem.',
+      },
+      {
+        text: 'Studio habit carousel introduces practice moves',
+        note: 'Cue the routines learners will rehearse.',
+      },
+      {
+        text: 'Prototype gallery spotlights evidence',
+        note: 'Showcase iterations and celebrate growth.',
+      },
+      {
+        text: 'Reflection grid closes with next steps',
+        note: 'Surface commitments and future experiments.',
+      },
+    ],
+    tableRows: [
+      {
+        label: 'Scenario launch',
+        answers: ['Pose a bold question framed as a pill', 'Hero image with overlay badge'],
+      },
+      {
+        label: 'Practice lane',
+        answers: ['Sequence a trio of iterative tasks', 'Card stack with step badges'],
+      },
+      {
+        label: 'Reflection close',
+        answers: ['Collect evidence and next steps aloud', 'Dual-column recap with progress chips'],
+      },
+    ],
+  },
+  multipleChoice: {
     instructions:
       'Skim the scenario pill, read the prompt badge, then tap the best response before revealing the feedback card.',
     rubric:
       'Learners earn a progress badge for each prompt answered correctly. Discuss any uncertain items before advancing.',
     questions: [
       {
-        prompt:
-          'Which action best represents a low-cost, high-impact climate solution we could prototype this term?',
+        prompt: 'Which action best represents a low-cost, high-impact climate solution we could prototype this term?',
         explanation:
           'Distributed solar kits create an immediate, measurable reduction in emissions while modelling learner agency.',
         options: [
-          { text: 'Installing rooftop solar starter kits across the neighbourhood hub', correct: true },
-          { text: 'Hosting weekly awareness assemblies in the auditorium', correct: false },
-          { text: 'Publishing a quarterly sustainability report for stakeholders', correct: false },
-          { text: 'Planting decorative palms around the entrance plaza', correct: false }
-        ]
+          'Installing rooftop solar starter kits across the neighbourhood hub',
+          'Hosting weekly awareness assemblies in the auditorium',
+          'Publishing a quarterly sustainability report for stakeholders',
+          'Planting decorative palms around the entrance plaza',
+        ],
       },
       {
         prompt: 'Which data badge should pair with the infographic on Slide 4 of this deck?',
         explanation:
           'The infographic highlights measurable gains, so we surface the Impact badge rather than narrative or testimonial cues.',
         options: [
-          { text: 'Impact badge · compares baseline and post-project metrics', correct: true },
-          { text: 'People badge · lifts a learner testimonial or quote', correct: false },
-          { text: 'Story badge · cues the narrative hook for the showcase', correct: false }
-        ]
-      }
-    ]
-  }),
-  linking: () => ({
-    title: 'Badge Match Relay',
-    instructions:
-      'Review each badge brief, then link it to the headline that best captures its focus.',
-    rubric:
-      'Award one point per correct link. Invite learners to justify any mismatches before revealing the key.',
-    pairs: [
-      {
-        prompt: 'Impact badge',
-        match: 'Highlights measurable outcomes or data gains',
-        hint: 'Look for the badge that quantifies progress.',
-      },
-      {
-        prompt: 'Story badge',
-        match: 'Frames the narrative arc or learner voiceover',
-        hint: 'Pairs with a voice-led reflection.',
-      },
-      {
-        prompt: 'People badge',
-        match: 'Spotlights collaborators, mentors, or partners',
-        hint: 'Focus on relationships and teams.',
+          'Impact badge · compares baseline and post-project metrics',
+          'People badge · lifts a learner testimonial or quote',
+          'Story badge · cues the narrative hook for the showcase',
+        ],
       },
     ],
-  }),
-  dropdown: () => ({
+  },
+  linking: {
+    title: 'Badge Match Relay',
+    instructions: 'Review each badge brief, then link it to the headline that best captures its focus.',
+    rubric:
+      'Award one point per correct link. Invite learners to justify any mismatches before revealing the key.',
+    hints: {
+      impact: 'Look for the badge that quantifies progress.',
+      story: 'Pairs with a voice-led reflection.',
+      people: 'Focus on relationships and teams.',
+    },
+  },
+  dropdown: {
     title: 'Select the Slide Move',
     instructions: 'Read the prompt, then use the dropdown to choose the move that completes the card.',
     rubric:
       'Celebrate a point for every accurate dropdown choice. Coach learners to explain why a move fits before revealing answers.',
-    items: [
-      {
-        prompt: 'Slide 2 pairs the scenario pill with the ____ badge to ground the challenge.',
-        options: [
-          { text: 'Impact', correct: false },
-          { text: 'Story', correct: false },
-          { text: 'Context', correct: true },
-        ],
-        feedback: 'The context badge reinforces the scenario so teams align on the brief.',
-      },
-      {
-        prompt: 'During the prototype review we surface evidence with the ____ badge.',
-        options: [
-          { text: 'Progress', correct: true },
-          { text: 'Spark', correct: false },
-          { text: 'People', correct: false },
-        ],
-        feedback: 'Progress keeps attention on iteration wins instead of new prompts.',
-      },
-    ],
-  }),
-  gapfill: () => ({
+  },
+  gapfill: {
     title: 'Badge Copy Refinement',
     instructions: 'Preview the mentor text pill, then tighten each badge caption with precise C1 language.',
     rubric: 'Award one point per correctly completed blank; coach for concision before revealing the model answers.',
-    passage:
-      'Each slide opens with a [[scenario|context]] pill that anchors learners in a real brief. ' +
-      'To reinforce the voice and tone, pair every action card with a [[badge|micro-badge]] label that signals the focus. ' +
-      'During the showcase, move from the [[insight|key insight]] badge into the reflection grid so evidence stays visible.'
-  }),
-  grouping: () => ({
+    synonyms: {
+      scenario: ['scenario', 'context'],
+      badge: ['badge', 'micro-badge'],
+      insight: ['insight', 'key insight'],
+    },
+  },
+  grouping: {
     title: 'Assemble the Slide Stack',
     instructions: 'Drag each card into the correct lane to storyboard the updated presentation flow.',
     rubric: 'Teams earn a collaboration badge for every card sorted into the matching lane.',
-    categories: [
-      {
-        name: 'Launch Pillars',
-        description: 'Use these to open the deck with momentum and clarity.',
-        items: ['Scenario pill', 'Spark question duo', 'Visual promise badge']
-      },
-      {
-        name: 'Studio Habits',
-        description: 'Mid-deck structures that drive iteration and prototyping.',
-        items: ['Feedback carousel', 'Prototype gallery', 'Coach check-in pill']
-      },
-      {
-        name: 'Reflection Tokens',
-        description: 'Closing structures that surface evidence of learning.',
-        items: ['Glow/Grow cards', 'Exit ticket mosaic', 'Next steps badge']
-      }
-    ]
-  }),
-  'multiple-choice-grid': () => ({
+  },
+  grid: {
     title: 'Slide Status Grid',
     instructions: 'Scan each workflow card and choose the column that best describes its current status.',
     rubric:
       'Score a point when the selected column aligns with the planning brief. Prompt learners to defend each placement.',
-    columns: ['Ready to launch', 'In iteration', 'Needs support'],
-    rows: [
-      {
-        statement: 'Scenario pill and spark question pair',
-        note: 'Sets the narrative hook for the sprint.',
-        correctIndex: 0,
-      },
-      {
-        statement: 'Prototype gallery slide',
-        note: 'Captures evidence of current builds.',
-        correctIndex: 1,
-      },
-      {
-        statement: 'Reflection badge grid',
-        note: 'Needs more learner voice before sharing.',
-        correctIndex: 2,
-      },
-    ],
-  }),
-  ranking: () => ({
+  },
+  ranking: {
     title: 'Sequence the Deck Flow',
     instructions: 'Drag or move each card to order the slide flow from opening to showcase.',
     rubric:
       'Award two points for a perfect order. For near misses, ask teams to narrate the rationale before revealing the model.',
-    items: [
-      { text: 'Scenario pill announces the brief', note: 'Hook learners with the real-world problem.' },
-      { text: 'Studio habit carousel introduces practice moves', note: 'Cue the routines learners will rehearse.' },
-      { text: 'Prototype gallery spotlights evidence', note: 'Showcase iterations and celebrate growth.' },
-      { text: 'Reflection grid closes with next steps', note: 'Surface commitments and future experiments.' },
-    ],
-  }),
-  'table-completion': () => ({
+  },
+  table: {
     title: 'Card Composition Planner',
     instructions: 'Complete the matrix to align each slide card with the new visual language.',
     rubric: 'Assign one point per accurately completed cell. Invite teams to justify their pairings before scoring.',
-    columnHeaders: ['Focus area', 'Learner-facing move', 'Visible artifact'],
-    rows: [
-      {
-        label: 'Scenario launch',
-        answers: ['Pose a bold question framed as a pill', 'Hero image with overlay badge']
-      },
-      {
-        label: 'Practice lane',
-        answers: ['Sequence a trio of iterative tasks', 'Card stack with step badges']
-      },
-      {
-        label: 'Reflection close',
-        answers: ['Collect evidence and next steps aloud', 'Dual-column recap with progress chips']
-      }
-    ]
-  }),
-  'quiz-show': () => ({
+  },
+  quiz: {
     title: 'Slide Quiz Showdown',
     instructions:
       'Run the lightning round: reveal the prompt pill, let teams buzz in, then flip the answer and extension cards.',
     rubric:
       'Award two points for accurate responses and one point for strong extensions. Pause between slides to celebrate badges earned.',
     defaultTime: 35,
+    teams: ['Team Catalyst', 'Team Atlas', 'Team Pulse'],
+  },
+  quizContent: {
     questions: [
       {
-        prompt:
-          'Which visual cue signals a progress badge has been earned during the reflection slide?',
+        prompt: 'Which visual cue signals a progress badge has been earned during the reflection slide?',
         answer: 'A soft green chip with the badge icon pulses beside the learner name.',
         feedback: 'Invite learners to describe what evidence unlocked that badge to reinforce metacognition.',
         image: 'https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg',
         time: 40,
-        icons: {
-          prompt: '',
-          answer: '',
-          feedback: '',
-          image: '',
-          time: '',
-        },
       },
       {
         prompt: 'How should we introduce a new studio habit card when time is limited?',
@@ -196,13 +316,6 @@ const DEFAULT_STATES = {
         feedback: 'Model a concise demo before inviting teams to rehearse the habit in pairs.',
         image: 'https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg',
         time: 30,
-        icons: {
-          prompt: '',
-          answer: '',
-          feedback: '',
-          image: '',
-          time: '',
-        },
       },
       {
         prompt: 'What belongs in the recap grid after a prototyping sprint?',
@@ -210,45 +323,658 @@ const DEFAULT_STATES = {
         feedback: 'Layer the exit ticket mosaic beneath so trends stay visible across teams.',
         image: 'https://images.pexels.com/photos/1181356/pexels-photo-1181356.jpeg',
         time: 35,
-        icons: {
-          prompt: '',
-          answer: '',
-          feedback: '',
-          image: '',
-          time: '',
-        },
-      }
+      },
     ],
-    teams: [
-      { name: 'Team Catalyst', icon: '', score: 0 },
-      { name: 'Team Atlas', icon: '', score: 0 },
-      { name: 'Team Pulse', icon: '', score: 0 }
+  },
+};
+
+const DEFAULT_GROUPING_CATEGORIES = DEFAULT_COPY_META.shared.grouping.categories;
+const DEFAULT_GRID_COLUMNS = DEFAULT_COPY_META.shared.grid.columns;
+const DEFAULT_GRID_ROWS = DEFAULT_COPY_META.shared.grid.rows;
+const DEFAULT_RANKING_ITEMS = DEFAULT_COPY_META.shared.ranking;
+const DEFAULT_TABLE_ROWS = DEFAULT_COPY_META.shared.tableRows;
+const DEFAULT_MULTIPLE_CHOICE_QUESTIONS = DEFAULT_COPY_META.multipleChoice.questions;
+const DEFAULT_LINKING_ORDER = ['impact', 'story', 'people'];
+const DEFAULT_QUIZ_QUESTIONS = DEFAULT_COPY_META.quizContent.questions;
+
+const MODULE_COPY_SCHEMAS = {
+  'multiple-choice': {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Checkpoint clarity',
+      rules: { pattern: 'Prefix · Sprint name' },
+      template: (meta) => `${meta.shared.checkpointLabel} · ${meta.shared.sprintName}`,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Mentor coaching voice',
+      rules: { sentences: 2 },
+      template: (meta) =>
+        meta.multipleChoice?.instructions ||
+        `Skim the ${meta.shared.scenarioPill}, read the ${meta.shared.promptBadge}, then tap the best response before revealing the ${meta.shared.feedbackCard}.`,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Encouraging and precise',
+      rules: { focus: 'Celebrate accuracy and discourse' },
+      template: (meta) =>
+        meta.multipleChoice?.rubric ||
+        `Learners earn a ${meta.shared.progressBadge} for each prompt answered correctly. Discuss any uncertain items before advancing.`,
+    }),
+    questions: [
+      {
+        prompt: createCopyField({
+          title: 'Priority action question',
+          tone: 'Challenge-based prompt',
+          rules: { format: 'Open investigative question' },
+          template: (meta) =>
+            meta.multipleChoice?.questions?.[0]?.prompt ||
+            `Which action best represents a ${meta.shared.sprintFocus} we could prototype this term?`,
+        }),
+        explanation: createCopyField({
+          title: 'Model explanation',
+          tone: 'Affirming and specific',
+          rules: { highlight: 'Impact and agency' },
+          template: (meta) =>
+            meta.multipleChoice?.questions?.[0]?.explanation ||
+            `${meta.shared.heroAction} create ${meta.shared.heroImpact} while ${meta.shared.heroAngle}.`,
+        }),
+        options: [
+          {
+            text: createCopyField({
+              title: 'High-impact response',
+              tone: 'Actionable move',
+              rules: { focus: 'Specific learner action' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[0]?.options?.[0] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[0].options[0],
+            }),
+            correct: true,
+          },
+          {
+            text: createCopyField({
+              title: 'Awareness alternative',
+              tone: 'Informational but insufficient',
+              rules: { highlight: 'Less impactful pathway' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[0]?.options?.[1] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[0].options[1],
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'Reporting alternative',
+              tone: 'Formal but indirect',
+              rules: { focus: 'Stakeholder communication' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[0]?.options?.[2] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[0].options[2],
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'Cosmetic alternative',
+              tone: 'Surface-level action',
+              rules: { highlight: 'Low impact choice' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[0]?.options?.[3] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[0].options[3],
+            }),
+            correct: false,
+          },
+        ],
+      },
+      {
+        prompt: createCopyField({
+          title: 'Data pairing question',
+          tone: 'Evidence-first prompt',
+          rules: { highlight: 'Badge alignment' },
+          template: (meta) =>
+            meta.multipleChoice?.questions?.[1]?.prompt ||
+            `Which data badge should pair with the infographic on Slide ${meta.shared.dataBadgeSlide} of this deck?`,
+        }),
+        explanation: createCopyField({
+          title: 'Badge rationale',
+          tone: 'Concise justification',
+          rules: { reinforce: 'Evidence-driven cues' },
+          template: (meta) =>
+            meta.multipleChoice?.questions?.[1]?.explanation ||
+            `The infographic highlights ${meta.shared.infographicFocus}, so we surface the ${meta.shared.badges.impact} rather than narrative or testimonial cues.`,
+        }),
+        options: [
+          {
+            text: createCopyField({
+              title: 'Impact badge option',
+              tone: 'Badge descriptor',
+              rules: { include: 'Outcome focus' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[1]?.options?.[0] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[1].options[0],
+            }),
+            correct: true,
+          },
+          {
+            text: createCopyField({
+              title: 'People badge option',
+              tone: 'Badge descriptor',
+              rules: { include: 'Testimonial framing' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[1]?.options?.[1] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[1].options[1],
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'Story badge option',
+              tone: 'Badge descriptor',
+              rules: { include: 'Narrative focus' },
+              template: (meta) =>
+                meta.multipleChoice?.questions?.[1]?.options?.[2] ||
+                DEFAULT_MULTIPLE_CHOICE_QUESTIONS[1].options[2],
+            }),
+            correct: false,
+          },
+        ],
+      },
     ],
+  },
+  linking: {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Energetic facilitation',
+      rules: { format: 'Action verb plus badge concept' },
+      template: (meta) => meta.linking?.title || DEFAULT_COPY_META.linking.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Coach directive',
+      rules: { sentenceCount: 1 },
+      template: (meta) =>
+        meta.linking?.instructions || DEFAULT_COPY_META.linking.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Collaborative scoring guidance',
+      rules: { highlight: 'Dialogue before reveal' },
+      template: (meta) => meta.linking?.rubric || DEFAULT_COPY_META.linking.rubric,
+    }),
+    pairs: DEFAULT_LINKING_ORDER.map((key, index) => ({
+      prompt: createCopyField({
+        title: 'Badge label',
+        tone: 'Title case',
+        rules: { vocabulary: 'Badge names' },
+        template: (meta) =>
+          meta.linking?.pairs?.[index]?.badge || meta.shared.badges[key],
+      }),
+      match: createCopyField({
+        title: 'Headline match',
+        tone: 'Descriptive and active',
+        rules: { focus: 'Badge outcomes' },
+        template: (meta) =>
+          meta.linking?.pairs?.[index]?.description || meta.shared.badgeDescriptions[key],
+      }),
+      hint: createCopyField({
+        title: 'Matching hint',
+        tone: 'Coaching whisper',
+        rules: { optional: true },
+        template: (meta) =>
+          meta.linking?.pairs?.[index]?.hint || meta.linking?.hints?.[key] || '',
+      }),
+    })),
+  },
+  dropdown: {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Prompt-driven',
+      rules: { format: 'Action phrase' },
+      template: (meta) => meta.dropdown?.title || DEFAULT_COPY_META.dropdown.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Direct and concise',
+      rules: { emphasise: 'Dropdown selection' },
+      template: (meta) =>
+        meta.dropdown?.instructions || DEFAULT_COPY_META.dropdown.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Celebratory and clear',
+      rules: { encourage: 'Coaching moments' },
+      template: (meta) => meta.dropdown?.rubric || DEFAULT_COPY_META.dropdown.rubric,
+    }),
+    items: [
+      {
+        prompt: createCopyField({
+          title: 'Scenario alignment prompt',
+          tone: 'Guided question',
+          rules: { emphasise: 'Scenario context' },
+          template: (meta) =>
+            meta.dropdown?.items?.[0]?.prompt ||
+            `Slide ${meta.shared.dropdown.scenarioSlide} pairs the ${meta.shared.scenarioPill} with the ____ badge to ground the challenge.`,
+        }),
+        options: [
+          {
+            text: createCopyField({
+              title: 'Impact option',
+              tone: 'Single-word label',
+              rules: { align: 'Badge name' },
+              template: (meta) =>
+                meta.dropdown?.items?.[0]?.options?.[0] || meta.shared.badges.impactLabel,
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'Story option',
+              tone: 'Single-word label',
+              rules: { align: 'Badge name' },
+              template: (meta) =>
+                meta.dropdown?.items?.[0]?.options?.[1] || meta.shared.badges.storyLabel,
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'Context option',
+              tone: 'Single-word label',
+              rules: { align: 'Correct badge' },
+              template: (meta) =>
+                meta.dropdown?.items?.[0]?.options?.[2] || meta.shared.badges.contextLabel,
+            }),
+            correct: true,
+          },
+        ],
+        feedback: createCopyField({
+          title: 'Scenario feedback',
+          tone: 'Encouraging coach note',
+          rules: { emphasise: 'Alignment' },
+          template: (meta) =>
+            meta.dropdown?.items?.[0]?.feedback || meta.shared.dropdown.scenarioFeedback,
+        }),
+      },
+      {
+        prompt: createCopyField({
+          title: 'Prototype evidence prompt',
+          tone: 'Guided question',
+          rules: { emphasise: 'Evidence focus' },
+          template: (meta) =>
+            meta.dropdown?.items?.[1]?.prompt ||
+            'During the prototype review we surface evidence with the ____ badge.',
+        }),
+        options: [
+          {
+            text: createCopyField({
+              title: 'Progress option',
+              tone: 'Single-word label',
+              rules: { align: 'Correct badge' },
+              template: (meta) =>
+                meta.dropdown?.items?.[1]?.options?.[0] || meta.shared.badges.progressLabel,
+            }),
+            correct: true,
+          },
+          {
+            text: createCopyField({
+              title: 'Spark option',
+              tone: 'Single-word label',
+              rules: { align: 'Badge name' },
+              template: (meta) =>
+                meta.dropdown?.items?.[1]?.options?.[1] || meta.shared.badges.sparkLabel,
+            }),
+            correct: false,
+          },
+          {
+            text: createCopyField({
+              title: 'People option',
+              tone: 'Single-word label',
+              rules: { align: 'Badge name' },
+              template: (meta) =>
+                meta.dropdown?.items?.[1]?.options?.[2] || meta.shared.badges.peopleLabel,
+            }),
+            correct: false,
+          },
+        ],
+        feedback: createCopyField({
+          title: 'Prototype feedback',
+          tone: 'Celebratory coaching',
+          rules: { emphasise: 'Momentum' },
+          template: (meta) =>
+            meta.dropdown?.items?.[1]?.feedback || meta.shared.dropdown.prototypeFeedback,
+        }),
+      },
+    ],
+  },
+  gapfill: {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Editorial focus',
+      rules: { highlight: 'Refinement' },
+      template: (meta) => meta.gapfill?.title || DEFAULT_COPY_META.gapfill.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Coach invitation',
+      rules: { emphasise: 'Precision' },
+      template: (meta) =>
+        meta.gapfill?.instructions || DEFAULT_COPY_META.gapfill.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Measured and supportive',
+      rules: { highlight: 'Concision' },
+      template: (meta) => meta.gapfill?.rubric || DEFAULT_COPY_META.gapfill.rubric,
+    }),
+    passage: createCopyField({
+      title: 'Mentor text passage',
+      tone: 'Badge-forward narrative',
+      rules: { structure: 'Three sentences with blanks' },
+      template: (meta) => {
+        if (meta.gapfill?.passage) {
+          return meta.gapfill.passage;
+        }
+        const scenario = (meta.gapfill?.synonyms?.scenario || DEFAULT_COPY_META.gapfill.synonyms.scenario).join('|');
+        const badge = (meta.gapfill?.synonyms?.badge || DEFAULT_COPY_META.gapfill.synonyms.badge).join('|');
+        const insight = (meta.gapfill?.synonyms?.insight || DEFAULT_COPY_META.gapfill.synonyms.insight).join('|');
+        return (
+          `Each slide opens with a [[${scenario}]] pill that anchors learners in a real brief. ` +
+          `To reinforce the voice and tone, pair every action card with a [[${badge}]] label that signals the focus. ` +
+          `During the showcase, move from the [[${insight}]] badge into the reflection grid so evidence stays visible.`
+        );
+      },
+    }),
+  },
+  grouping: {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Action oriented',
+      rules: { highlight: 'Assembly language' },
+      template: (meta) => meta.grouping?.title || DEFAULT_COPY_META.grouping.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Facilitator coaching',
+      rules: { emphasise: 'Drag-and-drop action' },
+      template: (meta) =>
+        meta.grouping?.instructions || DEFAULT_COPY_META.grouping.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Collaborative encouragement',
+      rules: { highlight: 'Teamwork badges' },
+      template: (meta) => meta.grouping?.rubric || DEFAULT_COPY_META.grouping.rubric,
+    }),
+    categories: DEFAULT_GROUPING_CATEGORIES.map((category, categoryIndex) => ({
+      name: createCopyField({
+        title: 'Category name',
+        tone: 'Title case label',
+        rules: { align: 'Deck lane' },
+        template: (meta) => meta.grouping?.categories?.[categoryIndex]?.name || category.name,
+      }),
+      description: createCopyField({
+        title: 'Category description',
+        tone: 'Supportive guidance',
+        rules: { focus: 'Learner action' },
+        template: (meta) =>
+          meta.grouping?.categories?.[categoryIndex]?.description || category.description,
+      }),
+      items: (category.items || []).map((item, itemIndex) =>
+        createCopyField({
+          title: 'Category item',
+          tone: 'Concise noun phrase',
+          rules: { align: 'Deck artefact' },
+          template: (meta) =>
+            meta.grouping?.categories?.[categoryIndex]?.items?.[itemIndex] || item,
+        }),
+      ),
+    })),
+  },
+  'multiple-choice-grid': {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Status check',
+      rules: { emphasise: 'Grid framing' },
+      template: (meta) => meta.grid?.title || DEFAULT_COPY_META.grid.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Observer voice',
+      rules: { highlight: 'Scan then choose' },
+      template: (meta) => meta.grid?.instructions || DEFAULT_COPY_META.grid.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Debrief ready',
+      rules: { emphasise: 'Defense of placement' },
+      template: (meta) => meta.grid?.rubric || DEFAULT_COPY_META.grid.rubric,
+    }),
+    columns: DEFAULT_GRID_COLUMNS.map((column, index) =>
+      createCopyField({
+        title: 'Grid column',
+        tone: 'Short label',
+        rules: { align: 'Status language' },
+        template: (meta) => meta.shared.grid?.columns?.[index] || column,
+      }),
+    ),
+    rows: DEFAULT_GRID_ROWS.map((row, rowIndex) => ({
+      statement: createCopyField({
+        title: 'Grid statement',
+        tone: 'Workflow description',
+        rules: { emphasise: 'Slide component' },
+        template: (meta) => meta.shared.grid?.rows?.[rowIndex]?.statement || row.statement,
+      }),
+      note: createCopyField({
+        title: 'Grid note',
+        tone: 'Clarifying support',
+        rules: { highlight: 'Why the placement matters' },
+        template: (meta) => meta.shared.grid?.rows?.[rowIndex]?.note || row.note,
+      }),
+      correctIndex: row.correctIndex,
+    })),
+  },
+  ranking: {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Sequencing energy',
+      rules: { emphasise: 'Flow language' },
+      template: (meta) => meta.ranking?.title || DEFAULT_COPY_META.ranking.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Momentum-focused',
+      rules: { highlight: 'Ordering action' },
+      template: (meta) => meta.ranking?.instructions || DEFAULT_COPY_META.ranking.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Celebratory clarity',
+      rules: { emphasise: 'Narrating rationale' },
+      template: (meta) => meta.ranking?.rubric || DEFAULT_COPY_META.ranking.rubric,
+    }),
+    items: DEFAULT_RANKING_ITEMS.map((item, index) => ({
+      text: createCopyField({
+        title: 'Ranking statement',
+        tone: 'Active description',
+        rules: { align: 'Deck flow' },
+        template: (meta) => meta.shared.ranking?.[index]?.text || item.text,
+      }),
+      note: createCopyField({
+        title: 'Ranking rationale',
+        tone: 'Supportive coach note',
+        rules: { highlight: 'Learner focus' },
+        template: (meta) => meta.shared.ranking?.[index]?.note || item.note,
+      }),
+    })),
+  },
+  'table-completion': {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'Planner voice',
+      rules: { highlight: 'Composition' },
+      template: (meta) => meta.table?.title || DEFAULT_COPY_META.table.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Coach clarity',
+      rules: { emphasise: 'Alignment' },
+      template: (meta) => meta.table?.instructions || DEFAULT_COPY_META.table.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Evidence-focused',
+      rules: { highlight: 'Justification' },
+      template: (meta) => meta.table?.rubric || DEFAULT_COPY_META.table.rubric,
+    }),
+    columnHeaders: [
+      createCopyField({
+        title: 'First column header',
+        tone: 'Title case',
+        rules: { align: 'Focus area' },
+        template: (meta) => meta.shared.tableHeaders?.[0] || DEFAULT_COPY_META.shared.tableHeaders[0],
+      }),
+      createCopyField({
+        title: 'Second column header',
+        tone: 'Title case',
+        rules: { align: 'Learner move' },
+        template: (meta) => meta.shared.tableHeaders?.[1] || DEFAULT_COPY_META.shared.tableHeaders[1],
+      }),
+      createCopyField({
+        title: 'Third column header',
+        tone: 'Title case',
+        rules: { align: 'Artefact' },
+        template: (meta) => meta.shared.tableHeaders?.[2] || DEFAULT_COPY_META.shared.tableHeaders[2],
+      }),
+    ],
+    rows: DEFAULT_TABLE_ROWS.map((row, rowIndex) => ({
+      label: createCopyField({
+        title: 'Row label',
+        tone: 'Focus descriptor',
+        rules: { align: 'Deck phase' },
+        template: (meta) => meta.shared.tableRows?.[rowIndex]?.label || row.label,
+      }),
+      answers: row.answers.map((answer, answerIndex) =>
+        createCopyField({
+          title: 'Expected answer',
+          tone: 'Actionable phrase',
+          rules: { align: 'Column focus' },
+          template: (meta) =>
+            meta.shared.tableRows?.[rowIndex]?.answers?.[answerIndex] || answer,
+        }),
+      ),
+    })),
+  },
+  'quiz-show': {
+    title: createCopyField({
+      title: 'Module title',
+      tone: 'High-energy host',
+      rules: { emphasise: 'Competitive framing' },
+      template: (meta) => meta.quiz?.title || DEFAULT_COPY_META.quiz.title,
+    }),
+    instructions: createCopyField({
+      title: 'Learner instructions',
+      tone: 'Energetic facilitation',
+      rules: { highlight: 'Sequence of actions' },
+      template: (meta) =>
+        meta.quiz?.instructions || DEFAULT_COPY_META.quiz.instructions,
+    }),
+    rubric: createCopyField({
+      title: 'Success criteria',
+      tone: 'Celebrate momentum',
+      rules: { emphasise: 'Points and extensions' },
+      template: (meta) => meta.quiz?.rubric || DEFAULT_COPY_META.quiz.rubric,
+    }),
+    defaultTime: DEFAULT_COPY_META.quiz.defaultTime,
+    questions: DEFAULT_QUIZ_QUESTIONS.map((question, index) => ({
+      prompt: createCopyField({
+        title: 'Quiz prompt',
+        tone: 'Fast-paced question',
+        rules: { highlight: 'Deck detail' },
+        template: (meta) => meta.quizContent?.questions?.[index]?.prompt || question.prompt,
+      }),
+      answer: createCopyField({
+        title: 'Model answer',
+        tone: 'Confident reveal',
+        rules: { emphasise: 'Specific cues' },
+        template: (meta) => meta.quizContent?.questions?.[index]?.answer || question.answer,
+      }),
+      feedback: createCopyField({
+        title: 'Extension coaching',
+        tone: 'Supportive challenge',
+        rules: { encourage: 'Metacognition' },
+        template: (meta) => meta.quizContent?.questions?.[index]?.feedback || question.feedback,
+      }),
+      image: createCopyField({
+        title: 'Slide image URL',
+        tone: 'Descriptive media link',
+        rules: { format: 'Absolute URL' },
+        template: (meta) => meta.quizContent?.questions?.[index]?.image || question.image,
+      }),
+      time: question.time,
+      icons: {
+        prompt: createCopyField({ title: 'Prompt icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        answer: createCopyField({ title: 'Answer icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        feedback: createCopyField({ title: 'Feedback icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        image: createCopyField({ title: 'Image icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        time: createCopyField({ title: 'Time icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+      },
+    })),
+    teams: DEFAULT_COPY_META.quiz.teams.map((team, index) => ({
+      name: createCopyField({
+        title: 'Team name',
+        tone: 'Energetic label',
+        rules: { align: 'Team identity' },
+        template: (meta) => meta.quiz?.teams?.[index] || team,
+      }),
+      icon: createCopyField({
+        title: 'Team icon',
+        tone: 'Icon token',
+        rules: { optional: true },
+        template: (meta) => meta.quiz?.teamIcons?.[index] || '',
+      }),
+      score: 0,
+    })),
     iconSettings: {
       general: {
-        title: '',
-        instructions: '',
-        rubric: '',
-        defaultTime: '',
+        title: createCopyField({ title: 'General title icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        instructions: createCopyField({ title: 'Instructions icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        rubric: createCopyField({ title: 'Rubric icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        defaultTime: createCopyField({ title: 'Default time icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
       },
       scoreboard: {
-        heading: '',
-        increment: '',
+        heading: createCopyField({ title: 'Scoreboard heading icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        increment: createCopyField({ title: 'Score increment icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
       },
       controls: {
-        previous: '',
-        next: '',
+        previous: createCopyField({ title: 'Previous control icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        next: createCopyField({ title: 'Next control icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
       },
       reveal: {
-        button: '',
+        button: createCopyField({ title: 'Reveal button icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
       },
       slides: {
-        answerHeading: '',
-        extensionHeading: '',
+        answerHeading: createCopyField({ title: 'Answer heading icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
+        extensionHeading: createCopyField({ title: 'Extension heading icon', tone: 'Icon token', rules: { optional: true }, template: () => '' }),
       },
     },
-  })
+  },
 };
+
+const mergeDeckMeta = (override = {}) => deepMergeMeta(cloneMetaValue(DEFAULT_COPY_META), override);
+
+const buildModuleCopy = (type, deckMeta) => {
+  const schema = MODULE_COPY_SCHEMAS[type];
+  if (!schema) {
+    return null;
+  }
+  const meta = mergeDeckMeta(deckMeta);
+  return compileSchemaWithMeta(schema, meta);
+};
+
+const DEFAULT_STATES = Object.keys(MODULE_COPY_SCHEMAS).reduce((acc, type) => {
+  acc[type] = (deckMeta) => buildModuleCopy(type, deckMeta);
+  return acc;
+}, {});
 
 const TYPE_META = {
   'multiple-choice': {
@@ -5007,7 +5733,14 @@ const parseGapfill = (passage = '') => {
   return { segments, gaps };
 };
 
-export { DEFAULT_STATES, TYPE_META, Generators };
+export {
+  DEFAULT_STATES,
+  TYPE_META,
+  Generators,
+  MODULE_COPY_SCHEMAS,
+  buildModuleCopy as generateModuleCopy,
+  mergeDeckMeta,
+};
 
 if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
