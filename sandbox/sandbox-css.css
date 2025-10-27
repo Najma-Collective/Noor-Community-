@@ -6,7 +6,7 @@
   --grid-gap-default: clamp(var(--space-5), 3vw, var(--space-7));
   --blank-canvas-pad: clamp(1.2rem, 2.6vw, 1.9rem);
   --blank-canvas-gap: clamp(1rem, 2vw, 1.5rem);
-  --blank-canvas-min-block: clamp(320px, 64vh, 640px);
+  --blank-canvas-min-block: clamp(320px, 64dvh, 640px);
 }
 
 *,
@@ -3469,7 +3469,7 @@ ol {
   );
   flex: 1 1 auto;
   min-height: 0;
-  min-block-size: var(--blank-canvas-min-block, clamp(320px, 64vh, 640px));
+  min-block-size: var(--blank-canvas-min-block, clamp(320px, 64dvh, 640px));
   border-radius: var(--radius-lg);
   border: 1px dashed rgba(122, 132, 113, 0.35);
   background: rgba(248, 246, 240, 0.8);
@@ -6108,6 +6108,163 @@ ol {
   margin: 0;
   font-style: italic;
   color: rgba(47, 58, 43, 0.6);
+}
+
+/* Card stack layout */
+.card-stack-layout {
+  gap: clamp(var(--space-4), 2.4vw, var(--space-6));
+}
+
+.card-stack-header {
+  align-items: flex-start;
+}
+
+.card-stack-pill {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--forest-shadow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-stack-lead {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.75);
+  max-width: min(680px, 100%);
+}
+
+.card-stack-list {
+  width: min(720px, 100%);
+}
+
+.card-stack-layout .stack-card {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 246, 240, 0.96) 100%);
+  border: 1px solid color-mix(in srgb, var(--border-sage) 70%, transparent);
+  box-shadow: var(--shadow-1);
+  padding: clamp(1rem, 1.8vw, 1.5rem);
+  border-radius: var(--radius-lg);
+}
+
+.card-stack-layout .stack-card + .stack-card {
+  margin-top: 0;
+}
+
+.card-stack-layout .stack-card-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--space-3), 1.8vw, var(--space-4));
+  margin-bottom: clamp(0.5rem, 1.2vw, 0.75rem);
+}
+
+.card-stack-layout .stack-card-header h3 {
+  margin: 0;
+  font-size: var(--step-1);
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.card-stack-layout .stack-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--secondary-sage) 30%, white 70%);
+  color: var(--primary-forest);
+  box-shadow: var(--shadow-0);
+  flex-shrink: 0;
+}
+
+.card-stack-layout .stack-card p {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.8);
+}
+
+/* Pill gallery layout */
+.pill-gallery-layout {
+  gap: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.pill-gallery-header {
+  align-items: flex-start;
+}
+
+.pill-gallery-pill {
+  background: rgba(26, 54, 44, 0.92);
+  color: #fff;
+  box-shadow: var(--shadow-1);
+}
+
+.pill-gallery-lead {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.75);
+  max-width: min(720px, 100%);
+}
+
+.pill-gallery-grid {
+  display: grid;
+  gap: clamp(var(--space-4), 2.6vw, var(--space-6));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.pill-gallery-item {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pill-gallery-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.pill-gallery-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: clamp(140px, 24vh, 220px);
+  padding: clamp(var(--space-3), 2vw, var(--space-4));
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(122, 168, 132, 0.16),
+    rgba(122, 168, 132, 0.16) 16px,
+    rgba(255, 255, 255, 0.35) 16px,
+    rgba(255, 255, 255, 0.35) 32px
+  );
+  color: rgba(47, 58, 43, 0.7);
+  font-weight: 600;
+  text-align: center;
+}
+
+.pill-gallery-caption {
+  display: flex;
+  gap: clamp(var(--space-3), 1.8vw, var(--space-4));
+  align-items: flex-start;
+  margin: 0;
+  padding: clamp(1rem, 1.9vw, 1.4rem);
+}
+
+.pill-gallery-caption p {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.85);
+}
+
+.pill-gallery-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-forest) 18%, white 82%);
+  color: var(--primary-forest);
+  box-shadow: var(--shadow-0);
+  flex-shrink: 0;
 }
 
 /* Grounding activity */

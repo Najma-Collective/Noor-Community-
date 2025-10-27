@@ -229,6 +229,30 @@
                 </span>
               </span>
             </label>
+            <label class="layout-option" title="Stack a trio of studio-ready cards with guided copy.">
+              <input type="radio" name="slideLayout" value="card-stack" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true">
+                  <i class="fa-solid fa-layer-group"></i>
+                </span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Card stack</span>
+                  <span class="layout-option-desc">Bundle three workflow cards with badge-ready headlines.</span>
+                </span>
+              </span>
+            </label>
+            <label class="layout-option" title="Pair a scenario pill with a gallery of evidence.">
+              <input type="radio" name="slideLayout" value="pill-with-gallery" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true">
+                  <i class="fa-solid fa-images"></i>
+                </span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Pill + gallery</span>
+                  <span class="layout-option-desc">Headline the brief, then showcase image evidence in a tidy grid.</span>
+                </span>
+              </span>
+            </label>
             <label class="layout-option" title="Plan a collaborative making task that uses new language.">
               <input type="radio" name="slideLayout" value="creative-practice" />
               <span class="layout-option-body">
@@ -833,6 +857,114 @@
             />
           </label>
           <ul id="builder-practice-list" class="builder-dynamic-list" aria-live="polite"></ul>
+        </section>
+
+        <section class="builder-section" data-layouts="card-stack">
+          <header class="builder-section-header">
+            <div>
+              <h3>Card stack</h3>
+              <p>Stack three workflow cards that keep the sprint moving.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill text</span>
+            <input type="text" name="cardStackPill" placeholder="Studio sprint stack" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill icon class</span>
+            <input
+              type="text"
+              name="cardStackPillIcon"
+              data-field="cardStackPillIcon"
+              placeholder="fa-solid fa-bookmark"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="cardStackTitle" placeholder="Preview the next build moves" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Lead copy</span>
+            <textarea
+              name="cardStackDescription"
+              rows="2"
+              placeholder="Skim the stack to confirm the workflow..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Cards (one per line)</span>
+            <textarea
+              name="cardStackItems"
+              rows="4"
+              placeholder="Prototype ready check — List the build, blockers, and final tweaks."
+            ></textarea>
+            <span class="builder-field-hint">Use “Title — description” on each line.</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Card icon class</span>
+            <input
+              type="text"
+              name="cardStackItemIcon"
+              data-field="cardStackItemIcon"
+              placeholder="fa-solid fa-circle-dot"
+              autocomplete="off"
+            />
+          </label>
+        </section>
+
+        <section class="builder-section" data-layouts="pill-with-gallery">
+          <header class="builder-section-header">
+            <div>
+              <h3>Pill + gallery</h3>
+              <p>Introduce the scenario, then display evidence-rich visuals.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill text</span>
+            <input type="text" name="pillGalleryPill" placeholder="Scenario spotlight" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill icon class</span>
+            <input
+              type="text"
+              name="pillGalleryPillIcon"
+              data-field="pillGalleryPillIcon"
+              placeholder="fa-solid fa-camera-retro"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="pillGalleryTitle" placeholder="Ground the challenge with vivid artefacts" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Lead copy</span>
+            <textarea
+              name="pillGalleryDescription"
+              rows="2"
+              placeholder="Pair the scenario pill with a gallery of visuals..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Gallery items (one per line)</span>
+            <textarea
+              name="pillGalleryItems"
+              rows="5"
+              placeholder="https://images.example.com/photo.jpg | Learners prototyping a device | Sprint briefing caption"
+            ></textarea>
+            <span class="builder-field-hint">Use “Image URL | Alt text | Caption” for each gallery tile.</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Gallery icon class</span>
+            <input
+              type="text"
+              name="pillGalleryItemIcon"
+              data-field="pillGalleryItemIcon"
+              placeholder="fa-solid fa-image"
+              autocomplete="off"
+            />
+          </label>
         </section>
 
         <section class="builder-section" data-layouts="creative-practice">

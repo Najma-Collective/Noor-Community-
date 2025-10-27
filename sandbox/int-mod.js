@@ -1457,6 +1457,81 @@ const splitMultiline = (value) =>
 const joinMultiline = (values) =>
   Array.isArray(values) ? values.map((entry) => trimText(entry)).filter(Boolean).join("\n") : trimText(values);
 
+const formatCardStackItems = (cards = []) =>
+  joinMultiline(
+    (Array.isArray(cards) ? cards : []).map((card) => {
+      const title = trimText(card?.title);
+      const description = trimText(card?.description);
+      if (!title && !description) {
+        return '';
+      }
+      return description ? `${title || 'Card'} — ${description}` : title;
+    }),
+  );
+
+const parseCardStackItems = (value) =>
+  splitMultiline(value).map((line, index) => {
+    const viaPipes = line.includes('|')
+      ? line
+          .split('|')
+          .map((part) => trimText(part))
+          .filter((part, partIndex) => partIndex === 0 || part)
+      : null;
+    let title = '';
+    let description = '';
+    if (Array.isArray(viaPipes) && viaPipes.length >= 1) {
+      [title] = viaPipes;
+      description = viaPipes.slice(1).join(' | ');
+    } else {
+      const dashMatch = line.match(/^(.*?)\s*[–—-]\s*(.+)$/);
+      if (dashMatch) {
+        title = trimText(dashMatch[1]);
+        description = trimText(dashMatch[2]);
+      } else {
+        title = trimText(line);
+      }
+    }
+    const resolvedTitle = title || `Card ${index + 1}`;
+    return {
+      title: resolvedTitle,
+      description: description || '',
+    };
+  });
+
+const formatPillGalleryItems = (items = []) =>
+  joinMultiline(
+    (Array.isArray(items) ? items : []).map((item) => {
+      const image = trimText(item?.image);
+      const alt = trimText(item?.alt);
+      const caption = trimText(item?.caption);
+      if (!image && !caption && !alt) {
+        return '';
+      }
+      const segments = [image, alt, caption];
+      while (segments.length && !segments[segments.length - 1]) {
+        segments.pop();
+      }
+      return segments.join(' | ');
+    }),
+  );
+
+const parsePillGalleryItems = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const parts = line.split('|').map((part) => trimText(part));
+      const [image = '', alt = '', ...captionParts] = parts;
+      const caption = captionParts.filter(Boolean).join(' | ');
+      if (!image && !caption) {
+        return null;
+      }
+      return {
+        image,
+        alt,
+        caption,
+      };
+    })
+    .filter(Boolean);
+
 const formatKeyValuePairs = (
   entries = [],
   { key = "label", value = "value", separator = " | " } = {},
@@ -7549,6 +7624,18 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
       'practiceInstructionsIcon',
       'practiceActivityType',
       'practiceActivityTypeIcon',
+      'cardStackPill',
+      'cardStackPillIcon',
+      'cardStackTitle',
+      'cardStackDescription',
+      'cardStackItems',
+      'cardStackItemIcon',
+      'pillGalleryPill',
+      'pillGalleryPillIcon',
+      'pillGalleryTitle',
+      'pillGalleryDescription',
+      'pillGalleryItems',
+      'pillGalleryItemIcon',
       'taskTitle',
       'taskImageUrl',
       'taskOverlayColor',
@@ -7781,6 +7868,24 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
         defaults.activityTypeIcon,
       );
       resetPracticeList(defaults.questions);
+      break;
+    }
+    case 'card-stack': {
+      setFieldValue('cardStackPill', defaults.pill ?? '');
+      setIconField('cardStackPillIcon', 'card-stack', defaults.pillIcon);
+      setFieldValue('cardStackTitle', defaults.title ?? '');
+      setFieldValue('cardStackDescription', defaults.description ?? '');
+      setFieldValue('cardStackItems', formatCardStackItems(defaults.cards));
+      setIconField('cardStackItemIcon', 'card-stack', defaults.cardIcon);
+      break;
+    }
+    case 'pill-with-gallery': {
+      setFieldValue('pillGalleryPill', defaults.pill ?? '');
+      setIconField('pillGalleryPillIcon', 'pill-with-gallery', defaults.pillIcon);
+      setFieldValue('pillGalleryTitle', defaults.title ?? '');
+      setFieldValue('pillGalleryDescription', defaults.description ?? '');
+      setFieldValue('pillGalleryItems', formatPillGalleryItems(defaults.gallery));
+      setIconField('pillGalleryItemIcon', 'pill-with-gallery', defaults.itemIcon);
       break;
     }
     case 'communicative-task': {
@@ -8263,6 +8368,50 @@ function getBuilderFormState() {
         questions,
         instructionsIcon,
         activityTypeIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'card-stack': {
+      const pillIcon = resolveLayoutIconField(
+        'card-stack',
+        'cardStackPillIcon',
+        formData.get('cardStackPillIcon'),
+      );
+      const cardIcon = resolveLayoutIconField(
+        'card-stack',
+        'cardStackItemIcon',
+        formData.get('cardStackItemIcon'),
+      );
+      state.data = {
+        pill: trimText(formData.get('cardStackPill')),
+        pillIcon,
+        title: trimText(formData.get('cardStackTitle')) || 'Card stack',
+        description: trimText(formData.get('cardStackDescription')),
+        cards: parseCardStackItems(formData.get('cardStackItems')),
+        cardIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'pill-with-gallery': {
+      const pillIcon = resolveLayoutIconField(
+        'pill-with-gallery',
+        'pillGalleryPillIcon',
+        formData.get('pillGalleryPillIcon'),
+      );
+      const itemIcon = resolveLayoutIconField(
+        'pill-with-gallery',
+        'pillGalleryItemIcon',
+        formData.get('pillGalleryItemIcon'),
+      );
+      state.data = {
+        pill: trimText(formData.get('pillGalleryPill')),
+        pillIcon,
+        title: trimText(formData.get('pillGalleryTitle')) || 'Scenario gallery',
+        description: trimText(formData.get('pillGalleryDescription')),
+        gallery: parsePillGalleryItems(formData.get('pillGalleryItems')),
+        itemIcon,
         layoutIcon,
       };
       break;
@@ -8877,6 +9026,12 @@ function updateBuilderPreview() {
       break;
     case 'interactive-practice':
       slide = createInteractivePracticeSlide(state.data);
+      break;
+    case 'card-stack':
+      slide = createCardStackSlide(state.data);
+      break;
+    case 'pill-with-gallery':
+      slide = createPillWithGallerySlide(state.data);
       break;
     case 'communicative-task':
       slide = createCommunicativeTaskSlide(state.data);
@@ -13206,6 +13361,229 @@ function createInteractivePracticeSlide({
   return slide;
 }
 
+function createCardStackSlide({
+  pill = '',
+  pillIcon = '',
+  title = 'Card stack',
+  description = '',
+  cards = [],
+  cardIcon = '',
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('card-stack', {
+    iconClass: getEffectiveLayoutIcon('card-stack', layoutIcon),
+  });
+
+  inner.classList.add('stack', 'card-stack-layout');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header card-stack-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill);
+  const pillIconClass =
+    normaliseIconClass(pillIcon) ||
+    getLayoutFieldIconDefault('card-stack', 'cardStackPillIcon') ||
+    'fa-solid fa-bookmark';
+  if (pillText) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill card-stack-pill';
+    if (pillIconClass) {
+      const icon = document.createElement('i');
+      icon.className = pillIconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(icon);
+    }
+    pillEl.appendChild(document.createTextNode(` ${pillText}`));
+    header.appendChild(pillEl);
+  }
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Card stack';
+  header.appendChild(heading);
+
+  const leadCopy = trimText(description);
+  if (leadCopy) {
+    const lead = document.createElement('p');
+    lead.className = 'card-stack-lead';
+    lead.textContent = leadCopy;
+    header.appendChild(lead);
+  }
+
+  const list = document.createElement('div');
+  list.className = 'card-stack-list stack stack-md';
+  inner.appendChild(list);
+
+  const resolvedIcon =
+    normaliseIconClass(cardIcon) ||
+    getLayoutFieldIconDefault('card-stack', 'cardStackItemIcon') ||
+    'fa-solid fa-circle-dot';
+
+  const stackItems = Array.isArray(cards)
+    ? cards
+        .map((card, index) => ({
+          title: trimText(card?.title) || `Card ${index + 1}`,
+          description: trimText(card?.description) || '',
+        }))
+        .filter((card) => card.title || card.description)
+    : [];
+
+  if (stackItems.length) {
+    stackItems.forEach((card, index) => {
+      const article = document.createElement('article');
+      article.className = 'card stack-card';
+      const headerRow = document.createElement('div');
+      headerRow.className = 'stack-card-header';
+      const iconWrap = document.createElement('span');
+      iconWrap.className = 'stack-card-icon';
+      if (resolvedIcon) {
+        const iconGlyph = document.createElement('i');
+        iconGlyph.className = resolvedIcon;
+        iconGlyph.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconGlyph);
+      }
+      const iconLabel = document.createElement('span');
+      iconLabel.className = 'sr-only';
+      iconLabel.textContent = `Card ${index + 1}`;
+      iconWrap.appendChild(iconLabel);
+      headerRow.appendChild(iconWrap);
+      const titleEl = document.createElement('h3');
+      titleEl.textContent = card.title || `Card ${index + 1}`;
+      headerRow.appendChild(titleEl);
+      article.appendChild(headerRow);
+      if (card.description) {
+        const detail = document.createElement('p');
+        detail.textContent = card.description;
+        article.appendChild(detail);
+      }
+      list.appendChild(article);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Outline each workflow card so learners can preview the sprint flow.';
+    list.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createPillWithGallerySlide({
+  pill = '',
+  pillIcon = '',
+  title = 'Scenario gallery',
+  description = '',
+  gallery = [],
+  itemIcon = '',
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('pill-with-gallery', {
+    iconClass: getEffectiveLayoutIcon('pill-with-gallery', layoutIcon),
+  });
+
+  inner.classList.add('stack', 'pill-gallery-layout');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header pill-gallery-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill);
+  const pillIconClass =
+    normaliseIconClass(pillIcon) ||
+    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryPillIcon') ||
+    'fa-solid fa-camera-retro';
+  if (pillText) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill pill-gallery-pill';
+    if (pillIconClass) {
+      const icon = document.createElement('i');
+      icon.className = pillIconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(icon);
+    }
+    pillEl.appendChild(document.createTextNode(` ${pillText}`));
+    header.appendChild(pillEl);
+  }
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Scenario gallery';
+  header.appendChild(heading);
+
+  const leadCopy = trimText(description);
+  if (leadCopy) {
+    const lead = document.createElement('p');
+    lead.className = 'pill-gallery-lead';
+    lead.textContent = leadCopy;
+    header.appendChild(lead);
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'pill-gallery-grid';
+  inner.appendChild(grid);
+
+  const resolvedIcon =
+    normaliseIconClass(itemIcon) ||
+    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryItemIcon') ||
+    'fa-solid fa-image';
+
+  const galleryItems = Array.isArray(gallery)
+    ? gallery
+        .map((item, index) => ({
+          image: trimText(item?.image),
+          alt: trimText(item?.alt) || `Gallery image ${index + 1}`,
+          caption: trimText(item?.caption) || '',
+        }))
+        .filter((item) => item.image || item.caption)
+    : [];
+
+  if (galleryItems.length) {
+    galleryItems.forEach((item, index) => {
+      const figure = document.createElement('figure');
+      figure.className = 'pill-gallery-item';
+      if (item.image) {
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.alt || `Gallery image ${index + 1}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        figure.appendChild(img);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'pill-gallery-placeholder';
+        placeholder.textContent = 'Add an image URL to showcase this moment.';
+        figure.appendChild(placeholder);
+      }
+      const caption = document.createElement('figcaption');
+      caption.className = 'pill-gallery-caption';
+      if (resolvedIcon) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'pill-gallery-icon';
+        const iconGlyph = document.createElement('i');
+        iconGlyph.className = resolvedIcon;
+        iconGlyph.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconGlyph);
+        const iconLabel = document.createElement('span');
+        iconLabel.className = 'sr-only';
+        iconLabel.textContent = `Gallery item ${index + 1}`;
+        iconWrap.appendChild(iconLabel);
+        caption.appendChild(iconWrap);
+      }
+      const captionText = document.createElement('p');
+      captionText.textContent = item.caption || 'Describe the visible evidence or learner action.';
+      caption.appendChild(captionText);
+      figure.appendChild(caption);
+      grid.appendChild(figure);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List gallery items so learners can see the scenario in action.';
+    grid.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
 
 
 
@@ -13490,6 +13868,12 @@ function handleBuilderSubmit(event) {
       break;
     case 'interactive-practice':
       slide = createInteractivePracticeSlide(state.data);
+      break;
+    case 'card-stack':
+      slide = createCardStackSlide(state.data);
+      break;
+    case 'pill-with-gallery':
+      slide = createPillWithGallerySlide(state.data);
       break;
     case 'communicative-task':
       slide = createCommunicativeTaskSlide(state.data);
@@ -13821,7 +14205,12 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const allowedBuilderLayouts = ['blank-canvas', 'interactive-practice'];
+  const allowedBuilderLayouts = [
+    'blank-canvas',
+    'interactive-practice',
+    'card-stack',
+    'pill-with-gallery',
+  ];
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
