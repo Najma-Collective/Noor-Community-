@@ -11646,1985 +11646,427 @@ function createBaseLessonSlide(layout, options = {}) {
   return { slide, inner };
 }
 
-function createLearningObjectivesSlide({
-  title = 'Learning Outcomes',
-  goals = [],
-  communicativeGoal = '',
-  goalIcon = '',
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('learning-objectives', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('learning-objectives', layoutIcon),
-  });
 
-  const header = document.createElement('header');
-  header.className = 'lesson-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Learning Outcomes';
-  header.appendChild(heading);
-
-  const goalText = trimText(communicativeGoal);
-  if (goalText) {
-    const goalElement = document.createElement('p');
-    goalElement.className = 'lesson-communicative';
-    const lead = document.createElement('strong');
-    lead.textContent = 'So you can';
-    goalElement.appendChild(lead);
-    goalElement.appendChild(document.createTextNode(` ${goalText}`));
-    header.appendChild(goalElement);
+function createSlideShell(layout) {
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden';
+  slide.dataset.type = 'lesson';
+  if (layout) {
+    slide.dataset.layout = layout;
   }
-
-  const body = document.createElement('div');
-  body.className = 'lesson-body';
-  inner.appendChild(body);
-
-  const cleanedGoals = Array.isArray(goals) ? goals.map((goal) => trimText(goal)).filter(Boolean) : [];
-  const goalIconClass =
-    normaliseIconClass(goalIcon) ||
-    getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon') ||
-    'fas fa-bullseye';
-  if (cleanedGoals.length) {
-    const card = document.createElement('div');
-    card.className = 'card lesson-goals-card';
-    const list = document.createElement('ul');
-    list.className = 'lesson-goals';
-    cleanedGoals.forEach((goal, index) => {
-      const item = document.createElement('li');
-      const icon = document.createElement('span');
-      icon.className = 'lesson-goal-icon';
-      const iconGlyph = document.createElement('i');
-      iconGlyph.className = goalIconClass;
-      iconGlyph.setAttribute('aria-hidden', 'true');
-      const iconLabel = document.createElement('span');
-      iconLabel.className = 'sr-only';
-      iconLabel.textContent = `Goal ${index + 1}`;
-      icon.appendChild(iconGlyph);
-      icon.appendChild(iconLabel);
-      const text = document.createElement('p');
-      text.textContent = goal;
-      item.appendChild(icon);
-      item.appendChild(text);
-      list.appendChild(item);
-    });
-    card.appendChild(list);
-    body.appendChild(card);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List the lesson goals to orient learners.';
-    body.appendChild(placeholder);
-  }
-
-  return slide;
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner';
+  slide.appendChild(inner);
+  return { slide, inner };
 }
 
-function createModelDialogueSlide({
-  title = 'Model dialogue',
-  instructions = '',
-  imageUrl = '',
-  audioUrl = '',
-  turns = [],
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('model-dialogue', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('model-dialogue', layoutIcon),
-  });
-
-  const resolvedImage = trimText(imageUrl);
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Model dialogue';
-  header.appendChild(heading);
-
-  const instructionText = trimText(instructions);
-  if (instructionText) {
-    const instructionEl = document.createElement('p');
-    instructionEl.className = 'lesson-instructions';
-    instructionEl.textContent = instructionText;
-    header.appendChild(instructionEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'lesson-dialogue';
-  inner.appendChild(body);
-
-  const dialogueWrap = document.createElement('div');
-  dialogueWrap.className = 'lesson-dialogue-text';
-  body.appendChild(dialogueWrap);
-
-  const cleanedTurns = Array.isArray(turns)
-    ? turns
-        .map((turn) => ({ speaker: trimText(turn?.speaker), line: trimText(turn?.line) }))
-        .filter((turn) => turn.speaker || turn.line)
-    : [];
-
-  if (cleanedTurns.length) {
-    cleanedTurns.forEach((turn) => {
-      const block = document.createElement('div');
-      block.className = 'dialogue-turn';
-      const speaker = document.createElement('span');
-      speaker.className = 'dialogue-speaker';
-      speaker.textContent = turn.speaker || 'Speaker';
-      const line = document.createElement('p');
-      line.className = 'dialogue-line';
-      line.textContent = turn.line || '';
-      block.appendChild(speaker);
-      block.appendChild(line);
-      dialogueWrap.appendChild(block);
-    });
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add dialogue turns so learners can analyse the model.';
-    dialogueWrap.appendChild(placeholder);
-  }
-
-  if (resolvedImage) {
-    const visual = document.createElement('div');
-    visual.className = 'lesson-dialogue-visual';
-    const img = document.createElement('img');
-    img.src = resolvedImage;
-    img.alt = trimText(title) || 'Dialogue context';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    visual.appendChild(img);
-    body.appendChild(visual);
-  }
-
-  const audioSource = trimText(audioUrl);
-  if (audioSource) {
-    const audioWrap = document.createElement('div');
-    audioWrap.className = 'lesson-audio';
-    const audioEl = document.createElement('audio');
-    audioEl.controls = true;
-    audioEl.src = audioSource;
-    audioWrap.appendChild(audioEl);
-    inner.appendChild(audioWrap);
-  }
-
-  return slide;
-}
-
-function createCommunicativeTaskSlide({
-  title = 'Communicative task',
-  imageUrl = '',
-  preparation = '',
-  performance = '',
-  scaffolding = [],
-  preparationIcon = '',
-  performanceIcon = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('communicative-task', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('communicative-task', layoutIcon),
-  });
-  slide.dataset.type = 'communicative-task';
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Communicative task';
-  header.appendChild(heading);
-
-  const splitPreparationText = (text) => {
-    const value = trimText(text);
-    if (!value) {
-      return { scenario: '', remainder: '' };
-    }
-    const newlineIndex = value.indexOf('\n');
-    if (newlineIndex !== -1) {
-      const scenario = trimText(value.slice(0, newlineIndex));
-      const remainder = trimText(value.slice(newlineIndex + 1));
-      if (scenario && remainder) {
-        return { scenario, remainder };
-      }
-    }
-    const sentenceMatch = value.match(/^(.+?[.!?])\s+([\s\S]+)$/);
-    if (sentenceMatch) {
-      const [, scenario, remainder] = sentenceMatch;
-      const trimmedScenario = trimText(scenario);
-      const trimmedRemainder = trimText(remainder);
-      if (trimmedScenario && trimmedRemainder) {
-        return { scenario: trimmedScenario, remainder: trimmedRemainder };
-      }
-    }
-    return { scenario: '', remainder: value };
-  };
-
-  const body = document.createElement('div');
-  body.className = 'task-body';
-  inner.appendChild(body);
-
-  const mainCard = document.createElement('div');
-  mainCard.className = 'card communicative-task-card';
-  body.appendChild(mainCard);
-
-  const { scenario: scenarioText, remainder: preparationRemainder } = splitPreparationText(
-    preparation,
-  );
-
-  if (scenarioText) {
-    const scenarioCard = document.createElement('div');
-    scenarioCard.className = 'column-card task-scenario';
-    const scenarioHeading = document.createElement('h3');
-    scenarioHeading.textContent = 'Scenario';
-    const scenarioParagraph = document.createElement('p');
-    scenarioParagraph.textContent = scenarioText;
-    scenarioCard.appendChild(scenarioHeading);
-    scenarioCard.appendChild(scenarioParagraph);
-    mainCard.appendChild(scenarioCard);
-  }
-
-  const instructionList = document.createElement('ul');
-  instructionList.className = 'instruction-list task-instruction-list';
-  mainCard.appendChild(instructionList);
-
-  const preparationIconClass =
-    normaliseIconClass(preparationIcon) ||
-    getLayoutFieldIconDefault('communicative-task', 'taskPreparationIcon') ||
-    'fa-solid fa-list-check';
-  const performanceIconClass =
-    normaliseIconClass(performanceIcon) ||
-    getLayoutFieldIconDefault('communicative-task', 'taskPerformanceIcon') ||
-    'fa-solid fa-people-group';
-
-  const steps = [
-    {
-      label: 'Preparation',
-      icon: preparationIconClass,
-      text: trimText(preparationRemainder) || 'Describe how learners should get ready together.',
-    },
-    {
-      label: 'Performance',
-      icon: performanceIconClass,
-      text: trimText(performance) || 'Explain how learners will carry out the task.',
-    },
-  ];
-
-  steps
-    .filter((step) => Boolean(step.text))
-    .forEach(({ label, icon, text }) => {
-      const item = document.createElement('li');
-      const iconEl = document.createElement('i');
-      iconEl.className = icon;
-      iconEl.setAttribute('aria-hidden', 'true');
-      item.appendChild(iconEl);
-      const content = document.createElement('div');
-      content.className = 'instruction-content';
-      const stepHeading = document.createElement('h4');
-      stepHeading.textContent = label;
-      const stepText = document.createElement('p');
-      stepText.textContent = text;
-      content.appendChild(stepHeading);
-      content.appendChild(stepText);
-      item.appendChild(content);
-      instructionList.appendChild(item);
-    });
-
-  const scaffoldingItems = Array.isArray(scaffolding)
-    ? scaffolding.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  const scaffoldingCard = document.createElement('div');
-  scaffoldingCard.className = 'column-card task-scaffolding';
-  const scaffoldHeading = document.createElement('h3');
-  scaffoldHeading.textContent = 'Language support';
-  scaffoldingCard.appendChild(scaffoldHeading);
-  if (scaffoldingItems.length) {
-    const list = document.createElement('ul');
-    list.className = 'task-scaffolding-list';
-    scaffoldingItems.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    scaffoldingCard.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add sentence stems or prompts to support learners during the task.';
-    scaffoldingCard.appendChild(placeholder);
-  }
-  body.appendChild(scaffoldingCard);
-
-  return slide;
-}
-
-function createPronunciationFocusSlide({
-  title = 'Pronunciation focus',
-  target = '',
-  words = [],
-  sentences = [],
-  practice = '',
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('pronunciation-focus', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('pronunciation-focus', layoutIcon),
-  });
-  slide.dataset.type = 'pronunciation';
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Pronunciation focus';
-  header.appendChild(heading);
-
-  const targetText = trimText(target);
-  if (targetText) {
-    const targetEl = document.createElement('p');
-    targetEl.className = 'pronunciation-target';
-    targetEl.textContent = targetText;
-    header.appendChild(targetEl);
-  }
-
+function createCardSlide(layout, buildCard) {
+  const { slide, inner } = createSlideShell(layout);
   const card = document.createElement('div');
-  card.className = 'pronunciation-focus-card';
+  card.className = 'card transparent';
+  inner.appendChild(card);
+  if (typeof buildCard === 'function') {
+    buildCard(card, { slide, inner });
+  }
+  return slide;
+}
+
+function appendPill(container, pillText, iconClass) {
+  if (!(container instanceof HTMLElement)) {
+    return null;
+  }
+  const text = trimText(pillText);
+  if (!text) {
+    return null;
+  }
+  const pill = document.createElement('span');
+  pill.className = 'pill';
+  const iconClassName = normaliseIconClass(iconClass);
+  if (iconClassName) {
+    const iconEl = document.createElement('i');
+    iconEl.className = iconClassName;
+    iconEl.setAttribute('aria-hidden', 'true');
+    pill.appendChild(iconEl);
+    pill.appendChild(document.createTextNode(' '));
+  }
+  pill.appendChild(document.createTextNode(text));
+  container.appendChild(pill);
+  return pill;
+}
+
+function normaliseParagraphs(paragraphs, fallback = []) {
+  const values = Array.isArray(paragraphs)
+    ? paragraphs
+    : paragraphs !== undefined && paragraphs !== null
+    ? [paragraphs]
+    : [];
+  const cleaned = values
+    .map((value) => trimText(value))
+    .filter((value) => value.length > 0);
+  if (cleaned.length) {
+    return cleaned;
+  }
+  return fallback.map((value) => trimText(value)).filter((value) => value.length > 0);
+}
+
+function createHeroPillSlide({
+  pill = 'Lesson 1',
+  pillIcon = 'fa-solid fa-star',
+  title = 'Hello, new friends!',
+  subtitle = 'We will speak, listen, and smile today.',
+  body = [
+    'Use simple English to talk about your name, your city, and one thing you like.',
+  ],
+} = {}) {
+  return createCardSlide('hero-pill', (card) => {
+    appendPill(card, pill, pillIcon);
+
+    const heading = document.createElement('h1');
+    heading.textContent = trimText(title) || 'Hello, new friends!';
+    card.appendChild(heading);
+
+    const subtitleText = trimText(subtitle);
+    if (subtitleText) {
+      const subtitleEl = document.createElement('p');
+      subtitleEl.className = 'deck-subtitle';
+      subtitleEl.textContent = subtitleText;
+      card.appendChild(subtitleEl);
+    }
+
+    const paragraphs = normaliseParagraphs(body, [
+      'Use simple English to talk about your name, your city, and one thing you like.',
+    ]);
+    paragraphs.forEach((text) => {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      card.appendChild(paragraph);
+    });
+  });
+}
+
+function createIconInstructionListSlide({
+  pill = 'Warm-up',
+  pillIcon = 'fa-solid fa-hand',
+  title = 'Say your name',
+  items = [
+    { icon: 'fa-solid fa-hand', text: 'Wave to the class.' },
+    { icon: 'fa-solid fa-user', text: "Say: \"Hi, I'm ____.\"" },
+    { icon: 'fa-solid fa-heart', text: 'Add one word you love.' },
+  ],
+} = {}) {
+  return createCardSlide('icon-instruction-list', (card) => {
+    appendPill(card, pill, pillIcon);
+
+    const heading = document.createElement('h2');
+    heading.textContent = trimText(title) || 'Say your name';
+    card.appendChild(heading);
+
+    const cleanedItems = Array.isArray(items)
+      ? items
+          .map((item) => ({
+            icon: normaliseIconClass(item?.icon),
+            text: trimText(item?.text),
+          }))
+          .filter((entry) => entry.icon || entry.text)
+      : [];
+
+    const list = document.createElement('ul');
+    list.className = 'instruction-list';
+
+    const resolvedItems = cleanedItems.length
+      ? cleanedItems
+      : [
+          { icon: 'fa-solid fa-hand', text: 'Wave to the class.' },
+          { icon: 'fa-solid fa-user', text: "Say: \"Hi, I'm ____.\"" },
+          { icon: 'fa-solid fa-heart', text: 'Add one word you love.' },
+        ];
+
+    resolvedItems.forEach(({ icon, text }) => {
+      const listItem = document.createElement('li');
+      const glyph = document.createElement('i');
+      glyph.className = icon || 'fa-solid fa-circle';
+      glyph.setAttribute('aria-hidden', 'true');
+      listItem.appendChild(glyph);
+      if (text) {
+        listItem.appendChild(document.createTextNode(` ${text}`));
+      }
+      list.appendChild(listItem);
+    });
+
+    card.appendChild(list);
+  });
+}
+
+function createEmojiGallerySlide({
+  pill = 'Feelings',
+  pillIcon = '',
+  title = 'How do you feel?',
+  lead = '',
+  items = [
+    { emoji: '😊', label: 'happy' },
+    { emoji: '😎', label: 'cool' },
+    { emoji: '😴', label: 'tired' },
+    { emoji: '🤗', label: 'thankful' },
+  ],
+  feedback = 'Show the card and say: "I feel ____ today."',
+} = {}) {
+  return createCardSlide('emoji-gallery', (card) => {
+    appendPill(card, pill, pillIcon);
+
+    const heading = document.createElement('h2');
+    heading.textContent = trimText(title) || 'How do you feel?';
+    card.appendChild(heading);
+
+    const leadText = trimText(lead);
+    if (leadText) {
+      const leadEl = document.createElement('p');
+      leadEl.textContent = leadText;
+      card.appendChild(leadEl);
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'gallery-grid';
+
+    const cleanedItems = Array.isArray(items)
+      ? items
+          .map((item) => ({
+            emoji: trimText(item?.emoji),
+            label: trimText(item?.label),
+          }))
+          .filter((entry) => entry.emoji || entry.label)
+      : [];
+
+    const resolvedItems = cleanedItems.length
+      ? cleanedItems
+      : [
+          { emoji: '😊', label: 'happy' },
+          { emoji: '😎', label: 'cool' },
+          { emoji: '😴', label: 'tired' },
+          { emoji: '🤗', label: 'thankful' },
+        ];
+
+    resolvedItems.forEach(({ emoji, label }) => {
+      const galleryCard = document.createElement('div');
+      galleryCard.className = 'gallery-card';
+      const paragraph = document.createElement('p');
+      const textParts = [emoji, label].filter(Boolean);
+      paragraph.textContent = textParts.length ? textParts.join(' ') : emoji || label || '';
+      galleryCard.appendChild(paragraph);
+      grid.appendChild(galleryCard);
+    });
+
+    card.appendChild(grid);
+
+    const feedbackText = trimText(feedback);
+    if (feedbackText) {
+      const feedbackEl = document.createElement('p');
+      feedbackEl.className = 'feedback-msg';
+      feedbackEl.textContent = feedbackText;
+      card.appendChild(feedbackEl);
+    }
+  });
+}
+
+function createNoteGridSlide({
+  pill = 'Pair talk',
+  pillIcon = 'fa-solid fa-people-arrows',
+  title = 'Pair talk',
+  lead = '',
+  notes = [
+    { heading: 'Partner name', text: '' },
+    { heading: 'Likes', text: '' },
+    { heading: 'City', text: '' },
+    { heading: 'Extra note', text: '' },
+  ],
+  tips = [
+    { heading: 'Food', text: 'I like ____.' },
+    { heading: 'Place', text: 'My city is ____.' },
+    { heading: 'Hobby', text: 'I enjoy ____.' },
+  ],
+} = {}) {
+  return createCardSlide('note-grid', (card) => {
+    appendPill(card, pill, pillIcon);
+
+    const heading = document.createElement('h2');
+    heading.textContent = trimText(title) || 'Pair talk';
+    card.appendChild(heading);
+
+    const leadText = trimText(lead);
+    if (leadText) {
+      const leadEl = document.createElement('p');
+      leadEl.textContent = leadText;
+      card.appendChild(leadEl);
+    }
+
+    const noteGrid = document.createElement('div');
+    noteGrid.className = 'split-grid';
+
+    const cleanedNotes = Array.isArray(notes)
+      ? notes
+          .map((note) => ({
+            heading: trimText(note?.heading),
+            text: trimText(note?.text),
+          }))
+          .filter((entry) => entry.heading || entry.text)
+      : [];
+
+    const resolvedNotes = cleanedNotes.length
+      ? cleanedNotes
+      : [
+          { heading: 'Partner name', text: '' },
+          { heading: 'Likes', text: '' },
+          { heading: 'City', text: '' },
+          { heading: 'Extra note', text: '' },
+        ];
+
+    resolvedNotes.forEach(({ heading: noteHeading, text }) => {
+      const noteCard = document.createElement('div');
+      noteCard.className = 'note-card';
+      noteCard.setAttribute('contenteditable', 'true');
+      if (noteHeading) {
+        const noteHeadingEl = document.createElement('h3');
+        noteHeadingEl.textContent = noteHeading;
+        noteCard.appendChild(noteHeadingEl);
+      }
+      const body = document.createElement('p');
+      body.textContent = text || '';
+      noteCard.appendChild(body);
+      noteGrid.appendChild(noteCard);
+    });
+
+    card.appendChild(noteGrid);
+
+    const cleanedTips = Array.isArray(tips)
+      ? tips
+          .map((tip) => ({
+            heading: trimText(tip?.heading),
+            text: trimText(tip?.text),
+          }))
+          .filter((entry) => entry.heading || entry.text)
+      : [];
+
+    const resolvedTips = cleanedTips.length
+      ? cleanedTips
+      : [
+          { heading: 'Food', text: 'I like ____.' },
+          { heading: 'Place', text: 'My city is ____.' },
+          { heading: 'Hobby', text: 'I enjoy ____.' },
+        ];
+
+    const tipsGrid = document.createElement('div');
+    tipsGrid.className = 'tips-grid';
+
+    resolvedTips.forEach(({ heading: tipHeading, text }) => {
+      const tipCard = document.createElement('div');
+      tipCard.className = 'tip-card';
+      if (tipHeading) {
+        const tipHeadingEl = document.createElement('h3');
+        tipHeadingEl.textContent = tipHeading;
+        tipCard.appendChild(tipHeadingEl);
+      }
+      const tipBody = document.createElement('p');
+      tipBody.textContent = text || '';
+      tipCard.appendChild(tipBody);
+      tipsGrid.appendChild(tipCard);
+    });
+
+    card.appendChild(tipsGrid);
+  });
+}
+
+function createQuizCardSlide({
+  title = 'Quiz time',
+  subtitle = 'Pick the best word',
+  question = '"I ____ music."',
+  options = [
+    { label: 'A) love', correct: true },
+    { label: 'B) drink', correct: false },
+    { label: 'C) cook', correct: false },
+    { label: 'D) drive', correct: false },
+  ],
+  feedback = 'We say "I love music" to talk about favourite sounds.',
+  quizId = 'quiz-card-1',
+} = {}) {
+  const { slide, inner } = createSlideShell('quiz-card');
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
   inner.appendChild(card);
 
-  const wordList = Array.isArray(words) ? words.map((word) => trimText(word)).filter(Boolean) : [];
-  if (wordList.length) {
-    const wordsEl = document.createElement('div');
-    wordsEl.className = 'pronunciation-words';
-    wordList.forEach((word) => {
-      const span = document.createElement('span');
-      span.textContent = word;
-      wordsEl.appendChild(span);
-    });
-    card.appendChild(wordsEl);
-  }
-
-  const sentenceList = Array.isArray(sentences)
-    ? sentences.map((sentence) => trimText(sentence)).filter(Boolean)
-    : [];
-  if (sentenceList.length) {
-    const sentenceEl = document.createElement('div');
-    sentenceEl.className = 'pronunciation-examples';
-    sentenceList.forEach((sentence) => {
-      const example = document.createElement('span');
-      example.textContent = sentence;
-      sentenceEl.appendChild(example);
-    });
-    card.appendChild(sentenceEl);
-  }
-
-  const practiceText = trimText(practice);
-  const practiceEl = document.createElement('div');
-  practiceEl.className = 'pronunciation-practice';
-  practiceEl.textContent = practiceText || 'Describe how learners should practise the target sound.';
-  card.appendChild(practiceEl);
-
-  return slide;
-}
-
-function createReflectionSlide({
-  title = 'Reflection',
-  prompts = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('reflection', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('reflection', layoutIcon),
-  });
-  slide.dataset.type = 'reflection';
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Reflection';
-  header.appendChild(heading);
-
-  const body = document.createElement('div');
-  body.className = 'reflection-body';
-  inner.appendChild(body);
-
-  const promptList = Array.isArray(prompts) ? prompts.map((prompt) => trimText(prompt)).filter(Boolean) : [];
-  if (promptList.length) {
-    const list = document.createElement('ul');
-    list.className = 'reflection-prompts';
-    promptList.forEach((prompt) => {
-      const li = document.createElement('li');
-      li.textContent = prompt;
-      list.appendChild(li);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add reflection prompts to guide learners.';
-    body.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createGroundingActivitySlide({
-  title = 'Grounding activity',
-  subtitle = '',
-  steps = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('grounding-activity', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('grounding-activity', layoutIcon),
-  });
-  const header = document.createElement('header');
-  header.className = 'lesson-header grounding-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Grounding activity';
-  header.appendChild(heading);
-
   const subtitleText = trimText(subtitle);
   if (subtitleText) {
     const subtitleEl = document.createElement('p');
-    subtitleEl.className = 'grounding-subtitle';
+    subtitleEl.className = 'deck-subtitle';
     subtitleEl.textContent = subtitleText;
-    header.appendChild(subtitleEl);
+    card.appendChild(subtitleEl);
   }
 
-  const body = document.createElement('div');
-  body.className = 'grounding-body';
-  inner.appendChild(body);
-
-  const stepsList = Array.isArray(steps) ? steps.map((step) => trimText(step)).filter(Boolean) : [];
-  if (stepsList.length) {
-    const list = document.createElement('ol');
-    list.className = 'grounding-steps';
-    stepsList.forEach((step, index) => {
-      const item = document.createElement('li');
-      const badge = document.createElement('span');
-      badge.className = 'grounding-step-badge';
-      badge.textContent = index + 1;
-      item.appendChild(badge);
-      const text = document.createElement('p');
-      text.textContent = step;
-      item.appendChild(text);
-      list.appendChild(item);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add a short grounding script or sequence.';
-    body.appendChild(placeholder);
+  const resolvedTitle = trimText(title);
+  if (resolvedTitle) {
+    const heading = document.createElement('h2');
+    heading.textContent = resolvedTitle;
+    card.appendChild(heading);
   }
 
-  return slide;
-}
-
-function createTopicIntroductionSlide({
-  title = 'Today we explore',
-  hook = '',
-  context = '',
-  essentialQuestion = '',
-  keyVocabulary = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('topic-introduction', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('topic-introduction', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header topic-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Today we explore';
-  header.appendChild(heading);
-
-  const hookText = trimText(hook);
-  if (hookText) {
-    const hookEl = document.createElement('p');
-    hookEl.className = 'topic-hook';
-    hookEl.textContent = hookText;
-    header.appendChild(hookEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'topic-body';
-  inner.appendChild(body);
-
-  const contextText = trimText(context);
-  if (contextText) {
-    const contextEl = document.createElement('p');
-    contextEl.className = 'topic-context';
-    contextEl.textContent = contextText;
-    body.appendChild(contextEl);
-  }
-
-  const questionText = trimText(essentialQuestion);
+  const questionText = trimText(question);
   if (questionText) {
-    const question = document.createElement('div');
-    question.className = 'topic-question-card';
-    const label = document.createElement('span');
-    label.className = 'topic-question-label';
-    label.textContent = 'Essential question';
-    question.appendChild(label);
-    const text = document.createElement('p');
-    text.textContent = questionText;
-    question.appendChild(text);
-    body.appendChild(question);
+    const questionEl = document.createElement('p');
+    questionEl.textContent = questionText;
+    card.appendChild(questionEl);
   }
 
-  const vocabList = Array.isArray(keyVocabulary)
-    ? keyVocabulary.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  const vocabSection = document.createElement('section');
-  vocabSection.className = 'topic-vocabulary';
-  const vocabHeading = document.createElement('h3');
-  vocabHeading.textContent = 'Key vocabulary';
-  vocabSection.appendChild(vocabHeading);
-  if (vocabList.length) {
-    const list = document.createElement('ul');
-    list.className = 'topic-vocabulary-list';
-    vocabList.forEach((term) => {
-      const item = document.createElement('li');
-      item.textContent = term;
-      list.appendChild(item);
-    });
-    vocabSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List 3-5 terms learners should notice today.';
-    vocabSection.appendChild(placeholder);
-  }
-  body.appendChild(vocabSection);
-
-  return slide;
-}
-
-function createGuidedDiscoverySlide({
-  title = 'Guided discovery',
-  context = '',
-  discoveryPrompts = [],
-  noticingQuestions = [],
-  sampleLanguage = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('guided-discovery', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('guided-discovery', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header discovery-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Guided discovery';
-  header.appendChild(heading);
-
-  const contextText = trimText(context);
-  if (contextText) {
-    const contextEl = document.createElement('p');
-    contextEl.className = 'discovery-context';
-    contextEl.textContent = contextText;
-    header.appendChild(contextEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'discovery-body';
-  inner.appendChild(body);
-
-  const promptList = Array.isArray(discoveryPrompts)
-    ? discoveryPrompts.map((prompt) => trimText(prompt)).filter(Boolean)
-    : [];
-  const promptsSection = document.createElement('section');
-  promptsSection.className = 'discovery-section';
-  const promptsHeading = document.createElement('h3');
-  promptsHeading.textContent = 'Explore the text';
-  promptsSection.appendChild(promptsHeading);
-  if (promptList.length) {
-    const list = document.createElement('ul');
-    list.className = 'discovery-prompt-list';
-    promptList.forEach((prompt) => {
-      const item = document.createElement('li');
-      item.textContent = prompt;
-      list.appendChild(item);
-    });
-    promptsSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add a short sequence of noticing tasks.';
-    promptsSection.appendChild(placeholder);
-  }
-  body.appendChild(promptsSection);
-
-  const noticingSection = document.createElement('section');
-  noticingSection.className = 'discovery-section';
-  const noticingHeading = document.createElement('h3');
-  noticingHeading.textContent = 'What do you notice?';
-  noticingSection.appendChild(noticingHeading);
-  const questionList = Array.isArray(noticingQuestions)
-    ? noticingQuestions.map((question) => trimText(question)).filter(Boolean)
-    : [];
-  if (questionList.length) {
-    const list = document.createElement('ul');
-    list.className = 'discovery-question-list';
-    questionList.forEach((question) => {
-      const item = document.createElement('li');
-      item.textContent = question;
-      list.appendChild(item);
-    });
-    noticingSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add questions that guide pattern noticing.';
-    noticingSection.appendChild(placeholder);
-  }
-  body.appendChild(noticingSection);
-
-  const sampleSection = document.createElement('section');
-  sampleSection.className = 'discovery-section';
-  const sampleHeading = document.createElement('h3');
-  sampleHeading.textContent = 'Sample language';
-  sampleSection.appendChild(sampleHeading);
-  const languageItems = Array.isArray(sampleLanguage)
-    ? sampleLanguage.map((sample) => trimText(sample)).filter(Boolean)
-    : [];
-  if (languageItems.length) {
-    const list = document.createElement('ul');
-    list.className = 'discovery-language-list';
-    languageItems.forEach((sample) => {
-      const item = document.createElement('li');
-      item.textContent = sample;
-      list.appendChild(item);
-    });
-    sampleSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Collect two lines that model the target language.';
-    sampleSection.appendChild(placeholder);
-  }
-  body.appendChild(sampleSection);
-
-  return slide;
-}
-
-function createCreativePracticeSlide({
-  title = 'Creative practice',
-  brief = '',
-  materials = [],
-  makingSteps = [],
-  sharingOptions = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('creative-practice', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('creative-practice', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header creative-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Creative practice';
-  header.appendChild(heading);
-
-  const briefText = trimText(brief);
-  if (briefText) {
-    const briefEl = document.createElement('p');
-    briefEl.className = 'creative-brief';
-    briefEl.textContent = briefText;
-    header.appendChild(briefEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'creative-body';
-  inner.appendChild(body);
-
-  const materialsList = Array.isArray(materials)
-    ? materials.map((material) => trimText(material)).filter(Boolean)
-    : [];
-  if (materialsList.length) {
-    const materialsSection = document.createElement('section');
-    materialsSection.className = 'creative-section materials-section';
-    const materialsHeading = document.createElement('h3');
-    materialsHeading.textContent = 'Gather your materials';
-    materialsSection.appendChild(materialsHeading);
-    const chips = document.createElement('ul');
-    chips.className = 'creative-materials';
-    materialsList.forEach((material) => {
-      const item = document.createElement('li');
-      item.textContent = material;
-      chips.appendChild(item);
-    });
-    materialsSection.appendChild(chips);
-    body.appendChild(materialsSection);
-  }
-
-  const stepsList = Array.isArray(makingSteps)
-    ? makingSteps.map((step) => trimText(step)).filter(Boolean)
-    : [];
-  const stepsSection = document.createElement('section');
-  stepsSection.className = 'creative-section';
-  const stepsHeading = document.createElement('h3');
-  stepsHeading.textContent = 'Make together';
-  stepsSection.appendChild(stepsHeading);
-  if (stepsList.length) {
-    const list = document.createElement('ol');
-    list.className = 'creative-steps';
-    stepsList.forEach((step) => {
-      const item = document.createElement('li');
-      item.textContent = step;
-      list.appendChild(item);
-    });
-    stepsSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Outline the creative steps learners follow.';
-    stepsSection.appendChild(placeholder);
-  }
-  body.appendChild(stepsSection);
-
-  const sharingList = Array.isArray(sharingOptions)
-    ? sharingOptions.map((option) => trimText(option)).filter(Boolean)
-    : [];
-  const sharingSection = document.createElement('section');
-  sharingSection.className = 'creative-section';
-  const sharingHeading = document.createElement('h3');
-  sharingHeading.textContent = 'Share your work';
-  sharingSection.appendChild(sharingHeading);
-  if (sharingList.length) {
-    const list = document.createElement('ul');
-    list.className = 'creative-sharing';
-    sharingList.forEach((option) => {
-      const item = document.createElement('li');
-      item.textContent = option;
-      list.appendChild(item);
-    });
-    sharingSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Suggest how learners will present their creations.';
-    sharingSection.appendChild(placeholder);
-  }
-  body.appendChild(sharingSection);
-
-  return slide;
-}
-
-function createTaskDividerSlide({
-  title = 'Task cycle',
-  subtitle = '',
-  timing = '',
-  focus = '',
-  actions = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('task-divider', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('task-divider', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header divider-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Task cycle';
-  header.appendChild(heading);
-
-  const subtitleText = trimText(subtitle);
-  if (subtitleText) {
-    const subtitleEl = document.createElement('p');
-    subtitleEl.className = 'divider-subtitle';
-    subtitleEl.textContent = subtitleText;
-    header.appendChild(subtitleEl);
-  }
-
-  const focusText = trimText(focus);
-  if (focusText || trimText(timing)) {
-    const banner = document.createElement('div');
-    banner.className = 'divider-banner';
-    const timeText = trimText(timing);
-    if (timeText) {
-      const timeEl = document.createElement('span');
-      timeEl.className = 'divider-timing';
-      timeEl.textContent = timeText;
-      banner.appendChild(timeEl);
-    }
-    if (focusText) {
-      const focusEl = document.createElement('p');
-      focusEl.textContent = focusText;
-      banner.appendChild(focusEl);
-    }
-    inner.appendChild(banner);
-  }
-
-  const actionsList = Array.isArray(actions)
-    ? actions.map((action) => trimText(action)).filter(Boolean)
-    : [];
-  const body = document.createElement('div');
-  body.className = 'divider-body';
-  inner.appendChild(body);
-
-  if (actionsList.length) {
-    const list = document.createElement('ul');
-    list.className = 'divider-actions';
-    actionsList.forEach((action) => {
-      const item = document.createElement('li');
-      item.textContent = action;
-      list.appendChild(item);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Outline what learners should do during this phase.';
-    body.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createTaskReportingSlide({
-  title = 'Task reporting',
-  goal = '',
-  prompts = [],
-  roles = [],
-  evidence = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('task-reporting', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('task-reporting', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header reporting-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Task reporting';
-  header.appendChild(heading);
-
-  const goalText = trimText(goal);
-  if (goalText) {
-    const goalEl = document.createElement('p');
-    goalEl.className = 'reporting-goal';
-    goalEl.textContent = goalText;
-    header.appendChild(goalEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'reporting-body';
-  inner.appendChild(body);
-
-  const promptList = Array.isArray(prompts)
-    ? prompts.map((prompt) => trimText(prompt)).filter(Boolean)
-    : [];
-  const promptsSection = document.createElement('section');
-  promptsSection.className = 'reporting-section';
-  const promptsHeading = document.createElement('h3');
-  promptsHeading.textContent = 'Share this';
-  promptsSection.appendChild(promptsHeading);
-  if (promptList.length) {
-    const list = document.createElement('ul');
-    list.className = 'reporting-prompts';
-    promptList.forEach((prompt) => {
-      const item = document.createElement('li');
-      item.textContent = prompt;
-      list.appendChild(item);
-    });
-    promptsSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add 2-3 reporting prompts or questions.';
-    promptsSection.appendChild(placeholder);
-  }
-  body.appendChild(promptsSection);
-
-  const rolesSection = document.createElement('section');
-  rolesSection.className = 'reporting-section';
-  const rolesHeading = document.createElement('h3');
-  rolesHeading.textContent = 'Roles';
-  rolesSection.appendChild(rolesHeading);
-  const roleEntries = Array.isArray(roles)
-    ? roles
-        .map((role) => ({ label: trimText(role?.label), value: trimText(role?.value) }))
-        .filter((role) => role.label || role.value)
-    : [];
-  if (roleEntries.length) {
-    const table = document.createElement('table');
-    table.className = 'reporting-role-table';
-    const tbody = document.createElement('tbody');
-    roleEntries.forEach((role) => {
-      const row = document.createElement('tr');
-      const roleCell = document.createElement('th');
-      roleCell.scope = 'row';
-      roleCell.textContent = role.label || 'Role';
-      row.appendChild(roleCell);
-      const valueCell = document.createElement('td');
-      valueCell.textContent = role.value || '';
-      row.appendChild(valueCell);
-      tbody.appendChild(row);
-    });
-    table.appendChild(tbody);
-    rolesSection.appendChild(table);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Define who facilitates, records, or shares back.';
-    rolesSection.appendChild(placeholder);
-  }
-  body.appendChild(rolesSection);
-
-  const evidenceList = Array.isArray(evidence)
-    ? evidence.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  if (evidenceList.length) {
-    const evidenceSection = document.createElement('section');
-    evidenceSection.className = 'reporting-section';
-    const evidenceHeading = document.createElement('h3');
-    evidenceHeading.textContent = 'Capture evidence';
-    evidenceSection.appendChild(evidenceHeading);
-    const list = document.createElement('ul');
-    list.className = 'reporting-evidence';
-    evidenceList.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    evidenceSection.appendChild(list);
-    body.appendChild(evidenceSection);
-  }
-
-  return slide;
-}
-
-function createGenreDeconstructionSlide({
-  title = 'Genre deconstruction',
-  genre = '',
-  purpose = '',
-  features = [],
-  mentorText = '',
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('genre-deconstruction', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('genre-deconstruction', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header genre-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Genre deconstruction';
-  header.appendChild(heading);
-
-  if (trimText(genre) || trimText(purpose)) {
-    const meta = document.createElement('p');
-    meta.className = 'genre-meta';
-    const genreText = trimText(genre);
-    if (genreText) {
-      const genreSpan = document.createElement('span');
-      genreSpan.className = 'genre-type';
-      genreSpan.textContent = genreText;
-      meta.appendChild(genreSpan);
-    }
-    const purposeText = trimText(purpose);
-    if (purposeText) {
-      const purposeSpan = document.createElement('span');
-      purposeSpan.textContent = purposeText;
-      meta.appendChild(purposeSpan);
-    }
-    header.appendChild(meta);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'genre-body';
-  inner.appendChild(body);
-
-  const featuresSection = document.createElement('section');
-  featuresSection.className = 'genre-section';
-  const featuresHeading = document.createElement('h3');
-  featuresHeading.textContent = 'Text moves to notice';
-  featuresSection.appendChild(featuresHeading);
-  const featureEntries = Array.isArray(features)
-    ? features
-        .map((feature) => ({ label: trimText(feature?.label), value: trimText(feature?.value) }))
-        .filter((feature) => feature.label || feature.value)
-    : [];
-  if (featureEntries.length) {
-    const list = document.createElement('ul');
-    list.className = 'genre-feature-list';
-    featureEntries.forEach((feature) => {
-      const item = document.createElement('li');
-      const label = document.createElement('strong');
-      label.textContent = feature.label || 'Feature';
-      item.appendChild(label);
-      if (feature.value) {
-        const text = document.createElement('p');
-        text.textContent = feature.value;
-        item.appendChild(text);
-      }
-      list.appendChild(item);
-    });
-    featuresSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List the structural moves in this genre.';
-    featuresSection.appendChild(placeholder);
-  }
-  body.appendChild(featuresSection);
-
-  const mentorTextValue = trimText(mentorText);
-  if (mentorTextValue) {
-    const mentorSection = document.createElement('section');
-    mentorSection.className = 'genre-section';
-    const mentorHeading = document.createElement('h3');
-    mentorHeading.textContent = 'Mentor text excerpt';
-    mentorSection.appendChild(mentorHeading);
-    const block = document.createElement('blockquote');
-    block.className = 'genre-mentor-text';
-    block.textContent = mentorTextValue;
-    mentorSection.appendChild(block);
-    body.appendChild(mentorSection);
-  }
-
-  return slide;
-}
-
-function createLinguisticFeatureHuntSlide({
-  title = 'Feature hunt',
-  sourceText = '',
-  features = [],
-  reflection = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('linguistic-feature-hunt', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('linguistic-feature-hunt', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header feature-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Feature hunt';
-  header.appendChild(heading);
-
-  const body = document.createElement('div');
-  body.className = 'feature-body';
-  inner.appendChild(body);
-
-  const textValue = trimText(sourceText);
-  if (textValue) {
-    const excerpt = document.createElement('div');
-    excerpt.className = 'feature-source';
-    const label = document.createElement('span');
-    label.className = 'feature-source-label';
-    label.textContent = 'Text excerpt';
-    excerpt.appendChild(label);
-    const paragraph = document.createElement('p');
-    paragraph.textContent = textValue;
-    excerpt.appendChild(paragraph);
-    body.appendChild(excerpt);
-  }
-
-  const featureList = Array.isArray(features)
-    ? features.map((feature) => trimText(feature)).filter(Boolean)
-    : [];
-  const huntSection = document.createElement('section');
-  huntSection.className = 'feature-section';
-  const huntHeading = document.createElement('h3');
-  huntHeading.textContent = 'Hunt for';
-  huntSection.appendChild(huntHeading);
-  if (featureList.length) {
-    const list = document.createElement('ul');
-    list.className = 'feature-targets';
-    featureList.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    huntSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List two features learners should highlight.';
-    huntSection.appendChild(placeholder);
-  }
-  body.appendChild(huntSection);
-
-  const reflectionList = Array.isArray(reflection)
-    ? reflection.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  if (reflectionList.length) {
-    const reflectionSection = document.createElement('section');
-    reflectionSection.className = 'feature-section';
-    const reflectionHeading = document.createElement('h3');
-    reflectionHeading.textContent = 'Reflect together';
-    reflectionSection.appendChild(reflectionHeading);
-    const list = document.createElement('ul');
-    list.className = 'feature-reflection';
-    reflectionList.forEach((prompt) => {
-      const item = document.createElement('li');
-      item.textContent = prompt;
-      list.appendChild(item);
-    });
-    reflectionSection.appendChild(list);
-    body.appendChild(reflectionSection);
-  }
-
-  return slide;
-}
-
-function createTextReconstructionSlide({
-  title = 'Text reconstruction',
-  context = '',
-  steps = [],
-  segments = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('text-reconstruction', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('text-reconstruction', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header reconstruction-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Text reconstruction';
-  header.appendChild(heading);
-
-  const contextText = trimText(context);
-  if (contextText) {
-    const contextEl = document.createElement('p');
-    contextEl.className = 'reconstruction-context';
-    contextEl.textContent = contextText;
-    header.appendChild(contextEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'reconstruction-body';
-  inner.appendChild(body);
-
-  const stepsList = Array.isArray(steps)
-    ? steps.map((step) => trimText(step)).filter(Boolean)
-    : [];
-  const stepsSection = document.createElement('section');
-  stepsSection.className = 'reconstruction-section';
-  const stepsHeading = document.createElement('h3');
-  stepsHeading.textContent = 'Follow these steps';
-  stepsSection.appendChild(stepsHeading);
-  if (stepsList.length) {
-    const list = document.createElement('ol');
-    list.className = 'reconstruction-steps';
-    stepsList.forEach((step) => {
-      const item = document.createElement('li');
-      item.textContent = step;
-      list.appendChild(item);
-    });
-    stepsSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List the routine learners should follow.';
-    stepsSection.appendChild(placeholder);
-  }
-  body.appendChild(stepsSection);
-
-  const segmentList = Array.isArray(segments)
-    ? segments.map((segment) => trimText(segment)).filter(Boolean)
-    : [];
-  const segmentsSection = document.createElement('section');
-  segmentsSection.className = 'reconstruction-section';
-  const segmentsHeading = document.createElement('h3');
-  segmentsHeading.textContent = 'Sentence strips';
-  segmentsSection.appendChild(segmentsHeading);
-  if (segmentList.length) {
-    const list = document.createElement('ul');
-    list.className = 'reconstruction-segments';
-    segmentList.forEach((segment, index) => {
-      const item = document.createElement('li');
-      const badge = document.createElement('span');
-      badge.className = 'reconstruction-badge';
-      badge.textContent = index + 1;
-      item.appendChild(badge);
-      const text = document.createElement('p');
-      text.textContent = segment;
-      item.appendChild(text);
-      list.appendChild(item);
-    });
-    segmentsSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Paste the strips or clues learners will reorder.';
-    segmentsSection.appendChild(placeholder);
-  }
-  body.appendChild(segmentsSection);
-
-  return slide;
-}
-
-function createJumbledTextSequencingSlide({
-  title = 'Sequence the text',
-  instructions = '',
-  segments = [],
-  supportTips = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('jumbled-text-sequencing', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('jumbled-text-sequencing', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header sequencing-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Sequence the text';
-  header.appendChild(heading);
-
-  const instructionsText = trimText(instructions);
-  if (instructionsText) {
-    const instructionsEl = document.createElement('p');
-    instructionsEl.className = 'sequencing-instructions';
-    instructionsEl.textContent = instructionsText;
-    header.appendChild(instructionsEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'sequencing-body';
-  inner.appendChild(body);
-
-  const segmentList = Array.isArray(segments)
-    ? segments.map((segment) => trimText(segment)).filter(Boolean)
-    : [];
-  if (segmentList.length) {
-    const list = document.createElement('ol');
-    list.className = 'sequencing-segments';
-    segmentList.forEach((segment) => {
-      const item = document.createElement('li');
-      item.textContent = segment;
-      list.appendChild(item);
-    });
-    body.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List the jumbled statements learners will order.';
-    body.appendChild(placeholder);
-  }
-
-  const supportList = Array.isArray(supportTips)
-    ? supportTips.map((tip) => trimText(tip)).filter(Boolean)
-    : [];
-  if (supportList.length) {
-    const supportSection = document.createElement('section');
-    supportSection.className = 'sequencing-support';
-    const supportHeading = document.createElement('h3');
-    supportHeading.textContent = 'Support tips';
-    supportSection.appendChild(supportHeading);
-    const list = document.createElement('ul');
-    supportList.forEach((tip) => {
-      const item = document.createElement('li');
-      item.textContent = tip;
-      list.appendChild(item);
-    });
-    supportSection.appendChild(list);
-    body.appendChild(supportSection);
-  }
-
-  return slide;
-}
-
-function createScaffoldedJointConstructionSlide({
-  title = 'Scaffolded joint construction',
-  mentorFocus = '',
-  sharedOutcome = '',
-  teacherMoves = [],
-  learnerMoves = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('scaffolded-joint-construction', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('scaffolded-joint-construction', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header joint-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Scaffolded joint construction';
-  header.appendChild(heading);
-
-  if (trimText(mentorFocus) || trimText(sharedOutcome)) {
-    const meta = document.createElement('p');
-    meta.className = 'joint-meta';
-    const mentorText = trimText(mentorFocus);
-    if (mentorText) {
-      const mentorSpan = document.createElement('span');
-      mentorSpan.className = 'joint-mentor';
-      mentorSpan.textContent = mentorText;
-      meta.appendChild(mentorSpan);
-    }
-    const outcomeText = trimText(sharedOutcome);
-    if (outcomeText) {
-      const outcomeSpan = document.createElement('span');
-      outcomeSpan.textContent = outcomeText;
-      meta.appendChild(outcomeSpan);
-    }
-    header.appendChild(meta);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'joint-body';
-  inner.appendChild(body);
-
-  const columns = document.createElement('div');
-  columns.className = 'joint-columns';
-  body.appendChild(columns);
-
-  const teacherList = Array.isArray(teacherMoves)
-    ? teacherMoves.map((move) => trimText(move)).filter(Boolean)
-    : [];
-  const teacherColumn = document.createElement('section');
-  teacherColumn.className = 'joint-column';
-  const teacherHeading = document.createElement('h3');
-  teacherHeading.textContent = 'Teacher moves';
-  teacherColumn.appendChild(teacherHeading);
-  if (teacherList.length) {
-    const list = document.createElement('ul');
-    teacherList.forEach((move) => {
-      const item = document.createElement('li');
-      item.textContent = move;
-      list.appendChild(item);
-    });
-    teacherColumn.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Note how you will model and guide the text.';
-    teacherColumn.appendChild(placeholder);
-  }
-  columns.appendChild(teacherColumn);
-
-  const learnerList = Array.isArray(learnerMoves)
-    ? learnerMoves.map((move) => trimText(move)).filter(Boolean)
-    : [];
-  const learnerColumn = document.createElement('section');
-  learnerColumn.className = 'joint-column';
-  const learnerHeading = document.createElement('h3');
-  learnerHeading.textContent = 'Learner moves';
-  learnerColumn.appendChild(learnerHeading);
-  if (learnerList.length) {
-    const list = document.createElement('ul');
-    learnerList.forEach((move) => {
-      const item = document.createElement('li');
-      item.textContent = move;
-      list.appendChild(item);
-    });
-    learnerColumn.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Describe what learners contribute together.';
-    learnerColumn.appendChild(placeholder);
-  }
-  columns.appendChild(learnerColumn);
-
-  return slide;
-}
-
-function createIndependentConstructionChecklistSlide({
-  title = 'Independent construction',
-  reminder = '',
-  checklist = [],
-  stretchGoals = [],
-  imageUrl = '',
-  overlayColor = '',
-  overlayOpacity = 0,
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('independent-construction-checklist', {
-    imageUrl,
-    overlayColor,
-    overlayOpacity,
-    iconClass: getEffectiveLayoutIcon('independent-construction-checklist', layoutIcon),
-  });
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header checklist-header';
-  inner.appendChild(header);
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Independent construction';
-  header.appendChild(heading);
-
-  const reminderText = trimText(reminder);
-  if (reminderText) {
-    const reminderEl = document.createElement('p');
-    reminderEl.className = 'checklist-reminder';
-    reminderEl.textContent = reminderText;
-    header.appendChild(reminderEl);
-  }
-
-  const body = document.createElement('div');
-  body.className = 'checklist-body';
-  inner.appendChild(body);
-
-  const checklistItems = Array.isArray(checklist)
-    ? checklist.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  const checklistSection = document.createElement('section');
-  checklistSection.className = 'checklist-section';
-  const checklistHeading = document.createElement('h3');
-  checklistHeading.textContent = 'Before you submit';
-  checklistSection.appendChild(checklistHeading);
-  if (checklistItems.length) {
-    const list = document.createElement('ul');
-    list.className = 'checklist-items';
-    checklistItems.forEach((item) => {
-      const li = document.createElement('li');
-      const icon = document.createElement('span');
-      icon.className = 'checklist-icon';
-      icon.setAttribute('aria-hidden', 'true');
-      icon.textContent = '☑';
-      li.appendChild(icon);
-      const text = document.createElement('span');
-      text.textContent = item;
-      li.appendChild(text);
-      list.appendChild(li);
-    });
-    checklistSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List success criteria learners can self-check.';
-    checklistSection.appendChild(placeholder);
-  }
-  body.appendChild(checklistSection);
-
-  const stretchList = Array.isArray(stretchGoals)
-    ? stretchGoals.map((item) => trimText(item)).filter(Boolean)
-    : [];
-  if (stretchList.length) {
-    const stretchSection = document.createElement('section');
-    stretchSection.className = 'checklist-section';
-    const stretchHeading = document.createElement('h3');
-    stretchHeading.textContent = 'Stretch goals';
-    stretchSection.appendChild(stretchHeading);
-    const list = document.createElement('ul');
-    list.className = 'checklist-stretch';
-    stretchList.forEach((item) => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      list.appendChild(li);
-    });
-    stretchSection.appendChild(list);
-    body.appendChild(stretchSection);
-  }
-
-  return slide;
-}
-
-function applyInteractivePracticeType(slide, type) {
-  if (!(slide instanceof HTMLElement)) {
-    return;
-  }
-  const resolvedType = trimText(type) || 'multiple-choice';
-  slide.dataset.activityType = resolvedType;
-  const typeBadge = slide.querySelector('.practice-type');
-  if (typeBadge instanceof HTMLElement) {
-    typeBadge.textContent = getModuleTypeLabel(resolvedType);
-  }
-}
-
-function createInteractivePracticeSlide({
-  title,
-  instructions,
-  activityType,
-  questions = [],
-  layoutIcon = '',
-} = {}) {
-  const resolvedTitle = trimText(title) || "Practice";
-  const resolvedInstructions = trimText(instructions);
-  const resolvedType = trimText(activityType) || "multiple-choice";
-  const resolvedQuestions = Array.isArray(questions)
-    ? questions.filter((q) => q && (q.prompt || q.options?.length))
-    : [];
-
-  const slide = document.createElement("div");
-  slide.className = "slide-stage hidden interactive-practice-slide";
-  slide.dataset.type = "interactive-practice";
-
-  attachLayoutIconBadge(slide, getEffectiveLayoutIcon('interactive-practice', layoutIcon));
-
-  const inner = document.createElement("div");
-  inner.className = "slide-inner interactive-practice-inner";
-  slide.appendChild(inner);
-
-  const header = document.createElement("header");
-  header.className = "practice-header";
-  inner.appendChild(header);
-
-  const heading = document.createElement("h2");
-  heading.textContent = resolvedTitle;
-  header.appendChild(heading);
-
-  const typeBadge = document.createElement("span");
-  typeBadge.className = "practice-type";
-  header.appendChild(typeBadge);
-
-  const body = document.createElement("div");
-  body.className = "practice-body";
-  inner.appendChild(body);
-
-  const instructionSection = document.createElement("section");
-  instructionSection.className = "practice-instructions";
-  if (resolvedInstructions) {
-    const paragraph = document.createElement("p");
-    paragraph.textContent = resolvedInstructions;
-    instructionSection.appendChild(paragraph);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "Describe how learners should complete the activity.";
-    instructionSection.appendChild(placeholder);
-  }
-  body.appendChild(instructionSection);
-
-  const questionSection = document.createElement("section");
-  questionSection.className = "practice-questions";
-  body.appendChild(questionSection);
-
-  if (resolvedQuestions.length) {
-    const list = document.createElement("ol");
-    resolvedQuestions.forEach(({ prompt, options = [], answer }, index) => {
-      const item = document.createElement("li");
-      item.className = "practice-question";
-      const promptEl = document.createElement("p");
-      promptEl.className = "practice-question-text";
-      promptEl.textContent = prompt || `Question ${index + 1}`;
-      item.appendChild(promptEl);
-      const optionList = Array.isArray(options) ? options.filter(Boolean) : [];
-      if (optionList.length) {
-        const optionsEl = document.createElement("ul");
-        optionsEl.className = "practice-options";
-        optionList.forEach((opt) => {
-          const optLi = document.createElement("li");
-          optLi.textContent = opt;
-          optionsEl.appendChild(optLi);
-        });
-        item.appendChild(optionsEl);
-      }
-      const answerText = trimText(answer);
-      if (answerText) {
-        const answerEl = document.createElement("p");
-        answerEl.className = "practice-answer";
-        answerEl.textContent = `Correct: ${answerText}`;
-        item.appendChild(answerEl);
-      }
-      list.appendChild(item);
-    });
-    questionSection.appendChild(list);
-  } else {
-    const placeholder = document.createElement("p");
-    placeholder.className = "lesson-empty";
-    placeholder.textContent = "List the prompts or stems learners will respond to.";
-    questionSection.appendChild(placeholder);
-  }
-
-  const moduleArea = document.createElement("div");
-  moduleArea.className = "practice-module";
-  moduleArea.dataset.role = "practice-module-area";
-  inner.appendChild(moduleArea);
-
-  const moduleHost = document.createElement("div");
-  moduleHost.className = "practice-module-host";
-  moduleHost.dataset.role = "practice-module-host";
-  moduleArea.appendChild(moduleHost);
-
-  const addBtn = document.createElement("button");
-  addBtn.type = "button";
-  addBtn.className = "activity-btn";
-  addBtn.dataset.action = "add-module";
-  addBtn.innerHTML = '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
-  moduleArea.appendChild(addBtn);
-
-  applyInteractivePracticeType(slide, resolvedType);
-
-  return slide;
-}
-
-function createCardStackSlide({
-  pill = '',
-  pillIcon = '',
-  title = 'Card stack',
-  description = '',
-  cards = [],
-  cardIcon = '',
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('card-stack', {
-    iconClass: getEffectiveLayoutIcon('card-stack', layoutIcon),
-  });
-
-  inner.classList.add('stack', 'card-stack-layout');
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header card-stack-header stack stack-sm';
-  inner.appendChild(header);
-
-  const pillText = trimText(pill);
-  const pillIconClass =
-    normaliseIconClass(pillIcon) ||
-    getLayoutFieldIconDefault('card-stack', 'cardStackPillIcon') ||
-    'fa-solid fa-bookmark';
-  if (pillText) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill card-stack-pill';
-    if (pillIconClass) {
-      const icon = document.createElement('i');
-      icon.className = pillIconClass;
-      icon.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(icon);
-    }
-    pillEl.appendChild(document.createTextNode(` ${pillText}`));
-    header.appendChild(pillEl);
-  }
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Card stack';
-  header.appendChild(heading);
-
-  const leadCopy = trimText(description);
-  if (leadCopy) {
-    const lead = document.createElement('p');
-    lead.className = 'card-stack-lead';
-    lead.textContent = leadCopy;
-    header.appendChild(lead);
-  }
-
-  const list = document.createElement('div');
-  list.className = 'card-stack-list stack stack-md';
-  inner.appendChild(list);
-
-  const resolvedIcon =
-    normaliseIconClass(cardIcon) ||
-    getLayoutFieldIconDefault('card-stack', 'cardStackItemIcon') ||
-    'fa-solid fa-circle-dot';
-
-  const stackItems = Array.isArray(cards)
-    ? cards
-        .map((card, index) => ({
-          title: trimText(card?.title) || `Card ${index + 1}`,
-          description: trimText(card?.description) || '',
+  const optionContainer = document.createElement('div');
+  optionContainer.className = 'quiz-options';
+  optionContainer.dataset.quizId = trimText(quizId) || 'quiz-card';
+
+  const cleanedOptions = Array.isArray(options)
+    ? options
+        .map((option) => ({
+          text: trimText(option?.label ?? option?.text),
+          correct: Boolean(option?.correct),
         }))
-        .filter((card) => card.title || card.description)
+        .filter((entry) => entry.text)
     : [];
 
-  if (stackItems.length) {
-    stackItems.forEach((card, index) => {
-      const article = document.createElement('article');
-      article.className = 'card stack-card';
-      const headerRow = document.createElement('div');
-      headerRow.className = 'stack-card-header';
-      const iconWrap = document.createElement('span');
-      iconWrap.className = 'stack-card-icon';
-      if (resolvedIcon) {
-        const iconGlyph = document.createElement('i');
-        iconGlyph.className = resolvedIcon;
-        iconGlyph.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconGlyph);
-      }
-      const iconLabel = document.createElement('span');
-      iconLabel.className = 'sr-only';
-      iconLabel.textContent = `Card ${index + 1}`;
-      iconWrap.appendChild(iconLabel);
-      headerRow.appendChild(iconWrap);
-      const titleEl = document.createElement('h3');
-      titleEl.textContent = card.title || `Card ${index + 1}`;
-      headerRow.appendChild(titleEl);
-      article.appendChild(headerRow);
-      if (card.description) {
-        const detail = document.createElement('p');
-        detail.textContent = card.description;
-        article.appendChild(detail);
-      }
-      list.appendChild(article);
-    });
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Outline each workflow card so learners can preview the sprint flow.';
-    list.appendChild(placeholder);
-  }
+  const resolvedOptions = cleanedOptions.length
+    ? cleanedOptions
+    : [
+        { text: 'A) love', correct: true },
+        { text: 'B) drink', correct: false },
+        { text: 'C) cook', correct: false },
+        { text: 'D) drive', correct: false },
+      ];
 
-  return slide;
-}
-
-function createPillWithGallerySlide({
-  pill = '',
-  pillIcon = '',
-  title = 'Scenario gallery',
-  description = '',
-  gallery = [],
-  itemIcon = '',
-  layoutIcon = '',
-} = {}) {
-  const { slide, inner } = createBaseLessonSlide('pill-with-gallery', {
-    iconClass: getEffectiveLayoutIcon('pill-with-gallery', layoutIcon),
+  resolvedOptions.forEach((option) => {
+    const optionEl = document.createElement('div');
+    optionEl.className = 'quiz-option';
+    if (option.correct) {
+      optionEl.dataset.correct = 'true';
+    }
+    optionEl.textContent = option.text;
+    optionContainer.appendChild(optionEl);
   });
 
-  inner.classList.add('stack', 'pill-gallery-layout');
+  card.appendChild(optionContainer);
 
-  const header = document.createElement('header');
-  header.className = 'lesson-header pill-gallery-header stack stack-sm';
-  inner.appendChild(header);
-
-  const pillText = trimText(pill);
-  const pillIconClass =
-    normaliseIconClass(pillIcon) ||
-    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryPillIcon') ||
-    'fa-solid fa-camera-retro';
-  if (pillText) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill pill-gallery-pill';
-    if (pillIconClass) {
-      const icon = document.createElement('i');
-      icon.className = pillIconClass;
-      icon.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(icon);
-    }
-    pillEl.appendChild(document.createTextNode(` ${pillText}`));
-    header.appendChild(pillEl);
-  }
-
-  const heading = document.createElement('h2');
-  heading.textContent = trimText(title) || 'Scenario gallery';
-  header.appendChild(heading);
-
-  const leadCopy = trimText(description);
-  if (leadCopy) {
-    const lead = document.createElement('p');
-    lead.className = 'pill-gallery-lead';
-    lead.textContent = leadCopy;
-    header.appendChild(lead);
-  }
-
-  const grid = document.createElement('div');
-  grid.className = 'pill-gallery-grid';
-  inner.appendChild(grid);
-
-  const resolvedIcon =
-    normaliseIconClass(itemIcon) ||
-    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryItemIcon') ||
-    'fa-solid fa-image';
-
-  const galleryItems = Array.isArray(gallery)
-    ? gallery
-        .map((item, index) => ({
-          image: trimText(item?.image),
-          alt: trimText(item?.alt) || `Gallery image ${index + 1}`,
-          caption: trimText(item?.caption) || '',
-        }))
-        .filter((item) => item.image || item.caption)
-    : [];
-
-  if (galleryItems.length) {
-    galleryItems.forEach((item, index) => {
-      const figure = document.createElement('figure');
-      figure.className = 'pill-gallery-item';
-      if (item.image) {
-        const img = document.createElement('img');
-        img.src = item.image;
-        img.alt = item.alt || `Gallery image ${index + 1}`;
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        figure.appendChild(img);
-      } else {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'pill-gallery-placeholder';
-        placeholder.textContent = 'Add an image URL to showcase this moment.';
-        figure.appendChild(placeholder);
-      }
-      const caption = document.createElement('figcaption');
-      caption.className = 'pill-gallery-caption';
-      if (resolvedIcon) {
-        const iconWrap = document.createElement('span');
-        iconWrap.className = 'pill-gallery-icon';
-        const iconGlyph = document.createElement('i');
-        iconGlyph.className = resolvedIcon;
-        iconGlyph.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconGlyph);
-        const iconLabel = document.createElement('span');
-        iconLabel.className = 'sr-only';
-        iconLabel.textContent = `Gallery item ${index + 1}`;
-        iconWrap.appendChild(iconLabel);
-        caption.appendChild(iconWrap);
-      }
-      const captionText = document.createElement('p');
-      captionText.textContent = item.caption || 'Describe the visible evidence or learner action.';
-      caption.appendChild(captionText);
-      const creditText = trimText(item.credit);
-      if (creditText) {
-        const creditLine = document.createElement('p');
-        creditLine.className = 'pill-gallery-credit';
-        const creditUrl = trimText(item.creditUrl);
-        if (creditUrl) {
-          const link = document.createElement('a');
-          link.href = creditUrl;
-          link.target = '_blank';
-          link.rel = 'noreferrer noopener';
-          link.textContent = creditText;
-          creditLine.appendChild(link);
-        } else {
-          creditLine.textContent = creditText;
-        }
-        caption.appendChild(creditLine);
-      }
-      figure.appendChild(caption);
-      grid.appendChild(figure);
-    });
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'List gallery items so learners can see the scenario in action.';
-    grid.appendChild(placeholder);
+  const feedbackText = trimText(feedback);
+  if (feedbackText) {
+    const feedbackEl = document.createElement('p');
+    feedbackEl.className = 'feedback-msg success';
+    feedbackEl.id = `${optionContainer.dataset.quizId}-feedback`;
+    feedbackEl.hidden = true;
+    feedbackEl.textContent = feedbackText;
+    card.appendChild(feedbackEl);
   }
 
   return slide;
 }
-
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
-  'learning-objectives': (data) => createLearningObjectivesSlide(data),
-  'model-dialogue': (data) => createModelDialogueSlide(data),
-  'interactive-practice': (data) => createInteractivePracticeSlide(data),
-  'communicative-task': (data) => createCommunicativeTaskSlide(data),
-  'pronunciation-focus': (data) => createPronunciationFocusSlide(data),
-  reflection: (data) => createReflectionSlide(data),
-  'grounding-activity': (data) => createGroundingActivitySlide(data),
-  'topic-introduction': (data) => createTopicIntroductionSlide(data),
-  'guided-discovery': (data) => createGuidedDiscoverySlide(data),
-  'creative-practice': (data) => createCreativePracticeSlide(data),
-  'task-divider': (data) => createTaskDividerSlide(data),
-  'task-reporting': (data) => createTaskReportingSlide(data),
-  'genre-deconstruction': (data) => createGenreDeconstructionSlide(data),
-  'linguistic-feature-hunt': (data) => createLinguisticFeatureHuntSlide(data),
-  'text-reconstruction': (data) => createTextReconstructionSlide(data),
-  'jumbled-text-sequencing': (data) => createJumbledTextSequencingSlide(data),
-  'scaffolded-joint-construction': (data) =>
-    createScaffoldedJointConstructionSlide(data),
-  'independent-construction-checklist': (data) =>
-    createIndependentConstructionChecklistSlide(data),
-  'card-stack': (data) => createCardStackSlide(data),
-  'pill-with-gallery': (data) => createPillWithGallerySlide(data),
+  'hero-pill': (data) => createHeroPillSlide(data),
+  'icon-instruction-list': (data) => createIconInstructionListSlide(data),
+  'emoji-gallery': (data) => createEmojiGallerySlide(data),
+  'note-grid': (data) => createNoteGridSlide(data),
+  'quiz-card': (data) => createQuizCardSlide(data),
 };
 
 export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(

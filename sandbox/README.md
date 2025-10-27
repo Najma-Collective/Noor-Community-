@@ -30,7 +30,7 @@ Deck briefs are plain JSON objects with the following top-level shape:
   "pexelsKey": "Optional per-brief Pexels key override",
   "slides": [
     {
-      "layout": "pill-with-gallery", // Any value from SUPPORTED_LESSON_LAYOUTS
+      "layout": "hero-pill", // Any value from SUPPORTED_LESSON_LAYOUTS
       "data": { /* Layout specific configuration */ }
     }
   ]
@@ -43,26 +43,11 @@ The current layouts exposed to the generator are:
 
 ```
 blank-canvas
-learning-objectives
-model-dialogue
-interactive-practice
-communicative-task
-pronunciation-focus
-reflection
-grounding-activity
-topic-introduction
-guided-discovery
-creative-practice
-task-divider
-task-reporting
-genre-deconstruction
-linguistic-feature-hunt
-text-reconstruction
-jumbled-text-sequencing
-scaffolded-joint-construction
-independent-construction-checklist
-card-stack
-pill-with-gallery
+hero-pill
+icon-instruction-list
+emoji-gallery
+note-grid
+quiz-card
 ```
 
 > **Tip:** If you request an unsupported layout the script exits with a helpful error listing the invalid value.
@@ -99,7 +84,7 @@ Supported placeholder options:
 | `creditPrefix` | Prefix prepended to the photographer name (defaults to `Photo`). |
 | `creditUrl` | Manually specify a credit link (otherwise the photographer URL from Pexels is used when available). |
 
-When media is resolved, the CLI stores the chosen URL in the layout data, fills any missing `alt` text, and—unless disabled—adds a credit string plus optional link. The pill-with-gallery layout surfaces credits as an extra caption line automatically.
+When media is resolved, the CLI stores the chosen URL in the layout data, fills any missing `alt` text, and—unless disabled—adds a credit string plus optional link. Layouts that render image captions surface credits inline automatically.
 
 Provide your API key via `--pexels-key`, the `PEXELS_API_KEY` environment variable, or the `pexelsKey` field in the brief. For local prototyping you can use the shared sandbox key:
 
@@ -112,7 +97,7 @@ PEXELS_API_KEY=ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd
 Two ready-to-run briefs live in [`sandbox/examples/`](./examples/):
 
 - [`card-stack-brief.json`](./examples/card-stack-brief.json) – generates a workflow preview stack.
-- [`pill-gallery-brief.json`](./examples/pill-gallery-brief.json) – demonstrates auto-populated gallery imagery with credits.
+- [`pill-gallery-brief.json`](./examples/pill-gallery-brief.json) – showcases the hero-pill and emoji-gallery layouts working together.
 
 Generate both decks and compare the resulting HTML to understand how the CLI applies defaults, merges overrides, and captures Pexels metadata for you.
 
