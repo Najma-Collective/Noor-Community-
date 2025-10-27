@@ -2143,6 +2143,60 @@ ol {
   gap: 0.75rem;
 }
 
+.card.matching-board {
+  --stack-gap: clamp(1rem, 2.3vw, 1.6rem);
+  background: color-mix(in srgb, var(--soft-white) 92%, transparent);
+  border-color: color-mix(in srgb, var(--border-soft) 75%, transparent);
+  box-shadow: var(--shadow-2);
+}
+
+.matching-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.matching-board .matching-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.matching-board .matching-term,
+.matching-board .matching-definition {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(122, 132, 113, 0.25);
+  background: var(--soft-white);
+  box-shadow: var(--shadow-1);
+  font-size: var(--step--1);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.matching-board .matching-term {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.matching-board .matching-definition {
+  font-weight: 500;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--forest-shadow) 88%, transparent);
+}
+
+.matching-board .matching-term:hover,
+.matching-board .matching-term:focus-visible,
+.matching-board .matching-definition:hover,
+.matching-board .matching-definition:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+}
+
 .matching-option {
   display: grid;
   grid-template-columns: 1fr minmax(180px, 250px);
