@@ -1,19 +1,27 @@
 export const LAYOUT_ICON_DEFAULTS = {
   'blank-canvas': 'fa-solid fa-border-all',
-  'card-stack': 'fa-solid fa-layer-group',
-  'pill-with-gallery': 'fa-solid fa-images',
+  'hero-pill': 'fa-solid fa-star',
+  'icon-instruction-list': 'fa-solid fa-list-check',
+  'emoji-gallery': 'fa-solid fa-face-smile-beam',
+  'note-grid': 'fa-solid fa-table-cells-large',
+  'quiz-card': 'fa-solid fa-circle-question',
 };
 
 export const LAYOUT_FIELD_ICON_DEFAULTS = {
-  'card-stack': {
-    cardStackPillIcon: 'fa-solid fa-bookmark',
-    cardStackItemIcon: 'fa-solid fa-circle-dot',
+  'hero-pill': {
+    heroPillIcon: 'fa-solid fa-star',
   },
-  'pill-with-gallery': {
-    pillGalleryPillIcon: 'fa-solid fa-camera-retro',
-    pillGalleryItemIcon: 'fa-solid fa-image',
+  'icon-instruction-list': {
+    instructionPillIcon: 'fa-solid fa-hand',
+    instructionItemIcon: 'fa-solid fa-circle',
   },
-};
+  'emoji-gallery': {
+    galleryPillIcon: 'fa-solid fa-face-smile-beam',
+  },
+  'note-grid': {
+    notePillIcon: 'fa-solid fa-people-arrows',
+  },
+}; 
 
 export const getLayoutFieldIconDefault = (layout, field) =>
   LAYOUT_FIELD_ICON_DEFAULTS?.[layout]?.[field] ?? '';
@@ -42,7 +50,7 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
       ],
     },
   ],
-  'card-stack': [
+  'hero-pill': [
     {
       id: 'stageAlignment',
       label: 'Stage alignment',
@@ -51,21 +59,10 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
       options: [
         { value: 'top', label: 'Top aligned', classes: [] },
         { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
-      ],
-    },
-    {
-      id: 'stackDensity',
-      label: 'Card spacing',
-      appliesTo: 'inner',
-      defaultValue: 'default',
-      options: [
-        { value: 'default', label: 'Comfortable', classes: ['stack-md'] },
-        { value: 'tight', label: 'Compact', classes: ['stack-tight'] },
-        { value: 'roomy', label: 'Roomy', classes: ['stack-lg'] },
       ],
     },
   ],
-  'pill-with-gallery': [
+  'icon-instruction-list': [
     {
       id: 'stageAlignment',
       label: 'Stage alignment',
@@ -76,14 +73,40 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
         { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
       ],
     },
+  ],
+  'emoji-gallery': [
     {
-      id: 'galleryAlignment',
-      label: 'Gallery alignment',
-      appliesTo: 'inner',
-      defaultValue: 'start',
+      id: 'stageAlignment',
+      label: 'Stage alignment',
+      appliesTo: 'stage',
+      defaultValue: 'top',
       options: [
-        { value: 'start', label: 'Left', classes: ['align-start'] },
-        { value: 'center', label: 'Center', classes: ['align-center'] },
+        { value: 'top', label: 'Top aligned', classes: [] },
+        { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
+      ],
+    },
+  ],
+  'note-grid': [
+    {
+      id: 'stageAlignment',
+      label: 'Stage alignment',
+      appliesTo: 'stage',
+      defaultValue: 'top',
+      options: [
+        { value: 'top', label: 'Top aligned', classes: [] },
+        { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
+      ],
+    },
+  ],
+  'quiz-card': [
+    {
+      id: 'stageAlignment',
+      label: 'Stage alignment',
+      appliesTo: 'stage',
+      defaultValue: 'top',
+      options: [
+        { value: 'top', label: 'Top aligned', classes: [] },
+        { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
       ],
     },
   ],
@@ -91,58 +114,62 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
 
 export const BUILDER_LAYOUT_DEFAULTS = {
   'blank-canvas': () => ({}),
-  'interactive-practice': () => ({
-    activityType: 'multiple-choice',
-    questions: [{}],
-  }),
-  'card-stack': () => ({
-    pill: 'Studio sprint stack',
-    pillIcon: 'fa-solid fa-bookmark',
-    title: 'Preview the next build moves',
-    description:
-      'Skim the stack to confirm the workflow: prep the sprint, collect field notes, and plan the next showcase.',
-    cardIcon: 'fa-solid fa-circle-dot',
-    cards: [
-      {
-        title: 'Prototype ready check',
-        description: 'List the build, blockers, and final tweaks teams need before sharing.',
-      },
-      {
-        title: 'Feedback carousel',
-        description: 'Identify which peers will rotate through and the lens they should use while observing.',
-      },
-      {
-        title: 'Evidence capture',
-        description: 'Note the artefacts, quotes, or data teams will collect to prove the sprint worked.',
-      },
+  'hero-pill': () => ({
+    pill: 'Lesson 1',
+    pillIcon: 'fa-solid fa-star',
+    title: 'Hello, new friends!',
+    subtitle: 'We will speak, listen, and smile today.',
+    body: [
+      'Use simple English to talk about your name, your city, and one thing you like.',
     ],
   }),
-  'pill-with-gallery': () => ({
-    pill: 'Scenario spotlight',
-    pillIcon: 'fa-solid fa-camera-retro',
-    title: 'Ground the challenge with vivid artefacts',
-    description:
-      'Pair the scenario pill with a gallery of in-sprint visuals so learners can orient quickly and see real momentum.',
-    itemIcon: 'fa-solid fa-image',
-    gallery: [
-      {
-        image:
-          'https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Students discussing project notes around a table',
-        caption: 'Sprint briefing · Teams outline the user need and pitch rapid ideas.',
-      },
-      {
-        image:
-          'https://images.pexels.com/photos/3182765/pexels-photo-3182765.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Prototype sketches spread across a worktable',
-        caption: 'Iteration lab · Capture early prototypes with quick annotations.',
-      },
-      {
-        image:
-          'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Learner presenting to peers with a laptop in hand',
-        caption: 'Gallery walk · Highlight how teams narrate impact evidence.',
-      },
+  'icon-instruction-list': () => ({
+    pill: 'Warm-up',
+    pillIcon: 'fa-solid fa-hand',
+    title: 'Say your name',
+    items: [
+      { icon: 'fa-solid fa-hand', text: 'Wave to the class.' },
+      { icon: 'fa-solid fa-user', text: 'Say: "Hi, I\'m ____."' },
+      { icon: 'fa-solid fa-heart', text: 'Add one word you love.' },
     ],
+  }),
+  'emoji-gallery': () => ({
+    pill: 'Feelings',
+    title: 'How do you feel?',
+    items: [
+      { emoji: '😊', label: 'happy' },
+      { emoji: '😎', label: 'cool' },
+      { emoji: '😴', label: 'tired' },
+      { emoji: '🤗', label: 'thankful' },
+    ],
+    feedback: 'Show the card and say: "I feel ____ today."',
+  }),
+  'note-grid': () => ({
+    pill: 'Pair talk',
+    pillIcon: 'fa-solid fa-people-arrows',
+    title: 'Pair talk',
+    notes: [
+      { heading: 'Partner name', text: '' },
+      { heading: 'Likes', text: '' },
+      { heading: 'City', text: '' },
+      { heading: 'Extra note', text: '' },
+    ],
+    tips: [
+      { heading: 'Food', text: 'I like ____.' },
+      { heading: 'Place', text: 'My city is ____.' },
+      { heading: 'Hobby', text: 'I enjoy ____.' },
+    ],
+  }),
+  'quiz-card': () => ({
+    title: 'Quiz time',
+    subtitle: 'Pick the best word',
+    question: '"I ____ music."',
+    options: [
+      { label: 'A) love', correct: true },
+      { label: 'B) drink', correct: false },
+      { label: 'C) cook', correct: false },
+      { label: 'D) drive', correct: false },
+    ],
+    feedback: 'We say "I love music" to talk about favourite sounds.',
   }),
 };
