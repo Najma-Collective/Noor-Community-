@@ -1,6 +1,6 @@
 # Sandbox deck scaffolding
 
-The sandbox now ships with a lightweight command-line utility that transforms a JSON "brief" into a fully interactive Noor Community deck. The generator renders slides with the same layout functions used by the in-browser builder (`sandbox/int-mod.js`) so the output stays in sync with design updates.
+The sandbox deck tooling is in the middle of a major refresh. We are rebuilding a curated collection of lesson archetypes and, during that work, the generator and in-browser builder only expose the `blank-canvas` layout. Existing identifiers such as `learning-objectives`, `interactive-practice`, and the other legacy archetypes have been deprecated and now produce explicit errors when requested. This temporary pause keeps the codebase tidy while the next wave of layouts is authored.
 
 ## Quick start
 
@@ -9,10 +9,10 @@ The sandbox now ships with a lightweight command-line utility that transforms a 
    cd sandbox
    npm install
    ```
-2. Author a brief (see [Brief format](#brief-format)). You can start from the samples in [`sandbox/examples/`](./examples/).
+2. Author a brief (see [Brief format](#brief-format)). While the curated list is under construction, every slide should use the `blank-canvas` layout—e.g. create `examples/blank-canvas-brief.json` with the sample payload below.
 3. Run the generator:
    ```bash
-   node scripts/create-deck.mjs --input examples/card-stack-brief.json --output decks/card-stack.html \
+   node scripts/create-deck.mjs --input examples/blank-canvas-brief.json --output decks/blank-deck.html \
      --pexels-key "$PEXELS_API_KEY"
    ```
 
@@ -30,19 +30,28 @@ Deck briefs are plain JSON objects with the following top-level shape:
   "pexelsKey": "Optional per-brief Pexels key override",
   "slides": [
     {
-      "layout": "pill-with-gallery", // Any value from SUPPORTED_LESSON_LAYOUTS
-      "data": { /* Layout specific configuration */ }
+      "layout": "blank-canvas", // Only accepted value while curated layouts are rebuilt
+      "data": {}
     }
   ]
 }
 ```
 
-Each slide must declare a `layout`. The CLI will merge the corresponding defaults from `BUILDER_LAYOUT_DEFAULTS` before applying your overrides, so you can omit any field you want to keep at its template value.
+Each slide must declare a `layout`. The CLI still merges defaults from `BUILDER_LAYOUT_DEFAULTS`, but that table currently only contains the blank archetype. Supplying one of the previously documented identifiers will raise a descriptive error reminding you that the layout is retired for now.
 
-The current layouts exposed to the generator are:
+## Supported layouts
 
 ```
 blank-canvas
+```
+
+A refreshed catalogue of layouts will arrive in upcoming releases. When that happens, the README and CLI help text will expand to include usage guidance for each archetype.
+
+## Deprecated layout identifiers
+
+The following identifiers were removed as part of the cleanup and should no longer be used in briefs, saved state files, or custom tooling:
+
+```
 learning-objectives
 model-dialogue
 interactive-practice
@@ -65,41 +74,21 @@ card-stack
 pill-with-gallery
 ```
 
-> **Tip:** If you request an unsupported layout the script exits with a helpful error listing the invalid value.
+Referencing any of these identifiers will now cause the sandbox build steps to fail fast so that downstream decks are not silently desynchronised.
 
 ## Pexels integration
 
-Any layout field that ultimately expects an image URL can be seeded from the Pexels catalogue by supplying a placeholder object instead of a string. The CLI recognises an object with a `pexelsQuery` property and replaces it with the first match returned by the [Pexels Search API](https://www.pexels.com/api/documentation/#photos-search).
+The generator still understands the Pexels placeholder object format. Although `blank-canvas` does not automatically slot imagery, you can stash resolved URLs in your brief and reference them from custom markup inside the canvas. The [Pexels Search API](https://www.pexels.com/api/documentation/#photos-search) remains available through the same configuration fields as before.
 
-Example gallery item:
+Example placeholder object:
 
 ```json
 {
-  "caption": "Prototype lab · Crews sketch solutions and annotate their trade-offs.",
-  "image": {
-    "pexelsQuery": "students prototyping project",
-    "orientation": "landscape",
-    "creditPrefix": "Photo",
-    "fallback": "https://images.pexels.com/photos/3182745/pexels-photo-3182745.jpeg",
-    "alt": "Students huddled around a table comparing notes"
-  }
+  "pexelsQuery": "students prototyping project",
+  "orientation": "landscape",
+  "fallback": "https://images.pexels.com/photos/3182745/pexels-photo-3182745.jpeg"
 }
 ```
-
-Supported placeholder options:
-
-| Field | Purpose |
-| --- | --- |
-| `pexelsQuery` | Search term sent to the Pexels API (required). |
-| `orientation`, `size`, `variant`, `color`, `locale`, `perPage` | Passed directly to the API request for finer control. |
-| `alt` | Overrides the auto-generated alternative text. |
-| `fallback` | URL to use if the API request fails or returns zero results. |
-| `includeCredit` | Set to `false` to skip automatic credit lines. |
-| `credit` | Custom credit string to inject into the slide caption. |
-| `creditPrefix` | Prefix prepended to the photographer name (defaults to `Photo`). |
-| `creditUrl` | Manually specify a credit link (otherwise the photographer URL from Pexels is used when available). |
-
-When media is resolved, the CLI stores the chosen URL in the layout data, fills any missing `alt` text, and—unless disabled—adds a credit string plus optional link. The pill-with-gallery layout surfaces credits as an extra caption line automatically.
 
 Provide your API key via `--pexels-key`, the `PEXELS_API_KEY` environment variable, or the `pexelsKey` field in the brief. For local prototyping you can use the shared sandbox key:
 
@@ -107,17 +96,8 @@ Provide your API key via `--pexels-key`, the `PEXELS_API_KEY` environment variab
 PEXELS_API_KEY=ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd
 ```
 
-## Example briefs
-
-Two ready-to-run briefs live in [`sandbox/examples/`](./examples/):
-
-- [`card-stack-brief.json`](./examples/card-stack-brief.json) – generates a workflow preview stack.
-- [`pill-gallery-brief.json`](./examples/pill-gallery-brief.json) – demonstrates auto-populated gallery imagery with credits.
-
-Generate both decks and compare the resulting HTML to understand how the CLI applies defaults, merges overrides, and captures Pexels metadata for you.
-
 ## Output structure
 
-The CLI produces an HTML document that already links to the sandbox fonts and styles, injects the standard toolbar shell, and initialises `setupInteractiveDeck` via an inline module script. Slides are rendered into the main stage in the order provided by the brief; the first slide is automatically unhidden.
+The CLI produces an HTML document that already links to the sandbox fonts and styles, injects the standard toolbar shell, and initialises `setupInteractiveDeck` via an inline module script. Slides are rendered into the main stage in the order provided by the brief; the first slide is automatically unhidden. Because the output reuses the production layout generator, you can safely edit the generated markup further in code or drop it back into the builder without structural drift.
 
-Because the output reuses the production layout generators, you can safely edit the generated markup further in code or drop it back into the builder without structural drift.
+As additional archetypes graduate into the curated list, they will surface here along with any new data contracts or media affordances they introduce.
