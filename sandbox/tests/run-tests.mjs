@@ -4,12 +4,19 @@ import { dirname, join } from 'node:path';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { DEFAULT_STATES as MODULE_DEFAULTS, Generators as ModuleGenerators } from '../activity-builder.js';
+import {
+  collectUnknownClasses,
+  extractClassesFromCss,
+  loadSandboxClassAllowlist,
+} from './helpers/css-allowlist.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const fixturePath = join(__dirname, 'fixtures', 'minimal-deck.html');
 const html = await readFile(fixturePath, 'utf8');
 const css = await readFile(join(__dirname, '../sandbox-css.css'), 'utf8');
+const { allowed: sandboxClassAllowlist, isAllowed: isAllowedSandboxClass } =
+  await loadSandboxClassAllowlist();
 
 const dom = new JSDOM(html, {
   url: 'https://example.com/sandbox/',
@@ -50,6 +57,41 @@ const nextFrame = () =>
   new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
 const flushTimers = () =>
   new Promise((resolve) => window.setTimeout(resolve, 0));
+
+async function captureConsole(fn) {
+  const errors = [];
+  const warnings = [];
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  console.error = (...args) => {
+    errors.push(args);
+    if (typeof originalError === 'function') {
+      originalError(...args);
+    }
+  };
+  console.warn = (...args) => {
+    warnings.push(args);
+    if (typeof originalWarn === 'function') {
+      originalWarn(...args);
+    }
+  };
+  try {
+    return { result: await fn(), errors, warnings };
+  } finally {
+    console.error = originalError;
+    console.warn = originalWarn;
+  }
+}
+
+const assertNoUnknownClasses = (root, context, isAllowed = isAllowedSandboxClass) => {
+  const violations = collectUnknownClasses(root, isAllowed);
+  const unknownClasses = Array.from(violations.keys());
+  assert.equal(
+    unknownClasses.length,
+    0,
+    `${context} should not include non-sandbox classes. Found: ${unknownClasses.join(', ')}`,
+  );
+};
 
 if (typeof window.requestAnimationFrame !== 'function') {
   window.requestAnimationFrame = (callback) => window.setTimeout(callback, 16);
@@ -185,15 +227,32 @@ global.fetch = async (input, init = {}) => {
   };
 };
 
-const MODULE_TYPES = ['multiple-choice', 'gapfill', 'grouping', 'table-completion', 'quiz-show'];
-const moduleFixtures = MODULE_TYPES.reduce((acc, type) => {
-  const config = MODULE_DEFAULTS[type]();
-  acc[type] = {
-    config,
-    html: ModuleGenerators[type](config),
-  };
-  return acc;
-}, {});
+const MODULE_TYPES = Object.keys(MODULE_DEFAULTS).filter(
+  (type) => typeof ModuleGenerators[type] === 'function',
+);
+const moduleFixtures = {};
+for (const type of MODULE_TYPES) {
+  const factory = MODULE_DEFAULTS[type];
+  const config = typeof factory === 'function' ? factory() : {};
+  const { result: html, errors, warnings } = await captureConsole(() =>
+    ModuleGenerators[type](config),
+  );
+  assert.equal(
+    errors.length,
+    0,
+    `Module generator "${type}" should not log console errors. Logged: ${errors
+      .map((entry) => entry.join(' '))
+      .join(' | ')}`,
+  );
+  assert.equal(
+    warnings.length,
+    0,
+    `Module generator "${type}" should not log console warnings. Logged: ${warnings
+      .map((entry) => entry.join(' '))
+      .join(' | ')}`,
+  );
+  moduleFixtures[type] = { config, html };
+}
 
 const moduleFrame = document.getElementById('module-builder-frame');
 Object.defineProperty(moduleFrame, 'contentWindow', {
@@ -204,6 +263,8 @@ Object.defineProperty(moduleFrame, 'contentWindow', {
 
 const {
   setupInteractiveDeck,
+  SUPPORTED_LESSON_LAYOUTS,
+  createLessonSlideFromState,
 } = await import(pathToFileURL(join(__dirname, '../int-mod.js')).href);
 
 await setupInteractiveDeck();
@@ -1136,9 +1197,51 @@ assert.match(
 
 const moduleParser = new window.DOMParser();
 
+for (const layout of SUPPORTED_LESSON_LAYOUTS) {
+  const { errors, warnings } = await captureConsole(() => {
+    const slide = createLessonSlideFromState({ layout });
+    assert.ok(slide instanceof window.HTMLElement, `Layout "${layout}" should create an element`);
+    stageViewport.appendChild(slide);
+    assertNoUnknownClasses(slide, `Lesson layout "${layout}"`);
+    slide.remove();
+  });
+  assert.equal(
+    errors.length,
+    0,
+    `Lesson layout "${layout}" should not log console errors. Logged: ${errors.map((entry) => entry.join(' ')).join(' | ')}`,
+  );
+  assert.equal(
+    warnings.length,
+    0,
+    `Lesson layout "${layout}" should not log console warnings. Logged: ${warnings
+      .map((entry) => entry.join(' '))
+      .join(' | ')}`,
+  );
+}
+
 MODULE_TYPES.forEach((type) => {
   const { config, html } = moduleFixtures[type];
   const moduleDoc = moduleParser.parseFromString(html, 'text/html');
+  const styleBlocks = Array.from(moduleDoc.querySelectorAll('style'));
+  const localClassAllowlist = new Set();
+  styleBlocks.forEach((block) => {
+    extractClassesFromCss(block.textContent || '').forEach((className) =>
+      localClassAllowlist.add(className),
+    );
+  });
+  const moduleClassAllowlistChecker = (className = '') =>
+    isAllowedSandboxClass(className) || localClassAllowlist.has(className);
+  assertNoUnknownClasses(
+    moduleDoc.documentElement,
+    `Module "${type}"`,
+    moduleClassAllowlistChecker,
+  );
+  const externalScripts = moduleDoc.querySelectorAll('script[src]');
+  assert.equal(
+    externalScripts.length,
+    0,
+    `${type} module should not reference external scripts`,
+  );
   const shell = moduleDoc.querySelector('.activity-shell');
   assert.ok(shell instanceof window.HTMLElement, `${type} module should render the activity shell container`);
 

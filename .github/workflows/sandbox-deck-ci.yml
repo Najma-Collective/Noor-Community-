@@ -1,0 +1,33 @@
+name: Sandbox deck checks
+
+on:
+  push:
+    paths:
+      - 'sandbox/**'
+      - '.github/workflows/sandbox-deck-ci.yml'
+  pull_request:
+    paths:
+      - 'sandbox/**'
+      - '.github/workflows/sandbox-deck-ci.yml'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sandbox
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sandbox/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run sandbox lint
+        run: npm run lint
+      - name: Run sandbox tests
+        run: npm test

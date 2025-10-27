@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "lint": "node tests/static-lint.mjs",
     "test": "node tests/run-tests.mjs"
   },
   "devDependencies": {
