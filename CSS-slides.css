@@ -57,7 +57,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100dvh;
+  min-height: 100vh;
   color: var(--forest-shadow);
   background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
   font-family: var(--font-body);
@@ -70,7 +70,7 @@ body {
 .deck-app {
   display: grid;
   grid-template-rows: var(--toolbar-h) 1fr;
-  min-height: 100dvh;
+  min-height: 100vh;
 }
 
 .deck-toolbar {
@@ -196,7 +196,7 @@ body {
 }
 
 .deck-workspace {
-  height: calc(100dvh - var(--toolbar-h));
+  height: calc(100vh - var(--toolbar-h));
   padding: var(--workspace-pad);
   display: grid;
   place-items: center;
@@ -228,7 +228,7 @@ body {
   aspect-ratio: var(--slide-aspect-w) / var(--slide-aspect-h);
   width: min(
     calc(
-      (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+      (100vh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
         (var(--slide-aspect-w) / var(--slide-aspect-h))
     ),
     calc(100vw - (var(--workspace-pad) * 2))
@@ -237,6 +237,31 @@ body {
   overflow: hidden auto;
   outline: 1px solid var(--border-sage);
   transition: opacity 300ms ease-in-out;
+}
+
+@supports (height: 100dvh) {
+  html,
+  body {
+    min-height: 100dvh;
+  }
+
+  .deck-app {
+    min-height: 100dvh;
+  }
+
+  .deck-workspace {
+    height: calc(100dvh - var(--toolbar-h));
+  }
+
+  .slide-stage {
+    width: min(
+      calc(
+        (100dvh - var(--toolbar-h) - (var(--workspace-pad) * 2)) *
+          (var(--slide-aspect-w) / var(--slide-aspect-h))
+      ),
+      calc(100vw - (var(--workspace-pad) * 2))
+    );
+  }
 }
 
 .slide-stage.hidden {

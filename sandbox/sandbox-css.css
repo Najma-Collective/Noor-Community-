@@ -6,7 +6,7 @@
   --grid-gap-default: clamp(var(--space-5), 3vw, var(--space-7));
   --blank-canvas-pad: clamp(1.2rem, 2.6vw, 1.9rem);
   --blank-canvas-gap: clamp(1rem, 2vw, 1.5rem);
-  --blank-canvas-min-block: clamp(320px, 64dvh, 640px);
+  --blank-canvas-min-block: clamp(320px, 64vh, 640px);
 }
 
 *,
@@ -19,7 +19,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100dvh;
+  min-height: 100vh;
   color: var(--ink);
   background: var(--gradient-sand);
   font-family: var(--font-body);
@@ -317,7 +317,7 @@ body {
 .deck-app {
   display: grid;
   grid-template-rows: var(--toolbar-h) 1fr;
-  min-height: 100dvh;
+  min-height: 100vh;
 }
 
 .deck-toolbar {
@@ -1125,7 +1125,7 @@ body {
 }
 
 .deck-workspace {
-  height: calc(100dvh - var(--toolbar-h));
+  height: calc(100vh - var(--toolbar-h));
   padding: var(--workspace-pad);
   display: grid;
   place-items: center;
@@ -1145,14 +1145,14 @@ body {
 
 .deck-workspace.is-blank-active {
   --workspace-pad: 0px;
-  --blank-layout-height: calc(100dvh - var(--toolbar-h));
+  --blank-layout-height: calc(100vh - var(--toolbar-h));
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
   padding: 0;
   width: 100%;
-  height: calc(100dvh - var(--toolbar-h));
+  height: calc(100vh - var(--toolbar-h));
   min-height: 0;
 }
 
@@ -1175,7 +1175,7 @@ body {
   --blank-canvas-pad: clamp(1.1rem, 2.4vw, 1.85rem);
   --blank-canvas-gap: clamp(0.9rem, 2vw, 1.45rem);
   --blank-canvas-min-block: min(
-    clamp(360px, 68dvh, 720px),
+    clamp(360px, 68vh, 720px),
     calc(var(--blank-layout-height) - var(--stage-pad) * 2)
   );
   flex: 1 1 auto;
@@ -1188,6 +1188,41 @@ body {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --blank-canvas-min-block: clamp(320px, 64dvh, 640px);
+  }
+
+  html,
+  body {
+    min-height: 100dvh;
+  }
+
+  .deck-app {
+    min-height: 100dvh;
+  }
+
+  .deck-workspace {
+    height: calc(100dvh - var(--toolbar-h));
+  }
+
+  .deck-workspace.is-blank-active {
+    --blank-layout-height: calc(100dvh - var(--toolbar-h));
+    height: calc(100dvh - var(--toolbar-h));
+  }
+
+  .deck-workspace.is-blank-active .slide-stage[data-type="blank"] {
+    --blank-canvas-min-block: min(
+      clamp(360px, 68dvh, 720px),
+      calc(var(--blank-layout-height) - var(--stage-pad) * 2)
+    );
+  }
+
+  .blank-canvas {
+    min-block-size: var(--blank-canvas-min-block, clamp(320px, 64dvh, 640px));
+  }
 }
 
 .deck-workspace.is-blank-active .slide-stage[data-type="blank"] > .slide-inner {
@@ -3290,7 +3325,7 @@ ol {
   );
   flex: 1 1 auto;
   min-height: 0;
-  min-block-size: var(--blank-canvas-min-block, clamp(320px, 64dvh, 640px));
+  min-block-size: var(--blank-canvas-min-block, clamp(320px, 64vh, 640px));
   border-radius: var(--radius-lg);
   border: 1px dashed rgba(122, 132, 113, 0.35);
   background: rgba(248, 246, 240, 0.8);
