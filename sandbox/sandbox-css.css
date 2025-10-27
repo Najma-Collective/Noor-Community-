@@ -947,6 +947,31 @@ body {
   max-height: none;
 }
 
+.builder-preview--blank {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: var(--blank-canvas-pad, clamp(1.2rem, 2.6vw, 1.9rem));
+  gap: var(--blank-canvas-gap, clamp(1rem, 2vw, 1.5rem));
+}
+
+.builder-preview--blank .slide-stage {
+  width: 100%;
+  max-width: none;
+  transform: none;
+  transform-origin: unset;
+}
+
+.builder-preview--blank .slide-stage .slide-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.builder-preview--blank .blank-slide {
+  flex: 1 1 auto;
+}
+
 .ghost-btn {
   border: 1px solid var(--border-sage);
   background: transparent;
