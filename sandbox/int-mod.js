@@ -8851,11 +8851,13 @@ function updateBuilderPreview() {
   }
   const state = getBuilderFormState();
   builderPreview.classList.remove('has-content');
+  builderPreview.classList.remove('builder-preview--blank');
   builderPreview.innerHTML = '';
   if (!state) {
     return;
   }
   if (state.layout === 'blank-canvas') {
+    builderPreview.classList.add('builder-preview--blank');
     const blankSlide = createBlankSlide();
     if (blankSlide instanceof HTMLElement) {
       const previewSlide = blankSlide.cloneNode(true);

@@ -228,8 +228,10 @@ assert.ok(addSlideBtn, 'add slide button should exist');
 
 const builderOverlay = document.getElementById('activity-builder-overlay');
 const builderForm = document.getElementById('activity-builder-form');
+const builderPreview = document.getElementById('builder-preview');
 assert.ok(builderOverlay instanceof window.HTMLElement, 'builder overlay should mount');
 assert.ok(builderForm instanceof window.HTMLFormElement, 'builder form should be available');
+assert.ok(builderPreview instanceof window.HTMLElement, 'builder preview container should exist');
 
 const layoutPickerFieldset = builderOverlay.querySelector('.layout-picker');
 assert.ok(
@@ -259,6 +261,10 @@ addSlideBtn.click();
 await flushTimers();
 await nextFrame();
 assert.ok(builderOverlay.classList.contains('is-visible'), 'builder overlay should open when adding a slide');
+assert.ok(
+  builderPreview.classList.contains('builder-preview--blank'),
+  'blank layout should mark the builder preview as blank',
+);
 
 const expectedLayouts = ['blank-canvas', 'interactive-practice'];
 
@@ -500,6 +506,11 @@ assert.ok(
 interactivePracticeRadio.checked = true;
 interactivePracticeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
 await flushTimers();
+await nextFrame();
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'non-blank layouts should clear the blank preview modifier',
+);
 
 const practiceTitleInput = builderOverlay.querySelector('input[name="practiceTitle"]');
 const practiceInstructionsInput = builderOverlay.querySelector(
