@@ -2,29 +2,34 @@
   "title": "Scenario Spotlight",
   "slides": [
     {
-      "layout": "hero-pill",
+      "layout": "pill-with-gallery",
       "data": {
-        "pill": "Lesson 1",
-        "title": "Hello, new friends!",
-        "subtitle": "We will speak, listen, and smile today.",
-        "body": [
-          "Use simple English to talk about your name, your city, and one thing you like.",
-          "Share a favourite hobby and listen for what your classmates love."
+        "pill": "Field notes",
+        "title": "Ground the pitch with lived moments",
+        "description": "Pair the scenario pill with three visuals that highlight learner momentum.",
+        "gallery": [
+          {
+            "caption": "Kick-off huddle · Teams outline their roles and co-design agreements.",
+            "image": {
+              "pexelsQuery": "students collaborating in classroom",
+              "orientation": "landscape"
+            }
+          },
+          {
+            "caption": "Prototype lab · Crews sketch solutions and annotate their trade-offs.",
+            "image": {
+              "pexelsQuery": "students prototyping project",
+              "orientation": "landscape"
+            }
+          },
+          {
+            "caption": "Gallery walk · Learners capture peer feedback and next steps.",
+            "image": {
+              "pexelsQuery": "students presenting project",
+              "orientation": "landscape"
+            }
+          }
         ]
-      }
-    },
-    {
-      "layout": "emoji-gallery",
-      "data": {
-        "pill": "Feelings",
-        "title": "How do you feel?",
-        "items": [
-          { "emoji": "😊", "label": "happy" },
-          { "emoji": "😎", "label": "confident" },
-          { "emoji": "😴", "label": "sleepy" },
-          { "emoji": "🤗", "label": "thankful" }
-        ],
-        "feedback": "Hold up a card and say: \"I feel ____ today.\""
       }
     }
   ]
