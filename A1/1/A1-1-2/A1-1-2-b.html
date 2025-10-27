@@ -36,6 +36,18 @@
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       }
 
+      .grid-two {
+        display: grid;
+        gap: 1.5rem;
+        align-items: stretch;
+      }
+
+      @media (min-width: 768px) {
+        .grid-two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
       .id-card-grid {
         display: grid;
         gap: 1.25rem;
@@ -43,8 +55,17 @@
       }
 
       .deck-workspace {
-        background: radial-gradient(circle at top, rgba(236, 241, 229, 0.75), transparent 55%),
-          linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(236, 238, 232, 0.8));
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(236, 241, 229, 0.75),
+            transparent 55%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(236, 238, 232, 0.8)
+          );
       }
 
       .card {
@@ -84,94 +105,52 @@
         gap: 0.5rem;
       }
 
-      .intonation-board {
-        display: grid;
-        gap: 1.25rem;
-      }
-
-      .intonation-items {
-        display: grid;
-        gap: 0.85rem;
-      }
-
-      .intonation-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        flex-wrap: wrap;
-        padding: 0.85rem 1.1rem;
-        border-radius: var(--radius);
-        background: rgba(248, 246, 240, 0.85);
-        border: 1px solid rgba(122, 132, 113, 0.25);
-      }
-
-      .intonation-question {
-        font-weight: 600;
-        color: var(--deep-forest);
-        flex: 1 1 180px;
-      }
-
-      .drop-zone.intonation-drop {
-        width: 54px;
-        height: 54px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.35rem;
-        border-radius: 50%;
-        border-width: 2px;
-        border-style: dashed;
-        border-color: rgba(122, 132, 113, 0.4);
-        background: rgba(255, 255, 255, 0.9);
-      }
-
-      .token-bank.compact {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .token-bank.compact .click-token {
-        min-width: 54px;
-        height: 54px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        font-size: 1.35rem;
-        background: rgba(255, 255, 255, 0.95);
-        border: 2px solid rgba(122, 132, 113, 0.35);
-        box-shadow: var(--shadow-1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .token-bank.compact .click-token:focus-visible {
-        outline: 3px solid var(--primary-sage);
-        outline-offset: 2px;
-      }
-
-      .token-bank.compact .click-token:active {
-        transform: scale(0.96);
-        box-shadow: var(--shadow-2);
-      }
-
       .dialogue-stack {
         display: grid;
         gap: 1rem;
       }
 
-      .dialogue-card.split {
+      .dialogue-turn {
         display: grid;
-        gap: 0.75rem;
+        gap: 0.5rem;
+        padding: 1rem 1.1rem;
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(122, 132, 113, 0.18);
+        box-shadow: var(--shadow-1);
+      }
+
+      .dialogue-turn h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--deep-forest);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .dialogue-turn p {
+        margin: 0;
       }
     </style>
   </head>
   <body>
     <a class="skip-link" href="#lesson-stage">Skip to lesson workspace</a>
-    <div id="deck-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-    <div id="deck-toast-root" class="deck-toast-container" aria-live="polite" aria-atomic="true"></div>
+    <div
+      id="deck-status"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+    <div
+      id="deck-toast-root"
+      class="deck-toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand">
@@ -187,7 +166,11 @@
             <i class="fa-solid fa-floppy-disk"></i>
             Save Deck
           </button>
-          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+          <button
+            id="load-state-btn"
+            class="toolbar-btn secondary"
+            type="button"
+          >
             <i class="fa-solid fa-file-import"></i>
             Load Deck
           </button>
@@ -201,7 +184,11 @@
             <i class="fa-solid fa-plus"></i>
             Add Blank Slide
           </button>
-          <button id="activity-builder-btn" class="toolbar-btn tertiary" type="button">
+          <button
+            id="activity-builder-btn"
+            class="toolbar-btn tertiary"
+            type="button"
+          >
             <i class="fa-solid fa-layer-group"></i>
             Activity Builder
           </button>
@@ -226,7 +213,10 @@
               aria-label="Canvas tools"
               hidden
             >
-              <div class="toolbar-dropdown-inner" data-role="canvas-tools-options"></div>
+              <div
+                class="toolbar-dropdown-inner"
+                data-role="canvas-tools-options"
+              ></div>
             </div>
           </div>
         </div>
@@ -247,9 +237,13 @@
             <div class="slide-inner is-centered">
               <div class="bg-content centered">
                 <div class="overlay-card centered">
-                  <span class="pill overlay-pill"><i class="fa-solid fa-building-columns"></i> Step 1b</span>
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-building-columns"></i> Step 1b</span
+                  >
                   <h1>Joining the Club</h1>
-                  <p class="deck-subtitle">Asking for and Giving Personal Information</p>
+                  <p class="deck-subtitle">
+                    Asking for and Giving Personal Information
+                  </p>
                 </div>
               </div>
             </div>
@@ -269,12 +263,22 @@
             <div class="slide-inner is-centered">
               <div class="bg-content centered">
                 <div class="overlay-card centered">
-                  <span class="pill overlay-pill"><i class="fa-solid fa-leaf"></i> Step 2 · Grounding</span>
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-leaf"></i> Step 2 · Grounding</span
+                  >
                   <h2>Let's Begin Together</h2>
                   <ul class="instruction-list text-step-1">
-                    <li><i class="fa-solid fa-wind"></i>Take a deep breath in.</li>
-                    <li><i class="fa-solid fa-stopwatch"></i>Hold for three seconds.</li>
-                    <li><i class="fa-solid fa-feather"></i>Exhale slowly and arrive in the lesson.</li>
+                    <li>
+                      <i class="fa-solid fa-wind"></i>Take a deep breath in.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-stopwatch"></i>Hold for three
+                      seconds.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-feather"></i>Exhale slowly and
+                      arrive in the lesson.
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -284,14 +288,17 @@
           <!-- Slide 3: Lesson Aims -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-bullseye"></i> Step 3</span>
+              <span class="pill"
+                ><i class="fa-solid fa-bullseye"></i> Step 3</span
+              >
               <h2>Today's Aims</h2>
               <div class="card">
                 <p>By the end of this lesson, you will be able to:</p>
                 <ul class="instruction-list aims-list">
                   <li>
                     <i class="fa-solid fa-id-card"></i>
-                    Ask for personal details like name, nationality, and address.
+                    Ask for personal details like name, nationality, and
+                    address.
                   </li>
                   <li>
                     <i class="fa-solid fa-person-chalkboard"></i>
@@ -303,7 +310,8 @@
                   </li>
                   <li>
                     <i class="fa-solid fa-wave-square"></i>
-                    Use falling intonation for Wh- questions (e.g., <em>What's your name?</em> ↘).
+                    Use falling intonation for Wh- questions (e.g.,
+                    <em>What's your name?</em> ↘).
                   </li>
                 </ul>
               </div>
@@ -313,18 +321,31 @@
           <!-- Slide 4: Pre-task A Activating Schemata -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-comments"></i> Step 4 · Pre-task A · 5 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-comments"></i> Step 4 · Pre-task A · 5
+                minutes</span
+              >
               <h2>Museum Membership</h2>
               <div class="grid-two">
                 <div class="card">
                   <p class="editable-text">
                     <i class="fa-solid fa-people-arrows"></i>
-                    Look at the image. Imagine you are at a museum in Palestine. Work with a partner and discuss these questions:
+                    Look at the image. Imagine you are at a museum in Palestine.
+                    Work with a partner and discuss these questions:
                   </p>
                   <ul class="instruction-list list-grid">
-                    <li><i class="fa-solid fa-circle-question"></i>What are these cards?</li>
-                    <li><i class="fa-solid fa-circle-question"></i>Why do people get them?</li>
-                    <li><i class="fa-solid fa-circle-question"></i>What information is on them?</li>
+                    <li>
+                      <i class="fa-solid fa-circle-question"></i>What are these
+                      cards?
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-circle-question"></i>Why do people
+                      get them?
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-circle-question"></i>What
+                      information is on them?
+                    </li>
                   </ul>
                 </div>
                 <figure class="image-card">
@@ -343,24 +364,56 @@
           <!-- Slide 5: Pre-task B Restrictive Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-bars-staggered"></i> Step 5 · Pre-task B · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-bars-staggered"></i> Step 5 · Pre-task B
+                · 7 minutes</span
+              >
               <h2>At the Reception Desk</h2>
               <div class="grid-two">
                 <div class="card">
-                  <h3 class="icon-heading"><i class="fa-solid fa-headset"></i><span>Listen &amp; Read</span></h3>
+                  <h3 class="icon-heading">
+                    <i class="fa-solid fa-headset"></i
+                    ><span>Listen &amp; Read</span>
+                  </h3>
                   <div class="dialogue-stack" role="presentation">
-                    <div class="dialogue-card split">
-                      <h4><i class="fa-solid fa-person-booth"></i> Receptionist</h4>
+                    <div class="dialogue-turn">
+                      <h4>
+                        <i class="fa-solid fa-person-booth"></i> Receptionist
+                      </h4>
                       <p>Hello. Can I help you?</p>
-                      <p>Of course. What's your name?</p>
-                      <p>And where are you from?</p>
-                      <p>Great. And what's your address?</p>
                     </div>
-                    <div class="dialogue-card split">
+                    <div class="dialogue-turn">
                       <h4><i class="fa-solid fa-person"></i> Visitor</h4>
                       <p>Yes, I'd like to sign up for a membership card.</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4>
+                        <i class="fa-solid fa-person-booth"></i> Receptionist
+                      </h4>
+                      <p>Of course. What's your name?</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4><i class="fa-solid fa-person"></i> Visitor</h4>
                       <p>My name is Omar Hassan.</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4>
+                        <i class="fa-solid fa-person-booth"></i> Receptionist
+                      </h4>
+                      <p>And where are you from?</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4><i class="fa-solid fa-person"></i> Visitor</h4>
                       <p>I'm from Egypt.</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4>
+                        <i class="fa-solid fa-person-booth"></i> Receptionist
+                      </h4>
+                      <p>Great. And what's your address?</p>
+                    </div>
+                    <div class="dialogue-turn">
+                      <h4><i class="fa-solid fa-person"></i> Visitor</h4>
                       <p>My address is 15 Al-Quds Street, Ramallah.</p>
                     </div>
                   </div>
@@ -378,7 +431,8 @@
                     </h3>
                     <p class="editable-text">
                       <i class="fa-solid fa-music"></i>
-                      Listen to the conversation. Then match the receptionist's questions to the visitor's answers.
+                      Listen to the conversation. Then match the receptionist's
+                      questions to the visitor's answers.
                     </p>
                   </div>
                   <div class="matching-grid">
@@ -388,7 +442,9 @@
                         <span>1. What's your name?</span>
                         <select data-answer="b">
                           <option value="">Choose...</option>
-                          <option value="a">My address is 15 Al-Quds Street, Ramallah.</option>
+                          <option value="a">
+                            My address is 15 Al-Quds Street, Ramallah.
+                          </option>
                           <option value="b">My name is Omar Hassan.</option>
                           <option value="c">I'm from Egypt.</option>
                         </select>
@@ -397,7 +453,9 @@
                         <span>2. Where are you from?</span>
                         <select data-answer="c">
                           <option value="">Choose...</option>
-                          <option value="a">My address is 15 Al-Quds Street, Ramallah.</option>
+                          <option value="a">
+                            My address is 15 Al-Quds Street, Ramallah.
+                          </option>
                           <option value="b">My name is Omar Hassan.</option>
                           <option value="c">I'm from Egypt.</option>
                         </select>
@@ -406,7 +464,9 @@
                         <span>3. What's your address?</span>
                         <select data-answer="a">
                           <option value="">Choose...</option>
-                          <option value="a">My address is 15 Al-Quds Street, Ramallah.</option>
+                          <option value="a">
+                            My address is 15 Al-Quds Street, Ramallah.
+                          </option>
                           <option value="b">My name is Omar Hassan.</option>
                           <option value="c">I'm from Egypt.</option>
                         </select>
@@ -414,8 +474,20 @@
                     </div>
                   </div>
                   <div class="activity-actions">
-                    <button class="activity-btn" type="button" data-action="check">Check Matches</button>
-                    <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                    <button
+                      class="activity-btn"
+                      type="button"
+                      data-action="check"
+                    >
+                      Check Matches
+                    </button>
+                    <button
+                      class="activity-btn secondary"
+                      type="button"
+                      data-action="reset"
+                    >
+                      Reset
+                    </button>
                   </div>
                   <div class="feedback-msg" aria-live="polite"></div>
                 </div>
@@ -426,15 +498,33 @@
           <!-- Slide 6: Pre-task B Semi-controlled Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-question-circle"></i> Step 6 · Pre-task B · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-question-circle"></i> Step 6 · Pre-task B
+                · 7 minutes</span
+              >
               <h2>Checking Understanding</h2>
               <div class="card">
-                <p class="editable-text">Read the dialogue again. Answer the questions with your partner.</p>
+                <p class="editable-text">
+                  Read the dialogue again. Answer the questions with your
+                  partner.
+                </p>
                 <ul class="instruction-list">
-                  <li><i class="fa-solid fa-circle-question"></i>What does the visitor want?</li>
-                  <li><i class="fa-solid fa-circle-question"></i>What is the receptionist's first question?</li>
-                  <li><i class="fa-solid fa-circle-question"></i>Is Omar from Morocco?</li>
-                  <li><i class="fa-solid fa-circle-question"></i>What three pieces of information does Omar give?</li>
+                  <li>
+                    <i class="fa-solid fa-circle-question"></i>What does the
+                    visitor want?
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-circle-question"></i>What is the
+                    receptionist's first question?
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-circle-question"></i>Is Omar from
+                    Morocco?
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-circle-question"></i>What three pieces
+                    of information does Omar give?
+                  </li>
                 </ul>
               </div>
             </div>
@@ -443,43 +533,78 @@
           <!-- Slide 7: Pre-task B Freer Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-user-friends"></i> Step 7 · Pre-task B · 6 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-user-friends"></i> Step 7 · Pre-task B ·
+                6 minutes</span
+              >
               <h2>Practice with a New Identity</h2>
               <div class="grid-two">
                 <div class="card">
                   <p class="editable-text">
-                    Imagine you are one of the new members below. Your partner is the receptionist. Practice the conversation from the model.
+                    Imagine you are one of the new members below. Your partner
+                    is the receptionist. Practice the conversation from the
+                    model.
                   </p>
                   <ul class="instruction-list">
-                    <li><i class="fa-solid fa-arrow-right"></i>Use the same question order from the dialogue.</li>
-                    <li><i class="fa-solid fa-arrow-right"></i>Answer with the exact details on your ID card.</li>
-                    <li><i class="fa-solid fa-arrow-right"></i>Switch roles and choose a new card.</li>
+                    <li>
+                      <i class="fa-solid fa-arrow-right"></i>Use the same
+                      question order from the dialogue.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-arrow-right"></i>Answer with the
+                      exact details on your ID card.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-arrow-right"></i>Switch roles and
+                      choose a new card.
+                    </li>
                   </ul>
                 </div>
                 <div class="card">
                   <div class="id-card-grid">
                     <div class="id-card editable-text">
-                      <h3><i class="fa-solid fa-id-card-clip"></i> Fatima Alami</h3>
+                      <h3>
+                        <i class="fa-solid fa-id-card-clip"></i> Fatima Alami
+                      </h3>
                       <ul>
                         <li><i class="fa-solid fa-flag"></i>Moroccan</li>
-                        <li><i class="fa-solid fa-location-dot"></i>22 Jaffa Street, Bethlehem</li>
-                        <li><i class="fa-solid fa-phone"></i>+972 2 555 1432</li>
+                        <li>
+                          <i class="fa-solid fa-location-dot"></i>22 Jaffa
+                          Street, Bethlehem
+                        </li>
+                        <li>
+                          <i class="fa-solid fa-phone"></i>+972 2 555 1432
+                        </li>
                       </ul>
                     </div>
                     <div class="id-card editable-text">
-                      <h3><i class="fa-solid fa-id-card-clip"></i> Jamal Rami</h3>
+                      <h3>
+                        <i class="fa-solid fa-id-card-clip"></i> Jamal Rami
+                      </h3>
                       <ul>
                         <li><i class="fa-solid fa-flag"></i>Jordanian</li>
-                        <li><i class="fa-solid fa-location-dot"></i>18 Olive Grove Road, Nablus</li>
-                        <li><i class="fa-solid fa-phone"></i>+970 59 310 8821</li>
+                        <li>
+                          <i class="fa-solid fa-location-dot"></i>18 Olive Grove
+                          Road, Nablus
+                        </li>
+                        <li>
+                          <i class="fa-solid fa-phone"></i>+970 59 310 8821
+                        </li>
                       </ul>
                     </div>
                     <div class="id-card editable-text">
-                      <h3><i class="fa-solid fa-id-card-clip"></i> Sara Khoury</h3>
+                      <h3>
+                        <i class="fa-solid fa-id-card-clip"></i> Sara Khoury
+                      </h3>
                       <ul>
                         <li><i class="fa-solid fa-flag"></i>Palestinian</li>
-                        <li><i class="fa-solid fa-location-dot"></i>7 Jasmine Lane, Hebron</li>
-                        <li><i class="fa-solid fa-phone"></i>+972 59 664 9025</li>
+                        <li>
+                          <i class="fa-solid fa-location-dot"></i>7 Jasmine
+                          Lane, Hebron
+                        </li>
+                        <li>
+                          <i class="fa-solid fa-phone"></i>+972 59 664 9025
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -491,7 +616,10 @@
           <!-- Slide 8: Pre-task C Restrictive Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-pen-ruler"></i> Step 8 · Pre-task C · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-pen-ruler"></i> Step 8 · Pre-task C · 7
+                minutes</span
+              >
               <h2>Grammar Focus: <em>to be</em> and Possessives</h2>
               <div class="card" data-activity="mc-grammar">
                 <p>Select the correct word to complete each sentence.</p>
@@ -551,8 +679,20 @@
                   </p>
                 </div>
                 <div class="activity-actions">
-                  <button class="activity-btn" type="button" data-action="check">Check Answers</button>
-                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                  <button
+                    class="activity-btn"
+                    type="button"
+                    data-action="check"
+                  >
+                    Check Answers
+                  </button>
+                  <button
+                    class="activity-btn secondary"
+                    type="button"
+                    data-action="reset"
+                  >
+                    Reset
+                  </button>
                 </div>
                 <div class="feedback-msg" aria-live="polite"></div>
               </div>
@@ -562,15 +702,30 @@
           <!-- Slide 9: Pre-task C Semi-controlled Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-user"></i> Step 9 · Pre-task C · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-user"></i> Step 9 · Pre-task C · 7
+                minutes</span
+              >
               <h2>About You</h2>
               <div class="card">
-                <p class="editable-text">Complete these sentences with your own personal information.</p>
+                <p class="editable-text">
+                  Complete these sentences with your own personal information.
+                </p>
                 <ul class="instruction-list editable-text">
-                  <li><i class="fa-solid fa-signature"></i>My name is __________.</li>
-                  <li><i class="fa-solid fa-location-dot"></i>I am from __________.</li>
-                  <li><i class="fa-solid fa-map-pin"></i>My address is __________.</li>
-                  <li><i class="fa-solid fa-phone"></i>My phone number is __________.</li>
+                  <li>
+                    <i class="fa-solid fa-signature"></i>My name is __________.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-location-dot"></i>I am from
+                    __________.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-map-pin"></i>My address is __________.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-phone"></i>My phone number is
+                    __________.
+                  </li>
                 </ul>
               </div>
             </div>
@@ -579,22 +734,39 @@
           <!-- Slide 10: Pre-task C Freer Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-file-signature"></i> Step 10 · Pre-task C · 6 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-file-signature"></i> Step 10 · Pre-task C
+                · 6 minutes</span
+              >
               <h2>Fill the Form</h2>
               <div class="grid-two">
                 <div class="card">
                   <p class="editable-text">
-                    Work with a partner. Ask them questions to complete this membership form about them. Use "What's your...?" and "Where are you from?".
+                    Work with a partner. Ask them questions to complete this
+                    membership form about them. Use "What's your...?" and "Where
+                    are you from?".
                   </p>
                   <ul class="instruction-list">
-                    <li><i class="fa-solid fa-check"></i>Partner A interviews Partner B.</li>
-                    <li><i class="fa-solid fa-check"></i>Swap roles and complete a second form.</li>
-                    <li><i class="fa-solid fa-check"></i>Compare your details at the end.</li>
+                    <li>
+                      <i class="fa-solid fa-check"></i>Partner A interviews
+                      Partner B.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-check"></i>Swap roles and complete a
+                      second form.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-check"></i>Compare your details at
+                      the end.
+                    </li>
                   </ul>
                 </div>
                 <div class="card">
                   <div class="form-card">
-                    <h3 class="icon-heading"><i class="fa-solid fa-landmark"></i><span>The Palestinian Heritage Museum</span></h3>
+                    <h3 class="icon-heading">
+                      <i class="fa-solid fa-landmark"></i
+                      ><span>The Palestinian Heritage Museum</span>
+                    </h3>
                     <p class="deck-subtitle">Membership Form</p>
                     <ul class="instruction-list">
                       <li><strong>Name:</strong> ___________________</li>
@@ -610,56 +782,79 @@
           <!-- Slide 11: Pre-task D Restrictive Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-arrow-down"></i> Step 11 · Pre-task D · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-arrow-down"></i> Step 11 · Pre-task D · 7
+                minutes</span
+              >
               <h2>Pronunciation Focus: Falling Intonation</h2>
-              <div class="card" data-activity="token-drop">
-                <p class="editable-text">
-                  In English, Wh- questions usually have a falling intonation (the voice goes down). Tap an arrow (↘) and then tap the matching drop zone next to each question.
-                </p>
-                <div class="intonation-board">
-                  <div class="intonation-items">
-                    <div class="intonation-item">
-                      <span class="intonation-question">What's your name?</span>
-                      <button
-                        type="button"
-                        class="drop-zone intonation-drop placeholder"
-                        data-answer="↘"
-                        data-placeholder="↘"
-                        aria-label="Add a falling arrow for What's your name?"
-                      ></button>
-                    </div>
-                    <div class="intonation-item">
-                      <span class="intonation-question">Where are you from?</span>
-                      <button
-                        type="button"
-                        class="drop-zone intonation-drop placeholder"
-                        data-answer="↘"
-                        data-placeholder="↘"
-                        aria-label="Add a falling arrow for Where are you from?"
-                      ></button>
-                    </div>
-                    <div class="intonation-item">
-                      <span class="intonation-question">What's your address?</span>
-                      <button
-                        type="button"
-                        class="drop-zone intonation-drop placeholder"
-                        data-answer="↘"
-                        data-placeholder="↘"
-                        aria-label="Add a falling arrow for What's your address?"
-                      ></button>
+              <div
+                class="card activity-card"
+                id="activity-intonation-1"
+                data-activity="dropdown"
+                aria-labelledby="activity-intonation-1-heading"
+              >
+                <div class="card-header">
+                  <h3 id="activity-intonation-1-heading" class="icon-heading">
+                    <i class="fa-solid fa-arrow-down-short-wide"></i>
+                    <span>Choose the Intonation</span>
+                  </h3>
+                  <p class="editable-text">
+                    Choose the right intonation for each Wh-question.
+                  </p>
+                </div>
+                <div class="card transparent">
+                  <div>
+                    <label for="intonation-q1">What's your name?</label>
+                    <div>
+                      <select id="intonation-q1" data-answer="↘">
+                        <option value="">Select...</option>
+                        <option value="↘">↘ Falling</option>
+                        <option value="↗">↗ Rising</option>
+                      </select>
                     </div>
                   </div>
-                  <div class="token-bank compact" aria-label="Arrow tokens">
-                    <button type="button" class="click-token" data-value="↘" aria-label="Falling arrow 1">↘</button>
-                    <button type="button" class="click-token" data-value="↘" aria-label="Falling arrow 2">↘</button>
-                    <button type="button" class="click-token" data-value="↘" aria-label="Falling arrow 3">↘</button>
+                  <div>
+                    <label for="intonation-q2">Where are you from?</label>
+                    <div>
+                      <select id="intonation-q2" data-answer="↘">
+                        <option value="">Select...</option>
+                        <option value="↘">↘ Falling</option>
+                        <option value="↗">↗ Rising</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label for="intonation-q3">What's your address?</label>
+                    <div>
+                      <select id="intonation-q3" data-answer="↘">
+                        <option value="">Select...</option>
+                        <option value="↘">↘ Falling</option>
+                        <option value="↗">↗ Rising</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-                <div class="activity-actions">
-                  <button class="activity-btn" type="button" data-action="check">Check</button>
-                  <button class="activity-btn secondary" type="button" data-action="reset">Reset</button>
+                <div class="blank-actions">
+                  <button
+                    type="button"
+                    class="activity-btn"
+                    data-action="check"
+                  >
+                    Check
+                  </button>
+                  <button
+                    type="button"
+                    class="activity-btn secondary"
+                    data-action="reset"
+                  >
+                    Reset
+                  </button>
                 </div>
-                <div class="feedback-msg" aria-live="polite"></div>
+                <div
+                  class="feedback-msg"
+                  role="status"
+                  aria-live="polite"
+                ></div>
               </div>
             </div>
           </div>
@@ -667,15 +862,32 @@
           <!-- Slide 12: Pre-task D Semi-controlled Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-microphone"></i> Step 12 · Pre-task D · 7 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-microphone"></i> Step 12 · Pre-task D · 7
+                minutes</span
+              >
               <h2>Listen and Repeat</h2>
               <div class="card">
-                <p class="editable-text">Listen to your teacher and repeat the questions. Focus on making your voice go down at the end.</p>
+                <p class="editable-text">
+                  Listen to your teacher and repeat the questions. Focus on
+                  making your voice go down at the end.
+                </p>
                 <ul class="instruction-list">
-                  <li><i class="fa-solid fa-volume-high"></i>What's your name? ↘</li>
-                  <li><i class="fa-solid fa-volume-high"></i>What's your address? ↘</li>
-                  <li><i class="fa-solid fa-volume-high"></i>What's your phone number? ↘</li>
-                  <li><i class="fa-solid fa-volume-high"></i>Where are you from? ↘</li>
+                  <li>
+                    <i class="fa-solid fa-volume-high"></i>What's your name? ↘
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-volume-high"></i>What's your address?
+                    ↘
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-volume-high"></i>What's your phone
+                    number? ↘
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-volume-high"></i>Where are you from?
+                    ↘
+                  </li>
                 </ul>
               </div>
             </div>
@@ -684,32 +896,37 @@
           <!-- Slide 13: Pre-task D Freer Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-comments"></i> Step 13 · Pre-task D · 6 minutes</span>
+              <span class="pill"
+                ><i class="fa-solid fa-comments"></i> Step 13 · Pre-task D · 6
+                minutes</span
+              >
               <h2>Dialogue Practice</h2>
               <div class="card">
                 <p class="editable-text">
-                  Work with your partner again. Practice the receptionist conversation from the beginning of the lesson.
+                  Work with your partner again. Practice the receptionist
+                  conversation from the beginning of the lesson.
                 </p>
-                <div class="dialogue-stack" role="presentation">
-                  <div class="dialogue-card split">
-                    <h4><i class="fa-solid fa-person-booth"></i> Receptionist</h4>
-                    <p>Hello. Can I help you?</p>
-                    <p>Of course. What's your name? ↘</p>
-                    <p>Where are you from? ↘</p>
-                    <p>What's your address? ↘</p>
-                  </div>
-                  <div class="dialogue-card split">
-                    <h4><i class="fa-solid fa-person"></i> Visitor</h4>
-                    <p>Yes, I'd like to sign up for a membership card.</p>
-                    <p>My name is Omar Hassan.</p>
-                    <p>I'm from Egypt.</p>
-                    <p>My address is 15 Al-Quds Street, Ramallah.</p>
-                  </div>
-                </div>
                 <p class="editable-text">
                   <i class="fa-solid fa-volume-high"></i>
-                  Receptionist: Pay close attention to the falling intonation on each question.
+                  Receptionist: Pay close attention to the falling intonation on
+                  each question.
                 </p>
+              </div>
+              <div class="grid-two mt-sm" role="presentation">
+                <div class="dialogue-turn">
+                  <h4><i class="fa-solid fa-person-booth"></i> Receptionist</h4>
+                  <p>Hello. Can I help you?</p>
+                  <p>Of course. What's your name? ↘</p>
+                  <p>Where are you from? ↘</p>
+                  <p>What's your address? ↘</p>
+                </div>
+                <div class="dialogue-turn">
+                  <h4><i class="fa-solid fa-person"></i> Visitor</h4>
+                  <p>Yes, I'd like to sign up for a membership card.</p>
+                  <p>My name is Omar Hassan.</p>
+                  <p>I'm from Egypt.</p>
+                  <p>My address is 15 Al-Quds Street, Ramallah.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -728,7 +945,9 @@
             <div class="slide-inner is-centered">
               <div class="bg-content centered">
                 <div class="overlay-card centered">
-                  <span class="pill overlay-pill"><i class="fa-solid fa-flag-checkered"></i> Step 14</span>
+                  <span class="pill overlay-pill"
+                    ><i class="fa-solid fa-flag-checkered"></i> Step 14</span
+                  >
                   <h2>Task</h2>
                 </div>
               </div>
@@ -738,17 +957,38 @@
           <!-- Slide 15: Task Preparation -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-landmark"></i> Step 15 · Task Preparation</span>
+              <span class="pill"
+                ><i class="fa-solid fa-landmark"></i> Step 15 · Task
+                Preparation</span
+              >
               <h2>Get Ready to Role-Play</h2>
               <div class="card">
                 <p class="editable-text">
-                  You are at the grand opening of <strong>The Palestinian Heritage Museum</strong> in Ramallah. You want to become a member to get discounts and special access to exhibits. You will go to the reception desk to sign up.
+                  You are at the grand opening of
+                  <strong>The Palestinian Heritage Museum</strong> in Ramallah.
+                  You want to become a member to get discounts and special
+                  access to exhibits. You will go to the reception desk to sign
+                  up.
                 </p>
                 <ul class="instruction-list">
-                  <li><i class="fa-solid fa-people-arrows"></i>Decide who is Role A (New Member) and Role B (Receptionist).</li>
-                  <li><i class="fa-solid fa-id-card"></i><strong>Role A:</strong> Plan a fictional name, nationality, and address.</li>
-                  <li><i class="fa-solid fa-handshake-angle"></i><strong>Role B:</strong> Plan how you will greet the member.</li>
-                  <li><i class="fa-solid fa-hourglass-half"></i>You have 2 minutes to prepare.</li>
+                  <li>
+                    <i class="fa-solid fa-people-arrows"></i>Decide who is Role
+                    A (New Member) and Role B (Receptionist).
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-id-card"></i
+                    ><strong>Role A:</strong> Plan a fictional name,
+                    nationality, and address.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-handshake-angle"></i
+                    ><strong>Role B:</strong> Plan how you will greet the
+                    member.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-hourglass-half"></i>You have 2 minutes
+                    to prepare.
+                  </li>
                 </ul>
               </div>
             </div>
@@ -757,46 +997,93 @@
           <!-- Slide 16: Task -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-users"></i> Step 16 · Task</span>
+              <span class="pill"
+                ><i class="fa-solid fa-users"></i> Step 16 · Task</span
+              >
               <h2>Role-Play: Signing Up</h2>
               <div class="grid-two">
                 <div class="card">
-                  <h3 class="icon-heading"><i class="fa-solid fa-id-card"></i><span>Role A · New Member</span></h3>
+                  <h3 class="icon-heading">
+                    <i class="fa-solid fa-id-card"></i
+                    ><span>Role A · New Member</span>
+                  </h3>
                   <ul class="instruction-list">
-                    <li><i class="fa-solid fa-location-dot"></i>You are at The Palestinian Heritage Museum.</li>
-                    <li><i class="fa-solid fa-id-card"></i>You want to sign up for a membership card.</li>
-                    <li><i class="fa-solid fa-share"></i>Give the receptionist your details.</li>
-                    <li><i class="fa-solid fa-handshake"></i>Be polite and ask for the receptionist's name at the end.</li>
+                    <li>
+                      <i class="fa-solid fa-location-dot"></i>You are at The
+                      Palestinian Heritage Museum.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-id-card"></i>You want to sign up for
+                      a membership card.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-share"></i>Give the receptionist
+                      your details.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-handshake"></i>Be polite and ask for
+                      the receptionist's name at the end.
+                    </li>
                   </ul>
                 </div>
                 <div class="card">
-                  <h3 class="icon-heading"><i class="fa-solid fa-person-booth"></i><span>Role B · Receptionist</span></h3>
+                  <h3 class="icon-heading">
+                    <i class="fa-solid fa-person-booth"></i
+                    ><span>Role B · Receptionist</span>
+                  </h3>
                   <ul class="instruction-list">
-                    <li><i class="fa-solid fa-briefcase"></i>You work at The Palestinian Heritage Museum.</li>
-                    <li><i class="fa-solid fa-hand-sparkles"></i>Welcome the visitor.</li>
-                    <li><i class="fa-solid fa-clipboard-list"></i>Ask for their name, nationality, and address.</li>
-                    <li><i class="fa-solid fa-signature"></i>When they ask, tell them your name is Sam.</li>
+                    <li>
+                      <i class="fa-solid fa-briefcase"></i>You work at The
+                      Palestinian Heritage Museum.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-hand-sparkles"></i>Welcome the
+                      visitor.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-clipboard-list"></i>Ask for their
+                      name, nationality, and address.
+                    </li>
+                    <li>
+                      <i class="fa-solid fa-signature"></i>When they ask, tell
+                      them your name is Sam.
+                    </li>
                   </ul>
                 </div>
               </div>
-              <p class="editable-text mt-sm"><i class="fa-solid fa-hourglass-start"></i> Perform the conversation for 4-5 minutes.</p>
+              <p class="editable-text mt-sm">
+                <i class="fa-solid fa-hourglass-start"></i> Perform the
+                conversation for 4-5 minutes.
+              </p>
             </div>
           </div>
 
           <!-- Slide 17: Reporting -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-clipboard-user"></i> Step 17 · Reporting</span>
+              <span class="pill"
+                ><i class="fa-solid fa-clipboard-user"></i> Step 17 ·
+                Reporting</span
+              >
               <h2>Briefing the Manager</h2>
               <div class="card">
                 <p class="editable-text">
-                  After your role-play, your manager (the teacher) will ask a few receptionists:
+                  After your role-play, your manager (the teacher) will ask a
+                  few receptionists:
                 </p>
                 <ul class="instruction-list">
-                  <li><i class="fa-solid fa-circle-check"></i>Did the new member sign up successfully?</li>
-                  <li><i class="fa-solid fa-id-badge"></i>What were their details?</li>
+                  <li>
+                    <i class="fa-solid fa-circle-check"></i>Did the new member
+                    sign up successfully?
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-id-badge"></i>What were their details?
+                  </li>
                 </ul>
-                <p class="editable-text">Be ready to report the name and nationality of the new member you spoke to.</p>
+                <p class="editable-text">
+                  Be ready to report the name and nationality of the new member
+                  you spoke to.
+                </p>
               </div>
             </div>
           </div>
@@ -804,12 +1091,20 @@
           <!-- Slide 18: Homework Practice -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-house-user"></i> Step 18 · Homework</span>
+              <span class="pill"
+                ><i class="fa-solid fa-house-user"></i> Step 18 · Homework</span
+              >
               <h2>Homework Practice</h2>
               <div class="grid-two">
                 <div class="card" data-activity="unscramble">
-                  <h3 class="icon-heading"><i class="fa-solid fa-shuffle"></i><span>Activity 1 · Unscramble the Sentences</span></h3>
-                  <p class="deck-subtitle">Type the sentences correctly. Earn 1 point for each perfect sentence.</p>
+                  <h3 class="icon-heading">
+                    <i class="fa-solid fa-shuffle"></i
+                    ><span>Activity 1 · Unscramble the Sentences</span>
+                  </h3>
+                  <p class="deck-subtitle">
+                    Type the sentences correctly. Earn 1 point for each perfect
+                    sentence.
+                  </p>
                   <ul class="unscramble-list">
                     <li>
                       <p>1. name / is / My / Fatima</p>
@@ -858,14 +1153,23 @@
                     </li>
                   </ul>
                   <div class="activity-actions">
-                    <button class="activity-btn" data-action="check">Check Answers</button>
-                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                    <button class="activity-btn" data-action="check">
+                      Check Answers
+                    </button>
+                    <button class="activity-btn secondary" data-action="reset">
+                      Reset
+                    </button>
                   </div>
                   <div class="feedback-msg" aria-live="polite"></div>
                 </div>
                 <div class="card" data-activity="mc-grammar">
-                  <h3 class="icon-heading"><i class="fa-solid fa-comments"></i><span>Activity 2 · Complete the Dialogue</span></h3>
-                  <p class="deck-subtitle">Choose the correct word for each blank.</p>
+                  <h3 class="icon-heading">
+                    <i class="fa-solid fa-comments"></i
+                    ><span>Activity 2 · Complete the Dialogue</span>
+                  </h3>
+                  <p class="deck-subtitle">
+                    Choose the correct word for each blank.
+                  </p>
                   <div class="quiz-card" data-answer="your">
                     <p>
                       A: Hello. What's (1)
@@ -937,8 +1241,12 @@
                     </p>
                   </div>
                   <div class="activity-actions">
-                    <button class="activity-btn" data-action="check">Check Answers</button>
-                    <button class="activity-btn secondary" data-action="reset">Reset</button>
+                    <button class="activity-btn" data-action="check">
+                      Check Answers
+                    </button>
+                    <button class="activity-btn secondary" data-action="reset">
+                      Reset
+                    </button>
                   </div>
                   <div class="feedback-msg" aria-live="polite"></div>
                 </div>
@@ -949,27 +1257,57 @@
           <!-- Slide 19: Reflection -->
           <div class="slide-stage hidden">
             <div class="slide-inner">
-              <span class="pill"><i class="fa-solid fa-lightbulb"></i> Step 19 · Reflection</span>
+              <span class="pill"
+                ><i class="fa-solid fa-lightbulb"></i> Step 19 ·
+                Reflection</span
+              >
               <h2>Reflection: 3, 2, 1</h2>
               <div class="card">
-                <p class="editable-text">Think about your learning in today's lesson.</p>
+                <p class="editable-text">
+                  Think about your learning in today's lesson.
+                </p>
                 <ul class="instruction-list">
-                  <li><i class="fa-solid fa-list-ol"></i><strong>3</strong> things you can say in English now.</li>
-                  <li><i class="fa-solid fa-book"></i><strong>2</strong> grammar or vocabulary points you learned.</li>
-                  <li><i class="fa-solid fa-question"></i><strong>1</strong> question you still have.</li>
+                  <li>
+                    <i class="fa-solid fa-list-ol"></i><strong>3</strong> things
+                    you can say in English now.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-book"></i><strong>2</strong> grammar
+                    or vocabulary points you learned.
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-question"></i
+                    ><strong>1</strong> question you still have.
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
 
           <div class="deck-logo-cluster">
-            <img src="../../../assets/almanar_logo.png" alt="Al Manar logo" loading="lazy" />
-            <img src="../../../assets/noor_logo.webp" alt="Noor Community logo" loading="lazy" />
+            <img
+              src="../../../assets/almanar_logo.png"
+              alt="Al Manar logo"
+              loading="lazy"
+            />
+            <img
+              src="../../../assets/noor_logo.webp"
+              alt="Noor Community logo"
+              loading="lazy"
+            />
           </div>
-          <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous Slide">
+          <button
+            class="slide-nav slide-nav-prev"
+            type="button"
+            aria-label="Previous Slide"
+          >
             <i class="fa-solid fa-chevron-left"></i>
           </button>
-          <button class="slide-nav slide-nav-next" type="button" aria-label="Next Slide">
+          <button
+            class="slide-nav slide-nav-next"
+            type="button"
+            aria-label="Next Slide"
+          >
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
@@ -982,16 +1320,26 @@
       aria-hidden="true"
       hidden
     >
-      <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
+      <div
+        class="builder-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="builder-title"
+      >
         <header class="builder-header">
           <div>
             <p class="builder-eyebrow">Slide library</p>
             <h2 id="builder-title">Create a lesson slide</h2>
             <p class="builder-subtitle">
-              Start from a blank canvas or generate slides for language input, practice, and reflection.
+              Start from a blank canvas or generate slides for language input,
+              practice, and reflection.
             </p>
           </div>
-          <button type="button" class="builder-close" aria-label="Close slide builder">
+          <button
+            type="button"
+            class="builder-close"
+            aria-label="Close slide builder"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </header>
@@ -1008,12 +1356,20 @@
                   data-layout-option="blank-canvas"
                   title="Start with an empty slide and build everything yourself."
                 >
-                  <input type="radio" name="slideLayout" value="blank-canvas" checked />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="blank-canvas"
+                    checked
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
                       <span class="layout-option-title">Blank canvas</span>
-                      <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                      <span class="layout-option-desc"
+                        >Add your own text boxes, drawings, and pasted
+                        media.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1033,12 +1389,21 @@
                   data-layout-option="grounding-activity"
                   title="Lead a brief settling or mindfulness routine."
                 >
-                  <input type="radio" name="slideLayout" value="grounding-activity" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="grounding-activity"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Grounding activity</span>
-                      <span class="layout-option-desc">Script a calm arrival routine with simple prompts.</span>
+                      <span class="layout-option-title"
+                        >Grounding activity</span
+                      >
+                      <span class="layout-option-desc"
+                        >Script a calm arrival routine with simple
+                        prompts.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1058,12 +1423,21 @@
                   data-layout-option="topic-introduction"
                   title="Introduce the big idea, hook, and vocabulary for the lesson."
                 >
-                  <input type="radio" name="slideLayout" value="topic-introduction" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="topic-introduction"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Topic introduction</span>
-                      <span class="layout-option-desc">Frame the theme, essential question, and key vocabulary.</span>
+                      <span class="layout-option-title"
+                        >Topic introduction</span
+                      >
+                      <span class="layout-option-desc"
+                        >Frame the theme, essential question, and key
+                        vocabulary.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1083,12 +1457,21 @@
                   data-layout-option="learning-objectives"
                   title="Present the learning focus and communicative outcome."
                 >
-                  <input type="radio" name="slideLayout" value="learning-objectives" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="learning-objectives"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Learning objectives</span>
-                      <span class="layout-option-desc">Highlight lesson goals and the real-world application.</span>
+                      <span class="layout-option-title"
+                        >Learning objectives</span
+                      >
+                      <span class="layout-option-desc"
+                        >Highlight lesson goals and the real-world
+                        application.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1108,12 +1491,21 @@
                   data-layout-option="model-dialogue"
                   title="Show a short model text or dialogue."
                 >
-                  <input type="radio" name="slideLayout" value="model-dialogue" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="model-dialogue"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Model dialogue / text</span>
-                      <span class="layout-option-desc">Introduce the target language through a contextualised exchange.</span>
+                      <span class="layout-option-title"
+                        >Model dialogue / text</span
+                      >
+                      <span class="layout-option-desc"
+                        >Introduce the target language through a contextualised
+                        exchange.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1133,12 +1525,19 @@
                   data-layout-option="guided-discovery"
                   title="Guide learners to notice patterns in the input."
                 >
-                  <input type="radio" name="slideLayout" value="guided-discovery" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="guided-discovery"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
                       <span class="layout-option-title">Guided discovery</span>
-                      <span class="layout-option-desc">Sequence noticing prompts, questions, and sample language.</span>
+                      <span class="layout-option-desc"
+                        >Sequence noticing prompts, questions, and sample
+                        language.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1158,12 +1557,21 @@
                   data-layout-option="communicative-task"
                   title="Design an information-gap or collaborative speaking task."
                 >
-                  <input type="radio" name="slideLayout" value="communicative-task" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="communicative-task"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Communicative task</span>
-                      <span class="layout-option-desc">Outline partner roles, goals, and real-world prompts.</span>
+                      <span class="layout-option-title"
+                        >Communicative task</span
+                      >
+                      <span class="layout-option-desc"
+                        >Outline partner roles, goals, and real-world
+                        prompts.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1183,12 +1591,21 @@
                   data-layout-option="pronunciation-focus"
                   title="Plan drills, stress, or intonation work."
                 >
-                  <input type="radio" name="slideLayout" value="pronunciation-focus" />
+                  <input
+                    type="radio"
+                    name="slideLayout"
+                    value="pronunciation-focus"
+                  />
                   <span class="layout-option-body">
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
-                      <span class="layout-option-title">Pronunciation focus</span>
-                      <span class="layout-option-desc">Highlight sounds, stress, or intonation in meaningful contexts.</span>
+                      <span class="layout-option-title"
+                        >Pronunciation focus</span
+                      >
+                      <span class="layout-option-desc"
+                        >Highlight sounds, stress, or intonation in meaningful
+                        contexts.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1213,7 +1630,10 @@
                     <span class="layout-option-icon" aria-hidden="true"></span>
                     <span class="layout-option-copy">
                       <span class="layout-option-title">Reflection</span>
-                      <span class="layout-option-desc">Summarise insights, wins, and curiosities from the lesson.</span>
+                      <span class="layout-option-desc"
+                        >Summarise insights, wins, and curiosities from the
+                        lesson.</span
+                      >
                     </span>
                   </span>
                   <span class="layout-icon-field">
@@ -1233,36 +1653,64 @@
 
             <fieldset class="builder-field">
               <legend class="builder-field-label">Section title</legend>
-              <input type="text" name="sectionTitle" placeholder="e.g. Pre-task B" />
+              <input
+                type="text"
+                name="sectionTitle"
+                placeholder="e.g. Pre-task B"
+              />
             </fieldset>
 
             <fieldset class="builder-field">
               <legend class="builder-field-label">Slide subtitle</legend>
-              <input type="text" name="sectionSubtitle" placeholder="Add timing, focus, or grouping notes" />
+              <input
+                type="text"
+                name="sectionSubtitle"
+                placeholder="Add timing, focus, or grouping notes"
+              />
             </fieldset>
 
             <fieldset class="builder-field builder-field--full">
               <legend class="builder-field-label">Slide description</legend>
-              <textarea name="sectionDescription" rows="3" placeholder="Summarise what happens on this slide"></textarea>
+              <textarea
+                name="sectionDescription"
+                rows="3"
+                placeholder="Summarise what happens on this slide"
+              ></textarea>
             </fieldset>
 
             <fieldset class="builder-field">
               <legend class="builder-field-label">Icon class</legend>
-              <input type="text" name="sectionIcon" value="fa-solid fa-circle-info" />
+              <input
+                type="text"
+                name="sectionIcon"
+                value="fa-solid fa-circle-info"
+              />
             </fieldset>
 
             <fieldset class="builder-field">
               <legend class="builder-field-label">Timing</legend>
-              <input type="text" name="sectionTiming" placeholder="e.g. 6 minutes" />
+              <input
+                type="text"
+                name="sectionTiming"
+                placeholder="e.g. 6 minutes"
+              />
             </fieldset>
 
             <fieldset class="builder-field builder-field--full">
-              <legend class="builder-field-label">Add notes for teachers</legend>
-              <textarea name="teacherNotes" rows="4" placeholder="Reminders, differentiation tips, or cultural notes"></textarea>
+              <legend class="builder-field-label">
+                Add notes for teachers
+              </legend>
+              <textarea
+                name="teacherNotes"
+                rows="4"
+                placeholder="Reminders, differentiation tips, or cultural notes"
+              ></textarea>
             </fieldset>
           </div>
           <footer class="builder-footer">
-            <button type="button" class="ghost-btn" data-action="clear">Reset</button>
+            <button type="button" class="ghost-btn" data-action="clear">
+              Reset
+            </button>
             <button type="submit" class="primary-btn">Add slide</button>
           </footer>
         </form>
@@ -1275,16 +1723,26 @@
       aria-hidden="true"
       hidden
     >
-      <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="module-builder-title">
+      <div
+        class="builder-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="module-builder-title"
+      >
         <header class="builder-header">
           <div>
             <p class="builder-eyebrow">Interactive modules</p>
             <h2 id="module-builder-title">Drop in a practice activity</h2>
             <p class="builder-subtitle">
-              Configure Noor templates and drop the activity onto your blank slide.
+              Configure Noor templates and drop the activity onto your blank
+              slide.
             </p>
           </div>
-          <button type="button" class="builder-close" aria-label="Close module builder">
+          <button
+            type="button"
+            class="builder-close"
+            aria-label="Close module builder"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </header>
@@ -1300,11 +1758,13 @@
     </div>
 
     <script>
-      document.querySelectorAll('.bg-media img[loading="eager"]').forEach((img) => {
-        if (img.dataset.remoteSrc) {
-          img.src = img.dataset.remoteSrc;
-        }
-      });
+      document
+        .querySelectorAll('.bg-media img[loading="eager"]')
+        .forEach((img) => {
+          if (img.dataset.remoteSrc) {
+            img.src = img.dataset.remoteSrc;
+          }
+        });
     </script>
     <script type="module">
       import { setupInteractiveDeck } from "../../../sandbox/int-mod.js";
