@@ -1034,123 +1034,162 @@
                 Pre-task D · Semi-controlled Practice · 7 minutes
               </span>
               <h2>Intonation Drill &amp; Transformation</h2>
-          <div class="card" data-activity="table-completion">
+          <div class="card" data-activity="dropdown">
             <div class="activity-header">
               <h3>
                 <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                 Mark the intonation pattern for each sentence.
               </h3>
-              <p>Drag the arrows onto each clause to show rising (➚) or falling (➘) intonation.</p>
+              <p>
+                Choose the intonation for each clause using the dropdowns —
+                <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                rising or
+                <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                falling.
+              </p>
             </div>
-            <div class="intonation-grid">
-              <div class="intonation-row">
-                <p>If we had hired a dedicated project manager [...], the team wouldn&apos;t be so overworked now [...].</p>
-                <div class="intonation-slots">
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➚"
-                    data-placeholder="Clause 1"
-                    aria-label="Intonation for clause 1"
-                  ></button>
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➘"
-                    data-placeholder="Clause 2"
-                    aria-label="Intonation for clause 2"
-                  ></button>
+            <ol class="intonation-dropdown-list">
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 1</span>
+                  <p>If we had hired a dedicated project manager [...].</p>
                 </div>
-              </div>
-              <div class="intonation-row">
-                <p>The community would trust us more [...] if we had involved them from the beginning [...].</p>
-                <div class="intonation-slots">
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➘"
-                    data-placeholder="Clause 3"
-                    aria-label="Intonation for clause 3"
-                  ></button>
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➚"
-                    data-placeholder="Clause 4"
-                    aria-label="Intonation for clause 4"
-                  ></button>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-1">Select intonation for clause 1</label>
+                  <select id="intonation-1" class="dropdown-select intonation-select" data-answer="fa-arrow-up">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
                 </div>
-              </div>
-              <div class="intonation-row">
-                <p>If I had seen the report earlier [...], I would be better prepared for this meeting [...].</p>
-                <div class="intonation-slots">
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➚"
-                    data-placeholder="Clause 5"
-                    aria-label="Intonation for clause 5"
-                  ></button>
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➘"
-                    data-placeholder="Clause 6"
-                    aria-label="Intonation for clause 6"
-                  ></button>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 2</span>
+                  <p>The team wouldn&apos;t be so overworked now [...].</p>
                 </div>
-              </div>
-              <div class="intonation-row">
-                <p>We wouldn&apos;t need this contingency fund [...] if the original budget had been more realistic [...].</p>
-                <div class="intonation-slots">
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➘"
-                    data-placeholder="Clause 7"
-                    aria-label="Intonation for clause 7"
-                  ></button>
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➚"
-                    data-placeholder="Clause 8"
-                    aria-label="Intonation for clause 8"
-                  ></button>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-2">Select intonation for clause 2</label>
+                  <select id="intonation-2" class="dropdown-select intonation-select" data-answer="fa-arrow-down">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
                 </div>
-              </div>
-              <div class="intonation-row">
-                <p>If we had established common ground then [...], we wouldn&apos;t risk a deadlock now [...].</p>
-                <div class="intonation-slots">
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➚"
-                    data-placeholder="Clause 9"
-                    aria-label="Intonation for clause 9"
-                  ></button>
-                  <button
-                    type="button"
-                    class="drop-zone placeholder"
-                    data-answer="➘"
-                    data-placeholder="Clause 10"
-                    aria-label="Intonation for clause 10"
-                  ></button>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 3</span>
+                  <p>The community would trust us more [...].</p>
                 </div>
-              </div>
-            </div>
-            <div class="token-bank" aria-label="Intonation markers">
-              <button type="button" class="click-token" data-value="➚">➚</button>
-              <button type="button" class="click-token" data-value="➘">➘</button>
-              <button type="button" class="click-token" data-value="➚">➚</button>
-              <button type="button" class="click-token" data-value="➘">➘</button>
-              <button type="button" class="click-token" data-value="➚">➚</button>
-              <button type="button" class="click-token" data-value="➘">➘</button>
-              <button type="button" class="click-token" data-value="➘">➘</button>
-              <button type="button" class="click-token" data-value="➚">➚</button>
-              <button type="button" class="click-token" data-value="➚">➚</button>
-              <button type="button" class="click-token" data-value="➘">➘</button>
-            </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-3">Select intonation for clause 3</label>
+                  <select id="intonation-3" class="dropdown-select intonation-select" data-answer="fa-arrow-down">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 4</span>
+                  <p>If we had involved them from the beginning [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-4">Select intonation for clause 4</label>
+                  <select id="intonation-4" class="dropdown-select intonation-select" data-answer="fa-arrow-up">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 5</span>
+                  <p>If I had seen the report earlier [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-5">Select intonation for clause 5</label>
+                  <select id="intonation-5" class="dropdown-select intonation-select" data-answer="fa-arrow-up">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 6</span>
+                  <p>I would be better prepared for this meeting [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-6">Select intonation for clause 6</label>
+                  <select id="intonation-6" class="dropdown-select intonation-select" data-answer="fa-arrow-down">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 7</span>
+                  <p>We wouldn&apos;t need this contingency fund [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-7">Select intonation for clause 7</label>
+                  <select id="intonation-7" class="dropdown-select intonation-select" data-answer="fa-arrow-down">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 8</span>
+                  <p>If the original budget had been more realistic [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-8">Select intonation for clause 8</label>
+                  <select id="intonation-8" class="dropdown-select intonation-select" data-answer="fa-arrow-up">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 9</span>
+                  <p>If we had established common ground then [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-9">Select intonation for clause 9</label>
+                  <select id="intonation-9" class="dropdown-select intonation-select" data-answer="fa-arrow-up">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+              <li class="intonation-dropdown-row">
+                <div class="clause-text">
+                  <span class="clause-index">Clause 10</span>
+                  <p>We wouldn&apos;t risk a deadlock now [...].</p>
+                </div>
+                <div class="clause-control">
+                  <label class="visually-hidden" for="intonation-10">Select intonation for clause 10</label>
+                  <select id="intonation-10" class="dropdown-select intonation-select" data-answer="fa-arrow-down">
+                    <option value="">Choose pattern...</option>
+                    <option value="fa-arrow-up">&uarr; Rising (fa-arrow-up)</option>
+                    <option value="fa-arrow-down">&darr; Falling (fa-arrow-down)</option>
+                  </select>
+                </div>
+              </li>
+            </ol>
             <div class="activity-actions">
               <button class="activity-btn" data-action="check">Check</button>
               <button class="activity-btn secondary" data-action="reset">Reset</button>

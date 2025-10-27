@@ -7031,3 +7031,57 @@ ol {
   }
 }
 
+.intonation-dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(var(--space-3), 1.6vw, var(--space-4));
+}
+
+.intonation-dropdown-row {
+  display: grid;
+  gap: clamp(var(--space-2), 1.2vw, var(--space-3));
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  padding: clamp(var(--space-3), 1.6vw, var(--space-4));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--soft-white) 90%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--forest-shadow) 10%, transparent);
+}
+
+.clause-text {
+  display: grid;
+  gap: clamp(var(--space-1), 0.8vw, var(--space-2));
+}
+
+.clause-text p {
+  margin: 0;
+}
+
+.clause-index {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--forest-shadow) 70%, transparent);
+}
+
+.clause-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.intonation-select {
+  min-width: clamp(180px, 24vw, 220px);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+@media (min-width: 720px) {
+  .intonation-dropdown-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
