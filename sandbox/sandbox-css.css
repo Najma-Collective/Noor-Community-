@@ -2141,6 +2141,63 @@ ol {
   gap: 0.65rem;
 }
 
+.quiz-clause {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  line-height: 1.6;
+}
+
+.quiz-clause-text {
+  flex: 1 1 220px;
+  font-size: var(--step--1, 0.95rem);
+  color: var(--forest-shadow);
+}
+
+.quiz-clause-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(122, 132, 113, 0.35);
+  background: var(--soft-white);
+  padding: 0.25rem 0.6rem 0.25rem 0.75rem;
+  box-shadow: var(--shadow-1);
+}
+
+.quiz-clause-control:focus-within {
+  border-color: rgba(56, 98, 74, 0.55);
+  box-shadow: 0 0 0 3px rgba(56, 98, 74, 0.15);
+}
+
+.quiz-clause-control i {
+  color: rgba(56, 63, 52, 0.75);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.quiz-clause-control select {
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--step--1, 0.95rem);
+  color: var(--forest-shadow);
+  padding: 0.25rem 0.25rem 0.25rem 0;
+  min-width: 8rem;
+}
+
+.quiz-clause-control select:focus {
+  outline: 2px solid var(--focus-outline, rgba(56, 98, 74, 0.4));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.quiz-clause-control select option {
+  color: initial;
+}
+
 .quiz-options {
   display: grid;
   gap: 0.45rem;
