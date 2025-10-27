@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Describing a Celebration · Pre-Class Worksheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-pbVkEeMCOvcgwAev70QS33p81VXRM4SS82O8SWuLM8ykMSf6EoMnjc1GDZCBoJIz0RoeJaA43EIBoszq7xsm4g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./CSS" />
+    <style>
+      :root {
+        color-scheme: light;
+        --hero-image-url: url('https://images.pexels.com/photos/225025/pexels-photo-225025.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body, 'Nunito', sans-serif);
+        background: linear-gradient(160deg, var(--warm-cream, #f8f6f0), var(--soft-white, #fefcf7));
+        color: var(--ink, #2f3a2b);
+      }
+
+      #app-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+
+      .brand-strip {
+        display: flex;
+        align-items: center;
+        gap: 1.75rem;
+        flex-wrap: wrap;
+      }
+
+      .brand-strip img {
+        height: 56px;
+        width: auto;
+      }
+
+      header.hero {
+        position: relative;
+        border-radius: 28px;
+        overflow: hidden;
+        min-height: 320px;
+        display: grid;
+        align-items: center;
+        padding: clamp(1.75rem, 2vw + 1rem, 3rem);
+        color: #fff;
+        box-shadow: 0 25px 60px rgba(36, 46, 35, 0.2);
+        background-color: #3e4a3a;
+        background-image: linear-gradient(
+            135deg,
+            rgba(62, 74, 58, 0.45),
+            rgba(122, 132, 113, 0.25)
+          ),
+          var(--hero-image-url, none);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      .hero-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        z-index: 1;
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: clamp(2rem, 2.2rem + 1vw, 3rem);
+        font-family: var(--font-display, 'Questrial', sans-serif);
+      }
+
+      .hero-meta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        font-weight: 600;
+      }
+
+      .hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(6px);
+      }
+
+      .hero-meta i {
+        font-size: 0.95rem;
+      }
+
+      main {
+        display: grid;
+        gap: 2.5rem;
+      }
+
+      .content-card {
+        background: var(--soft-white, #fefcf7);
+        border-radius: 24px;
+        padding: clamp(1.5rem, 1.5rem + 0.8vw, 2.5rem);
+        box-shadow: 0 18px 40px rgba(77, 91, 70, 0.12);
+        border: 1px solid rgba(122, 132, 113, 0.18);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        font-family: var(--font-display, 'Questrial', sans-serif);
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 1.5rem + 0.6vw, 2rem);
+      }
+
+      .dialogue-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .dialogue-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 16px;
+        background: rgba(156, 175, 136, 0.12);
+        border: 1px solid rgba(156, 175, 136, 0.25);
+      }
+
+      .dialogue-speaker {
+        font-weight: 700;
+        min-width: 130px;
+      }
+
+      #activities {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .activity-card {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .activity-body {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .activity-btn {
+        align-self: start;
+        padding: 0.8rem 1.5rem;
+        border-radius: 999px;
+        border: 1px solid var(--primary-sage, #7a8471);
+        background: var(--primary-sage, #7a8471);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        min-height: var(--target-min, 44px);
+      }
+
+      .activity-btn.secondary {
+        background: transparent;
+        color: var(--primary-sage, #7a8471);
+      }
+
+      .activity-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .activity-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .feedback-banner {
+        display: none;
+        border-radius: 16px;
+        padding: 1rem 1.25rem;
+        background: rgba(122, 132, 113, 0.15);
+        border: 1px solid rgba(122, 132, 113, 0.3);
+        line-height: 1.6;
+      }
+
+      .feedback-banner[data-visible='true'] {
+        display: block;
+      }
+
+      .feedback-banner ul {
+        margin: 0.5rem 0 0;
+        padding-left: 1.25rem;
+      }
+
+      fieldset {
+        margin: 0;
+        border: none;
+        display: grid;
+        gap: 0.75rem;
+        padding: 0;
+      }
+
+      .mc-question {
+        font-weight: 700;
+      }
+
+      .mc-options {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .mc-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 132, 113, 0.25);
+        background: rgba(248, 246, 240, 0.6);
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      }
+
+      .mc-option:hover,
+      .mc-option:focus-within {
+        transform: translateY(-1px);
+        border-color: rgba(122, 132, 113, 0.5);
+        box-shadow: 0 6px 18px rgba(34, 41, 32, 0.08);
+      }
+
+      .mc-option-key {
+        font-weight: 700;
+        color: var(--primary-sage, #7a8471);
+      }
+
+      .mc-option[data-state='selected'] {
+        border-color: var(--secondary-sage, #9caf88);
+        background: rgba(156, 175, 136, 0.16);
+      }
+
+      .mc-option[data-state='correct'] {
+        border-color: rgba(67, 138, 94, 0.6);
+        background: rgba(67, 138, 94, 0.12);
+      }
+
+      .mc-option[data-state='incorrect'] {
+        border-color: rgba(185, 66, 66, 0.45);
+        background: rgba(185, 66, 66, 0.1);
+      }
+
+      .matching-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .matching-item {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .matching-item select,
+      .dropdown-item select {
+        padding: 0.6rem 0.75rem;
+        border-radius: 12px;
+        border: 1px solid rgba(122, 132, 113, 0.35);
+        font-size: 1rem;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+
+      select[data-state='correct'] {
+        border-color: rgba(67, 138, 94, 0.7);
+        background: rgba(67, 138, 94, 0.14);
+      }
+
+      select[data-state='incorrect'] {
+        border-color: rgba(185, 66, 66, 0.6);
+        background: rgba(185, 66, 66, 0.12);
+      }
+
+      select[data-state='empty'] {
+        border-color: rgba(255, 180, 77, 0.7);
+        background: rgba(255, 180, 77, 0.12);
+      }
+
+      .dropdown-item {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .ranking-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 14px;
+        background: rgba(248, 246, 240, 0.7);
+        border: 1px solid rgba(122, 132, 113, 0.25);
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .ranking-item[data-state='correct'] {
+        border-color: rgba(67, 138, 94, 0.6);
+        background: rgba(67, 138, 94, 0.12);
+      }
+
+      .ranking-item[data-state='incorrect'] {
+        border-color: rgba(185, 66, 66, 0.5);
+        background: rgba(185, 66, 66, 0.12);
+      }
+
+      .ranking-controls {
+        display: inline-flex;
+        gap: 0.35rem;
+      }
+
+      .ranking-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(122, 132, 113, 0.25);
+        background: #fff;
+        color: var(--primary-sage, #7a8471);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+
+      .ranking-btn:hover,
+      .ranking-btn:focus-visible {
+        transform: translateY(-1px);
+        border-color: var(--secondary-sage, #9caf88);
+        box-shadow: 0 6px 18px rgba(34, 41, 32, 0.08);
+      }
+
+      .ranking-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      #toast-root {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        display: grid;
+        gap: 0.75rem;
+        z-index: 999;
+        pointer-events: none;
+      }
+
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.25rem;
+        border-radius: 14px;
+        background: rgba(67, 138, 94, 0.95);
+        color: #fff;
+        box-shadow: 0 18px 35px rgba(34, 41, 32, 0.18);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .toast.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 768px) {
+        #app-wrapper {
+          padding-inline: 1rem;
+        }
+
+        .brand-strip {
+          justify-content: center;
+          gap: 1.25rem;
+        }
+
+        .brand-strip img {
+          height: 48px;
+        }
+
+        header.hero {
+          min-height: 260px;
+        }
+
+        .dialogue-speaker {
+          min-width: 100px;
+        }
+
+        #toast-root {
+          right: 0.75rem;
+          left: 0.75rem;
+          bottom: 1rem;
+        }
+
+        .toast {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-wrapper">
+      <div class="brand-strip" aria-label="Partner logos">
+        <img
+          src="../../../assets/noor_logo.webp"
+          alt="Noor Community logo"
+          loading="lazy"
+        />
+        <img
+          src="../../../assets/almanar_logo.png"
+          alt="Al Manar Community Center logo"
+          loading="lazy"
+        />
+      </div>
+      <header class="hero" id="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <h1 id="hero-title" class="hero-title">Describing a Celebration</h1>
+          <div class="hero-meta" role="list">
+            <span role="listitem"><i class="fa-solid fa-chart-simple"></i> Level&nbsp;A2</span>
+            <span role="listitem"><i class="fa-solid fa-layer-group"></i> Module&nbsp;1</span>
+            <span role="listitem"><i class="fa-solid fa-book-open"></i> Lesson&nbsp;Number&nbsp;2</span>
+            <span role="listitem"><i class="fa-solid fa-people-group"></i> Unit&nbsp;Theme:&nbsp;Celebrations&nbsp;in&nbsp;Palestine</span>
+            <span role="listitem"><i class="fa-solid fa-bullseye"></i> Lesson&nbsp;Aim:&nbsp;Describe&nbsp;a&nbsp;local&nbsp;festival&nbsp;using&nbsp;there&nbsp;was/were&nbsp;and&nbsp;event&nbsp;vocabulary</span>
+          </div>
+        </div>
+      </header>
+
+      <main id="content">
+        <section class="content-card" aria-labelledby="dialogue-title">
+          <div class="section-heading">
+            <i class="fa-solid fa-comments"></i>
+            <h2 id="dialogue-title">Model Dialogue</h2>
+          </div>
+          <ul class="dialogue-list" id="dialogue-list"></ul>
+        </section>
+
+        <section id="activities"></section>
+      </main>
+    </div>
+
+    <div id="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+    <template id="activity-template">
+      <section class="content-card activity-card" data-activity>
+        <header>
+          <div class="section-heading">
+            <i class="fa-solid fa-seedling"></i>
+            <h2 class="activity-title"></h2>
+          </div>
+          <p class="activity-instruction"></p>
+        </header>
+        <div class="activity-body"></div>
+        <div class="feedback-banner" role="status" aria-live="polite"></div>
+        <footer class="activity-footer">
+          <button class="activity-btn check-btn" type="button">
+            <i class="fa-solid fa-circle-check"></i>
+            Check Answers
+          </button>
+          <button class="activity-btn secondary reset-btn" type="button">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Try Again
+          </button>
+        </footer>
+      </section>
+    </template>
+
+    <template id="multiple-choice-option">
+      <label class="mc-option">
+        <input type="radio" hidden />
+        <span class="mc-option-key"></span>
+        <span class="mc-option-text"></span>
+      </label>
+    </template>
+
+    <template id="matching-select">
+      <div class="matching-item">
+        <p class="matching-question"></p>
+        <label>
+          <span class="sr-only">Choose a match</span>
+          <select></select>
+        </label>
+      </div>
+    </template>
+
+    <template id="dropdown-item">
+      <div class="dropdown-item">
+        <p class="dropdown-sentence"></p>
+        <label>
+          <span class="sr-only">Select the missing word</span>
+          <select></select>
+        </label>
+      </div>
+    </template>
+
+    <template id="ranking-item">
+      <li class="ranking-item">
+        <span class="ranking-text"></span>
+        <div class="ranking-controls">
+          <button class="ranking-btn move-up" type="button" aria-label="Move up">
+            <i class="fa fa-arrow-circle-o-up fa-solid fa-arrow-circle-up"></i>
+          </button>
+          <button class="ranking-btn move-down" type="button" aria-label="Move down">
+            <i class="fa fa-arrow-circle-o-down fa-solid fa-arrow-circle-down"></i>
+          </button>
+        </div>
+      </li>
+    </template>
+
+    <script type="module">
+      const worksheetData = {
+        model: {
+          lines: [
+            { speaker: 'Fatima', text: 'Hi Layla! How was your weekend?' },
+            {
+              speaker: 'Layla',
+              text: 'It was great! On Saturday, I went to the Taste of Palestine food festival in Ramallah. It was a big celebration.',
+            },
+            { speaker: 'Fatima', text: 'That sounds exciting. What stood out to you?' },
+            {
+              speaker: 'Layla',
+              text: 'There was a dabke concert with loud music, and everyone was clapping along.',
+            },
+            { speaker: 'Fatima', text: 'Nice! Did you eat anything special?' },
+            {
+              speaker: 'Layla',
+              text: 'Yes! There were food stalls from different villages. It was crowded, but the makloubeh smelled amazing.',
+            },
+            { speaker: 'Fatima', text: 'Who did you go with?' },
+            { speaker: 'Layla', text: 'My cousins came with me. Even though it was loud, it felt like home.' },
+          ],
+        },
+        activities: [
+          {
+            number: 1,
+            name: 'Check Your Understanding',
+            instruction: 'Read the dialogue and choose the correct answer for each question.',
+            type: 'multiple-choice',
+            items: [
+              {
+                question: '1. Where did Layla spend her Saturday?',
+                options: [
+                  { key: 'a', label: 'a) At a quiet cafe in Bethlehem' },
+                  { key: 'b', label: 'b) At the Taste of Palestine food festival in Ramallah' },
+                  { key: 'c', label: 'c) At a concert hall in Jerusalem' },
+                ],
+                answer: 'b',
+                feedback: {
+                  a: 'The dialogue never mentions a cafe. Layla talks about a big celebration in Ramallah.',
+                  c: 'There was a concert inside the festival, but she stayed at the food festival in Ramallah.',
+                },
+              },
+              {
+                question: '2. What made the festival so loud?',
+                options: [
+                  { key: 'a', label: 'a) The busy traffic outside the venue' },
+                  { key: 'b', label: 'b) The sellers shouting prices at the stalls' },
+                  { key: 'c', label: 'c) A dabke concert with loud music' },
+                ],
+                answer: 'c',
+                feedback: {
+                  a: 'Layla describes music inside the festival, not traffic from the street.',
+                  b: 'She mentions food stalls, but the loud sound comes from the dabke concert.',
+                },
+              },
+              {
+                question: '3. Why did the event feel like home for Layla?',
+                options: [
+                  { key: 'a', label: 'a) She found a quiet place to sit alone.' },
+                  { key: 'b', label: 'b) Her cousins were with her, sharing the crowded space.' },
+                  { key: 'c', label: 'c) She met tourists visiting from Europe.' },
+                ],
+                answer: 'b',
+                feedback: {
+                  a: 'Layla actually says it was crowded, not quiet, and she stayed with her cousins.',
+                  c: 'She talks about family, not tourists. Re-read the last lines of the model.',
+                },
+              },
+            ],
+          },
+          {
+            number: 2,
+            name: 'Vocabulary: Describing the Festival',
+            instruction: 'Match the words from the dialogue with their meanings.',
+            type: 'matching',
+            items: {
+              questions: [
+                {
+                  id: '1',
+                  prompt: '1. celebration',
+                  answer: 'a',
+                  feedback: {
+                    b: '"Crowded" explains how many people were there. Layla calls the festival a celebration because it was a big community event.',
+                    c: 'A concert happened at the celebration, but the word "celebration" means the whole event.',
+                    d: '"Loud" describes the music. The celebration is the joyful festival itself.',
+                  },
+                },
+                {
+                  id: '2',
+                  prompt: '2. crowded',
+                  answer: 'b',
+                  feedback: {
+                    a: 'Layla already names the celebration. She adds that it was crowded because many people were there.',
+                    c: 'The concert was one part of the event. "Crowded" tells us about the number of people.',
+                    d: 'Loud music is part of the concert, not the meaning of "crowded".',
+                  },
+                },
+                {
+                  id: '3',
+                  prompt: '3. concert',
+                  answer: 'c',
+                  feedback: {
+                    a: 'The concert is not the entire celebration; it is one activity with music.',
+                    b: '"Crowded" is how the space felt. The concert is the live performance Layla heard.',
+                    d: 'Loud describes the sound of the concert, but the word "concert" means the performance itself.',
+                  },
+                },
+                {
+                  id: '4',
+                  prompt: '4. loud',
+                  answer: 'd',
+                  feedback: {
+                    a: 'The celebration is the event. "Loud" is about the sound of the music.',
+                    b: 'Crowded explains the number of people, not the volume.',
+                    c: 'Layla says the concert was loud, so the word describes the strong sound of the music.',
+                  },
+                },
+              ],
+              options: [
+                { key: 'a', label: 'a) a big community event to enjoy together' },
+                { key: 'b', label: 'b) completely full of people' },
+                { key: 'c', label: 'c) a live music performance with musicians or dancers' },
+                { key: 'd', label: 'd) making a strong noise that you can feel' },
+              ],
+            },
+          },
+          {
+            number: 3,
+            name: "Grammar Focus: 'There was' or 'There were'?",
+            instruction: 'Choose the correct form to complete each sentence from the dialogue.',
+            type: 'dropdown',
+            items: [
+              {
+                sentence: '1. There [was/were] a dabke concert with loud music.',
+                options: ['was', 'were'],
+                answer: 'was',
+                feedback: {
+                  were: 'A concert is one event, so Layla says "There was a dabke concert."',
+                },
+              },
+              {
+                sentence: '2. There [was/were] food stalls from different villages.',
+                options: ['was', 'were'],
+                answer: 'were',
+                feedback: {
+                  was: 'Layla talks about several stalls. Plural nouns need "were."',
+                },
+              },
+              {
+                sentence: '3. It [was/were] crowded near the dessert stalls.',
+                options: ['was', 'were'],
+                answer: 'was',
+                feedback: {
+                  were: 'The subject is "it," so Layla says "It was crowded."',
+                },
+              },
+              {
+                sentence: '4. My cousins [was/were] with me the whole evening.',
+                options: ['was', 'were'],
+                answer: 'were',
+                feedback: {
+                  was: '"Cousins" is plural. In the dialogue she talks about her cousins, so use "were."',
+                },
+              },
+            ],
+          },
+          {
+            number: 4,
+            name: 'Rebuild Layla\'s Story',
+            instruction: 'Use the arrows to arrange the sentences in the same order as the model dialogue.',
+            type: 'ranking',
+            items: {
+              lines: [
+                {
+                  id: 'A',
+                  text: 'A. Layla went to the Taste of Palestine food festival in Ramallah.',
+                  hint: 'She mentions the festival before describing any activities.',
+                },
+                {
+                  id: 'B',
+                  text: 'B. There was a dabke concert with loud music.',
+                  hint: 'Right after introducing the celebration, she talks about the concert.',
+                },
+                {
+                  id: 'C',
+                  text: 'C. There were food stalls from different villages.',
+                  hint: 'Food comes after the music detail in the dialogue.',
+                },
+                {
+                  id: 'D',
+                  text: 'D. It felt like home because her cousins were with her in the crowd.',
+                  hint: 'Her feelings and cousins end the story.',
+                },
+              ],
+              correctOrder: ['A', 'B', 'C', 'D'],
+              feedback: 'Revisit Layla\'s story: she starts with the event, then the music, the food, and finally how she felt.',
+            },
+          },
+        ],
+      };
+
+      const HERO_IMAGE_URL =
+        'https://images.pexels.com/photos/225025/pexels-photo-225025.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600';
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initWorksheet().catch(error => console.error('Worksheet failed to initialise', error));
+      });
+
+      async function initWorksheet() {
+        const data = await loadWorksheetData();
+        renderModelDialogue(data.model);
+        renderActivities(data.activities);
+        await loadHeroImage();
+      }
+
+      async function loadWorksheetData() {
+        await new Promise(resolve => setTimeout(resolve, 150));
+        return cloneData(worksheetData);
+      }
+
+      function renderModelDialogue(model) {
+        const list = document.getElementById('dialogue-list');
+        list.innerHTML = '';
+
+        model.lines.forEach(line => {
+          const item = document.createElement('li');
+          item.className = 'dialogue-item';
+
+          const speaker = document.createElement('span');
+          speaker.className = 'dialogue-speaker';
+          speaker.textContent = `${line.speaker}:`;
+
+          const text = document.createElement('span');
+          text.textContent = line.text;
+
+          item.append(speaker, text);
+          list.appendChild(item);
+        });
+      }
+
+      function renderActivities(activities) {
+        const container = document.getElementById('activities');
+        const template = document.getElementById('activity-template');
+        container.innerHTML = '';
+
+        activities.forEach(activity => {
+          const node = template.content.firstElementChild.cloneNode(true);
+          const title = node.querySelector('.activity-title');
+          const instruction = node.querySelector('.activity-instruction');
+          const body = node.querySelector('.activity-body');
+          const feedbackEl = node.querySelector('.feedback-banner');
+          const checkBtn = node.querySelector('.check-btn');
+          const resetBtn = node.querySelector('.reset-btn');
+
+          title.textContent = `${activity.number}. ${activity.name}`;
+          instruction.textContent = activity.instruction;
+
+          const implementation = activityImplementations[activity.type];
+          if (!implementation) {
+            console.warn(`No implementation for activity type: ${activity.type}`);
+            return;
+          }
+
+          let dirty = false;
+          checkBtn.disabled = true;
+
+          const setDirty = () => {
+            dirty = true;
+            checkBtn.disabled = false;
+            feedbackEl.dataset.visible = 'false';
+            feedbackEl.innerHTML = '';
+          };
+
+          const instance = implementation(activity, body, feedbackEl, {
+            onChange: setDirty,
+          });
+
+          checkBtn.addEventListener('click', () => {
+            if (!dirty) {
+              return;
+            }
+
+            const result = instance.check();
+            dirty = false;
+            checkBtn.disabled = true;
+
+            if (result?.perfect) {
+              showToast('Great work! Every answer matches Layla\'s story.');
+            }
+          });
+
+          resetBtn.addEventListener('click', () => {
+            instance.reset();
+            dirty = false;
+            checkBtn.disabled = true;
+            feedbackEl.dataset.visible = 'false';
+            feedbackEl.innerHTML = '';
+          });
+
+          container.appendChild(node);
+        });
+      }
+
+      const activityImplementations = {
+        'multiple-choice': (activity, body, feedbackEl, options) => {
+          const template = document.getElementById('multiple-choice-option');
+          const questionStates = activity.items.map((item, index) => {
+            const fieldset = document.createElement('fieldset');
+            fieldset.setAttribute('role', 'group');
+            fieldset.setAttribute('aria-labelledby', `mc-question-${activity.number}-${index + 1}`);
+
+            const legend = document.createElement('p');
+            legend.className = 'mc-question';
+            legend.id = `mc-question-${activity.number}-${index + 1}`;
+            legend.textContent = item.question;
+
+            const optionsWrapper = document.createElement('div');
+            optionsWrapper.className = 'mc-options';
+
+            const state = {
+              answer: item.answer,
+              feedback: item.feedback || {},
+              inputs: [],
+              labels: [],
+            };
+
+            item.options.forEach(option => {
+              const optionNode = template.content.firstElementChild.cloneNode(true);
+              const input = optionNode.querySelector('input');
+              const keyEl = optionNode.querySelector('.mc-option-key');
+              const textEl = optionNode.querySelector('.mc-option-text');
+
+              input.name = `mc-${activity.number}-${index}`;
+              input.value = option.key;
+              input.required = false;
+              input.tabIndex = 0;
+
+              input.addEventListener('change', () => {
+                state.labels.forEach(label => label.dataset.state = '');
+                optionNode.dataset.state = 'selected';
+                options?.onChange?.();
+              });
+
+              optionNode.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  input.checked = true;
+                  input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+              });
+
+              keyEl.textContent = option.key.toUpperCase();
+              textEl.textContent = option.label;
+
+              state.inputs.push(input);
+              state.labels.push(optionNode);
+              optionsWrapper.appendChild(optionNode);
+            });
+
+            fieldset.append(legend, optionsWrapper);
+            body.appendChild(fieldset);
+
+            return state;
+          });
+
+          return {
+            check() {
+              let correct = 0;
+              let completed = true;
+              const messages = [];
+
+              questionStates.forEach((state, index) => {
+                let selectedValue = null;
+
+                state.labels.forEach(label => {
+                  if (label.dataset.state === 'selected') {
+                    label.dataset.state = '';
+                  }
+                });
+
+                state.inputs.forEach((input, idx) => {
+                  const label = state.labels[idx];
+                  label.dataset.state = '';
+                  if (input.checked) {
+                    selectedValue = input.value;
+                    label.dataset.state = 'selected';
+                  }
+                });
+
+                if (!selectedValue) {
+                  completed = false;
+                  messages.push(`Question ${index + 1}: Choose an answer before checking.`);
+                  return;
+                }
+
+                state.labels.forEach(label => {
+                  if (label.dataset.state !== 'selected') {
+                    label.dataset.state = '';
+                  }
+                });
+
+                const correctLabel = state.labels.find(label => {
+                  const input = label.querySelector('input');
+                  return input && input.value === state.answer;
+                });
+                if (correctLabel) {
+                  correctLabel.dataset.state = 'correct';
+                }
+
+                if (selectedValue === state.answer) {
+                  correct += 1;
+                  const selectedLabel = state.labels.find(label => {
+                    const input = label.querySelector('input');
+                    return input && input.value === selectedValue;
+                  });
+                  if (selectedLabel) {
+                    selectedLabel.dataset.state = 'correct';
+                  }
+                } else {
+                  const wrongLabel = state.labels.find(label => {
+                    const input = label.querySelector('input');
+                    return input && input.value === selectedValue;
+                  });
+                  if (wrongLabel) {
+                    wrongLabel.dataset.state = 'incorrect';
+                  }
+                  const message = state.feedback?.[selectedValue];
+                  if (message) {
+                    messages.push(message);
+                  }
+                }
+              });
+
+              updateFeedback(feedbackEl, {
+                completed,
+                correct,
+                total: questionStates.length,
+                messages,
+                successMessage: 'Excellent reading! You remembered every detail from the festival.',
+                retryMessage: 'Check the dialogue again. These notes will help you adjust your answers:',
+              });
+
+              return {
+                correct,
+                total: questionStates.length,
+                completed,
+                messages,
+                perfect: completed && correct === questionStates.length,
+              };
+            },
+            reset() {
+              questionStates.forEach(state => {
+                state.inputs.forEach(input => {
+                  input.checked = false;
+                });
+                state.labels.forEach(label => {
+                  label.dataset.state = '';
+                });
+              });
+            },
+          };
+        },
+
+        matching: (activity, body, feedbackEl, options) => {
+          const questionTemplate = document.getElementById('matching-select');
+
+          const listHeading = document.createElement('div');
+          listHeading.className = 'dialogue-item';
+          listHeading.innerHTML =
+            '<span class="dialogue-speaker">Word</span><span>Meaning</span>';
+          body.appendChild(listHeading);
+
+          const selectStates = activity.items.questions.map(question => {
+            const node = questionTemplate.content.firstElementChild.cloneNode(true);
+            node.querySelector('.matching-question').textContent = question.prompt;
+            const select = node.querySelector('select');
+
+            select.innerHTML = '<option value="">Select an option</option>';
+            activity.items.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option.key;
+              opt.textContent = option.label;
+              select.appendChild(opt);
+            });
+
+            select.addEventListener('change', () => {
+              options?.onChange?.();
+            });
+
+            body.appendChild(node);
+            return { select, answer: question.answer, feedback: question.feedback || {} };
+          });
+
+          return {
+            check() {
+              let correct = 0;
+              let completed = true;
+              const messages = [];
+
+              selectStates.forEach((state, index) => {
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+
+                if (!state.select.value) {
+                  completed = false;
+                  updateSelectState(state.select, 'empty');
+                  messages.push(`Word ${index + 1}: Choose a meaning before checking.`);
+                  return;
+                }
+
+                if (state.select.value === state.answer) {
+                  correct += 1;
+                  updateSelectState(state.select, 'correct');
+                } else {
+                  updateSelectState(state.select, 'incorrect');
+                  const message = state.feedback?.[state.select.value];
+                  if (message) {
+                    state.select.setAttribute('title', message);
+                    messages.push(message);
+                  }
+                }
+              });
+
+              updateFeedback(feedbackEl, {
+                completed,
+                correct,
+                total: selectStates.length,
+                messages,
+                successMessage: 'Beautifully matched! Your vocabulary choices mirror Layla\'s description.',
+                retryMessage: 'Review the dialogue lines again and adjust the meanings:',
+              });
+
+              return {
+                correct,
+                total: selectStates.length,
+                completed,
+                messages,
+                perfect: completed && correct === selectStates.length,
+              };
+            },
+            reset() {
+              selectStates.forEach(state => {
+                state.select.value = '';
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+              });
+            },
+          };
+        },
+
+        dropdown: (activity, body, feedbackEl, options) => {
+          const template = document.getElementById('dropdown-item');
+          const states = activity.items.map(item => {
+            const node = template.content.firstElementChild.cloneNode(true);
+            node.querySelector('.dropdown-sentence').textContent = item.sentence;
+            const select = node.querySelector('select');
+
+            select.innerHTML = '<option value="">Select an answer</option>';
+            item.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option;
+              opt.textContent = option;
+              select.appendChild(opt);
+            });
+
+            select.addEventListener('change', () => {
+              options?.onChange?.();
+            });
+
+            body.appendChild(node);
+            return { select, answer: item.answer, feedback: item.feedback || {} };
+          });
+
+          return {
+            check() {
+              let correct = 0;
+              let completed = true;
+              const messages = [];
+
+              states.forEach((state, index) => {
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+
+                if (!state.select.value) {
+                  completed = false;
+                  updateSelectState(state.select, 'empty');
+                  messages.push(`Sentence ${index + 1}: Choose a word before checking.`);
+                  return;
+                }
+
+                if (state.select.value === state.answer) {
+                  correct += 1;
+                  updateSelectState(state.select, 'correct');
+                } else {
+                  updateSelectState(state.select, 'incorrect');
+                  const message = state.feedback?.[state.select.value];
+                  if (message) {
+                    state.select.setAttribute('title', message);
+                    messages.push(message);
+                  }
+                }
+              });
+
+              updateFeedback(feedbackEl, {
+                completed,
+                correct,
+                total: states.length,
+                messages,
+                successMessage: 'Grammar on point! Your forms match Layla\'s exact sentences.',
+                retryMessage: 'Check which nouns are singular or plural in the dialogue:',
+              });
+
+              return {
+                correct,
+                total: states.length,
+                completed,
+                messages,
+                perfect: completed && correct === states.length,
+              };
+            },
+            reset() {
+              states.forEach(state => {
+                state.select.value = '';
+                updateSelectState(state.select, null);
+                state.select.removeAttribute('title');
+              });
+            },
+          };
+        },
+
+        ranking: (activity, body, feedbackEl, options) => {
+          const template = document.getElementById('ranking-item');
+          const list = document.createElement('ul');
+          list.className = 'ranking-list';
+
+          const initialOrder = activity.items.lines.map(line => ({ ...line }));
+          let currentOrder = [...initialOrder];
+
+          function renderList() {
+            list.innerHTML = '';
+            currentOrder.forEach((line, index) => {
+              const node = template.content.firstElementChild.cloneNode(true);
+              node.querySelector('.ranking-text').textContent = line.text;
+              node.dataset.state = '';
+
+              const upBtn = node.querySelector('.move-up');
+              const downBtn = node.querySelector('.move-down');
+
+              upBtn.disabled = index === 0;
+              downBtn.disabled = index === currentOrder.length - 1;
+
+              upBtn.addEventListener('click', () => {
+                moveItem(index, index - 1);
+              });
+
+              downBtn.addEventListener('click', () => {
+                moveItem(index, index + 1);
+              });
+
+              list.appendChild(node);
+            });
+          }
+
+          function moveItem(from, to) {
+            if (to < 0 || to >= currentOrder.length) return;
+            const updated = [...currentOrder];
+            const [moved] = updated.splice(from, 1);
+            updated.splice(to, 0, moved);
+            currentOrder = updated;
+            renderList();
+            options?.onChange?.();
+          }
+
+          renderList();
+          body.appendChild(list);
+
+          return {
+            check() {
+              const expected = activity.items.correctOrder;
+              const messages = [];
+              let correct = 0;
+
+              const items = list.querySelectorAll('.ranking-item');
+
+              currentOrder.forEach((line, index) => {
+                const itemEl = items[index];
+                if (!itemEl) return;
+
+                if (line.id === expected[index]) {
+                  itemEl.dataset.state = 'correct';
+                  correct += 1;
+                } else {
+                  itemEl.dataset.state = 'incorrect';
+                  const hint = line.hint || activity.items.feedback;
+                  if (hint) {
+                    messages.push(`${line.text.split('. ')[1]} → ${hint}`);
+                  }
+                }
+              });
+
+              const completed = correct === expected.length;
+
+              updateFeedback(feedbackEl, {
+                completed: true,
+                correct,
+                total: expected.length,
+                messages,
+                successMessage: 'You sequenced Layla\'s story perfectly!',
+                retryMessage: activity.items.feedback,
+              });
+
+              return {
+                correct,
+                total: expected.length,
+                completed: true,
+                messages,
+                perfect: completed,
+              };
+            },
+            reset() {
+              currentOrder = [...initialOrder];
+              renderList();
+            },
+          };
+        },
+      };
+
+      function updateFeedback(container, { completed, correct, total, messages, successMessage, retryMessage }) {
+        container.dataset.visible = 'true';
+
+        if (!completed) {
+          container.innerHTML = '<p>Please answer every item before checking.</p>';
+          return;
+        }
+
+        if (correct === total) {
+          container.innerHTML = `<p>${successMessage}</p>`;
+          return;
+        }
+
+        let messageHtml = `<p>${retryMessage}</p>`;
+        if (messages.length) {
+          const uniqueMessages = [...new Set(messages)];
+          messageHtml += '<ul>' + uniqueMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+        }
+        container.innerHTML = messageHtml;
+      }
+
+      function showToast(message) {
+        const root = document.getElementById('toast-root');
+        if (!root) return;
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        toast.innerHTML = `<i class="fa-solid fa-star"></i><span>${message}</span>`;
+        root.appendChild(toast);
+
+        requestAnimationFrame(() => {
+          toast.classList.add('is-visible');
+        });
+
+        setTimeout(() => {
+          toast.classList.remove('is-visible');
+          toast.addEventListener(
+            'transitionend',
+            () => {
+              toast.remove();
+            },
+            { once: true }
+          );
+        }, 3200);
+      }
+
+      function cloneData(value) {
+        if (typeof structuredClone === 'function') {
+          return structuredClone(value);
+        }
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function updateSelectState(select, state) {
+        if (!state) {
+          select.removeAttribute('data-state');
+        } else {
+          select.dataset.state = state;
+        }
+      }
+
+      async function loadHeroImage() {
+        const hero = document.getElementById('hero');
+        if (!hero) return;
+
+        const image = new Image();
+        image.decoding = 'async';
+        image.loading = 'lazy';
+        image.src = HERO_IMAGE_URL;
+
+        const rootStyle = document.documentElement.style;
+
+        const applyBackground = () => {
+          rootStyle.setProperty('--hero-image-url', `url(${HERO_IMAGE_URL})`);
+          hero.dataset.imageLoaded = 'true';
+        };
+
+        image.addEventListener('load', applyBackground, { once: true });
+        image.addEventListener(
+          'error',
+          () => {
+            console.warn('Unable to load hero image from direct URL.');
+            rootStyle.removeProperty('--hero-image-url');
+            hero.dataset.imageLoaded = 'false';
+          },
+          { once: true }
+        );
+
+        if (image.complete && image.naturalWidth > 0) {
+          applyBackground();
+        }
+      }
+    </script>
+  </body>
+</html>
