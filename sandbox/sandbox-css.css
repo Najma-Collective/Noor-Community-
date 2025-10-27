@@ -192,6 +192,24 @@ body {
   justify-items: center;
 }
 
+.dialogue-insight-layout {
+  display: grid;
+  gap: clamp(var(--space-4), 2.4vw, var(--space-6));
+  max-width: var(--content-max-width);
+}
+
+.dialogue-transcript .dialogue-card {
+  display: grid;
+  gap: clamp(var(--space-3), 1.8vw, var(--space-4));
+}
+
+@media (min-width: 900px) {
+  .dialogue-insight-layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
 .list-reset {
   margin: 0;
   padding: 0;
