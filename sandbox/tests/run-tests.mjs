@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const fixturePath = join(__dirname, 'fixtures', 'minimal-deck.html');
 const html = await readFile(fixturePath, 'utf8');
+const css = await readFile(join(__dirname, '../sandbox-css.css'), 'utf8');
 
 const dom = new JSDOM(html, {
   url: 'https://example.com/sandbox/',
@@ -17,6 +18,32 @@ const dom = new JSDOM(html, {
 
 const { window } = dom;
 const { document } = window;
+
+const escapeForRegExp = (value) =>
+  value.replace(/[-/\^$*+?.()|[\]{}]/g, '\$&');
+const selectorsToInclude = [
+  ':root',
+  '.deck-workspace.is-blank-active',
+  '.deck-workspace.is-blank-active .stage-viewport',
+  '.deck-workspace.is-blank-active .slide-stage[data-type="blank"]',
+  '.deck-workspace.is-blank-active .slide-stage[data-type="blank"] > .slide-inner',
+  '.deck-workspace.is-blank-active .slide-stage[data-type="blank"] .blank-slide',
+  '.deck-workspace.is-blank-active .blank-slide > .blank-controls-home',
+  '.blank-slide',
+  '.blank-controls-home',
+  '.blank-canvas',
+];
+const importantCss = selectorsToInclude
+  .map((selector) => {
+    const pattern = new RegExp(`${escapeForRegExp(selector)}\\s*{[\\s\\S]*?}`, 'g');
+    const matches = css.match(pattern);
+    return matches ? matches.join('\n') : '';
+  })
+  .filter(Boolean)
+  .join('\n');
+const styleEl = document.createElement('style');
+styleEl.textContent = importantCss;
+document.head?.append(styleEl);
 
 const noop = () => {};
 const nextFrame = () =>
@@ -392,6 +419,34 @@ assert.equal(
 );
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close after inserting a module');
 
+const blankCanvasStyles = window.getComputedStyle(blankCanvas);
+assert.equal(
+  blankCanvasStyles.getPropertyValue('overflow').trim(),
+  'hidden auto',
+  'blank canvas should only surface vertical scrollbars while keeping the horizontal axis hidden',
+);
+assert.equal(
+  parseFloat(blankCanvasStyles.minHeight),
+  0,
+  'blank canvas flex minimum should allow it to stretch with the viewport',
+);
+assert.equal(blankCanvasStyles.flexGrow, '1', 'blank canvas should flex to fill the blank slide');
+const canvasMinBlockSize = blankCanvasStyles.getPropertyValue('min-block-size').trim();
+assert.ok(canvasMinBlockSize.length > 0, 'blank canvas should expose a viewport-aware sizing token');
+assert.match(
+  canvasMinBlockSize,
+  /(dvh|min\(|calc\()/i,
+  'blank canvas sizing token should reference the viewport height',
+);
+const workspaceViewportSizing = window
+  .getComputedStyle(deckWorkspace)
+  .getPropertyValue('--blank-layout-height')
+  .trim();
+assert.ok(
+  workspaceViewportSizing.includes('100dvh'),
+  'blank workspace should track viewport height while the blank layout is active',
+);
+
 const initialTextboxCount = textboxes.length;
 selectInsertOption('add-textbox');
 await flushTimers();
@@ -526,6 +581,15 @@ assert.ok(
   !deckWorkspace.classList.contains('is-blank-active'),
   'workspace should clear blank state after leaving the blank slide',
 );
+const workspaceViewportSizingAfterPractice = window
+  .getComputedStyle(deckWorkspace)
+  .getPropertyValue('--blank-layout-height')
+  .trim();
+assert.equal(
+  workspaceViewportSizingAfterPractice,
+  '',
+  'blank workspace should clear viewport sizing tokens when the blank layout is inactive',
+);
 
 const practiceModuleHost = practiceSlide.querySelector('[data-role="practice-module-host"]');
 const practiceAddModuleBtn = practiceSlide.querySelector('[data-action="add-module"]');
@@ -597,6 +661,27 @@ assert.ok(
 
 const moduleOnlyCanvas = moduleOnlyBlankSlide.querySelector('.blank-canvas');
 assert.ok(moduleOnlyCanvas instanceof window.HTMLElement, 'module-only blank slide should provide a canvas');
+const moduleOnlyCanvasStyles = window.getComputedStyle(moduleOnlyCanvas);
+const toggledCanvasMinBlock = moduleOnlyCanvasStyles
+  .getPropertyValue('min-block-size')
+  .trim();
+assert.ok(
+  toggledCanvasMinBlock.length > 0 && /(dvh|min\(|calc\()/i.test(toggledCanvasMinBlock),
+  'blank canvas should restore its viewport-aware sizing token after toggling back to the blank layout',
+);
+assert.equal(
+  moduleOnlyCanvasStyles.getPropertyValue('overflow').trim(),
+  'hidden auto',
+  'module-only blank canvas should continue to avoid stray scrollbars after toggling layouts',
+);
+const workspaceViewportSizingAfterReturn = window
+  .getComputedStyle(deckWorkspace)
+  .getPropertyValue('--blank-layout-height')
+  .trim();
+assert.ok(
+  workspaceViewportSizingAfterReturn.includes('100dvh'),
+  'blank workspace should resume tracking the viewport height after returning to a blank slide',
+);
 
 selectInsertOption('add-module');
 await flushTimers();
