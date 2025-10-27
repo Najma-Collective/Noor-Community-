@@ -1487,6 +1487,130 @@
             </div>
           </div>
 
+          <!-- Slide: Card stack layout overview -->
+          <div class="slide-stage hidden lesson-slide lesson-slide--card-stack">
+            <div class="slide-inner lesson-slide-inner card-stack-layout">
+              <header class="lesson-header card-stack-header stack stack-sm">
+                <span class="pill card-stack-pill"
+                  ><i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                  Studio Sprint Stack</span
+                >
+                <h2>Sequence the sprint workflow</h2>
+                <p class="card-stack-lead">
+                  Stack three cards to narrate how teams move from the scenario
+                  pill into prototyping and evidence capture. Each card should
+                  hold a badge-ready headline and a single actionable note.
+                </p>
+              </header>
+              <div class="card-stack-list stack stack-md">
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 1</span>
+                    </span>
+                    <h3>Set the stage</h3>
+                  </div>
+                  <p>
+                    Preview the scenario pill and name the badge learners earn
+                    when they surface a bold user insight during share outs.
+                  </p>
+                </article>
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 2</span>
+                    </span>
+                    <h3>Prototype carousel</h3>
+                  </div>
+                  <p>
+                    List the rotation order and cue the feedback lens so each
+                    team knows how to capture glow/grow notes efficiently.
+                  </p>
+                </article>
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 3</span>
+                    </span>
+                    <h3>Evidence capture</h3>
+                  </div>
+                  <p>
+                    End with the documentation move—call out the artifacts or
+                    recordings that teams should collect before the next build.
+                  </p>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide: Pill plus gallery layout overview -->
+          <div class="slide-stage hidden lesson-slide lesson-slide--pill-with-gallery">
+            <div class="slide-inner lesson-slide-inner pill-gallery-layout">
+              <header class="lesson-header pill-gallery-header stack stack-sm">
+                <span class="pill pill-gallery-pill"
+                  ><i class="fa-solid fa-camera-retro" aria-hidden="true"></i>
+                  Scenario Spotlight</span
+                >
+                <h2>Showcase the challenge in action</h2>
+                <p class="pill-gallery-lead">
+                  Pair the scenario pill with three gallery tiles so learners
+                  can see the brief, the build, and the emerging impact at a
+                  glance.
+                </p>
+              </header>
+              <div class="pill-gallery-grid">
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Learners planning a sprint with sticky notes"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 1</span>
+                    </span>
+                    <p>Briefing circle · Teams surface user needs and success criteria.</p>
+                  </figcaption>
+                </figure>
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/3182765/pexels-photo-3182765.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Sketches and prototypes on a table"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 2</span>
+                    </span>
+                    <p>Iteration lab · Capture build photos alongside the feedback badge earned.</p>
+                  </figcaption>
+                </figure>
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Student presenting a project to peers"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 3</span>
+                    </span>
+                    <p>Gallery walk · Highlight the reflection question that unlocks the progress badge.</p>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
           <div class="deck-logo-cluster">
             <img src="../assets/almanar_logo.png" alt="Al Manar logo" loading="lazy" />
             <img src="../assets/noor_logo.webp" alt="Noor Community logo" loading="lazy" />
@@ -1808,6 +1932,56 @@
                   placeholder="fa-solid fa-list-check"
                   value="fa-solid fa-list-check"
                   aria-label="Icon class for Interactive practice layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="card-stack"
+              title="Stack a trio of studio-ready cards with guided copy."
+            >
+              <input type="radio" name="slideLayout" value="card-stack" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Card stack</span>
+                  <span class="layout-option-desc">Bundle three workflow cards with badge-ready headlines.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="card-stack"
+                  placeholder="fa-solid fa-layer-group"
+                  value="fa-solid fa-layer-group"
+                  aria-label="Icon class for Card stack layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="pill-with-gallery"
+              title="Pair a scenario pill with a gallery of evidence." 
+            >
+              <input type="radio" name="slideLayout" value="pill-with-gallery" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Pill + gallery</span>
+                  <span class="layout-option-desc">Headline the brief, then showcase image evidence in a tidy grid.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="pill-with-gallery"
+                  placeholder="fa-solid fa-images"
+                  value="fa-solid fa-images"
+                  aria-label="Icon class for Pill plus gallery layout"
                   autocomplete="off"
                 />
               </span>
@@ -2795,6 +2969,114 @@
             />
           </label>
           <ul id="builder-practice-list" class="builder-dynamic-list" aria-live="polite"></ul>
+        </section>
+
+        <section class="builder-section" data-layouts="card-stack">
+          <header class="builder-section-header">
+            <div>
+              <h3>Card stack</h3>
+              <p>Stack three workflow cards that keep the sprint moving.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill text</span>
+            <input type="text" name="cardStackPill" placeholder="Studio sprint stack" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill icon class</span>
+            <input
+              type="text"
+              name="cardStackPillIcon"
+              data-field="cardStackPillIcon"
+              placeholder="fa-solid fa-bookmark"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="cardStackTitle" placeholder="Preview the next build moves" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Lead copy</span>
+            <textarea
+              name="cardStackDescription"
+              rows="2"
+              placeholder="Skim the stack to confirm the workflow..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Cards (one per line)</span>
+            <textarea
+              name="cardStackItems"
+              rows="4"
+              placeholder="Prototype ready check — List the build, blockers, and final tweaks."
+            ></textarea>
+            <span class="builder-field-hint">Use “Title — description” on each line.</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Card icon class</span>
+            <input
+              type="text"
+              name="cardStackItemIcon"
+              data-field="cardStackItemIcon"
+              placeholder="fa-solid fa-circle-dot"
+              autocomplete="off"
+            />
+          </label>
+        </section>
+
+        <section class="builder-section" data-layouts="pill-with-gallery">
+          <header class="builder-section-header">
+            <div>
+              <h3>Pill + gallery</h3>
+              <p>Introduce the scenario, then display evidence-rich visuals.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill text</span>
+            <input type="text" name="pillGalleryPill" placeholder="Scenario spotlight" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Pill icon class</span>
+            <input
+              type="text"
+              name="pillGalleryPillIcon"
+              data-field="pillGalleryPillIcon"
+              placeholder="fa-solid fa-camera-retro"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="pillGalleryTitle" placeholder="Ground the challenge with vivid artefacts" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Lead copy</span>
+            <textarea
+              name="pillGalleryDescription"
+              rows="2"
+              placeholder="Pair the scenario pill with a gallery of visuals..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Gallery items (one per line)</span>
+            <textarea
+              name="pillGalleryItems"
+              rows="5"
+              placeholder="https://images.example.com/photo.jpg | Learners prototyping a device | Sprint briefing caption"
+            ></textarea>
+            <span class="builder-field-hint">Use “Image URL | Alt text | Caption” for each gallery tile.</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Gallery icon class</span>
+            <input
+              type="text"
+              name="pillGalleryItemIcon"
+              data-field="pillGalleryItemIcon"
+              placeholder="fa-solid fa-image"
+              autocomplete="off"
+            />
+          </label>
         </section>
 
         <section class="builder-section" data-layouts="creative-practice">

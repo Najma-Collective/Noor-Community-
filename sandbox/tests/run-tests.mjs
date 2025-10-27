@@ -240,8 +240,8 @@ assert.ok(
 );
 assert.equal(
   layoutPickerFieldset.dataset.layouts,
-  'blank-canvas,interactive-practice',
-  'layout picker should offer blank and interactive practice layouts',
+  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
+  'layout picker should expose the sandbox card stack and pill gallery layouts',
 );
 
 const imageSearchSection = builderOverlay
@@ -253,8 +253,8 @@ assert.ok(
 );
 assert.equal(
   imageSearchSection.dataset.layouts,
-  'blank-canvas,interactive-practice',
-  'image search tools should remain available to blank and interactive practice layouts',
+  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
+  'image search tools should remain available to blank, interactive practice, card stack, and pill gallery layouts',
 );
 
 addSlideBtn.click();
@@ -266,7 +266,12 @@ assert.ok(
   'blank layout should mark the builder preview as blank',
 );
 
-const expectedLayouts = ['blank-canvas', 'interactive-practice'];
+const expectedLayouts = [
+  'blank-canvas',
+  'interactive-practice',
+  'card-stack',
+  'pill-with-gallery',
+];
 
 expectedLayouts.forEach((value) => {
   const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
@@ -625,6 +630,157 @@ await flushTimers();
 assert.ok(
   !moduleOverlay.classList.contains('is-visible'),
   'module overlay should close after returning from practice slide',
+);
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for card stack layout selection',
+);
+
+const cardStackRadio = builderOverlay.querySelector('input[name="slideLayout"][value="card-stack"]');
+assert.ok(
+  cardStackRadio instanceof window.HTMLInputElement,
+  'card stack layout option should be selectable',
+);
+cardStackRadio.checked = true;
+cardStackRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'card stack layout should toggle the preview away from the blank state',
+);
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting a card stack slide',
+);
+
+const cardStackSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-layout="card-stack"]'),
+);
+assert.ok(
+  cardStackSlides.length >= 1,
+  'card stack layout submission should add a card stack slide to the deck',
+);
+const cardStackSlide = cardStackSlides.at(-1);
+assert.ok(
+  cardStackSlide instanceof window.HTMLElement,
+  'card stack slide should exist in the deck after submission',
+);
+assert.ok(
+  !cardStackSlide.classList.contains('hidden'),
+  'card stack slide should become the active slide after submission',
+);
+
+const cardStackPill = cardStackSlide.querySelector('.card-stack-pill');
+assert.ok(
+  cardStackPill instanceof window.HTMLElement,
+  'card stack slide should render the workflow pill',
+);
+
+const cardStackList = cardStackSlide.querySelector('.card-stack-list');
+assert.ok(
+  cardStackList instanceof window.HTMLElement,
+  'card stack slide should render the workflow list',
+);
+const stackCards = Array.from(cardStackList.querySelectorAll('.stack-card'));
+assert.ok(stackCards.length >= 3, 'card stack slide should render multiple stack cards with defaults');
+
+const firstStackCard = stackCards[0];
+assert.ok(
+  firstStackCard?.querySelector('.stack-card-icon i'),
+  'card stack slide should include an icon for each workflow card',
+);
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for pill gallery layout selection',
+);
+
+const pillGalleryRadio = builderOverlay.querySelector(
+  'input[name="slideLayout"][value="pill-with-gallery"]',
+);
+assert.ok(
+  pillGalleryRadio instanceof window.HTMLInputElement,
+  'pill plus gallery layout option should be selectable',
+);
+pillGalleryRadio.checked = true;
+pillGalleryRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'pill plus gallery layout should update the preview away from the blank state',
+);
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting a pill plus gallery slide',
+);
+
+const pillGallerySlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-layout="pill-with-gallery"]'),
+);
+assert.ok(
+  pillGallerySlides.length >= 1,
+  'pill plus gallery layout submission should add a pill gallery slide to the deck',
+);
+const pillGallerySlide = pillGallerySlides.at(-1);
+assert.ok(
+  pillGallerySlide instanceof window.HTMLElement,
+  'pill gallery slide should exist in the deck after submission',
+);
+assert.ok(
+  !pillGallerySlide.classList.contains('hidden'),
+  'pill gallery slide should become the active slide after submission',
+);
+
+const pillGalleryPill = pillGallerySlide.querySelector('.pill-gallery-pill');
+assert.ok(
+  pillGalleryPill instanceof window.HTMLElement,
+  'pill gallery slide should render the scenario pill',
+);
+
+const pillGalleryGrid = pillGallerySlide.querySelector('.pill-gallery-grid');
+assert.ok(
+  pillGalleryGrid instanceof window.HTMLElement,
+  'pill gallery slide should render the gallery grid',
+);
+const galleryItems = Array.from(pillGalleryGrid.querySelectorAll('.pill-gallery-item'));
+assert.ok(galleryItems.length >= 3, 'pill gallery slide should render gallery tiles with defaults');
+
+const firstGalleryFigure = galleryItems[0];
+assert.ok(
+  firstGalleryFigure?.querySelector('img, .pill-gallery-placeholder'),
+  'pill gallery slide should provide imagery or placeholders for each tile',
+);
+const firstGalleryCaption = firstGalleryFigure?.querySelector('.pill-gallery-caption');
+assert.ok(
+  firstGalleryCaption?.querySelector('.pill-gallery-icon i'),
+  'pill gallery slide should decorate captions with the default icon',
 );
 
 addSlideBtn.click();
