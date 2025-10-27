@@ -1,0 +1,36 @@
+{
+  "title": "Scenario Spotlight",
+  "slides": [
+    {
+      "layout": "pill-with-gallery",
+      "data": {
+        "pill": "Field notes",
+        "title": "Ground the pitch with lived moments",
+        "description": "Pair the scenario pill with three visuals that highlight learner momentum.",
+        "gallery": [
+          {
+            "caption": "Kick-off huddle · Teams outline their roles and co-design agreements.",
+            "image": {
+              "pexelsQuery": "students collaborating in classroom",
+              "orientation": "landscape"
+            }
+          },
+          {
+            "caption": "Prototype lab · Crews sketch solutions and annotate their trade-offs.",
+            "image": {
+              "pexelsQuery": "students prototyping project",
+              "orientation": "landscape"
+            }
+          },
+          {
+            "caption": "Gallery walk · Learners capture peer feedback and next steps.",
+            "image": {
+              "pexelsQuery": "students presenting project",
+              "orientation": "landscape"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

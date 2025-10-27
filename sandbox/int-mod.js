@@ -13571,6 +13571,23 @@ function createPillWithGallerySlide({
       const captionText = document.createElement('p');
       captionText.textContent = item.caption || 'Describe the visible evidence or learner action.';
       caption.appendChild(captionText);
+      const creditText = trimText(item.credit);
+      if (creditText) {
+        const creditLine = document.createElement('p');
+        creditLine.className = 'pill-gallery-credit';
+        const creditUrl = trimText(item.creditUrl);
+        if (creditUrl) {
+          const link = document.createElement('a');
+          link.href = creditUrl;
+          link.target = '_blank';
+          link.rel = 'noreferrer noopener';
+          link.textContent = creditText;
+          creditLine.appendChild(link);
+        } else {
+          creditLine.textContent = creditText;
+        }
+        caption.appendChild(creditLine);
+      }
       figure.appendChild(caption);
       grid.appendChild(figure);
     });
@@ -13581,6 +13598,52 @@ function createPillWithGallerySlide({
     grid.appendChild(placeholder);
   }
 
+  return slide;
+}
+
+const LESSON_LAYOUT_RENDERERS = {
+  'blank-canvas': () => createBlankSlide(),
+  'learning-objectives': (data) => createLearningObjectivesSlide(data),
+  'model-dialogue': (data) => createModelDialogueSlide(data),
+  'interactive-practice': (data) => createInteractivePracticeSlide(data),
+  'communicative-task': (data) => createCommunicativeTaskSlide(data),
+  'pronunciation-focus': (data) => createPronunciationFocusSlide(data),
+  reflection: (data) => createReflectionSlide(data),
+  'grounding-activity': (data) => createGroundingActivitySlide(data),
+  'topic-introduction': (data) => createTopicIntroductionSlide(data),
+  'guided-discovery': (data) => createGuidedDiscoverySlide(data),
+  'creative-practice': (data) => createCreativePracticeSlide(data),
+  'task-divider': (data) => createTaskDividerSlide(data),
+  'task-reporting': (data) => createTaskReportingSlide(data),
+  'genre-deconstruction': (data) => createGenreDeconstructionSlide(data),
+  'linguistic-feature-hunt': (data) => createLinguisticFeatureHuntSlide(data),
+  'text-reconstruction': (data) => createTextReconstructionSlide(data),
+  'jumbled-text-sequencing': (data) => createJumbledTextSequencingSlide(data),
+  'scaffolded-joint-construction': (data) =>
+    createScaffoldedJointConstructionSlide(data),
+  'independent-construction-checklist': (data) =>
+    createIndependentConstructionChecklistSlide(data),
+  'card-stack': (data) => createCardStackSlide(data),
+  'pill-with-gallery': (data) => createPillWithGallerySlide(data),
+};
+
+export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(
+  Object.keys(LESSON_LAYOUT_RENDERERS),
+);
+
+export function getLessonLayoutRenderer(layout) {
+  return LESSON_LAYOUT_RENDERERS[layout] ?? null;
+}
+
+export function createLessonSlideFromState({ layout = 'blank-canvas', data = {} } = {}) {
+  const renderer = getLessonLayoutRenderer(layout);
+  if (typeof renderer !== 'function') {
+    throw new Error(`Unsupported lesson layout: ${layout}`);
+  }
+  const slide = renderer(data);
+  if (!(slide instanceof HTMLElement)) {
+    throw new Error(`Renderer for layout "${layout}" did not return an element.`);
+  }
   return slide;
 }
 
