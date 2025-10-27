@@ -15,16 +15,31 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="../../../CSS-slides.css" />
+    <link rel="stylesheet" href="../../../sandbox/sandbox-theme.css" />
+    <link rel="stylesheet" href="../../../sandbox/sandbox-css.css" />
   </head>
   <body>
+    <a class="skip-link" href="#lesson-stage">Skip to lesson workspace</a>
+    <div
+      id="deck-status"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+    <div
+      id="deck-toast-root"
+      class="deck-toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
     <div class="deck-app">
       <header class="deck-toolbar">
         <div class="toolbar-brand" aria-label="Noor Community deck toolbar">
-          <i
-            class="fa-solid fa-seedling"
-            style="color: var(--primary-sage)"
-            aria-hidden="true"
-          ></i>
+          <div class="toolbar-logos" aria-hidden="true">
+            <img src="../../../assets/noor_logo.webp" alt="" />
+            <img src="../../../assets/almanar_logo.png" alt="" />
+          </div>
           <span>Noor Community</span>
         </div>
         <div id="slide-counter" class="slide-counter">1 / 19</div>
@@ -44,33 +59,41 @@
             accept="application/json"
             aria-label="Load saved deck state"
           />
-          <div class="highlight-controls" role="group" aria-label="Highlight text">
-            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
-            <label class="sr-only" for="highlight-color">Highlight colour</label>
-            <select id="highlight-color" class="toolbar-select">
-              <option value="#F9E27D">Sunbeam</option>
-              <option value="#A5D6A7">Meadow</option>
-              <option value="#FFCCBC">Coral</option>
-            </select>
-            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
-              Apply
-            </button>
-            <button
-              id="remove-highlight-btn"
-              class="toolbar-btn ghost"
-              type="button"
-            >
-              Clear
-            </button>
-          </div>
           <button id="add-slide-btn" class="toolbar-btn" type="button">
             <i class="fa-solid fa-plus" aria-hidden="true"></i>
             Add Blank Slide
           </button>
+          <div class="toolbar-menu" data-role="canvas-tools">
+            <button
+              id="canvas-tools-toggle"
+              class="toolbar-btn tertiary has-caret"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="canvas-tools-menu"
+              disabled
+            >
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              Canvas Tools
+              <span class="toolbar-caret" aria-hidden="true"></span>
+            </button>
+            <div
+              id="canvas-tools-menu"
+              class="toolbar-dropdown"
+              role="menu"
+              aria-label="Canvas tools"
+              hidden
+            >
+              <div
+                class="toolbar-dropdown-inner"
+                data-role="canvas-tools-options"
+              ></div>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main class="deck-workspace">
+      <main id="lesson-stage" class="deck-workspace">
         <div class="stage-viewport">
           <!-- Slide 1: Title Slide (Standard) -->
           <div class="slide-stage">
@@ -1505,16 +1528,2151 @@
             </div>
           </div>
 
-          <button class="slide-nav slide-nav-prev" aria-label="Previous Slide">
+          <div class="deck-logo-cluster">
+            <img
+              src="../../../assets/almanar_logo.png"
+              alt="Al Manar logo"
+              loading="lazy"
+            />
+            <img
+              src="../../../assets/noor_logo.webp"
+              alt="Noor Community logo"
+              loading="lazy"
+            />
+          </div>
+          <button
+            class="slide-nav slide-nav-prev"
+            type="button"
+            aria-label="Previous Slide"
+          >
             <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
           </button>
-          <button class="slide-nav slide-nav-next" aria-label="Next Slide">
+          <button
+            class="slide-nav slide-nav-next"
+            type="button"
+            aria-label="Next Slide"
+          >
             <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
           </button>
         </div>
       </main>
     </div>
 
+    <div
+  id="activity-builder-overlay"
+  class="builder-overlay"
+  aria-hidden="true"
+  hidden
+>
+  <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
+    <header class="builder-header">
+      <div>
+        <p class="builder-eyebrow">Slide library</p>
+        <h2 id="builder-title">Create a lesson slide</h2>
+        <p class="builder-subtitle">
+          Start from a blank canvas or generate slides for language input, practice, and reflection.
+        </p>
+      </div>
+      <button type="button" class="builder-close" aria-label="Close slide builder">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+    <form id="activity-builder-form" class="builder-form">
+      <div class="builder-grid">
+        <fieldset
+          class="builder-field builder-field--full layout-picker"
+          data-layouts="blank-canvas,learning-objectives,model-dialogue,interactive-practice,communicative-task,pronunciation-focus,reflection"
+        >
+          <legend class="builder-field-label">Choose a layout</legend>
+          <div class="layout-picker-grid">
+            <label
+              class="layout-option"
+              data-layout-option="blank-canvas"
+              title="Start with an empty slide and build everything yourself."
+            >
+              <input type="radio" name="slideLayout" value="blank-canvas" checked />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Blank canvas</span>
+                  <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="blank-canvas"
+                  placeholder="fa-solid fa-border-all"
+                  value="fa-solid fa-border-all"
+                  aria-label="Icon class for Blank canvas layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="grounding-activity"
+              title="Lead a brief settling or mindfulness routine."
+            >
+              <input type="radio" name="slideLayout" value="grounding-activity" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Grounding activity</span>
+                  <span class="layout-option-desc">Script a calm arrival routine with simple prompts.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="grounding-activity"
+                  placeholder="fa-solid fa-leaf"
+                  value="fa-solid fa-leaf"
+                  aria-label="Icon class for Grounding activity layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="topic-introduction"
+              title="Introduce the big idea, hook, and vocabulary for the lesson."
+            >
+              <input type="radio" name="slideLayout" value="topic-introduction" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Topic introduction</span>
+                  <span class="layout-option-desc">Frame the theme, essential question, and key vocabulary.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="topic-introduction"
+                  placeholder="fa-solid fa-lightbulb"
+                  value="fa-solid fa-lightbulb"
+                  aria-label="Icon class for Topic introduction layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="learning-objectives"
+              title="Present the learning focus and communicative outcome."
+            >
+              <input type="radio" name="slideLayout" value="learning-objectives" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Learning objectives</span>
+                  <span class="layout-option-desc">Highlight lesson goals and the real-world application.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="learning-objectives"
+                  placeholder="fa-solid fa-bullseye"
+                  value="fa-solid fa-bullseye"
+                  aria-label="Icon class for Learning objectives layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="model-dialogue"
+              title="Show a short model text or dialogue."
+            >
+              <input type="radio" name="slideLayout" value="model-dialogue" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Model dialogue / text</span>
+                  <span class="layout-option-desc">Introduce the target language through a contextualised exchange.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="model-dialogue"
+                  placeholder="fa-solid fa-comments"
+                  value="fa-solid fa-comments"
+                  aria-label="Icon class for Model dialogue / text layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="guided-discovery"
+              title="Guide learners to notice patterns in the input."
+            >
+              <input type="radio" name="slideLayout" value="guided-discovery" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Guided discovery</span>
+                  <span class="layout-option-desc">Sequence noticing prompts, questions, and sample language.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="guided-discovery"
+                  placeholder="fa-solid fa-magnifying-glass"
+                  value="fa-solid fa-magnifying-glass"
+                  aria-label="Icon class for Guided discovery layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="genre-deconstruction"
+              title="Break down the genre features in a mentor text."
+            >
+              <input type="radio" name="slideLayout" value="genre-deconstruction" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Genre deconstruction</span>
+                  <span class="layout-option-desc">Summarise the purpose, key moves, and mentor text excerpt.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="genre-deconstruction"
+                  placeholder="fa-solid fa-book-open"
+                  value="fa-solid fa-book-open"
+                  aria-label="Icon class for Genre deconstruction layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="linguistic-feature-hunt"
+              title="Create a feature hunt for a short text."
+            >
+              <input type="radio" name="slideLayout" value="linguistic-feature-hunt" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Feature hunt</span>
+                  <span class="layout-option-desc">Share the extract, what to highlight, and reflection prompts.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="linguistic-feature-hunt"
+                  placeholder="fa-solid fa-highlighter"
+                  value="fa-solid fa-highlighter"
+                  aria-label="Icon class for Feature hunt layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="text-reconstruction"
+              title="Offer sentence strips and steps to rebuild a text."
+            >
+              <input type="radio" name="slideLayout" value="text-reconstruction" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Text reconstruction</span>
+                  <span class="layout-option-desc">List the routine and the strips learners will order.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="text-reconstruction"
+                  placeholder="fa-solid fa-puzzle-piece"
+                  value="fa-solid fa-puzzle-piece"
+                  aria-label="Icon class for Text reconstruction layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="jumbled-text-sequencing"
+              title="Sequence a jumbled set of statements or ideas."
+            >
+              <input type="radio" name="slideLayout" value="jumbled-text-sequencing" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Jumbled sequencing</span>
+                  <span class="layout-option-desc">Provide the segments and tips that support ordering.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="jumbled-text-sequencing"
+                  placeholder="fa-solid fa-shuffle"
+                  value="fa-solid fa-shuffle"
+                  aria-label="Icon class for Jumbled sequencing layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="interactive-practice"
+              title="Build a controlled practice task with prompts and answers."
+            >
+              <input type="radio" name="slideLayout" value="interactive-practice" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Interactive practice</span>
+                  <span class="layout-option-desc">Collect prompts, answer options, and solutions for quick checks.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="interactive-practice"
+                  placeholder="fa-solid fa-list-check"
+                  value="fa-solid fa-list-check"
+                  aria-label="Icon class for Interactive practice layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="creative-practice"
+              title="Plan a collaborative making task that uses new language."
+            >
+              <input type="radio" name="slideLayout" value="creative-practice" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Creative practice</span>
+                  <span class="layout-option-desc">Capture materials, making steps, and sharing options.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="creative-practice"
+                  placeholder="fa-solid fa-paintbrush"
+                  value="fa-solid fa-paintbrush"
+                  aria-label="Icon class for Creative practice layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="communicative-task"
+              title="Prepare learners for a freer speaking task."
+            >
+              <input type="radio" name="slideLayout" value="communicative-task" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Communicative task</span>
+                  <span class="layout-option-desc">Outline the scenario, preparation notes, and language scaffolding.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="communicative-task"
+                  placeholder="fa-solid fa-people-arrows"
+                  value="fa-solid fa-people-arrows"
+                  aria-label="Icon class for Communicative task layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="task-divider"
+              title="Insert a divider that names the next task phase."
+            >
+              <input type="radio" name="slideLayout" value="task-divider" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Task divider</span>
+                  <span class="layout-option-desc">Signal timing, focus, and quick actions before moving on.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="task-divider"
+                  placeholder="fa-solid fa-flag-checkered"
+                  value="fa-solid fa-flag-checkered"
+                  aria-label="Icon class for Task divider layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="task-reporting"
+              title="Coordinate share-out roles after a communicative task."
+            >
+              <input type="radio" name="slideLayout" value="task-reporting" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Task reporting</span>
+                  <span class="layout-option-desc">Outline prompts, evidence to gather, and facilitator roles.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="task-reporting"
+                  placeholder="fa-solid fa-bullhorn"
+                  value="fa-solid fa-bullhorn"
+                  aria-label="Icon class for Task reporting layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="scaffolded-joint-construction"
+              title="Plan a joint construction with teacher and learner moves."
+            >
+              <input type="radio" name="slideLayout" value="scaffolded-joint-construction" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Joint construction</span>
+                  <span class="layout-option-desc">Map mentor text focus, shared outcome, and move sequences.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="scaffolded-joint-construction"
+                  placeholder="fa-solid fa-people-group"
+                  value="fa-solid fa-people-group"
+                  aria-label="Icon class for Joint construction layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="independent-construction-checklist"
+              title="Support independent writing with a checklist."
+            >
+              <input type="radio" name="slideLayout" value="independent-construction-checklist" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Independent checklist</span>
+                  <span class="layout-option-desc">List success criteria and stretch goals for individual drafts.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="independent-construction-checklist"
+                  placeholder="fa-solid fa-clipboard-check"
+                  value="fa-solid fa-clipboard-check"
+                  aria-label="Icon class for Independent checklist layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="pronunciation-focus"
+              title="Focus on a sound or intonation pattern from the lesson."
+            >
+              <input type="radio" name="slideLayout" value="pronunciation-focus" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Pronunciation focus</span>
+                  <span class="layout-option-desc">Capture target sounds, example words, and practice tips.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="pronunciation-focus"
+                  placeholder="fa-solid fa-wave-square"
+                  value="fa-solid fa-wave-square"
+                  aria-label="Icon class for Pronunciation focus layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label
+              class="layout-option"
+              data-layout-option="reflection"
+              title="Close the lesson with reflection prompts."
+            >
+              <input type="radio" name="slideLayout" value="reflection" />
+              <span class="layout-option-body">
+                <span class="layout-option-icon" aria-hidden="true"></span>
+                <span class="layout-option-copy">
+                  <span class="layout-option-title">Reflection</span>
+                  <span class="layout-option-desc">Guide learners to note what they learned and who they connected with.</span>
+                </span>
+              </span>
+              <span class="layout-icon-field">
+                <input
+                  type="text"
+                  class="layout-icon-input"
+                  data-layout-icon="reflection"
+                  placeholder="fa-solid fa-moon"
+                  value="fa-solid fa-moon"
+                  aria-label="Icon class for Reflection layout"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <section class="builder-section" data-layouts="grounding-activity">
+          <header class="builder-section-header">
+            <div>
+              <h3>Grounding activity</h3>
+              <p>Script the settling routine learners follow as class begins.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="groundingTitle" placeholder="Grounding activity" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Subtitle</span>
+            <input type="text" name="groundingSubtitle" placeholder="e.g. Arrive in the room" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Guided steps (one per line)</span>
+            <textarea
+              name="groundingSteps"
+              rows="4"
+              placeholder="Breathe in for four counts..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Steps icon class</span>
+            <input
+              type="text"
+              name="groundingStepsIcon"
+              data-field="groundingStepsIcon"
+              placeholder="fa-solid fa-shoe-prints"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="groundingBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="groundingOverlayColor" value="#10352c" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="groundingOverlayOpacity" min="0" max="90" step="5" value="45" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="topic-introduction">
+          <header class="builder-section-header">
+            <div>
+              <h3>Topic introduction</h3>
+              <p>Frame the theme, hook, and key vocabulary for the lesson.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="topicTitle" placeholder="Today we explore" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Hook / opener</span>
+            <textarea
+              name="topicHook"
+              rows="2"
+              placeholder="Pose a provocative question or statement"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Hook icon class</span>
+            <input
+              type="text"
+              name="topicHookIcon"
+              data-field="topicHookIcon"
+              placeholder="fa-solid fa-hand-pointer"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context</span>
+            <textarea
+              name="topicContext"
+              rows="2"
+              placeholder="Connect to learners' lived experiences"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context icon class</span>
+            <input
+              type="text"
+              name="topicContextIcon"
+              data-field="topicContextIcon"
+              placeholder="fa-solid fa-circle-info"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Essential question</span>
+            <input type="text" name="topicQuestion" placeholder="How can...?" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Essential question icon class</span>
+            <input
+              type="text"
+              name="topicQuestionIcon"
+              data-field="topicQuestionIcon"
+              placeholder="fa-solid fa-circle-question"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Key vocabulary (one per line)</span>
+            <textarea
+              name="topicKeyVocabulary"
+              rows="3"
+              placeholder="sustainable"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Key vocabulary icon class</span>
+            <input
+              type="text"
+              name="topicKeyVocabularyIcon"
+              data-field="topicKeyVocabularyIcon"
+              placeholder="fa-solid fa-spell-check"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="topicBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="topicOverlayColor" value="#152a41" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="topicOverlayOpacity" min="0" max="90" step="5" value="40" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="learning-objectives">
+          <header class="builder-section-header">
+            <div>
+              <h3>Learning objectives</h3>
+              <p>List the skills learners will practise and the communicative outcome.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="learningTitle" placeholder="Learning Outcomes" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Goal 1</span>
+            <input type="text" name="learningGoalOne" placeholder="We will…" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Goal 2</span>
+            <input type="text" name="learningGoalTwo" placeholder="We will…" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Goal 3</span>
+            <input type="text" name="learningGoalThree" placeholder="Optional extra focus" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Goal icon class</span>
+            <input
+              type="text"
+              name="learningGoalIcon"
+              data-field="learningGoalIcon"
+              placeholder="fa-solid fa-bullseye"
+              autocomplete="off"
+            />
+            <span class="builder-field-hint">Font Awesome class applied to each goal bullet.</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Communicative goal</span>
+            <textarea
+              name="learningCommunicativeGoal"
+              rows="2"
+              placeholder="So you can…"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Communicative goal icon class</span>
+            <input
+              type="text"
+              name="learningCommunicativeGoalIcon"
+              data-field="learningCommunicativeGoalIcon"
+              placeholder="fa-solid fa-comments"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Background image URL</span>
+            <input type="url" name="learningImageUrl" placeholder="Paste an image link" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay colour</span>
+            <input type="color" name="learningOverlayColor" value="#152a41" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay opacity</span>
+            <input
+              type="range"
+              name="learningOverlayOpacity"
+              min="0"
+              max="90"
+              step="5"
+              value="40"
+            />
+            <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+          </label>
+        </section>
+
+        <section class="builder-section" data-layouts="model-dialogue">
+          <header class="builder-section-header">
+            <div>
+              <h3>Model dialogue / text</h3>
+              <p>Provide context, dialogue turns, and optional media.</p>
+            </div>
+            <button type="button" class="ghost-btn" id="builder-add-dialogue">
+              <i class="fa-solid fa-plus"></i>
+              Add turn
+            </button>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="dialogueTitle" placeholder="e.g. Get to know people" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Student instructions</span>
+            <textarea
+              name="dialogueInstructions"
+              rows="2"
+              placeholder="Explain how learners should use the text"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Instructions icon class</span>
+            <input
+              type="text"
+              name="dialogueInstructionsIcon"
+              data-field="dialogueInstructionsIcon"
+              placeholder="fa-solid fa-person-chalkboard"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Image URL</span>
+            <input type="url" name="dialogueImageUrl" placeholder="Paste an image link" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay colour</span>
+            <input type="color" name="dialogueOverlayColor" value="#283142" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay opacity</span>
+            <input
+              type="range"
+              name="dialogueOverlayOpacity"
+              min="0"
+              max="90"
+              step="5"
+              value="35"
+            />
+            <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Audio URL (optional)</span>
+            <input type="url" name="dialogueAudioUrl" placeholder="Link to audio recording" />
+          </label>
+          <ul id="builder-dialogue-list" class="builder-dynamic-list" aria-live="polite"></ul>
+        </section>
+
+        <section class="builder-section" data-layouts="guided-discovery">
+          <header class="builder-section-header">
+            <div>
+              <h3>Guided discovery</h3>
+              <p>Sequence noticing prompts and sample language for the input.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="discoveryTitle" placeholder="Guided discovery" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context</span>
+            <textarea
+              name="discoveryContext"
+              rows="2"
+              placeholder="Explain what text or scenario learners will analyse"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context icon class</span>
+            <input
+              type="text"
+              name="discoveryContextIcon"
+              data-field="discoveryContextIcon"
+              placeholder="fa-solid fa-circle-info"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Discovery prompts (one per line)</span>
+            <textarea
+              name="discoveryPrompts"
+              rows="3"
+              placeholder="Read the exchange twice..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Discovery prompts icon class</span>
+            <input
+              type="text"
+              name="discoveryPromptsIcon"
+              data-field="discoveryPromptsIcon"
+              placeholder="fa-solid fa-list-ul"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Noticing questions</span>
+            <textarea
+              name="discoveryNoticingQuestions"
+              rows="3"
+              placeholder="What tense do you notice...?"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Noticing questions icon class</span>
+            <input
+              type="text"
+              name="discoveryNoticingQuestionsIcon"
+              data-field="discoveryNoticingQuestionsIcon"
+              placeholder="fa-solid fa-eye"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sample language (one per line)</span>
+            <textarea
+              name="discoveryLanguageSamples"
+              rows="3"
+              placeholder="They suggested..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sample language icon class</span>
+            <input
+              type="text"
+              name="discoveryLanguageSamplesIcon"
+              data-field="discoveryLanguageSamplesIcon"
+              placeholder="fa-solid fa-quote-right"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="discoveryBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="discoveryOverlayColor" value="#2b293f" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="discoveryOverlayOpacity" min="0" max="90" step="5" value="35" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="genre-deconstruction">
+          <header class="builder-section-header">
+            <div>
+              <h3>Genre deconstruction</h3>
+              <p>Capture the purpose, key moves, and a mentor text excerpt.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="genreTitle" placeholder="Genre deconstruction" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Genre type</span>
+            <input type="text" name="genreType" placeholder="e.g. Proposal email" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Genre icon class</span>
+            <input
+              type="text"
+              name="genreTypeIcon"
+              data-field="genreTypeIcon"
+              placeholder="fa-solid fa-book-open"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Purpose</span>
+            <textarea
+              name="genrePurpose"
+              rows="2"
+              placeholder="Why do writers use this text type?"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Purpose icon class</span>
+            <input
+              type="text"
+              name="genrePurposeIcon"
+              data-field="genrePurposeIcon"
+              placeholder="fa-solid fa-bullseye"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Key moves (Feature | Description)</span>
+            <textarea
+              name="genreFeatures"
+              rows="3"
+              placeholder="Opening move | Warm greeting plus appreciation"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Key moves icon class</span>
+            <input
+              type="text"
+              name="genreFeaturesIcon"
+              data-field="genreFeaturesIcon"
+              placeholder="fa-solid fa-list"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Mentor text excerpt</span>
+            <textarea
+              name="genreMentorText"
+              rows="4"
+              placeholder="Paste a short excerpt learners will analyse"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Mentor text icon class</span>
+            <input
+              type="text"
+              name="genreMentorTextIcon"
+              data-field="genreMentorTextIcon"
+              placeholder="fa-solid fa-feather"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="genreBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="genreOverlayColor" value="#3b2b2a" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="genreOverlayOpacity" min="0" max="90" step="5" value="30" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="linguistic-feature-hunt">
+          <header class="builder-section-header">
+            <div>
+              <h3>Feature hunt</h3>
+              <p>Share the extract and what learners should highlight.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="featureTitle" placeholder="Feature hunt" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Source text</span>
+            <textarea
+              name="featureSourceText"
+              rows="3"
+              placeholder="When we evaluate proposals..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Source text icon class</span>
+            <input
+              type="text"
+              name="featureSourceTextIcon"
+              data-field="featureSourceTextIcon"
+              placeholder="fa-solid fa-book"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Features to highlight</span>
+            <textarea
+              name="featureTargets"
+              rows="3"
+              placeholder="Underline hedging phrases"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Features icon class</span>
+            <input
+              type="text"
+              name="featureTargetsIcon"
+              data-field="featureTargetsIcon"
+              placeholder="fa-solid fa-highlighter"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Reflection prompts</span>
+            <textarea
+              name="featureReflection"
+              rows="2"
+              placeholder="Which feature appears most often?"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Reflection icon class</span>
+            <input
+              type="text"
+              name="featureReflectionIcon"
+              data-field="featureReflectionIcon"
+              placeholder="fa-solid fa-lightbulb"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="featureBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="featureOverlayColor" value="#1f2d28" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="featureOverlayOpacity" min="0" max="90" step="5" value="25" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="text-reconstruction">
+          <header class="builder-section-header">
+            <div>
+              <h3>Text reconstruction</h3>
+              <p>List the steps and sentence strips learners will reorder.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="reconstructionTitle" placeholder="Text reconstruction" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context</span>
+            <textarea
+              name="reconstructionContext"
+              rows="2"
+              placeholder="Explain what learners are rebuilding"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Context icon class</span>
+            <input
+              type="text"
+              name="reconstructionContextIcon"
+              data-field="reconstructionContextIcon"
+              placeholder="fa-solid fa-circle-info"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Steps (one per line)</span>
+            <textarea
+              name="reconstructionSteps"
+              rows="3"
+              placeholder="Read each strip aloud..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Steps icon class</span>
+            <input
+              type="text"
+              name="reconstructionStepsIcon"
+              data-field="reconstructionStepsIcon"
+              placeholder="fa-solid fa-list-ol"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sentence strips</span>
+            <textarea
+              name="reconstructionSegments"
+              rows="4"
+              placeholder="First, introduce the challenge..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sentence strips icon class</span>
+            <input
+              type="text"
+              name="reconstructionSegmentsIcon"
+              data-field="reconstructionSegmentsIcon"
+              placeholder="fa-solid fa-table-columns"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="reconstructionBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="reconstructionOverlayColor" value="#263141" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="reconstructionOverlayOpacity" min="0" max="90" step="5" value="35" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="jumbled-text-sequencing">
+          <header class="builder-section-header">
+            <div>
+              <h3>Jumbled sequencing</h3>
+              <p>List the mixed-up sentences and supportive hints.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="sequencingTitle" placeholder="Sequence the text" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Instructions</span>
+            <textarea
+              name="sequencingInstructions"
+              rows="2"
+              placeholder="Explain how learners will reorder the statements"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Instructions icon class</span>
+            <input
+              type="text"
+              name="sequencingInstructionsIcon"
+              data-field="sequencingInstructionsIcon"
+              placeholder="fa-solid fa-circle-play"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Segments (one per line)</span>
+            <textarea
+              name="sequencingSegments"
+              rows="4"
+              placeholder="The youth group surveyed families..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Segments icon class</span>
+            <input
+              type="text"
+              name="sequencingSegmentsIcon"
+              data-field="sequencingSegmentsIcon"
+              placeholder="fa-solid fa-bars"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Support tips</span>
+            <textarea
+              name="sequencingSupportTips"
+              rows="3"
+              placeholder="Look for time connectives..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Support tips icon class</span>
+            <input
+              type="text"
+              name="sequencingSupportTipsIcon"
+              data-field="sequencingSupportTipsIcon"
+              placeholder="fa-solid fa-lightbulb"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="sequencingBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="sequencingOverlayColor" value="#2f233c" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="sequencingOverlayOpacity" min="0" max="90" step="5" value="30" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="interactive-practice">
+          <header class="builder-section-header">
+            <div>
+              <h3>Interactive practice</h3>
+              <p>Collect prompts, answer options, and the correct response.</p>
+            </div>
+            <button type="button" class="ghost-btn" id="builder-add-practice">
+              <i class="fa-solid fa-plus"></i>
+              Add prompt
+            </button>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="practiceTitle" placeholder="Practice" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Instructions</span>
+            <textarea
+              name="practiceInstructions"
+              rows="2"
+              placeholder="Tell learners how to complete the task"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Instructions icon class</span>
+            <input
+              type="text"
+              name="practiceInstructionsIcon"
+              data-field="practiceInstructionsIcon"
+              placeholder="fa-solid fa-clipboard-check"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Activity template</span>
+            <select name="practiceActivityType">
+              <option value="multiple-choice">Multiple choice quiz</option>
+              <option value="linking">Linking match-up</option>
+              <option value="dropdown">Dropdown response</option>
+              <option value="gapfill">Gap fill activity</option>
+              <option value="grouping">Grouping challenge</option>
+              <option value="multiple-choice-grid">Multiple choice grid</option>
+              <option value="ranking">Ranking sequence</option>
+              <option value="table-completion">Table completion</option>
+              <option value="quiz-show">Slide quiz showdown</option>
+            </select>
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Activity template icon class</span>
+            <input
+              type="text"
+              name="practiceActivityTypeIcon"
+              data-field="practiceActivityTypeIcon"
+              placeholder="fa-solid fa-shapes"
+              autocomplete="off"
+            />
+          </label>
+          <ul id="builder-practice-list" class="builder-dynamic-list" aria-live="polite"></ul>
+        </section>
+
+        <section class="builder-section" data-layouts="creative-practice">
+          <header class="builder-section-header">
+            <div>
+              <h3>Creative practice</h3>
+              <p>Plan a collaborative making task that leverages new language.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="creativeTitle" placeholder="Creative practice" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Brief</span>
+            <textarea
+              name="creativeBrief"
+              rows="2"
+              placeholder="Teams design a solution prototype..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Brief icon class</span>
+            <input
+              type="text"
+              name="creativeBriefIcon"
+              data-field="creativeBriefIcon"
+              placeholder="fa-solid fa-lightbulb"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Materials (one per line)</span>
+            <textarea
+              name="creativeMaterials"
+              rows="3"
+              placeholder="Large paper"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Materials icon class</span>
+            <input
+              type="text"
+              name="creativeMaterialsIcon"
+              data-field="creativeMaterialsIcon"
+              placeholder="fa-solid fa-toolbox"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Making steps</span>
+            <textarea
+              name="creativeMakingSteps"
+              rows="3"
+              placeholder="Sketch your idea..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Making steps icon class</span>
+            <input
+              type="text"
+              name="creativeMakingStepsIcon"
+              data-field="creativeMakingStepsIcon"
+              placeholder="fa-solid fa-gears"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sharing options</span>
+            <textarea
+              name="creativeSharingOptions"
+              rows="3"
+              placeholder="Gallery walk..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Sharing options icon class</span>
+            <input
+              type="text"
+              name="creativeSharingOptionsIcon"
+              data-field="creativeSharingOptionsIcon"
+              placeholder="fa-solid fa-people-arrows"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="creativeBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="creativeOverlayColor" value="#4b1f2c" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="creativeOverlayOpacity" min="0" max="90" step="5" value="35" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="communicative-task">
+          <header class="builder-section-header">
+            <div>
+              <h3>Communicative task</h3>
+              <p>Describe the scenario, preparation, and performance phase.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Task title</span>
+            <input type="text" name="taskTitle" placeholder="e.g. Language exchange introductions" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Image URL</span>
+            <input type="url" name="taskImageUrl" placeholder="Paste an image link" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay colour</span>
+            <input type="color" name="taskOverlayColor" value="#1f2d3a" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay opacity</span>
+            <input
+              type="range"
+              name="taskOverlayOpacity"
+              min="0"
+              max="90"
+              step="5"
+              value="30"
+            />
+            <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Preparation phase</span>
+            <textarea
+              name="taskPreparation"
+              rows="3"
+              placeholder="Explain what learners do before speaking"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Performance phase</span>
+            <textarea
+              name="taskPerformance"
+              rows="3"
+              placeholder="Describe how learners will carry out the task"
+            ></textarea>
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Preparation icon class</span>
+              <input
+                type="text"
+                name="taskPreparationIcon"
+                data-field="taskPreparationIcon"
+                placeholder="fa-solid fa-list-check"
+                autocomplete="off"
+              />
+              <span class="builder-field-hint">Icon displayed beside the preparation step.</span>
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Performance icon class</span>
+              <input
+                type="text"
+                name="taskPerformanceIcon"
+                data-field="taskPerformanceIcon"
+                placeholder="fa-solid fa-people-group"
+                autocomplete="off"
+              />
+              <span class="builder-field-hint">Icon displayed beside the performance step.</span>
+            </label>
+          </div>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Scaffolding language (one per line)</span>
+            <textarea
+              name="taskScaffolding"
+              rows="3"
+              placeholder="Key phrases or question stems"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Scaffolding icon class</span>
+            <input
+              type="text"
+              name="taskScaffoldingIcon"
+              data-field="taskScaffoldingIcon"
+              placeholder="fa-solid fa-lightbulb"
+              autocomplete="off"
+            />
+          </label>
+        </section>
+
+        <section class="builder-section" data-layouts="task-divider">
+          <header class="builder-section-header">
+            <div>
+              <h3>Task divider</h3>
+              <p>Signal the next phase with timing, focus, and quick actions.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="dividerTitle" placeholder="Task cycle" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Subtitle</span>
+            <input type="text" name="dividerSubtitle" placeholder="e.g. Before you speak" />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Timing</span>
+              <input type="text" name="dividerTiming" placeholder="e.g. 5 minutes" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Timing icon class</span>
+              <input
+                type="text"
+                name="dividerTimingIcon"
+                data-field="dividerTimingIcon"
+                placeholder="fa-solid fa-stopwatch"
+                autocomplete="off"
+              />
+            </label>
+            <label class="builder-field builder-field--full">
+              <span class="builder-field-label">Focus</span>
+              <textarea
+                name="dividerFocus"
+                rows="2"
+                placeholder="Plan the approach with your partner"
+              ></textarea>
+            </label>
+            <label class="builder-field builder-field--full">
+              <span class="builder-field-label">Focus icon class</span>
+              <input
+                type="text"
+                name="dividerFocusIcon"
+                data-field="dividerFocusIcon"
+                placeholder="fa-solid fa-bullseye"
+                autocomplete="off"
+              />
+            </label>
+          </div>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Actions (one per line)</span>
+            <textarea
+              name="dividerActions"
+              rows="3"
+              placeholder="Skim the prompt together..."
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Actions icon class</span>
+            <input
+              type="text"
+              name="dividerActionsIcon"
+              data-field="dividerActionsIcon"
+              placeholder="fa-solid fa-list-check"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="dividerBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="dividerOverlayColor" value="#1f2d3a" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="dividerOverlayOpacity" min="0" max="90" step="5" value="30" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="task-reporting">
+          <header class="builder-section-header">
+            <div>
+              <h3>Task reporting</h3>
+              <p>Coordinate share-out prompts, evidence, and group roles.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="reportingTitle" placeholder="Task reporting" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Share-out goal</span>
+            <textarea
+              name="reportingGoal"
+              rows="2"
+              placeholder="Share highlights from your conversations"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Share-out goal icon class</span>
+            <input
+              type="text"
+              name="reportingGoalIcon"
+              data-field="reportingGoalIcon"
+              placeholder="fa-solid fa-flag-checkered"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Prompts (one per line)</span>
+            <textarea
+              name="reportingPrompts"
+              rows="3"
+              placeholder="What solution did your partner propose?"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Prompts icon class</span>
+            <input
+              type="text"
+              name="reportingPromptsIcon"
+              data-field="reportingPromptsIcon"
+              placeholder="fa-solid fa-comments"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Roles (Role | Action)</span>
+            <textarea
+              name="reportingRoles"
+              rows="3"
+              placeholder="Facilitator | Keep the share-out moving"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Roles icon class</span>
+            <input
+              type="text"
+              name="reportingRolesIcon"
+              data-field="reportingRolesIcon"
+              placeholder="fa-solid fa-user-group"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Evidence to capture</span>
+            <textarea
+              name="reportingEvidence"
+              rows="2"
+              placeholder="Summaries on sticky notes"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Evidence icon class</span>
+            <input
+              type="text"
+              name="reportingEvidenceIcon"
+              data-field="reportingEvidenceIcon"
+              placeholder="fa-solid fa-magnifying-glass"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="reportingBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="reportingOverlayColor" value="#2a3b2c" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="reportingOverlayOpacity" min="0" max="90" step="5" value="30" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="scaffolded-joint-construction">
+          <header class="builder-section-header">
+            <div>
+              <h3>Joint construction</h3>
+              <p>Map the mentor focus, shared outcome, and teacher/learner moves.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="jointTitle" placeholder="Scaffolded joint construction" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Mentor text focus</span>
+            <textarea
+              name="jointMentor"
+              rows="2"
+              placeholder="Mentor text: project proposal introduction"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Mentor focus icon class</span>
+            <input
+              type="text"
+              name="jointMentorIcon"
+              data-field="jointMentorIcon"
+              placeholder="fa-solid fa-chalkboard-user"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Shared outcome</span>
+            <textarea
+              name="jointSharedOutcome"
+              rows="2"
+              placeholder="Draft the opening paragraph together"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Shared outcome icon class</span>
+            <input
+              type="text"
+              name="jointSharedOutcomeIcon"
+              data-field="jointSharedOutcomeIcon"
+              placeholder="fa-solid fa-people-group"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Teacher moves</span>
+            <textarea
+              name="jointTeacherMoves"
+              rows="3"
+              placeholder="Think aloud to model planning"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Teacher moves icon class</span>
+            <input
+              type="text"
+              name="jointTeacherMovesIcon"
+              data-field="jointTeacherMovesIcon"
+              placeholder="fa-solid fa-person-chalkboard"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Learner moves</span>
+            <textarea
+              name="jointLearnerMoves"
+              rows="3"
+              placeholder="Offer phrases that mirror the mentor text"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Learner moves icon class</span>
+            <input
+              type="text"
+              name="jointLearnerMovesIcon"
+              data-field="jointLearnerMovesIcon"
+              placeholder="fa-solid fa-people-line"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="jointBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="jointOverlayColor" value="#213329" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="jointOverlayOpacity" min="0" max="90" step="5" value="30" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="independent-construction-checklist">
+          <header class="builder-section-header">
+            <div>
+              <h3>Independent checklist</h3>
+              <p>List success criteria and stretch goals for individual drafts.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="checklistTitle" placeholder="Independent construction" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Reminder</span>
+            <textarea
+              name="checklistReminder"
+              rows="2"
+              placeholder="Use the checklist while drafting your text"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Reminder icon class</span>
+            <input
+              type="text"
+              name="checklistReminderIcon"
+              data-field="checklistReminderIcon"
+              placeholder="fa-solid fa-bell"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Checklist items (one per line)</span>
+            <textarea
+              name="checklistItems"
+              rows="3"
+              placeholder="State the community challenge clearly"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Checklist items icon class</span>
+            <input
+              type="text"
+              name="checklistItemsIcon"
+              data-field="checklistItemsIcon"
+              placeholder="fa-solid fa-square-check"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Stretch goals (one per line)</span>
+            <textarea
+              name="checklistStretch"
+              rows="2"
+              placeholder="Add a compelling statistic"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Stretch goals icon class</span>
+            <input
+              type="text"
+              name="checklistStretchIcon"
+              data-field="checklistStretchIcon"
+              placeholder="fa-solid fa-mountain"
+              autocomplete="off"
+            />
+          </label>
+          <div class="builder-field-grid">
+            <label class="builder-field">
+              <span class="builder-field-label">Background image URL</span>
+              <input type="url" name="checklistBackgroundImage" placeholder="Paste an image link" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay colour</span>
+              <input type="color" name="checklistOverlayColor" value="#2a2f27" />
+            </label>
+            <label class="builder-field">
+              <span class="builder-field-label">Overlay opacity</span>
+              <input type="range" name="checklistOverlayOpacity" min="0" max="90" step="5" value="25" />
+              <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="builder-section" data-layouts="pronunciation-focus">
+          <header class="builder-section-header">
+            <div>
+              <h3>Pronunciation focus</h3>
+              <p>Capture the target sound, sample words, and practice guidance.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="pronunciationTitle" placeholder="e.g. What does /st/ sound like?" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Target sound or feature</span>
+            <input type="text" name="pronunciationTarget" placeholder="Describe the focus" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Target icon class</span>
+            <input
+              type="text"
+              name="pronunciationTargetIcon"
+              data-field="pronunciationTargetIcon"
+              placeholder="fa-solid fa-wave-square"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Example word 1</span>
+            <input type="text" name="pronunciationWordOne" placeholder="e.g. student" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Example word 2</span>
+            <input type="text" name="pronunciationWordTwo" placeholder="e.g. study" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Example words icon class</span>
+            <input
+              type="text"
+              name="pronunciationWordsIcon"
+              data-field="pronunciationWordsIcon"
+              placeholder="fa-solid fa-font"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Example sentence 1</span>
+            <input type="text" name="pronunciationSentenceOne" placeholder="Include arrows or stress marks" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Example sentence 2</span>
+            <input type="text" name="pronunciationSentenceTwo" placeholder="Include arrows or stress marks" />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Example sentences icon class</span>
+            <input
+              type="text"
+              name="pronunciationSentencesIcon"
+              data-field="pronunciationSentencesIcon"
+              placeholder="fa-solid fa-quote-right"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Practice instructions</span>
+            <textarea
+              name="pronunciationPractice"
+              rows="3"
+              placeholder="How will you coach and personalise the sound?"
+            ></textarea>
+          </label>
+          <label class="builder-field builder-field--full">
+            <span class="builder-field-label">Practice icon class</span>
+            <input
+              type="text"
+              name="pronunciationPracticeIcon"
+              data-field="pronunciationPracticeIcon"
+              placeholder="fa-solid fa-microphone-lines"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Image URL</span>
+            <input type="url" name="pronunciationImageUrl" placeholder="Paste an image link" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay colour</span>
+            <input type="color" name="pronunciationOverlayColor" value="#4b1f2c" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay opacity</span>
+            <input
+              type="range"
+              name="pronunciationOverlayOpacity"
+              min="0"
+              max="90"
+              step="5"
+              value="35"
+            />
+            <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+          </label>
+        </section>
+
+        <section class="builder-section" data-layouts="reflection">
+          <header class="builder-section-header">
+            <div>
+              <h3>Reflection prompts</h3>
+              <p>Give learners space to capture memorable people, places, or language.</p>
+            </div>
+          </header>
+          <label class="builder-field">
+            <span class="builder-field-label">Slide title</span>
+            <input type="text" name="reflectionTitle" placeholder="e.g. Reflection" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Prompt 1</span>
+            <input type="text" name="reflectionPromptOne" placeholder="e.g. A classmate’s name" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Prompt 2</span>
+            <input type="text" name="reflectionPromptTwo" placeholder="e.g. A place in Palestine" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Prompt 3</span>
+            <input type="text" name="reflectionPromptThree" placeholder="e.g. A job" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Prompts icon class</span>
+            <input
+              type="text"
+              name="reflectionPromptsIcon"
+              data-field="reflectionPromptsIcon"
+              placeholder="fa-solid fa-comment-dots"
+              autocomplete="off"
+            />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Background image URL</span>
+            <input type="url" name="reflectionImageUrl" placeholder="Paste an image link" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay colour</span>
+            <input type="color" name="reflectionOverlayColor" value="#2a3b2c" />
+          </label>
+          <label class="builder-field">
+            <span class="builder-field-label">Overlay opacity</span>
+            <input
+              type="range"
+              name="reflectionOverlayOpacity"
+              min="0"
+              max="90"
+              step="5"
+              value="35"
+            />
+            <span class="builder-field-hint">0 = transparent, 90 = strongest overlay</span>
+          </label>
+        </section>
+
+        <section
+          class="builder-section"
+          data-layouts="learning-objectives,model-dialogue,grounding-activity,topic-introduction,guided-discovery,creative-practice,communicative-task,task-divider,task-reporting,genre-deconstruction,linguistic-feature-hunt,text-reconstruction,jumbled-text-sequencing,scaffolded-joint-construction,independent-construction-checklist,pronunciation-focus,reflection"
+        >
+          <header class="builder-section-header">
+            <div>
+              <h3>Image search</h3>
+              <p>Search Pexels and apply the image to the selected layout.</p>
+            </div>
+          </header>
+          <div class="image-search">
+            <div class="image-search-controls">
+              <input type="text" name="imageSearch" placeholder="Search Pexels" />
+              <button type="button" class="ghost-btn" data-action="search-image">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+              </button>
+            </div>
+            <div
+              class="image-search-results"
+              id="builder-image-results"
+              role="listbox"
+              aria-label="Image search results"
+            ></div>
+            <p class="image-search-status" id="image-search-status" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <section class="builder-section builder-preview-section">
+          <header class="builder-section-header">
+            <div>
+              <h3>Slide preview</h3>
+              <p>Updates automatically as you edit the fields.</p>
+            </div>
+            <button type="button" class="ghost-btn" id="builder-refresh-preview">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              Refresh preview
+            </button>
+          </header>
+          <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
+        </section>
+
+        <section class="builder-section">
+          <header class="builder-section-header">
+            <div>
+              <h3>Builder JSON</h3>
+              <p>Preview the data that will generate the slide.</p>
+            </div>
+          </header>
+          <pre id="builder-json-preview" class="builder-json-preview" aria-live="polite">{}</pre>
+        </section>
+
+        <footer class="builder-footer">
+          <p id="builder-status" class="builder-status" aria-live="polite"></p>
+          <div class="builder-actions">
+            <button type="button" class="toolbar-btn ghost" data-action="cancel-builder">
+              Cancel
+            </button>
+            <button type="submit" class="toolbar-btn">
+              <i class="fa-solid fa-square-plus"></i>
+              Insert slide
+            </button>
+          </div>
+        </footer>
+      </div>
+    </form>
+  </div>
+</div>
+    <div
+      id="module-builder-overlay"
+      class="builder-overlay module-builder-overlay"
+      aria-hidden="true"
+      hidden
+    >
+      <div
+        class="builder-dialog module-builder-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="module-builder-title"
+      >
+        <header class="builder-header module-builder-header">
+          <div>
+            <p class="builder-eyebrow">Sandbox tools</p>
+            <h2 id="module-builder-title">Interactive Activity Modules</h2>
+            <p class="builder-subtitle">
+              Configure Noor templates and drop the activity onto your blank slide.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="builder-close module-builder-close"
+            aria-label="Close module builder"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <div class="module-builder-body">
+          <iframe
+            id="module-builder-frame"
+            title="Activity module builder"
+            src="about:blank"
+            data-builder-src="../../../sandbox/activity-builder.html"
+            loading="lazy"
+            tabindex="-1"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+
+    <script type="module">
+      document
+        .querySelectorAll('.bg-media.priority-high img')
+        .forEach((img) => img.setAttribute('fetchpriority', 'high'));
+    </script>
     <script type="module">
       import { setupInteractiveDeck } from "../../../sandbox/int-mod.js";
       setupInteractiveDeck();
