@@ -855,6 +855,14 @@ footer a {
   color: var(--color-ink-subtle);
 }
 
+.text-ink-strong {
+  color: var(--color-ink);
+}
+
+.text-ink-muted {
+  color: var(--color-ink-muted);
+}
+
 .text-primary {
   color: var(--color-accent);
 }
@@ -1079,6 +1087,9 @@ footer a {
   overflow: hidden;
   min-height: clamp(220px, 30vw, 340px);
   box-shadow: var(--shadow-md);
+  --photo-overlay-highlight: rgba(255, 255, 255, 0.32);
+  --photo-overlay-base: rgba(23, 53, 43, 0.26);
+  --photo-overlay-shadow: rgba(13, 32, 26, 0.58);
 }
 
 .photo-card::before {
@@ -1088,7 +1099,7 @@ footer a {
   background-image: var(--photo, none);
   background-size: cover;
   background-position: center;
-  filter: brightness(0.95) saturate(1.05);
+  filter: brightness(1.02) saturate(1.05);
 }
 
 .photo-card::after {
@@ -1096,13 +1107,13 @@ footer a {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 70% 20%, rgba(35, 77, 66, 0.34), transparent 58%),
-    linear-gradient(180deg, rgba(23, 38, 26, 0.28), rgba(23, 38, 26, 0.78));
+    linear-gradient(155deg, var(--photo-overlay-highlight) 0%, rgba(255, 255, 255, 0.12) 48%, transparent 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, var(--photo-overlay-base) 32%, var(--photo-overlay-shadow) 100%);
 }
 
 .photo-card > * {
   position: relative;
-  color: #ffffff;
+  color: var(--color-ink);
 }
 
 .photo-card .card-body {
@@ -1110,15 +1121,14 @@ footer a {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  background:
-    linear-gradient(140deg, rgba(36, 50, 38, 0.85), rgba(35, 107, 91, 0.62));
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  border: 1px solid rgba(36, 50, 38, 0.32);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-ink);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 44px rgba(15, 35, 28, 0.22);
 }
 
 .photo-card .card-body p {
-  color: rgba(255, 255, 255, 0.85);
+  color: #2f4a3c;
 }
 
 .card.with-image {
