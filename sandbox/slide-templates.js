@@ -239,6 +239,9 @@ export const BUILDER_LAYOUT_DEFAULTS = {
     gallery: [
       {
         caption: 'Kick-off huddle · Crews frame the user need and note the first evidence goal.',
+        detail: 'Capture alignment quotes that prove teams understand the sprint promise.',
+        tag: 'Glow badge',
+        tagIcon: 'fa-solid fa-star',
         image: {
           pexelsQuery: 'students collaborating on design sprint',
           orientation: 'landscape',
@@ -246,6 +249,9 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       },
       {
         caption: 'Prototype lab · Document the messy middle alongside the feedback lens in play.',
+        detail: 'Snap progress photos while coaches log glow/grow notes during each rotation.',
+        tag: 'Sprint lab',
+        tagIcon: 'fa-solid fa-wand-magic-sparkles',
         image: {
           pexelsQuery: 'students prototyping together classroom sticky notes',
           orientation: 'landscape',
@@ -253,6 +259,9 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       },
       {
         caption: 'Gallery walk · Capture how learners narrate the impact badge they unlocked.',
+        detail: 'Highlight the metrics, quotes, or artefacts that back up the celebration.',
+        tag: 'Grow move',
+        tagIcon: 'fa-solid fa-seedling',
         image: {
           pexelsQuery: 'student presenting project classroom reflection',
           orientation: 'landscape',
@@ -260,6 +269,7 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       },
       {
         caption: 'Mentor moments · Highlight who coached the next build move and why it mattered.',
+        detail: 'Log the coaching insight and the support the squad requested before the next sprint.',
         image: {
           pexelsQuery: 'mentor coaching students project',
           orientation: 'landscape',

@@ -72,6 +72,8 @@ scaffolded-joint-construction
 independent-construction-checklist
 card-stack
 pill-with-gallery
+reflection-board
+split-grid
 ```
 
 Referencing any of these identifiers will now cause the sandbox build steps to fail fast so that downstream decks are not silently desynchronised.
