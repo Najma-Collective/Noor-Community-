@@ -10335,9 +10335,694 @@ function createHeroOverlaySlide({
   return slide;
 }
 
+function normaliseGalleryMedia(entry = {}) {
+  const resolved = {
+    url: '',
+    alt: '',
+    credit: '',
+    creditUrl: '',
+  };
+  if (!entry || typeof entry !== 'object') {
+    return resolved;
+  }
+  if (typeof entry.url === 'string') {
+    resolved.url = trimText(entry.url);
+  }
+  if (!resolved.url && typeof entry.src === 'string') {
+    resolved.url = trimText(entry.src);
+  }
+  if (!resolved.url && typeof entry.image === 'string') {
+    resolved.url = trimText(entry.image);
+  }
+  if (!resolved.alt && typeof entry.alt === 'string') {
+    resolved.alt = trimText(entry.alt);
+  }
+  if (!resolved.credit && typeof entry.credit === 'string') {
+    resolved.credit = trimText(entry.credit);
+  }
+  if (!resolved.creditUrl && typeof entry.creditUrl === 'string') {
+    resolved.creditUrl = trimText(entry.creditUrl);
+  }
+  if (!resolved.creditUrl && typeof entry.creditURL === 'string') {
+    resolved.creditUrl = trimText(entry.creditURL);
+  }
+  return resolved;
+}
+
+function applyMosaicStyleClass(target, value) {
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  const slug = trimText(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (slug) {
+    target.classList.add(`mosaic-style-${slug}`);
+  }
+}
+
+function createPillWithGallerySlide({
+  pill,
+  pillIcon,
+  title,
+  description,
+  gallery,
+  actions,
+  mosaicStyle,
+  actionIcon,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+  icon,
+  iconClass,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('pill-with-gallery', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header pill-gallery-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill) || 'Scenario spotlight';
+  const pillIconClass = resolveLayoutIconField('pill-with-gallery', 'pillGalleryPillIcon', pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill pill-gallery-pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    header.appendChild(pillEl);
+  }
+
+  const resolvedTitle = trimText(title) || 'Show the sprint momentum at a glance';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  header.appendChild(headingEl);
+
+  const resolvedDescription = trimText(description);
+  if (resolvedDescription) {
+    const leadEl = document.createElement('p');
+    leadEl.className = 'pill-gallery-lead';
+    leadEl.textContent = resolvedDescription;
+    header.appendChild(leadEl);
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'pill-gallery-grid';
+  applyMosaicStyleClass(grid, mosaicStyle);
+  inner.appendChild(grid);
+
+  const items = Array.isArray(gallery) ? gallery : [];
+  if (!items.length) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'pill-gallery-empty';
+    placeholder.textContent = 'Add gallery tiles to spotlight the build.';
+    grid.appendChild(placeholder);
+  } else {
+    items.forEach((item, index) => {
+      if (!item || typeof item !== 'object') {
+        return;
+      }
+      const figure = document.createElement('figure');
+      figure.className = 'pill-gallery-item';
+      grid.appendChild(figure);
+
+      const imageMeta = (() => {
+        if (typeof item.image === 'string') {
+          return normaliseGalleryMedia({ url: item.image });
+        }
+        if (item.image && typeof item.image === 'object') {
+          return normaliseGalleryMedia(item.image);
+        }
+        return normaliseGalleryMedia({});
+      })();
+      if (!imageMeta.url && typeof item.media === 'object') {
+        Object.assign(imageMeta, normaliseGalleryMedia(item.media));
+      }
+      const fallbackAlt = trimText(item.alt);
+      if (fallbackAlt) {
+        imageMeta.alt = fallbackAlt;
+      }
+      const fallbackCredit = trimText(item.credit);
+      if (fallbackCredit) {
+        imageMeta.credit = fallbackCredit;
+      }
+      const fallbackCreditUrl = trimText(item.creditUrl);
+      if (fallbackCreditUrl) {
+        imageMeta.creditUrl = fallbackCreditUrl;
+      }
+
+      if (imageMeta.url) {
+        const media = document.createElement('div');
+        media.className = 'pill-gallery-media';
+        const img = document.createElement('img');
+        img.dataset.remoteSrc = imageMeta.url;
+        img.alt = imageMeta.alt || trimText(item.caption) || `Gallery item ${index + 1}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        media.appendChild(img);
+        figure.appendChild(media);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'pill-gallery-placeholder';
+        placeholder.textContent = 'Add evidence image';
+        figure.appendChild(placeholder);
+      }
+
+      const caption = trimText(item.caption);
+      const detail = trimText(item.detail ?? item.description ?? item.note);
+      const creditText = imageMeta.credit;
+      const creditUrl = imageMeta.creditUrl;
+      const badge = trimText(item.tag ?? item.badge ?? '');
+      const badgeIcon = normaliseIconClass(item.tagIcon ?? item.badgeIcon);
+      const itemIcon = normaliseIconClass(item.icon) ||
+        resolveLayoutIconField('pill-with-gallery', 'pillGalleryItemIcon', item.icon);
+
+      if (caption || detail || creditText || badge || itemIcon) {
+        const figcaption = document.createElement('figcaption');
+        figcaption.className = 'pill-gallery-caption';
+        figure.appendChild(figcaption);
+
+        if (itemIcon) {
+          const iconWrap = document.createElement('span');
+          iconWrap.className = 'pill-gallery-icon';
+          const iconEl = document.createElement('i');
+          iconEl.className = itemIcon;
+          iconEl.setAttribute('aria-hidden', 'true');
+          iconWrap.appendChild(iconEl);
+          figcaption.appendChild(iconWrap);
+        }
+
+        const textWrap = document.createElement('div');
+        textWrap.className = 'pill-gallery-text';
+        figcaption.appendChild(textWrap);
+
+        if (badge) {
+          const badgeEl = document.createElement('span');
+          badgeEl.className = 'pill-gallery-badge';
+          if (badgeIcon) {
+            const badgeIconEl = document.createElement('i');
+            badgeIconEl.className = badgeIcon;
+            badgeIconEl.setAttribute('aria-hidden', 'true');
+            badgeEl.appendChild(badgeIconEl);
+            badgeEl.appendChild(document.createTextNode(' '));
+          }
+          badgeEl.appendChild(document.createTextNode(badge));
+          textWrap.appendChild(badgeEl);
+        }
+
+        if (caption) {
+          const captionEl = document.createElement('p');
+          captionEl.className = 'pill-gallery-caption-text';
+          captionEl.textContent = caption;
+          textWrap.appendChild(captionEl);
+        }
+
+        if (detail) {
+          const detailEl = document.createElement('p');
+          detailEl.className = 'pill-gallery-detail';
+          detailEl.textContent = detail;
+          textWrap.appendChild(detailEl);
+        }
+
+        if (creditText) {
+          const creditEl = document.createElement('p');
+          creditEl.className = 'pill-gallery-credit';
+          if (creditUrl) {
+            const link = document.createElement('a');
+            link.href = creditUrl;
+            link.target = '_blank';
+            link.rel = 'noreferrer noopener';
+            link.textContent = creditText;
+            creditEl.appendChild(link);
+          } else {
+            creditEl.textContent = creditText;
+          }
+          textWrap.appendChild(creditEl);
+        }
+      }
+    });
+  }
+
+  const actionItems = Array.isArray(actions) ? actions : [];
+  const hasAction = actionItems.some(
+    (action) => action && (trimText(action.label) || trimText(action.description)),
+  );
+  if (hasAction) {
+    const row = document.createElement('div');
+    row.className = 'pill-gallery-cta-row';
+    inner.appendChild(row);
+
+    actionItems.forEach((action) => {
+      if (!action || (!trimText(action.label) && !trimText(action.description))) {
+        return;
+      }
+      const href = trimText(action.href ?? action.url);
+      const actionIconClass = normaliseIconClass(action.icon) ||
+        resolveLayoutIconField('pill-with-gallery', 'pillGalleryActionIcon', actionIcon);
+      const itemEl = href ? document.createElement('a') : document.createElement('div');
+      itemEl.className = 'pill-gallery-cta';
+      if (href) {
+        itemEl.href = href;
+        itemEl.target = '_blank';
+        itemEl.rel = 'noreferrer noopener';
+      }
+      if (actionIconClass) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'pill-gallery-cta-icon';
+        const iconEl = document.createElement('i');
+        iconEl.className = actionIconClass;
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+        itemEl.appendChild(iconWrap);
+      }
+      const textWrap = document.createElement('span');
+      textWrap.className = 'pill-gallery-cta-text';
+      const label = trimText(action.label);
+      if (label) {
+        const labelEl = document.createElement('span');
+        labelEl.className = 'pill-gallery-cta-label';
+        labelEl.textContent = label;
+        textWrap.appendChild(labelEl);
+      }
+      const descriptionText = trimText(action.description ?? action.detail);
+      if (descriptionText) {
+        const descEl = document.createElement('span');
+        descEl.className = 'pill-gallery-cta-description';
+        descEl.textContent = descriptionText;
+        textWrap.appendChild(descEl);
+      }
+      itemEl.appendChild(textWrap);
+      row.appendChild(itemEl);
+    });
+  }
+
+  return slide;
+}
+
+function createReflectionBoardSlide({
+  pill,
+  pillIcon,
+  title,
+  description,
+  boardNote,
+  columns,
+  footer,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+  icon,
+  iconClass,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('reflection-board', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header reflection-board-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill) || 'Reflection board';
+  const pillIconClass = resolveLayoutIconField('reflection-board', 'reflectionBoardPillIcon', pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill reflection-board-pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    header.appendChild(pillEl);
+  }
+
+  const resolvedTitle = trimText(title) || 'Surface glow and grow insights';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  header.appendChild(headingEl);
+
+  const resolvedDescription = trimText(description);
+  if (resolvedDescription) {
+    const lead = document.createElement('p');
+    lead.className = 'reflection-board-lead';
+    lead.textContent = resolvedDescription;
+    header.appendChild(lead);
+  }
+
+  const columnsContainer = document.createElement('div');
+  columnsContainer.className = 'reflection-board-grid';
+  inner.appendChild(columnsContainer);
+
+  const columnEntries = Array.isArray(columns) ? columns : [];
+  if (!columnEntries.length) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'reflection-board-empty';
+    placeholder.textContent = 'Add glow and grow columns to guide the reflection.';
+    columnsContainer.appendChild(placeholder);
+  } else {
+    columnEntries.forEach((column, index) => {
+      if (!column || typeof column !== 'object') {
+        return;
+      }
+      const columnEl = document.createElement('section');
+      columnEl.className = 'reflection-board-column stack stack-sm';
+      columnsContainer.appendChild(columnEl);
+
+      const columnHeader = document.createElement('header');
+      columnHeader.className = 'reflection-board-column-header';
+      columnEl.appendChild(columnHeader);
+
+      const columnIconClass = normaliseIconClass(column.icon) ||
+        resolveLayoutIconField('reflection-board', 'reflectionBoardColumnIcon', index === 0 ? column.icon : undefined);
+      if (columnIconClass) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'reflection-board-column-icon';
+        const iconEl = document.createElement('i');
+        iconEl.className = columnIconClass;
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+        columnHeader.appendChild(iconWrap);
+      }
+
+      const columnTitle = trimText(column.title) || `Column ${index + 1}`;
+      const columnTitleEl = document.createElement('h3');
+      columnTitleEl.textContent = columnTitle;
+      columnHeader.appendChild(columnTitleEl);
+
+      const emphasis = trimText(column.emphasis ?? column.summary);
+      if (emphasis) {
+        const emphasisEl = document.createElement('p');
+        emphasisEl.className = 'reflection-board-emphasis';
+        emphasisEl.textContent = emphasis;
+        columnEl.appendChild(emphasisEl);
+      }
+
+      const cardsList = document.createElement('ul');
+      cardsList.className = 'reflection-board-cards';
+      columnEl.appendChild(cardsList);
+
+      const cards = Array.isArray(column.cards) ? column.cards : [];
+      if (!cards.length) {
+        const emptyCard = document.createElement('li');
+        emptyCard.className = 'reflection-board-card reflection-board-card--empty';
+        emptyCard.textContent = 'Add reflection prompts or note cards.';
+        cardsList.appendChild(emptyCard);
+      } else {
+        cards.forEach((card) => {
+          if (!card || typeof card !== 'object') {
+            return;
+          }
+          const label = trimText(card.title ?? card.label);
+          const descriptionText = trimText(card.description ?? card.detail ?? card.note);
+          if (!label && !descriptionText) {
+            return;
+          }
+          const cardEl = document.createElement('li');
+          cardEl.className = 'reflection-board-card';
+          cardsList.appendChild(cardEl);
+
+          const iconClass = normaliseIconClass(card.icon) ||
+            resolveLayoutIconField('reflection-board', 'reflectionBoardCardIcon', card.icon);
+          if (iconClass) {
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'reflection-board-card-icon';
+            const iconEl = document.createElement('i');
+            iconEl.className = iconClass;
+            iconEl.setAttribute('aria-hidden', 'true');
+            iconWrap.appendChild(iconEl);
+            cardEl.appendChild(iconWrap);
+          }
+
+          const textWrap = document.createElement('div');
+          textWrap.className = 'reflection-board-card-text';
+          cardEl.appendChild(textWrap);
+
+          if (label) {
+            const labelEl = document.createElement('h4');
+            labelEl.textContent = label;
+            textWrap.appendChild(labelEl);
+          }
+
+          if (descriptionText) {
+            const descEl = document.createElement('p');
+            descEl.textContent = descriptionText;
+            textWrap.appendChild(descEl);
+          }
+        });
+      }
+    });
+  }
+
+  const note = trimText(boardNote);
+  if (note) {
+    const noteEl = document.createElement('p');
+    noteEl.className = 'reflection-board-note';
+    noteEl.textContent = note;
+    inner.appendChild(noteEl);
+  }
+
+  if (footer && typeof footer === 'object') {
+    const footerLabel = trimText(footer.label);
+    const footerDescription = trimText(footer.description ?? footer.detail);
+    if (footerLabel || footerDescription) {
+      const footerEl = document.createElement('div');
+      footerEl.className = 'reflection-board-footer';
+      inner.appendChild(footerEl);
+      if (footerLabel) {
+        const labelEl = document.createElement('span');
+        labelEl.className = 'reflection-board-footer-label';
+        labelEl.textContent = footerLabel;
+        footerEl.appendChild(labelEl);
+      }
+      if (footerDescription) {
+        const descEl = document.createElement('p');
+        descEl.className = 'reflection-board-footer-description';
+        descEl.textContent = footerDescription;
+        footerEl.appendChild(descEl);
+      }
+    }
+  }
+
+  return slide;
+}
+
+function createSplitGridSlide({
+  pill,
+  pillIcon,
+  title,
+  description,
+  columns,
+  footerNote,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+  icon,
+  iconClass,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('split-grid', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header split-grid-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill) || 'Dual recap';
+  const pillIconClass = resolveLayoutIconField('split-grid', 'splitGridPillIcon', pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill split-grid-pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    header.appendChild(pillEl);
+  }
+
+  const resolvedTitle = trimText(title) || 'Balance glow and grow moves';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  header.appendChild(headingEl);
+
+  const resolvedDescription = trimText(description);
+  if (resolvedDescription) {
+    const lead = document.createElement('p');
+    lead.className = 'split-grid-lead';
+    lead.textContent = resolvedDescription;
+    header.appendChild(lead);
+  }
+
+  const columnsWrap = document.createElement('div');
+  columnsWrap.className = 'split-grid-columns';
+  inner.appendChild(columnsWrap);
+
+  const columnEntries = Array.isArray(columns) ? columns : [];
+  if (!columnEntries.length) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'split-grid-empty';
+    placeholder.textContent = 'Add glow and grow columns to complete the recap.';
+    columnsWrap.appendChild(placeholder);
+  } else {
+    columnEntries.forEach((column, index) => {
+      if (!column || typeof column !== 'object') {
+        return;
+      }
+      const columnEl = document.createElement('section');
+      columnEl.className = 'split-grid-column stack stack-sm';
+      columnsWrap.appendChild(columnEl);
+
+      const columnHeader = document.createElement('header');
+      columnHeader.className = 'split-grid-column-header';
+      columnEl.appendChild(columnHeader);
+
+      let defaultField = 'splitGridItemIcon';
+      if (index === 0) {
+        defaultField = 'splitGridLeftIcon';
+      } else if (index === 1) {
+        defaultField = 'splitGridRightIcon';
+      }
+      const columnIconClass = normaliseIconClass(column.icon) ||
+        resolveLayoutIconField('split-grid', defaultField, column.icon);
+      if (columnIconClass) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'split-grid-column-icon';
+        const iconEl = document.createElement('i');
+        iconEl.className = columnIconClass;
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+        columnHeader.appendChild(iconWrap);
+      }
+
+      const columnTitle = trimText(column.title) || `Column ${index + 1}`;
+      const columnTitleEl = document.createElement('h3');
+      columnTitleEl.textContent = columnTitle;
+      columnHeader.appendChild(columnTitleEl);
+
+      const columnDescription = trimText(column.description ?? column.summary);
+      if (columnDescription) {
+        const descEl = document.createElement('p');
+        descEl.className = 'split-grid-column-description';
+        descEl.textContent = columnDescription;
+        columnEl.appendChild(descEl);
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'split-grid-items';
+      columnEl.appendChild(list);
+
+      const items = Array.isArray(column.items) ? column.items : [];
+      if (!items.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'split-grid-item split-grid-item--empty';
+        emptyItem.textContent = 'Add recap notes or next steps.';
+        list.appendChild(emptyItem);
+      } else {
+        items.forEach((item) => {
+          if (!item || typeof item !== 'object') {
+            return;
+          }
+          const label = trimText(item.title ?? item.label);
+          const detail = trimText(item.detail ?? item.description ?? item.note);
+          if (!label && !detail) {
+            return;
+          }
+          const itemEl = document.createElement('li');
+          itemEl.className = 'split-grid-item';
+          list.appendChild(itemEl);
+
+          const iconClass = normaliseIconClass(item.icon) ||
+            resolveLayoutIconField('split-grid', 'splitGridItemIcon', item.icon);
+          if (iconClass) {
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'split-grid-item-icon';
+            const iconEl = document.createElement('i');
+            iconEl.className = iconClass;
+            iconEl.setAttribute('aria-hidden', 'true');
+            iconWrap.appendChild(iconEl);
+            itemEl.appendChild(iconWrap);
+          }
+
+          const textWrap = document.createElement('div');
+          textWrap.className = 'split-grid-item-text';
+          itemEl.appendChild(textWrap);
+
+          if (label) {
+            const labelEl = document.createElement('h4');
+            labelEl.textContent = label;
+            textWrap.appendChild(labelEl);
+          }
+
+          if (detail) {
+            const detailEl = document.createElement('p');
+            detailEl.textContent = detail;
+            textWrap.appendChild(detailEl);
+          }
+        });
+      }
+    });
+  }
+
+  const footerText = trimText(footerNote);
+  if (footerText) {
+    const footerEl = document.createElement('p');
+    footerEl.className = 'split-grid-footer-note';
+    footerEl.textContent = footerText;
+    inner.appendChild(footerEl);
+  }
+
+  return slide;
+}
+
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
   'hero-overlay': (data) => createHeroOverlaySlide(data),
+  'pill-with-gallery': (data) => createPillWithGallerySlide(data),
+  'reflection-board': (data) => createReflectionBoardSlide(data),
+  'split-grid': (data) => createSplitGridSlide(data),
 };
 
 export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(
