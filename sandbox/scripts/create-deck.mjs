@@ -213,6 +213,12 @@ async function resolveMediaPlaceholders(subject, context) {
     return subject;
   }
   for (const [key, value] of Object.entries(subject)) {
+    if (Array.isArray(value)) {
+      subject[key] = await Promise.all(
+        value.map((entry) => resolveMediaPlaceholders(entry, context)),
+      );
+      continue;
+    }
     if (isPlainObject(value) && typeof value.pexelsQuery === 'string') {
       const query = value.pexelsQuery;
       let asset = null;
