@@ -266,6 +266,9 @@ const {
   SUPPORTED_LESSON_LAYOUTS,
   createLessonSlideFromState,
 } = await import(pathToFileURL(join(__dirname, '../int-mod.js')).href);
+const { BUILDER_LAYOUT_DEFAULTS } = await import(
+  pathToFileURL(join(__dirname, '../slide-templates.js')).href,
+);
 
 await setupInteractiveDeck();
 await flushTimers();
@@ -299,16 +302,15 @@ assert.ok(
   layoutPickerFieldset instanceof window.HTMLElement,
   'layout picker fieldset should exist in the builder',
 );
+const expectedBuilderLayouts = Array.from(
+  new Set(['blank-canvas', ...Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {})]),
+).join(',');
 assert.equal(
   layoutPickerFieldset.dataset.layouts,
-  'blank-canvas',
-  'layout picker should only expose the blank canvas layout while archetypes are rebuilt',
+  expectedBuilderLayouts,
+  'layout picker should expose all builder layouts that provide defaults',
 );
 
-const imageSearchSection = builderOverlay
-  .querySelector('.image-search')
-  ?.closest('[data-layouts]');
-assert.ok(!imageSearchSection, 'image search section should be removed during the layout refresh');
 
 addSlideBtn.click();
 await flushTimers();
