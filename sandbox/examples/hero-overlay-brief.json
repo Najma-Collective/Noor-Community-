@@ -1,5 +1,9 @@
 {
   "title": "Partnership Opening Moment",
+  "lang": "en",
+  "brand": {
+    "label": "Noor Partnership Council"
+  },
   "slides": [
     {
       "layout": "hero-overlay",

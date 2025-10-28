@@ -330,11 +330,6 @@ function createDeckShell(document, brief, slideCount) {
   fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
   head.appendChild(fontAwesome);
 
-  const coreStyles = document.createElement('link');
-  coreStyles.rel = 'stylesheet';
-  coreStyles.href = '../CSS-slides.css';
-  head.appendChild(coreStyles);
-
   const sandboxTheme = document.createElement('link');
   sandboxTheme.rel = 'stylesheet';
   sandboxTheme.href = './sandbox-theme.css';
@@ -381,6 +376,38 @@ function createDeckShell(document, brief, slideCount) {
   brand.className = 'toolbar-brand';
   header.appendChild(brand);
 
+  const logos = Array.isArray(brief.brand?.logos)
+    ? brief.brand.logos.filter((logo) => logo && typeof logo.src === 'string')
+    : [
+        { src: '../assets/noor_logo.webp', alt: '' },
+        { src: '../assets/almanar_logo.png', alt: '' },
+      ];
+
+  if (logos.length) {
+    const logoCluster = document.createElement('div');
+    logoCluster.className = 'toolbar-logos';
+    logoCluster.setAttribute('aria-hidden', 'true');
+    logos.forEach((logo) => {
+      const img = document.createElement('img');
+      img.src = logo.src;
+      if (logo.alt != null) {
+        img.alt = String(logo.alt);
+      } else {
+        img.alt = '';
+      }
+      const widthValue = Number(logo.width);
+      if (Number.isFinite(widthValue) && widthValue > 0) {
+        img.width = widthValue;
+      }
+      const heightValue = Number(logo.height);
+      if (Number.isFinite(heightValue) && heightValue > 0) {
+        img.height = heightValue;
+      }
+      logoCluster.appendChild(img);
+    });
+    brand.appendChild(logoCluster);
+  }
+
   const brandLabel = document.createElement('span');
   brandLabel.textContent = brief.brand?.label || 'Noor Community';
   brand.appendChild(brandLabel);
@@ -395,26 +422,97 @@ function createDeckShell(document, brief, slideCount) {
   actions.className = 'toolbar-actions';
   header.appendChild(actions);
 
-  const saveButton = document.createElement('button');
-  saveButton.id = 'save-state-btn';
-  saveButton.className = 'toolbar-btn';
-  saveButton.type = 'button';
-  saveButton.textContent = 'Save Deck';
+  const createToolbarButton = ({
+    id,
+    className,
+    icon,
+    label,
+    type = 'button',
+    disabled = false,
+  }) => {
+    const button = document.createElement('button');
+    if (id) {
+      button.id = id;
+    }
+    button.className = className;
+    button.type = type;
+    if (disabled) {
+      button.disabled = true;
+    }
+    const iconEl = document.createElement('i');
+    iconEl.className = icon;
+    iconEl.setAttribute('aria-hidden', 'true');
+    button.appendChild(iconEl);
+    button.appendChild(document.createTextNode(` ${label}`));
+    return button;
+  };
+
+  const saveButton = createToolbarButton({
+    id: 'save-state-btn',
+    className: 'toolbar-btn',
+    icon: 'fa-solid fa-floppy-disk',
+    label: 'Save Deck',
+  });
   actions.appendChild(saveButton);
 
-  const loadButton = document.createElement('button');
-  loadButton.id = 'load-state-btn';
-  loadButton.className = 'toolbar-btn secondary';
-  loadButton.type = 'button';
-  loadButton.textContent = 'Load Deck';
+  const loadButton = createToolbarButton({
+    id: 'load-state-btn',
+    className: 'toolbar-btn secondary',
+    icon: 'fa-solid fa-file-import',
+    label: 'Load Deck',
+  });
   actions.appendChild(loadButton);
 
   const loadInput = document.createElement('input');
   loadInput.id = 'load-state-input';
   loadInput.type = 'file';
   loadInput.accept = 'application/json';
+  loadInput.className = 'sr-only';
   loadInput.hidden = true;
   actions.appendChild(loadInput);
+
+  const addSlideButton = createToolbarButton({
+    id: 'add-slide-btn',
+    className: 'toolbar-btn',
+    icon: 'fa-solid fa-plus',
+    label: 'Add Blank Slide',
+  });
+  actions.appendChild(addSlideButton);
+
+  const toolbarMenu = document.createElement('div');
+  toolbarMenu.className = 'toolbar-menu';
+  toolbarMenu.dataset.role = 'canvas-tools';
+  actions.appendChild(toolbarMenu);
+
+  const canvasToggle = createToolbarButton({
+    id: 'canvas-tools-toggle',
+    className: 'toolbar-btn tertiary has-caret',
+    icon: 'fa-solid fa-wand-magic-sparkles',
+    label: 'Canvas Tools',
+    disabled: true,
+  });
+  canvasToggle.setAttribute('aria-haspopup', 'true');
+  canvasToggle.setAttribute('aria-expanded', 'false');
+  canvasToggle.setAttribute('aria-controls', 'canvas-tools-menu');
+  toolbarMenu.appendChild(canvasToggle);
+
+  const caret = document.createElement('span');
+  caret.className = 'toolbar-caret';
+  caret.setAttribute('aria-hidden', 'true');
+  canvasToggle.appendChild(caret);
+
+  const canvasMenu = document.createElement('div');
+  canvasMenu.id = 'canvas-tools-menu';
+  canvasMenu.className = 'toolbar-dropdown';
+  canvasMenu.setAttribute('role', 'menu');
+  canvasMenu.setAttribute('aria-label', 'Canvas tools');
+  canvasMenu.hidden = true;
+  toolbarMenu.appendChild(canvasMenu);
+
+  const canvasMenuInner = document.createElement('div');
+  canvasMenuInner.className = 'toolbar-dropdown-inner';
+  canvasMenuInner.dataset.role = 'canvas-tools-options';
+  canvasMenu.appendChild(canvasMenuInner);
 
   const main = document.createElement('main');
   main.id = 'lesson-stage';
