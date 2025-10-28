@@ -656,6 +656,117 @@ nav a[aria-current="page"]::after {
   color: var(--color-ink-subtle);
 }
 
+/* Page-specific hero imagery */
+body.home {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-about {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-programs {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/5306430/pexels-photo-5306430.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/5306430/pexels-photo-5306430.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/5306430/pexels-photo-5306430.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/5306430/pexels-photo-5306430.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-program-english {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/9572338/pexels-photo-9572338.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/9572338/pexels-photo-9572338.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/9572338/pexels-photo-9572338.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/9572338/pexels-photo-9572338.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-program-writing {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/7092572/pexels-photo-7092572.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/7092572/pexels-photo-7092572.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/7092572/pexels-photo-7092572.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/7092572/pexels-photo-7092572.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-program-eap {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-program-mentoring {
+  --hero-backdrop: image-set(
+    url('https://images.pexels.com/photos/6325984/pexels-photo-6325984.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1440')
+      1x,
+    url('https://images.pexels.com/photos/6325984/pexels-photo-6325984.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1920')
+      2x
+  );
+  --hero-image: image-set(
+    url('https://images.pexels.com/photos/6325984/pexels-photo-6325984.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1254')
+      1x,
+    url('https://images.pexels.com/photos/6325984/pexels-photo-6325984.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=3200&h=1672')
+      2x
+  );
+}
+
+body.page-contact {
+  --hero-backdrop: url('https://images.pexels.com/photos/34433299/pexels-photo-34433299.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=960');
+  --hero-image: url('https://images.pexels.com/photos/34433299/pexels-photo-34433299.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');
+}
+
 @keyframes carouselFadeIn {
   from {
     opacity: 0;
