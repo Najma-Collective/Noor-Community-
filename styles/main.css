@@ -484,6 +484,95 @@ nav a[aria-current="page"]::after {
   gap: clamp(var(--space-3), 3vw, var(--space-5));
 }
 
+.carousel {
+  --carousel-gap: clamp(var(--space-4), 4vw, var(--space-5));
+  display: grid;
+  gap: var(--carousel-gap);
+}
+
+.carousel__viewport {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(var(--space-3), 3vw, var(--space-4));
+  touch-action: pan-y;
+}
+
+[data-carousel-ready] .carousel__viewport {
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+
+[data-carousel-ready] [data-carousel-slide] {
+  display: none;
+}
+
+[data-carousel-ready] [data-carousel-slide].is-active {
+  display: block;
+  animation: carouselFadeIn var(--motion-duration-snappy) var(--motion-ease-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-carousel-ready] [data-carousel-slide].is-active {
+    animation: none;
+  }
+}
+
+.carousel__controls {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+[data-carousel-ready] .carousel__controls {
+  display: flex;
+}
+
+.carousel__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: clamp(var(--space-2), 2.6vw, var(--space-3)) clamp(var(--space-3), 4vw, var(--space-4));
+  border-radius: 999px;
+  border: 1px solid rgba(47, 107, 91, 0.2);
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 12px 26px rgba(27, 41, 31, 0.1);
+}
+
+.carousel__control:hover,
+.carousel__control:focus-visible {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-accent-soft) 10%);
+  box-shadow: 0 18px 36px rgba(27, 41, 31, 0.16);
+}
+
+.carousel__control:focus-visible {
+  outline: 3px solid var(--color-highlight);
+  outline-offset: var(--space-1);
+}
+
+.carousel__status {
+  font-size: var(--step--1);
+  color: var(--color-ink-subtle);
+}
+
+@keyframes carouselFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-3));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .hero {
   position: relative;
   overflow: hidden;
@@ -797,6 +886,18 @@ footer a {
 
 .text-step-0 {
   font-size: var(--step-0);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .text-step-1 {

@@ -185,19 +185,32 @@
 
     <section class="stack section-alt section-offset" aria-labelledby="testimonials-heading">
       <h2 id="testimonials-heading">Learner Voices</h2>
-      <div class="two-column-grid">
-        <figure class="card">
-          <blockquote>
-            <p>“Noor Community helped me believe that my story matters. I now speak up in class and share my ideas without fear.”</p>
-          </blockquote>
-          <figcaption>— Aya, Writing Lab graduate</figcaption>
-        </figure>
-        <figure class="card">
-          <blockquote>
-            <p>“My mentor showed me how to apply for college and gave me the courage to keep going. I feel prepared for my next chapter.”</p>
-          </blockquote>
-          <figcaption>— Tareq, EAP Bridge participant</figcaption>
-        </figure>
+      <div class="carousel" data-carousel data-carousel-label="Learner testimonials">
+        <div class="carousel__viewport" id="learner-voices-viewport" data-carousel-viewport>
+          <figure class="card" data-carousel-slide>
+            <blockquote>
+              <p>“Noor Community helped me believe that my story matters. I now speak up in class and share my ideas without fear.”</p>
+            </blockquote>
+            <figcaption>— Aya, Writing Lab graduate</figcaption>
+          </figure>
+          <figure class="card" data-carousel-slide>
+            <blockquote>
+              <p>“My mentor showed me how to apply for college and gave me the courage to keep going. I feel prepared for my next chapter.”</p>
+            </blockquote>
+            <figcaption>— Tareq, EAP Bridge participant</figcaption>
+          </figure>
+        </div>
+        <div class="carousel__controls" aria-label="Carousel controls">
+          <button type="button" class="carousel__control" data-carousel-prev aria-label="Show previous testimonial" aria-controls="learner-voices-viewport">
+            <span aria-hidden="true">&#8592;</span>
+            <span>Prev</span>
+          </button>
+          <button type="button" class="carousel__control" data-carousel-next aria-label="Show next testimonial" aria-controls="learner-voices-viewport">
+            <span>Next</span>
+            <span aria-hidden="true">&#8594;</span>
+          </button>
+        </div>
+        <p class="carousel__status visually-hidden" data-carousel-status role="status" aria-live="polite"></p>
       </div>
     </section>
 
@@ -227,5 +240,6 @@
       </div>
     </div>
   </footer>
+  <script src="js/testimonialCarousel.js" defer></script>
 </body>
 </html>
