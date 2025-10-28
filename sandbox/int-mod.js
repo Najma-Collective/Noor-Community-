@@ -11070,6 +11070,9 @@ function ensureInteractivePracticeModuleControls(slide) {
     };
   }
 
+  const ButtonCtor =
+    typeof HTMLButtonElement === 'undefined' ? HTMLElement : HTMLButtonElement;
+
   let moduleArea = slide.querySelector('[data-role="practice-module-area"]');
   if (!(moduleArea instanceof HTMLElement)) {
     moduleArea = document.createElement('div');
@@ -11101,7 +11104,7 @@ function ensureInteractivePracticeModuleControls(slide) {
   }
 
   let addBtn = moduleArea.querySelector('[data-action="add-module"]');
-  if (!(addBtn instanceof HTMLButtonElement)) {
+  if (!(addBtn instanceof ButtonCtor)) {
     addBtn = document.createElement('button');
     addBtn.type = 'button';
     addBtn.className = 'activity-btn';
