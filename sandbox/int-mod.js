@@ -10119,8 +10119,225 @@ function createBaseLessonSlide(layout, options = {}) {
   return { slide, inner };
 }
 
+function parseHexColor(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const hex = value.trim().replace(/^#/, "");
+  if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) {
+    return null;
+  }
+  const normalized = hex.length === 3
+    ? hex
+        .split("")
+        .map((char) => char + char)
+        .join("")
+    : hex;
+  const int = Number.parseInt(normalized, 16);
+  return {
+    r: (int >> 16) & 255,
+    g: (int >> 8) & 255,
+    b: int & 255,
+  };
+}
+
+function resolveOverlayTintValue(tint, opacity) {
+  const resolvedTint = trimText(tint);
+  if (!resolvedTint && !(typeof opacity === "number" || typeof opacity === "string")) {
+    return "";
+  }
+
+  if (resolvedTint.startsWith("linear-gradient")) {
+    return resolvedTint;
+  }
+
+  const resolvedOpacity = resolveOverlayOpacity(opacity ?? 65);
+  if (!resolvedTint) {
+    return `rgba(14, 30, 20, ${resolvedOpacity || 0.6})`;
+  }
+
+  if (resolvedTint.startsWith("rgba") || resolvedTint.startsWith("rgb")) {
+    return resolvedTint;
+  }
+
+  if (resolvedTint.startsWith("hsla") || resolvedTint.startsWith("hsl")) {
+    return resolvedTint;
+  }
+
+  const parsed = parseHexColor(resolvedTint);
+  if (parsed) {
+    const channelOpacity = resolvedOpacity || 0.6;
+    return `rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${channelOpacity})`;
+  }
+
+  return resolvedTint;
+}
+
+function normaliseHeroOverlayImage({ image, alt, credit, creditUrl } = {}) {
+  const resolved = {
+    url: "",
+    alt: trimText(alt),
+    credit: trimText(credit),
+    creditUrl: trimText(creditUrl),
+  };
+
+  const assignFromObject = (source = {}) => {
+    if (!source || typeof source !== "object") {
+      return;
+    }
+    if (!resolved.url) {
+      resolved.url =
+        trimText(source.url ?? source.src ?? source.image ?? source.href ?? "") || resolved.url;
+    }
+    if (!resolved.alt) {
+      resolved.alt = trimText(source.alt ?? source.label ?? "");
+    }
+    if (!resolved.credit) {
+      resolved.credit = trimText(source.credit ?? "");
+    }
+    if (!resolved.creditUrl) {
+      resolved.creditUrl = trimText(source.creditUrl ?? source.creditURL ?? "");
+    }
+  };
+
+  if (typeof image === "string") {
+    resolved.url = trimText(image);
+  } else if (Array.isArray(image)) {
+    for (const entry of image) {
+      assignFromObject(entry);
+      if (resolved.url) {
+        break;
+      }
+    }
+  } else {
+    assignFromObject(image);
+  }
+
+  return resolved;
+}
+
+function createHeroOverlaySlide({
+  pill,
+  pillIcon,
+  headline,
+  subtitle,
+  overlayTint,
+  overlayOpacity,
+  alignment,
+  cardWidth,
+  image,
+  alt,
+  credit,
+  creditUrl,
+  icon,
+  iconClass,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide("hero-overlay", { iconClass: resolvedIcon });
+
+  slide.classList.add("full-width-bg");
+
+  const media = document.createElement("div");
+  media.className = "bg-media";
+  slide.insertBefore(media, inner);
+
+  const overlay = document.createElement("div");
+  overlay.className = "img-overlay";
+  const overlayValue = resolveOverlayTintValue(overlayTint, overlayOpacity);
+  if (overlayValue) {
+    overlay.style.background = overlayValue;
+  }
+  slide.insertBefore(overlay, inner);
+
+  const imageMeta = normaliseHeroOverlayImage({ image, alt, credit, creditUrl });
+  if (imageMeta.url) {
+    const img = document.createElement("img");
+    img.dataset.remoteSrc = imageMeta.url;
+    img.alt = imageMeta.alt || "Hero background";
+    img.loading = "lazy";
+    img.decoding = "async";
+    media.appendChild(img);
+  } else {
+    media.classList.add("remote-image-fallback");
+  }
+
+  if (imageMeta.credit) {
+    slide.dataset.imageCredit = imageMeta.credit;
+  }
+  if (imageMeta.creditUrl) {
+    slide.dataset.imageCreditUrl = imageMeta.creditUrl;
+  }
+
+  inner.innerHTML = "";
+  const content = document.createElement("div");
+  content.className = "bg-content";
+  const resolvedAlignment = trimText(alignment).toLowerCase();
+  let overlayAlignment = "overlay-align-left";
+  if (resolvedAlignment === "center" || resolvedAlignment === "centre") {
+    overlayAlignment = "overlay-align-center";
+    inner.style.justifyContent = "center";
+  } else if (resolvedAlignment === "end" || resolvedAlignment === "right") {
+    overlayAlignment = "overlay-align-right";
+    inner.style.justifyContent = "flex-end";
+  } else {
+    inner.style.justifyContent = "flex-start";
+  }
+  content.classList.add(overlayAlignment);
+  inner.appendChild(content);
+
+  const card = document.createElement("div");
+  card.className = "overlay-card";
+  if (overlayAlignment === "overlay-align-center") {
+    card.classList.add("centered");
+  }
+  const resolvedCardWidth =
+    typeof cardWidth === "number" && !Number.isNaN(cardWidth)
+      ? `${cardWidth}px`
+      : trimText(cardWidth);
+  if (resolvedCardWidth) {
+    card.style.maxWidth = resolvedCardWidth;
+  }
+  content.appendChild(card);
+
+  const pillText = trimText(pill) || "Session partnership";
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement("span");
+    pillEl.className = "pill overlay-pill";
+    if (pillIconClass) {
+      const iconEl = document.createElement("i");
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute("aria-hidden", "true");
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(" "));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    card.appendChild(pillEl);
+  }
+
+  const resolvedHeadline = trimText(headline) || "Set the tone for today's session";
+  const headingEl = document.createElement("h1");
+  headingEl.textContent = resolvedHeadline;
+  card.appendChild(headingEl);
+
+  const resolvedSubtitle = trimText(subtitle);
+  if (resolvedSubtitle) {
+    const subtitleEl = document.createElement("p");
+    subtitleEl.className = "deck-subtitle";
+    subtitleEl.textContent = resolvedSubtitle;
+    card.appendChild(subtitleEl);
+  }
+
+  return slide;
+}
+
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
+  'hero-overlay': (data) => createHeroOverlaySlide(data),
 };
 
 export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(

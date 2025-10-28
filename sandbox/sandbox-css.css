@@ -1517,6 +1517,51 @@ body {
   display: none;
 }
 
+.slide-stage.full-width-bg {
+  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.slide-stage.full-width-bg > .slide-inner {
+  position: absolute;
+  inset: 0;
+  padding: var(--stage-pad);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.bg-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.bg-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.92);
+  display: block;
+}
+
+.img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(14, 30, 20, 0.72) 0%,
+    rgba(14, 30, 20, 0.4) 45%,
+    rgba(14, 30, 20, 0.2) 70%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
 /* Slide layout modifiers */
 .slide-stage.is-centered-stage {
   display: flex;
