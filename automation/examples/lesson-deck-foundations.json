@@ -1,0 +1,284 @@
+{
+  "id": "CIVICS.GLOBAL.COLLAB",
+  "slug": "global-civics-collaboration",
+  "title": "Global Civics: Collaboration Toolkit",
+  "subtitle": "Building inclusive communities",
+  "description": {
+    "format": "markdown",
+    "content": "Equip facilitators with stories, prompts, and workspaces that spotlight collaborative problem solving."
+  },
+  "language": "en",
+  "version": "1.0.0",
+  "level": "B2",
+  "subject": "Global Civics",
+  "theme": "Urban community lab",
+  "estimated_duration_minutes": 75,
+  "tags": ["collaboration", "civic-action", "community"],
+  "learning_objectives": [
+    {
+      "format": "markdown",
+      "content": "Identify the pillars of effective community collaboration."
+    },
+    {
+      "format": "markdown",
+      "content": "Facilitate inclusive decision-making rituals."
+    }
+  ],
+  "contributors": [
+    { "name": "Layla Idris", "role": "Lead author" },
+    { "name": "Chris Njoroge", "role": "Editor" }
+  ],
+  "release_status": "approved",
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "https://placehold.co/1600x900?text=Global+Civics",
+      "alt": "Learners collaborating with sticky notes on a transparent wall",
+      "credit": "Pexels",
+      "placeholder": true
+    },
+    "thumbnail": {
+      "type": "image",
+      "src": "https://placehold.co/512x512/cfe6d1/263326?text=Collab",
+      "alt": "Iconic city skyline with dialogue bubbles"
+    },
+    "downloads": [
+      {
+        "label": { "text": "Facilitator guide" },
+        "href": "https://example.org/downloads/civics-collaboration-guide.pdf",
+        "file_type": "pdf"
+      }
+    ],
+    "brand_palette": {
+      "primary": "#3D7E6C",
+      "secondary": "#F2D0A4",
+      "accent": "#1B4965"
+    }
+  },
+  "accessibility": {
+    "summary": {
+      "format": "plain",
+      "content": "Use the captions supplied on media blocks and read all prompts aloud before learners move into groups."
+    },
+    "pronunciation_glossary": [
+      { "term": "Cohesion", "phonetic": "koh-HEE-zhun" }
+    ]
+  },
+  "glossary": [
+    {
+      "term": "Collaborative governance",
+      "definition": "Shared decision-making involving community stakeholders and institutions."
+    }
+  ],
+  "slides": [
+    {
+      "slug": "cover",
+      "title": { "text": "Welcome" },
+      "archetype": "hero.overlay",
+      "objective_refs": [1],
+      "data": {
+        "background_media": {
+          "type": "image",
+          "src": "https://placehold.co/1920x1080/1b4965/ffffff?text=Welcome",
+          "alt": "A facilitator greeting learners in a modern studio"
+        },
+        "headline": {
+          "format": "markdown",
+          "content": "Global Civics: Collaboration Toolkit"
+        },
+        "subhead": "Spark learner dialogue about inclusive community making.",
+        "overlay_instructions": {
+          "format": "markdown",
+          "content": "Invite learners to share a recent win when working with a partner." 
+        }
+      }
+    },
+    {
+      "slug": "lesson-aims",
+      "title": { "text": "Lesson aims" },
+      "archetype": "pill.card-stack",
+      "objective_refs": [1, 2],
+      "data": {
+        "pill_label": { "text": "Lesson aims" },
+        "headline": {
+          "format": "markdown",
+          "content": "By the end of today you will…"
+        },
+        "card_body": [
+          {
+            "format": "markdown",
+            "content": "Map the five characteristics of thriving civic teams."
+          },
+          {
+            "format": "markdown",
+            "content": "Practice a consensus-building conversation with your peers."
+          }
+        ],
+        "footnote": "Reference the facilitator notes if participants are unfamiliar with the term *consensus*."
+      }
+    },
+    {
+      "slug": "community-spotlight",
+      "title": { "text": "Community spotlight" },
+      "archetype": "centered.callout",
+      "data": {
+        "headline": {
+          "format": "markdown",
+          "content": "\"We rebuilt our youth centre in 12 weeks by co-designing every step with residents.\""
+        },
+        "supporting_text": [
+          {
+            "format": "markdown",
+            "content": "Ask learners to highlight verbs that showcase collaborative behaviour."
+          }
+        ],
+        "illustration": {
+          "type": "image",
+          "src": "https://placehold.co/800x600/f2d0a4/1b4965?text=Spotlight",
+          "alt": "Volunteers painting a mural together"
+        },
+        "accent_pill": { "text": "Case study" }
+      }
+    },
+    {
+      "slug": "dialogue-demo",
+      "title": { "text": "Model dialogue" },
+      "archetype": "centered.dialogue",
+      "data": {
+        "headline": {
+          "format": "markdown",
+          "content": "Preview the consensus check-in script."
+        },
+        "dialogue_box": {
+          "lines": [
+            {
+              "speaker": "Facilitator",
+              "text": "How might we adapt the schedule so everyone’s constraints are heard?"
+            },
+            {
+              "speaker": "Learner",
+              "text": {
+                "format": "markdown",
+                "content": "We could add an asynchronous survey before the next session."
+              },
+              "pronunciation": "AY-sin-kroh-nuhs"
+            }
+          ],
+          "stage_direction": {
+            "format": "markdown",
+            "content": "Pause and invite participants to paraphrase the learner response."
+          }
+        }
+      }
+    },
+    {
+      "slug": "collaboration-pill",
+      "title": { "text": "Key mindsets" },
+      "archetype": "pill.simple",
+      "data": {
+        "pill_label": { "text": "Mindset" },
+        "body_copy": [
+          "Assume positive intent, especially when feedback arrives late.",
+          {
+            "format": "markdown",
+            "content": "Invite quieter voices by offering a one-minute silent reflection."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "story-arc",
+      "title": { "text": "Story arc" },
+      "archetype": "card.stack",
+      "objective_refs": [1],
+      "data": {
+        "headline": "The arc of collaboration",
+        "card_body": [
+          "Set shared intentions and ground rules.",
+          {
+            "format": "markdown",
+            "content": "Prototype solutions in small cohorts using the provided template."
+          },
+          {
+            "format": "markdown",
+            "content": "Decide on next actions with a colour-dot voting round."
+          }
+        ],
+        "media": {
+          "type": "image",
+          "src": "https://placehold.co/600x400/3d7e6c/ffffff?text=Story+Arc",
+          "alt": "Storyboard cards pinned to a wall"
+        }
+      }
+    },
+    {
+      "slug": "knowledge-grid",
+      "title": { "text": "Collaboration grid" },
+      "archetype": "grid.workspace",
+      "objective_refs": [2],
+      "data": {
+        "grid_slots": [
+          {
+            "id": "rituals",
+            "title": { "text": "Shared rituals" },
+            "body": {
+              "format": "markdown",
+              "content": "List opening and closing routines that build trust."
+            },
+            "aria_label": "Grid slot for noting trusted rituals"
+          },
+          {
+            "id": "tools",
+            "title": { "text": "Tools" },
+            "body": "Capture digital platforms or analog kits that help decisions stay transparent.",
+            "media": {
+              "type": "image",
+              "src": "https://placehold.co/320x200/1b4965/ffffff?text=Tools",
+              "alt": "Assortment of collaboration tools"
+            }
+          },
+          {
+            "id": "signals",
+            "title": { "text": "Signals of success" },
+            "body": {
+              "format": "markdown",
+              "content": "Agree on two observable behaviours that indicate inclusive decision making."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "slug": "wrap-up",
+      "title": { "text": "Wrap-up" },
+      "archetype": "content.wrapper",
+      "data": {
+        "content_blocks": [
+          {
+            "type": "paragraph",
+            "text": "Before closing, ask each group to share one take-away ritual."
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "format": "markdown",
+                "content": "Celebrate quick wins publicly to model gratitude."
+              },
+              "Document open questions to revisit in the next council meeting.",
+              {
+                "format": "markdown",
+                "content": "Send a follow-up pulse survey using the provided template."
+              }
+            ]
+          },
+          {
+            "type": "quote",
+            "text": "\"Nothing strengthens a community like designing the future together.\"",
+            "attribution": "Maya Lozano, civic designer"
+          }
+        ]
+      }
+    }
+  ]
+}

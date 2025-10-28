@@ -1,0 +1,829 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noor-community.org/schemas/lesson-deck.schema.json",
+  "title": "Lesson deck specification",
+  "description": "Canonical schema for Noor Community sandbox lesson decks, covering deck-level metadata, shared assets, and archetype-aligned slide payloads.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "language",
+    "level",
+    "version",
+    "assets",
+    "slides",
+    "contributors"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9._-]{3,40}$",
+      "description": "Stable identifier that links the JSON to deck exports and learning platform manifests."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "URL-safe slug used for routing in the sandbox tooling."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 4,
+      "description": "Human friendly deck title rendered on cover slides and navigation."
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Optional deck subtitle that appears beneath the main title."
+    },
+    "description": {
+      "$ref": "#/$defs/localizedRichText",
+      "description": "Marketing-style summary for catalog listings."
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$",
+      "description": "Primary ISO 639-1 language tag for the deck copy."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v?\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the deck JSON payload."
+    },
+    "level": {
+      "type": "string",
+      "enum": ["A1", "A2", "B1", "B2", "C1"],
+      "description": "CEFR-aligned difficulty tier."
+    },
+    "subject": {
+      "type": "string",
+      "description": "High level subject classification such as Global Civics or Professional English."
+    },
+    "theme": {
+      "type": "string",
+      "description": "Design or narrative theme that influences imagery and storytelling."
+    },
+    "estimated_duration_minutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 480,
+      "description": "Approximate facilitator run time in minutes."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 2
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Search keywords that drive catalogue filtering."
+    },
+    "learning_objectives": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/localizedRichText"
+      },
+      "minItems": 1,
+      "description": "List of facilitator-facing learning outcomes."
+    },
+    "contributors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "role": {
+            "type": "string"
+          },
+          "organisation": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Authors, editors, and reviewers attributed on the deck."
+    },
+    "review_notes": {
+      "$ref": "#/$defs/localizedRichText",
+      "description": "Internal QA notes or outstanding review items."
+    },
+    "release_status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "approved", "published"],
+      "default": "draft",
+      "description": "Workflow status used by the curriculum ops team."
+    },
+    "release_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target publish date in ISO-8601 format."
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cover_image"],
+      "properties": {
+        "cover_image": {
+          "allOf": [
+            { "$ref": "#/$defs/mediaAsset" },
+            {
+              "properties": {
+                "type": { "const": "image" }
+              }
+            }
+          ],
+          "description": "Hero image used on the cover slide and marketing listings."
+        },
+        "thumbnail": {
+          "allOf": [
+            { "$ref": "#/$defs/mediaAsset" },
+            {
+              "properties": {
+                "type": { "const": "image" }
+              }
+            }
+          ],
+          "description": "Square thumbnail for compact deck cards."
+        },
+        "hero_video": {
+          "allOf": [
+            { "$ref": "#/$defs/mediaAsset" },
+            {
+              "properties": {
+                "type": { "enum": ["video", "iframe"] }
+              }
+            }
+          ],
+          "description": "Optional motion background or embed."
+        },
+        "downloads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "href"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "$ref": "#/$defs/localizedText" },
+              "href": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_type": {
+                "type": "string",
+                "enum": ["pdf", "pptx", "docx", "zip", "external"]
+              }
+            }
+          },
+          "description": "Printable facilitator guides or slide exports."
+        },
+        "brand_palette": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary": { "type": "string", "pattern": "^#?[0-9A-Fa-f]{6}$" },
+            "secondary": { "type": "string", "pattern": "^#?[0-9A-Fa-f]{6}$" },
+            "accent": { "type": "string", "pattern": "^#?[0-9A-Fa-f]{6}$" }
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "$ref": "#/$defs/localizedRichText" },
+        "audio_description": { "$ref": "#/$defs/localizedRichText" },
+        "pronunciation_glossary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term", "phonetic"],
+            "additionalProperties": false,
+            "properties": {
+              "term": { "type": "string" },
+              "phonetic": { "type": "string" },
+              "notes": { "$ref": "#/$defs/localizedRichText" }
+            }
+          }
+        }
+      }
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition"],
+        "additionalProperties": false,
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "$ref": "#/$defs/localizedRichText" },
+          "pronunciation": { "type": "string" }
+        }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/slideBase" },
+          {
+            "oneOf": [
+              { "properties": { "archetype": { "const": "hero.overlay" }, "data": { "$ref": "#/$defs/hero.overlay" } } },
+              { "properties": { "archetype": { "const": "centered.callout" }, "data": { "$ref": "#/$defs/centered.callout" } } },
+              { "properties": { "archetype": { "const": "centered.dialogue" }, "data": { "$ref": "#/$defs/centered.dialogue" } } },
+              { "properties": { "archetype": { "const": "pill.card-stack" }, "data": { "$ref": "#/$defs/pill.card-stack" } } },
+              { "properties": { "archetype": { "const": "pill.simple" }, "data": { "$ref": "#/$defs/pill.simple" } } },
+              { "properties": { "archetype": { "const": "card.stack" }, "data": { "$ref": "#/$defs/card.stack" } } },
+              { "properties": { "archetype": { "const": "grid.workspace" }, "data": { "$ref": "#/$defs/grid.workspace" } } },
+              { "properties": { "archetype": { "const": "content.wrapper" }, "data": { "$ref": "#/$defs/content.wrapper" } } },
+              { "properties": { "archetype": { "const": "interactive.activity-card" }, "data": { "$ref": "#/$defs/interactive.activity-card" } } },
+              { "properties": { "archetype": { "const": "interactive.token-board" }, "data": { "$ref": "#/$defs/interactive.token-board" } } },
+              { "properties": { "archetype": { "const": "interactive.token-table" }, "data": { "$ref": "#/$defs/interactive.token-table" } } },
+              { "properties": { "archetype": { "const": "interactive.token-quiz" }, "data": { "$ref": "#/$defs/interactive.token-quiz" } } },
+              { "properties": { "archetype": { "const": "interactive.quiz-feedback" }, "data": { "$ref": "#/$defs/interactive.quiz-feedback" } } },
+              { "properties": { "archetype": { "const": "interactive.audio-dialogue" }, "data": { "$ref": "#/$defs/interactive.audio-dialogue" } } },
+              { "properties": { "archetype": { "const": "dialogue.grid" }, "data": { "$ref": "#/$defs/dialogue.grid" } } },
+              { "properties": { "archetype": { "const": "dialogue.stack" }, "data": { "$ref": "#/$defs/dialogue.stack" } } }
+            ]
+          }
+        ]
+      }
+    },
+    "notes": {
+      "$ref": "#/$defs/localizedRichText",
+      "description": "General facilitator prep guidance."
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string" },
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+        }
+      }
+    },
+    "localizedRichText": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["format", "content"],
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": ["markdown", "html", "plain"]
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1
+            },
+            "locale": {
+              "type": "string",
+              "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+            }
+          }
+        }
+      ]
+    },
+    "mediaAsset": {
+      "type": "object",
+      "required": ["type", "src"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["image", "video", "audio", "document", "iframe", "external"]
+        },
+        "src": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 5
+        },
+        "caption": { "$ref": "#/$defs/localizedRichText" },
+        "transcript": { "$ref": "#/$defs/localizedRichText" },
+        "credit": { "type": "string" },
+        "placeholder": {
+          "type": "boolean",
+          "description": "Marks assets that still require final media production."
+        }
+      }
+    },
+    "actionButton": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "$ref": "#/$defs/localizedText" },
+        "icon": { "type": "string" },
+        "aria_label": { "type": "string" }
+      }
+    },
+    "actionBar": {
+      "type": "object",
+      "required": ["primary"],
+      "additionalProperties": false,
+      "properties": {
+        "primary": { "$ref": "#/$defs/actionButton" },
+        "secondary": { "$ref": "#/$defs/actionButton" },
+        "tertiary": { "$ref": "#/$defs/actionButton" },
+        "timer_hint": { "$ref": "#/$defs/localizedText" }
+      }
+    },
+    "token": {
+      "type": "object",
+      "required": ["id", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedRichText" },
+        "aria_label": { "type": "string" }
+      }
+    },
+    "dropzone": {
+      "type": "object",
+      "required": ["id", "title", "accepts"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "$ref": "#/$defs/localizedText" },
+        "accepts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "instructions": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "tableShell": {
+      "type": "object",
+      "required": ["columns", "rows"],
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/localizedText" }
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["prompt", "cell_keys"],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": { "$ref": "#/$defs/localizedRichText" },
+              "cell_keys": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "quizPrompt": {
+      "type": "object",
+      "required": ["id", "question", "correct_token_ids"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "$ref": "#/$defs/localizedRichText" },
+        "stimulus": { "$ref": "#/$defs/mediaAsset" },
+        "correct_token_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "rationale": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "feedbackRegion": {
+      "type": "object",
+      "required": ["positive", "negative"],
+      "additionalProperties": false,
+      "properties": {
+        "positive": { "$ref": "#/$defs/localizedRichText" },
+        "negative": { "$ref": "#/$defs/localizedRichText" },
+        "neutral": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "dialogueLine": {
+      "type": "object",
+      "required": ["speaker", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "speaker": { "type": "string" },
+        "avatar": { "$ref": "#/$defs/mediaAsset" },
+        "text": { "$ref": "#/$defs/localizedRichText" },
+        "pronunciation": { "type": "string" }
+      }
+    },
+    "promptCard": {
+      "type": "object",
+      "required": ["title", "prompt"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "$ref": "#/$defs/localizedText" },
+        "prompt": { "$ref": "#/$defs/localizedRichText" },
+        "support": { "$ref": "#/$defs/localizedRichText" },
+        "media": { "$ref": "#/$defs/mediaAsset" }
+      }
+    },
+    "slideBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "title", "archetype", "data"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "hero.overlay",
+            "centered.callout",
+            "centered.dialogue",
+            "pill.card-stack",
+            "pill.simple",
+            "card.stack",
+            "grid.workspace",
+            "content.wrapper",
+            "interactive.activity-card",
+            "interactive.token-board",
+            "interactive.token-table",
+            "interactive.token-quiz",
+            "interactive.quiz-feedback",
+            "interactive.audio-dialogue",
+            "dialogue.grid",
+            "dialogue.stack"
+          ]
+        },
+        "data": {},
+        "objective_refs": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "duration_hint": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 45
+        },
+        "notes": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "hero.overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background_media", "headline", "subhead"],
+      "properties": {
+        "background_media": { "$ref": "#/$defs/mediaAsset" },
+        "headline": { "$ref": "#/$defs/localizedRichText" },
+        "subhead": { "$ref": "#/$defs/localizedRichText" },
+        "overlay_instructions": { "$ref": "#/$defs/localizedRichText" },
+        "cta": { "$ref": "#/$defs/actionButton" }
+      }
+    },
+    "centered.callout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "supporting_text"],
+      "properties": {
+        "headline": { "$ref": "#/$defs/localizedRichText" },
+        "supporting_text": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/localizedRichText" },
+          "minItems": 1
+        },
+        "illustration": { "$ref": "#/$defs/mediaAsset" },
+        "accent_pill": { "$ref": "#/$defs/localizedText" }
+      }
+    },
+    "centered.dialogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "dialogue_box"],
+      "properties": {
+        "headline": { "$ref": "#/$defs/localizedRichText" },
+        "dialogue_box": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lines"],
+          "properties": {
+            "lines": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/dialogueLine" },
+              "minItems": 1
+            },
+            "stage_direction": { "$ref": "#/$defs/localizedRichText" }
+          }
+        }
+      }
+    },
+    "pill.card-stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pill_label", "headline", "card_body"],
+      "properties": {
+        "pill_label": { "$ref": "#/$defs/localizedText" },
+        "headline": { "$ref": "#/$defs/localizedRichText" },
+        "card_body": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/localizedRichText" },
+          "minItems": 1
+        },
+        "footnote": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "pill.simple": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pill_label", "body_copy"],
+      "properties": {
+        "pill_label": { "$ref": "#/$defs/localizedText" },
+        "body_copy": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/localizedRichText" },
+          "minItems": 1
+        }
+      }
+    },
+    "card.stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "card_body"],
+      "properties": {
+        "headline": { "$ref": "#/$defs/localizedRichText" },
+        "card_body": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/localizedRichText" },
+          "minItems": 1
+        },
+        "media": { "$ref": "#/$defs/mediaAsset" }
+      }
+    },
+    "grid.workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grid_slots"],
+      "properties": {
+        "grid_slots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "title", "body"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "$ref": "#/$defs/localizedText" },
+              "body": { "$ref": "#/$defs/localizedRichText" },
+              "media": { "$ref": "#/$defs/mediaAsset" },
+              "aria_label": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "content.wrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_blocks"],
+      "properties": {
+        "content_blocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["paragraph", "list", "quote", "media", "callout"]
+              },
+              "text": { "$ref": "#/$defs/localizedRichText" },
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/localizedRichText" }
+              },
+              "media": { "$ref": "#/$defs/mediaAsset" },
+              "attribution": { "$ref": "#/$defs/localizedRichText" }
+            }
+          }
+        }
+      }
+    },
+    "interactive.activity-card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pill_label", "instructions", "action_bar"],
+      "properties": {
+        "pill_label": { "$ref": "#/$defs/localizedText" },
+        "instructions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/localizedRichText" }
+        },
+        "action_bar": { "$ref": "#/$defs/actionBar" },
+        "timer_hint": { "$ref": "#/$defs/localizedText" },
+        "accessibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "aria_live": { "type": "string" },
+            "instructions": { "$ref": "#/$defs/localizedRichText" }
+          }
+        }
+      }
+    },
+    "interactive.token-board": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["token_bank", "dropzones", "action_bar", "feedback_region"],
+      "properties": {
+        "token_bank": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/token" }
+        },
+        "dropzones": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/dropzone" }
+        },
+        "action_bar": { "$ref": "#/$defs/actionBar" },
+        "feedback_region": { "$ref": "#/$defs/feedbackRegion" },
+        "scoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_points": { "type": "integer", "minimum": 1 },
+            "partial_credit": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "interactive.token-table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["token_bank", "table_shell", "action_bar"],
+      "properties": {
+        "token_bank": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/token" }
+        },
+        "table_shell": { "$ref": "#/$defs/tableShell" },
+        "action_bar": { "$ref": "#/$defs/actionBar" },
+        "accessibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "summary": { "$ref": "#/$defs/localizedRichText" }
+          }
+        }
+      }
+    },
+    "interactive.token-quiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["token_bank", "quiz_prompts"],
+      "properties": {
+        "token_bank": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/token" }
+        },
+        "quiz_prompts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/quizPrompt" }
+        },
+        "completion_copy": { "$ref": "#/$defs/feedbackRegion" }
+      }
+    },
+    "interactive.quiz-feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quiz_items", "feedback_region"],
+      "properties": {
+        "quiz_items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["prompt", "learner_response"],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": { "$ref": "#/$defs/localizedRichText" },
+              "learner_response": { "$ref": "#/$defs/localizedRichText" },
+              "is_correct": { "type": "boolean" },
+              "explanation": { "$ref": "#/$defs/localizedRichText" }
+            }
+          }
+        },
+        "feedback_region": { "$ref": "#/$defs/feedbackRegion" },
+        "next_steps": { "$ref": "#/$defs/localizedRichText" }
+      }
+    },
+    "interactive.audio-dialogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audio_player", "prompt_card"],
+      "properties": {
+        "audio_player": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "duration_seconds"],
+          "properties": {
+            "source": { "$ref": "#/$defs/mediaAsset" },
+            "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+            "transcript": { "$ref": "#/$defs/localizedRichText" },
+            "captions": { "$ref": "#/$defs/localizedRichText" }
+          }
+        },
+        "prompt_card": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["title", "instructions"],
+          "properties": {
+            "title": { "$ref": "#/$defs/localizedText" },
+            "instructions": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/localizedRichText" }
+            },
+            "supporting_points": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/localizedRichText" }
+            }
+          }
+        }
+      }
+    },
+    "dialogue.grid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pill_label", "prompt_cards"],
+      "properties": {
+        "pill_label": { "$ref": "#/$defs/localizedText" },
+        "prompt_cards": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/promptCard" }
+        }
+      }
+    },
+    "dialogue.stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialogue_box"],
+      "properties": {
+        "dialogue_box": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lines"],
+          "properties": {
+            "title": { "$ref": "#/$defs/localizedText" },
+            "lines": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/dialogueLine" },
+              "minItems": 1
+            },
+            "cta": { "$ref": "#/$defs/actionButton" }
+          }
+        }
+      }
+    }
+  }
+}
