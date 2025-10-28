@@ -11691,12 +11691,12 @@ function togglePracticeTypeClasses(target, slug) {
 }
 
 function applyInteractivePracticeType(slide, type) {
-  if (!(slide instanceof HTMLElement)) {
-    return "";
-  }
-
   const slug = normalisePracticeModuleType(type);
   const label = resolvePracticeModuleLabel(type, slug);
+
+  if (!(slide instanceof HTMLElement)) {
+    return slug;
+  }
 
   if (slug) {
     slide.dataset.activityType = slug;
@@ -11757,6 +11757,7 @@ function applyInteractivePracticeType(slide, type) {
     } else {
       delete moduleHost.dataset.activityType;
     }
+    togglePracticeTypeClasses(moduleHost, slug);
   }
 
   return slug;
