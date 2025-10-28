@@ -34,6 +34,12 @@ body {
   background-color: var(--surface-base);
 }
 
+.slide-stage.hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Layout primitives */
 .stack {
   --stack-gap: var(--stack-gap-default);
