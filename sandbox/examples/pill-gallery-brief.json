@@ -6,7 +6,8 @@
       "data": {
         "pill": "Field notes",
         "title": "Ground the pitch with lived moments",
-        "description": "Pair the scenario pill with three visuals that highlight learner momentum.",
+        "description": "Pair the scenario pill with a mosaic of visuals that highlight learner momentum.",
+        "mosaicStyle": "spotlight",
         "gallery": [
           {
             "caption": "Kick-off huddle · Teams outline their roles and co-design agreements.",
@@ -28,6 +29,27 @@
               "pexelsQuery": "students presenting project",
               "orientation": "landscape"
             }
+          },
+          {
+            "caption": "Mentor 1:1 · Coach highlights the experiment to run before the showcase.",
+            "image": {
+              "pexelsQuery": "teacher mentoring student project",
+              "orientation": "landscape"
+            }
+          }
+        ],
+        "actions": [
+          {
+            "label": "Download observation checklist",
+            "description": "Equip coaches with prompts for glow/grow notes.",
+            "icon": "fa-solid fa-clipboard-check",
+            "href": "#"
+          },
+          {
+            "label": "Share prototype brief",
+            "description": "Remind teams what evidence to capture next.",
+            "icon": "fa-solid fa-share-nodes",
+            "href": "#"
           }
         ]
       }

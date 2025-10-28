@@ -244,6 +244,15 @@ async function resolveMediaPlaceholders(subject, context) {
         continue;
       }
       subject[key] = asset.url;
+      const hasValue = (input) => {
+        if (input === null || input === undefined) {
+          return false;
+        }
+        if (typeof input === 'string') {
+          return input.trim().length > 0;
+        }
+        return true;
+      };
       if (typeof subject.alt === 'string' && !subject.alt.trim()) {
         subject.alt = asset.alt;
       } else if (!('alt' in subject) && typeof value.alt === 'string') {
@@ -255,13 +264,17 @@ async function resolveMediaPlaceholders(subject, context) {
       if (creditEnabled && asset.photographer) {
         const prefix = typeof value.creditPrefix === 'string' ? value.creditPrefix : 'Photo';
         const customCredit = typeof value.credit === 'string' ? value.credit : null;
-        subject.credit = subject.credit ?? customCredit ?? `${prefix}: ${asset.photographer}`;
-        if (asset.photographerUrl && !subject.creditUrl) {
-          subject.creditUrl = asset.photographerUrl;
-        } else if (typeof value.creditUrl === 'string') {
-          subject.creditUrl = subject.creditUrl ?? value.creditUrl;
+        if (!hasValue(subject.credit)) {
+          subject.credit = hasValue(customCredit)
+            ? customCredit
+            : `${prefix}: ${asset.photographer}`;
         }
-      } else if (typeof value.credit === 'string' && !subject.credit) {
+        if (asset.photographerUrl && !hasValue(subject.creditUrl)) {
+          subject.creditUrl = asset.photographerUrl;
+        } else if (typeof value.creditUrl === 'string' && !hasValue(subject.creditUrl)) {
+          subject.creditUrl = value.creditUrl;
+        }
+      } else if (typeof value.credit === 'string' && !hasValue(subject.credit)) {
         subject.credit = value.credit;
       }
       continue;
