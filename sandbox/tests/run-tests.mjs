@@ -301,8 +301,8 @@ assert.ok(
 );
 assert.equal(
   layoutPickerFieldset.dataset.layouts,
-  'blank-canvas',
-  'layout picker should only expose the blank canvas layout while archetypes are rebuilt',
+  'blank-canvas,interactive-practice',
+  'layout picker should expose the blank canvas and interactive practice layouts',
 );
 
 const imageSearchSection = builderOverlay

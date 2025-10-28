@@ -7340,6 +7340,12 @@ ol {
   box-shadow: var(--shadow-1);
 }
 
+.practice-summary {
+  margin: 0;
+  color: rgba(47, 58, 43, 0.75);
+  line-height: 1.6;
+}
+
 .practice-instructions p {
   margin: 0;
   font-weight: 600;
@@ -7390,6 +7396,189 @@ ol {
   margin: 0;
   color: rgba(47, 58, 43, 0.65);
   font-style: italic;
+}
+
+.practice-preview-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.practice-preview-item {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.practice-preview-item .practice-answer {
+  font-style: italic;
+  color: var(--primary-forest);
+}
+
+.practice-linking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.practice-linking-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.practice-linking-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgba(122, 132, 113, 0.2);
+  color: var(--forest-shadow);
+  font-weight: 700;
+}
+
+.practice-linking-hint {
+  margin: 0;
+  font-size: var(--step--1);
+  color: rgba(47, 58, 43, 0.65);
+}
+
+.practice-dropdown select {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(122, 132, 113, 0.35);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.practice-gapfill {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.practice-gapfill-text {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.practice-gap {
+  position: relative;
+  font-weight: 600;
+  color: var(--primary-forest);
+  padding: 0 0.15rem;
+}
+
+.practice-gap-answer {
+  font-weight: 400;
+  color: rgba(47, 58, 43, 0.65);
+  font-size: var(--step--1);
+}
+
+.practice-grouping {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.practice-group {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-0);
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.practice-group-items {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.practice-grid {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-0);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.practice-grid th,
+.practice-grid td {
+  border: 1px solid rgba(122, 132, 113, 0.26);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  font-size: var(--step--1);
+}
+
+.practice-grid td.is-correct {
+  text-align: center;
+  color: var(--primary-forest);
+  font-size: 1rem;
+}
+
+.practice-grid--completion th:first-child {
+  background: rgba(122, 132, 113, 0.12);
+}
+
+.practice-grid--completion td {
+  font-style: italic;
+}
+
+.practice-ranking-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.practice-quiz-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.practice-quiz-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-0);
+  border: 1px solid rgba(122, 132, 113, 0.22);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.practice-quiz-card h4 {
+  margin: 0;
+  font-size: var(--step-0);
+}
+
+.practice-meta {
+  margin: 0;
+  font-size: var(--step--1);
+  color: rgba(47, 58, 43, 0.7);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.practice-empty {
+  margin: 0;
+  font-style: italic;
+  color: rgba(47, 58, 43, 0.55);
+}
+
+.practice-options .is-correct {
+  font-weight: 700;
+  color: var(--primary-forest);
 }
 
 .practice-module-host {

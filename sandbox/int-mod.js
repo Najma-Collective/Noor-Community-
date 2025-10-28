@@ -1,5 +1,6 @@
 import {
   BUILDER_LAYOUT_DEFAULTS,
+  MODULE_LAYOUT_DEFAULTS,
   LAYOUT_FIELD_ICON_DEFAULTS,
   LAYOUT_ICON_DEFAULTS,
   getLayoutFieldIconDefault,
@@ -7568,24 +7569,168 @@ function resetPracticeList(questions = []) {
   entries.forEach((question) => addPracticeItem(question));
 }
 
-function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
+function ensureInteractivePracticeBuilderLayout() {
+  const overlay =
+    builderOverlay instanceof HTMLElement ? builderOverlay : document.querySelector('#activity-builder-overlay');
+  const form = builderForm instanceof HTMLFormElement ? builderForm : overlay?.querySelector?.('#activity-builder-form');
+  if (!(overlay instanceof HTMLElement) || !(form instanceof HTMLFormElement)) {
+    return;
+  }
+
+  const layoutGrid = form.querySelector('.layout-picker-grid');
+  if (
+    layoutGrid instanceof HTMLElement &&
+    !layoutGrid.querySelector('[data-layout-option="interactive-practice"]')
+  ) {
+    const option = document.createElement('label');
+    option.className = 'layout-option';
+    option.dataset.layoutOption = 'interactive-practice';
+    option.title =
+      'Seed a slide with Sandbox chrome, facilitation notes, and an embedded interactive module frame.';
+    option.innerHTML = `
+      <input type="radio" name="slideLayout" value="interactive-practice" />
+      <span class="layout-option-body">
+        <span class="layout-option-icon" aria-hidden="true">
+          <i class="fa-solid fa-puzzle-piece"></i>
+        </span>
+        <span class="layout-option-copy">
+          <span class="layout-option-title">Interactive practice</span>
+          <span class="layout-option-desc">Frame a module with Sandbox pills, facilitation notes, and rubric cues.</span>
+        </span>
+      </span>
+    `;
+    layoutGrid.appendChild(option);
+  }
+
+  const builderGrid = form.querySelector('.builder-grid');
+  if (!(builderGrid instanceof HTMLElement)) {
+    return;
+  }
+
+  let practiceSection = builderGrid.querySelector('[data-layouts~="interactive-practice"]');
+  if (!(practiceSection instanceof HTMLElement)) {
+    practiceSection = document.createElement('section');
+    practiceSection.className = 'builder-section';
+    practiceSection.dataset.layouts = 'interactive-practice';
+    practiceSection.innerHTML = `
+      <header class="builder-section-header">
+        <div>
+          <h3>Interactive practice</h3>
+          <p>Use Sandbox chrome to introduce the module and coach learners through the activity.</p>
+        </div>
+      </header>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Slide title</span>
+        <input type="text" name="practiceTitle" placeholder="Interactive practice spotlight" autocomplete="off" />
+      </label>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Slide summary</span>
+        <textarea
+          name="practiceSummary"
+          rows="2"
+          placeholder="Set the context for the interactive module."
+        ></textarea>
+      </label>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Facilitation notes</span>
+        <textarea
+          name="practiceInstructions"
+          rows="3"
+          placeholder="Describe how to guide learners through the module."
+        ></textarea>
+      </label>
+      <label class="builder-field builder-field--full">
+        <span class="builder-field-label">Rubric reminder</span>
+        <textarea
+          name="practiceRubric"
+          rows="2"
+          placeholder="Explain how to celebrate success or give feedback."
+        ></textarea>
+      </label>
+      <label class="builder-field">
+        <span class="builder-field-label">Module template</span>
+        <select name="practiceActivityType">
+          <option value="multiple-choice">Multiple choice quiz</option>
+          <option value="linking">Linking match-up</option>
+          <option value="dropdown">Dropdown response</option>
+          <option value="gapfill">Gap fill activity</option>
+          <option value="grouping">Grouping challenge</option>
+          <option value="multiple-choice-grid">Multiple choice grid</option>
+          <option value="ranking">Ranking sequence</option>
+          <option value="table-completion">Table completion</option>
+          <option value="quiz-show">Slide quiz showdown</option>
+        </select>
+      </label>
+    `;
+    const previewSection = builderGrid.querySelector('.builder-preview-section');
+    builderGrid.insertBefore(
+      practiceSection,
+      previewSection instanceof HTMLElement ? previewSection : builderGrid.lastElementChild,
+    );
+  }
+
+  const typeSelect = form.elements.namedItem?.('practiceActivityType');
+  if (typeSelect instanceof HTMLSelectElement) {
+    if (!typeSelect.value) {
+      typeSelect.value = 'multiple-choice';
+    }
+    if (!typeSelect.dataset.deckEnhanced) {
+      typeSelect.dataset.deckEnhanced = 'true';
+      typeSelect.addEventListener('change', () => {
+        applyBuilderLayoutDefaults('interactive-practice', { updatePreview: true, force: true });
+        showBuilderStatus('Interactive practice template updated.', 'info');
+      });
+    }
+  }
+}
+
+function applyBuilderLayoutDefaults(layout, { updatePreview = false, force = false } = {}) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
 
-  const targetLayout = layout === 'blank-canvas' ? layout : 'blank-canvas';
-  const defaults = getBuilderLayoutDefaults(targetLayout);
-  if (defaults && typeof defaults === 'object') {
-    Object.entries(defaults).forEach(([name, value]) => {
+  if (layout === 'interactive-practice') {
+    const typeField = builderForm.elements.namedItem?.('practiceActivityType');
+    if (typeField instanceof HTMLSelectElement && !typeField.value) {
+      typeField.value = 'multiple-choice';
+    }
+    const moduleType =
+      typeField instanceof HTMLSelectElement && typeField.value
+        ? typeField.value
+        : 'multiple-choice';
+    const defaultsFactory =
+      MODULE_LAYOUT_DEFAULTS?.[moduleType] ?? MODULE_LAYOUT_DEFAULTS?.['multiple-choice'];
+    const defaults = typeof defaultsFactory === 'function' ? defaultsFactory() : {};
+    const assignments = [
+      ['practiceTitle', defaults.title ?? ''],
+      ['practiceSummary', defaults.summary ?? ''],
+      ['practiceInstructions', defaults.instructions ?? ''],
+      ['practiceRubric', defaults.rubric ?? ''],
+    ];
+    assignments.forEach(([name, value]) => {
       const field = builderForm.elements.namedItem?.(name);
-      if (
-        field instanceof HTMLInputElement ||
-        field instanceof HTMLTextAreaElement ||
-        field instanceof HTMLSelectElement
-      ) {
-        field.value = value ?? '';
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        if (force || !field.value) {
+          field.value = value ?? '';
+        }
       }
     });
+  } else {
+    const defaults = getBuilderLayoutDefaults(layout);
+    if (defaults && typeof defaults === 'object') {
+      Object.entries(defaults).forEach(([name, value]) => {
+        const field = builderForm.elements.namedItem?.(name);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          if (force || !field.value) {
+            field.value = value ?? '';
+          }
+        }
+      });
+    }
   }
 
   if (updatePreview) {
@@ -7599,8 +7744,45 @@ function getBuilderFormState() {
     return null;
   }
 
-  const layout = 'blank-canvas';
+  const layout = getSelectedLayout();
   const layoutIcon = resolveLayoutIconClass(layout);
+
+  if (layout === 'interactive-practice') {
+    const typeField = builderForm.elements.namedItem?.('practiceActivityType');
+    const selectedType =
+      typeField instanceof HTMLSelectElement && typeField.value
+        ? typeField.value
+        : 'multiple-choice';
+    const getTextValue = (name) => {
+      const field = builderForm.elements.namedItem?.(name);
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        return trimText(field.value);
+      }
+      return '';
+    };
+    const data = {};
+    if (selectedType) {
+      data.activityType = selectedType;
+    }
+    const title = getTextValue('practiceTitle');
+    if (title) {
+      data.title = title;
+    }
+    const summary = getTextValue('practiceSummary');
+    if (summary) {
+      data.summary = summary;
+    }
+    const instructions = getTextValue('practiceInstructions');
+    if (instructions) {
+      data.instructions = instructions;
+    }
+    const rubric = getTextValue('practiceRubric');
+    if (rubric) {
+      data.rubric = rubric;
+    }
+    return { layout, icon: layoutIcon, data };
+  }
+
   return { layout, icon: layoutIcon, data: {} };
 }
 
@@ -7666,13 +7848,26 @@ function updateBuilderPreview() {
   if (!state) {
     return;
   }
-  builderPreview.classList.add('builder-preview--blank');
-  const blankSlide = createBlankSlide();
-  if (blankSlide instanceof HTMLElement) {
-    const previewSlide = blankSlide.cloneNode(true);
+
+  try {
+    const previewSlide = createLessonSlideFromState({ layout: state.layout, data: state.data });
+    if (!(previewSlide instanceof HTMLElement)) {
+      return;
+    }
+    if (state.icon) {
+      attachLayoutIconBadge(previewSlide, state.icon);
+    }
+    if (state.layout === 'blank-canvas') {
+      builderPreview.classList.add('builder-preview--blank');
+      attachBlankSlideEvents(previewSlide);
+    } else if (state.layout === 'interactive-practice') {
+      initialiseInteractivePracticeSlide(previewSlide);
+    }
     previewSlide.classList.remove('hidden');
     builderPreview.appendChild(previewSlide);
     builderPreview.classList.add('has-content');
+  } catch (error) {
+    console.warn('Unable to update builder preview', error);
   }
 }
 
@@ -7689,7 +7884,8 @@ function resetBuilderForm() {
   }
   setSelectedLayout('blank-canvas');
   syncBuilderLayout('blank-canvas');
-  applyBuilderLayoutDefaults('blank-canvas', { updatePreview: true });
+  applyBuilderLayoutDefaults('interactive-practice', { force: true });
+  applyBuilderLayoutDefaults('blank-canvas', { updatePreview: true, force: true });
 }
 
 function openBuilderOverlay({ layout } = {}) {
@@ -11029,8 +11225,742 @@ function createSplitGridSlide({
   return slide;
 }
 
+const getModulePracticeDefaults = (type = 'multiple-choice') => {
+  const defaultsFactory = MODULE_LAYOUT_DEFAULTS?.[type] ?? MODULE_LAYOUT_DEFAULTS?.['multiple-choice'];
+  if (typeof defaultsFactory === 'function') {
+    try {
+      return defaultsFactory() ?? {};
+    } catch (error) {
+      console.warn('Unable to resolve interactive practice defaults for', type, error);
+    }
+  }
+  return {};
+};
+
+const resolvePracticeLayoutData = (data = {}) => {
+  const overrides = data && typeof data === 'object' ? { ...data } : {};
+  const requestedType =
+    typeof overrides.activityType === 'string' && overrides.activityType.trim()
+      ? overrides.activityType.trim()
+      : typeof overrides.moduleType === 'string' && overrides.moduleType.trim()
+      ? overrides.moduleType.trim()
+      : 'multiple-choice';
+  delete overrides.moduleType;
+  const type = MODULE_LAYOUT_DEFAULTS?.[requestedType] ? requestedType : 'multiple-choice';
+  const defaults = getModulePracticeDefaults(type);
+  const { seed: overrideSeed, ...rest } = overrides;
+  const seed = overrideSeed ?? defaults.seed ?? null;
+  const config = {
+    ...defaults,
+    ...rest,
+    activityType: type,
+    seed,
+  };
+  if (!config.summary && defaults.summary) {
+    config.summary = defaults.summary;
+  }
+  return config;
+};
+
+const createPracticeEmptyMessage = (message) => {
+  const empty = document.createElement('p');
+  empty.className = 'practice-empty';
+  empty.textContent = message;
+  return empty;
+};
+
+const renderMultipleChoicePreview = ({ seed } = {}) => {
+  const questions = Array.isArray(seed?.questions) ? seed.questions.filter(Boolean) : [];
+  if (!questions.length) {
+    return null;
+  }
+  const list = document.createElement('ol');
+  list.className = 'practice-preview-list';
+  questions.slice(0, 3).forEach((question) => {
+    if (!question || typeof question !== 'object') {
+      return;
+    }
+    const promptText = trimText(question.prompt);
+    const item = document.createElement('li');
+    item.className = 'practice-preview-item';
+    if (promptText) {
+      const prompt = document.createElement('p');
+      prompt.className = 'practice-question-text';
+      prompt.textContent = promptText;
+      item.appendChild(prompt);
+    }
+    const options = Array.isArray(question.options) ? question.options.filter(Boolean) : [];
+    if (options.length) {
+      const optionList = document.createElement('ul');
+      optionList.className = 'practice-options';
+      options.slice(0, 4).forEach((option) => {
+        if (!option || typeof option !== 'object') {
+          return;
+        }
+        const optionText = trimText(option.text);
+        if (!optionText) {
+          return;
+        }
+        const li = document.createElement('li');
+        li.textContent = optionText;
+        if (option.correct) {
+          li.classList.add('is-correct');
+        }
+        optionList.appendChild(li);
+      });
+      item.appendChild(optionList);
+    }
+    const explanation = trimText(question.explanation);
+    if (explanation) {
+      const answer = document.createElement('p');
+      answer.className = 'practice-answer';
+      answer.textContent = explanation;
+      item.appendChild(answer);
+    } else {
+      const answerOption = options.find((option) => option && option.correct);
+      const answerText = trimText(answerOption?.text);
+      if (answerText) {
+        const answer = document.createElement('p');
+        answer.className = 'practice-answer';
+        answer.textContent = `Answer: ${answerText}`;
+        item.appendChild(answer);
+      }
+    }
+    list.appendChild(item);
+  });
+  return list;
+};
+
+const renderLinkingPreview = ({ seed } = {}) => {
+  const pairs = Array.isArray(seed?.pairs) ? seed.pairs.filter(Boolean) : [];
+  if (!pairs.length) {
+    return null;
+  }
+  const list = document.createElement('ol');
+  list.className = 'practice-linking-list';
+  pairs.slice(0, 4).forEach((pair, index) => {
+    if (!pair || typeof pair !== 'object') {
+      return;
+    }
+    const prompt = trimText(pair.prompt);
+    const match = trimText(pair.match);
+    const hint = trimText(pair.hint);
+    if (!prompt && !match && !hint) {
+      return;
+    }
+    const item = document.createElement('li');
+    item.className = 'practice-linking-item';
+
+    const pill = document.createElement('span');
+    pill.className = 'practice-linking-pill';
+    pill.textContent = `${index + 1}`;
+    item.appendChild(pill);
+
+    const promptWrap = document.createElement('div');
+    promptWrap.className = 'practice-linking-text';
+    if (prompt) {
+      const promptEl = document.createElement('p');
+      promptEl.className = 'practice-question-text';
+      promptEl.textContent = prompt;
+      promptWrap.appendChild(promptEl);
+    }
+    if (hint) {
+      const hintEl = document.createElement('p');
+      hintEl.className = 'practice-linking-hint';
+      hintEl.textContent = hint;
+      promptWrap.appendChild(hintEl);
+    }
+    item.appendChild(promptWrap);
+
+    if (match) {
+      const answer = document.createElement('p');
+      answer.className = 'practice-answer';
+      answer.textContent = match;
+      item.appendChild(answer);
+    }
+
+    list.appendChild(item);
+  });
+  return list;
+};
+
+const renderDropdownPreview = ({ seed } = {}) => {
+  const items = Array.isArray(seed?.items) ? seed.items.filter(Boolean) : [];
+  if (!items.length) {
+    return null;
+  }
+  const list = document.createElement('ol');
+  list.className = 'practice-preview-list';
+  items.slice(0, 3).forEach((itemConfig) => {
+    if (!itemConfig || typeof itemConfig !== 'object') {
+      return;
+    }
+    const promptText = trimText(itemConfig.prompt);
+    const options = Array.isArray(itemConfig.options) ? itemConfig.options.filter(Boolean) : [];
+    const item = document.createElement('li');
+    item.className = 'practice-preview-item';
+    if (promptText) {
+      const prompt = document.createElement('p');
+      prompt.className = 'practice-question-text';
+      prompt.textContent = promptText;
+      item.appendChild(prompt);
+    }
+    if (options.length) {
+      const selectWrap = document.createElement('div');
+      selectWrap.className = 'practice-dropdown';
+      const select = document.createElement('select');
+      select.setAttribute('aria-label', 'Sample dropdown response');
+      select.disabled = true;
+      const placeholder = document.createElement('option');
+      placeholder.textContent = 'Select the best fit';
+      select.appendChild(placeholder);
+      options.slice(0, 4).forEach((option) => {
+        const optionText = trimText(option?.text);
+        if (!optionText) {
+          return;
+        }
+        const optionEl = document.createElement('option');
+        optionEl.textContent = optionText;
+        select.appendChild(optionEl);
+      });
+      selectWrap.appendChild(select);
+      item.appendChild(selectWrap);
+    }
+    const feedback = trimText(itemConfig.feedback);
+    if (feedback) {
+      const feedbackEl = document.createElement('p');
+      feedbackEl.className = 'practice-answer';
+      feedbackEl.textContent = feedback;
+      item.appendChild(feedbackEl);
+    }
+    list.appendChild(item);
+  });
+  return list;
+};
+
+const renderGapfillPreview = ({ seed } = {}) => {
+  const passage = trimText(seed?.passage);
+  if (!passage) {
+    return null;
+  }
+  const wrapper = document.createElement('div');
+  wrapper.className = 'practice-gapfill';
+  const paragraph = document.createElement('p');
+  paragraph.className = 'practice-gapfill-text';
+  const pattern = /\[\[(.+?)\]\]/g;
+  let lastIndex = 0;
+  let match;
+  while ((match = pattern.exec(passage)) !== null) {
+    const segment = passage.slice(lastIndex, match.index);
+    if (segment) {
+      paragraph.appendChild(document.createTextNode(segment));
+    }
+    const answers = match[1]
+      .split('|')
+      .map((answer) => trimText(answer))
+      .filter(Boolean);
+    const blank = document.createElement('span');
+    blank.className = 'practice-gap';
+    blank.textContent = '______';
+    if (answers.length) {
+      blank.dataset.answer = answers.join(' / ');
+      const hint = document.createElement('span');
+      hint.className = 'practice-gap-answer';
+      hint.textContent = ` (${answers[0]})`;
+      blank.appendChild(hint);
+    }
+    paragraph.appendChild(blank);
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < passage.length) {
+    paragraph.appendChild(document.createTextNode(passage.slice(lastIndex)));
+  }
+  wrapper.appendChild(paragraph);
+  return wrapper;
+};
+
+const renderGroupingPreview = ({ seed } = {}) => {
+  const categories = Array.isArray(seed?.categories) ? seed.categories.filter(Boolean) : [];
+  if (!categories.length) {
+    return null;
+  }
+  const container = document.createElement('div');
+  container.className = 'practice-grouping';
+  categories.slice(0, 3).forEach((category) => {
+    if (!category || typeof category !== 'object') {
+      return;
+    }
+    const title = trimText(category.name ?? category.title);
+    const description = trimText(category.description ?? category.summary);
+    const items = Array.isArray(category.items) ? category.items.filter(Boolean) : [];
+    if (!title && !description && !items.length) {
+      return;
+    }
+    const column = document.createElement('article');
+    column.className = 'practice-group';
+    if (title) {
+      const heading = document.createElement('h4');
+      heading.textContent = title;
+      column.appendChild(heading);
+    }
+    if (description) {
+      const desc = document.createElement('p');
+      desc.textContent = description;
+      column.appendChild(desc);
+    }
+    if (items.length) {
+      const list = document.createElement('ul');
+      list.className = 'practice-group-items';
+      items.slice(0, 4).forEach((item) => {
+        const value = trimText(item);
+        if (!value) {
+          return;
+        }
+        const li = document.createElement('li');
+        li.textContent = value;
+        list.appendChild(li);
+      });
+      column.appendChild(list);
+    }
+    container.appendChild(column);
+  });
+  return container;
+};
+
+const renderMultipleChoiceGridPreview = ({ seed } = {}) => {
+  const columns = Array.isArray(seed?.columns) ? seed.columns.filter(Boolean) : [];
+  const rows = Array.isArray(seed?.rows) ? seed.rows.filter(Boolean) : [];
+  if (!columns.length || !rows.length) {
+    return null;
+  }
+  const table = document.createElement('table');
+  table.className = 'practice-grid';
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  thead.appendChild(headRow);
+  const headingCell = document.createElement('th');
+  headingCell.textContent = 'Prompt';
+  headRow.appendChild(headingCell);
+  columns.slice(0, 4).forEach((column) => {
+    const cell = document.createElement('th');
+    cell.textContent = trimText(column);
+    headRow.appendChild(cell);
+  });
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.slice(0, 4).forEach((row) => {
+    if (!row || typeof row !== 'object') {
+      return;
+    }
+    const rowEl = document.createElement('tr');
+    const statementCell = document.createElement('th');
+    statementCell.scope = 'row';
+    statementCell.textContent = trimText(row.statement ?? row.prompt ?? row.title);
+    rowEl.appendChild(statementCell);
+    columns.slice(0, 4).forEach((_, columnIndex) => {
+      const cell = document.createElement('td');
+      if (row.correctIndex === columnIndex) {
+        cell.classList.add('is-correct');
+        cell.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>';
+      }
+      rowEl.appendChild(cell);
+    });
+    tbody.appendChild(rowEl);
+  });
+  table.appendChild(tbody);
+  return table;
+};
+
+const renderRankingPreview = ({ seed } = {}) => {
+  const items = Array.isArray(seed?.items) ? seed.items.filter(Boolean) : [];
+  if (!items.length) {
+    return null;
+  }
+  const list = document.createElement('ol');
+  list.className = 'practice-ranking-list';
+  items.slice(0, 4).forEach((item) => {
+    if (!item || typeof item !== 'object') {
+      return;
+    }
+    const text = trimText(item.text ?? item.prompt ?? item.title);
+    const note = trimText(item.note ?? item.detail ?? item.description);
+    if (!text && !note) {
+      return;
+    }
+    const li = document.createElement('li');
+    const label = document.createElement('p');
+    label.className = 'practice-question-text';
+    label.textContent = text || 'Sequence item';
+    li.appendChild(label);
+    if (note) {
+      const detail = document.createElement('p');
+      detail.className = 'practice-answer';
+      detail.textContent = note;
+      li.appendChild(detail);
+    }
+    list.appendChild(li);
+  });
+  return list;
+};
+
+const renderTableCompletionPreview = ({ seed } = {}) => {
+  const headers = Array.isArray(seed?.columnHeaders) ? seed.columnHeaders.filter(Boolean) : [];
+  const rows = Array.isArray(seed?.rows) ? seed.rows.filter(Boolean) : [];
+  if (!headers.length || !rows.length) {
+    return null;
+  }
+  const table = document.createElement('table');
+  table.className = 'practice-grid practice-grid--completion';
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  thead.appendChild(headRow);
+  const emptyHead = document.createElement('th');
+  emptyHead.textContent = 'Row';
+  headRow.appendChild(emptyHead);
+  headers.slice(0, 4).forEach((header) => {
+    const cell = document.createElement('th');
+    cell.textContent = trimText(header);
+    headRow.appendChild(cell);
+  });
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.slice(0, 4).forEach((row) => {
+    if (!row || typeof row !== 'object') {
+      return;
+    }
+    const rowEl = document.createElement('tr');
+    const label = document.createElement('th');
+    label.scope = 'row';
+    label.textContent = trimText(row.label ?? row.title ?? row.prompt) || 'Prompt';
+    rowEl.appendChild(label);
+    const answers = Array.isArray(row.answers) ? row.answers.filter(Boolean) : [];
+    headers.slice(0, 4).forEach((_, index) => {
+      const cell = document.createElement('td');
+      const answerText = trimText(answers[index]);
+      if (answerText) {
+        cell.textContent = answerText;
+      }
+      rowEl.appendChild(cell);
+    });
+    tbody.appendChild(rowEl);
+  });
+  table.appendChild(tbody);
+  return table;
+};
+
+const renderQuizShowPreview = ({ seed } = {}) => {
+  const questions = Array.isArray(seed?.questions) ? seed.questions.filter(Boolean) : [];
+  if (!questions.length) {
+    return null;
+  }
+  const stack = document.createElement('div');
+  stack.className = 'practice-quiz-stack';
+  questions.slice(0, 2).forEach((question) => {
+    if (!question || typeof question !== 'object') {
+      return;
+    }
+    const prompt = trimText(question.prompt);
+    const answer = trimText(question.answer);
+    const feedback = trimText(question.feedback);
+    const time = Number.isFinite(question.time) ? question.time : null;
+    if (!prompt && !answer && !feedback) {
+      return;
+    }
+    const card = document.createElement('article');
+    card.className = 'practice-quiz-card';
+    if (prompt) {
+      const promptEl = document.createElement('h4');
+      promptEl.textContent = prompt;
+      card.appendChild(promptEl);
+    }
+    if (answer) {
+      const answerEl = document.createElement('p');
+      answerEl.className = 'practice-answer';
+      answerEl.textContent = `Answer: ${answer}`;
+      card.appendChild(answerEl);
+    }
+    if (feedback) {
+      const feedbackEl = document.createElement('p');
+      feedbackEl.textContent = feedback;
+      card.appendChild(feedbackEl);
+    }
+    if (time) {
+      const timeEl = document.createElement('p');
+      timeEl.className = 'practice-meta';
+      timeEl.innerHTML = '<i class="fa-solid fa-stopwatch" aria-hidden="true"></i> ' + time + 's';
+      card.appendChild(timeEl);
+    }
+    stack.appendChild(card);
+  });
+  return stack;
+};
+
+const MODULE_PRACTICE_PREVIEW_RENDERERS = {
+  'multiple-choice': renderMultipleChoicePreview,
+  linking: renderLinkingPreview,
+  dropdown: renderDropdownPreview,
+  gapfill: renderGapfillPreview,
+  grouping: renderGroupingPreview,
+  'multiple-choice-grid': renderMultipleChoiceGridPreview,
+  ranking: renderRankingPreview,
+  'table-completion': renderTableCompletionPreview,
+  'quiz-show': renderQuizShowPreview,
+};
+
+const renderPracticePreview = (container, config) => {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+  container.innerHTML = '';
+  const renderer = MODULE_PRACTICE_PREVIEW_RENDERERS?.[config.activityType];
+  if (typeof renderer === 'function') {
+    try {
+      const content = renderer(config);
+      if (content instanceof Node) {
+        container.appendChild(content);
+        return;
+      }
+    } catch (error) {
+      console.warn('Interactive practice preview failed to render', error);
+    }
+  }
+  container.appendChild(
+    createPracticeEmptyMessage('Use the module builder to populate this interactive activity preview.'),
+  );
+};
+
+const renderPracticeInstructions = (section, config) => {
+  if (!(section instanceof HTMLElement)) {
+    return;
+  }
+  section.innerHTML = '';
+  const headingText = trimText(config.instructionsHeading) || 'How to facilitate';
+  const heading = document.createElement('h3');
+  heading.className = 'practice-subheading';
+  const iconClass = normaliseIconClass(config.instructionsIcon);
+  if (iconClass) {
+    const icon = document.createElement('i');
+    icon.className = iconClass;
+    icon.setAttribute('aria-hidden', 'true');
+    heading.appendChild(icon);
+    heading.appendChild(document.createTextNode(' '));
+  }
+  heading.appendChild(document.createTextNode(headingText));
+  section.appendChild(heading);
+
+  const instructionsText = trimText(config.instructions);
+  if (instructionsText) {
+    instructionsText
+      .split(/\n+/)
+      .map((entry) => trimText(entry))
+      .filter(Boolean)
+      .forEach((entry) => {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = entry;
+        section.appendChild(paragraph);
+      });
+  } else {
+    section.appendChild(createPracticeEmptyMessage('Add facilitation notes to guide the activity.'));
+  }
+
+  const rubricText = trimText(config.rubric);
+  if (rubricText) {
+    const rubric = document.createElement('p');
+    rubric.className = 'practice-rubric';
+    rubric.textContent = rubricText;
+    section.appendChild(rubric);
+  }
+};
+
+const renderInteractivePracticeSlide = (slide, config) => {
+  if (!(slide instanceof HTMLElement)) {
+    return slide;
+  }
+  slide.__practiceConfig = config;
+  slide.dataset.activityType = config.activityType;
+  slide.dataset.activity = 'practice';
+  const header = slide.querySelector('.practice-header');
+  const pillEl = header?.querySelector('[data-role="practice-pill"]');
+  if (pillEl instanceof HTMLElement) {
+    pillEl.innerHTML = '';
+    const pillIconClass = normaliseIconClass(config.pillIcon);
+    if (pillIconClass) {
+      const icon = document.createElement('i');
+      icon.className = pillIconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(icon);
+      pillEl.appendChild(document.createTextNode(' '));
+    }
+    const pillText = trimText(config.pillLabel) || 'Interactive practice';
+    pillEl.appendChild(document.createTextNode(pillText));
+  }
+
+  const typeBadge = header?.querySelector('[data-role="practice-type"]');
+  if (typeBadge instanceof HTMLElement) {
+    typeBadge.textContent = getModuleTypeLabel(config.activityType);
+  }
+
+  const titleEl = header?.querySelector('[data-role="practice-title"]');
+  if (titleEl instanceof HTMLElement) {
+    titleEl.textContent = trimText(config.title) || 'Interactive practice spotlight';
+  }
+
+  const summaryEl = header?.querySelector('[data-role="practice-summary"]');
+  if (summaryEl instanceof HTMLElement) {
+    const summary = trimText(config.summary);
+    if (summary) {
+      summaryEl.textContent = summary;
+      summaryEl.hidden = false;
+    } else {
+      summaryEl.textContent = '';
+      summaryEl.hidden = true;
+    }
+  }
+
+  const instructionsSection = slide.querySelector('[data-role="practice-instructions"]');
+  renderPracticeInstructions(instructionsSection, config);
+
+  const previewHeading = slide.querySelector('[data-role="practice-preview-heading"]');
+  if (previewHeading instanceof HTMLElement) {
+    previewHeading.innerHTML = '';
+    const iconClass = normaliseIconClass(config.previewIcon);
+    if (iconClass) {
+      const icon = document.createElement('i');
+      icon.className = iconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      previewHeading.appendChild(icon);
+      previewHeading.appendChild(document.createTextNode(' '));
+    }
+    previewHeading.appendChild(
+      document.createTextNode(trimText(config.previewHeading) || 'Activity outline'),
+    );
+  }
+
+  const previewContainer = slide.querySelector('[data-role="practice-preview"]');
+  renderPracticePreview(previewContainer, config);
+
+  const { moduleArea } = ensureInteractivePracticeModuleControls(slide);
+  if (moduleArea instanceof HTMLElement) {
+    let hint = moduleArea.querySelector('[data-role="practice-module-hint"]');
+    if (!(hint instanceof HTMLElement)) {
+      hint = document.createElement('p');
+      hint.className = 'practice-module-hint';
+      hint.dataset.role = 'practice-module-hint';
+      moduleArea.insertBefore(hint, moduleArea.firstChild ?? null);
+    }
+    const hintText = trimText(config.moduleHint);
+    if (hintText) {
+      hint.textContent = hintText;
+      hint.hidden = false;
+    } else {
+      hint.textContent = '';
+      hint.hidden = true;
+    }
+  }
+
+  slide.dataset.activityTitle = trimText(config.title) || 'Interactive practice spotlight';
+  return slide;
+};
+
+function createInteractivePracticeSlide(data = {}) {
+  const config = resolvePracticeLayoutData(data);
+  const slide = document.createElement('div');
+  slide.className = 'slide-stage hidden interactive-practice-slide';
+  slide.dataset.type = 'activity';
+  slide.dataset.activity = 'practice';
+
+  const inner = document.createElement('div');
+  inner.className = 'slide-inner interactive-practice-inner';
+  slide.appendChild(inner);
+
+  const header = document.createElement('header');
+  header.className = 'practice-header';
+  inner.appendChild(header);
+
+  const pill = document.createElement('span');
+  pill.className = 'pill practice-pill';
+  pill.dataset.role = 'practice-pill';
+  header.appendChild(pill);
+
+  const typeBadge = document.createElement('span');
+  typeBadge.className = 'practice-type';
+  typeBadge.dataset.role = 'practice-type';
+  header.appendChild(typeBadge);
+
+  const titleEl = document.createElement('h2');
+  titleEl.dataset.role = 'practice-title';
+  header.appendChild(titleEl);
+
+  const summaryEl = document.createElement('p');
+  summaryEl.className = 'practice-summary';
+  summaryEl.dataset.role = 'practice-summary';
+  header.appendChild(summaryEl);
+
+  const body = document.createElement('div');
+  body.className = 'practice-body';
+  inner.appendChild(body);
+
+  const instructionsSection = document.createElement('section');
+  instructionsSection.className = 'practice-instructions';
+  instructionsSection.dataset.role = 'practice-instructions';
+  body.appendChild(instructionsSection);
+
+  const previewSection = document.createElement('section');
+  previewSection.className = 'practice-questions';
+  previewSection.dataset.role = 'practice-preview-section';
+  body.appendChild(previewSection);
+
+  const previewHeading = document.createElement('h3');
+  previewHeading.className = 'practice-subheading';
+  previewHeading.dataset.role = 'practice-preview-heading';
+  previewSection.appendChild(previewHeading);
+
+  const previewContainer = document.createElement('div');
+  previewContainer.className = 'practice-preview';
+  previewContainer.dataset.role = 'practice-preview';
+  previewSection.appendChild(previewContainer);
+
+  const moduleArea = document.createElement('div');
+  moduleArea.className = 'practice-module';
+  moduleArea.dataset.role = 'practice-module-area';
+  inner.appendChild(moduleArea);
+
+  const moduleHint = document.createElement('p');
+  moduleHint.className = 'practice-module-hint';
+  moduleHint.dataset.role = 'practice-module-hint';
+  moduleArea.appendChild(moduleHint);
+
+  const moduleHost = document.createElement('div');
+  moduleHost.className = 'practice-module-host';
+  moduleHost.dataset.role = 'practice-module-host';
+  moduleArea.appendChild(moduleHost);
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'activity-btn';
+  addBtn.dataset.action = 'add-module';
+  addBtn.innerHTML =
+    '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
+  moduleArea.appendChild(addBtn);
+
+  renderInteractivePracticeSlide(slide, config);
+  return slide;
+}
+
+function applyInteractivePracticeType(slide, type) {
+  if (!(slide instanceof HTMLElement)) {
+    return slide;
+  }
+  const previousConfig = slide.__practiceConfig ?? {};
+  const overrides = { ...previousConfig, activityType: type };
+  delete overrides.seed;
+  const config = resolvePracticeLayoutData(overrides);
+  return renderInteractivePracticeSlide(slide, config);
+}
+
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
+  'interactive-practice': (data) => createInteractivePracticeSlide(data),
   'hero-overlay': (data) => createHeroOverlaySlide(data),
   'pill-with-gallery': (data) => createPillWithGallerySlide(data),
   'reflection-board': (data) => createReflectionBoardSlide(data),
@@ -11483,13 +12413,29 @@ function handleBuilderSubmit(event) {
     return;
   }
 
-  const slide = createBlankSlide();
+  let slide;
+  try {
+    slide = createLessonSlideFromState({ layout: state.layout, data: state.data });
+  } catch (error) {
+    console.warn('Unable to generate slide from builder state', error);
+    showBuilderStatus("We couldn't build that slide right now.", 'error');
+    return;
+  }
+
   if (!(slide instanceof HTMLElement)) {
     showBuilderStatus("We couldn't build that slide right now.", 'error');
     return;
   }
 
-  attachBlankSlideEvents(slide);
+  if (state.icon) {
+    attachLayoutIconBadge(slide, state.icon);
+  }
+
+  if (state.layout === 'blank-canvas') {
+    attachBlankSlideEvents(slide);
+  } else if (state.layout === 'interactive-practice') {
+    initialiseInteractivePracticeSlide(slide);
+  }
   insertActivitySlide(slide);
   showBuilderStatus('Slide added to your deck.', 'success');
   closeBuilderOverlay({ reset: true, focus: true });
@@ -11529,12 +12475,17 @@ function initialiseActivityBuilderUI() {
         if (!(target instanceof HTMLInputElement)) {
           return;
         }
-        const layoutValue = 'blank-canvas';
+        const layoutValue = target.value || 'blank-canvas';
         setSelectedLayout(layoutValue);
-        applyBuilderLayoutDefaults(layoutValue);
+        syncBuilderLayout(layoutValue);
+        applyBuilderLayoutDefaults(layoutValue, { force: true });
         updateBuilderJsonPreview();
         updateBuilderPreview();
-        showBuilderStatus('Blank canvas selected.', 'info');
+        const statusMessage =
+          layoutValue === 'interactive-practice'
+            ? 'Interactive practice layout selected.'
+            : 'Blank canvas selected.';
+        showBuilderStatus(statusMessage, 'info');
       });
     });
   }
@@ -11682,7 +12633,8 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const allowedBuilderLayouts = ['blank-canvas'];
+  ensureInteractivePracticeBuilderLayout();
+  const allowedBuilderLayouts = ['blank-canvas', 'interactive-practice'];
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
