@@ -1,5 +1,9 @@
 {
   "title": "Scenario Spotlight",
+  "lang": "en",
+  "brand": {
+    "label": "Studio Field Notes"
+  },
   "slides": [
     {
       "layout": "pill-with-gallery",

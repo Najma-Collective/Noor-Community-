@@ -1,5 +1,9 @@
 {
   "title": "Studio Sprint Preview",
+  "lang": "en",
+  "brand": {
+    "label": "Studio Sprint"
+  },
   "slides": [
     {
       "layout": "card-stack",
