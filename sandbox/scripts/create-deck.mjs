@@ -2,6 +2,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 
 import {
@@ -10,8 +11,28 @@ import {
 } from '../int-mod.js';
 import { BUILDER_LAYOUT_DEFAULTS } from '../slide-templates.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const DEFAULT_LANGUAGE = 'en';
 const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
+
+function toPosixPath(value) {
+  return value.split(path.sep).join('/');
+}
+
+function resolveAssetHref(outputPath, assetRelativePath) {
+  const absoluteAssetPath = path.resolve(__dirname, '..', assetRelativePath);
+  let relativeHref = path.relative(path.dirname(outputPath), absoluteAssetPath);
+  if (!relativeHref) {
+    relativeHref = path.basename(absoluteAssetPath);
+  }
+  let normalizedHref = toPosixPath(relativeHref);
+  if (!normalizedHref.startsWith('.') && !normalizedHref.startsWith('/')) {
+    normalizedHref = `./${normalizedHref}`;
+  }
+  return normalizedHref;
+}
 
 function printUsage() {
   console.log(`Noor Community deck scaffolder\n\n` +
@@ -290,7 +311,7 @@ async function resolveMediaPlaceholders(subject, context) {
   return subject;
 }
 
-function createDeckShell(document, brief, slideCount) {
+function createDeckShell(document, brief, slideCount, assetPaths = {}) {
   document.documentElement.lang = brief.lang || DEFAULT_LANGUAGE;
   const head = document.head;
   head.innerHTML = '';
@@ -330,14 +351,16 @@ function createDeckShell(document, brief, slideCount) {
   fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
   head.appendChild(fontAwesome);
 
+  const sandboxThemeHref = assetPaths.sandboxTheme ?? './sandbox-theme.css';
   const sandboxTheme = document.createElement('link');
   sandboxTheme.rel = 'stylesheet';
-  sandboxTheme.href = './sandbox-theme.css';
+  sandboxTheme.href = sandboxThemeHref;
   head.appendChild(sandboxTheme);
 
+  const sandboxCustomHref = assetPaths.sandboxCss ?? './sandbox-css.css';
   const sandboxCustom = document.createElement('link');
   sandboxCustom.rel = 'stylesheet';
-  sandboxCustom.href = './sandbox-css.css';
+  sandboxCustom.href = sandboxCustomHref;
   head.appendChild(sandboxCustom);
 
   const body = document.body;
@@ -537,15 +560,16 @@ function createDeckShell(document, brief, slideCount) {
   nextButton.innerHTML = '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>';
   stageViewport.appendChild(nextButton);
 
+  const intModHref = assetPaths.intMod ?? './int-mod.js';
   const script = document.createElement('script');
   script.type = 'module';
-  script.textContent = `import { setupInteractiveDeck } from './int-mod.js';\nsetupInteractiveDeck({ root: document });`;
+  script.textContent = `import { setupInteractiveDeck } from '${intModHref}';\nsetupInteractiveDeck({ root: document });`;
   body.appendChild(script);
 
   return { deckApp, stageViewport };
 }
 
-async function buildDeck(brief, options) {
+async function buildDeck(brief, options = {}) {
   const { dom, previousGlobals } = ensureDomEnvironment();
   try {
     const document = dom.window.document;
@@ -553,7 +577,8 @@ async function buildDeck(brief, options) {
     if (!slides.length) {
       throw new Error('The brief must define at least one slide.');
     }
-    const { stageViewport } = createDeckShell(document, brief, slides.length);
+    const assetPaths = options.assetPaths ?? {};
+    const { stageViewport } = createDeckShell(document, brief, slides.length, assetPaths);
     const stageSlides = [];
     for (const slideDefinition of slides) {
       const layout = slideDefinition?.layout;
@@ -624,11 +649,16 @@ async function main() {
     );
   }
 
-  const html = await buildDeck(brief, { pexelsKey });
   const outputPath = path.resolve(
     process.cwd(),
     args.output || path.join(path.dirname(inputPath), `${path.parse(inputPath).name}.html`),
   );
+  const assetPaths = {
+    sandboxTheme: resolveAssetHref(outputPath, 'sandbox-theme.css'),
+    sandboxCss: resolveAssetHref(outputPath, 'sandbox-css.css'),
+    intMod: resolveAssetHref(outputPath, 'int-mod.js'),
+  };
+  const html = await buildDeck(brief, { pexelsKey, assetPaths });
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, html, 'utf8');
 
