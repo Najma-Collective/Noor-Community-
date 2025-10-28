@@ -209,7 +209,8 @@ main {
   flex-direction: column;
   gap: clamp(2.8rem, 6vw, 4.8rem);
   padding-inline: clamp(1.4rem, 4vw, 3.8rem);
-  padding-block: clamp(3rem, 7vw, 5.5rem);
+  padding-block-start: clamp(4.2rem, 9vw, 6.6rem);
+  padding-block-end: clamp(3rem, 7vw, 5.5rem);
 }
 
 main::before {
@@ -673,7 +674,7 @@ nav a[aria-current="page"]::after {
   padding: clamp(2.6rem, 6vw, 4.6rem);
   border-radius: var(--radius-lg);
   background: linear-gradient(135deg, #ffffff 0%, #f5f2e9 55%, #e7f3ef 100%);
-  box-shadow: 0 32px 60px rgba(23, 38, 26, 0.16);
+  box-shadow: 0 24px 48px rgba(23, 38, 26, 0.14);
   isolation: isolate;
 }
 
@@ -683,20 +684,21 @@ nav a[aria-current="page"]::after {
   inset: 0;
   z-index: 0;
   background:
-    linear-gradient(120deg, rgba(36, 50, 38, 0.38) 0%, rgba(36, 50, 38, 0.22) 45%, rgba(36, 50, 38, 0.1) 100%),
-    var(--hero-backdrop, radial-gradient(circle at 15% 20%, rgba(244, 212, 124, 0.4) 0, transparent 55%));
+    linear-gradient(130deg, rgba(222, 164, 122, 0.28) 0%, rgba(236, 190, 150, 0.18) 48%, rgba(244, 215, 190, 0.12) 100%),
+    var(--hero-backdrop, radial-gradient(circle at 15% 20%, rgba(244, 212, 124, 0.35) 0, transparent 55%));
   background-size: cover;
   background-position: center;
-  filter: saturate(1.05);
-  opacity: 0.68;
+  filter: saturate(1.02);
+  opacity: 0.42;
 }
 
 .hero::after {
   content: "";
   position: absolute;
-  inset: 18px;
-  border-radius: calc(var(--radius-lg) - 14px);
-  border: 1px solid rgba(47, 107, 91, 0.1);
+  inset: 12px;
+  border-radius: calc(var(--radius-lg) - 18px);
+  border: 1px solid rgba(222, 164, 122, 0.18);
+  box-shadow: 0 8px 24px rgba(209, 146, 110, 0.08);
   pointer-events: none;
   z-index: 2;
 }
