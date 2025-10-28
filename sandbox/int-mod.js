@@ -7902,10 +7902,16 @@ function handleModuleBuilderMessage(event) {
       title: config?.data?.title,
       activityType: config?.type,
     });
-    if (config?.type) {
-      const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
-      if (practiceSlide instanceof HTMLElement) {
-        applyInteractivePracticeType(practiceSlide, config.type);
+    const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+    if (practiceSlide instanceof HTMLElement) {
+      const resolvedType = applyInteractivePracticeType(
+        practiceSlide,
+        config?.type ?? moduleEditTarget.dataset.activityType,
+      );
+      if (resolvedType) {
+        moduleEditTarget.dataset.activityType = resolvedType;
+      } else {
+        delete moduleEditTarget.dataset.activityType;
       }
     }
     moduleEditTarget.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -7936,10 +7942,16 @@ function handleModuleBuilderMessage(event) {
   });
 
   moduleTargetCanvas.appendChild(moduleElement);
-  if (config?.type) {
-    const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
-    if (practiceSlide instanceof HTMLElement) {
-      applyInteractivePracticeType(practiceSlide, config.type);
+  const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+  if (practiceSlide instanceof HTMLElement) {
+    const resolvedType = applyInteractivePracticeType(
+      practiceSlide,
+      config?.type ?? moduleElement.dataset.activityType,
+    );
+    if (resolvedType) {
+      moduleElement.dataset.activityType = resolvedType;
+    } else {
+      delete moduleElement.dataset.activityType;
     }
   }
   moduleElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -11049,6 +11061,147 @@ export function createLessonSlideFromState({ layout = 'blank-canvas', data = {} 
 
 
 
+const PRACTICE_TYPE_CLASS_PREFIX = "practice-type--";
+const PRACTICE_TYPE_FALLBACK_LABEL = "Interactive module";
+
+function normalisePracticeModuleType(type) {
+  if (type == null) {
+    return "";
+  }
+  const raw =
+    typeof type === "string"
+      ? type
+      : typeof type === "number"
+        ? String(type)
+        : "";
+  const expanded = raw.replace(/([a-z0-9])([A-Z])/g, "$1-$2");
+  const slug = trimText(expanded)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug;
+}
+
+function resolvePracticeModuleLabel(type, slug) {
+  const raw =
+    typeof type === "string"
+      ? type
+      : typeof type === "number"
+        ? String(type)
+        : "";
+  const expanded = raw.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+  const trimmed = trimText(expanded).replace(/[-_]+/g, " ");
+  if (trimmed) {
+    if (/[A-Z]/.test(trimmed)) {
+      return trimmed.replace(/\s{2,}/g, " ");
+    }
+    return trimmed
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+  if (!slug) {
+    return PRACTICE_TYPE_FALLBACK_LABEL;
+  }
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function togglePracticeTypeClasses(target, slug) {
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  const removable = [];
+  target.classList.forEach((cls) => {
+    if (cls.startsWith(PRACTICE_TYPE_CLASS_PREFIX)) {
+      removable.push(cls);
+    }
+  });
+  if (removable.length) {
+    target.classList.remove(...removable);
+  }
+  if (slug) {
+    target.classList.add(`${PRACTICE_TYPE_CLASS_PREFIX}${slug}`);
+  }
+}
+
+function applyInteractivePracticeType(slide, type) {
+  if (!(slide instanceof HTMLElement)) {
+    return "";
+  }
+
+  const slug = normalisePracticeModuleType(type);
+  const label = resolvePracticeModuleLabel(type, slug);
+
+  if (slug) {
+    slide.dataset.activityType = slug;
+  } else {
+    delete slide.dataset.activityType;
+  }
+
+  togglePracticeTypeClasses(slide, slug);
+
+  const labelTargets = slide.querySelectorAll(
+    "[data-role=\"practice-type-label\"], [data-practice-type-label]",
+  );
+  if (labelTargets.length) {
+    labelTargets.forEach((target) => {
+      if (target instanceof HTMLElement) {
+        target.textContent = label;
+      }
+    });
+  }
+
+  const pillTargets = slide.querySelectorAll(
+    "[data-role=\"practice-type\"], .practice-type",
+  );
+  pillTargets.forEach((pill) => {
+    if (!(pill instanceof HTMLElement)) {
+      return;
+    }
+    if (slug) {
+      pill.dataset.activityType = slug;
+    } else if (pill.dataset && "activityType" in pill.dataset) {
+      delete pill.dataset.activityType;
+    }
+    togglePracticeTypeClasses(pill, slug);
+    const pillLabel =
+      pill.querySelector("[data-role=\"practice-type-label\"]") ??
+      pill.querySelector("[data-practice-type-label]");
+    if (pillLabel instanceof HTMLElement) {
+      pillLabel.textContent = label;
+    } else if (!labelTargets.length && pill.childElementCount === 0) {
+      pill.textContent = label;
+    }
+  });
+
+  const moduleArea = slide.querySelector("[data-role=\"practice-module-area\"]");
+  if (moduleArea instanceof HTMLElement) {
+    if (slug) {
+      moduleArea.dataset.activityType = slug;
+    } else {
+      delete moduleArea.dataset.activityType;
+    }
+    togglePracticeTypeClasses(moduleArea, slug);
+  }
+
+  const moduleHost = slide.querySelector("[data-role=\"practice-module-host\"]");
+  if (moduleHost instanceof HTMLElement) {
+    if (slug) {
+      moduleHost.dataset.activityType = slug;
+    } else {
+      delete moduleHost.dataset.activityType;
+    }
+  }
+
+  return slug;
+}
+
 function ensureInteractivePracticeModuleControls(slide) {
   if (!(slide instanceof HTMLElement)) {
     return {
@@ -11145,6 +11298,11 @@ function initialiseInteractivePracticeSlide(slide) {
   }
   slide.__deckPracticeInitialised = true;
 
+  const initialType = applyInteractivePracticeType(slide, slide.dataset.activityType);
+  if (initialType) {
+    slide.dataset.activityType = initialType;
+  }
+
   const { host, addBtn } = ensureInteractivePracticeModuleControls(slide);
 
   const updateState = () => refreshInteractivePracticeModuleState(slide);
@@ -11157,10 +11315,16 @@ function initialiseInteractivePracticeSlide(slide) {
   if (addBtn instanceof HTMLButtonElement && host instanceof HTMLElement) {
     addBtn.addEventListener('click', () => {
       const practiceSlide = addBtn.closest('.interactive-practice-slide');
-      const presetType =
+      let presetType =
         practiceSlide instanceof HTMLElement && practiceSlide.dataset.activityType
           ? practiceSlide.dataset.activityType
           : 'multiple-choice';
+      if (practiceSlide instanceof HTMLElement) {
+        const resolvedPreset = applyInteractivePracticeType(practiceSlide, presetType);
+        if (resolvedPreset) {
+          presetType = resolvedPreset;
+        }
+      }
       const config = presetType ? { type: presetType } : null;
       openModuleOverlay({
         canvas: host,
@@ -11172,7 +11336,12 @@ function initialiseInteractivePracticeSlide(slide) {
             initialiseModuleEmbed(module, { onRemove: updateState });
             if (practiceSlide instanceof HTMLElement) {
               const moduleType = module.dataset.activityType || presetType;
-              applyInteractivePracticeType(practiceSlide, moduleType);
+              const resolvedType = applyInteractivePracticeType(practiceSlide, moduleType);
+              if (resolvedType) {
+                module.dataset.activityType = resolvedType;
+              } else {
+                delete module.dataset.activityType;
+              }
             }
           }
           updateState();
