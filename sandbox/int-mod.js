@@ -7596,7 +7596,7 @@ const getEffectiveLayoutIcon = (_layout, iconClass) =>
 
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
-  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
+  const factory = BUILDER_LAYOUT_DEFAULTS?.[layout];
   if (typeof factory === 'function') {
     try {
       return factory();
@@ -7827,9 +7827,15 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     return;
   }
 
-  const isKnownLayout = typeof layout === 'string' && layout in BUILDER_LAYOUT_DEFAULTS;
-  const targetLayout = isKnownLayout ? layout : 'blank-canvas';
-  const defaults = getBuilderLayoutDefaults(targetLayout) || {};
+  const requestedLayout =
+    typeof layout === 'string' && layout ? layout : 'blank-canvas';
+  let targetLayout = requestedLayout;
+  let defaults = getBuilderLayoutDefaults(targetLayout) || null;
+
+  if (!defaults) {
+    targetLayout = 'blank-canvas';
+    defaults = getBuilderLayoutDefaults(targetLayout) || {};
+  }
 
   ensureLayoutIconDefault(targetLayout);
   applyLayoutFieldIconDefaults(targetLayout);
@@ -12243,9 +12249,11 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const allowedBuilderLayouts = Array.from(
-    new Set(['blank-canvas', ...Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {})]),
-  );
+  const builderLayoutDefaultKeys = Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {});
+  if (!builderLayoutDefaultKeys.includes('blank-canvas')) {
+    builderLayoutDefaultKeys.unshift('blank-canvas');
+  }
+  const allowedBuilderLayouts = Array.from(new Set(builderLayoutDefaultKeys));
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
