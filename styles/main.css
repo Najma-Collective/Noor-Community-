@@ -998,6 +998,7 @@ section.stack.cta p {
 
 .button {
   --btn-bg: linear-gradient(135deg, #2f6b5b 0%, #234d42 100%);
+  --btn-bg-hover: linear-gradient(135deg, #358471 0%, #28594c 100%);
   --btn-color: #ffffff;
   --btn-border: rgba(27, 41, 31, 0.08);
   display: inline-flex;
@@ -1014,7 +1015,8 @@ section.stack.cta p {
   color: var(--btn-color);
   border: 1px solid var(--btn-border);
   box-shadow: 0 12px 24px rgba(36, 50, 38, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  transition: transform 0.3s var(--motion-ease-soft), box-shadow 0.3s var(--motion-ease-soft),
+    background 0.35s var(--motion-ease-soft);
 }
 
 .button span {
@@ -1023,14 +1025,15 @@ section.stack.cta p {
 
 .button:hover,
 .button:focus-visible {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 18px 36px rgba(36, 50, 38, 0.22);
-  filter: brightness(1.05);
+  background: var(--btn-bg-hover);
   text-decoration: none;
 }
 
 .button.secondary {
   --btn-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.75));
+  --btn-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.82));
   --btn-color: var(--color-accent-strong);
   --btn-border: rgba(47, 107, 91, 0.28);
   box-shadow: 0 10px 24px rgba(47, 107, 91, 0.18);
@@ -1405,6 +1408,8 @@ form.stack.horizontal button {
 }
 
 button {
+  --btn-bg: linear-gradient(135deg, rgba(47, 107, 91, 0.92), rgba(35, 77, 66, 0.92));
+  --btn-bg-hover: linear-gradient(135deg, rgba(56, 138, 116, 0.95), rgba(37, 88, 73, 0.95));
   font: inherit;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -1412,18 +1417,19 @@ button {
   border-radius: 999px;
   border: 1px solid rgba(47, 107, 91, 0.28);
   padding: 0.75rem 1.6rem;
-  background: linear-gradient(135deg, rgba(47, 107, 91, 0.92), rgba(35, 77, 66, 0.92));
+  background: var(--btn-bg);
   color: #ffffff;
   cursor: pointer;
   box-shadow: 0 12px 24px rgba(27, 41, 31, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  transition: transform 0.3s var(--motion-ease-soft), box-shadow 0.3s var(--motion-ease-soft),
+    background 0.35s var(--motion-ease-soft);
 }
 
 button:hover,
 button:focus-visible {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 18px 36px rgba(27, 41, 31, 0.22);
-  filter: brightness(1.05);
+  background: var(--btn-bg-hover);
 }
 
 form.stack.horizontal {
