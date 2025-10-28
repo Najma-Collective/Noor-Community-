@@ -1451,43 +1451,21 @@ form.stack.horizontal {
   background: rgba(255, 255, 255, 0.9);
 }
 
-.callout-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: clamp(var(--space-3), 3vw, var(--space-5));
+.info-list {
+  --stack-gap: clamp(var(--space-2), 2vw, var(--space-3));
+  border-left: 3px solid color-mix(in srgb, var(--color-accent) 32%, transparent);
+  padding-left: clamp(var(--space-3), 2.5vw, var(--space-4));
 }
 
-.callout-card {
-  position: relative;
-  padding: clamp(1.5rem, 3vw, 2.1rem);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(246, 243, 232, 0.9) 100%);
-  border: 1px solid rgba(47, 107, 91, 0.14);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 14%, transparent);
-  box-shadow: 0 18px 40px rgba(27, 41, 31, 0.1);
-  display: grid;
-  gap: 0.7rem;
-  overflow: hidden;
-}
-
-.callout-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(244, 212, 124, 0.26), rgba(47, 107, 91, 0.12));
-  opacity: 0.18;
-  pointer-events: none;
-}
-
-.callout-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.callout-card strong {
+.info-list-item strong {
   font-family: var(--font-heading);
   color: var(--color-accent-strong);
   font-size: var(--step-1);
+  letter-spacing: 0.01em;
+}
+
+.info-list-item p {
+  color: var(--color-ink-muted);
 }
 
 .step-list {
