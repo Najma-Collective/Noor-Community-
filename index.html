@@ -27,61 +27,148 @@
     </div>
   </header>
   <main>
-    <section class="hero">
-      <div class="two-column-grid">
-        <div>
+    <section class="hero hero-aurora" style="--hero-backdrop: url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=960');">
+      <div class="hero-lights" aria-hidden="true"></div>
+      <div class="two-column-grid hero-content">
+        <div class="stack animate-rise">
+          <span class="badge">Community-rooted learning</span>
           <h1>Illuminating Pathways for Refugee Learners</h1>
           <p>We help refugee and newcomer students build the confidence, language skills, and academic readiness they need to thrive in higher education and beyond.</p>
-          <a class="button" href="programs.html"><span>Explore our programs</span></a>
+          <div class="stat-grid hero-metrics stagger">
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">92%</span>
+                <span class="stat-label">Learner retention</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">18</span>
+                <span class="stat-label">Countries represented</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">350+</span>
+                <span class="stat-label">Hours of mentorship</span>
+              </div>
+            </div>
+          </div>
+          <div class="stack horizontal animate-rise animate-delay-3">
+            <a class="button" href="programs.html"><span>Explore our programs</span></a>
+            <a class="button secondary" href="program-mentoring.html"><span>Meet our mentors</span></a>
+          </div>
         </div>
-        <div>
-          <img src="assets/almanar_logo.png" alt="Students collaborating together" class="hero-image">
-        </div>
+        <figure class="hero-media animate-float animate-delay-2" style="--hero-image: url('https://images.pexels.com/photos/8199620/pexels-photo-8199620.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="hero-media-content">
+            <p class="text-step--1">“English Immersion let me dream in more than one language.”</p>
+            <span class="text-step--1">— Aya, Writing Lab graduate</span>
+          </div>
+        </figure>
       </div>
     </section>
 
-    <section class="stack" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">Our Vision</h2>
-      <p>We envision a future where every displaced learner can access transformative education, discover their voice, and feel empowered to shape the communities they join. By pairing culturally responsive teaching with wraparound support, Noor Community creates safe learning spaces that celebrate multilingual identities and lived experience.</p>
+    <section class="section-soft stack" aria-labelledby="vision-heading">
+      <div class="two-column-grid">
+        <div class="stack">
+          <h2 id="vision-heading">Our Vision</h2>
+          <p>We envision a future where every displaced learner can access transformative education, discover their voice, and feel empowered to shape the communities they join. By pairing culturally responsive teaching with wraparound support, Noor Community creates safe learning spaces that celebrate multilingual identities and lived experience.</p>
+          <ul class="highlight-list">
+            <li>Trauma-informed classrooms designed around trust, belonging, and joy.</li>
+            <li>Curriculum that centers learner stories while building academic power.</li>
+            <li>Pathways into college, careers, and community leadership.</li>
+          </ul>
+        </div>
+        <article class="photo-card" style="--photo: url('https://images.pexels.com/photos/34413828/pexels-photo-34413828.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-body">
+            <h3>Spaces of Belonging</h3>
+            <p>Every cohort gathers in vibrant learning hubs where cultures are honored, perspectives are celebrated, and learners build community with peers and mentors.</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="two-column-grid" aria-labelledby="what-we-do-heading">
-      <div>
+      <div class="stack">
         <h2 id="what-we-do-heading">What We Do</h2>
         <p>Noor Community delivers high-touch academic programs and mentorship for refugee learners, centering trauma-informed practice and growth-focused feedback. Our integrated curriculum supports language development, critical thinking, and university readiness while connecting participants to peer and professional networks.</p>
-      </div>
-      <div>
-        <ul class="stack">
+        <ul class="highlight-list">
           <li>Integrated English language immersion rooted in authentic dialogue.</li>
           <li>Writing support that demystifies academic expectations and genre conventions.</li>
-          <li>Bridging courses that map higher-education systems and study skills.</li>
           <li>Mentoring that pairs students with compassionate guides and alumni.</li>
         </ul>
+      </div>
+      <div class="stack">
+        <div class="callout-grid stagger">
+          <div class="callout-card">
+            <strong>Holistic Care</strong>
+            <p class="mb-0">Transportation, childcare, and wellbeing partners remove barriers so learners can focus on growth.</p>
+          </div>
+          <div class="callout-card">
+            <strong>Co-created Learning</strong>
+            <p class="mb-0">Curriculum is built with learners, ensuring every session reflects lived experience and aspirations.</p>
+          </div>
+          <div class="callout-card">
+            <strong>Global Network</strong>
+            <p class="mb-0">Alumni and mentors collaborate across borders to open doors to scholarships and careers.</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="stack" aria-labelledby="programs-heading">
       <h2 id="programs-heading">Program Highlights</h2>
       <div class="two-column-grid cards">
-        <article class="card">
-          <h3>English Immersion</h3>
-          <p>Daily conversation labs, project-based learning, and cultural orientation equip students to communicate with confidence.</p>
-          <a class="button" href="program-english.html"><span>See details</span></a>
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/9572338/pexels-photo-9572338.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>English Immersion</h3>
+            <p>Daily conversation labs, project-based learning, and cultural orientation equip students to communicate with confidence.</p>
+            <a class="button" href="program-english.html"><span>See details</span></a>
+          </div>
         </article>
-        <article class="card">
-          <h3>Writing Lab</h3>
-          <p>Workshops and coaching support learners in crafting compelling narratives, research essays, and scholarship applications.</p>
-          <a class="button" href="program-writing.html"><span>See details</span></a>
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/8423119/pexels-photo-8423119.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>Writing Lab</h3>
+            <p>Workshops and coaching support learners in crafting compelling narratives, research essays, and scholarship applications.</p>
+            <a class="button" href="program-writing.html"><span>See details</span></a>
+          </div>
         </article>
-        <article class="card">
-          <h3>EAP Bridge</h3>
-          <p>Structured academic preparation that introduces critical reading, lecture strategies, and assessment literacy.</p>
-          <a class="button" href="program-eap.html"><span>See details</span></a>
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/4778624/pexels-photo-4778624.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>EAP Bridge</h3>
+            <p>Structured academic preparation introduces critical reading, lecture strategies, and assessment literacy.</p>
+            <a class="button" href="program-eap.html"><span>See details</span></a>
+          </div>
         </article>
-        <article class="card">
-          <h3>Mentoring</h3>
-          <p>Personalized guidance from educators and peer leaders navigating university pathways and community resources.</p>
-          <a class="button" href="program-mentoring.html"><span>See details</span></a>
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/1181722/pexels-photo-1181722.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>Mentoring</h3>
+            <p>Personalized guidance from educators and peer leaders navigating university pathways and community resources.</p>
+            <a class="button" href="program-mentoring.html"><span>See details</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-soft stack" aria-labelledby="pathways-heading">
+      <div class="two-column-grid">
+        <div class="stack">
+          <h2 id="pathways-heading">Pathways Beyond the Classroom</h2>
+          <p>Learners connect with mentors, scholarship advisors, and industry partners to translate new skills into action. We host storytelling showcases, campus visits, and leadership labs that open new doors.</p>
+          <ol class="step-list">
+            <li>Personalized learning plans co-designed with each participant.</li>
+            <li>Mentor matching that pairs learners with alumni and professionals.</li>
+            <li>Career exploration intensives and scholarship navigation.</li>
+          </ol>
+        </div>
+        <article class="card accent stack">
+          <h3>Wraparound Services</h3>
+          <p>Our care teams coordinate interpretation, wellness circles, technology access, and family outreach to create a seamless support ecosystem.</p>
+          <p class="text-muted mb-0">We partner with trusted community organizations to ensure every learner feels seen and supported.</p>
         </article>
       </div>
     </section>
@@ -120,7 +207,7 @@
       </div>
       <div>
         <ul class="stack horizontal">
-          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html" aria-current="page">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="programs.html">Programs</a></li>
           <li><a href="contact.html">Contact</a></li>

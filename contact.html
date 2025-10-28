@@ -27,77 +27,92 @@
     </div>
   </header>
   <main>
-    <section class="hero">
-      <div class="two-column-grid">
-        <div>
+    <section class="hero hero-aurora" style="--hero-backdrop: url('https://images.pexels.com/photos/34433299/pexels-photo-34433299.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=960');">
+      <div class="hero-lights" aria-hidden="true"></div>
+      <div class="two-column-grid hero-content">
+        <div class="stack animate-rise">
+          <span class="badge">We’d love to hear from you</span>
           <h1>Contact Noor Community</h1>
           <p>We are here to answer your questions, connect you with resources, and welcome you into our learning community.</p>
+          <div class="callout-grid stagger">
+            <div class="callout-card">
+              <strong>Email</strong>
+              <p class="mb-0"><a href="mailto:hello@noorcommunity.org">hello@noorcommunity.org</a></p>
+            </div>
+            <div class="callout-card">
+              <strong>Phone</strong>
+              <p class="mb-0"><a href="tel:+1234567890">+1 (234) 567-890</a></p>
+            </div>
+            <div class="callout-card">
+              <strong>Office hours</strong>
+              <p class="mb-0">Monday–Friday, 9am–5pm</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <img src="assets/almanar_logo.png" alt="Community members meeting together" class="hero-image">
+        <figure class="hero-media animate-float animate-delay-2" style="--hero-image: url('https://images.pexels.com/photos/34433299/pexels-photo-34433299.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="hero-media-content">
+            <p class="text-step--1">“Together we imagine learning spaces full of light and possibility.”</p>
+            <span class="text-step--1">— Noor Community Team</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section-soft stack" aria-labelledby="visit-heading">
+      <div class="two-column-grid">
+        <div class="stack">
+          <h2 id="visit-heading">Visit Us</h2>
+          <p>Community Learning Center<br>1234 Elm Street<br>City, State 00000</p>
+          <p>Bus lines 3, 7, and 15 stop within one block. Parking passes are available upon request.</p>
+          <div class="callout-grid stagger">
+            <div class="callout-card">
+              <strong>Accessibility</strong>
+              <p class="mb-0">Our space includes elevator access, quiet rooms, and translation headsets.</p>
+            </div>
+            <div class="callout-card">
+              <strong>Partnerships</strong>
+              <p class="mb-0">We collaborate with local colleges, libraries, and youth centers to host programs.</p>
+            </div>
+          </div>
         </div>
+        <form class="card stack" aria-labelledby="form-heading">
+          <h3 id="form-heading">Send a Message</h3>
+          <label class="stack" for="name">Name
+            <input id="name" name="name" type="text" required>
+          </label>
+          <label class="stack" for="email">Email
+            <input id="email" name="email" type="email" required>
+          </label>
+          <label class="stack" for="program-interest">Program of Interest
+            <select id="program-interest" name="program-interest">
+              <option value="english">English Immersion</option>
+              <option value="writing">Writing Lab</option>
+              <option value="eap">EAP Bridge</option>
+              <option value="mentoring">Mentoring</option>
+              <option value="partnership">Partnership</option>
+            </select>
+          </label>
+          <label class="stack" for="message">Message
+            <textarea id="message" name="message" rows="4" required></textarea>
+          </label>
+          <button class="button" type="submit"><span>Send message</span></button>
+        </form>
       </div>
-    </section>
-
-    <section class="stack" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">Our Vision</h2>
-      <p>We build bridges between refugee learners, mentors, and partners who believe in the power of education. Reach out to learn how we can collaborate.</p>
-    </section>
-
-    <section class="two-column-grid" aria-labelledby="what-we-do-heading">
-      <div>
-        <h2 id="what-we-do-heading">What We Do</h2>
-        <p>Noor Community offers language immersion, writing support, EAP bridging, and mentorship. Our team is ready to discuss enrollment, partnerships, and volunteer opportunities.</p>
-      </div>
-      <div class="card stack">
-        <h3>Connect With Us</h3>
-        <ul class="stack">
-          <li>Email: <a href="mailto:hello@noorcommunity.org">hello@noorcommunity.org</a></li>
-          <li>Phone: <a href="tel:+1234567890">+1 (234) 567-890</a></li>
-          <li>Office hours: Monday–Friday, 9am–5pm</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="two-column-grid" aria-labelledby="visit-heading">
-      <div>
-        <h2 id="visit-heading">Visit Us</h2>
-        <p>Community Learning Center<br>1234 Elm Street<br>City, State 00000</p>
-        <p>Bus lines 3, 7, and 15 stop within one block. Parking passes are available upon request.</p>
-      </div>
-      <form class="card stack" aria-labelledby="form-heading">
-        <h3 id="form-heading">Send a Message</h3>
-        <label class="stack" for="name">Name
-          <input id="name" name="name" type="text" required>
-        </label>
-        <label class="stack" for="email">Email
-          <input id="email" name="email" type="email" required>
-        </label>
-        <label class="stack" for="program-interest">Program of Interest
-          <select id="program-interest" name="program-interest">
-            <option value="english">English Immersion</option>
-            <option value="writing">Writing Lab</option>
-            <option value="eap">EAP Bridge</option>
-            <option value="mentoring">Mentoring</option>
-            <option value="partnership">Partnership</option>
-          </select>
-        </label>
-        <label class="stack" for="message">Message
-          <textarea id="message" name="message" rows="4" required></textarea>
-        </label>
-        <button type="submit">Send message</button>
-      </form>
     </section>
 
     <section class="stack" aria-labelledby="cta-heading">
-      <h2 id="cta-heading">Stay Connected</h2>
-      <p>Subscribe to our newsletter for program updates, success stories, and volunteer opportunities.</p>
-      <form class="stack horizontal" aria-label="Newsletter sign-up">
-        <label class="stack" for="newsletter-email">Email address
-          <input id="newsletter-email" name="newsletter-email" type="email" required>
-        </label>
-        <button type="submit">Subscribe</button>
-      </form>
+      <div class="newsletter-card">
+        <div class="stack">
+          <h2 id="cta-heading">Stay Connected</h2>
+          <p>Subscribe to our newsletter for program updates, success stories, and volunteer opportunities.</p>
+          <form class="stack horizontal" aria-label="Newsletter sign-up">
+            <label class="stack" for="newsletter-email">Email address
+              <input id="newsletter-email" name="newsletter-email" type="email" required>
+            </label>
+            <button class="button secondary" type="submit"><span>Subscribe</span></button>
+          </form>
+        </div>
+      </div>
     </section>
   </main>
   <footer>

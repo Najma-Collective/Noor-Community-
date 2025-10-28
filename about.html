@@ -27,47 +27,78 @@
     </div>
   </header>
   <main>
-    <section class="hero">
-      <div class="two-column-grid">
-        <div>
+    <section class="hero hero-aurora" style="--hero-backdrop: url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=960');">
+      <div class="hero-lights" aria-hidden="true"></div>
+      <div class="two-column-grid hero-content">
+        <div class="stack animate-rise">
+          <span class="badge">Educator-led collective</span>
           <h1>About Noor Community</h1>
           <p>We are an educator-led collective supporting refugee learners through trauma-informed instruction, peer mentorship, and community-building initiatives.</p>
+          <div class="stat-grid hero-metrics stagger">
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">12+</span>
+                <span class="stat-label">Years of service</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">450</span>
+                <span class="stat-label">Learners guided</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">60</span>
+                <span class="stat-label">Volunteer educators</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <img src="assets/almanar_logo.png" alt="Group of students smiling together" class="hero-image">
-        </div>
+        <figure class="hero-media animate-float animate-delay-2" style="--hero-image: url('https://images.pexels.com/photos/34473107/pexels-photo-34473107.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="hero-media-content">
+            <p class="text-step--1">“We design spaces where every language, culture, and story is cherished.”</p>
+            <span class="text-step--1">— Nadia Hassan, Executive Director</span>
+          </div>
+        </figure>
       </div>
     </section>
 
-    <section class="stack" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">Our Vision</h2>
-      <p>Every learner deserves to feel seen, encouraged, and equipped to pursue their aspirations. We cultivate learning environments where multilingual identities are celebrated and where students can reimagine their futures with confidence.</p>
+    <section class="section-soft stack" aria-labelledby="vision-heading">
+      <div class="two-column-grid">
+        <div class="stack">
+          <h2 id="vision-heading">Our Vision</h2>
+          <p>Every learner deserves to feel seen, encouraged, and equipped to pursue their aspirations. We cultivate learning environments where multilingual identities are celebrated and where students can reimagine their futures with confidence.</p>
+          <ul class="highlight-list">
+            <li>Community-rooted pedagogy that affirms culture and lived experience.</li>
+            <li>Holistic care that centers wellbeing, family engagement, and access.</li>
+            <li>Leadership pathways that amplify youth voice in public forums.</li>
+          </ul>
+        </div>
+        <article class="photo-card" style="--photo: url('https://images.pexels.com/photos/34467294/pexels-photo-34467294.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-body">
+            <h3>Collective Story</h3>
+            <p>Noor Community grew from volunteer-led study circles into a coordinated network of teachers, counselors, and student leaders across multiple cities.</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="two-column-grid" aria-labelledby="story-heading">
-      <div>
+      <article class="card accent stack">
         <h2 id="story-heading">Our Story</h2>
-        <p>Noor Community grew from volunteer-led study circles into a coordinated network of teachers, counselors, and student leaders. Over the years we have expanded to serve learners across multiple cities while retaining a focus on relationship-centered support.</p>
-      </div>
-      <div class="stack">
-        <p>Key milestones include:</p>
-        <ul class="stack">
-          <li>Launching our English Immersion program to meet urgent language needs for newly arrived youth.</li>
-          <li>Creating the Writing Lab to demystify university expectations and elevate personal narratives.</li>
-          <li>Building the EAP Bridge to connect learners to higher education pathways and scholarships.</li>
-          <li>Expanding mentorship to include alumni coaches, career panels, and wellbeing resources.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="two-column-grid" aria-labelledby="approach-heading">
-      <div>
-        <h2 id="approach-heading">How We Work</h2>
-        <p>Our curriculum design and learner support approach center three pillars: collaborative pedagogy, culturally sustaining practice, and holistic wellbeing. We design experiences that welcome family voices, leverage community expertise, and reduce barriers to participation.</p>
-      </div>
+        <p>Noor Community began with a handful of educators responding to urgent language needs in local refugee resettlement centers. We now steward year-round programs that blend academic rigor with deep relational care.</p>
+        <ol class="step-list">
+          <li>Launching English Immersion to welcome newly arrived youth.</li>
+          <li>Creating the Writing Lab to uplift personal narratives and scholarship voices.</li>
+          <li>Building the EAP Bridge to connect learners with higher education systems.</li>
+          <li>Expanding mentorship with alumni coaches, career panels, and wellbeing resources.</li>
+        </ol>
+      </article>
       <div class="card stack">
-        <h3>Core Commitments</h3>
-        <ul class="stack">
+        <h3>How We Work</h3>
+        <p>Our curriculum design and learner support approach center three pillars: collaborative pedagogy, culturally sustaining practice, and holistic wellbeing. We design experiences that welcome family voices, leverage community expertise, and reduce barriers to participation.</p>
+        <ul class="highlight-list">
           <li>Language justice through translanguaging and accessible resources.</li>
           <li>Academic readiness through scaffolded projects and feedback loops.</li>
           <li>Career exploration via mentoring, internships, and storytelling.</li>
@@ -77,30 +108,49 @@
 
     <section class="stack" aria-labelledby="team-heading">
       <h2 id="team-heading">Meet Our Team</h2>
-      <div class="two-column-grid">
-        <article class="card">
-          <h3>Nadia Hassan, Executive Director</h3>
-          <p>Nadia brings fifteen years of experience in refugee education and leads our partnerships, program design, and advocacy.</p>
+      <div class="profile-grid">
+        <article class="card profile-card">
+          <img class="profile-avatar" src="https://images.pexels.com/photos/3772511/pexels-photo-3772511.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Portrait of Nadia Hassan">
+          <div class="stack">
+            <h3>Nadia Hassan</h3>
+            <p class="text-muted">Executive Director</p>
+            <p>Nadia brings fifteen years of experience in refugee education and leads our partnerships, program design, and advocacy.</p>
+          </div>
         </article>
-        <article class="card">
-          <h3>Samir Rahman, Program Lead</h3>
-          <p>Samir coordinates curriculum development and educator training across English Immersion, Writing Lab, and EAP Bridge.</p>
+        <article class="card profile-card">
+          <img class="profile-avatar" src="https://images.pexels.com/photos/6816527/pexels-photo-6816527.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Portrait of Samir Rahman">
+          <div class="stack">
+            <h3>Samir Rahman</h3>
+            <p class="text-muted">Program Lead</p>
+            <p>Samir coordinates curriculum development and educator training across English Immersion, Writing Lab, and EAP Bridge.</p>
+          </div>
         </article>
-        <article class="card">
-          <h3>Layla Odeh, Mentorship Coordinator</h3>
-          <p>Layla matches learners with mentors, facilitates wellbeing circles, and ensures participants access wraparound services.</p>
+        <article class="card profile-card">
+          <img class="profile-avatar" src="https://images.pexels.com/photos/3779445/pexels-photo-3779445.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Portrait of Layla Odeh">
+          <div class="stack">
+            <h3>Layla Odeh</h3>
+            <p class="text-muted">Mentorship Coordinator</p>
+            <p>Layla matches learners with mentors, facilitates wellbeing circles, and ensures participants access wraparound services.</p>
+          </div>
         </article>
-        <article class="card">
-          <h3>Volunteer Educators &amp; Alumni Mentors</h3>
-          <p>Our team of volunteers and alumni leaders bring diverse perspectives, professional expertise, and deep community roots.</p>
+        <article class="card profile-card">
+          <img class="profile-avatar" src="https://images.pexels.com/photos/6816531/pexels-photo-6816531.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Portrait of Volunteer mentors">
+          <div class="stack">
+            <h3>Volunteer Educators &amp; Alumni Mentors</h3>
+            <p class="text-muted">Community Network</p>
+            <p>Our team of volunteers and alumni leaders bring diverse perspectives, professional expertise, and deep community roots.</p>
+          </div>
         </article>
       </div>
     </section>
 
-    <section class="stack cta" aria-labelledby="support-heading">
+    <section class="section-soft stack" aria-labelledby="support-heading">
       <h2 id="support-heading">Support Our Mission</h2>
       <p>Your partnership helps us provide scholarships, technology, and culturally responsive learning spaces for refugee youth.</p>
-      <a class="button" href="contact.html"><span>Partner with us</span></a>
+      <div class="stack horizontal">
+        <a class="button" href="contact.html"><span>Partner with us</span></a>
+        <a class="button secondary" href="programs.html"><span>Explore programs</span></a>
+      </div>
     </section>
   </main>
   <footer>
