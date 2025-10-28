@@ -1,10 +1,14 @@
 export const LAYOUT_ICON_DEFAULTS = {
   'blank-canvas': 'fa-solid fa-border-all',
+  'hero-overlay': 'fa-solid fa-mountain-sun',
   'card-stack': 'fa-solid fa-layer-group',
   'pill-with-gallery': 'fa-solid fa-images',
 };
 
 export const LAYOUT_FIELD_ICON_DEFAULTS = {
+  'hero-overlay': {
+    heroOverlayPillIcon: 'fa-solid fa-city',
+  },
   'card-stack': {
     cardStackPillIcon: 'fa-solid fa-bookmark',
     cardStackItemIcon: 'fa-solid fa-circle-dot',
@@ -65,6 +69,29 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
       ],
     },
   ],
+  'hero-overlay': [
+    {
+      id: 'stageAlignment',
+      label: 'Stage alignment',
+      appliesTo: 'stage',
+      defaultValue: 'top',
+      options: [
+        { value: 'top', label: 'Top aligned', classes: [] },
+        { value: 'center', label: 'Centered', classes: ['is-centered-stage'] },
+      ],
+    },
+    {
+      id: 'cardAlignment',
+      label: 'Overlay alignment',
+      appliesTo: 'inner',
+      defaultValue: 'start',
+      options: [
+        { value: 'start', label: 'Left', classes: ['overlay-align-left'] },
+        { value: 'center', label: 'Center', classes: ['overlay-align-center'] },
+        { value: 'end', label: 'Right', classes: ['overlay-align-right'] },
+      ],
+    },
+  ],
   'pill-with-gallery': [
     {
       id: 'stageAlignment',
@@ -94,6 +121,21 @@ export const BUILDER_LAYOUT_DEFAULTS = {
   'interactive-practice': () => ({
     activityType: 'multiple-choice',
     questions: [{}],
+  }),
+  'hero-overlay': () => ({
+    pill: 'Bethlehem × Amman partnership',
+    pillIcon: 'fa-solid fa-city',
+    headline: 'Applying critical thinking to urgent pivots',
+    subtitle:
+      'Open with the partnership context, then frame the negotiation challenge the cohort will tackle today.',
+    overlayTint: '#14291f',
+    overlayOpacity: 58,
+    alignment: 'start',
+    image: {
+      pexelsQuery: 'professional team negotiating around table',
+      orientation: 'landscape',
+      alt: 'Professional team negotiating around a meeting table',
+    },
   }),
   'card-stack': () => ({
     pill: 'Studio sprint stack',
