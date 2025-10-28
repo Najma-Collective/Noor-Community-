@@ -1190,8 +1190,8 @@ footer a {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 70% 20%, rgba(35, 77, 66, 0.34), transparent 58%),
-    linear-gradient(180deg, rgba(23, 38, 26, 0.28), rgba(23, 38, 26, 0.78));
+    radial-gradient(circle at 70% 20%, rgba(222, 168, 122, 0.38), transparent 60%),
+    linear-gradient(180deg, rgba(92, 53, 34, 0.32), rgba(62, 37, 24, 0.72));
 }
 
 .photo-card > * {
@@ -1205,10 +1205,11 @@ footer a {
   flex-direction: column;
   gap: var(--space-2);
   background:
-    linear-gradient(140deg, rgba(36, 50, 38, 0.85), rgba(35, 107, 91, 0.62));
+    linear-gradient(140deg, rgba(120, 70, 40, 0.82), rgba(199, 133, 95, 0.64));
   backdrop-filter: blur(12px) saturate(120%);
   -webkit-backdrop-filter: blur(12px) saturate(120%);
-  border: 1px solid rgba(36, 50, 38, 0.32);
+  border: 1px solid rgba(120, 70, 40, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 239, 227, 0.25);
 }
 
 .photo-card .card-body p {
@@ -1336,9 +1337,10 @@ form.stack.horizontal {
 .newsletter-card {
   padding: clamp(1.6rem, 4vw, 2.4rem);
   border-radius: var(--radius-lg);
-  background: linear-gradient(140deg, rgba(47, 107, 91, 0.85), rgba(47, 107, 91, 0.65));
+  background: linear-gradient(135deg, rgba(158, 96, 54, 0.9), rgba(214, 155, 109, 0.7));
   color: #ffffff;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 30px 80px rgba(94, 60, 36, 0.16);
+  border: 1px solid rgba(158, 96, 54, 0.28);
 }
 
 .newsletter-card p {
