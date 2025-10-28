@@ -369,10 +369,141 @@ nav a[aria-current="page"]::after {
 }
 
 
+.section-frame {
+  --frame-radius: clamp(38px, 9vw, 96px);
+  --frame-gutter: clamp(1.6rem, 5vw, 2.8rem);
+  --frame-inner-offset: clamp(0.55rem, 3vw, 1.4rem);
+  --frame-base: linear-gradient(
+    158deg,
+    color-mix(in srgb, var(--color-surface) 96%, var(--color-surface-soft) 4%),
+    color-mix(in srgb, var(--color-surface-tint) 84%, var(--color-surface) 16%)
+  );
+  --frame-glow-a: radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--color-highlight) 32%, transparent) 0 54%, transparent 74%);
+  --frame-glow-b: radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--color-accent) 26%, transparent) 0 48%, transparent 72%);
+  --frame-veil: rgba(255, 255, 255, 0.46);
+  --frame-outline: color-mix(in srgb, var(--color-accent-strong) 18%, transparent);
+  position: relative;
+  isolation: isolate;
+  width: min(100%, calc(var(--content-width) + 220px));
+  margin: clamp(var(--space-5), 8vw, var(--space-7)) auto;
+  padding: var(--frame-gutter);
+}
+
+.section-frame > * {
+  position: relative;
+  z-index: 3;
+}
+
+.section-frame::before,
+.section-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--frame-radius);
+  pointer-events: none;
+}
+
+.section-frame::before {
+  z-index: 1;
+  background:
+    var(--frame-glow-a),
+    var(--frame-glow-b),
+    var(--frame-base);
+  box-shadow: 0 38px 90px rgba(23, 38, 26, 0.15);
+  opacity: 0.97;
+  transform: translate3d(0, 0, 0);
+}
+
+@supports (clip-path: path("M0 0 L1 0 L1 1 L0 1 Z")) {
+  .section-frame::before {
+    clip-path: path("M0% 24% C0% 10% 6% 0% 18% 0% C32% 0% 40% 8% 46% 16% C50% 22% 50% 22% 54% 16% C60% 8% 68% 0% 82% 0% C94% 0% 100% 10% 100% 24% V76% C100% 90% 94% 100% 82% 100% C68% 100% 60% 92% 54% 84% C50% 78% 50% 78% 46% 84% C40% 92% 32% 100% 18% 100% C6% 100% 0% 90% 0% 76% Z");
+  }
+
+  .section-frame.section-frame--hero::before {
+    clip-path: path("M0% 22% C0% 8% 6% 0% 20% 0% C38% 0% 46% 10% 50% 16% C54% 20% 54% 20% 58% 16% C62% 10% 70% 0% 84% 0% C96% 0% 100% 8% 100% 22% V78% C100% 92% 94% 100% 82% 100% C70% 100% 62% 90% 58% 84% C54% 78% 54% 78% 50% 84% C46% 90% 38% 100% 20% 100% C6% 100% 0% 92% 0% 78% Z");
+  }
+
+  .section-frame.section-frame--slim::before {
+    clip-path: path("M0% 28% C0% 14% 6% 0% 18% 0% C36% 0% 44% 12% 48% 18% C50% 22% 50% 22% 52% 18% C56% 12% 64% 0% 82% 0% C94% 0% 100% 14% 100% 28% V72% C100% 86% 94% 100% 82% 100% C64% 100% 56% 88% 52% 82% C50% 78% 50% 78% 48% 82% C44% 88% 36% 100% 18% 100% C6% 100% 0% 86% 0% 72% Z");
+  }
+}
+
+.section-frame::after {
+  z-index: 2;
+  inset: var(--frame-inner-offset);
+  border-radius: calc(var(--frame-radius) - var(--frame-inner-offset));
+  border: 1px solid var(--frame-outline);
+  background: linear-gradient(150deg, transparent 18%, var(--frame-veil) 52%, transparent 88%);
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+}
+
+.section-frame.section-frame--hero {
+  margin-top: clamp(var(--space-3), 5vw, var(--space-5));
+  padding: clamp(var(--space-3), 6vw, var(--space-4)) clamp(var(--space-2), 4vw, var(--space-4));
+  --frame-inner-offset: clamp(0.45rem, 2.5vw, 1.1rem);
+  --frame-glow-a: radial-gradient(circle at 12% 24%, color-mix(in srgb, var(--color-highlight) 28%, transparent) 0 52%, transparent 76%);
+  --frame-glow-b: radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--color-accent) 22%, transparent) 0 48%, transparent 70%);
+  --frame-veil: rgba(255, 255, 255, 0.38);
+}
+
+.section-frame:has(.section-soft) {
+  --frame-base: linear-gradient(158deg, color-mix(in srgb, var(--color-surface) 94%, var(--color-surface-soft) 6%), color-mix(in srgb, var(--color-surface-tint) 80%, var(--color-surface) 20%));
+  --frame-glow-a: radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--color-highlight) 36%, transparent) 0 50%, transparent 72%);
+  --frame-glow-b: radial-gradient(circle at 84% 20%, color-mix(in srgb, var(--color-accent) 24%, transparent) 0 44%, transparent 72%);
+  --frame-outline: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  --frame-veil: rgba(244, 212, 124, 0.24);
+}
+
+.section-frame:has(.section-alt) {
+  --frame-base: linear-gradient(162deg, color-mix(in srgb, var(--color-surface) 88%, var(--color-surface-soft) 12%), color-mix(in srgb, var(--color-surface-tint) 74%, var(--color-surface) 26%));
+  --frame-glow-a: radial-gradient(circle at 14% 22%, color-mix(in srgb, var(--color-highlight) 26%, transparent) 0 44%, transparent 68%);
+  --frame-glow-b: radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--color-accent) 36%, transparent) 0 52%, transparent 74%);
+  --frame-outline: color-mix(in srgb, var(--color-accent-strong) 26%, transparent);
+  --frame-veil: rgba(111, 173, 163, 0.22);
+}
+
+.section-frame:has(.section-alt.section-offset) {
+  --frame-base: linear-gradient(165deg, color-mix(in srgb, var(--color-surface) 84%, var(--color-surface-soft) 16%), color-mix(in srgb, var(--color-surface-tint) 68%, var(--color-surface) 32%));
+  --frame-veil: rgba(111, 173, 163, 0.28);
+  --frame-inner-offset: clamp(0.65rem, 3.4vw, 1.55rem);
+}
+
+.section-frame.section-frame--slim {
+  width: min(100%, calc(var(--content-width) + 180px));
+  padding: clamp(var(--space-2), 5vw, var(--space-3)) clamp(var(--space-2), 4.6vw, var(--space-3));
+  --frame-inner-offset: clamp(0.45rem, 2.6vw, 1.1rem);
+}
+
+@media (max-width: 720px) {
+  .section-frame {
+    --frame-radius: clamp(30px, 14vw, 42px);
+    --frame-gutter: clamp(var(--space-2), 6vw, var(--space-3));
+    --frame-inner-offset: clamp(0.4rem, 3.2vw, 0.9rem);
+    padding: var(--frame-gutter);
+  }
+
+  .section-frame::before {
+    clip-path: inset(0 round var(--frame-radius));
+  }
+}
+
+.section-frame + .section-divider {
+  margin-top: calc(-1 * clamp(var(--space-2), 4vw, var(--space-3)));
+}
+
+.section-divider + .section-frame {
+  margin-top: clamp(var(--space-4), 6vw, var(--space-5));
+}
+
+.section-frame + .section-frame {
+  margin-top: clamp(var(--space-4), 6vw, var(--space-5));
+}
+
 .section-divider {
   position: relative;
   width: min(100%, calc(var(--content-width) + 280px));
-  margin: clamp(var(--space-6), 7vw, var(--space-8)) auto;
+  margin: clamp(var(--space-4), 5vw, var(--space-6)) auto;
   height: 1px;
   background-image: linear-gradient(
     90deg,
@@ -402,15 +533,16 @@ nav a[aria-current="page"]::after {
 }
 
 
+
 .section-alt {
   position: relative;
-  padding: clamp(2.6rem, 6vw, 4rem);
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--color-highlight) 38%, transparent) 0%, transparent 45%),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--color-accent) 24%, transparent) 0%, transparent 55%),
-    linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 92%, var(--color-surface-soft) 8%), color-mix(in srgb, var(--color-surface-tint) 85%, var(--color-surface) 15%));
-  box-shadow: 0 24px 55px rgba(27, 41, 31, 0.12);
+  padding: clamp(2.4rem, 5.5vw, 3.6rem);
+  border-radius: calc(var(--frame-radius, var(--radius-lg)) - clamp(0.5rem, 2.6vw, 1.2rem));
+  background: color-mix(in srgb, var(--color-surface) 78%, rgba(47, 107, 91, 0.28) 22%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 26px 60px rgba(27, 41, 31, 0.14);
+  overflow: hidden;
 }
 
 .section-alt > * {
@@ -418,13 +550,14 @@ nav a[aria-current="page"]::after {
   z-index: 1;
 }
 
-
 .section-alt::before {
   content: "";
   position: absolute;
-  inset: clamp(0.75rem, 3vw, 1.6rem);
-  border-radius: calc(var(--radius-lg) - clamp(0.9rem, 4vw, 1.4rem));
-  border: 1px solid color-mix(in srgb, var(--color-accent) 26%, transparent);
+  inset: clamp(0.65rem, 3vw, 1.4rem);
+  border-radius: calc(var(--frame-radius, var(--radius-lg)) - clamp(1.2rem, 4vw, 1.8rem));
+  border: 1px solid color-mix(in srgb, var(--color-accent-strong) 20%, transparent);
+  opacity: 0.6;
+  mix-blend-mode: soft-light;
   pointer-events: none;
   z-index: 0;
 }
@@ -434,12 +567,15 @@ nav a[aria-current="page"]::after {
 }
 
 
+
 .section-offset::after {
   content: "";
   position: absolute;
-  inset: clamp(0.6rem, 3vw, 1.4rem) clamp(0.4rem, 3vw, 1.4rem);
-  border-radius: calc(var(--radius-lg) - clamp(0.6rem, 3vw, 1.1rem));
-  border: 1px dashed color-mix(in srgb, var(--color-accent-strong) 28%, transparent);
+  inset: clamp(0.6rem, 3vw, 1.2rem) clamp(0.45rem, 3vw, 1.4rem);
+  border-radius: calc(var(--frame-radius, var(--radius-lg)) - clamp(0.9rem, 3.4vw, 1.6rem));
+  border: 1px dashed color-mix(in srgb, var(--color-accent-strong) 24%, transparent);
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
   pointer-events: none;
   z-index: 0;
 }
@@ -918,21 +1054,22 @@ footer a {
 .section-soft {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  padding: clamp(2.4rem, 5vw, 3.6rem);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(244, 212, 124, 0.25) 0, transparent 45%),
-    radial-gradient(circle at 90% 0%, rgba(111, 173, 163, 0.18) 0, transparent 55%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(241, 246, 242, 0.95));
-  box-shadow: var(--shadow-md);
+  border-radius: calc(var(--frame-radius, var(--radius-lg)) - clamp(0.45rem, 2.4vw, 1.2rem));
+  padding: clamp(2.1rem, 4.6vw, 3.2rem);
+  background: color-mix(in srgb, var(--color-surface) 72%, rgba(255, 255, 255, 0) 28%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 22px 55px rgba(29, 46, 33, 0.12);
 }
 
 .section-soft::after {
   content: "";
   position: absolute;
-  inset: 22px;
-  border-radius: calc(var(--radius-lg) - 18px);
-  border: 1px dashed rgba(47, 107, 91, 0.16);
+  inset: clamp(0.8rem, 3vw, 1.6rem);
+  border-radius: calc(var(--frame-radius, var(--radius-lg)) - clamp(1.4rem, 4.4vw, 2rem));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
   pointer-events: none;
 }
 
