@@ -1,0 +1,147 @@
+{
+  "id": "LANG.LISTENING.C1.DIALOGUES",
+  "slug": "listening-dialogues",
+  "title": "Listening Lab Dialogues",
+  "description": {
+    "format": "markdown",
+    "content": "Authentic scripts and prompts for advanced listening practice."
+  },
+  "language": "en",
+  "version": "2.0.0",
+  "level": "C1",
+  "subject": "Academic English",
+  "tags": ["listening", "dialogue", "transcript"],
+  "learning_objectives": [
+    {
+      "format": "markdown",
+      "content": "Analyse spontaneous academic dialogue and extract key claims."
+    }
+  ],
+  "contributors": [
+    { "name": "Heidi Zhang", "role": "Script writer" },
+    { "name": "Omar Al-Rashid", "role": "Audio producer" }
+  ],
+  "release_status": "published",
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "https://placehold.co/1600x900/0c2233/ffffff?text=Listening+Lab",
+      "alt": "Two students recording a podcast interview"
+    }
+  },
+  "slides": [
+    {
+      "slug": "dialogue-audio",
+      "title": { "text": "Campus radio interview" },
+      "archetype": "interactive.audio-dialogue",
+      "data": {
+        "audio_player": {
+          "source": {
+            "type": "audio",
+            "src": "https://example.org/audio/campus-interview.mp3",
+            "alt": "Interview audio placeholder",
+            "transcript": {
+              "format": "markdown",
+              "content": "**Host:** Welcome back…\n**Guest:** Thanks for inviting me!"
+            },
+            "placeholder": true
+          },
+          "duration_seconds": 186,
+          "transcript": {
+            "format": "markdown",
+            "content": "View the full transcript in the facilitator notebook."
+          }
+        },
+        "prompt_card": {
+          "title": { "text": "While listening" },
+          "instructions": [
+            "Note every discourse marker you hear in the first two minutes.",
+            {
+              "format": "markdown",
+              "content": "Flag idiomatic expressions and discuss possible paraphrases with your group."
+            }
+          ],
+          "supporting_points": [
+            {
+              "format": "markdown",
+              "content": "Encourage learners to use the captions toggle if they miss key details."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "slug": "dialogue-grid",
+      "title": { "text": "Breakout prompts" },
+      "archetype": "dialogue.grid",
+      "data": {
+        "pill_label": { "text": "Breakout" },
+        "prompt_cards": [
+          {
+            "title": { "text": "Tone shifts" },
+            "prompt": {
+              "format": "markdown",
+              "content": "Describe how the guest’s tone changes after minute three."
+            },
+            "support": "Replay the clip if learners struggle to recall supporting evidence."
+          },
+          {
+            "title": { "text": "Audience questions" },
+            "prompt": "Generate two questions you would ask the guest to explore the topic further.",
+            "media": {
+              "type": "image",
+              "src": "https://placehold.co/400x300/0c2233/ffffff?text=Audience",
+              "alt": "Audience members with microphones"
+            }
+          },
+          {
+            "title": { "text": "Academic vocabulary" },
+            "prompt": {
+              "format": "markdown",
+              "content": "List five academic verbs heard in the interview and create paraphrases."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "slug": "script-stack",
+      "title": { "text": "Script replay" },
+      "archetype": "dialogue.stack",
+      "data": {
+        "dialogue_box": {
+          "title": { "text": "Act it out" },
+          "lines": [
+            {
+              "speaker": "Host",
+              "text": {
+                "format": "markdown",
+                "content": "You mentioned launching a *student-led incubator*. How will teams pitch?"
+              }
+            },
+            {
+              "speaker": "Guest",
+              "text": "Each team submits a 90-second teaser before presenting live.",
+              "avatar": {
+                "type": "image",
+                "src": "https://placehold.co/120x120/ffffff/0c2233?text=G",
+                "alt": "Guest avatar illustration"
+              }
+            },
+            {
+              "speaker": "Host",
+              "text": {
+                "format": "markdown",
+                "content": "Great! We’ll invite listeners to vote on their favourite."
+              }
+            }
+          ],
+          "cta": {
+            "label": { "text": "Assign roles" },
+            "aria_label": "Assign dialogue roles for the replay"
+          }
+        }
+      }
+    }
+  ]
+}

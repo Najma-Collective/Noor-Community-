@@ -1,0 +1,208 @@
+{
+  "id": "SKILLS.PRO.PROBLEM_SOLVING",
+  "slug": "problem-solving-lab",
+  "title": "Problem-Solving Lab",
+  "description": "Interactive drills that help teams test, iterate, and reflect in real time.",
+  "language": "en-GB",
+  "version": "1.1.0",
+  "level": "B1",
+  "subject": "Professional Skills",
+  "estimated_duration_minutes": 60,
+  "tags": ["problem solving", "interactive", "teamwork"],
+  "learning_objectives": [
+    "Select appropriate collaboration rituals for rapid experiments.",
+    "Use structured feedback to improve prototype ideas."
+  ],
+  "contributors": [
+    { "name": "Fatima Rahman", "role": "Instructional designer" }
+  ],
+  "release_status": "in_review",
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "https://placehold.co/1600x900/002f49/ffffff?text=Problem+Solving",
+      "alt": "Teammates planning on a digital whiteboard"
+    }
+  },
+  "slides": [
+    {
+      "slug": "warmup-activity",
+      "title": { "text": "Warm-up activity" },
+      "archetype": "interactive.activity-card",
+      "data": {
+        "pill_label": { "text": "Warm-up" },
+        "instructions": [
+          {
+            "format": "markdown",
+            "content": "Pair up and brainstorm as many *unexpected uses* for your prototype as possible in 90 seconds."
+          },
+          {
+            "format": "markdown",
+            "content": "Add each idea to the sticky note board, labelling it with your initials."
+          }
+        ],
+        "action_bar": {
+          "primary": { "label": { "text": "Start timer" }, "aria_label": "Start warm-up timer" },
+          "secondary": { "label": { "text": "Need an example?" } },
+          "timer_hint": { "text": "90 seconds" }
+        },
+        "accessibility": {
+          "instructions": "Use verbal prompts for remote learners and confirm everyone can access the whiteboard link."
+        }
+      }
+    },
+    {
+      "slug": "token-board-classify",
+      "title": { "text": "Classify risks" },
+      "archetype": "interactive.token-board",
+      "data": {
+        "token_bank": [
+          { "id": "t1", "label": { "text": "Scope drift" } },
+          { "id": "t2", "label": { "text": "Budget overrun" } },
+          { "id": "t3", "label": { "text": "Stakeholder fatigue" }, "aria_label": "Stakeholder fatigue risk token" },
+          { "id": "t4", "label": { "text": "Regulatory delay" } }
+        ],
+        "dropzones": [
+          {
+            "id": "control",
+            "title": { "text": "High control" },
+            "accepts": ["t1", "t2"],
+            "instructions": "Drag risks you can influence directly."
+          },
+          {
+            "id": "monitor",
+            "title": { "text": "Monitor" },
+            "accepts": ["t3"],
+            "instructions": {
+              "format": "markdown",
+              "content": "Discuss which rituals keep the team aware of emerging issues."
+            }
+          },
+          {
+            "id": "escalate",
+            "title": { "text": "Escalate" },
+            "accepts": ["t4"]
+          }
+        ],
+        "action_bar": {
+          "primary": { "label": { "text": "Check answers" } },
+          "secondary": { "label": { "text": "Reset board" }, "aria_label": "Reset the classification board" }
+        },
+        "feedback_region": {
+          "positive": "Great classification—share a quick rationale for each placement.",
+          "negative": {
+            "format": "markdown",
+            "content": "Review the [influence vs. concern](https://example.org/influence-matrix) matrix before retrying."
+          },
+          "neutral": "If risks span multiple zones, duplicate the token with a new colour." 
+        },
+        "scoring": {
+          "max_points": 4,
+          "partial_credit": true
+        }
+      }
+    },
+    {
+      "slug": "token-table-roadmap",
+      "title": { "text": "Timeline builder" },
+      "archetype": "interactive.token-table",
+      "data": {
+        "token_bank": [
+          { "id": "alpha", "label": { "text": "Prototype" } },
+          { "id": "beta", "label": { "text": "Pilot" } },
+          { "id": "launch", "label": { "text": "Launch" } },
+          { "id": "retro", "label": { "text": "Retrospective" } }
+        ],
+        "table_shell": {
+          "columns": [
+            { "text": "Phase" },
+            { "text": "Owner" },
+            { "text": "Confidence" }
+          ],
+          "rows": [
+            {
+              "prompt": {
+                "format": "markdown",
+                "content": "Place each milestone token in the *Phase* column, then assign an owner." 
+              },
+              "cell_keys": ["alpha", "beta", "launch", "retro"]
+            }
+          ]
+        },
+        "action_bar": {
+          "primary": { "label": { "text": "Save snapshot" } }
+        },
+        "accessibility": {
+          "summary": "Read the column headers aloud and confirm screen reader focus order using the Tab key."
+        }
+      }
+    },
+    {
+      "slug": "token-quiz-check",
+      "title": { "text": "Check your understanding" },
+      "archetype": "interactive.token-quiz",
+      "data": {
+        "token_bank": [
+          { "id": "listen", "label": { "text": "Listen" }, "description": "Spend two minutes hearing the idea fully." },
+          { "id": "clarify", "label": { "text": "Clarify" } },
+          { "id": "reframe", "label": { "text": "Reframe" } }
+        ],
+        "quiz_prompts": [
+          {
+            "id": "qp1",
+            "question": "Which ritual prevents assumptions when teams react to new data?",
+            "correct_token_ids": ["listen"],
+            "rationale": {
+              "format": "markdown",
+              "content": "Listening fully ensures teams respond to facts rather than guesses."
+            }
+          },
+          {
+            "id": "qp2",
+            "question": {
+              "format": "markdown",
+              "content": "The team rushed into solution mode without defining success. Select the **two** rituals that reset alignment."
+            },
+            "correct_token_ids": ["clarify", "reframe"]
+          }
+        ],
+        "completion_copy": {
+          "positive": "You’re ready to facilitate the debrief!",
+          "negative": "Review the ritual cheat sheet and retry the quiz."
+        }
+      }
+    },
+    {
+      "slug": "quiz-feedback",
+      "title": { "text": "Quiz feedback" },
+      "archetype": "interactive.quiz-feedback",
+      "data": {
+        "quiz_items": [
+          {
+            "prompt": "Which ritual prevents assumptions when teams react to new data?",
+            "learner_response": "Listen",
+            "is_correct": true,
+            "explanation": "Listening expands understanding before committing to action."
+          },
+          {
+            "prompt": "The team rushed into solution mode without defining success.",
+            "learner_response": "Clarify",
+            "is_correct": false,
+            "explanation": "Combine clarify with reframe to restore shared success metrics."
+          }
+        ],
+        "feedback_region": {
+          "positive": {
+            "format": "markdown",
+            "content": "Celebrate accurate responses with a quick shout-out round."
+          },
+          "negative": "Highlight how clarifying questions surface hidden assumptions."
+        },
+        "next_steps": {
+          "format": "markdown",
+          "content": "Assign each participant a ritual to test during the next sprint review."
+        }
+      }
+    }
+  ]
+}
