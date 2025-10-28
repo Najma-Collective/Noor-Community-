@@ -27,71 +27,134 @@
     </div>
   </header>
   <main>
-    <section class="hero">
-      <div class="two-column-grid">
-        <div>
+    <section class="hero hero-aurora" style="--hero-backdrop: url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=960');">
+      <div class="hero-lights" aria-hidden="true"></div>
+      <div class="two-column-grid hero-content">
+        <div class="stack animate-rise">
+          <span class="badge">College readiness</span>
           <h1>EAP Bridge</h1>
-          <p>The English for Academic Purposes Bridge prepares refugee learners to enter college with a clear understanding of academic culture, expectations, and resources.</p>
-          <a class="button" href="contact.html"><span>Sign up</span></a>
+          <p>Structured academic preparation introduces critical reading, lecture strategies, and assessment literacy so learners transition into higher education with confidence.</p>
+          <div class="stat-grid hero-metrics stagger">
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">95%</span>
+                <span class="stat-label">College persistence</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">6</span>
+                <span class="stat-label">University partners</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-content">
+                <span class="stat-number">120</span>
+                <span class="stat-label">Hours of academic coaching</span>
+              </div>
+            </div>
+          </div>
+          <div class="stack horizontal animate-rise animate-delay-3">
+            <a class="button" href="contact.html"><span>Connect with advisors</span></a>
+            <a class="button secondary" href="programs.html"><span>Back to programs</span></a>
+          </div>
         </div>
-        <div>
-          <img src="assets/almanar_logo.png" alt="Mentor supporting a student with coursework" class="hero-image">
+        <figure class="hero-media animate-float animate-delay-2" style="--hero-image: url('https://images.pexels.com/photos/3414792/pexels-photo-3414792.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="hero-media-content">
+            <p class="text-step--1">“EAP Bridge made university systems feel approachable and achievable.”</p>
+            <span class="text-step--1">— Tareq, EAP Bridge participant</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section-soft stack" aria-labelledby="vision-heading">
+      <div class="two-column-grid">
+        <div class="stack">
+          <h2 id="vision-heading">Our Vision</h2>
+          <p>EAP Bridge equips learners with the academic literacy, study strategies, and institutional knowledge that universities expect yet rarely teach explicitly.</p>
+          <ul class="highlight-list">
+            <li>Seminars on critical reading, note-taking, and academic discourse.</li>
+            <li>Workshops on time management, exam strategies, and research ethics.</li>
+            <li>Advising on admissions, financial aid, and scholarship navigation.</li>
+          </ul>
         </div>
+        <article class="photo-card" style="--photo: url('https://images.pexels.com/photos/4778624/pexels-photo-4778624.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-body">
+            <h3>Bridge to Campus</h3>
+            <p>Campus tours, lecture shadowing, and alumni panels help learners envision themselves thriving in university spaces.</p>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="stack" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">Our Vision</h2>
-      <p>Higher education should be accessible to every refugee learner. EAP Bridge demystifies campus systems and cultivates the academic literacy needed to succeed.</p>
-    </section>
-
-    <section class="two-column-grid" aria-labelledby="what-we-do-heading">
-      <div>
-        <h2 id="what-we-do-heading">What We Do</h2>
-        <p>Participants engage in integrated coursework that includes academic reading, lecture note-taking, presentation skills, and critical inquiry. We collaborate with partner colleges to align assignments and provide authentic practice.</p>
-      </div>
-      <div class="card stack">
-        <h3>Program Snapshot</h3>
-        <ul class="stack">
-          <li>Semester-long cohort with hybrid online and in-person sessions.</li>
-          <li>Workshops on academic integrity, research, and citation tools.</li>
-          <li>Campus visits and mentorship from current university students.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="two-column-grid" aria-labelledby="curriculum-heading">
-      <div>
-        <h2 id="curriculum-heading">Curriculum Highlights</h2>
-        <ul class="stack">
-          <li>Critical reading labs exploring contemporary global issues.</li>
-          <li>Lecture simulations with peer feedback and professor guest speakers.</li>
-          <li>Capstone projects that map personal education plans and scholarship opportunities.</li>
-        </ul>
-      </div>
+    <section class="two-column-grid" aria-labelledby="snapshot-heading">
+      <article class="card accent stack">
+        <h2 id="snapshot-heading">Program Snapshot</h2>
+        <p>We blend rigorous academic skill-building with mentorship, ensuring learners understand both classroom expectations and the unwritten rules of higher education.</p>
+        <div class="callout-grid stagger">
+          <div class="callout-card">
+            <strong>Lecture labs</strong>
+            <p class="mb-0">Learners practice note-taking and questioning during simulated lectures.</p>
+          </div>
+          <div class="callout-card">
+            <strong>Assessment studio</strong>
+            <p class="mb-0">Workshops decode rubrics, citations, and academic integrity policies.</p>
+          </div>
+          <div class="callout-card">
+            <strong>Advising intensives</strong>
+            <p class="mb-0">One-on-one sessions navigate course selection, transfer credits, and scholarships.</p>
+          </div>
+        </div>
+      </article>
       <div class="card stack">
         <h3>Support Services</h3>
-        <p>Advising, technology access, and mental health referrals ensure learners are supported throughout their transition to college.</p>
+        <p>Bridge participants access technology, tutoring, and mentorship tailored to their academic goals.</p>
+        <ul class="highlight-list">
+          <li>Laptop and hotspot lending for hybrid coursework.</li>
+          <li>STEM, humanities, and writing tutoring pods.</li>
+          <li>Wellness coaching to balance study, work, and family commitments.</li>
+        </ul>
       </div>
+    </section>
+
+    <section class="stack" aria-labelledby="curriculum-heading">
+      <h2 id="curriculum-heading">Curriculum Highlights</h2>
+      <div class="two-column-grid">
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/4778404/pexels-photo-4778404.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>Academic Literacy</h3>
+            <p>Participants dissect scholarly texts, practice synthesis, and build confident academic voices.</p>
+          </div>
+        </article>
+        <article class="card with-image" style="--card-photo: url('https://images.pexels.com/photos/4778624/pexels-photo-4778624.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');">
+          <div class="card-image" aria-hidden="true"></div>
+          <div class="card-body">
+            <h3>College Knowledge</h3>
+            <p>Series on financial literacy, campus resources, and student leadership prepare learners for their first semester.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-soft stack" aria-labelledby="journey-heading">
+      <h2 id="journey-heading">Enrollment Journey</h2>
+      <ol class="step-list">
+        <li>Meet with an advisor to assess academic goals and prior coursework.</li>
+        <li>Join skill-based cohorts and attend orientation with family and mentors.</li>
+        <li>Complete capstone presentations and transition planning with our college partners.</li>
+      </ol>
     </section>
 
     <section class="stack" aria-labelledby="testimonial-heading">
-      <h2 id="testimonial-heading">Learner Testimonial</h2>
+      <h2 id="testimonial-heading">Bridge Testimonial</h2>
       <figure class="card">
         <blockquote>
-          <p>“EAP Bridge taught me how to read complex texts and advocate for myself with professors. I am now in my first semester of engineering.”</p>
+          <p>“My mentor showed me how to apply for college and gave me the courage to keep going. I feel prepared for my next chapter.”</p>
         </blockquote>
-        <figcaption>— Omar, EAP Bridge alum</figcaption>
+        <figcaption>— Tareq, EAP Bridge participant</figcaption>
       </figure>
-    </section>
-
-    <section class="stack cta" aria-labelledby="cta-heading">
-      <h2 id="cta-heading">Take the Next Step Toward College</h2>
-      <p>We will help you gather application materials, practice interviews, and connect with financial aid resources.</p>
-      <div class="stack horizontal">
-        <a class="button" href="contact.html"><span>Meet with an advisor</span></a>
-        <a class="button secondary" href="programs.html"><span>Back to programs</span></a>
-      </div>
     </section>
   </main>
   <footer>
