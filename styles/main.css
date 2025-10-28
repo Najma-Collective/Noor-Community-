@@ -365,6 +365,105 @@ nav a[aria-current="page"]::after {
   margin: 0;
 }
 
+
+.section-divider {
+  position: relative;
+  width: min(100%, calc(var(--content-width) + 280px));
+  margin: clamp(var(--space-6), 7vw, var(--space-8)) auto;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-accent) 50%, transparent) 18%,
+    color-mix(in srgb, var(--color-highlight) 65%, transparent) 50%,
+    color-mix(in srgb, var(--color-accent) 50%, transparent) 82%,
+    transparent
+  );
+  border-radius: 999px;
+  box-shadow: 0 14px 30px rgba(36, 50, 38, 0.08);
+  pointer-events: none;
+}
+
+.section-divider::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-accent-strong) 32%, transparent) 0 22px,
+    transparent 22px 44px
+  );
+  opacity: 0.45;
+  mix-blend-mode: multiply;
+  border-radius: inherit;
+}
+
+
+.section-alt {
+  position: relative;
+  padding: clamp(2.6rem, 6vw, 4rem);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--color-highlight) 38%, transparent) 0%, transparent 45%),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--color-accent) 24%, transparent) 0%, transparent 55%),
+    linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 92%, var(--color-surface-soft) 8%), color-mix(in srgb, var(--color-surface-tint) 85%, var(--color-surface) 15%));
+  box-shadow: 0 24px 55px rgba(27, 41, 31, 0.12);
+}
+
+.section-alt > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+.section-alt::before {
+  content: "";
+  position: absolute;
+  inset: clamp(0.75rem, 3vw, 1.6rem);
+  border-radius: calc(var(--radius-lg) - clamp(0.9rem, 4vw, 1.4rem));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 26%, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-offset {
+  position: relative;
+}
+
+
+.section-offset::after {
+  content: "";
+  position: absolute;
+  inset: clamp(0.6rem, 3vw, 1.4rem) clamp(0.4rem, 3vw, 1.4rem);
+  border-radius: calc(var(--radius-lg) - clamp(0.6rem, 3vw, 1.1rem));
+  border: 1px dashed color-mix(in srgb, var(--color-accent-strong) 28%, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-offset > * {
+  position: relative;
+  z-index: 1;
+}
+
+.section-offset .two-column-grid > * {
+  transition: transform 0.6s var(--motion-ease-soft);
+}
+
+@media (min-width: 920px) {
+  .section-offset .two-column-grid {
+    gap: clamp(var(--space-5), 5vw, var(--space-7));
+  }
+
+  .section-offset .two-column-grid > *:nth-child(odd) {
+    transform: translateY(-14px);
+  }
+
+  .section-offset .two-column-grid > *:nth-child(even) {
+    transform: translateY(14px);
+  }
+}
+
 .horizontal {
   display: flex;
   flex-wrap: wrap;
