@@ -34,6 +34,18 @@ function resolveAssetHref(outputPath, assetRelativePath) {
   return normalizedHref;
 }
 
+function escapeAttribute(value) {
+  if (value == null) {
+    return '';
+  }
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function printUsage() {
   console.log(`Noor Community deck scaffolder\n\n` +
     `Usage: node sandbox/scripts/create-deck.mjs --input <brief.json> [--output <deck.html>] [--pexels-key <key>]\n` +
@@ -363,6 +375,28 @@ function createDeckShell(document, brief, slideCount, assetPaths = {}) {
   sandboxCustom.href = sandboxCustomHref;
   head.appendChild(sandboxCustom);
 
+  const activityBuilderHref = assetPaths.activityBuilder ?? './activity-builder.html';
+  const activityBuilderCssHref = assetPaths.activityBuilderCss ?? './activity-builder.css';
+  const activityBuilderJsHref = assetPaths.activityBuilderJs ?? './activity-builder.js';
+
+  const builderPrefetch = document.createElement('link');
+  builderPrefetch.rel = 'prefetch';
+  builderPrefetch.href = activityBuilderHref;
+  builderPrefetch.setAttribute('as', 'document');
+  builderPrefetch.setAttribute('type', 'text/html');
+  head.appendChild(builderPrefetch);
+
+  const builderCssPrefetch = document.createElement('link');
+  builderCssPrefetch.rel = 'prefetch';
+  builderCssPrefetch.href = activityBuilderCssHref;
+  builderCssPrefetch.setAttribute('as', 'style');
+  head.appendChild(builderCssPrefetch);
+
+  const builderJsPreload = document.createElement('link');
+  builderJsPreload.rel = 'modulepreload';
+  builderJsPreload.href = activityBuilderJsHref;
+  head.appendChild(builderJsPreload);
+
   const body = document.body;
   body.innerHTML = '';
 
@@ -502,6 +536,14 @@ function createDeckShell(document, brief, slideCount, assetPaths = {}) {
   });
   actions.appendChild(addSlideButton);
 
+  const builderToggle = createToolbarButton({
+    id: 'activity-builder-btn',
+    className: 'toolbar-btn secondary',
+    icon: 'fa-solid fa-border-all',
+    label: 'Open Builder',
+  });
+  actions.appendChild(builderToggle);
+
   const toolbarMenu = document.createElement('div');
   toolbarMenu.className = 'toolbar-menu';
   toolbarMenu.dataset.role = 'canvas-tools';
@@ -561,6 +603,144 @@ function createDeckShell(document, brief, slideCount, assetPaths = {}) {
   stageViewport.appendChild(nextButton);
 
   const intModHref = assetPaths.intMod ?? './int-mod.js';
+  const ViewHTMLElement = document.defaultView?.HTMLElement ?? globalThis.HTMLElement;
+  const ViewHTMLIFrameElement = document.defaultView?.HTMLIFrameElement ?? globalThis.HTMLIFrameElement;
+
+  const builderOverlayTemplate = document.createElement('template');
+  builderOverlayTemplate.innerHTML = `
+    <div id="activity-builder-overlay" class="builder-overlay" aria-hidden="true" hidden>
+      <div class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
+        <header class="builder-header">
+          <div>
+            <p class="builder-eyebrow">Slide library</p>
+            <h2 id="builder-title">Create a lesson slide</h2>
+            <p class="builder-subtitle">
+              Start from a blank canvas while the curated lesson layouts are rebuilt.
+            </p>
+          </div>
+          <button type="button" class="builder-close" aria-label="Close slide builder">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <form id="activity-builder-form" class="builder-form">
+          <div class="builder-grid">
+            <fieldset class="builder-field builder-field--full layout-picker" data-layouts="blank-canvas">
+              <legend class="builder-field-label">Choose a layout</legend>
+              <div class="layout-picker-grid">
+                <label class="layout-option" title="Start with an empty slide and build everything yourself.">
+                  <input type="radio" name="slideLayout" value="blank-canvas" checked />
+                  <span class="layout-option-body">
+                    <span class="layout-option-icon" aria-hidden="true">
+                      <i class="fa-solid fa-border-all"></i>
+                    </span>
+                    <span class="layout-option-copy">
+                      <span class="layout-option-title">Blank canvas</span>
+                      <span class="layout-option-desc">Add your own text boxes, drawings, and pasted media.</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <section class="builder-section" data-layouts="blank-canvas">
+              <header class="builder-section-header">
+                <div>
+                  <h3>Blank canvas</h3>
+                  <p>Use the stage toolbar to insert text boxes, drawings, and modules.</p>
+                </div>
+              </header>
+              <p class="builder-hint">There are no additional form fields for this layout.</p>
+            </section>
+
+            <section class="builder-section builder-preview-section">
+              <header class="builder-section-header">
+                <div>
+                  <h3>Slide preview</h3>
+                  <p>Updates automatically as you edit the fields.</p>
+                </div>
+                <button type="button" class="ghost-btn" id="builder-refresh-preview">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                  Refresh preview
+                </button>
+              </header>
+              <div id="builder-preview" class="builder-preview" aria-live="polite"></div>
+            </section>
+
+            <section class="builder-section">
+              <header class="builder-section-header">
+                <div>
+                  <h3>Builder JSON</h3>
+                  <p>Preview the data that will generate the slide.</p>
+                </div>
+              </header>
+              <pre id="builder-json-preview" class="builder-json-preview" aria-live="polite">{}</pre>
+            </section>
+
+            <footer class="builder-footer">
+              <p id="builder-status" class="builder-status" aria-live="polite"></p>
+              <div class="builder-actions">
+                <button type="button" class="toolbar-btn ghost" data-action="cancel-builder">
+                  Cancel
+                </button>
+                <button type="submit" class="toolbar-btn">
+                  <i class="fa-solid fa-square-plus"></i>
+                  Insert slide
+                </button>
+              </div>
+            </footer>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  const builderOverlay = builderOverlayTemplate.content.firstElementChild;
+  if (ViewHTMLElement && builderOverlay instanceof ViewHTMLElement) {
+    builderOverlay.setAttribute('data-builder-css', activityBuilderCssHref);
+    builderOverlay.setAttribute('data-builder-js', activityBuilderJsHref);
+    body.appendChild(builderOverlay);
+  }
+
+  const moduleOverlayTemplate = document.createElement('template');
+  moduleOverlayTemplate.innerHTML = `
+    <div id="module-builder-overlay" class="builder-overlay module-builder-overlay" aria-hidden="true" hidden>
+      <div class="builder-dialog module-builder-dialog" role="dialog" aria-modal="true" aria-labelledby="module-builder-title">
+        <header class="builder-header module-builder-header">
+          <div>
+            <p class="builder-eyebrow">Sandbox tools</p>
+            <h2 id="module-builder-title">Interactive Activity Modules</h2>
+            <p class="builder-subtitle">
+              Configure Noor templates and drop the activity onto your blank slide.
+            </p>
+          </div>
+          <button type="button" class="builder-close module-builder-close" aria-label="Close module builder">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </header>
+        <div class="module-builder-body">
+          <iframe
+            id="module-builder-frame"
+            title="Activity module builder"
+            src="about:blank"
+            data-builder-src="${escapeAttribute(activityBuilderHref)}"
+            loading="lazy"
+            tabindex="-1"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const moduleOverlay = moduleOverlayTemplate.content.firstElementChild;
+  if (ViewHTMLElement && moduleOverlay instanceof ViewHTMLElement) {
+    body.appendChild(moduleOverlay);
+    const moduleFrame = moduleOverlay.querySelector('#module-builder-frame');
+    if (ViewHTMLIFrameElement && moduleFrame instanceof ViewHTMLIFrameElement) {
+      moduleFrame.setAttribute('data-builder-src', activityBuilderHref);
+      moduleFrame.setAttribute('src', 'about:blank');
+    }
+  }
+
   const script = document.createElement('script');
   script.type = 'module';
   script.textContent = `import { setupInteractiveDeck } from '${intModHref}';\nsetupInteractiveDeck({ root: document });`;
@@ -657,6 +837,9 @@ async function main() {
     sandboxTheme: resolveAssetHref(outputPath, 'sandbox-theme.css'),
     sandboxCss: resolveAssetHref(outputPath, 'sandbox-css.css'),
     intMod: resolveAssetHref(outputPath, 'int-mod.js'),
+    activityBuilder: resolveAssetHref(outputPath, 'activity-builder.html'),
+    activityBuilderCss: resolveAssetHref(outputPath, 'activity-builder.css'),
+    activityBuilderJs: resolveAssetHref(outputPath, 'activity-builder.js'),
   };
   const html = await buildDeck(brief, { pexelsKey, assetPaths });
   await mkdir(path.dirname(outputPath), { recursive: true });
