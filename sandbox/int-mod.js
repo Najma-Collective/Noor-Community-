@@ -1501,13 +1501,32 @@ const parseCardStackItems = (value) =>
 const formatPillGalleryItems = (items = []) =>
   joinMultiline(
     (Array.isArray(items) ? items : []).map((item) => {
-      const image = trimText(item?.image);
-      const alt = trimText(item?.alt);
-      const caption = trimText(item?.caption);
-      if (!image && !caption && !alt) {
+      if (!item || typeof item !== 'object') {
         return '';
       }
-      const segments = [image, alt, caption];
+      const image = trimText(item.image ?? item.url ?? '');
+      const alt = trimText(item.alt ?? '');
+      const caption = trimText(item.caption ?? '');
+      const detail = trimText(item.detail ?? item.description ?? '');
+      const credit = trimText(item.credit ?? '');
+      const creditUrl = trimText(item.creditUrl ?? '');
+      const badge = trimText(item.tag ?? item.badge ?? '');
+      const badgeIcon = trimText(item.tagIcon ?? item.badgeIcon ?? '');
+      const itemIcon = trimText(item.icon ?? item.iconClass ?? '');
+      if (!image && !caption && !detail && !badge && !itemIcon && !alt && !credit) {
+        return '';
+      }
+      const segments = [
+        image,
+        alt,
+        caption,
+        detail,
+        credit,
+        creditUrl,
+        badge,
+        badgeIcon,
+        itemIcon,
+      ];
       while (segments.length && !segments[segments.length - 1]) {
         segments.pop();
       }
@@ -1519,15 +1538,159 @@ const parsePillGalleryItems = (value) =>
   splitMultiline(value)
     .map((line) => {
       const parts = line.split('|').map((part) => trimText(part));
-      const [image = '', alt = '', ...captionParts] = parts;
-      const caption = captionParts.filter(Boolean).join(' | ');
-      if (!image && !caption) {
+      if (!parts.length) {
         return null;
       }
-      return {
+      while (parts.length < 9) {
+        parts.push('');
+      }
+      const [
+        image = '',
+        alt = '',
+        caption = '',
+        detail = '',
+        credit = '',
+        creditUrl = '',
+        badge = '',
+        badgeIcon = '',
+        itemIcon = '',
+      ] = parts;
+      if (!image && !caption && !detail && !badge && !itemIcon && !alt && !credit) {
+        return null;
+      }
+      const entry = {
         image,
         alt,
         caption,
+      };
+      if (detail) {
+        entry.detail = detail;
+      }
+      if (credit) {
+        entry.credit = credit;
+      }
+      if (creditUrl) {
+        entry.creditUrl = creditUrl;
+      }
+      if (badge) {
+        entry.tag = badge;
+      }
+      if (badgeIcon) {
+        entry.tagIcon = badgeIcon;
+      }
+      if (itemIcon) {
+        entry.icon = itemIcon;
+      }
+      return entry;
+    })
+    .filter(Boolean);
+
+const formatGalleryActions = (items = []) =>
+  joinMultiline(
+    (Array.isArray(items) ? items : []).map((item) => {
+      if (!item || typeof item !== 'object') {
+        return '';
+      }
+      const label = trimText(item.label ?? item.title ?? '');
+      const description = trimText(item.description ?? item.detail ?? '');
+      const href = trimText(item.href ?? item.url ?? '');
+      const icon = trimText(item.icon ?? item.iconClass ?? '');
+      const segments = [label];
+      if (description) {
+        segments.push(description);
+      }
+      if (href) {
+        segments.push(href);
+      }
+      if (icon) {
+        segments.push(icon);
+      }
+      return segments.filter(Boolean).join(' | ');
+    }),
+  );
+
+const parseGalleryActions = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [label = '', description = '', href = '', icon = ''] = line
+        .split('|')
+        .map((part) => trimText(part));
+      if (!label && !description && !href && !icon) {
+        return null;
+      }
+      return {
+        label,
+        description,
+        href,
+        icon,
+      };
+    })
+    .filter(Boolean);
+
+const formatReflectionBoardCards = (cards = []) =>
+  joinMultiline(
+    (Array.isArray(cards) ? cards : []).map((card) => {
+      if (!card || typeof card !== 'object') {
+        return '';
+      }
+      const title = trimText(card.title ?? card.label ?? '');
+      const description = trimText(card.description ?? card.detail ?? card.note ?? '');
+      if (!title && !description) {
+        return '';
+      }
+      return [title, description].filter(Boolean).join(' | ');
+    }),
+  );
+
+const parseReflectionBoardCards = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [title = '', description = ''] = line
+        .split('|')
+        .map((part) => trimText(part));
+      if (!title && !description) {
+        return null;
+      }
+      return {
+        title,
+        description,
+      };
+    })
+    .filter(Boolean);
+
+const formatSplitGridItems = (items = []) =>
+  joinMultiline(
+    (Array.isArray(items) ? items : []).map((item) => {
+      if (!item || typeof item !== 'object') {
+        return '';
+      }
+      const title = trimText(item.title ?? item.label ?? '');
+      const detail = trimText(item.detail ?? item.description ?? item.note ?? '');
+      const icon = trimText(item.icon ?? '');
+      const segments = [title];
+      if (detail) {
+        segments.push(detail);
+      }
+      if (icon) {
+        segments.push(icon);
+      }
+      return segments.filter(Boolean).join(' | ');
+    }),
+  );
+
+const parseSplitGridItems = (value) =>
+  splitMultiline(value)
+    .map((line) => {
+      const [title = '', detail = '', icon = ''] = line
+        .split('|')
+        .map((part) => trimText(part));
+      if (!title && !detail && !icon) {
+        return null;
+      }
+      return {
+        title,
+        detail,
+        icon,
       };
     })
     .filter(Boolean);
@@ -7568,24 +7731,203 @@ function resetPracticeList(questions = []) {
   entries.forEach((question) => addPracticeItem(question));
 }
 
+const escapeForSelector = (value) => {
+  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+    return CSS.escape(value);
+  }
+  return String(value)
+    .replace(/([\0-\x1f\x7f]|^-?[0-9]|[^a-zA-Z0-9_-])/g, (match, ch) => {
+      if (ch === undefined) {
+        return '\\';
+      }
+      const hex = ch.charCodeAt(0).toString(16).toUpperCase();
+      return `\\${hex} `;
+    });
+};
+
+const setFormFieldValue = (name, value) => {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const control = builderForm.elements.namedItem?.(name);
+  if (!control) {
+    return;
+  }
+  const resolvedValue = value ?? '';
+  const isRadioList =
+    typeof RadioNodeList !== 'undefined' && control instanceof RadioNodeList;
+  if (isRadioList) {
+    control.value = resolvedValue;
+    const escapedName = escapeForSelector(name);
+    builderForm
+      .querySelectorAll(`input[type="radio"][name="${escapedName}"]`)
+      .forEach((radio) => {
+        if (radio instanceof HTMLInputElement) {
+          radio.checked = radio.value === resolvedValue;
+        }
+      });
+    return;
+  }
+  if (
+    control instanceof HTMLInputElement ||
+    control instanceof HTMLTextAreaElement ||
+    control instanceof HTMLSelectElement
+  ) {
+    control.value = resolvedValue;
+  }
+};
+
+const applyLayoutFieldIconDefaults = (layout) => {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const iconDefaults = LAYOUT_FIELD_ICON_DEFAULTS?.[layout];
+  if (!iconDefaults) {
+    return;
+  }
+  const controls = builderForm.querySelectorAll('[data-field]');
+  controls.forEach((element) => {
+    if (
+      !(
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLTextAreaElement ||
+        element instanceof HTMLSelectElement
+      )
+    ) {
+      return;
+    }
+    const { field } = element.dataset;
+    if (!field || !(field in iconDefaults)) {
+      return;
+    }
+    const container = element.closest('[data-layouts]');
+    if (container instanceof HTMLElement) {
+      const layouts = (container.dataset.layouts || '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      if (layouts.length && !layouts.includes(layout)) {
+        return;
+      }
+    }
+    element.value = iconDefaults[field] ?? '';
+  });
+};
+
+const ensureLayoutIconDefault = (layout) => {
+  const defaultIcon = LAYOUT_ICON_DEFAULTS?.[layout];
+  if (!defaultIcon) {
+    return;
+  }
+  setLayoutIconValue(layout, defaultIcon);
+};
+
 function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
 
-  const targetLayout = layout === 'blank-canvas' ? layout : 'blank-canvas';
-  const defaults = getBuilderLayoutDefaults(targetLayout);
-  if (defaults && typeof defaults === 'object') {
-    Object.entries(defaults).forEach(([name, value]) => {
-      const field = builderForm.elements.namedItem?.(name);
-      if (
-        field instanceof HTMLInputElement ||
-        field instanceof HTMLTextAreaElement ||
-        field instanceof HTMLSelectElement
-      ) {
-        field.value = value ?? '';
-      }
-    });
+  const isKnownLayout = typeof layout === 'string' && layout in BUILDER_LAYOUT_DEFAULTS;
+  const targetLayout = isKnownLayout ? layout : 'blank-canvas';
+  const defaults = getBuilderLayoutDefaults(targetLayout) || {};
+
+  ensureLayoutIconDefault(targetLayout);
+  applyLayoutFieldIconDefaults(targetLayout);
+
+  const assignTextField = (name, value) => setFormFieldValue(name, value ?? '');
+
+  switch (targetLayout) {
+    case 'interactive-practice': {
+      assignTextField('practiceTitle', defaults.title ?? '');
+      assignTextField('practiceInstructions', defaults.instructions ?? '');
+      assignTextField('practiceInstructionsIcon', defaults.instructionsIcon ?? '');
+      assignTextField(
+        'practiceActivityType',
+        defaults.activityType ?? 'multiple-choice',
+      );
+      assignTextField('practiceActivityTypeIcon', defaults.activityTypeIcon ?? '');
+      resetPracticeList(defaults.questions);
+      break;
+    }
+    case 'card-stack': {
+      assignTextField('cardStackPill', defaults.pill ?? '');
+      assignTextField('cardStackPillIcon', defaults.pillIcon ?? '');
+      assignTextField('cardStackTitle', defaults.title ?? '');
+      assignTextField('cardStackDescription', defaults.description ?? '');
+      assignTextField('cardStackItems', formatCardStackItems(defaults.cards));
+      assignTextField('cardStackItemIcon', defaults.cardIcon ?? '');
+      break;
+    }
+    case 'pill-with-gallery': {
+      assignTextField('pillGalleryPill', defaults.pill ?? '');
+      assignTextField('pillGalleryPillIcon', defaults.pillIcon ?? '');
+      assignTextField('pillGalleryTitle', defaults.title ?? '');
+      assignTextField('pillGalleryDescription', defaults.description ?? '');
+      assignTextField('pillGalleryMosaicStyle', defaults.mosaicStyle ?? '');
+      assignTextField('pillGalleryItems', formatPillGalleryItems(defaults.gallery));
+      assignTextField('pillGalleryItemIcon', defaults.itemIcon ?? '');
+      assignTextField('pillGalleryActions', formatGalleryActions(defaults.actions));
+      assignTextField('pillGalleryActionIcon', defaults.actionIcon ?? '');
+      break;
+    }
+    case 'reflection-board': {
+      const [glowColumn = {}, growColumn = {}] = Array.isArray(defaults.columns)
+        ? defaults.columns
+        : [];
+      assignTextField('reflectionBoardPill', defaults.pill ?? '');
+      assignTextField('reflectionBoardPillIcon', defaults.pillIcon ?? '');
+      assignTextField('reflectionBoardTitle', defaults.title ?? '');
+      assignTextField('reflectionBoardDescription', defaults.description ?? '');
+      assignTextField(
+        'reflectionBoardGlowCards',
+        formatReflectionBoardCards(glowColumn.cards),
+      );
+      assignTextField(
+        'reflectionBoardGrowCards',
+        formatReflectionBoardCards(growColumn.cards),
+      );
+      assignTextField('reflectionBoardGlowIcon', glowColumn.icon ?? '');
+      assignTextField('reflectionBoardGrowIcon', growColumn.icon ?? '');
+      assignTextField('reflectionBoardCardIcon', defaults.cardIcon ?? '');
+      assignTextField('reflectionBoardNote', defaults.boardNote ?? defaults.note ?? '');
+      const footer =
+        defaults.footer && typeof defaults.footer === 'object' ? defaults.footer : {};
+      assignTextField('reflectionBoardFooterLabel', footer.label ?? '');
+      assignTextField(
+        'reflectionBoardFooterDescription',
+        footer.description ?? footer.detail ?? '',
+      );
+      break;
+    }
+    case 'split-grid': {
+      const [leftColumn = {}, rightColumn = {}] = Array.isArray(defaults.columns)
+        ? defaults.columns
+        : [];
+      assignTextField('splitGridPill', defaults.pill ?? '');
+      assignTextField('splitGridPillIcon', defaults.pillIcon ?? '');
+      assignTextField('splitGridTitle', defaults.title ?? '');
+      assignTextField('splitGridDescription', defaults.description ?? '');
+      assignTextField(
+        'splitGridLeftItems',
+        formatSplitGridItems(leftColumn.items),
+      );
+      assignTextField(
+        'splitGridRightItems',
+        formatSplitGridItems(rightColumn.items),
+      );
+      assignTextField('splitGridLeftIcon', leftColumn.icon ?? '');
+      assignTextField('splitGridRightIcon', rightColumn.icon ?? '');
+      assignTextField('splitGridItemIcon', defaults.itemIcon ?? '');
+      assignTextField('splitGridFooterNote', defaults.footerNote ?? '');
+      break;
+    }
+    default: {
+      Object.entries(defaults).forEach(([name, value]) => {
+        if (typeof value === 'string' || typeof value === 'number') {
+          assignTextField(name, String(value ?? ''));
+        }
+      });
+    }
   }
 
   if (updatePreview) {
@@ -7599,9 +7941,221 @@ function getBuilderFormState() {
     return null;
   }
 
-  const layout = 'blank-canvas';
-  const layoutIcon = resolveLayoutIconClass(layout);
-  return { layout, icon: layoutIcon, data: {} };
+  const layout = getSelectedLayout();
+  const fallbackIcon = LAYOUT_ICON_DEFAULTS?.[layout] ?? '';
+  const layoutIcon = resolveLayoutIconClass(layout) || fallbackIcon;
+
+  if (layout === 'blank-canvas' || !layout) {
+    return { layout: 'blank-canvas', icon: layoutIcon, data: {} };
+  }
+
+  const formData = new FormData(builderForm);
+  const getRawValue = (name) => {
+    if (!formData.has(name)) {
+      return null;
+    }
+    const value = formData.get(name);
+    return typeof value === 'string' ? value : '';
+  };
+  const getTrimmedValue = (name) => {
+    const value = getRawValue(name);
+    return value == null ? null : value.trim();
+  };
+  const getNumericValue = (name) => {
+    const value = getTrimmedValue(name);
+    if (value == null || value === '') {
+      return null;
+    }
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  };
+  const cloneDefaults = (defaults) => {
+    if (!defaults || typeof defaults !== 'object') {
+      return {};
+    }
+    try {
+      return JSON.parse(JSON.stringify(defaults));
+    } catch (error) {
+      return { ...defaults };
+    }
+  };
+
+  const baseDefaults = getBuilderLayoutDefaults(layout) || {};
+  const data = cloneDefaults(baseDefaults);
+
+  switch (layout) {
+    case 'interactive-practice': {
+      const prompts = formData
+        .getAll('practicePrompt')
+        .map((value) => (typeof value === 'string' ? value : ''));
+      const optionEntries = formData
+        .getAll('practiceOptions')
+        .map((value) => (typeof value === 'string' ? value : ''));
+      const answers = formData
+        .getAll('practiceAnswer')
+        .map((value) => (typeof value === 'string' ? value : ''));
+      const questionCount = Math.max(prompts.length, optionEntries.length, answers.length);
+      const questions = [];
+      for (let index = 0; index < questionCount; index += 1) {
+        const prompt = trimText(prompts[index] ?? '');
+        const optionsRaw = optionEntries[index] ?? '';
+        const answer = trimText(answers[index] ?? '');
+        const options = splitMultiline(optionsRaw);
+        if (prompt || options.length || answer) {
+          questions.push({ prompt, options, answer });
+        }
+      }
+      data.title = getRawValue('practiceTitle') ?? data.title;
+      data.instructions = getRawValue('practiceInstructions') ?? data.instructions;
+      data.instructionsIcon = getTrimmedValue('practiceInstructionsIcon') ?? data.instructionsIcon;
+      data.activityType =
+        getTrimmedValue('practiceActivityType') || data.activityType || 'multiple-choice';
+      data.activityTypeIcon =
+        getTrimmedValue('practiceActivityTypeIcon') ?? data.activityTypeIcon;
+      data.questions = questions.length ? questions : data.questions ?? [{}];
+      break;
+    }
+    case 'card-stack': {
+      data.pill = getRawValue('cardStackPill') ?? data.pill;
+      data.pillIcon = getTrimmedValue('cardStackPillIcon') ?? data.pillIcon;
+      data.title = getRawValue('cardStackTitle') ?? data.title;
+      data.description = getRawValue('cardStackDescription') ?? data.description;
+      if (formData.has('cardStackItems')) {
+        data.cards = parseCardStackItems(getRawValue('cardStackItems') ?? '');
+      }
+      data.cardIcon = getTrimmedValue('cardStackItemIcon') ?? data.cardIcon;
+      break;
+    }
+    case 'pill-with-gallery': {
+      data.pill = getRawValue('pillGalleryPill') ?? data.pill;
+      data.pillIcon = getTrimmedValue('pillGalleryPillIcon') ?? data.pillIcon;
+      data.title = getRawValue('pillGalleryTitle') ?? data.title;
+      data.description = getRawValue('pillGalleryDescription') ?? data.description;
+      data.mosaicStyle = getTrimmedValue('pillGalleryMosaicStyle') ?? data.mosaicStyle;
+      if (formData.has('pillGalleryItems')) {
+        data.gallery = parsePillGalleryItems(getRawValue('pillGalleryItems') ?? '');
+      }
+      if (formData.has('pillGalleryActions')) {
+        data.actions = parseGalleryActions(getRawValue('pillGalleryActions') ?? '');
+      }
+      data.itemIcon = getTrimmedValue('pillGalleryItemIcon') ?? data.itemIcon;
+      data.actionIcon = getTrimmedValue('pillGalleryActionIcon') ?? data.actionIcon;
+      break;
+    }
+    case 'reflection-board': {
+      const columns = Array.isArray(data.columns) ? data.columns : [];
+      const glowColumn = { ...(columns[0] ?? {}) };
+      const growColumn = { ...(columns[1] ?? {}) };
+      data.pill = getRawValue('reflectionBoardPill') ?? data.pill;
+      data.pillIcon = getTrimmedValue('reflectionBoardPillIcon') ?? data.pillIcon;
+      data.title = getRawValue('reflectionBoardTitle') ?? data.title;
+      data.description = getRawValue('reflectionBoardDescription') ?? data.description;
+      if (formData.has('reflectionBoardGlowCards')) {
+        glowColumn.cards = parseReflectionBoardCards(
+          getRawValue('reflectionBoardGlowCards') ?? '',
+        );
+      }
+      if (formData.has('reflectionBoardGrowCards')) {
+        growColumn.cards = parseReflectionBoardCards(
+          getRawValue('reflectionBoardGrowCards') ?? '',
+        );
+      }
+      glowColumn.icon = getTrimmedValue('reflectionBoardGlowIcon') ?? glowColumn.icon;
+      growColumn.icon = getTrimmedValue('reflectionBoardGrowIcon') ?? growColumn.icon;
+      data.cardIcon = getTrimmedValue('reflectionBoardCardIcon') ?? data.cardIcon;
+      data.columns = [glowColumn, growColumn];
+      const boardNote = getRawValue('reflectionBoardNote');
+      if (boardNote !== null) {
+        data.boardNote = boardNote;
+      }
+      const footerLabel = getRawValue('reflectionBoardFooterLabel');
+      const footerDescription = getRawValue('reflectionBoardFooterDescription');
+      if (footerLabel !== null || footerDescription !== null) {
+        const footer =
+          data.footer && typeof data.footer === 'object' ? { ...data.footer } : {};
+        if (footerLabel !== null) {
+          footer.label = footerLabel;
+        }
+        if (footerDescription !== null) {
+          footer.description = footerDescription;
+        }
+        const hasFooterContent = trimText(footer.label) || trimText(footer.description);
+        data.footer = hasFooterContent ? footer : undefined;
+      }
+      break;
+    }
+    case 'split-grid': {
+      const columns = Array.isArray(data.columns) ? data.columns : [];
+      const leftColumn = { ...(columns[0] ?? {}) };
+      const rightColumn = { ...(columns[1] ?? {}) };
+      data.pill = getRawValue('splitGridPill') ?? data.pill;
+      data.pillIcon = getTrimmedValue('splitGridPillIcon') ?? data.pillIcon;
+      data.title = getRawValue('splitGridTitle') ?? data.title;
+      data.description = getRawValue('splitGridDescription') ?? data.description;
+      if (formData.has('splitGridLeftItems')) {
+        leftColumn.items = parseSplitGridItems(getRawValue('splitGridLeftItems') ?? '');
+      }
+      if (formData.has('splitGridRightItems')) {
+        rightColumn.items = parseSplitGridItems(getRawValue('splitGridRightItems') ?? '');
+      }
+      leftColumn.icon = getTrimmedValue('splitGridLeftIcon') ?? leftColumn.icon;
+      rightColumn.icon = getTrimmedValue('splitGridRightIcon') ?? rightColumn.icon;
+      data.itemIcon = getTrimmedValue('splitGridItemIcon') ?? data.itemIcon;
+      data.columns = [leftColumn, rightColumn];
+      const footerNote = getRawValue('splitGridFooterNote');
+      if (footerNote !== null) {
+        data.footerNote = footerNote;
+      }
+      break;
+    }
+    case 'hero-overlay': {
+      data.pill = getRawValue('heroOverlayPill') ?? data.pill;
+      data.pillIcon = getTrimmedValue('heroOverlayPillIcon') ?? data.pillIcon;
+      data.headline = getRawValue('heroOverlayHeadline') ?? data.headline;
+      data.subtitle = getRawValue('heroOverlaySubtitle') ?? data.subtitle;
+      const overlayTint = getTrimmedValue('heroOverlayOverlayTint');
+      if (overlayTint !== null) {
+        data.overlayTint = overlayTint;
+      }
+      const overlayOpacity = getNumericValue('heroOverlayOverlayOpacity');
+      if (overlayOpacity !== null) {
+        data.overlayOpacity = overlayOpacity;
+      }
+      const alignment = getTrimmedValue('heroOverlayAlignment');
+      if (alignment !== null) {
+        data.alignment = alignment;
+      }
+      const cardWidth = getTrimmedValue('heroOverlayCardWidth');
+      if (cardWidth !== null) {
+        data.cardWidth = cardWidth;
+      }
+      const imageUrl = getTrimmedValue('heroOverlayImageUrl');
+      const imageAlt = getRawValue('heroOverlayImageAlt');
+      const imageCredit = getRawValue('heroOverlayImageCredit');
+      const imageCreditUrl = getRawValue('heroOverlayImageCreditUrl');
+      if (imageUrl !== null || imageAlt !== null || imageCredit !== null || imageCreditUrl !== null) {
+        const image = data.image && typeof data.image === 'object' ? { ...data.image } : {};
+        if (imageUrl !== null) {
+          image.url = imageUrl;
+        }
+        if (imageAlt !== null) {
+          image.alt = imageAlt;
+        }
+        if (imageCredit !== null) {
+          image.credit = imageCredit;
+        }
+        if (imageCreditUrl !== null) {
+          image.creditUrl = imageCreditUrl;
+        }
+        data.image = image;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  return { layout, icon: layoutIcon, data };
 }
 
 function updateBuilderJsonPreview() {
@@ -11529,12 +12083,19 @@ function initialiseActivityBuilderUI() {
         if (!(target instanceof HTMLInputElement)) {
           return;
         }
-        const layoutValue = 'blank-canvas';
+        const layoutValue = target.value || 'blank-canvas';
         setSelectedLayout(layoutValue);
         applyBuilderLayoutDefaults(layoutValue);
+        syncBuilderLayout(layoutValue);
         updateBuilderJsonPreview();
         updateBuilderPreview();
-        showBuilderStatus('Blank canvas selected.', 'info');
+        const optionLabel =
+          target
+            .closest('.layout-option')
+            ?.querySelector('.layout-option-title')
+            ?.textContent?.trim() ||
+          layoutValue.replace(/-/g, ' ');
+        showBuilderStatus(`${optionLabel} selected.`, 'info');
       });
     });
   }
@@ -11682,7 +12243,9 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const allowedBuilderLayouts = ['blank-canvas'];
+  const allowedBuilderLayouts = Array.from(
+    new Set(['blank-canvas', ...Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {})]),
+  );
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
