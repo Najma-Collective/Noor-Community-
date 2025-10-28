@@ -99,6 +99,124 @@ This document inventories recurring slide components across the A1–C1 referenc
 - **Modifiers:**
   - Keep prompts in a simple vertical stack; if a lighter background is required atop photography, pair the card with `.transparent` and adjust list backgrounds to use `--surface-overlay-light` for sufficient contrast.
 
+## Centered callouts
+- **Seen in:** C1/Getting to know you/getting-to-know-you-b.html (Slide 4) uses a centered prompt card to frame a language focus moment; B2/1/B2-1-1/B2-1-1-Strategic Planning.html (Slide 13) reuses the same centered stack for pronunciation reminders.【F:C1/Getting to know you/getting-to-know-you-b.html†L723-L731】【F:B2/1/B2-1-1/B2-1-1-Strategic Planning.html†L891-L896】
+- **Structure:**
+  ```html
+  <div class="slide-inner centered-text">
+    <span class="pill">Topic</span>
+    <div class="prompt-card">
+      <h2>Headline</h2>
+      <p>Supporting reminder or challenge.</p>
+    </div>
+  </div>
+  ```
+- **Tokens:**
+  - Centered stacks inherit the display/body ramps from the design tokens (`--font-display`, `--step-2`) and rely on the global spacing scale to keep the prompt card breathing room consistent.【F:sandbox/sandbox-theme.css†L1-L73】
+  - `.prompt-card` borrows the neutral card palette and radius so that the centered slide still reads as part of the core surface system.【F:C1/Getting to know you/getting-to-know-you-b.html†L725-L731】
+- **Modifiers:**
+  - Pair with `.pill` chips for quick context labels and constrain prose with inline width utilities (e.g., `max-width: 70%`) when you want tighter focus.【F:B2/1/B2-1-1/B2-1-1-Strategic Planning.html†L891-L896】
+
+## Dialogue spotlights
+- **Seen in:** B2/1/B2-1-4/B2-1-4-b.html (Slides 6–8) use `.dialogue-box` cards inside grids for model conversations; B2/1/B2-1-3/B2-1-3-b.html (Slide 7) collapses to a single centered box for a scenario question.【F:B2/1/B2-1-4/B2-1-4-b.html†L2136-L2147】【F:B2/1/B2-1-3/B2-1-3-b.html†L208-L216】
+- **Structure:**
+  ```html
+  <div class="grid-container">
+    <div class="dialogue-box">
+      <h3>Prompt</h3>
+      <p>Guided language or sample exchange.</p>
+    </div>
+    <!-- repeat for multi-column grids -->
+  </div>
+  ```
+- **Tokens:**
+  - `.dialogue-box` inherits the base card radius and shadow while swapping to a cream fill for contrast; typography sits on the standard type scale so grids can mix narrative paragraphs and highlighted phrases.【F:sandbox/sandbox-css.css†L1898-L1935】【F:B2/1/B2-1-4/B2-1-4-b.html†L2136-L2147】
+  - Grid-driven variants lean on `.grid-container` / `.split-grid` helpers to stay responsive without redefining breakpoints.【F:sandbox/sandbox-css.css†L1898-L1935】【F:sandbox/sandbox-css.css†L2009-L2016】
+- **Modifiers:**
+  - Swap the grid container for a centered `.dialogue-box` when a single case study should dominate the slide; lists inside the box can reuse `.instruction-list` styling for step-by-step phrasing.【F:B2/1/B2-1-3/B2-1-3-b.html†L208-L216】
+
+## Token bank sorting boards
+- **Seen in:** C1/Getting to know you/getting-to-know-you-b.html (Slide 16) and C1/1/C1-1-2/C1-1-2.html (Slides 9 & 20) for categorisation and table-completion practice.【F:C1/Getting to know you/getting-to-know-you-b.html†L1000-L1026】【F:C1/1/C1-1-2/C1-1-2.html†L332-L361】
+- **Structure:**
+  ```html
+  <div class="card" data-activity="categorization">
+    <div class="token-bank">…</div>
+    <div class="category-columns">
+      <div class="category-column">
+        <div class="drop-zone"></div>
+      </div>
+      …
+    </div>
+    <div class="activity-actions">
+      <button class="activity-btn" data-action="check">Check</button>
+      <button class="activity-btn secondary" data-action="reset">Reset</button>
+    </div>
+    <div class="feedback-msg"></div>
+  </div>
+  ```
+- **Tokens:**
+  - `.token-bank`, `.click-token`, and `.category-column` draw from the same neutral palette and spacing scale as cards, adding dashed borders and chip styling to signal drag/drop affordances.【F:sandbox/sandbox-css.css†L2456-L2480】
+  - Action bars reuse the shared `.activity-actions` flex gap and `.activity-btn` button chroma so controls stay consistent across interactive slides.【F:sandbox/sandbox-css.css†L5743-L5750】
+- **Modifiers:**
+  - Attach `.feedback-msg` beneath the board for automated evaluation text and extend the pattern with `.table-completion-wrapper` when tokens should snap into table cells instead of columns.【F:sandbox/sandbox-css.css†L4363-L4376】【F:C1/1/C1-1-2/C1-1-2.html†L332-L361】
+
+## Quiz feedback boards
+- **Seen in:** C1/Getting to know you/getting-to-know-you-b.html (Slide 8) and C1/Getting to know you/Getting-to-know-you.html (Slides 7–14) for grammar polls and trivia checks.【F:C1/Getting to know you/getting-to-know-you-b.html†L807-L825】【F:C1/Getting to know you/Getting-to-know-you.html†L460-L534】
+- **Structure:**
+  ```html
+  <div class="card">
+    <div class="quiz-grid">
+      <div class="quiz-card">
+        <p>Prompt…</p>
+        <select>…</select>
+      </div>
+      …
+    </div>
+    <p class="feedback-msg">Coach the class once answers are in.</p>
+  </div>
+  ```
+- **Tokens:**
+  - `.quiz-card` and `.quiz-clause-control` sit on the neutral card palette with rounded controls that reuse the `--radius` and `--shadow-1` elevation for tactile dropdowns.【F:sandbox/sandbox-css.css†L2296-L2344】
+  - `.feedback-msg` provides a consistent place to surface success/error states or facilitator notes, with weight/colour tokens tuned for clarity.【F:sandbox/sandbox-css.css†L4363-L4376】
+- **Modifiers:**
+  - Combine with the token-bank pattern when answer options should be dragged rather than selected; the JSON index flags this union as `interactive.token-quiz` for automation.【F:sandbox/docs/slide-archetypes.json†L213-L241】
+
+## Activity action cards
+- **Seen in:** C1/Getting to know you/getting-to-know-you-b.html (Slides 9 & 10) and B2/Getting to know you/Getting-to-know-you.html (Slides 2–5) where instructions, editable grids, and facilitator tips share a single surface.【F:C1/Getting to know you/getting-to-know-you-b.html†L862-L895】【F:B2/Getting to know you/Getting-to-know-you.html†L345-L368】
+- **Structure:**
+  ```html
+  <div class="card transparent">
+    <span class="pill">Activity label</span>
+    <h2>Task headline</h2>
+    <ul class="instruction-list">…</ul>
+    <div class="split-grid">…</div>
+    <div class="activity-actions">
+      <button class="activity-btn">Check</button>
+      <button class="activity-btn secondary">Reset</button>
+    </div>
+  </div>
+  ```
+- **Tokens:**
+  - `.card` and `.split-grid` reuse the shared radius/spacing tokens to host editable “workspace” elements alongside instructions.【F:sandbox/sandbox-css.css†L1898-L1935】【F:sandbox/sandbox-css.css†L2009-L2016】
+  - `.activity-actions` / `.activity-btn` align with the interactive control palette so every task provides the same affordances for checking work.【F:sandbox/sandbox-css.css†L5743-L5750】
+- **Modifiers:**
+  - Switch the base card to `.transparent` when stacking atop photography and use `.feedback-msg` below the action bar for just-in-time coaching.【F:sandbox/sandbox-css.css†L1920-L1924】【F:sandbox/sandbox-css.css†L4363-L4376】
+
+## Legacy content wrappers
+- **Seen in:** C1/Getting to know you/Getting-to-know-you.html (Slides 1–5) which lean on the legacy `.content-wrapper` shell to separate headers, bodies, and footers inside the slide canvas.【F:C1/Getting to know you/Getting-to-know-you.html†L119-L167】【F:C1/Getting to know you/Getting-to-know-you.html†L344-L368】
+- **Structure:**
+  ```html
+  <div class="content-wrapper">
+    <div class="content-header">…</div>
+    <div class="content-body">…</div>
+    <div class="content-footer">…</div>
+  </div>
+  ```
+- **Tokens:**
+  - The wrapper honours the same spacing variables defined in the theme (`--space-4`, `--space-5`) so the header/body/footer rhythm matches newer components even without the modern card helpers.【F:sandbox/sandbox-theme.css†L24-L57】【F:C1/Getting to know you/Getting-to-know-you.html†L119-L167】
+- **Modifiers:**
+  - Apply grid utilities such as `.icon-choice-grid` inside the body to modernise legacy slides while keeping the container contract stable for backwards compatibility.【F:C1/Getting to know you/Getting-to-know-you.html†L349-L366】
+
 ### Implementation checklist
 1. Import `sandbox-theme.css` + `sandbox-css.css` so the variables and base classes resolve consistently across decks.
 2. Compose slides from these archetypes before adding bespoke styling; extend with modifier classes rather than duplicating base rules.

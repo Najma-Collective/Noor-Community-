@@ -1,0 +1,797 @@
+# Production slide construction audit
+
+This report groups slides from A1–C1 decks by canonical archetype (after normalising stage classes and layout components). Each subsection lists the source slides using 1-indexed positions within the deck files.
+
+## card.stack
+- **Pattern signature:** `card`
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 11
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 12
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 14
+  - A2/Getting to know you/getting-to-know-you.html — slide 15
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 19
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 13
+  - B2/Getting to know you/Getting-to-know-you.html — slide 19
+- **Pattern signature:** `card,feedback`
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 9
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 9
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 8
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 9
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 10
+  - A2/Getting to know you/getting-to-know-you.html — slide 9
+  - A2/Getting to know you/getting-to-know-you.html — slide 10
+  - A2/Getting to know you/getting-to-know-you.html — slide 11
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 7
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 8
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 9
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 10
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 11
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 12
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 13
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 14
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 15
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 7
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 8
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 9
+  - B2/Getting to know you/Getting-to-know-you.html — slide 7
+  - B2/Getting to know you/Getting-to-know-you.html — slide 8
+  - B2/Getting to know you/Getting-to-know-you.html — slide 9
+  - B2/Getting to know you/Getting-to-know-you.html — slide 10
+  - B2/Getting to know you/Getting-to-know-you.html — slide 11
+  - B2/Getting to know you/Getting-to-know-you.html — slide 12
+  - B2/Getting to know you/Getting-to-know-you.html — slide 13
+  - B2/Getting to know you/Getting-to-know-you.html — slide 14
+  - B2/Getting to know you/Getting-to-know-you.html — slide 15
+- **Pattern signature:** `card,feedback,grid`
+  - B2/Getting to know you/Getting-to-know-you.html — slide 4
+- **Pattern signature:** `card,grid`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 2
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 5
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 7
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 8
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 9
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 14
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 15
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 2
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 5
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 7
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 8
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 11
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 12
+  - A1/2/A1-2-1/A2-2-1b.html — slide 2
+  - A1/2/A1-2-1/A2-2-1b.html — slide 5
+  - A1/2/A1-2-1/A2-2-1b.html — slide 8
+  - A1/2/A1-2-1/A2-2-1b.html — slide 9
+  - A1/2/A1-2-1/A2-2-1b.html — slide 12
+  - A1/2/A1-2-1/A2-2-1b.html — slide 13
+  - A1/2/A1-2-2/A1-2-2b.html — slide 2
+  - A1/2/A1-2-2/A1-2-2b.html — slide 5
+  - A1/2/A1-2-2/A1-2-2b.html — slide 7
+  - A1/2/A1-2-2/A1-2-2b.html — slide 9
+  - A1/2/A1-2-2/A1-2-2b.html — slide 10
+  - A1/2/A1-2-2/A1-2-2b.html — slide 11
+  - A1/2/A1-2-2/A1-2-2b.html — slide 12
+  - A1/2/A1-2-2/A1-2-2b.html — slide 15
+  - A1/2/A1-2-2/A1-2-2b.html — slide 16
+  - A1/2/A1-2-3/A1-2-3b.html — slide 2
+  - A1/2/A1-2-3/A1-2-3b.html — slide 5
+  - A1/2/A1-2-3/A1-2-3b.html — slide 7
+  - A1/2/A1-2-3/A1-2-3b.html — slide 8
+  - A1/2/A1-2-3/A1-2-3b.html — slide 11
+  - A1/2/A1-2-3/A1-2-3b.html — slide 12
+  - A1/2/A1-2-4/A1-2-4b.html — slide 2
+  - A1/2/A1-2-4/A1-2-4b.html — slide 5
+  - A1/2/A1-2-4/A1-2-4b.html — slide 9
+  - A1/2/A1-2-4/A1-2-4b.html — slide 10
+  - A1/2/A1-2-4/A1-2-4b.html — slide 11
+  - A1/2/A1-2-4/A1-2-4b.html — slide 14
+  - A1/2/A1-2-4/A1-2-4b.html — slide 15
+  - A2/1/A2-1-1/A2-1-b.html — slide 2
+  - A2/1/A2-1-1/A2-1-b.html — slide 5
+  - A2/1/A2-1-1/A2-1-b.html — slide 9
+  - A2/1/A2-1-1/A2-1-b.html — slide 10
+  - A2/1/A2-1-1/A2-1-b.html — slide 11
+  - A2/1/A2-1-1/A2-1-b.html — slide 14
+  - A2/1/A2-1-1/A2-1-b.html — slide 15
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 2
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 5
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 7
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 10
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 11
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 14
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 15
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 2
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 5
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 6
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 7
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 9
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 10
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 11
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 14
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 15
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 2
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 5
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 6
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 7
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 10
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 11
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 14
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 15
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 5
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 12
+  - A2/Getting to know you/getting-to-know-you.html — slide 4
+  - A2/Getting to know you/getting-to-know-you.html — slide 6
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 2
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 4
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 5
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 6
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 10
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 11
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 2
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 5
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 7
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 8
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 9
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 14
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 15
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 2
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 5
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 7
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 8
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 9
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 14
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 15
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 2
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 5
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 7
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 9
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 14
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 15
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 4
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 5
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 11
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 2
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 4
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 5
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 6
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 10
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 11
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 2
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 4
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 11
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 12
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 2
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 4
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 5
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 6
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 10
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 11
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 2
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 5
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 8
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 12
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 13
+  - C1/Getting to know you/Getting-to-know-you.html — slide 17
+- **Pattern signature:** `card,grid,list`
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 5
+
+## centered.callout
+- **Pattern signature:** `(no extra categories)`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 12
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 9
+  - A1/2/A1-2-1/A2-2-1b.html — slide 10
+  - A1/2/A1-2-2/A1-2-2b.html — slide 13
+  - A1/2/A1-2-3/A1-2-3b.html — slide 9
+  - A1/2/A1-2-4/A1-2-4b.html — slide 12
+  - A2/1/A2-1-1/A2-1-b.html — slide 12
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 12
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 12
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 12
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 8
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 12
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 12
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 12
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 7
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 8
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 8
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 10
+- **Pattern signature:** `pill`
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 13
+
+## centered.dialogue
+- **Pattern signature:** `dialogue`
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 7
+
+## content.wrapper
+- **Pattern signature:** `(no extra categories)`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 10
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 16
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 13
+  - A1/2/A1-2-1/A2-2-1b.html — slide 14
+  - A1/2/A1-2-2/A1-2-2b.html — slide 17
+  - A1/2/A1-2-3/A1-2-3b.html — slide 13
+  - A1/2/A1-2-4/A1-2-4b.html — slide 16
+  - A2/1/A2-1-1/A2-1-b.html — slide 16
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 16
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 16
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 16
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 7
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 12
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 10
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 16
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 10
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 16
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 10
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 16
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 14
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 12
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 8
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 13
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 12
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 14
+  - C1/Getting to know you/Getting-to-know-you.html — slide 3
+  - C1/Getting to know you/Getting-to-know-you.html — slide 4
+  - C1/Getting to know you/Getting-to-know-you.html — slide 5
+  - C1/Getting to know you/Getting-to-know-you.html — slide 6
+  - C1/Getting to know you/Getting-to-know-you.html — slide 18
+
+## dialogue.grid
+- **Pattern signature:** `dialogue,grid`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 4
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 4
+  - A1/2/A1-2-1/A2-2-1b.html — slide 4
+  - A1/2/A1-2-1/A2-2-1b.html — slide 7
+  - A1/2/A1-2-2/A1-2-2b.html — slide 4
+  - A1/2/A1-2-2/A1-2-2b.html — slide 8
+  - A1/2/A1-2-3/A1-2-3b.html — slide 4
+  - A1/2/A1-2-4/A1-2-4b.html — slide 4
+  - A1/2/A1-2-4/A1-2-4b.html — slide 7
+  - A1/2/A1-2-4/A1-2-4b.html — slide 8
+  - A2/1/A2-1-1/A2-1-b.html — slide 4
+  - A2/1/A2-1-1/A2-1-b.html — slide 7
+  - A2/1/A2-1-1/A2-1-b.html — slide 8
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 4
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 8
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 4
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 8
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 4
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 8
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 4
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 4
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 4
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 8
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 5
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 6
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 10
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 4
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 7
+
+## dialogue.stack
+- **Pattern signature:** `card,dialogue,pill`
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 9
+- **Pattern signature:** `dialogue`
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 7
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 9
+
+## grid.workspace
+- **Pattern signature:** `grid`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 3
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 11
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 3
+  - A1/2/A1-2-1/A2-2-1b.html — slide 3
+  - A1/2/A1-2-2/A1-2-2b.html — slide 3
+  - A1/2/A1-2-3/A1-2-3b.html — slide 3
+  - A1/2/A1-2-4/A1-2-4b.html — slide 3
+  - A2/1/A2-1-1/A2-1-b.html — slide 3
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 3
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 9
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 1
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 3
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 1
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 3
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 9
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 3
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 3
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 11
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 3
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 11
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 3
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 11
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 3
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 3
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 3
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 3
+  - C1/Getting to know you/Getting-to-know-you.html — slide 1
+  - C1/Getting to know you/Getting-to-know-you.html — slide 2
+  - C1/Getting to know you/Getting-to-know-you.html — slide 19
+
+## hero.overlay
+- **Pattern signature:** `card,grid,hero`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 6
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 13
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 6
+  - A1/2/A1-2-1/A2-2-1b.html — slide 6
+  - A1/2/A1-2-1/A2-2-1b.html — slide 11
+  - A1/2/A1-2-2/A1-2-2b.html — slide 14
+  - A1/2/A1-2-3/A1-2-3b.html — slide 6
+  - A1/2/A1-2-3/A1-2-3b.html — slide 10
+  - A1/2/A1-2-4/A1-2-4b.html — slide 13
+  - A2/1/A2-1-1/A2-1-b.html — slide 13
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 13
+  - A2/1/A2-1-3/A2-1-3-b.html — slide 13
+  - A2/1/A2-1-4/A2-1-4-b.html — slide 13
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 9
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 6
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 13
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 6
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 13
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 6
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 13
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 9
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 9
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 9
+- **Pattern signature:** `card,hero`
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 6
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 11
+- **Pattern signature:** `card,hero,pill`
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 2
+- **Pattern signature:** `grid,hero`
+  - A1/1/A1-1-3/A1-1-3-b.html — slide 1
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 1
+  - A1/1/A1-1-4/A1-1-4-b.html — slide 10
+  - A1/2/A1-2-1/A2-2-1b.html — slide 1
+  - A1/2/A1-2-2/A1-2-2b.html — slide 1
+  - A1/2/A1-2-2/A1-2-2b.html — slide 6
+  - A1/2/A1-2-3/A1-2-3b.html — slide 1
+  - A1/2/A1-2-4/A1-2-4b.html — slide 1
+  - A1/2/A1-2-4/A1-2-4b.html — slide 6
+  - A2/1/A2-1-1/A2-1-b.html — slide 1
+  - A2/1/A2-1-1/A2-1-b.html — slide 6
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 1
+  - A2/1/A2-1-2/ A2-1-2-b.html — slide 6
+  - B1/1/B1-1-1/B1-1-1-b-alt.html — slide 1
+  - B1/1/B1-1-2/B1-1-2-b.html — slide 1
+  - B1/1/B1-1-3/B1-1-3-b.html — slide 1
+  - B1/1/B1-1-4/B1-1-4-b.html — slide 1
+  - B2/1/B2-1-1/B2-1-1-b.html — slide 1
+  - B2/1/B2-1-2/B2-1-2-b.html — slide 1
+  - B2/1/B2-1-3/B2-1-3-b.html — slide 1
+  - B2/1/B2-1-4/B2-1-4-b.html — slide 1
+- **Pattern signature:** `hero`
+  - A1/1/A1-1-1/A1-1-b.html — slide 1
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 1
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 1
+  - C1/1/C1-1-1/C1-1-1.html — slide 1
+  - C1/C1-test/C1-test.html — slide 1
+- **Pattern signature:** `hero,list,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 4
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 2
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 3
+- **Pattern signature:** `hero,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 1
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 2
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 14
+  - A1/1/A1-1-1/A1-1-b.html — slide 2
+  - A1/1/A1-1-1/A1-1-b.html — slide 14
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 1
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 14
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 2
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 15
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 2
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 14
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 14
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 1
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 1
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 2
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 14
+  - B2/1/B2-1-2/B2-1-2.html — slide 1
+  - B2/1/B2-1-2/B2-1-2.html — slide 2
+  - B2/1/B2-1-2/B2-1-2.html — slide 14
+  - B2/1/B2-1-3/B2-1-3.html — slide 1
+  - B2/1/B2-1-3/B2-1-3.html — slide 2
+  - B2/1/B2-1-3/B2-1-3.html — slide 14
+  - B2/1/B2-1-4/B2-1-4.html — slide 1
+  - B2/1/B2-1-4/B2-1-4.html — slide 2
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 1
+  - C1/1/C1-1-1/C1-1-1.html — slide 2
+  - C1/1/C1-1-1/C1-1-1.html — slide 14
+  - C1/1/C1-1-2/C1-1-2.html — slide 1
+  - C1/1/C1-1-2/C1-1-2.html — slide 2
+  - C1/1/C1-1-2/C1-1-2.html — slide 16
+  - C1/C1-test/C1-test.html — slide 2
+  - C1/C1-test/C1-test.html — slide 14
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 1
+
+## interactive.activity-card
+- **Pattern signature:** `activity,card,feedback,grid,pill`
+  - C1/1/C1-1-1/C1-1-1.html — slide 11
+  - C1/C1-test/C1-test.html — slide 11
+- **Pattern signature:** `activity,card,feedback,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 11
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 18
+  - A1/1/A1-1-1/A1-1-b.html — slide 11
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 5
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 8
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 11
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 18
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 6
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 9
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 6
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 8
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 9
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 18
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 5
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 8
+  - B2/1/B2-1-2/B2-1-2.html — slide 8
+  - B2/1/B2-1-2/B2-1-2.html — slide 11
+  - B2/1/B2-1-3/B2-1-3.html — slide 8
+  - B2/1/B2-1-3/B2-1-3.html — slide 11
+  - C1/1/C1-1-1/C1-1-1.html — slide 5
+  - C1/1/C1-1-1/C1-1-1.html — slide 6
+  - C1/1/C1-1-1/C1-1-1.html — slide 8
+  - C1/1/C1-1-1/C1-1-1.html — slide 12
+  - C1/1/C1-1-2/C1-1-2.html — slide 5
+  - C1/1/C1-1-2/C1-1-2.html — slide 6
+  - C1/1/C1-1-2/C1-1-2.html — slide 7
+  - C1/1/C1-1-2/C1-1-2.html — slide 10
+  - C1/1/C1-1-2/C1-1-2.html — slide 12
+  - C1/1/C1-1-2/C1-1-2.html — slide 13
+  - C1/1/C1-1-2/C1-1-2.html — slide 14
+  - C1/C1-test/C1-test.html — slide 5
+  - C1/C1-test/C1-test.html — slide 6
+  - C1/C1-test/C1-test.html — slide 8
+  - C1/C1-test/C1-test.html — slide 12
+- **Pattern signature:** `activity,feedback,pill`
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 6
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 7
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 15
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 16
+- **Pattern signature:** `activity,grid`
+  - C1/Getting to know you/Getting-to-know-you.html — slide 16
+
+## interactive.audio-dialogue
+- **Pattern signature:** `audio,dialogue,pill`
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 10
+
+## interactive.quiz-feedback
+- **Pattern signature:** `activity,audio,card,feedback,pill,quiz`
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 8
+- **Pattern signature:** `activity,card,feedback,pill,quiz`
+  - A1/1/A1-1-1/A1-1-b.html — slide 8
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 11
+  - B2/1/B2-1-2/B2-1-2.html — slide 18
+  - B2/1/B2-1-3/B2-1-3.html — slide 18
+  - B2/1/B2-1-4/B2-1-4.html — slide 5
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 8
+  - C1/1/C1-1-2/C1-1-2.html — slide 19
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 8
+- **Pattern signature:** `feedback,quiz`
+  - C1/Getting to know you/Getting-to-know-you.html — slide 7
+  - C1/Getting to know you/Getting-to-know-you.html — slide 8
+  - C1/Getting to know you/Getting-to-know-you.html — slide 9
+  - C1/Getting to know you/Getting-to-know-you.html — slide 10
+  - C1/Getting to know you/Getting-to-know-you.html — slide 11
+  - C1/Getting to know you/Getting-to-know-you.html — slide 12
+  - C1/Getting to know you/Getting-to-know-you.html — slide 13
+  - C1/Getting to know you/Getting-to-know-you.html — slide 14
+  - C1/Getting to know you/Getting-to-know-you.html — slide 15
+
+## interactive.token-board
+- **Pattern signature:** `activity,card,feedback,manipulative,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 5
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 8
+  - A1/1/A1-1-1/A1-1-b.html — slide 6
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 12
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 5
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 16
+  - C1/1/C1-1-1/C1-1-1.html — slide 9
+  - C1/C1-test/C1-test.html — slide 9
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 16
+- **Pattern signature:** `card,manipulative,pill`
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 12
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 12
+
+## interactive.token-quiz
+- **Pattern signature:** `activity,card,feedback,manipulative,pill,quiz`
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 18
+
+## interactive.token-table
+- **Pattern signature:** `activity,card,feedback,grid,manipulative,pill,table`
+  - A1/1/A1-1-1/A1-1-b.html — slide 5
+  - C1/1/C1-1-2/C1-1-2.html — slide 9
+- **Pattern signature:** `activity,card,feedback,list,manipulative,pill,table`
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 11
+- **Pattern signature:** `activity,card,feedback,manipulative,pill,table`
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 11
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 5
+  - B2/1/B2-1-2/B2-1-2.html — slide 5
+  - B2/1/B2-1-3/B2-1-3.html — slide 5
+  - B2/1/B2-1-4/B2-1-4.html — slide 6
+  - C1/1/C1-1-2/C1-1-2.html — slide 20
+
+## pill.card-stack
+- **Pattern signature:** `card,feedback,grid,pill`
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 3
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 2
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 2
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 17
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 2
+  - B2/Getting to know you/Getting-to-know-you.html — slide 2
+  - B2/Getting to know you/Getting-to-know-you.html — slide 17
+- **Pattern signature:** `card,feedback,list,pill`
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 6
+  - A2/Getting to know you/getting-to-know-you.html — slide 5
+- **Pattern signature:** `card,feedback,pill`
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 8
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 8
+- **Pattern signature:** `card,feedback,pill,tips`
+  - A2/Getting to know you/getting-to-know-you.html — slide 3
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 3
+- **Pattern signature:** `card,grid,list,pill`
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 7
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 16
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 18
+  - C1/1/C1-1-1/C1-1-1.html — slide 4
+  - C1/1/C1-1-1/C1-1-1.html — slide 17
+  - C1/C1-test/C1-test.html — slide 4
+  - C1/C1-test/C1-test.html — slide 17
+- **Pattern signature:** `card,grid,pill`
+  - A1/1/A1-1-1/A1-1-b.html — slide 16
+  - A1/1/A1-1-1/A1-1-b.html — slide 17
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 7
+  - A2/Getting to know you/getting-to-know-you.html — slide 13
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 4
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 6
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 13
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 2
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 3
+  - B2/1/B2-1-2/B2-1-2.html — slide 10
+  - B2/1/B2-1-2/B2-1-2.html — slide 16
+  - B2/1/B2-1-3/B2-1-3.html — slide 10
+  - B2/1/B2-1-3/B2-1-3.html — slide 16
+  - B2/1/B2-1-4/B2-1-4.html — slide 12
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 2
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 5
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 6
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 13
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 19
+  - C1/1/C1-1-1/C1-1-1.html — slide 16
+  - C1/1/C1-1-2/C1-1-2.html — slide 4
+  - C1/1/C1-1-2/C1-1-2.html — slide 15
+  - C1/1/C1-1-2/C1-1-2.html — slide 17
+  - C1/1/C1-1-2/C1-1-2.html — slide 18
+  - C1/1/C1-1-2/C1-1-2.html — slide 21
+  - C1/C1-test/C1-test.html — slide 16
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 2
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 5
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 6
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 13
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 19
+- **Pattern signature:** `card,list,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 3
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 12
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 19
+  - A1/1/A1-1-1/A1-1-b.html — slide 3
+  - A1/1/A1-1-1/A1-1-b.html — slide 7
+  - A1/1/A1-1-1/A1-1-b.html — slide 9
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 3
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 4
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 6
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 9
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 10
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 12
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 15
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 16
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 17
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 19
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 1
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 4
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 8
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 10
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 11
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 13
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 16
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 17
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 18
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 2
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 4
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 10
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 2
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 4
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 7
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 10
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 11
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 16
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 4
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 6
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 11
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 13
+  - A2/Getting to know you/getting-to-know-you.html — slide 2
+  - A2/Getting to know you/getting-to-know-you.html — slide 7
+  - A2/Getting to know you/getting-to-know-you.html — slide 14
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 3
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 7
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 9
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 10
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 12
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 15
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 17
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 3
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 5
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 18
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 4
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 10
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 12
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 20
+  - B2/Getting to know you/Getting-to-know-you.html — slide 3
+  - B2/Getting to know you/Getting-to-know-you.html — slide 5
+  - B2/Getting to know you/Getting-to-know-you.html — slide 18
+  - C1/1/C1-1-1/C1-1-1.html — slide 3
+  - C1/1/C1-1-1/C1-1-1.html — slide 7
+  - C1/1/C1-1-1/C1-1-1.html — slide 10
+  - C1/1/C1-1-1/C1-1-1.html — slide 13
+  - C1/1/C1-1-1/C1-1-1.html — slide 15
+  - C1/1/C1-1-2/C1-1-2.html — slide 3
+  - C1/C1-test/C1-test.html — slide 3
+  - C1/C1-test/C1-test.html — slide 7
+  - C1/C1-test/C1-test.html — slide 10
+  - C1/C1-test/C1-test.html — slide 13
+  - C1/C1-test/C1-test.html — slide 15
+- **Pattern signature:** `card,pill`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 6
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 7
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 9
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 10
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 13
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 17
+  - A1/1/A1-1-1/A1-1-b.html — slide 4
+  - A1/1/A1-1-1/A1-1-b.html — slide 10
+  - A1/1/A1-1-1/A1-1-b.html — slide 12
+  - A1/1/A1-1-1/A1-1-b.html — slide 13
+  - A1/1/A1-1-1/A1-1-b.html — slide 15
+  - A1/1/A1-1-1/A1-1-b.html — slide 18
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 2
+  - A1/1/A1-1-2/A1-1-2-b.html — slide 13
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 5
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 7
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 14
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 19
+  - A1/1/A1-1-2/A1-1-2-c.html — slide 20
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 2
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 1
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 1
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 3
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 4
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 7
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 12
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 13
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 15
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 17
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 19
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 1
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 7
+  - A2/Getting to know you/getting-to-know-you.html — slide 1
+  - A2/Getting to know you/getting-to-know-you.html — slide 8
+  - B1/1/B1-1-1/B1-1-1-b.html — slide 19
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 1
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 6
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 1
+  - B1/Getting to Know you/getting-to-know-you-b.html — slide 6
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 19
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 3
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 4
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 6
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 10
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 11
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 15
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 16
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 17
+  - B2/1/B2-1-2/B2-1-2.html — slide 3
+  - B2/1/B2-1-2/B2-1-2.html — slide 4
+  - B2/1/B2-1-2/B2-1-2.html — slide 6
+  - B2/1/B2-1-2/B2-1-2.html — slide 7
+  - B2/1/B2-1-2/B2-1-2.html — slide 9
+  - B2/1/B2-1-2/B2-1-2.html — slide 12
+  - B2/1/B2-1-2/B2-1-2.html — slide 13
+  - B2/1/B2-1-2/B2-1-2.html — slide 15
+  - B2/1/B2-1-2/B2-1-2.html — slide 17
+  - B2/1/B2-1-3/B2-1-3.html — slide 3
+  - B2/1/B2-1-3/B2-1-3.html — slide 4
+  - B2/1/B2-1-3/B2-1-3.html — slide 6
+  - B2/1/B2-1-3/B2-1-3.html — slide 7
+  - B2/1/B2-1-3/B2-1-3.html — slide 9
+  - B2/1/B2-1-3/B2-1-3.html — slide 12
+  - B2/1/B2-1-3/B2-1-3.html — slide 13
+  - B2/1/B2-1-3/B2-1-3.html — slide 15
+  - B2/1/B2-1-3/B2-1-3.html — slide 17
+  - B2/1/B2-1-4/B2-1-4.html — slide 3
+  - B2/1/B2-1-4/B2-1-4.html — slide 4
+  - B2/1/B2-1-4/B2-1-4.html — slide 8
+  - B2/1/B2-1-4/B2-1-4.html — slide 9
+  - B2/1/B2-1-4/B2-1-4.html — slide 10
+  - B2/Getting to know you/Getting-to-know-you.html — slide 1
+  - B2/Getting to know you/Getting-to-know-you.html — slide 6
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 4
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 10
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 11
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 14
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 20
+  - C1/1/C1-1-1/C1-1-1.html — slide 18
+  - C1/1/C1-1-1/C1-1-1.html — slide 19
+  - C1/C1-test/C1-test.html — slide 18
+  - C1/C1-test/C1-test.html — slide 19
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 4
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 10
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 11
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 14
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 20
+- **Pattern signature:** `card,pill,reflection`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 20
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 19
+  - B2/1/B2-1-2/B2-1-2.html — slide 19
+  - B2/1/B2-1-3/B2-1-3.html — slide 19
+  - B2/1/B2-1-4/B2-1-4.html — slide 13
+- **Pattern signature:** `card,pill,roleplay`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 16
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 12
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 13
+  - C1/1/C1-1-2/C1-1-2.html — slide 8
+- **Pattern signature:** `card,pill,scenario`
+  - C1/1/C1-1-2/C1-1-2.html — slide 11
+- **Pattern signature:** `card,pill,table`
+  - A2/1/A2-1-1/A2-1-1-b.html — slide 10
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 8
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 12
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 17
+  - B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html — slide 7
+  - B2/1/B2-1-4/B2-1-4.html — slide 7
+  - B2/1/B2-1-4/B2-1-4.html — slide 11
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 3
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 9
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 15
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 17
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 3
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 9
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 15
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 17
+- **Pattern signature:** `card,pill,tips`
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 3
+  - A1/Getting to know you/Getting-to-know-you-b.html — slide 5
+  - A1/Getting to know you/Gettingtoknowyou.html — slide 6
+  - A2/Getting to know you/getting-to-know-you-b.html — slide 3
+  - A2/Getting to know you/getting-to-know-you.html — slide 12
+  - B1/Getting to Know you/Getting-to-know-you.html — slide 16
+  - B2/Getting to know you/Getting-to-know-you.html — slide 16
+- **Pattern signature:** `card,pill,worksheet`
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 18
+
+## pill.simple
+- **Pattern signature:** `grid,pill`
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 3
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 4
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 5
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 6
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 7
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 8
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 9
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 10
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 3
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 4
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 5
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 6
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 7
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 8
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 9
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 10
+- **Pattern signature:** `pill`
+  - A1/1/A1-1-2/A1-1-2-Conversation.html — slide 1
+  - A1/1/A1-1-3/A1-1-3-Conversation.html — slide 1
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 4
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 5
+  - B2/1/B2-1-1/B2-1-1-Strategic Planning.html — slide 9
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 7
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 7
+- **Pattern signature:** `pill,scenario`
+  - A1/1/A1-1-1/A1-1-1-C.html — slide 15
+- **Pattern signature:** `pill,table`
+  - B2/Getting to know you/getting-to-know-you-b.html — slide 18
+  - C1/Getting to know you/getting-to-know-you-b.html — slide 18
