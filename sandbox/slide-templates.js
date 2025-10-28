@@ -1,5 +1,8 @@
+import { DEFAULT_STATES } from './activity-builder.js';
+
 export const LAYOUT_ICON_DEFAULTS = {
   'blank-canvas': 'fa-solid fa-border-all',
+  'interactive-practice': 'fa-solid fa-puzzle-piece',
   'hero-overlay': 'fa-solid fa-mountain-sun',
   'card-stack': 'fa-solid fa-layer-group',
   'pill-with-gallery': 'fa-solid fa-grip',
@@ -35,6 +38,68 @@ export const LAYOUT_FIELD_ICON_DEFAULTS = {
 
 export const getLayoutFieldIconDefault = (layout, field) =>
   LAYOUT_FIELD_ICON_DEFAULTS?.[layout]?.[field] ?? '';
+
+const PRACTICE_BASE_CONFIG = Object.freeze({
+  stageLabel: 'Studio practice lab',
+  pillLabel: 'Interactive practice',
+  pillIcon: 'fa-solid fa-puzzle-piece',
+  title: 'Interactive practice spotlight',
+  summary: 'Launch the module, coach learners through the prompts, and celebrate the winning moves.',
+  instructionsHeading: 'How to facilitate',
+  instructionsIcon: 'fa-solid fa-person-chalkboard',
+  instructions:
+    'Guide learners through the interactive module, highlight strategies as they surface, then debrief with the rubric.',
+  rubricHeading: 'Celebrate the wins',
+  rubric:
+    'Award badges for accurate responses and ask teams to narrate their thinking before revealing the key.',
+  previewHeading: 'Activity outline',
+  previewIcon: 'fa-solid fa-diagram-project',
+  moduleHint: 'Use the button below to launch the interactive module builder and drop the activity into this slide.',
+});
+
+const getDefaultStateForModule = (type) => {
+  const factory = DEFAULT_STATES?.[type];
+  if (typeof factory === 'function') {
+    try {
+      return factory();
+    } catch (error) {
+      console.warn('Unable to resolve default state for module', type, error);
+    }
+  }
+  return {};
+};
+
+const buildPracticeDefaults = (type = 'multiple-choice') => {
+  const base = { ...PRACTICE_BASE_CONFIG };
+  const seed = getDefaultStateForModule(type);
+  const title = typeof seed?.title === 'string' && seed.title.trim() ? seed.title.trim() : base.title;
+  const instructions =
+    typeof seed?.instructions === 'string' && seed.instructions.trim()
+      ? seed.instructions.trim()
+      : base.instructions;
+  const rubric = typeof seed?.rubric === 'string' && seed.rubric.trim() ? seed.rubric.trim() : base.rubric;
+
+  return {
+    ...base,
+    activityType: type,
+    title,
+    instructions,
+    rubric,
+    seed,
+  };
+};
+
+export const MODULE_LAYOUT_DEFAULTS = {
+  'multiple-choice': () => buildPracticeDefaults('multiple-choice'),
+  linking: () => buildPracticeDefaults('linking'),
+  dropdown: () => buildPracticeDefaults('dropdown'),
+  gapfill: () => buildPracticeDefaults('gapfill'),
+  grouping: () => buildPracticeDefaults('grouping'),
+  'multiple-choice-grid': () => buildPracticeDefaults('multiple-choice-grid'),
+  ranking: () => buildPracticeDefaults('ranking'),
+  'table-completion': () => buildPracticeDefaults('table-completion'),
+  'quiz-show': () => buildPracticeDefaults('quiz-show'),
+};
 
 export const SLIDE_TEMPLATE_MODIFIERS = {
   'blank-canvas': [
@@ -188,10 +253,7 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
 
 export const BUILDER_LAYOUT_DEFAULTS = {
   'blank-canvas': () => ({}),
-  'interactive-practice': () => ({
-    activityType: 'multiple-choice',
-    questions: [{}],
-  }),
+  'interactive-practice': () => MODULE_LAYOUT_DEFAULTS['multiple-choice'](),
   'hero-overlay': () => ({
     pill: 'Bethlehem × Amman partnership',
     pillIcon: 'fa-solid fa-city',
