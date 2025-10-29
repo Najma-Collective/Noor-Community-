@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "lint": "node tests/static-lint.mjs",
-    "test": "node tests/run-tests.mjs",
+    "test": "node tests/run-tests.mjs && node tests/deck-render-cli-parity.mjs",
     "validate:lesson-decks": "node tests/validate-lesson-decks.mjs"
   },
   "devDependencies": {
