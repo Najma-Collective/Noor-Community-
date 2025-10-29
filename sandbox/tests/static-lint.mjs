@@ -1,12 +1,22 @@
 import assert from 'node:assert/strict';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readdir, readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import { DEFAULT_STATES, Generators } from '../activity-builder.js';
 import { SUPPORTED_LESSON_LAYOUTS, createLessonSlideFromState } from '../int-mod.js';
+import { renderLessonDeckToHtml } from '../../automation/render/index.mjs';
 import {
   collectUnknownClasses,
   extractClassesFromCss,
   loadSandboxClassAllowlist,
 } from './helpers/css-allowlist.mjs';
+import { captureConsole, validateDeckDocument } from './helpers/deck-validation.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, '..', '..');
+const examplesDir = path.join(repoRoot, 'automation', 'examples');
 
 const ModuleGenerators = Generators;
 
@@ -45,31 +55,6 @@ if (typeof window.cancelAnimationFrame !== 'function') {
 const stageViewport = document.querySelector('.stage-viewport');
 
 const { isAllowed: isAllowedSandboxClass } = await loadSandboxClassAllowlist();
-
-async function captureConsole(fn) {
-  const errors = [];
-  const warnings = [];
-  const originalError = console.error;
-  const originalWarn = console.warn;
-  console.error = (...args) => {
-    errors.push(args);
-    if (typeof originalError === 'function') {
-      originalError(...args);
-    }
-  };
-  console.warn = (...args) => {
-    warnings.push(args);
-    if (typeof originalWarn === 'function') {
-      originalWarn(...args);
-    }
-  };
-  try {
-    return { result: await fn(), errors, warnings };
-  } finally {
-    console.error = originalError;
-    console.warn = originalWarn;
-  }
-}
 
 const failures = [];
 
@@ -134,6 +119,51 @@ for (const [type, factory] of Object.entries(DEFAULT_STATES)) {
   const externalScripts = moduleDoc.querySelectorAll('script[src]');
   if (externalScripts.length) {
     addFailure(`Module "${type}" should not reference external scripts.`);
+  }
+}
+
+const exampleEntries = await readdir(examplesDir, { withFileTypes: true });
+const exampleFiles = exampleEntries
+  .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+  .map((entry) => entry.name)
+  .sort();
+
+if (!exampleFiles.length) {
+  addFailure('No lesson deck automation examples found to lint.');
+}
+
+for (const file of exampleFiles) {
+  const filePath = path.join(examplesDir, file);
+  const payload = JSON.parse(await readFile(filePath, 'utf8'));
+  const { result: html, errors, warnings } = await captureConsole(() =>
+    renderLessonDeckToHtml(payload, { pexelsKey: 'test-key' }),
+  );
+  if (errors.length) {
+    addFailure(
+      `Deck example "${file}" emitted console errors: ${errors
+        .map((entry) => entry.join(' '))
+        .join(' | ')}`,
+    );
+  }
+  if (warnings.length) {
+    addFailure(
+      `Deck example "${file}" emitted console warnings: ${warnings
+        .map((entry) => entry.join(' '))
+        .join(' | ')}`,
+    );
+  }
+
+  const deckDom = new JSDOM(html, {
+    url: 'https://example.com/sandbox/',
+    pretendToBeVisual: true,
+  });
+  const deckIssues = validateDeckDocument(deckDom.window.document, payload, {
+    isAllowedClass: isAllowedSandboxClass,
+  });
+  deckDom.window.close?.();
+
+  if (deckIssues.length) {
+    deckIssues.forEach((issue) => addFailure(`${file}: ${issue}`));
   }
 }
 
