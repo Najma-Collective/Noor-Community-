@@ -1027,6 +1027,189 @@ body {
   gap: var(--space-4);
 }
 
+.builder-archetype-picker {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface-card) 90%, white 10%);
+  padding: clamp(var(--space-4), 2.4vw, var(--space-6));
+  box-shadow: var(--shadow-1);
+}
+
+.builder-archetype-picker .builder-section-header {
+  margin-bottom: var(--space-3);
+}
+
+.builder-archetype-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(var(--space-3), 2vw, var(--space-4));
+}
+
+.builder-archetype-card {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--border-soft) 65%, transparent);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+  text-align: left;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 246, 240, 0.96) 100%);
+  box-shadow: var(--shadow-0);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.builder-archetype-card:hover,
+.builder-archetype-card:focus-visible {
+  border-color: color-mix(in srgb, var(--accent-amber) 45%, transparent);
+  box-shadow: var(--shadow-1);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.builder-archetype-card[data-selected='true'] {
+  border-color: color-mix(in srgb, var(--accent-amber) 55%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
+.builder-archetype-card:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: calc(var(--radius) + 3px);
+  border: 2px solid color-mix(in srgb, var(--accent-amber) 55%, transparent);
+}
+
+.builder-archetype-card h4 {
+  margin: 0;
+  font-size: var(--step-0);
+  font-family: var(--font-display);
+  color: var(--primary-forest);
+}
+
+.builder-archetype-card p {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+}
+
+.builder-archetype-card span[data-role='layout-label'] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+  font-weight: 700;
+}
+
+.builder-archetype-card span[data-role='layout-label'] i {
+  font-size: 0.95rem;
+}
+
+.builder-archetype-card .archetype-preview {
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--border-soft) 75%, transparent);
+  background: var(--surface-muted);
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+  min-height: 120px;
+}
+
+.archetype-preview {
+  position: relative;
+  isolation: isolate;
+}
+
+.archetype-preview__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-forest);
+  border-radius: inherit;
+  opacity: 0.35;
+}
+
+.archetype-preview__card,
+.archetype-preview__column,
+.archetype-preview__module,
+.archetype-preview__steps li,
+.archetype-preview__bullets li,
+.archetype-preview__cards li,
+.archetype-preview__tiles figure {
+  background: color-mix(in srgb, white 85%, var(--surface-card) 15%);
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--border-soft) 70%, transparent);
+  box-shadow: var(--shadow-0);
+}
+
+.archetype-preview__card {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.archetype-preview__pill {
+  display: inline-flex;
+  width: 48px;
+  height: 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-amber) 55%, transparent);
+}
+
+.archetype-preview__title,
+.archetype-preview__line {
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink-subtle) 10%, transparent);
+}
+
+.archetype-preview__line--short {
+  width: 60%;
+}
+
+.archetype-preview__steps,
+.archetype-preview__bullets,
+.archetype-preview__cards {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.archetype-preview__column {
+  min-height: 72px;
+}
+
+.archetype-preview__column--accent {
+  background: color-mix(in srgb, var(--accent-sky) 25%, transparent);
+}
+
+.archetype-preview__module {
+  height: 28px;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--accent-sky) 40%, transparent);
+  background: transparent;
+}
+
+.archetype-preview__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.archetype-preview--gallery .archetype-preview__tiles figure {
+  aspect-ratio: 1 / 1;
+}
+
+.archetype-preview--stack .archetype-preview__cards li {
+  height: 20px;
+}
+
 .builder-section-header {
   display: flex;
   justify-content: space-between;

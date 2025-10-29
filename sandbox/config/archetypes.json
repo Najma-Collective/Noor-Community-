@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Noor Community Sandbox Archetypes",
+  "description": "Canonical slide archetypes used by the Sandbox deck system with layout, typographic, and icon guidance.",
+  "version": "1.0.0",
+  "updated": "2024-07-01",
+  "type": "object",
+  "properties": {
+    "archetypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "layout",
+          "summary",
+          "visual",
+          "icons",
+          "constraints"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "title": { "type": "string" },
+          "layout": { "type": "string" },
+          "summary": { "type": "string" },
+          "usage": { "type": "string" },
+          "visual": {
+            "type": "object",
+            "required": ["grid", "alignment", "typography", "color"],
+            "properties": {
+              "grid": { "type": "string" },
+              "alignment": { "type": "string" },
+              "typography": { "type": "array", "items": { "type": "string" } },
+              "color": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "icons": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "constraints": { "type": "array", "items": { "type": "string" } },
+          "css": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "required": ["archetypes"],
+  "archetypes": [
+    {
+      "id": "hero-overlay-intro",
+      "title": "Hero overlay intro",
+      "layout": "topic-introduction",
+      "summary": "Full-bleed hero image with overlay card that introduces the scenario, hook, and key question.",
+      "usage": "Open a deck with visual impact and frame the essential question.",
+      "visual": {
+        "grid": "Full-bleed background image with overlay card sized by --content-max-width and stack spacing.",
+        "alignment": "Overlay card anchors left/top on desktop and centers below 720px via .is-centered-stage.",
+        "typography": [
+          "Display headings use --font-display with h1/h2 sizing from --step-3 and --step-2.",
+          "Body copy uses --font-body at --step-0." 
+        ],
+        "color": [
+          "Background image tinted by --surface-overlay-strong via lesson-slide--has-overlay.",
+          "Overlay card uses --surface-overlay-light with ink text." 
+        ]
+      },
+      "icons": {
+        "pill": "fa-solid fa-compass",
+        "layout": "fa-solid fa-lightbulb"
+      },
+      "constraints": [
+        "Keep overlay copy under 420 characters to avoid overflow on 16:9 aspect.",
+        "Use imagery with focal point in upper-left third to avoid cropping behind overlay." 
+      ],
+      "css": ["lesson-slide--topic-introduction", "overlay-card", "overlay-pill", "bg-media"]
+    },
+    {
+      "id": "grounding-ritual",
+      "title": "Grounding ritual",
+      "layout": "grounding-activity",
+      "summary": "Soft card that sequences numbered settling steps for lesson arrival routines.",
+      "usage": "Guide mindful openings or breathing exercises in synchronous sessions.",
+      "visual": {
+        "grid": "Single column stack with .grounding-steps list styled as grid rows inside card.",
+        "alignment": "Header stays top-left; list stretches full width with evenly spaced badges.",
+        "typography": [
+          "Heading uses --font-display at --step-2.",
+          "Step descriptions use --font-body at --step-0." 
+        ],
+        "color": [
+          "Badges use --primary-forest with white text.",
+          "Cards leverage --surface-card and --border-sage for separation." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-leaf",
+        "steps": "numeric badges"
+      },
+      "constraints": [
+        "Limit to 4-5 steps to preserve vertical rhythm on smaller screens.",
+        "Avoid imagery behind card to maintain calm tone." 
+      ],
+      "css": ["lesson-slide--grounding-activity", "grounding-steps", "grounding-step-badge"]
+    },
+    {
+      "id": "lesson-aims",
+      "title": "Lesson aims + communicative goal",
+      "layout": "learning-objectives",
+      "summary": "Carded bullet list with icon chips that foreground outcomes and communicative purpose.",
+      "usage": "State lesson intentions and connect them to real-world performance.",
+      "visual": {
+        "grid": "Header plus .lesson-goals card using flex column with icon/text pairs.",
+        "alignment": "Goal list snaps to center column using --content-max-width.",
+        "typography": [
+          "Heading uses --font-display at --step-2.",
+          "List items use --font-body at --step-0 with bold lead words." 
+        ],
+        "color": [
+          "Icon circles use --surface-muted and var(--primary-forest).",
+          "Pill uses --primary-sage mix for emphasis." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-bullseye",
+        "goal": "fa-solid fa-crosshairs"
+      },
+      "constraints": [
+        "3-4 goals recommended; additional items wrap but reduce readability.",
+        "Communicative goal paragraph limited to two sentences." 
+      ],
+      "css": ["lesson-goals-card", "lesson-goal-icon", "lesson-communicative"]
+    },
+    {
+      "id": "scenario-with-media",
+      "title": "Scenario split with media",
+      "layout": "communicative-task",
+      "summary": "Two-column card mixing scenario context, preparation/performance steps, and optional photo tile.",
+      "usage": "Brief learners on real-world tasks while keeping visual anchor at the side.",
+      "visual": {
+        "grid": "Responsive column-card + instruction list using .two-column-grid behaviour via flex on wider viewports.",
+        "alignment": "Instruction list left aligns while support card or image can snap right.",
+        "typography": [
+          "Section headings use --font-display at --step-1.",
+          "Instruction copy uses --font-body at --step-0 with bold labels." 
+        ],
+        "color": [
+          "Instruction icons adopt contextual Font Awesome glyphs with --primary-forest color.",
+          "Cards share --surface-card background." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-people-group",
+        "preparation": "fa-solid fa-list-check",
+        "performance": "fa-solid fa-people-arrows"
+      },
+      "constraints": [
+        "Scenario callout truncates after ~120 characters; move long context into preparation text.",
+        "Optional media slot expects 4:3 imagery for best fit." 
+      ],
+      "css": ["communicative-task-card", "task-scenario", "task-instruction-list", "task-scaffolding"]
+    },
+    {
+      "id": "interactive-checkpoint",
+      "title": "Interactive checkpoint",
+      "layout": "interactive-practice",
+      "summary": "Practice slide with instructions, ordered prompts, and optional embedded module host.",
+      "usage": "Capture quick formative checks that pair list prompts with H5P-style embeds.",
+      "visual": {
+        "grid": "Header + .practice-body split into instructions, questions, and module host sections.",
+        "alignment": "Questions render as ordered list with consistent gutter spacing.",
+        "typography": [
+          "Heading uses --font-display at --step-2.",
+          "Prompts use --font-body at --step-0; answers flagged with .practice-answer styling." 
+        ],
+        "color": [
+          "Module host area framed with dashed border and hover-sage background.",
+          "Type badge uses --surface-muted with --primary-forest text." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-puzzle-piece",
+        "type": "dynamic badge"
+      },
+      "constraints": [
+        "Embed area accepts a single module; addBtn hides once module is present.",
+        "Provide at most five prompts to preserve scroll-free desktop layout." 
+      ],
+      "css": ["interactive-practice-inner", "practice-instructions", "practice-question", "practice-module"]
+    },
+    {
+      "id": "task-report",
+      "title": "Task report board",
+      "layout": "task-reporting",
+      "summary": "Dual-column recap board that balances reporter responsibilities with listening prompts.",
+      "usage": "Structure whole-class share-outs after group work.",
+      "visual": {
+        "grid": "Primary column-card for presenting group plus secondary column-card for listeners.",
+        "alignment": "Cards sit in responsive grid using flex; collapse stacked on mobile.",
+        "typography": [
+          "Subheadings use --font-display at --step-1.",
+          "Lists use --font-body at --step-0." 
+        ],
+        "color": [
+          "Column dividers use --border-soft and accent icons for emphasis.",
+          "Listening prompts rely on --surface-muted background." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-bullhorn",
+        "report": "fa-solid fa-users",
+        "listen": "fa-solid fa-ear-listen"
+      },
+      "constraints": [
+        "Presenter notes limited to three bullets to prevent overflow.",
+        "Listening column should keep prompts under 160 characters each." 
+      ],
+      "css": ["task-reporting-body", "task-reporting-list", "task-reporting-column"]
+    },
+    {
+      "id": "reflection-321",
+      "title": "3-2-1 reflection",
+      "layout": "reflection",
+      "summary": "Stacked card with numbered prompts encouraging quick look-back moments.",
+      "usage": "Close lessons or asynchronous tasks with structured journaling.",
+      "visual": {
+        "grid": "Single card with .reflection-prompts list styled for stacked paragraphs.",
+        "alignment": "Body text stays centered horizontally via --content-max-width.",
+        "typography": [
+          "Heading uses --font-display at --step-2.",
+          "Prompt copy uses --font-body at --step-0 with bold numerals." 
+        ],
+        "color": [
+          "Card background uses --surface-card with subtle shadow var(--shadow-1).",
+          "Numerals rely on var(--primary-forest) for emphasis." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-moon",
+        "prompt": "numeral spans"
+      },
+      "constraints": [
+        "Maintain three prompt blocks; adjust numbers but keep stacked rhythm.",
+        "Encourage asynchronous use by pairing with chat or journaling instructions." 
+      ],
+      "css": ["reflection-prompts", "note-card", "pill"]
+    },
+    {
+      "id": "card-stack",
+      "title": "Card stack sprint",
+      "layout": "card-stack",
+      "summary": "Pill heading plus trio of stack cards for sequencing processes or workflows.",
+      "usage": "Map stepwise routines or highlight multi-stage sprints.",
+      "visual": {
+        "grid": "Header stack followed by .card-stack-list using flex column with stack spacing modifiers.",
+        "alignment": "Cards stretch full width but cap at --card-max-width.",
+        "typography": [
+          "Card headings use --font-display at --step-1.",
+          "Descriptions use --font-body at --step-0." 
+        ],
+        "color": [
+          "Pill uses accent palette and icon chip from --primary-forest.",
+          "Cards share --surface-card background with subtle drop shadow." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-layer-group",
+        "pill": "fa-solid fa-bookmark",
+        "card": "fa-solid fa-circle-dot"
+      },
+      "constraints": [
+        "Limit to 3-4 cards for comfortable scanning.",
+        "Use concise verbs for card headings (max 32 characters)." 
+      ],
+      "css": ["card-stack-layout", "stack-card", "stack-card-icon"]
+    },
+    {
+      "id": "pill-gallery",
+      "title": "Pill gallery showcase",
+      "layout": "pill-with-gallery",
+      "summary": "Scenario pill paired with masonry-style gallery tiles and captions.",
+      "usage": "Showcase evidence or scenario references alongside a guiding pill.",
+      "visual": {
+        "grid": "Header stack plus .pill-gallery-grid using responsive auto-fit columns.",
+        "alignment": "Captions left align beneath each figure and wrap gracefully on mobile.",
+        "typography": [
+          "Gallery captions use --font-body at --step--1.",
+          "Lead paragraph uses --font-body at --step-0 with medium weight." 
+        ],
+        "color": [
+          "Pill uses accent color with white text.",
+          "Gallery frames rely on --surface-card and border-sage." 
+        ]
+      },
+      "icons": {
+        "layout": "fa-solid fa-images",
+        "pill": "fa-solid fa-camera-retro",
+        "item": "fa-solid fa-image"
+      },
+      "constraints": [
+        "Provide 3-4 images at 4:3 or 1:1 ratios for best fit.",
+        "Alt text required for accessibility; keep captions under 120 characters." 
+      ],
+      "css": ["pill-gallery-layout", "pill-gallery-grid", "pill-gallery-caption"]
+    }
+  ]
+}

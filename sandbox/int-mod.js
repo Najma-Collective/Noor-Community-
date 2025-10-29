@@ -1,9 +1,12 @@
 import {
+  ARCHETYPE_LIBRARY,
   BUILDER_LAYOUT_DEFAULTS,
   LAYOUT_FIELD_ICON_DEFAULTS,
   LAYOUT_ICON_DEFAULTS,
+  getArchetypeTemplate,
   getLayoutFieldIconDefault,
 } from './slide-templates.js';
+import { ARCHETYPE_PREVIEW_MARKUP } from './templates/archetypes.js';
 
 // Shared interactive module for Noor Community decks
 
@@ -115,6 +118,8 @@ let builderDialogueList;
 let builderAddDialogueBtn;
 let builderPracticeList;
 let builderAddPracticeBtn;
+let builderArchetypeSection;
+let activeArchetypeId = '';
 let moduleOverlay;
 let moduleFrame;
 let moduleCloseBtn;
@@ -7431,6 +7436,46 @@ const attachLayoutIconBadge = (slide, iconClass) => {
 const getEffectiveLayoutIcon = (_layout, iconClass) =>
   typeof iconClass === 'string' ? iconClass.trim() : '';
 
+const setBuilderFieldValue = (name, value = '') => {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const field = builderForm.elements.namedItem?.(name);
+  if (
+    field instanceof HTMLInputElement ||
+    field instanceof HTMLTextAreaElement ||
+    field instanceof HTMLSelectElement
+  ) {
+    field.value = value ?? '';
+  }
+};
+
+const setBuilderIconField = (fieldName, layoutKey, providedValue) => {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return;
+  }
+  const resolved = resolveLayoutIconField(layoutKey, fieldName, providedValue);
+  setBuilderFieldValue(fieldName, resolved);
+  const field = builderForm.elements.namedItem?.(fieldName);
+  if (field instanceof HTMLInputElement) {
+    const placeholder = getLayoutFieldIconDefault(layoutKey, fieldName);
+    if (placeholder) {
+      field.placeholder = placeholder;
+    }
+  }
+};
+
+const setBuilderOverlayValues = (
+  prefix,
+  { imageUrl = '', overlayColor = '', overlayOpacity = 0 } = {},
+) => {
+  setBuilderFieldValue(`${prefix}ImageUrl`, imageUrl ?? '');
+  setBuilderFieldValue(`${prefix}OverlayColor`, overlayColor ?? '');
+  setBuilderFieldValue(
+    `${prefix}OverlayOpacity`,
+    String(normaliseOverlayPercent(overlayOpacity ?? 0)),
+  );
+};
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
   const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
@@ -7443,6 +7488,279 @@ const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
   }
   return null;
 };
+
+function applyArchetypeOverrides(layout, data = {}) {
+  switch (layout) {
+    case 'learning-objectives': {
+      const goals = Array.isArray(data.goals) ? data.goals : [];
+      setBuilderFieldValue('learningTitle', data.title ?? '');
+      setBuilderFieldValue('learningGoalOne', goals[0] ?? '');
+      setBuilderFieldValue('learningGoalTwo', goals[1] ?? '');
+      setBuilderFieldValue('learningGoalThree', goals[2] ?? '');
+      setBuilderIconField('learningGoalIcon', 'learning-objectives', data.goalIcon);
+      setBuilderFieldValue('learningCommunicativeGoal', data.communicativeGoal ?? '');
+      setBuilderIconField(
+        'learningCommunicativeGoalIcon',
+        'learning-objectives',
+        data.communicativeGoalIcon,
+      );
+      setBuilderOverlayValues('learning', data);
+      break;
+    }
+    case 'topic-introduction': {
+      setBuilderFieldValue('topicTitle', data.title ?? '');
+      setBuilderFieldValue('topicHook', data.hook ?? '');
+      setBuilderIconField('topicHookIcon', 'topic-introduction', data.hookIcon);
+      setBuilderFieldValue('topicContext', data.context ?? '');
+      setBuilderIconField('topicContextIcon', 'topic-introduction', data.contextIcon);
+      setBuilderFieldValue('topicQuestion', data.essentialQuestion ?? '');
+      setBuilderIconField(
+        'topicQuestionIcon',
+        'topic-introduction',
+        data.essentialQuestionIcon,
+      );
+      setBuilderFieldValue('topicKeyVocabulary', joinMultiline(data.keyVocabulary));
+      setBuilderIconField('topicKeyVocabularyIcon', 'topic-introduction', data.keyVocabularyIcon);
+      setBuilderOverlayValues('topic', data);
+      break;
+    }
+    case 'grounding-activity': {
+      setBuilderFieldValue('groundingTitle', data.title ?? '');
+      setBuilderFieldValue('groundingSubtitle', data.subtitle ?? '');
+      setBuilderFieldValue('groundingSteps', joinMultiline(data.steps));
+      setBuilderIconField('groundingStepsIcon', 'grounding-activity', data.stepsIcon);
+      setBuilderOverlayValues('grounding', data);
+      break;
+    }
+    case 'communicative-task': {
+      setBuilderFieldValue('taskTitle', data.title ?? '');
+      setBuilderFieldValue('taskPreparation', data.preparation ?? '');
+      setBuilderIconField('taskPreparationIcon', 'communicative-task', data.preparationIcon);
+      setBuilderFieldValue('taskPerformance', data.performance ?? '');
+      setBuilderIconField('taskPerformanceIcon', 'communicative-task', data.performanceIcon);
+      setBuilderFieldValue('taskScaffolding', joinMultiline(data.scaffolding));
+      setBuilderIconField('taskScaffoldingIcon', 'communicative-task', data.scaffoldingIcon);
+      setBuilderOverlayValues('task', data);
+      break;
+    }
+    case 'interactive-practice': {
+      setBuilderFieldValue('practiceTitle', data.title ?? '');
+      setBuilderFieldValue('practiceInstructions', data.instructions ?? '');
+      setBuilderIconField(
+        'practiceInstructionsIcon',
+        'interactive-practice',
+        data.instructionsIcon,
+      );
+      setBuilderFieldValue('practiceActivityType', data.activityType ?? '');
+      setBuilderIconField(
+        'practiceActivityTypeIcon',
+        'interactive-practice',
+        data.activityTypeIcon,
+      );
+      if (Array.isArray(data.questions)) {
+        resetPracticeList(data.questions);
+      }
+      break;
+    }
+    case 'task-reporting': {
+      setBuilderFieldValue('reportingTitle', data.title ?? '');
+      setBuilderFieldValue('reportingGoal', data.goal ?? '');
+      setBuilderIconField('reportingGoalIcon', 'task-reporting', data.goalIcon);
+      setBuilderFieldValue('reportingPrompts', joinMultiline(data.prompts));
+      setBuilderIconField('reportingPromptsIcon', 'task-reporting', data.promptsIcon);
+      setBuilderFieldValue(
+        'reportingRoles',
+        formatKeyValuePairs(Array.isArray(data.roles) ? data.roles : [], {
+          key: 'label',
+          value: 'value',
+        }),
+      );
+      setBuilderIconField('reportingRolesIcon', 'task-reporting', data.rolesIcon);
+      setBuilderFieldValue('reportingEvidence', joinMultiline(data.evidence));
+      setBuilderIconField('reportingEvidenceIcon', 'task-reporting', data.evidenceIcon);
+      setBuilderOverlayValues('reporting', data);
+      break;
+    }
+    case 'reflection': {
+      const prompts = Array.isArray(data.prompts) ? data.prompts : [];
+      setBuilderFieldValue('reflectionTitle', data.title ?? '');
+      setBuilderFieldValue('reflectionPromptOne', prompts[0] ?? '');
+      setBuilderFieldValue('reflectionPromptTwo', prompts[1] ?? '');
+      setBuilderFieldValue('reflectionPromptThree', prompts[2] ?? '');
+      setBuilderIconField('reflectionPromptsIcon', 'reflection', data.promptsIcon);
+      setBuilderOverlayValues('reflection', data);
+      break;
+    }
+    case 'card-stack': {
+      setBuilderFieldValue('cardStackPill', data.pill ?? '');
+      setBuilderIconField('cardStackPillIcon', 'card-stack', data.pillIcon);
+      setBuilderFieldValue('cardStackTitle', data.title ?? '');
+      setBuilderFieldValue('cardStackDescription', data.description ?? '');
+      setBuilderFieldValue('cardStackItems', formatCardStackItems(data.cards));
+      setBuilderIconField('cardStackItemIcon', 'card-stack', data.cardIcon);
+      break;
+    }
+    case 'pill-with-gallery': {
+      setBuilderFieldValue('pillGalleryPill', data.pill ?? '');
+      setBuilderIconField('pillGalleryPillIcon', 'pill-with-gallery', data.pillIcon);
+      setBuilderFieldValue('pillGalleryTitle', data.title ?? '');
+      setBuilderFieldValue('pillGalleryDescription', data.description ?? '');
+      setBuilderFieldValue('pillGalleryItems', formatPillGalleryItems(data.gallery));
+      setBuilderIconField('pillGalleryItemIcon', 'pill-with-gallery', data.itemIcon);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+
+function clearArchetypeSelection() {
+  if (!(builderArchetypeSection instanceof HTMLElement)) {
+    return;
+  }
+  builderArchetypeSection
+    .querySelectorAll('.builder-archetype-card')
+    .forEach((card) => {
+      card.classList.remove('is-selected');
+      card.removeAttribute('data-selected');
+      card.setAttribute('aria-pressed', 'false');
+    });
+  activeArchetypeId = '';
+}
+
+function selectArchetypeCard(archetypeId) {
+  if (!(builderArchetypeSection instanceof HTMLElement)) {
+    return;
+  }
+  clearArchetypeSelection();
+  const card = builderArchetypeSection.querySelector(`.builder-archetype-card[data-archetype-id="${archetypeId}"]`);
+  if (card instanceof HTMLElement) {
+    card.classList.add('is-selected');
+    card.setAttribute('data-selected', 'true');
+    card.setAttribute('aria-pressed', 'true');
+    activeArchetypeId = archetypeId;
+  }
+}
+
+function ensureArchetypePickerRoot() {
+  if (!(builderForm instanceof HTMLFormElement)) {
+    return null;
+  }
+  const grid = builderForm.querySelector('.builder-grid');
+  if (!(grid instanceof HTMLElement)) {
+    return null;
+  }
+  if (!(builderArchetypeSection instanceof HTMLElement)) {
+    const section = document.createElement('section');
+    section.className = 'builder-section builder-archetype-picker';
+    section.innerHTML = `
+      <header class="builder-section-header">
+        <div>
+          <h3>Archetype starters</h3>
+          <p>Drop in a fully scaffolded layout tuned to Noor's design system.</p>
+        </div>
+      </header>
+      <div class="builder-archetype-list" role="list"></div>
+    `;
+    const layoutFieldset = grid.querySelector('.layout-picker');
+    if (layoutFieldset instanceof HTMLElement) {
+      grid.insertBefore(section, layoutFieldset.nextElementSibling ?? layoutFieldset.nextSibling);
+    } else {
+      grid.prepend(section);
+    }
+    builderArchetypeSection = section;
+  }
+  return builderArchetypeSection;
+}
+
+function renderArchetypeCards() {
+  const section = ensureArchetypePickerRoot();
+  if (!(section instanceof HTMLElement)) {
+    return null;
+  }
+  const list = section.querySelector('.builder-archetype-list');
+  if (!(list instanceof HTMLElement)) {
+    return section;
+  }
+  const entries = Array.isArray(ARCHETYPE_LIBRARY) ? ARCHETYPE_LIBRARY : [];
+  if (!entries.length) {
+    section.hidden = true;
+    return section;
+  }
+  section.hidden = false;
+  const cards = entries
+    .map((entry) => {
+      const { id, title, summary, layout } = entry;
+      const icon = LAYOUT_ICON_DEFAULTS[layout] || 'fa-solid fa-border-all';
+      const preview = ARCHETYPE_PREVIEW_MARKUP?.[id] ?? '<div class="archetype-preview"></div>';
+      const isActive = activeArchetypeId === id;
+      return `
+        <button type="button" class="builder-archetype-card${
+          isActive ? ' is-selected' : ''
+        }" data-archetype-id="${id}" data-layout="${layout}" role="listitem" aria-pressed="${
+          isActive ? 'true' : 'false'
+        }"${isActive ? ' data-selected="true"' : ''}>
+          <span data-role="layout-label"><i class="${icon}" aria-hidden="true"></i>${escapeHtml(layout)}</span>
+          <h4>${escapeHtml(title ?? 'Archetype')}</h4>
+          <p>${escapeHtml(summary ?? '')}</p>
+          ${preview}
+        </button>
+      `;
+    })
+    .join('');
+  list.innerHTML = cards;
+  return section;
+}
+
+function handleArchetypeCardClick(event) {
+  const button = event.target instanceof HTMLElement ? event.target.closest('.builder-archetype-card') : null;
+  if (!(button instanceof HTMLButtonElement)) {
+    return;
+  }
+  const archetypeId = button.dataset.archetypeId ?? '';
+  if (!archetypeId) {
+    return;
+  }
+  const template = getArchetypeTemplate(archetypeId);
+  if (!template) {
+    showBuilderStatus('Archetype template is unavailable.', 'error');
+    return;
+  }
+  const { layout, data } = template;
+  if (!layout) {
+    showBuilderStatus('Archetype template is missing layout metadata.', 'error');
+    return;
+  }
+  setSelectedLayout(layout);
+  syncBuilderLayout(layout);
+  applyBuilderLayoutDefaults(layout, { updatePreview: false });
+  applyArchetypeOverrides(layout, data);
+  selectArchetypeCard(archetypeId);
+  updateBuilderJsonPreview();
+  updateBuilderPreview();
+  const entry = ARCHETYPE_LIBRARY.find((item) => item.id === archetypeId);
+  showBuilderStatus(
+    entry?.title ? `${entry.title} applied.` : 'Archetype applied to the builder.',
+    'success',
+  );
+}
+
+function initialiseArchetypePicker() {
+  const section = renderArchetypeCards();
+  if (!(section instanceof HTMLElement)) {
+    return;
+  }
+  if (section.__archetypeInitialised) {
+    return;
+  }
+  const list = section.querySelector('.builder-archetype-list');
+  if (list instanceof HTMLElement) {
+    list.addEventListener('click', handleArchetypeCardClick);
+  }
+  section.__archetypeInitialised = true;
+}
+
 
 function createDialogueItem({ speaker = '', line = '' } = {}) {
   builderFieldId += 1;
@@ -7802,6 +8120,8 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     resetDialogueList([]);
     resetPracticeList([]);
   };
+
+
 
   clearFields();
 
@@ -9203,6 +9523,7 @@ function resetBuilderForm() {
       });
     });
   }
+  clearArchetypeSelection();
   Object.entries(LAYOUT_ICON_DEFAULTS).forEach(([layout, icon]) => {
     setLayoutIconValue(layout, icon);
   });
@@ -14008,6 +14329,7 @@ function initialiseActivityBuilderUI() {
   }
 
   removeFallbackAddSlideListener();
+  initialiseArchetypePicker();
   if (builderOverlay.__deckBuilderInitialised) {
     updateBuilderJsonPreview();
     updateBuilderPreview();
@@ -14085,6 +14407,7 @@ function initialiseActivityBuilderUI() {
           return;
         }
         const layoutValue = target.value || 'blank-canvas';
+        clearArchetypeSelection();
         syncBuilderLayout(layoutValue);
         applyBuilderLayoutDefaults(layoutValue);
         updateBuilderJsonPreview();
@@ -14154,6 +14477,10 @@ function initialiseActivityBuilderUI() {
       }
       updateBuilderJsonPreview();
       updateBuilderPreview();
+    });
+    builderForm.addEventListener('reset', () => {
+      clearArchetypeSelection();
+      renderArchetypeCards();
     });
   }
 
