@@ -10691,6 +10691,212 @@ function createBaseLessonSlide(layout, options = {}) {
   return { slide, inner };
 }
 
+const getPlainText = (value) => {
+  if (!value) {
+    return '';
+  }
+  if (typeof value === 'string') {
+    return value.trim();
+  }
+  if (typeof value === 'number') {
+    return String(value);
+  }
+  if (typeof value === 'object') {
+    if (typeof value.text === 'string') {
+      return value.text.trim();
+    }
+    if (typeof value.content === 'string') {
+      return value.content.trim();
+    }
+  }
+  return '';
+};
+
+const normaliseTextArray = (value) => {
+  if (Array.isArray(value)) {
+    return value
+      .map((entry) => getPlainText(entry))
+      .map((entry) => trimText(entry))
+      .filter(Boolean);
+  }
+  const single = getPlainText(value);
+  return single ? [single] : [];
+};
+
+function normaliseContentBlock(block) {
+  if (!block) {
+    return null;
+  }
+
+  if (typeof block === 'string' || typeof block === 'number') {
+    return { type: 'paragraph', text: getPlainText(block) };
+  }
+
+  if (Array.isArray(block)) {
+    const items = normaliseTextArray(block);
+    if (!items.length) {
+      return null;
+    }
+    return { type: 'list', items };
+  }
+
+  if (typeof block !== 'object') {
+    return null;
+  }
+
+  const type = trimText(block.type ?? block.kind ?? '') || (Array.isArray(block.items) ? 'list' : 'paragraph');
+  const region = trimText(block.region ?? block.slot ?? '');
+
+  switch (type) {
+    case 'list': {
+      const items = normaliseTextArray(block.items ?? block.text ?? []);
+      if (!items.length) {
+        return null;
+      }
+      const ordered = Boolean(block.ordered || block.numbered);
+      return { type: 'list', items, ordered, region };
+    }
+    case 'quote': {
+      const text = getPlainText(block.text ?? block.content ?? '');
+      if (!text) {
+        return null;
+      }
+      const attribution = getPlainText(block.attribution ?? block.citation ?? '');
+      return { type: 'quote', text, attribution, region };
+    }
+    case 'media': {
+      const media = block.media ?? block;
+      return { type: 'media', media, caption: getPlainText(block.caption ?? ''), region };
+    }
+    case 'callout': {
+      const headline = getPlainText(block.title ?? block.heading ?? '');
+      const bodyItems = normaliseTextArray(block.text ?? block.body ?? block.items ?? []);
+      const description = getPlainText(block.description ?? '');
+      return {
+        type: 'callout',
+        headline,
+        body: bodyItems,
+        description,
+        region,
+      };
+    }
+    case 'paragraph':
+    default: {
+      const text = getPlainText(block.text ?? block.content ?? block.body ?? '');
+      if (!text) {
+        return null;
+      }
+      return { type: 'paragraph', text, region };
+    }
+  }
+}
+
+function appendContentBlock(container, block) {
+  if (!(container instanceof HTMLElement)) {
+    return false;
+  }
+  const normalised = normaliseContentBlock(block);
+  if (!normalised) {
+    return false;
+  }
+
+  switch (normalised.type) {
+    case 'list': {
+      const list = document.createElement(normalised.ordered ? 'ol' : 'ul');
+      list.className = normalised.ordered ? 'ordered-list' : 'instruction-list';
+      normalised.items.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+      container.appendChild(list);
+      return true;
+    }
+    case 'quote': {
+      const quote = document.createElement('blockquote');
+      quote.className = 'highlight-quote';
+      quote.textContent = normalised.text;
+      if (normalised.attribution) {
+        const cite = document.createElement('cite');
+        cite.textContent = normalised.attribution;
+        quote.appendChild(document.createTextNode(' '));
+        quote.appendChild(cite);
+      }
+      container.appendChild(quote);
+      return true;
+    }
+    case 'media': {
+      const figure = document.createElement('figure');
+      figure.className = 'context-image';
+      const media = normalised.media ?? {};
+      const mediaMeta = normaliseGalleryMedia({
+        url: media.url ?? media.src ?? media.image,
+        alt: media.alt ?? media.description ?? '',
+        credit: media.credit ?? '',
+        creditUrl: media.creditUrl ?? media.creditURL ?? '',
+      });
+      if (mediaMeta.url) {
+        const img = document.createElement('img');
+        img.dataset.remoteSrc = mediaMeta.url;
+        img.alt = mediaMeta.alt || 'Illustration';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        figure.appendChild(img);
+      }
+      if (normalised.caption) {
+        const figcaption = document.createElement('figcaption');
+        figcaption.textContent = normalised.caption;
+        figure.appendChild(figcaption);
+      }
+      container.appendChild(figure);
+      return true;
+    }
+    case 'callout': {
+      const card = document.createElement('div');
+      card.className = 'card stack stack-sm';
+      const heading = trimText(normalised.headline);
+      if (heading) {
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = heading;
+        card.appendChild(titleEl);
+      }
+      const description = trimText(normalised.description);
+      if (description) {
+        const descEl = document.createElement('p');
+        descEl.textContent = description;
+        card.appendChild(descEl);
+      }
+      if (Array.isArray(normalised.body) && normalised.body.length) {
+        normalised.body.forEach((line) => {
+          const paragraph = document.createElement('p');
+          paragraph.textContent = line;
+          card.appendChild(paragraph);
+        });
+      }
+      container.appendChild(card);
+      return true;
+    }
+    case 'paragraph':
+    default: {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = normalised.text;
+      container.appendChild(paragraph);
+      return true;
+    }
+  }
+}
+
+function appendContentBlocks(container, blocks) {
+  if (!Array.isArray(blocks)) {
+    return appendContentBlock(container, blocks);
+  }
+  let appended = false;
+  blocks.forEach((block) => {
+    appended = appendContentBlock(container, block) || appended;
+  });
+  return appended;
+}
+
 function parseHexColor(value) {
   if (typeof value !== "string") {
     return null;
@@ -11589,12 +11795,1608 @@ function createSplitGridSlide({
   return slide;
 }
 
+function createCenteredCalloutSlide({
+  pill,
+  pillLabel,
+  accentPill,
+  pillIcon,
+  icon,
+  iconClass,
+  headline,
+  title,
+  supportingText,
+  supporting_text,
+  description,
+  body,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('centered-callout', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  slide.classList.add('is-centered-stage');
+  inner.classList.add('align-center', 'stack', 'stack-md');
+
+  const pillText = trimText(
+    getPlainText(pillLabel ?? accentPill ?? pill ?? '') || '',
+  );
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedHeadline =
+    trimText(getPlainText(headline ?? title ?? '')) || 'Center the class on this prompt';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedHeadline;
+  inner.appendChild(headingEl);
+
+  const calloutCard = document.createElement('div');
+  calloutCard.className = 'card stack stack-sm';
+  inner.appendChild(calloutCard);
+
+  const supportingEntries = [
+    ...normaliseTextArray(supportingText ?? supporting_text ?? []),
+    ...normaliseTextArray(description ?? body ?? []),
+  ];
+
+  if (supportingEntries.length) {
+    supportingEntries.forEach((entry) => appendContentBlock(calloutCard, entry));
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add supporting prompts to complete the callout.';
+    calloutCard.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createCenteredDialogueSlide({
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  headline,
+  title,
+  dialogue,
+  dialogueBox,
+  dialogue_box,
+  stageDirection,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('centered-dialogue', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  slide.classList.add('is-centered-stage');
+  inner.classList.add('align-center', 'stack', 'stack-md');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedHeadline =
+    trimText(getPlainText(headline ?? title ?? '')) || 'Model the target conversation';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedHeadline;
+  inner.appendChild(headingEl);
+
+  const dialogueCard = document.createElement('div');
+  dialogueCard.className = 'card stack stack-sm';
+  inner.appendChild(dialogueCard);
+
+  const dialogueSection = document.createElement('div');
+  dialogueSection.className = 'lesson-dialogue';
+  dialogueCard.appendChild(dialogueSection);
+
+  const textColumn = document.createElement('div');
+  textColumn.className = 'lesson-dialogue-text';
+  dialogueSection.appendChild(textColumn);
+
+  const linesSource = dialogue_box ?? dialogueBox ?? dialogue ?? {};
+  const lines = Array.isArray(linesSource?.lines) ? linesSource.lines : [];
+  let appendedLine = false;
+
+  lines.forEach((line) => {
+    const speaker = trimText(getPlainText(line?.speaker ?? line?.name ?? ''));
+    const text = trimText(getPlainText(line?.text ?? line?.content ?? ''));
+    if (!text && !speaker) {
+      return;
+    }
+    const turn = document.createElement('div');
+    turn.className = 'dialogue-turn';
+    if (speaker) {
+      const speakerEl = document.createElement('span');
+      speakerEl.className = 'dialogue-speaker';
+      speakerEl.textContent = speaker;
+      turn.appendChild(speakerEl);
+    }
+    if (text) {
+      const textEl = document.createElement('p');
+      textEl.className = 'dialogue-line';
+      textEl.textContent = text;
+      turn.appendChild(textEl);
+    }
+    textColumn.appendChild(turn);
+    appendedLine = true;
+  });
+
+  if (!appendedLine) {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add dialogue lines to spotlight the exchange.';
+    textColumn.appendChild(placeholder);
+  }
+
+  const directionText =
+    trimText(getPlainText(stageDirection ?? linesSource?.stage_direction ?? ''));
+  if (directionText) {
+    const directionEl = document.createElement('p');
+    directionEl.className = 'lesson-instructions';
+    directionEl.textContent = directionText;
+    dialogueCard.appendChild(directionEl);
+  }
+
+  return slide;
+}
+
+function createCardStackSlide({
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  title,
+  headline,
+  description,
+  cards,
+  card_body,
+  cardIcon,
+  footnote,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('card-stack', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header card-stack-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = resolveLayoutIconField('card-stack', 'cardStackPillIcon', pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill card-stack-pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    header.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Stack the workflow cards';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  header.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? ''));
+  if (resolvedDescription) {
+    const lead = document.createElement('p');
+    lead.className = 'card-stack-lead';
+    lead.textContent = resolvedDescription;
+    header.appendChild(lead);
+  }
+
+  const list = document.createElement('div');
+  list.className = 'card-stack-list stack stack-md';
+  inner.appendChild(list);
+
+  const cardEntries = Array.isArray(cards)
+    ? cards
+    : Array.isArray(card_body)
+      ? card_body.map((entry) => ({ description: getPlainText(entry) }))
+      : [];
+
+  if (cardEntries.length) {
+    cardEntries.forEach((card, index) => {
+      const titleText = trimText(getPlainText(card?.title ?? card?.heading ?? ''));
+      const descriptionText = trimText(
+        getPlainText(card?.description ?? card?.detail ?? card?.text ?? ''),
+      );
+      if (!titleText && !descriptionText) {
+        return;
+      }
+      const cardEl = document.createElement('article');
+      cardEl.className = 'card stack-card';
+      const headerEl = document.createElement('div');
+      headerEl.className = 'stack-card-header';
+      cardEl.appendChild(headerEl);
+
+      const iconWrap = document.createElement('span');
+      iconWrap.className = 'stack-card-icon';
+      const itemIconClass =
+        normaliseIconClass(card?.icon) ||
+        resolveLayoutIconField('card-stack', 'cardStackItemIcon', cardIcon);
+      if (itemIconClass) {
+        const iconEl = document.createElement('i');
+        iconEl.className = itemIconClass;
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconEl);
+      }
+      const srLabel = document.createElement('span');
+      srLabel.className = 'sr-only';
+      srLabel.textContent = `Card ${index + 1}`;
+      iconWrap.appendChild(srLabel);
+      headerEl.appendChild(iconWrap);
+
+      const heading = document.createElement('h3');
+      heading.textContent = titleText || `Stack item ${index + 1}`;
+      headerEl.appendChild(heading);
+
+      if (descriptionText) {
+        const bodyEl = document.createElement('p');
+        bodyEl.textContent = descriptionText;
+        cardEl.appendChild(bodyEl);
+      }
+
+      list.appendChild(cardEl);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add cards to build the stack sequence.';
+    list.appendChild(placeholder);
+  }
+
+  const footnoteText = trimText(getPlainText(footnote ?? ''));
+  if (footnoteText) {
+    const footnoteEl = document.createElement('p');
+    footnoteEl.className = 'lesson-instructions';
+    footnoteEl.textContent = footnoteText;
+    inner.appendChild(footnoteEl);
+  }
+
+  return slide;
+}
+
+function createPillSimpleSlide({
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  title,
+  headline,
+  body,
+  bodyCopy,
+  body_copy,
+  description,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('pill-simple', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Frame the task for the class';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const card = document.createElement('div');
+  card.className = 'card stack stack-sm';
+  inner.appendChild(card);
+
+  const blocks = [];
+  blocks.push(...normaliseTextArray(body ?? []));
+  blocks.push(...normaliseTextArray(bodyCopy ?? body_copy ?? []));
+  blocks.push(...normaliseTextArray(description ?? []));
+
+  let appended = false;
+  blocks.forEach((entry) => {
+    if (appendContentBlock(card, entry)) {
+      appended = true;
+    }
+  });
+
+  if (!appended) {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add lesson copy to populate the card body.';
+    card.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createWorkspaceGridSlide({
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  title,
+  headline,
+  description,
+  intro,
+  gridSlots,
+  grid_slots,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('workspace-grid', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Collaborate in the workspace';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? intro ?? ''));
+  if (resolvedDescription) {
+    const descriptionEl = document.createElement('p');
+    descriptionEl.className = 'lesson-instructions';
+    descriptionEl.textContent = resolvedDescription;
+    inner.appendChild(descriptionEl);
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'gallery-grid';
+  inner.appendChild(grid);
+
+  const slots = Array.isArray(gridSlots) ? gridSlots : Array.isArray(grid_slots) ? grid_slots : [];
+
+  if (slots.length) {
+    slots.forEach((slot, index) => {
+      if (!slot || typeof slot !== 'object') {
+        return;
+      }
+      const slotEl = document.createElement('article');
+      slotEl.className = 'note-card';
+      const slotId = trimText(slot.id) || `slot-${index + 1}`;
+      slotEl.dataset.slotId = slotId;
+      if (slot.aria_label) {
+        slotEl.setAttribute('aria-label', slot.aria_label);
+      }
+      const titleText = trimText(getPlainText(slot.title ?? ''));
+      if (titleText) {
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = titleText;
+        slotEl.appendChild(titleEl);
+      }
+
+      const bodyContent = slot.body ?? slot.description ?? '';
+      if (!appendContentBlock(slotEl, bodyContent)) {
+        const placeholder = document.createElement('p');
+        placeholder.className = 'lesson-empty';
+        placeholder.textContent = 'Add notes or editable guidance to this workspace card.';
+        slotEl.appendChild(placeholder);
+      }
+
+      if (slot.media) {
+        appendContentBlock(slotEl, { type: 'media', media: slot.media });
+      }
+
+      grid.appendChild(slotEl);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add workspace cards to populate the grid.';
+    grid.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createContentWrapperSlide({
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  title,
+  headline,
+  header,
+  body,
+  footer,
+  contentBlocks,
+  content_blocks,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('content-wrapper', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-md');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle = trimText(getPlainText(title ?? headline ?? ''));
+  if (resolvedTitle) {
+    const headingEl = document.createElement('h2');
+    headingEl.textContent = resolvedTitle;
+    inner.appendChild(headingEl);
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'content-wrapper';
+  inner.appendChild(wrapper);
+
+  const headerEl = document.createElement('div');
+  headerEl.className = 'content-header stack stack-sm';
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'content-body stack stack-sm';
+  const footerEl = document.createElement('div');
+  footerEl.className = 'content-footer stack stack-sm';
+
+  const blocks = [];
+  if (Array.isArray(header)) {
+    header.forEach((block) => blocks.push({ ...block, region: 'header' }));
+  }
+  if (Array.isArray(body)) {
+    body.forEach((block) => blocks.push({ ...block, region: 'body' }));
+  }
+  if (Array.isArray(footer)) {
+    footer.forEach((block) => blocks.push({ ...block, region: 'footer' }));
+  }
+  const wrapperBlocks = Array.isArray(contentBlocks)
+    ? contentBlocks
+    : Array.isArray(content_blocks)
+      ? content_blocks
+      : [];
+  blocks.push(...wrapperBlocks);
+
+  blocks.forEach((block) => {
+    const normalised = normaliseContentBlock(block);
+    if (!normalised) {
+      return;
+    }
+    const region = normalised.region?.toLowerCase();
+    const target =
+      region === 'header'
+        ? headerEl
+        : region === 'footer'
+          ? footerEl
+          : bodyEl;
+    appendContentBlock(target, block);
+  });
+
+  if (!headerEl.childElementCount && headerEl.textContent.trim() === '') {
+    headerEl.remove();
+  } else {
+    wrapper.appendChild(headerEl);
+  }
+
+  if (!bodyEl.childElementCount && bodyEl.textContent.trim() === '') {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add paragraphs, lists, or media to populate the content body.';
+    bodyEl.appendChild(placeholder);
+  }
+  wrapper.appendChild(bodyEl);
+
+  if (!footerEl.childElementCount && footerEl.textContent.trim() === '') {
+    footerEl.remove();
+  } else {
+    wrapper.appendChild(footerEl);
+  }
+
+  return slide;
+}
+
+function createInteractiveActivityCardSlide({
+  pillLabel,
+  pill,
+  pillIcon,
+  icon,
+  iconClass,
+  title,
+  headline,
+  instructions,
+  actionBar,
+  action_bar,
+  timerHint,
+  timer_hint,
+  accessibility = {},
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-activity-card', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Facilitate the interactive task';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const card = document.createElement('div');
+  card.className = 'card stack stack-sm';
+  inner.appendChild(card);
+
+  const instructionsList = document.createElement('ul');
+  instructionsList.className = 'instruction-list';
+  const instructionEntries = normaliseTextArray(instructions ?? []);
+  if (instructionEntries.length) {
+    instructionEntries.forEach((entry) => {
+      const item = document.createElement('li');
+      item.textContent = entry;
+      instructionsList.appendChild(item);
+    });
+  } else {
+    const placeholder = document.createElement('li');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add activity instructions to guide learners.';
+    instructionsList.appendChild(placeholder);
+  }
+  card.appendChild(instructionsList);
+
+  const resolvedTimer = trimText(getPlainText(timerHint ?? timer_hint ?? ''));
+  if (resolvedTimer) {
+    const timerEl = document.createElement('p');
+    timerEl.className = 'lesson-instructions';
+    timerEl.textContent = resolvedTimer;
+    card.appendChild(timerEl);
+  }
+
+  const actions = actionBar ?? action_bar ?? {};
+  const actionsWrap = document.createElement('div');
+  actionsWrap.className = 'activity-actions';
+
+  const createActionBtn = (config, fallback, tone) => {
+    const label = trimText(getPlainText(config?.label ?? '')) || fallback;
+    if (!label) {
+      return null;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `activity-btn${tone === 'secondary' ? ' secondary' : ''}`;
+    const slug = label.toLowerCase();
+    if (slug.includes('check')) {
+      button.dataset.action = 'check';
+    } else if (slug.includes('reset') || slug.includes('clear')) {
+      button.dataset.action = 'reset';
+    } else if (slug.includes('hint')) {
+      button.dataset.action = 'hint';
+    }
+    if (config?.aria_label) {
+      button.setAttribute('aria-label', config.aria_label);
+    }
+    if (config?.icon) {
+      const iconEl = document.createElement('i');
+      iconEl.className = normaliseIconClass(config.icon);
+      iconEl.setAttribute('aria-hidden', 'true');
+      button.appendChild(iconEl);
+      button.appendChild(document.createTextNode(' '));
+    }
+    button.appendChild(document.createTextNode(label));
+    return button;
+  };
+
+  [
+    createActionBtn(actions.secondary, '', 'secondary'),
+    createActionBtn(actions.primary, 'Check', 'primary'),
+    createActionBtn(actions.tertiary, '', 'secondary'),
+  ]
+    .filter(Boolean)
+    .forEach((btn) => actionsWrap.appendChild(btn));
+
+  if (actionsWrap.childElementCount) {
+    card.appendChild(actionsWrap);
+  }
+
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback-msg';
+  feedback.setAttribute('aria-live', accessibility?.aria_live ?? 'polite');
+  if (accessibility?.instructions) {
+    feedback.dataset.instructions = getPlainText(accessibility.instructions);
+  }
+  card.appendChild(feedback);
+
+  return slide;
+}
+
+function createInteractiveTokenBoardSlide({
+  title,
+  headline,
+  description,
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  tokenBank,
+  token_bank,
+  dropzones,
+  actionBar,
+  action_bar,
+  feedbackRegion,
+  feedback_region,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-token-board', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Sort each token into the matching column';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? ''));
+  if (resolvedDescription) {
+    const descriptionEl = document.createElement('p');
+    descriptionEl.className = 'lesson-instructions';
+    descriptionEl.textContent = resolvedDescription;
+    inner.appendChild(descriptionEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.activity = 'categorization';
+  inner.appendChild(card);
+
+  const bank = document.createElement('div');
+  bank.className = 'token-bank';
+  card.appendChild(bank);
+
+  const tokenEntries = Array.isArray(tokenBank)
+    ? tokenBank
+    : Array.isArray(token_bank)
+      ? token_bank
+      : [];
+  const zones = Array.isArray(dropzones) ? dropzones : [];
+
+  tokenEntries.forEach((token) => {
+    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
+    if (!label) {
+      return;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'click-token';
+    const tokenId = trimText(token?.id ?? '');
+    if (tokenId) {
+      button.dataset.tokenId = tokenId;
+    }
+    const matchingZone = zones.find((zone) =>
+      Array.isArray(zone?.accepts) && zone.accepts.includes(tokenId),
+    );
+    if (matchingZone?.id) {
+      button.dataset.category = matchingZone.id;
+    }
+    if (token?.aria_label) {
+      button.setAttribute('aria-label', token.aria_label);
+    }
+    button.textContent = label;
+    bank.appendChild(button);
+  });
+
+  const columnsWrap = document.createElement('div');
+  columnsWrap.className = 'category-columns';
+  card.appendChild(columnsWrap);
+
+  if (zones.length) {
+    zones.forEach((zone) => {
+      const column = document.createElement('div');
+      column.className = 'category-column';
+      const zoneId = trimText(zone?.id ?? '');
+      if (zoneId) {
+        column.dataset.category = zoneId;
+      }
+      const heading = trimText(getPlainText(zone?.title ?? ''));
+      if (heading) {
+        const headingEl = document.createElement('h4');
+        headingEl.textContent = heading;
+        column.appendChild(headingEl);
+      }
+      const zoneInstructions = trimText(getPlainText(zone?.instructions ?? ''));
+      if (zoneInstructions) {
+        const note = document.createElement('p');
+        note.className = 'lesson-instructions';
+        note.textContent = zoneInstructions;
+        column.appendChild(note);
+      }
+      const drop = document.createElement('div');
+      drop.className = 'drop-zone';
+      drop.setAttribute('aria-label', heading ? `Drop zone for ${heading}` : 'Drop zone');
+      column.appendChild(drop);
+      columnsWrap.appendChild(column);
+    });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add category columns so learners can sort tokens.';
+    columnsWrap.appendChild(placeholder);
+  }
+
+  const actions = actionBar ?? action_bar ?? {};
+  const actionsWrap = document.createElement('div');
+  actionsWrap.className = 'activity-actions';
+
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.className = 'activity-btn secondary';
+  resetBtn.dataset.action = 'reset';
+  resetBtn.textContent = trimText(getPlainText(actions?.secondary?.label ?? 'Reset')) || 'Reset';
+  actionsWrap.appendChild(resetBtn);
+
+  const checkBtn = document.createElement('button');
+  checkBtn.type = 'button';
+  checkBtn.className = 'activity-btn';
+  checkBtn.dataset.action = 'check';
+  checkBtn.textContent = trimText(getPlainText(actions?.primary?.label ?? 'Check')) || 'Check';
+  actionsWrap.appendChild(checkBtn);
+
+  if (actions?.tertiary?.label) {
+    const tertiaryBtn = document.createElement('button');
+    tertiaryBtn.type = 'button';
+    tertiaryBtn.className = 'activity-btn secondary';
+    tertiaryBtn.textContent = getPlainText(actions.tertiary.label);
+    actionsWrap.appendChild(tertiaryBtn);
+  }
+
+  card.appendChild(actionsWrap);
+
+  const feedback = feedbackRegion ?? feedback_region ?? {};
+  const feedbackEl = document.createElement('div');
+  feedbackEl.className = 'feedback-msg';
+  feedbackEl.setAttribute('aria-live', 'polite');
+  if (feedback?.positive) {
+    feedbackEl.dataset.positive = getPlainText(feedback.positive);
+  }
+  if (feedback?.negative) {
+    feedbackEl.dataset.negative = getPlainText(feedback.negative);
+  }
+  if (feedback?.neutral) {
+    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
+  }
+  card.appendChild(feedbackEl);
+
+  return slide;
+}
+
+function createInteractiveTokenTableSlide({
+  title,
+  headline,
+  description,
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  tokenBank,
+  token_bank,
+  tableShell,
+  table_shell,
+  actionBar,
+  action_bar,
+  accessibility = {},
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-token-table', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Complete the table using the tokens';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? ''));
+  if (resolvedDescription) {
+    const descriptionEl = document.createElement('p');
+    descriptionEl.className = 'lesson-instructions';
+    descriptionEl.textContent = resolvedDescription;
+    inner.appendChild(descriptionEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.activity = 'table-completion';
+  inner.appendChild(card);
+
+  const shell = tableShell ?? table_shell ?? {};
+  const columns = Array.isArray(shell.columns) ? shell.columns : [];
+  const rows = Array.isArray(shell.rows) ? shell.rows : [];
+
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'table-responsive';
+  const table = document.createElement('table');
+  tableWrap.appendChild(table);
+  card.appendChild(tableWrap);
+
+  if (columns.length) {
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    columns.forEach((columnText) => {
+      const th = document.createElement('th');
+      th.textContent = getPlainText(columnText) || '';
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+  }
+
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+
+  if (rows.length) {
+    rows.forEach((row) => {
+      const tr = document.createElement('tr');
+      const promptCell = document.createElement('td');
+      promptCell.textContent = getPlainText(row?.prompt ?? '');
+      tr.appendChild(promptCell);
+
+      const cellKeys = Array.isArray(row?.cell_keys) ? row.cell_keys : [];
+      const dropZoneCount = Math.max(cellKeys.length, Math.max(columns.length - 1, 1));
+      for (let index = 0; index < dropZoneCount; index += 1) {
+        const td = document.createElement('td');
+        const drop = document.createElement('button');
+        drop.type = 'button';
+        drop.className = 'drop-zone placeholder';
+        const answer = cellKeys[index] ?? '';
+        if (answer) {
+          drop.dataset.answer = answer;
+        }
+        drop.dataset.placeholder = 'Select';
+        drop.textContent = 'Select';
+        drop.setAttribute(
+          'aria-label',
+          `Table cell ${index + 1} for ${getPlainText(row?.prompt ?? 'table row')}`,
+        );
+        td.appendChild(drop);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    });
+  } else {
+    const emptyRow = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = Math.max(columns.length, 2);
+    cell.className = 'lesson-empty';
+    cell.textContent = 'Add table rows to configure the activity.';
+    emptyRow.appendChild(cell);
+    tbody.appendChild(emptyRow);
+  }
+
+  const tokenEntries = Array.isArray(tokenBank)
+    ? tokenBank
+    : Array.isArray(token_bank)
+      ? token_bank
+      : [];
+  const bank = document.createElement('div');
+  bank.className = 'token-bank';
+  bank.setAttribute('aria-label', accessibility?.summary ?? 'Token options');
+  tokenEntries.forEach((token) => {
+    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
+    if (!label) {
+      return;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'click-token';
+    const tokenId = trimText(token?.id ?? '');
+    if (tokenId) {
+      button.dataset.tokenId = tokenId;
+      button.dataset.value = tokenId;
+    } else {
+      button.dataset.value = label;
+    }
+    button.textContent = label;
+    bank.appendChild(button);
+  });
+  card.appendChild(bank);
+
+  const actions = actionBar ?? action_bar ?? {};
+  const actionsWrap = document.createElement('div');
+  actionsWrap.className = 'activity-actions';
+
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.className = 'activity-btn secondary';
+  resetBtn.dataset.action = 'reset';
+  resetBtn.textContent = trimText(getPlainText(actions?.secondary?.label ?? 'Reset')) || 'Reset';
+  actionsWrap.appendChild(resetBtn);
+
+  const checkBtn = document.createElement('button');
+  checkBtn.type = 'button';
+  checkBtn.className = 'activity-btn';
+  checkBtn.dataset.action = 'check';
+  checkBtn.textContent = trimText(getPlainText(actions?.primary?.label ?? 'Check')) || 'Check';
+  actionsWrap.appendChild(checkBtn);
+
+  card.appendChild(actionsWrap);
+
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback-msg';
+  feedback.setAttribute('aria-live', 'polite');
+  card.appendChild(feedback);
+
+  return slide;
+}
+
+function createInteractiveTokenQuizSlide({
+  title,
+  headline,
+  description,
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  tokenBank,
+  token_bank,
+  quizPrompts,
+  quiz_prompts,
+  completionCopy,
+  completion_copy,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-token-quiz', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Drag each ritual token to answer the quiz';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? ''));
+  if (resolvedDescription) {
+    const descriptionEl = document.createElement('p');
+    descriptionEl.className = 'lesson-instructions';
+    descriptionEl.textContent = resolvedDescription;
+    inner.appendChild(descriptionEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.activity = 'token-drop';
+  inner.appendChild(card);
+
+  const prompts = Array.isArray(quizPrompts)
+    ? quizPrompts
+    : Array.isArray(quiz_prompts)
+      ? quiz_prompts
+      : [];
+
+  const promptList = document.createElement('ol');
+  promptList.className = 'practice-prompt-list';
+  prompts.forEach((prompt) => {
+    const question = getPlainText(prompt?.question ?? prompt?.text ?? '');
+    if (!question) {
+      return;
+    }
+    const li = document.createElement('li');
+    const text = document.createElement('p');
+    text.textContent = question;
+    li.appendChild(text);
+
+    const correctIds = Array.isArray(prompt?.correct_token_ids)
+      ? prompt.correct_token_ids
+      : [];
+    const dropCount = Math.max(correctIds.length, 1);
+    for (let index = 0; index < dropCount; index += 1) {
+      const drop = document.createElement('button');
+      drop.type = 'button';
+      drop.className = 'drop-zone placeholder';
+      drop.dataset.placeholder = 'Select';
+      const expectedId = correctIds[index] ?? '';
+      if (expectedId) {
+        drop.dataset.answer = expectedId;
+      }
+      drop.textContent = 'Select';
+      drop.setAttribute('aria-label', `Drop zone for ${question}`);
+      li.appendChild(drop);
+    }
+
+    const rationale = trimText(getPlainText(prompt?.rationale ?? ''));
+    if (rationale) {
+      const rationaleEl = document.createElement('p');
+      rationaleEl.className = 'lesson-instructions';
+      rationaleEl.textContent = rationale;
+      li.appendChild(rationaleEl);
+    }
+
+    promptList.appendChild(li);
+  });
+
+  card.appendChild(promptList);
+
+  const tokenEntries = Array.isArray(tokenBank)
+    ? tokenBank
+    : Array.isArray(token_bank)
+      ? token_bank
+      : [];
+
+  const bank = document.createElement('div');
+  bank.className = 'token-bank';
+  tokenEntries.forEach((token) => {
+    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
+    if (!label) {
+      return;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'click-token';
+    const tokenId = trimText(token?.id ?? '');
+    if (tokenId) {
+      button.dataset.tokenId = tokenId;
+      button.dataset.value = tokenId;
+    } else {
+      button.dataset.value = label;
+    }
+    if (token?.description) {
+      button.title = getPlainText(token.description);
+    }
+    button.textContent = label;
+    bank.appendChild(button);
+  });
+  card.appendChild(bank);
+
+  const actionsWrap = document.createElement('div');
+  actionsWrap.className = 'activity-actions';
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.className = 'activity-btn secondary';
+  resetBtn.dataset.action = 'reset';
+  resetBtn.textContent = 'Reset';
+  actionsWrap.appendChild(resetBtn);
+  const checkBtn = document.createElement('button');
+  checkBtn.type = 'button';
+  checkBtn.className = 'activity-btn';
+  checkBtn.dataset.action = 'check';
+  checkBtn.textContent = 'Check';
+  actionsWrap.appendChild(checkBtn);
+  card.appendChild(actionsWrap);
+
+  const feedback = completionCopy ?? completion_copy ?? {};
+  const feedbackEl = document.createElement('div');
+  feedbackEl.className = 'feedback-msg';
+  feedbackEl.setAttribute('aria-live', 'polite');
+  if (feedback?.positive) {
+    feedbackEl.dataset.positive = getPlainText(feedback.positive);
+  }
+  if (feedback?.negative) {
+    feedbackEl.dataset.negative = getPlainText(feedback.negative);
+  }
+  if (feedback?.neutral) {
+    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
+  }
+  card.appendChild(feedbackEl);
+
+  return slide;
+}
+
+function createInteractiveQuizFeedbackSlide({
+  title,
+  headline,
+  description,
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  quizItems,
+  quiz_items,
+  feedbackRegion,
+  feedback_region,
+  nextSteps,
+  next_steps,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-quiz-feedback', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Review learner responses and coach next steps';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const resolvedDescription = trimText(getPlainText(description ?? ''));
+  if (resolvedDescription) {
+    const descriptionEl = document.createElement('p');
+    descriptionEl.className = 'lesson-instructions';
+    descriptionEl.textContent = resolvedDescription;
+    inner.appendChild(descriptionEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card stack stack-sm';
+  inner.appendChild(card);
+
+  const items = Array.isArray(quizItems)
+    ? quizItems
+    : Array.isArray(quiz_items)
+      ? quiz_items
+      : [];
+
+  if (items.length) {
+    const list = document.createElement('ul');
+    list.className = 'instruction-list';
+    items.forEach((item) => {
+      const prompt = getPlainText(item?.prompt ?? '');
+      const response = getPlainText(item?.learner_response ?? '');
+      if (!prompt && !response) {
+        return;
+      }
+      const li = document.createElement('li');
+      if (prompt) {
+        const promptEl = document.createElement('strong');
+        promptEl.textContent = prompt;
+        li.appendChild(promptEl);
+      }
+      if (response) {
+        const responseEl = document.createElement('p');
+        responseEl.textContent = `Learner response: ${response}`;
+        li.appendChild(responseEl);
+      }
+      const isCorrect = item?.is_correct === true;
+      li.classList.add(isCorrect ? 'correct' : 'incorrect');
+      const explanation = trimText(getPlainText(item?.explanation ?? ''));
+      if (explanation) {
+        const explanationEl = document.createElement('p');
+        explanationEl.className = 'lesson-instructions';
+        explanationEl.textContent = explanation;
+        li.appendChild(explanationEl);
+      }
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add quiz feedback items to review responses.';
+    card.appendChild(placeholder);
+  }
+
+  const feedback = feedbackRegion ?? feedback_region ?? {};
+  const feedbackEl = document.createElement('div');
+  feedbackEl.className = 'feedback-msg';
+  feedbackEl.setAttribute('aria-live', 'polite');
+  if (feedback?.positive) {
+    feedbackEl.dataset.positive = getPlainText(feedback.positive);
+  }
+  if (feedback?.negative) {
+    feedbackEl.dataset.negative = getPlainText(feedback.negative);
+  }
+  if (feedback?.neutral) {
+    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
+  }
+  card.appendChild(feedbackEl);
+
+  const nextStepsText = trimText(getPlainText(nextSteps ?? next_steps ?? ''));
+  if (nextStepsText) {
+    const nextStepsEl = document.createElement('p');
+    nextStepsEl.className = 'lesson-instructions';
+    nextStepsEl.textContent = nextStepsText;
+    card.appendChild(nextStepsEl);
+  }
+
+  return slide;
+}
+
+function createInteractiveAudioDialogueSlide({
+  title,
+  headline,
+  pill,
+  pillLabel,
+  pillIcon,
+  icon,
+  iconClass,
+  audioPlayer,
+  audio_player,
+  promptCard,
+  prompt_card,
+  backgroundImage,
+  overlayColor,
+  overlayOpacity,
+} = {}) {
+  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
+  const { slide, inner } = createBaseLessonSlide('interactive-audio-dialogue', {
+    iconClass: resolvedIcon,
+    imageUrl: backgroundImage,
+    overlayColor,
+    overlayOpacity,
+  });
+
+  inner.classList.add('stack', 'stack-lg');
+
+  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
+  const pillIconClass = normaliseIconClass(pillIcon);
+  if (pillText || pillIconClass) {
+    const pillEl = document.createElement('span');
+    pillEl.className = 'pill';
+    if (pillIconClass) {
+      const iconEl = document.createElement('i');
+      iconEl.className = pillIconClass;
+      iconEl.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(iconEl);
+      if (pillText) {
+        pillEl.appendChild(document.createTextNode(' '));
+      }
+    }
+    if (pillText) {
+      pillEl.appendChild(document.createTextNode(pillText));
+    }
+    inner.appendChild(pillEl);
+  }
+
+  const resolvedTitle =
+    trimText(getPlainText(title ?? headline ?? '')) || 'Listen and analyse the dialogue';
+  const headingEl = document.createElement('h2');
+  headingEl.textContent = resolvedTitle;
+  inner.appendChild(headingEl);
+
+  const audioData = audioPlayer ?? audio_player ?? {};
+  if (audioData?.source?.url || audioData?.source?.src) {
+    const audioWrap = document.createElement('div');
+    audioWrap.className = 'lesson-audio';
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.preload = 'none';
+    const source = document.createElement('source');
+    source.src = audioData.source.url ?? audioData.source.src;
+    audio.appendChild(source);
+    audioWrap.appendChild(audio);
+    if (audioData?.transcript) {
+      const transcript = document.createElement('p');
+      transcript.className = 'lesson-instructions';
+      transcript.textContent = getPlainText(audioData.transcript);
+      audioWrap.appendChild(transcript);
+    }
+    inner.appendChild(audioWrap);
+  }
+
+  const prompt = promptCard ?? prompt_card ?? {};
+  const promptContainer = document.createElement('div');
+  promptContainer.className = 'card stack stack-sm';
+  const promptTitle = trimText(getPlainText(prompt?.title ?? ''));
+  if (promptTitle) {
+    const promptHeading = document.createElement('h3');
+    promptHeading.textContent = promptTitle;
+    promptContainer.appendChild(promptHeading);
+  }
+  const instructions = Array.isArray(prompt?.instructions)
+    ? prompt.instructions
+    : [];
+  if (instructions.length) {
+    const list = document.createElement('ul');
+    list.className = 'instruction-list';
+    instructions.forEach((entry) => {
+      const li = document.createElement('li');
+      li.textContent = getPlainText(entry);
+      list.appendChild(li);
+    });
+    promptContainer.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add prompts to accompany the audio dialogue.';
+    promptContainer.appendChild(placeholder);
+  }
+  const supporting = Array.isArray(prompt?.supporting_points)
+    ? prompt.supporting_points
+    : [];
+  supporting.forEach((point) => {
+    const pointEl = document.createElement('p');
+    pointEl.className = 'lesson-instructions';
+    pointEl.textContent = getPlainText(point);
+    promptContainer.appendChild(pointEl);
+  });
+  inner.appendChild(promptContainer);
+
+  return slide;
+}
+
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
   'hero-overlay': (data) => createHeroOverlaySlide(data),
   'pill-with-gallery': (data) => createPillWithGallerySlide(data),
   'reflection-board': (data) => createReflectionBoardSlide(data),
   'split-grid': (data) => createSplitGridSlide(data),
+  'centered-callout': (data) => createCenteredCalloutSlide(data),
+  'centered-dialogue': (data) => createCenteredDialogueSlide(data),
+  'card-stack': (data) => createCardStackSlide(data),
+  'pill-simple': (data) => createPillSimpleSlide(data),
+  'workspace-grid': (data) => createWorkspaceGridSlide(data),
+  'content-wrapper': (data) => createContentWrapperSlide(data),
+  'interactive-activity-card': (data) => createInteractiveActivityCardSlide(data),
+  'interactive-token-board': (data) => createInteractiveTokenBoardSlide(data),
+  'interactive-token-table': (data) => createInteractiveTokenTableSlide(data),
+  'interactive-token-quiz': (data) => createInteractiveTokenQuizSlide(data),
+  'interactive-quiz-feedback': (data) => createInteractiveQuizFeedbackSlide(data),
+  'interactive-audio-dialogue': (data) => createInteractiveAudioDialogueSlide(data),
 };
 
 export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(
