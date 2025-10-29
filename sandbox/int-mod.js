@@ -1501,32 +1501,13 @@ const parseCardStackItems = (value) =>
 const formatPillGalleryItems = (items = []) =>
   joinMultiline(
     (Array.isArray(items) ? items : []).map((item) => {
-      if (!item || typeof item !== 'object') {
+      const image = trimText(item?.image);
+      const alt = trimText(item?.alt);
+      const caption = trimText(item?.caption);
+      if (!image && !caption && !alt) {
         return '';
       }
-      const image = trimText(item.image ?? item.url ?? '');
-      const alt = trimText(item.alt ?? '');
-      const caption = trimText(item.caption ?? '');
-      const detail = trimText(item.detail ?? item.description ?? '');
-      const credit = trimText(item.credit ?? '');
-      const creditUrl = trimText(item.creditUrl ?? '');
-      const badge = trimText(item.tag ?? item.badge ?? '');
-      const badgeIcon = trimText(item.tagIcon ?? item.badgeIcon ?? '');
-      const itemIcon = trimText(item.icon ?? item.iconClass ?? '');
-      if (!image && !caption && !detail && !badge && !itemIcon && !alt && !credit) {
-        return '';
-      }
-      const segments = [
-        image,
-        alt,
-        caption,
-        detail,
-        credit,
-        creditUrl,
-        badge,
-        badgeIcon,
-        itemIcon,
-      ];
+      const segments = [image, alt, caption];
       while (segments.length && !segments[segments.length - 1]) {
         segments.pop();
       }
@@ -1538,159 +1519,15 @@ const parsePillGalleryItems = (value) =>
   splitMultiline(value)
     .map((line) => {
       const parts = line.split('|').map((part) => trimText(part));
-      if (!parts.length) {
+      const [image = '', alt = '', ...captionParts] = parts;
+      const caption = captionParts.filter(Boolean).join(' | ');
+      if (!image && !caption) {
         return null;
       }
-      while (parts.length < 9) {
-        parts.push('');
-      }
-      const [
-        image = '',
-        alt = '',
-        caption = '',
-        detail = '',
-        credit = '',
-        creditUrl = '',
-        badge = '',
-        badgeIcon = '',
-        itemIcon = '',
-      ] = parts;
-      if (!image && !caption && !detail && !badge && !itemIcon && !alt && !credit) {
-        return null;
-      }
-      const entry = {
+      return {
         image,
         alt,
         caption,
-      };
-      if (detail) {
-        entry.detail = detail;
-      }
-      if (credit) {
-        entry.credit = credit;
-      }
-      if (creditUrl) {
-        entry.creditUrl = creditUrl;
-      }
-      if (badge) {
-        entry.tag = badge;
-      }
-      if (badgeIcon) {
-        entry.tagIcon = badgeIcon;
-      }
-      if (itemIcon) {
-        entry.icon = itemIcon;
-      }
-      return entry;
-    })
-    .filter(Boolean);
-
-const formatGalleryActions = (items = []) =>
-  joinMultiline(
-    (Array.isArray(items) ? items : []).map((item) => {
-      if (!item || typeof item !== 'object') {
-        return '';
-      }
-      const label = trimText(item.label ?? item.title ?? '');
-      const description = trimText(item.description ?? item.detail ?? '');
-      const href = trimText(item.href ?? item.url ?? '');
-      const icon = trimText(item.icon ?? item.iconClass ?? '');
-      const segments = [label];
-      if (description) {
-        segments.push(description);
-      }
-      if (href) {
-        segments.push(href);
-      }
-      if (icon) {
-        segments.push(icon);
-      }
-      return segments.filter(Boolean).join(' | ');
-    }),
-  );
-
-const parseGalleryActions = (value) =>
-  splitMultiline(value)
-    .map((line) => {
-      const [label = '', description = '', href = '', icon = ''] = line
-        .split('|')
-        .map((part) => trimText(part));
-      if (!label && !description && !href && !icon) {
-        return null;
-      }
-      return {
-        label,
-        description,
-        href,
-        icon,
-      };
-    })
-    .filter(Boolean);
-
-const formatReflectionBoardCards = (cards = []) =>
-  joinMultiline(
-    (Array.isArray(cards) ? cards : []).map((card) => {
-      if (!card || typeof card !== 'object') {
-        return '';
-      }
-      const title = trimText(card.title ?? card.label ?? '');
-      const description = trimText(card.description ?? card.detail ?? card.note ?? '');
-      if (!title && !description) {
-        return '';
-      }
-      return [title, description].filter(Boolean).join(' | ');
-    }),
-  );
-
-const parseReflectionBoardCards = (value) =>
-  splitMultiline(value)
-    .map((line) => {
-      const [title = '', description = ''] = line
-        .split('|')
-        .map((part) => trimText(part));
-      if (!title && !description) {
-        return null;
-      }
-      return {
-        title,
-        description,
-      };
-    })
-    .filter(Boolean);
-
-const formatSplitGridItems = (items = []) =>
-  joinMultiline(
-    (Array.isArray(items) ? items : []).map((item) => {
-      if (!item || typeof item !== 'object') {
-        return '';
-      }
-      const title = trimText(item.title ?? item.label ?? '');
-      const detail = trimText(item.detail ?? item.description ?? item.note ?? '');
-      const icon = trimText(item.icon ?? '');
-      const segments = [title];
-      if (detail) {
-        segments.push(detail);
-      }
-      if (icon) {
-        segments.push(icon);
-      }
-      return segments.filter(Boolean).join(' | ');
-    }),
-  );
-
-const parseSplitGridItems = (value) =>
-  splitMultiline(value)
-    .map((line) => {
-      const [title = '', detail = '', icon = ''] = line
-        .split('|')
-        .map((part) => trimText(part));
-      if (!title && !detail && !icon) {
-        return null;
-      }
-      return {
-        title,
-        detail,
-        icon,
       };
     })
     .filter(Boolean);
@@ -7596,7 +7433,7 @@ const getEffectiveLayoutIcon = (_layout, iconClass) =>
 
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
-  const factory = BUILDER_LAYOUT_DEFAULTS?.[layout];
+  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
   if (typeof factory === 'function') {
     try {
       return factory();
@@ -7731,209 +7568,695 @@ function resetPracticeList(questions = []) {
   entries.forEach((question) => addPracticeItem(question));
 }
 
-const escapeForSelector = (value) => {
-  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
-    return CSS.escape(value);
-  }
-  return String(value)
-    .replace(/([\0-\x1f\x7f]|^-?[0-9]|[^a-zA-Z0-9_-])/g, (match, ch) => {
-      if (ch === undefined) {
-        return '\\';
-      }
-      const hex = ch.charCodeAt(0).toString(16).toUpperCase();
-      return `\\${hex} `;
-    });
-};
-
-const setFormFieldValue = (name, value) => {
-  if (!(builderForm instanceof HTMLFormElement)) {
-    return;
-  }
-  const control = builderForm.elements.namedItem?.(name);
-  if (!control) {
-    return;
-  }
-  const resolvedValue = value ?? '';
-  const isRadioList =
-    typeof RadioNodeList !== 'undefined' && control instanceof RadioNodeList;
-  if (isRadioList) {
-    control.value = resolvedValue;
-    const escapedName = escapeForSelector(name);
-    builderForm
-      .querySelectorAll(`input[type="radio"][name="${escapedName}"]`)
-      .forEach((radio) => {
-        if (radio instanceof HTMLInputElement) {
-          radio.checked = radio.value === resolvedValue;
-        }
-      });
-    return;
-  }
-  if (
-    control instanceof HTMLInputElement ||
-    control instanceof HTMLTextAreaElement ||
-    control instanceof HTMLSelectElement
-  ) {
-    control.value = resolvedValue;
-  }
-};
-
-const applyLayoutFieldIconDefaults = (layout) => {
-  if (!(builderForm instanceof HTMLFormElement)) {
-    return;
-  }
-  const iconDefaults = LAYOUT_FIELD_ICON_DEFAULTS?.[layout];
-  if (!iconDefaults) {
-    return;
-  }
-  const controls = builderForm.querySelectorAll('[data-field]');
-  controls.forEach((element) => {
-    if (
-      !(
-        element instanceof HTMLInputElement ||
-        element instanceof HTMLTextAreaElement ||
-        element instanceof HTMLSelectElement
-      )
-    ) {
-      return;
-    }
-    const { field } = element.dataset;
-    if (!field || !(field in iconDefaults)) {
-      return;
-    }
-    const container = element.closest('[data-layouts]');
-    if (container instanceof HTMLElement) {
-      const layouts = (container.dataset.layouts || '')
-        .split(',')
-        .map((value) => value.trim())
-        .filter(Boolean);
-      if (layouts.length && !layouts.includes(layout)) {
-        return;
-      }
-    }
-    element.value = iconDefaults[field] ?? '';
-  });
-};
-
-const ensureLayoutIconDefault = (layout) => {
-  const defaultIcon = LAYOUT_ICON_DEFAULTS?.[layout];
-  if (!defaultIcon) {
-    return;
-  }
-  setLayoutIconValue(layout, defaultIcon);
-};
-
 function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
   if (!(builderForm instanceof HTMLFormElement)) {
     return;
   }
 
-  const requestedLayout =
-    typeof layout === 'string' && layout ? layout : 'blank-canvas';
-  let targetLayout = requestedLayout;
-  let defaults = getBuilderLayoutDefaults(targetLayout) || null;
-
+  const defaults = getBuilderLayoutDefaults(layout);
   if (!defaults) {
-    targetLayout = 'blank-canvas';
-    defaults = getBuilderLayoutDefaults(targetLayout) || {};
+    return;
   }
 
-  ensureLayoutIconDefault(targetLayout);
-  applyLayoutFieldIconDefaults(targetLayout);
+  const setFieldValue = (name, value = '') => {
+    const field = builderForm.elements.namedItem?.(name);
+    if (!field) {
+      return;
+    }
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+      field.value = value ?? '';
+    }
+  };
 
-  const assignTextField = (name, value) => setFormFieldValue(name, value ?? '');
+  const setIconField = (fieldName, layoutKey, providedValue) => {
+    const resolved = resolveLayoutIconField(layoutKey, fieldName, providedValue);
+    setFieldValue(fieldName, resolved);
+    const input = builderForm.elements.namedItem?.(fieldName);
+    if (input instanceof HTMLInputElement) {
+      const placeholder = getLayoutFieldIconDefault(layoutKey, fieldName);
+      if (placeholder) {
+        input.placeholder = placeholder;
+      }
+    }
+  };
 
-  switch (targetLayout) {
-    case 'interactive-practice': {
-      assignTextField('practiceTitle', defaults.title ?? '');
-      assignTextField('practiceInstructions', defaults.instructions ?? '');
-      assignTextField('practiceInstructionsIcon', defaults.instructionsIcon ?? '');
-      assignTextField(
-        'practiceActivityType',
-        defaults.activityType ?? 'multiple-choice',
+  const clearFields = () => {
+    [
+      'learningTitle',
+      'learningGoalOne',
+      'learningGoalTwo',
+      'learningGoalThree',
+      'learningGoalIcon',
+      'learningCommunicativeGoal',
+      'learningCommunicativeGoalIcon',
+      'learningImageUrl',
+      'learningOverlayColor',
+      'learningOverlayOpacity',
+      'dialogueTitle',
+      'dialogueInstructions',
+      'dialogueInstructionsIcon',
+      'dialogueImageUrl',
+      'dialogueOverlayColor',
+      'dialogueOverlayOpacity',
+      'dialogueAudioUrl',
+      'practiceTitle',
+      'practiceInstructions',
+      'practiceInstructionsIcon',
+      'practiceActivityType',
+      'practiceActivityTypeIcon',
+      'cardStackPill',
+      'cardStackPillIcon',
+      'cardStackTitle',
+      'cardStackDescription',
+      'cardStackItems',
+      'cardStackItemIcon',
+      'pillGalleryPill',
+      'pillGalleryPillIcon',
+      'pillGalleryTitle',
+      'pillGalleryDescription',
+      'pillGalleryItems',
+      'pillGalleryItemIcon',
+      'taskTitle',
+      'taskImageUrl',
+      'taskOverlayColor',
+      'taskOverlayOpacity',
+      'taskPreparationIcon',
+      'taskPreparation',
+      'taskPerformanceIcon',
+      'taskPerformance',
+      'taskScaffolding',
+      'taskScaffoldingIcon',
+      'pronunciationTitle',
+      'pronunciationTarget',
+      'pronunciationTargetIcon',
+      'pronunciationWordOne',
+      'pronunciationWordTwo',
+      'pronunciationWordsIcon',
+      'pronunciationSentenceOne',
+      'pronunciationSentenceTwo',
+      'pronunciationSentencesIcon',
+      'pronunciationPractice',
+      'pronunciationPracticeIcon',
+      'pronunciationImageUrl',
+      'pronunciationOverlayColor',
+      'pronunciationOverlayOpacity',
+      'reflectionTitle',
+      'reflectionPromptOne',
+      'reflectionPromptTwo',
+      'reflectionPromptThree',
+      'reflectionPromptsIcon',
+      'reflectionImageUrl',
+      'reflectionOverlayColor',
+      'reflectionOverlayOpacity',
+      'groundingTitle',
+      'groundingSubtitle',
+      'groundingSteps',
+      'groundingStepsIcon',
+      'groundingBackgroundImage',
+      'groundingOverlayColor',
+      'groundingOverlayOpacity',
+      'topicTitle',
+      'topicHook',
+      'topicHookIcon',
+      'topicContext',
+      'topicContextIcon',
+      'topicQuestion',
+      'topicQuestionIcon',
+      'topicKeyVocabulary',
+      'topicKeyVocabularyIcon',
+      'topicBackgroundImage',
+      'topicOverlayColor',
+      'topicOverlayOpacity',
+      'discoveryTitle',
+      'discoveryContext',
+      'discoveryContextIcon',
+      'discoveryPrompts',
+      'discoveryPromptsIcon',
+      'discoveryNoticingQuestions',
+      'discoveryNoticingQuestionsIcon',
+      'discoveryLanguageSamples',
+      'discoveryLanguageSamplesIcon',
+      'discoveryBackgroundImage',
+      'discoveryOverlayColor',
+      'discoveryOverlayOpacity',
+      'creativeTitle',
+      'creativeBrief',
+      'creativeBriefIcon',
+      'creativeMaterials',
+      'creativeMaterialsIcon',
+      'creativeMakingSteps',
+      'creativeMakingStepsIcon',
+      'creativeSharingOptions',
+      'creativeSharingOptionsIcon',
+      'creativeBackgroundImage',
+      'creativeOverlayColor',
+      'creativeOverlayOpacity',
+      'dividerTitle',
+      'dividerSubtitle',
+      'dividerTiming',
+      'dividerTimingIcon',
+      'dividerFocus',
+      'dividerFocusIcon',
+      'dividerActions',
+      'dividerActionsIcon',
+      'dividerBackgroundImage',
+      'dividerOverlayColor',
+      'dividerOverlayOpacity',
+      'reportingTitle',
+      'reportingGoal',
+      'reportingGoalIcon',
+      'reportingPrompts',
+      'reportingPromptsIcon',
+      'reportingRoles',
+      'reportingRolesIcon',
+      'reportingEvidence',
+      'reportingEvidenceIcon',
+      'reportingBackgroundImage',
+      'reportingOverlayColor',
+      'reportingOverlayOpacity',
+      'genreTitle',
+      'genreType',
+      'genreTypeIcon',
+      'genrePurpose',
+      'genrePurposeIcon',
+      'genreFeatures',
+      'genreFeaturesIcon',
+      'genreMentorText',
+      'genreMentorTextIcon',
+      'genreBackgroundImage',
+      'genreOverlayColor',
+      'genreOverlayOpacity',
+      'featureTitle',
+      'featureSourceText',
+      'featureSourceTextIcon',
+      'featureTargets',
+      'featureTargetsIcon',
+      'featureReflection',
+      'featureReflectionIcon',
+      'featureBackgroundImage',
+      'featureOverlayColor',
+      'featureOverlayOpacity',
+      'reconstructionTitle',
+      'reconstructionContext',
+      'reconstructionContextIcon',
+      'reconstructionSteps',
+      'reconstructionStepsIcon',
+      'reconstructionSegments',
+      'reconstructionSegmentsIcon',
+      'reconstructionBackgroundImage',
+      'reconstructionOverlayColor',
+      'reconstructionOverlayOpacity',
+      'sequencingTitle',
+      'sequencingInstructions',
+      'sequencingInstructionsIcon',
+      'sequencingSegments',
+      'sequencingSegmentsIcon',
+      'sequencingSupportTips',
+      'sequencingSupportTipsIcon',
+      'sequencingBackgroundImage',
+      'sequencingOverlayColor',
+      'sequencingOverlayOpacity',
+      'jointTitle',
+      'jointMentor',
+      'jointMentorIcon',
+      'jointSharedOutcome',
+      'jointSharedOutcomeIcon',
+      'jointTeacherMoves',
+      'jointTeacherMovesIcon',
+      'jointLearnerMoves',
+      'jointLearnerMovesIcon',
+      'jointBackgroundImage',
+      'jointOverlayColor',
+      'jointOverlayOpacity',
+      'checklistTitle',
+      'checklistReminder',
+      'checklistReminderIcon',
+      'checklistItems',
+      'checklistItemsIcon',
+      'checklistStretch',
+      'checklistStretchIcon',
+      'checklistBackgroundImage',
+      'checklistOverlayColor',
+      'checklistOverlayOpacity',
+    ].forEach((name) => setFieldValue(name, ''));
+    resetDialogueList([]);
+    resetPracticeList([]);
+  };
+
+  clearFields();
+
+  if (layout in LAYOUT_ICON_DEFAULTS) {
+    const defaultIcon =
+      typeof defaults.icon === 'string' && defaults.icon.trim()
+        ? defaults.icon.trim()
+        : LAYOUT_ICON_DEFAULTS[layout] || '';
+    setLayoutIconValue(layout, defaultIcon);
+  }
+
+  switch (layout) {
+    case 'learning-objectives': {
+      const goals = Array.isArray(defaults.goals) ? defaults.goals : [];
+      setFieldValue('learningTitle', defaults.title ?? '');
+      setFieldValue('learningGoalOne', goals[0] ?? '');
+      setFieldValue('learningGoalTwo', goals[1] ?? '');
+      setFieldValue('learningGoalThree', goals[2] ?? '');
+      setIconField('learningGoalIcon', 'learning-objectives', defaults.goalIcon);
+      setFieldValue('learningCommunicativeGoal', defaults.communicativeGoal ?? '');
+      setIconField(
+        'learningCommunicativeGoalIcon',
+        'learning-objectives',
+        defaults.communicativeGoalIcon,
       );
-      assignTextField('practiceActivityTypeIcon', defaults.activityTypeIcon ?? '');
+      setFieldValue('learningImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('learningOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'learningOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'model-dialogue': {
+      setFieldValue('dialogueTitle', defaults.title ?? '');
+      setFieldValue('dialogueInstructions', defaults.instructions ?? '');
+      setIconField(
+        'dialogueInstructionsIcon',
+        'model-dialogue',
+        defaults.instructionsIcon,
+      );
+      setFieldValue('dialogueImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('dialogueOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'dialogueOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      setFieldValue('dialogueAudioUrl', defaults.audioUrl ?? '');
+      resetDialogueList(defaults.turns);
+      break;
+    }
+    case 'interactive-practice': {
+      setFieldValue('practiceTitle', defaults.title ?? '');
+      setFieldValue('practiceInstructions', defaults.instructions ?? '');
+      setIconField(
+        'practiceInstructionsIcon',
+        'interactive-practice',
+        defaults.instructionsIcon,
+      );
+      setFieldValue('practiceActivityType', defaults.activityType ?? '');
+      setIconField(
+        'practiceActivityTypeIcon',
+        'interactive-practice',
+        defaults.activityTypeIcon,
+      );
       resetPracticeList(defaults.questions);
       break;
     }
     case 'card-stack': {
-      assignTextField('cardStackPill', defaults.pill ?? '');
-      assignTextField('cardStackPillIcon', defaults.pillIcon ?? '');
-      assignTextField('cardStackTitle', defaults.title ?? '');
-      assignTextField('cardStackDescription', defaults.description ?? '');
-      assignTextField('cardStackItems', formatCardStackItems(defaults.cards));
-      assignTextField('cardStackItemIcon', defaults.cardIcon ?? '');
+      setFieldValue('cardStackPill', defaults.pill ?? '');
+      setIconField('cardStackPillIcon', 'card-stack', defaults.pillIcon);
+      setFieldValue('cardStackTitle', defaults.title ?? '');
+      setFieldValue('cardStackDescription', defaults.description ?? '');
+      setFieldValue('cardStackItems', formatCardStackItems(defaults.cards));
+      setIconField('cardStackItemIcon', 'card-stack', defaults.cardIcon);
       break;
     }
     case 'pill-with-gallery': {
-      assignTextField('pillGalleryPill', defaults.pill ?? '');
-      assignTextField('pillGalleryPillIcon', defaults.pillIcon ?? '');
-      assignTextField('pillGalleryTitle', defaults.title ?? '');
-      assignTextField('pillGalleryDescription', defaults.description ?? '');
-      assignTextField('pillGalleryMosaicStyle', defaults.mosaicStyle ?? '');
-      assignTextField('pillGalleryItems', formatPillGalleryItems(defaults.gallery));
-      assignTextField('pillGalleryItemIcon', defaults.itemIcon ?? '');
-      assignTextField('pillGalleryActions', formatGalleryActions(defaults.actions));
-      assignTextField('pillGalleryActionIcon', defaults.actionIcon ?? '');
+      setFieldValue('pillGalleryPill', defaults.pill ?? '');
+      setIconField('pillGalleryPillIcon', 'pill-with-gallery', defaults.pillIcon);
+      setFieldValue('pillGalleryTitle', defaults.title ?? '');
+      setFieldValue('pillGalleryDescription', defaults.description ?? '');
+      setFieldValue('pillGalleryItems', formatPillGalleryItems(defaults.gallery));
+      setIconField('pillGalleryItemIcon', 'pill-with-gallery', defaults.itemIcon);
       break;
     }
-    case 'reflection-board': {
-      const [glowColumn = {}, growColumn = {}] = Array.isArray(defaults.columns)
-        ? defaults.columns
-        : [];
-      assignTextField('reflectionBoardPill', defaults.pill ?? '');
-      assignTextField('reflectionBoardPillIcon', defaults.pillIcon ?? '');
-      assignTextField('reflectionBoardTitle', defaults.title ?? '');
-      assignTextField('reflectionBoardDescription', defaults.description ?? '');
-      assignTextField(
-        'reflectionBoardGlowCards',
-        formatReflectionBoardCards(glowColumn.cards),
+    case 'communicative-task': {
+      setFieldValue('taskTitle', defaults.title ?? '');
+      setFieldValue('taskImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('taskOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'taskOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
       );
-      assignTextField(
-        'reflectionBoardGrowCards',
-        formatReflectionBoardCards(growColumn.cards),
+      setIconField('taskPreparationIcon', 'communicative-task', defaults.preparationIcon);
+      setFieldValue('taskPreparation', defaults.preparation ?? '');
+      setIconField('taskPerformanceIcon', 'communicative-task', defaults.performanceIcon);
+      setFieldValue('taskPerformance', defaults.performance ?? '');
+      setFieldValue(
+        'taskScaffolding',
+        Array.isArray(defaults.scaffolding)
+          ? defaults.scaffolding.join('\n')
+          : defaults.scaffolding ?? '',
       );
-      assignTextField('reflectionBoardGlowIcon', glowColumn.icon ?? '');
-      assignTextField('reflectionBoardGrowIcon', growColumn.icon ?? '');
-      assignTextField('reflectionBoardCardIcon', defaults.cardIcon ?? '');
-      assignTextField('reflectionBoardNote', defaults.boardNote ?? defaults.note ?? '');
-      const footer =
-        defaults.footer && typeof defaults.footer === 'object' ? defaults.footer : {};
-      assignTextField('reflectionBoardFooterLabel', footer.label ?? '');
-      assignTextField(
-        'reflectionBoardFooterDescription',
-        footer.description ?? footer.detail ?? '',
+      setIconField('taskScaffoldingIcon', 'communicative-task', defaults.scaffoldingIcon);
+      break;
+    }
+    case 'pronunciation-focus': {
+      setFieldValue('pronunciationTitle', defaults.title ?? '');
+      setFieldValue('pronunciationTarget', defaults.target ?? '');
+      setIconField(
+        'pronunciationTargetIcon',
+        'pronunciation-focus',
+        defaults.targetIcon,
+      );
+      const words = Array.isArray(defaults.words) ? defaults.words : [];
+      setFieldValue('pronunciationWordOne', words[0] ?? '');
+      setFieldValue('pronunciationWordTwo', words[1] ?? '');
+      setIconField('pronunciationWordsIcon', 'pronunciation-focus', defaults.wordsIcon);
+      const sentences = Array.isArray(defaults.sentences) ? defaults.sentences : [];
+      setFieldValue('pronunciationSentenceOne', sentences[0] ?? '');
+      setFieldValue('pronunciationSentenceTwo', sentences[1] ?? '');
+      setIconField(
+        'pronunciationSentencesIcon',
+        'pronunciation-focus',
+        defaults.sentencesIcon,
+      );
+      setFieldValue('pronunciationPractice', defaults.practice ?? '');
+      setIconField(
+        'pronunciationPracticeIcon',
+        'pronunciation-focus',
+        defaults.practiceIcon,
+      );
+      setFieldValue('pronunciationImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('pronunciationOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'pronunciationOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
       );
       break;
     }
-    case 'split-grid': {
-      const [leftColumn = {}, rightColumn = {}] = Array.isArray(defaults.columns)
-        ? defaults.columns
-        : [];
-      assignTextField('splitGridPill', defaults.pill ?? '');
-      assignTextField('splitGridPillIcon', defaults.pillIcon ?? '');
-      assignTextField('splitGridTitle', defaults.title ?? '');
-      assignTextField('splitGridDescription', defaults.description ?? '');
-      assignTextField(
-        'splitGridLeftItems',
-        formatSplitGridItems(leftColumn.items),
+    case 'reflection': {
+      setFieldValue('reflectionTitle', defaults.title ?? '');
+      const prompts = Array.isArray(defaults.prompts) ? defaults.prompts : [];
+      setFieldValue('reflectionPromptOne', prompts[0] ?? '');
+      setFieldValue('reflectionPromptTwo', prompts[1] ?? '');
+      setFieldValue('reflectionPromptThree', prompts[2] ?? '');
+      setIconField('reflectionPromptsIcon', 'reflection', defaults.promptsIcon);
+      setFieldValue('reflectionImageUrl', defaults.imageUrl ?? '');
+      setFieldValue('reflectionOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reflectionOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
       );
-      assignTextField(
-        'splitGridRightItems',
-        formatSplitGridItems(rightColumn.items),
-      );
-      assignTextField('splitGridLeftIcon', leftColumn.icon ?? '');
-      assignTextField('splitGridRightIcon', rightColumn.icon ?? '');
-      assignTextField('splitGridItemIcon', defaults.itemIcon ?? '');
-      assignTextField('splitGridFooterNote', defaults.footerNote ?? '');
       break;
     }
-    default: {
-      Object.entries(defaults).forEach(([name, value]) => {
-        if (typeof value === 'string' || typeof value === 'number') {
-          assignTextField(name, String(value ?? ''));
-        }
-      });
+    case 'grounding-activity': {
+      setFieldValue('groundingTitle', defaults.title ?? '');
+      setFieldValue('groundingSubtitle', defaults.subtitle ?? '');
+      setFieldValue('groundingSteps', joinMultiline(defaults.steps));
+      setIconField('groundingStepsIcon', 'grounding-activity', defaults.stepsIcon);
+      setFieldValue('groundingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('groundingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'groundingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
     }
+    case 'topic-introduction': {
+      setFieldValue('topicTitle', defaults.title ?? '');
+      setFieldValue('topicHook', defaults.hook ?? '');
+      setIconField('topicHookIcon', 'topic-introduction', defaults.hookIcon);
+      setFieldValue('topicContext', defaults.context ?? '');
+      setIconField('topicContextIcon', 'topic-introduction', defaults.contextIcon);
+      setFieldValue('topicQuestion', defaults.essentialQuestion ?? '');
+      setIconField(
+        'topicQuestionIcon',
+        'topic-introduction',
+        defaults.essentialQuestionIcon,
+      );
+      setFieldValue('topicKeyVocabulary', joinMultiline(defaults.keyVocabulary));
+      setIconField(
+        'topicKeyVocabularyIcon',
+        'topic-introduction',
+        defaults.keyVocabularyIcon,
+      );
+      setFieldValue('topicBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('topicOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'topicOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'guided-discovery': {
+      setFieldValue('discoveryTitle', defaults.title ?? '');
+      setFieldValue('discoveryContext', defaults.context ?? '');
+      setIconField('discoveryContextIcon', 'guided-discovery', defaults.contextIcon);
+      setFieldValue('discoveryPrompts', joinMultiline(defaults.discoveryPrompts));
+      setIconField(
+        'discoveryPromptsIcon',
+        'guided-discovery',
+        defaults.discoveryPromptsIcon,
+      );
+      setFieldValue(
+        'discoveryNoticingQuestions',
+        joinMultiline(defaults.noticingQuestions),
+      );
+      setIconField(
+        'discoveryNoticingQuestionsIcon',
+        'guided-discovery',
+        defaults.noticingQuestionsIcon,
+      );
+      setFieldValue(
+        'discoveryLanguageSamples',
+        joinMultiline(defaults.sampleLanguage),
+      );
+      setIconField(
+        'discoveryLanguageSamplesIcon',
+        'guided-discovery',
+        defaults.sampleLanguageIcon,
+      );
+      setFieldValue('discoveryBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('discoveryOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'discoveryOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'creative-practice': {
+      setFieldValue('creativeTitle', defaults.title ?? '');
+      setFieldValue('creativeBrief', defaults.brief ?? '');
+      setIconField('creativeBriefIcon', 'creative-practice', defaults.briefIcon);
+      setFieldValue('creativeMaterials', joinMultiline(defaults.materials));
+      setIconField('creativeMaterialsIcon', 'creative-practice', defaults.materialsIcon);
+      setFieldValue('creativeMakingSteps', joinMultiline(defaults.makingSteps));
+      setIconField('creativeMakingStepsIcon', 'creative-practice', defaults.makingStepsIcon);
+      setFieldValue(
+        'creativeSharingOptions',
+        joinMultiline(defaults.sharingOptions),
+      );
+      setIconField(
+        'creativeSharingOptionsIcon',
+        'creative-practice',
+        defaults.sharingOptionsIcon,
+      );
+      setFieldValue('creativeBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('creativeOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'creativeOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'task-divider': {
+      setFieldValue('dividerTitle', defaults.title ?? '');
+      setFieldValue('dividerSubtitle', defaults.subtitle ?? '');
+      setFieldValue('dividerTiming', defaults.timing ?? '');
+      setIconField('dividerTimingIcon', 'task-divider', defaults.timingIcon);
+      setFieldValue('dividerFocus', defaults.focus ?? '');
+      setIconField('dividerFocusIcon', 'task-divider', defaults.focusIcon);
+      setFieldValue('dividerActions', joinMultiline(defaults.actions));
+      setIconField('dividerActionsIcon', 'task-divider', defaults.actionsIcon);
+      setFieldValue('dividerBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('dividerOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'dividerOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'task-reporting': {
+      setFieldValue('reportingTitle', defaults.title ?? '');
+      setFieldValue('reportingGoal', defaults.goal ?? '');
+      setIconField('reportingGoalIcon', 'task-reporting', defaults.goalIcon);
+      setFieldValue('reportingPrompts', joinMultiline(defaults.prompts));
+      setIconField('reportingPromptsIcon', 'task-reporting', defaults.promptsIcon);
+      setFieldValue(
+        'reportingRoles',
+        formatKeyValuePairs(defaults.roles, { key: 'label', value: 'value' }),
+      );
+      setIconField('reportingRolesIcon', 'task-reporting', defaults.rolesIcon);
+      setFieldValue('reportingEvidence', joinMultiline(defaults.evidence));
+      setIconField('reportingEvidenceIcon', 'task-reporting', defaults.evidenceIcon);
+      setFieldValue('reportingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('reportingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reportingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'genre-deconstruction': {
+      setFieldValue('genreTitle', defaults.title ?? '');
+      setFieldValue('genreType', defaults.genre ?? '');
+      setIconField('genreTypeIcon', 'genre-deconstruction', defaults.genreIcon);
+      setFieldValue('genrePurpose', defaults.purpose ?? '');
+      setIconField('genrePurposeIcon', 'genre-deconstruction', defaults.purposeIcon);
+      setFieldValue(
+        'genreFeatures',
+        formatKeyValuePairs(defaults.features, { key: 'label', value: 'value' }),
+      );
+      setIconField('genreFeaturesIcon', 'genre-deconstruction', defaults.featuresIcon);
+      setFieldValue('genreMentorText', defaults.mentorText ?? '');
+      setIconField('genreMentorTextIcon', 'genre-deconstruction', defaults.mentorTextIcon);
+      setFieldValue('genreBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('genreOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'genreOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'linguistic-feature-hunt': {
+      setFieldValue('featureTitle', defaults.title ?? '');
+      setFieldValue('featureSourceText', defaults.sourceText ?? '');
+      setIconField(
+        'featureSourceTextIcon',
+        'linguistic-feature-hunt',
+        defaults.sourceTextIcon,
+      );
+      setFieldValue('featureTargets', joinMultiline(defaults.features));
+      setIconField('featureTargetsIcon', 'linguistic-feature-hunt', defaults.featuresIcon);
+      setFieldValue('featureReflection', joinMultiline(defaults.reflection));
+      setIconField(
+        'featureReflectionIcon',
+        'linguistic-feature-hunt',
+        defaults.reflectionIcon,
+      );
+      setFieldValue('featureBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('featureOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'featureOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'text-reconstruction': {
+      setFieldValue('reconstructionTitle', defaults.title ?? '');
+      setFieldValue('reconstructionContext', defaults.context ?? '');
+      setIconField(
+        'reconstructionContextIcon',
+        'text-reconstruction',
+        defaults.contextIcon,
+      );
+      setFieldValue('reconstructionSteps', joinMultiline(defaults.steps));
+      setIconField(
+        'reconstructionStepsIcon',
+        'text-reconstruction',
+        defaults.stepsIcon,
+      );
+      setFieldValue('reconstructionSegments', joinMultiline(defaults.segments));
+      setIconField(
+        'reconstructionSegmentsIcon',
+        'text-reconstruction',
+        defaults.segmentsIcon,
+      );
+      setFieldValue('reconstructionBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('reconstructionOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'reconstructionOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'jumbled-text-sequencing': {
+      setFieldValue('sequencingTitle', defaults.title ?? '');
+      setFieldValue('sequencingInstructions', defaults.instructions ?? '');
+      setIconField(
+        'sequencingInstructionsIcon',
+        'jumbled-text-sequencing',
+        defaults.instructionsIcon,
+      );
+      setFieldValue('sequencingSegments', joinMultiline(defaults.segments));
+      setIconField(
+        'sequencingSegmentsIcon',
+        'jumbled-text-sequencing',
+        defaults.segmentsIcon,
+      );
+      setFieldValue('sequencingSupportTips', joinMultiline(defaults.supportTips));
+      setIconField(
+        'sequencingSupportTipsIcon',
+        'jumbled-text-sequencing',
+        defaults.supportTipsIcon,
+      );
+      setFieldValue('sequencingBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('sequencingOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'sequencingOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'scaffolded-joint-construction': {
+      setFieldValue('jointTitle', defaults.title ?? '');
+      setFieldValue('jointMentor', defaults.mentorFocus ?? '');
+      setIconField('jointMentorIcon', 'scaffolded-joint-construction', defaults.mentorFocusIcon);
+      setFieldValue('jointSharedOutcome', defaults.sharedOutcome ?? '');
+      setIconField(
+        'jointSharedOutcomeIcon',
+        'scaffolded-joint-construction',
+        defaults.sharedOutcomeIcon,
+      );
+      setFieldValue('jointTeacherMoves', joinMultiline(defaults.teacherMoves));
+      setIconField(
+        'jointTeacherMovesIcon',
+        'scaffolded-joint-construction',
+        defaults.teacherMovesIcon,
+      );
+      setFieldValue('jointLearnerMoves', joinMultiline(defaults.learnerMoves));
+      setIconField(
+        'jointLearnerMovesIcon',
+        'scaffolded-joint-construction',
+        defaults.learnerMovesIcon,
+      );
+      setFieldValue('jointBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('jointOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'jointOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    case 'independent-construction-checklist': {
+      setFieldValue('checklistTitle', defaults.title ?? '');
+      setFieldValue('checklistReminder', defaults.reminder ?? '');
+      setIconField(
+        'checklistReminderIcon',
+        'independent-construction-checklist',
+        defaults.reminderIcon,
+      );
+      setFieldValue('checklistItems', joinMultiline(defaults.checklist));
+      setIconField(
+        'checklistItemsIcon',
+        'independent-construction-checklist',
+        defaults.checklistIcon,
+      );
+      setFieldValue('checklistStretch', joinMultiline(defaults.stretchGoals));
+      setIconField(
+        'checklistStretchIcon',
+        'independent-construction-checklist',
+        defaults.stretchGoalsIcon,
+      );
+      setFieldValue('checklistBackgroundImage', defaults.imageUrl ?? '');
+      setFieldValue('checklistOverlayColor', defaults.overlayColor ?? '');
+      setFieldValue(
+        'checklistOverlayOpacity',
+        String(normaliseOverlayPercent(defaults.overlayOpacity ?? 0)),
+      );
+      break;
+    }
+    default:
+      break;
   }
 
   if (updatePreview) {
@@ -7946,222 +8269,678 @@ function getBuilderFormState() {
   if (!(builderForm instanceof HTMLFormElement)) {
     return null;
   }
-
-  const layout = getSelectedLayout();
-  const fallbackIcon = LAYOUT_ICON_DEFAULTS?.[layout] ?? '';
-  const layoutIcon = resolveLayoutIconClass(layout) || fallbackIcon;
-
-  if (layout === 'blank-canvas' || !layout) {
-    return { layout: 'blank-canvas', icon: layoutIcon, data: {} };
-  }
-
   const formData = new FormData(builderForm);
-  const getRawValue = (name) => {
-    if (!formData.has(name)) {
-      return null;
-    }
-    const value = formData.get(name);
-    return typeof value === 'string' ? value : '';
-  };
-  const getTrimmedValue = (name) => {
-    const value = getRawValue(name);
-    return value == null ? null : value.trim();
-  };
-  const getNumericValue = (name) => {
-    const value = getTrimmedValue(name);
-    if (value == null || value === '') {
-      return null;
-    }
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? null : parsed;
-  };
-  const cloneDefaults = (defaults) => {
-    if (!defaults || typeof defaults !== 'object') {
-      return {};
-    }
-    try {
-      return JSON.parse(JSON.stringify(defaults));
-    } catch (error) {
-      return { ...defaults };
-    }
-  };
-
-  const baseDefaults = getBuilderLayoutDefaults(layout) || {};
-  const data = cloneDefaults(baseDefaults);
-
+  const layout = (formData.get('slideLayout') || getSelectedLayout() || 'blank-canvas').toString();
+  const layoutIcon = resolveLayoutIconClass(layout);
+  const state = { layout, icon: layoutIcon };
   switch (layout) {
+    case 'learning-objectives': {
+      const goals = [
+        trimText(formData.get('learningGoalOne')),
+        trimText(formData.get('learningGoalTwo')),
+        trimText(formData.get('learningGoalThree')),
+      ].filter(Boolean);
+      const goalIcon = resolveLayoutIconField(
+        'learning-objectives',
+        'learningGoalIcon',
+        formData.get('learningGoalIcon'),
+      );
+      const communicativeGoalIcon = resolveLayoutIconField(
+        'learning-objectives',
+        'learningCommunicativeGoalIcon',
+        formData.get('learningCommunicativeGoalIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('learningTitle')) || 'Learning Outcomes',
+        goals,
+        communicativeGoal: trimText(formData.get('learningCommunicativeGoal')),
+        imageUrl: trimText(formData.get('learningImageUrl')),
+        overlayColor: trimText(formData.get('learningOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('learningOverlayOpacity'),
+        ),
+        goalIcon,
+        communicativeGoalIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'model-dialogue': {
+      const speakers = formData.getAll('dialogueSpeaker').map((value) => trimText(value));
+      const lines = formData.getAll('dialogueLine').map((value) => trimText(value));
+      const turns = [];
+      const count = Math.max(speakers.length, lines.length);
+      for (let index = 0; index < count; index += 1) {
+        const speaker = speakers[index] || '';
+        const line = lines[index] || '';
+        if (speaker || line) {
+          turns.push({ speaker, line });
+        }
+      }
+      const instructionsIcon = resolveLayoutIconField(
+        'model-dialogue',
+        'dialogueInstructionsIcon',
+        formData.get('dialogueInstructionsIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('dialogueTitle')) || 'Model dialogue',
+        instructions: trimText(formData.get('dialogueInstructions')),
+        imageUrl: trimText(formData.get('dialogueImageUrl')),
+        overlayColor: trimText(formData.get('dialogueOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('dialogueOverlayOpacity'),
+        ),
+        audioUrl: trimText(formData.get('dialogueAudioUrl')),
+        turns,
+        instructionsIcon,
+        layoutIcon,
+      };
+      break;
+    }
     case 'interactive-practice': {
-      const prompts = formData
-        .getAll('practicePrompt')
-        .map((value) => (typeof value === 'string' ? value : ''));
-      const optionEntries = formData
-        .getAll('practiceOptions')
-        .map((value) => (typeof value === 'string' ? value : ''));
-      const answers = formData
-        .getAll('practiceAnswer')
-        .map((value) => (typeof value === 'string' ? value : ''));
-      const questionCount = Math.max(prompts.length, optionEntries.length, answers.length);
+      const prompts = formData.getAll('practicePrompt').map((value) => trimText(value));
+      const optionsList = formData.getAll('practiceOptions');
+      const answers = formData.getAll('practiceAnswer').map((value) => trimText(value));
+      const count = Math.max(prompts.length, optionsList.length, answers.length);
       const questions = [];
-      for (let index = 0; index < questionCount; index += 1) {
-        const prompt = trimText(prompts[index] ?? '');
-        const optionsRaw = optionEntries[index] ?? '';
-        const answer = trimText(answers[index] ?? '');
-        const options = splitMultiline(optionsRaw);
+      for (let index = 0; index < count; index += 1) {
+        const prompt = prompts[index] || '';
+        const options = splitMultiline(optionsList[index]);
+        const answer = answers[index] || '';
         if (prompt || options.length || answer) {
           questions.push({ prompt, options, answer });
         }
       }
-      data.title = getRawValue('practiceTitle') ?? data.title;
-      data.instructions = getRawValue('practiceInstructions') ?? data.instructions;
-      data.instructionsIcon = getTrimmedValue('practiceInstructionsIcon') ?? data.instructionsIcon;
-      data.activityType =
-        getTrimmedValue('practiceActivityType') || data.activityType || 'multiple-choice';
-      data.activityTypeIcon =
-        getTrimmedValue('practiceActivityTypeIcon') ?? data.activityTypeIcon;
-      data.questions = questions.length ? questions : data.questions ?? [{}];
+      const instructionsIcon = resolveLayoutIconField(
+        'interactive-practice',
+        'practiceInstructionsIcon',
+        formData.get('practiceInstructionsIcon'),
+      );
+      const activityTypeIcon = resolveLayoutIconField(
+        'interactive-practice',
+        'practiceActivityTypeIcon',
+        formData.get('practiceActivityTypeIcon'),
+      );
+      state.data = {
+        activityType: trimText(formData.get('practiceActivityType')),
+        title: trimText(formData.get('practiceTitle')) || 'Practice',
+        instructions: trimText(formData.get('practiceInstructions')),
+        questions,
+        instructionsIcon,
+        activityTypeIcon,
+        layoutIcon,
+      };
       break;
     }
     case 'card-stack': {
-      data.pill = getRawValue('cardStackPill') ?? data.pill;
-      data.pillIcon = getTrimmedValue('cardStackPillIcon') ?? data.pillIcon;
-      data.title = getRawValue('cardStackTitle') ?? data.title;
-      data.description = getRawValue('cardStackDescription') ?? data.description;
-      if (formData.has('cardStackItems')) {
-        data.cards = parseCardStackItems(getRawValue('cardStackItems') ?? '');
-      }
-      data.cardIcon = getTrimmedValue('cardStackItemIcon') ?? data.cardIcon;
+      const pillIcon = resolveLayoutIconField(
+        'card-stack',
+        'cardStackPillIcon',
+        formData.get('cardStackPillIcon'),
+      );
+      const cardIcon = resolveLayoutIconField(
+        'card-stack',
+        'cardStackItemIcon',
+        formData.get('cardStackItemIcon'),
+      );
+      state.data = {
+        pill: trimText(formData.get('cardStackPill')),
+        pillIcon,
+        title: trimText(formData.get('cardStackTitle')) || 'Card stack',
+        description: trimText(formData.get('cardStackDescription')),
+        cards: parseCardStackItems(formData.get('cardStackItems')),
+        cardIcon,
+        layoutIcon,
+      };
       break;
     }
     case 'pill-with-gallery': {
-      data.pill = getRawValue('pillGalleryPill') ?? data.pill;
-      data.pillIcon = getTrimmedValue('pillGalleryPillIcon') ?? data.pillIcon;
-      data.title = getRawValue('pillGalleryTitle') ?? data.title;
-      data.description = getRawValue('pillGalleryDescription') ?? data.description;
-      data.mosaicStyle = getTrimmedValue('pillGalleryMosaicStyle') ?? data.mosaicStyle;
-      if (formData.has('pillGalleryItems')) {
-        data.gallery = parsePillGalleryItems(getRawValue('pillGalleryItems') ?? '');
-      }
-      if (formData.has('pillGalleryActions')) {
-        data.actions = parseGalleryActions(getRawValue('pillGalleryActions') ?? '');
-      }
-      data.itemIcon = getTrimmedValue('pillGalleryItemIcon') ?? data.itemIcon;
-      data.actionIcon = getTrimmedValue('pillGalleryActionIcon') ?? data.actionIcon;
+      const pillIcon = resolveLayoutIconField(
+        'pill-with-gallery',
+        'pillGalleryPillIcon',
+        formData.get('pillGalleryPillIcon'),
+      );
+      const itemIcon = resolveLayoutIconField(
+        'pill-with-gallery',
+        'pillGalleryItemIcon',
+        formData.get('pillGalleryItemIcon'),
+      );
+      state.data = {
+        pill: trimText(formData.get('pillGalleryPill')),
+        pillIcon,
+        title: trimText(formData.get('pillGalleryTitle')) || 'Scenario gallery',
+        description: trimText(formData.get('pillGalleryDescription')),
+        gallery: parsePillGalleryItems(formData.get('pillGalleryItems')),
+        itemIcon,
+        layoutIcon,
+      };
       break;
     }
-    case 'reflection-board': {
-      const columns = Array.isArray(data.columns) ? data.columns : [];
-      const glowColumn = { ...(columns[0] ?? {}) };
-      const growColumn = { ...(columns[1] ?? {}) };
-      data.pill = getRawValue('reflectionBoardPill') ?? data.pill;
-      data.pillIcon = getTrimmedValue('reflectionBoardPillIcon') ?? data.pillIcon;
-      data.title = getRawValue('reflectionBoardTitle') ?? data.title;
-      data.description = getRawValue('reflectionBoardDescription') ?? data.description;
-      if (formData.has('reflectionBoardGlowCards')) {
-        glowColumn.cards = parseReflectionBoardCards(
-          getRawValue('reflectionBoardGlowCards') ?? '',
-        );
-      }
-      if (formData.has('reflectionBoardGrowCards')) {
-        growColumn.cards = parseReflectionBoardCards(
-          getRawValue('reflectionBoardGrowCards') ?? '',
-        );
-      }
-      glowColumn.icon = getTrimmedValue('reflectionBoardGlowIcon') ?? glowColumn.icon;
-      growColumn.icon = getTrimmedValue('reflectionBoardGrowIcon') ?? growColumn.icon;
-      data.cardIcon = getTrimmedValue('reflectionBoardCardIcon') ?? data.cardIcon;
-      data.columns = [glowColumn, growColumn];
-      const boardNote = getRawValue('reflectionBoardNote');
-      if (boardNote !== null) {
-        data.boardNote = boardNote;
-      }
-      const footerLabel = getRawValue('reflectionBoardFooterLabel');
-      const footerDescription = getRawValue('reflectionBoardFooterDescription');
-      if (footerLabel !== null || footerDescription !== null) {
-        const footer =
-          data.footer && typeof data.footer === 'object' ? { ...data.footer } : {};
-        if (footerLabel !== null) {
-          footer.label = footerLabel;
-        }
-        if (footerDescription !== null) {
-          footer.description = footerDescription;
-        }
-        const hasFooterContent = trimText(footer.label) || trimText(footer.description);
-        data.footer = hasFooterContent ? footer : undefined;
-      }
+    case 'communicative-task': {
+      const preparationIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskPreparationIcon',
+        formData.get('taskPreparationIcon'),
+      );
+      const performanceIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskPerformanceIcon',
+        formData.get('taskPerformanceIcon'),
+      );
+      const scaffoldingIcon = resolveLayoutIconField(
+        'communicative-task',
+        'taskScaffoldingIcon',
+        formData.get('taskScaffoldingIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('taskTitle')) || 'Communicative task',
+        imageUrl: trimText(formData.get('taskImageUrl')),
+        overlayColor: trimText(formData.get('taskOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('taskOverlayOpacity'),
+        ),
+        preparation: trimText(formData.get('taskPreparation')),
+        performance: trimText(formData.get('taskPerformance')),
+        scaffolding: splitMultiline(formData.get('taskScaffolding')),
+        preparationIcon,
+        performanceIcon,
+        scaffoldingIcon,
+        layoutIcon,
+      };
       break;
     }
-    case 'split-grid': {
-      const columns = Array.isArray(data.columns) ? data.columns : [];
-      const leftColumn = { ...(columns[0] ?? {}) };
-      const rightColumn = { ...(columns[1] ?? {}) };
-      data.pill = getRawValue('splitGridPill') ?? data.pill;
-      data.pillIcon = getTrimmedValue('splitGridPillIcon') ?? data.pillIcon;
-      data.title = getRawValue('splitGridTitle') ?? data.title;
-      data.description = getRawValue('splitGridDescription') ?? data.description;
-      if (formData.has('splitGridLeftItems')) {
-        leftColumn.items = parseSplitGridItems(getRawValue('splitGridLeftItems') ?? '');
-      }
-      if (formData.has('splitGridRightItems')) {
-        rightColumn.items = parseSplitGridItems(getRawValue('splitGridRightItems') ?? '');
-      }
-      leftColumn.icon = getTrimmedValue('splitGridLeftIcon') ?? leftColumn.icon;
-      rightColumn.icon = getTrimmedValue('splitGridRightIcon') ?? rightColumn.icon;
-      data.itemIcon = getTrimmedValue('splitGridItemIcon') ?? data.itemIcon;
-      data.columns = [leftColumn, rightColumn];
-      const footerNote = getRawValue('splitGridFooterNote');
-      if (footerNote !== null) {
-        data.footerNote = footerNote;
-      }
+    case 'pronunciation-focus': {
+      const words = [
+        trimText(formData.get('pronunciationWordOne')),
+        trimText(formData.get('pronunciationWordTwo')),
+      ].filter(Boolean);
+      const sentences = [
+        trimText(formData.get('pronunciationSentenceOne')),
+        trimText(formData.get('pronunciationSentenceTwo')),
+      ].filter(Boolean);
+      const targetIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationTargetIcon',
+        formData.get('pronunciationTargetIcon'),
+      );
+      const wordsIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationWordsIcon',
+        formData.get('pronunciationWordsIcon'),
+      );
+      const sentencesIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationSentencesIcon',
+        formData.get('pronunciationSentencesIcon'),
+      );
+      const practiceIcon = resolveLayoutIconField(
+        'pronunciation-focus',
+        'pronunciationPracticeIcon',
+        formData.get('pronunciationPracticeIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('pronunciationTitle')) || 'Pronunciation focus',
+        target: trimText(formData.get('pronunciationTarget')),
+        words,
+        sentences,
+        practice: trimText(formData.get('pronunciationPractice')),
+        imageUrl: trimText(formData.get('pronunciationImageUrl')),
+        overlayColor: trimText(formData.get('pronunciationOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('pronunciationOverlayOpacity'),
+        ),
+        targetIcon,
+        wordsIcon,
+        sentencesIcon,
+        practiceIcon,
+        layoutIcon,
+      };
       break;
     }
-    case 'hero-overlay': {
-      data.pill = getRawValue('heroOverlayPill') ?? data.pill;
-      data.pillIcon = getTrimmedValue('heroOverlayPillIcon') ?? data.pillIcon;
-      data.headline = getRawValue('heroOverlayHeadline') ?? data.headline;
-      data.subtitle = getRawValue('heroOverlaySubtitle') ?? data.subtitle;
-      const overlayTint = getTrimmedValue('heroOverlayOverlayTint');
-      if (overlayTint !== null) {
-        data.overlayTint = overlayTint;
-      }
-      const overlayOpacity = getNumericValue('heroOverlayOverlayOpacity');
-      if (overlayOpacity !== null) {
-        data.overlayOpacity = overlayOpacity;
-      }
-      const alignment = getTrimmedValue('heroOverlayAlignment');
-      if (alignment !== null) {
-        data.alignment = alignment;
-      }
-      const cardWidth = getTrimmedValue('heroOverlayCardWidth');
-      if (cardWidth !== null) {
-        data.cardWidth = cardWidth;
-      }
-      const imageUrl = getTrimmedValue('heroOverlayImageUrl');
-      const imageAlt = getRawValue('heroOverlayImageAlt');
-      const imageCredit = getRawValue('heroOverlayImageCredit');
-      const imageCreditUrl = getRawValue('heroOverlayImageCreditUrl');
-      if (imageUrl !== null || imageAlt !== null || imageCredit !== null || imageCreditUrl !== null) {
-        const image = data.image && typeof data.image === 'object' ? { ...data.image } : {};
-        if (imageUrl !== null) {
-          image.url = imageUrl;
-        }
-        if (imageAlt !== null) {
-          image.alt = imageAlt;
-        }
-        if (imageCredit !== null) {
-          image.credit = imageCredit;
-        }
-        if (imageCreditUrl !== null) {
-          image.creditUrl = imageCreditUrl;
-        }
-        data.image = image;
-      }
+    case 'reflection': {
+      const prompts = [
+        trimText(formData.get('reflectionPromptOne')),
+        trimText(formData.get('reflectionPromptTwo')),
+        trimText(formData.get('reflectionPromptThree')),
+      ].filter(Boolean);
+      const promptsIcon = resolveLayoutIconField(
+        'reflection',
+        'reflectionPromptsIcon',
+        formData.get('reflectionPromptsIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('reflectionTitle')) || 'Reflection',
+        prompts,
+        imageUrl: trimText(formData.get('reflectionImageUrl')),
+        overlayColor: trimText(formData.get('reflectionOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reflectionOverlayOpacity'),
+        ),
+        promptsIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'grounding-activity': {
+      const stepsIcon = resolveLayoutIconField(
+        'grounding-activity',
+        'groundingStepsIcon',
+        formData.get('groundingStepsIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('groundingTitle')) || 'Grounding activity',
+        subtitle: trimText(formData.get('groundingSubtitle')),
+        steps: splitMultiline(formData.get('groundingSteps')),
+        imageUrl: trimText(formData.get('groundingBackgroundImage')),
+        overlayColor: trimText(formData.get('groundingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('groundingOverlayOpacity'),
+        ),
+        stepsIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'topic-introduction': {
+      const hookIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicHookIcon',
+        formData.get('topicHookIcon'),
+      );
+      const contextIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicContextIcon',
+        formData.get('topicContextIcon'),
+      );
+      const essentialQuestionIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicQuestionIcon',
+        formData.get('topicQuestionIcon'),
+      );
+      const keyVocabularyIcon = resolveLayoutIconField(
+        'topic-introduction',
+        'topicKeyVocabularyIcon',
+        formData.get('topicKeyVocabularyIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('topicTitle')) || 'Today we explore',
+        hook: trimText(formData.get('topicHook')),
+        context: trimText(formData.get('topicContext')),
+        essentialQuestion: trimText(formData.get('topicQuestion')),
+        keyVocabulary: splitMultiline(formData.get('topicKeyVocabulary')),
+        imageUrl: trimText(formData.get('topicBackgroundImage')),
+        overlayColor: trimText(formData.get('topicOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('topicOverlayOpacity'),
+        ),
+        hookIcon,
+        contextIcon,
+        essentialQuestionIcon,
+        keyVocabularyIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'guided-discovery': {
+      const contextIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryContextIcon',
+        formData.get('discoveryContextIcon'),
+      );
+      const discoveryPromptsIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryPromptsIcon',
+        formData.get('discoveryPromptsIcon'),
+      );
+      const noticingQuestionsIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryNoticingQuestionsIcon',
+        formData.get('discoveryNoticingQuestionsIcon'),
+      );
+      const sampleLanguageIcon = resolveLayoutIconField(
+        'guided-discovery',
+        'discoveryLanguageSamplesIcon',
+        formData.get('discoveryLanguageSamplesIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('discoveryTitle')) || 'Guided discovery',
+        context: trimText(formData.get('discoveryContext')),
+        discoveryPrompts: splitMultiline(formData.get('discoveryPrompts')),
+        noticingQuestions: splitMultiline(
+          formData.get('discoveryNoticingQuestions'),
+        ),
+        sampleLanguage: splitMultiline(
+          formData.get('discoveryLanguageSamples'),
+        ),
+        imageUrl: trimText(formData.get('discoveryBackgroundImage')),
+        overlayColor: trimText(formData.get('discoveryOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('discoveryOverlayOpacity'),
+        ),
+        contextIcon,
+        discoveryPromptsIcon,
+        noticingQuestionsIcon,
+        sampleLanguageIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'creative-practice': {
+      const briefIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeBriefIcon',
+        formData.get('creativeBriefIcon'),
+      );
+      const materialsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeMaterialsIcon',
+        formData.get('creativeMaterialsIcon'),
+      );
+      const makingStepsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeMakingStepsIcon',
+        formData.get('creativeMakingStepsIcon'),
+      );
+      const sharingOptionsIcon = resolveLayoutIconField(
+        'creative-practice',
+        'creativeSharingOptionsIcon',
+        formData.get('creativeSharingOptionsIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('creativeTitle')) || 'Creative practice',
+        brief: trimText(formData.get('creativeBrief')),
+        materials: splitMultiline(formData.get('creativeMaterials')),
+        makingSteps: splitMultiline(formData.get('creativeMakingSteps')),
+        sharingOptions: splitMultiline(
+          formData.get('creativeSharingOptions'),
+        ),
+        imageUrl: trimText(formData.get('creativeBackgroundImage')),
+        overlayColor: trimText(formData.get('creativeOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('creativeOverlayOpacity'),
+        ),
+        briefIcon,
+        materialsIcon,
+        makingStepsIcon,
+        sharingOptionsIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'task-divider': {
+      const timingIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerTimingIcon',
+        formData.get('dividerTimingIcon'),
+      );
+      const focusIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerFocusIcon',
+        formData.get('dividerFocusIcon'),
+      );
+      const actionsIcon = resolveLayoutIconField(
+        'task-divider',
+        'dividerActionsIcon',
+        formData.get('dividerActionsIcon'),
+      );
+      state.data = {
+        title: trimText(formData.get('dividerTitle')) || 'Task cycle',
+        subtitle: trimText(formData.get('dividerSubtitle')),
+        timing: trimText(formData.get('dividerTiming')),
+        focus: trimText(formData.get('dividerFocus')),
+        actions: splitMultiline(formData.get('dividerActions')),
+        imageUrl: trimText(formData.get('dividerBackgroundImage')),
+        overlayColor: trimText(formData.get('dividerOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('dividerOverlayOpacity'),
+        ),
+        timingIcon,
+        focusIcon,
+        actionsIcon,
+        layoutIcon,
+      };
+      break;
+    }
+    case 'task-reporting': {
+      state.data = {
+        title: trimText(formData.get('reportingTitle')) || 'Task reporting',
+        goal: trimText(formData.get('reportingGoal')),
+        prompts: splitMultiline(formData.get('reportingPrompts')),
+        roles: parseKeyValuePairs(formData.get('reportingRoles'), {
+          key: 'label',
+          valueKey: 'value',
+          delimiter: '|',
+        }),
+        evidence: splitMultiline(formData.get('reportingEvidence')),
+        imageUrl: trimText(formData.get('reportingBackgroundImage')),
+        overlayColor: trimText(formData.get('reportingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reportingOverlayOpacity'),
+        ),
+        goalIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingGoalIcon',
+          formData.get('reportingGoalIcon'),
+        ),
+        promptsIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingPromptsIcon',
+          formData.get('reportingPromptsIcon'),
+        ),
+        rolesIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingRolesIcon',
+          formData.get('reportingRolesIcon'),
+        ),
+        evidenceIcon: resolveLayoutIconField(
+          'task-reporting',
+          'reportingEvidenceIcon',
+          formData.get('reportingEvidenceIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'genre-deconstruction': {
+      state.data = {
+        title: trimText(formData.get('genreTitle')) || 'Genre deconstruction',
+        genre: trimText(formData.get('genreType')),
+        purpose: trimText(formData.get('genrePurpose')),
+        features: parseKeyValuePairs(formData.get('genreFeatures'), {
+          key: 'label',
+          valueKey: 'value',
+          delimiter: '|',
+        }),
+        mentorText: trimText(formData.get('genreMentorText')),
+        imageUrl: trimText(formData.get('genreBackgroundImage')),
+        overlayColor: trimText(formData.get('genreOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('genreOverlayOpacity'),
+        ),
+        genreIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreTypeIcon',
+          formData.get('genreTypeIcon'),
+        ),
+        purposeIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genrePurposeIcon',
+          formData.get('genrePurposeIcon'),
+        ),
+        featuresIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreFeaturesIcon',
+          formData.get('genreFeaturesIcon'),
+        ),
+        mentorTextIcon: resolveLayoutIconField(
+          'genre-deconstruction',
+          'genreMentorTextIcon',
+          formData.get('genreMentorTextIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'linguistic-feature-hunt': {
+      state.data = {
+        title: trimText(formData.get('featureTitle')) || 'Feature hunt',
+        sourceText: trimText(formData.get('featureSourceText')),
+        features: splitMultiline(formData.get('featureTargets')),
+        reflection: splitMultiline(formData.get('featureReflection')),
+        imageUrl: trimText(formData.get('featureBackgroundImage')),
+        overlayColor: trimText(formData.get('featureOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('featureOverlayOpacity'),
+        ),
+        sourceTextIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureSourceTextIcon',
+          formData.get('featureSourceTextIcon'),
+        ),
+        featuresIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureTargetsIcon',
+          formData.get('featureTargetsIcon'),
+        ),
+        reflectionIcon: resolveLayoutIconField(
+          'linguistic-feature-hunt',
+          'featureReflectionIcon',
+          formData.get('featureReflectionIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'text-reconstruction': {
+      state.data = {
+        title: trimText(formData.get('reconstructionTitle')) || 'Text reconstruction',
+        context: trimText(formData.get('reconstructionContext')),
+        steps: splitMultiline(formData.get('reconstructionSteps')),
+        segments: splitMultiline(formData.get('reconstructionSegments')),
+        imageUrl: trimText(formData.get('reconstructionBackgroundImage')),
+        overlayColor: trimText(formData.get('reconstructionOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('reconstructionOverlayOpacity'),
+        ),
+        contextIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionContextIcon',
+          formData.get('reconstructionContextIcon'),
+        ),
+        stepsIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionStepsIcon',
+          formData.get('reconstructionStepsIcon'),
+        ),
+        segmentsIcon: resolveLayoutIconField(
+          'text-reconstruction',
+          'reconstructionSegmentsIcon',
+          formData.get('reconstructionSegmentsIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'jumbled-text-sequencing': {
+      state.data = {
+        title: trimText(formData.get('sequencingTitle')) || 'Sequence the text',
+        instructions: trimText(formData.get('sequencingInstructions')),
+        segments: splitMultiline(formData.get('sequencingSegments')),
+        supportTips: splitMultiline(formData.get('sequencingSupportTips')),
+        imageUrl: trimText(formData.get('sequencingBackgroundImage')),
+        overlayColor: trimText(formData.get('sequencingOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('sequencingOverlayOpacity'),
+        ),
+        instructionsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingInstructionsIcon',
+          formData.get('sequencingInstructionsIcon'),
+        ),
+        segmentsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingSegmentsIcon',
+          formData.get('sequencingSegmentsIcon'),
+        ),
+        supportTipsIcon: resolveLayoutIconField(
+          'jumbled-text-sequencing',
+          'sequencingSupportTipsIcon',
+          formData.get('sequencingSupportTipsIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'scaffolded-joint-construction': {
+      state.data = {
+        title: trimText(formData.get('jointTitle')) || 'Scaffolded joint construction',
+        mentorFocus: trimText(formData.get('jointMentor')),
+        sharedOutcome: trimText(formData.get('jointSharedOutcome')),
+        teacherMoves: splitMultiline(formData.get('jointTeacherMoves')),
+        learnerMoves: splitMultiline(formData.get('jointLearnerMoves')),
+        imageUrl: trimText(formData.get('jointBackgroundImage')),
+        overlayColor: trimText(formData.get('jointOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('jointOverlayOpacity'),
+        ),
+        mentorFocusIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointMentorIcon',
+          formData.get('jointMentorIcon'),
+        ),
+        sharedOutcomeIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointSharedOutcomeIcon',
+          formData.get('jointSharedOutcomeIcon'),
+        ),
+        teacherMovesIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointTeacherMovesIcon',
+          formData.get('jointTeacherMovesIcon'),
+        ),
+        learnerMovesIcon: resolveLayoutIconField(
+          'scaffolded-joint-construction',
+          'jointLearnerMovesIcon',
+          formData.get('jointLearnerMovesIcon'),
+        ),
+        layoutIcon,
+      };
+      break;
+    }
+    case 'independent-construction-checklist': {
+      state.data = {
+        title: trimText(formData.get('checklistTitle')) || 'Independent construction',
+        reminder: trimText(formData.get('checklistReminder')),
+        checklist: splitMultiline(formData.get('checklistItems')),
+        stretchGoals: splitMultiline(formData.get('checklistStretch')),
+        imageUrl: trimText(formData.get('checklistBackgroundImage')),
+        overlayColor: trimText(formData.get('checklistOverlayColor')),
+        overlayOpacity: normaliseOverlayPercent(
+          formData.get('checklistOverlayOpacity'),
+        ),
+        reminderIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistReminderIcon',
+          formData.get('checklistReminderIcon'),
+        ),
+        checklistIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistItemsIcon',
+          formData.get('checklistItemsIcon'),
+        ),
+        stretchGoalsIcon: resolveLayoutIconField(
+          'independent-construction-checklist',
+          'checklistStretchIcon',
+          formData.get('checklistStretchIcon'),
+        ),
+        layoutIcon,
+      };
       break;
     }
     default:
       break;
   }
-
-  return { layout, icon: layoutIcon, data };
+  return state;
 }
 
 function updateBuilderJsonPreview() {
@@ -8226,32 +9005,220 @@ function updateBuilderPreview() {
   if (!state) {
     return;
   }
-  builderPreview.classList.add('builder-preview--blank');
-  const blankSlide = createBlankSlide();
-  if (blankSlide instanceof HTMLElement) {
-    const previewSlide = blankSlide.cloneNode(true);
+  if (state.layout === 'blank-canvas') {
+    builderPreview.classList.add('builder-preview--blank');
+    const blankSlide = createBlankSlide();
+    if (blankSlide instanceof HTMLElement) {
+      const previewSlide = blankSlide.cloneNode(true);
+      previewSlide.classList.remove('hidden');
+      builderPreview.appendChild(previewSlide);
+      builderPreview.classList.add('has-content');
+    }
+    return;
+  }
+  let slide = null;
+  switch (state.layout) {
+    case 'learning-objectives':
+      slide = createLearningObjectivesSlide(state.data);
+      break;
+    case 'model-dialogue':
+      slide = createModelDialogueSlide(state.data);
+      break;
+    case 'interactive-practice':
+      slide = createInteractivePracticeSlide(state.data);
+      break;
+    case 'card-stack':
+      slide = createCardStackSlide(state.data);
+      break;
+    case 'pill-with-gallery':
+      slide = createPillWithGallerySlide(state.data);
+      break;
+    case 'communicative-task':
+      slide = createCommunicativeTaskSlide(state.data);
+      break;
+    case 'pronunciation-focus':
+      slide = createPronunciationFocusSlide(state.data);
+      break;
+    case 'reflection':
+      slide = createReflectionSlide(state.data);
+      break;
+    case 'grounding-activity':
+      slide = createGroundingActivitySlide(state.data);
+      break;
+    case 'topic-introduction':
+      slide = createTopicIntroductionSlide(state.data);
+      break;
+    case 'guided-discovery':
+      slide = createGuidedDiscoverySlide(state.data);
+      break;
+    case 'creative-practice':
+      slide = createCreativePracticeSlide(state.data);
+      break;
+    case 'task-divider':
+      slide = createTaskDividerSlide(state.data);
+      break;
+    case 'task-reporting':
+      slide = createTaskReportingSlide(state.data);
+      break;
+    case 'genre-deconstruction':
+      slide = createGenreDeconstructionSlide(state.data);
+      break;
+    case 'linguistic-feature-hunt':
+      slide = createLinguisticFeatureHuntSlide(state.data);
+      break;
+    case 'text-reconstruction':
+      slide = createTextReconstructionSlide(state.data);
+      break;
+    case 'jumbled-text-sequencing':
+      slide = createJumbledTextSequencingSlide(state.data);
+      break;
+    case 'scaffolded-joint-construction':
+      slide = createScaffoldedJointConstructionSlide(state.data);
+      break;
+    case 'independent-construction-checklist':
+      slide = createIndependentConstructionChecklistSlide(state.data);
+      break;
+    default:
+      break;
+  }
+  if (slide instanceof HTMLElement) {
+    const previewSlide = slide.cloneNode(true);
     previewSlide.classList.remove('hidden');
     builderPreview.appendChild(previewSlide);
     builderPreview.classList.add('has-content');
   }
 }
 
+function updateImageSearchStatus(message = '', tone = 'info') {
+  if (!(builderImageStatus instanceof HTMLElement)) {
+    return;
+  }
+  builderImageStatus.textContent = message;
+  if (message) {
+    builderImageStatus.dataset.tone = tone;
+  } else {
+    builderImageStatus.removeAttribute('data-tone');
+  }
+}
+
+function renderImageSearchResults(photos = []) {
+  if (!(builderImageResults instanceof HTMLElement)) {
+    return;
+  }
+  builderImageResults.innerHTML = '';
+  if (!Array.isArray(photos) || !photos.length) {
+    return;
+  }
+  photos.forEach((photo, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'image-result';
+    button.dataset.url = photo.src?.large2x || photo.src?.large || '';
+    button.dataset.alt = photo.alt || '';
+    button.dataset.id = String(photo.id ?? index);
+    button.setAttribute('role', 'option');
+    button.setAttribute('aria-selected', 'false');
+    const img = document.createElement('img');
+    img.src = photo.src?.medium || photo.src?.small || photo.src?.tiny || '';
+    img.alt = photo.alt || 'Search result';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    button.appendChild(img);
+    builderImageResults.appendChild(button);
+  });
+}
+
+function selectImageResult(button) {
+  if (!(button instanceof HTMLElement)) {
+    return;
+  }
+  const url = button.dataset.url || '';
+  if (builderImageResults instanceof HTMLElement) {
+    builderImageResults
+      .querySelectorAll('.image-result')
+      .forEach((item) => {
+        item.classList.remove('is-selected');
+        item.setAttribute('aria-selected', 'false');
+      });
+  }
+  button.classList.add('is-selected');
+  button.setAttribute('aria-selected', 'true');
+  const layout = getSelectedLayout();
+  if (layout !== 'blank-canvas') {
+    return;
+  }
+}
+
+function handleImageSearch() {
+  const query = trimText(builderImageSearchInput?.value ?? '');
+  searchPexelsImages(query);
+}
+
+async function searchPexelsImages(query) {
+  if (!query) {
+    updateImageSearchStatus('Enter a keyword to search for lesson visuals.', 'info');
+    renderImageSearchResults([]);
+    return;
+  }
+  updateImageSearchStatus('Searching Pexels...', 'info');
+  if (!PEXELS_API_KEY) {
+    updateImageSearchStatus('Pexels search is unavailable.', 'error');
+    return;
+  }
+  try {
+    const response = await fetch(
+      `${PEXELS_SEARCH_URL}?query=${encodeURIComponent(query)}&per_page=8`,
+      {
+        headers: {
+          Authorization: PEXELS_API_KEY,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`Pexels request failed with status ${response.status}`);
+    }
+    const data = await response.json();
+    const photos = Array.isArray(data?.photos) ? data.photos : [];
+    if (!photos.length) {
+      updateImageSearchStatus('No images found. Try another term.', 'info');
+    } else {
+      updateImageSearchStatus(`Found ${photos.length} image${photos.length === 1 ? '' : 's'}.`, 'success');
+    }
+    renderImageSearchResults(photos);
+  } catch (error) {
+    console.warn('Image search failed', error);
+    updateImageSearchStatus("We couldn't fetch images right now.", 'error');
+  }
+}
+
 function resetBuilderForm() {
   if (builderForm instanceof HTMLFormElement) {
     builderForm.reset();
-  }
-  if (Array.isArray(builderLayoutInputs)) {
-    builderLayoutInputs.forEach((input) => {
-      if (input instanceof HTMLInputElement) {
-        input.checked = input.value === 'blank-canvas';
-      }
+    Object.values(LAYOUT_FIELD_ICON_DEFAULTS).forEach((fields = {}) => {
+      Object.entries(fields).forEach(([fieldName, iconClass]) => {
+        const input = builderForm.elements.namedItem?.(fieldName);
+        if (input instanceof HTMLInputElement && iconClass) {
+          input.placeholder = iconClass;
+        }
+      });
     });
   }
+  Object.entries(LAYOUT_ICON_DEFAULTS).forEach(([layout, icon]) => {
+    setLayoutIconValue(layout, icon);
+  });
+  resetDialogueList([]);
+  resetPracticeList([]);
+  if (builderImageResults instanceof HTMLElement) {
+    builderImageResults.innerHTML = '';
+  }
+  if (builderImageSearchInput instanceof HTMLInputElement) {
+    builderImageSearchInput.value = '';
+  }
+  updateImageSearchStatus('', 'info');
   setSelectedLayout('blank-canvas');
   syncBuilderLayout('blank-canvas');
   applyBuilderLayoutDefaults('blank-canvas', { updatePreview: true });
 }
-
 function openBuilderOverlay({ layout } = {}) {
   if (!(builderOverlay instanceof HTMLElement)) {
     return;
@@ -8462,16 +9429,10 @@ function handleModuleBuilderMessage(event) {
       title: config?.data?.title,
       activityType: config?.type,
     });
-    const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
-    if (practiceSlide instanceof HTMLElement) {
-      const resolvedType = applyInteractivePracticeType(
-        practiceSlide,
-        config?.type ?? moduleEditTarget.dataset.activityType,
-      );
-      if (resolvedType) {
-        moduleEditTarget.dataset.activityType = resolvedType;
-      } else {
-        delete moduleEditTarget.dataset.activityType;
+    if (config?.type) {
+      const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+      if (practiceSlide instanceof HTMLElement) {
+        applyInteractivePracticeType(practiceSlide, config.type);
       }
     }
     moduleEditTarget.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -8502,16 +9463,10 @@ function handleModuleBuilderMessage(event) {
   });
 
   moduleTargetCanvas.appendChild(moduleElement);
-  const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
-  if (practiceSlide instanceof HTMLElement) {
-    const resolvedType = applyInteractivePracticeType(
-      practiceSlide,
-      config?.type ?? moduleElement.dataset.activityType,
-    );
-    if (resolvedType) {
-      moduleElement.dataset.activityType = resolvedType;
-    } else {
-      delete moduleElement.dataset.activityType;
+  if (config?.type) {
+    const practiceSlide = moduleTargetCanvas.closest('.interactive-practice-slide');
+    if (practiceSlide instanceof HTMLElement) {
+      applyInteractivePracticeType(practiceSlide, config.type);
     }
   }
   moduleElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -10691,1361 +11646,1767 @@ function createBaseLessonSlide(layout, options = {}) {
   return { slide, inner };
 }
 
-const getPlainText = (value) => {
-  if (!value) {
-    return '';
-  }
-  if (typeof value === 'string') {
-    return value.trim();
-  }
-  if (typeof value === 'number') {
-    return String(value);
-  }
-  if (typeof value === 'object') {
-    if (typeof value.text === 'string') {
-      return value.text.trim();
-    }
-    if (typeof value.content === 'string') {
-      return value.content.trim();
-    }
-  }
-  return '';
-};
-
-const normaliseTextArray = (value) => {
-  if (Array.isArray(value)) {
-    return value
-      .map((entry) => getPlainText(entry))
-      .map((entry) => trimText(entry))
-      .filter(Boolean);
-  }
-  const single = getPlainText(value);
-  return single ? [single] : [];
-};
-
-function normaliseContentBlock(block) {
-  if (!block) {
-    return null;
-  }
-
-  if (typeof block === 'string' || typeof block === 'number') {
-    return { type: 'paragraph', text: getPlainText(block) };
-  }
-
-  if (Array.isArray(block)) {
-    const items = normaliseTextArray(block);
-    if (!items.length) {
-      return null;
-    }
-    return { type: 'list', items };
-  }
-
-  if (typeof block !== 'object') {
-    return null;
-  }
-
-  const type = trimText(block.type ?? block.kind ?? '') || (Array.isArray(block.items) ? 'list' : 'paragraph');
-  const region = trimText(block.region ?? block.slot ?? '');
-
-  switch (type) {
-    case 'list': {
-      const items = normaliseTextArray(block.items ?? block.text ?? []);
-      if (!items.length) {
-        return null;
-      }
-      const ordered = Boolean(block.ordered || block.numbered);
-      return { type: 'list', items, ordered, region };
-    }
-    case 'quote': {
-      const text = getPlainText(block.text ?? block.content ?? '');
-      if (!text) {
-        return null;
-      }
-      const attribution = getPlainText(block.attribution ?? block.citation ?? '');
-      return { type: 'quote', text, attribution, region };
-    }
-    case 'media': {
-      const media = block.media ?? block;
-      return { type: 'media', media, caption: getPlainText(block.caption ?? ''), region };
-    }
-    case 'callout': {
-      const headline = getPlainText(block.title ?? block.heading ?? '');
-      const bodyItems = normaliseTextArray(block.text ?? block.body ?? block.items ?? []);
-      const description = getPlainText(block.description ?? '');
-      return {
-        type: 'callout',
-        headline,
-        body: bodyItems,
-        description,
-        region,
-      };
-    }
-    case 'paragraph':
-    default: {
-      const text = getPlainText(block.text ?? block.content ?? block.body ?? '');
-      if (!text) {
-        return null;
-      }
-      return { type: 'paragraph', text, region };
-    }
-  }
-}
-
-function appendContentBlock(container, block) {
-  if (!(container instanceof HTMLElement)) {
-    return false;
-  }
-  const normalised = normaliseContentBlock(block);
-  if (!normalised) {
-    return false;
-  }
-
-  switch (normalised.type) {
-    case 'list': {
-      const list = document.createElement(normalised.ordered ? 'ol' : 'ul');
-      list.className = normalised.ordered ? 'ordered-list' : 'instruction-list';
-      normalised.items.forEach((item) => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        list.appendChild(li);
-      });
-      container.appendChild(list);
-      return true;
-    }
-    case 'quote': {
-      const quote = document.createElement('blockquote');
-      quote.className = 'highlight-quote';
-      quote.textContent = normalised.text;
-      if (normalised.attribution) {
-        const cite = document.createElement('cite');
-        cite.textContent = normalised.attribution;
-        quote.appendChild(document.createTextNode(' '));
-        quote.appendChild(cite);
-      }
-      container.appendChild(quote);
-      return true;
-    }
-    case 'media': {
-      const figure = document.createElement('figure');
-      figure.className = 'context-image';
-      const media = normalised.media ?? {};
-      const mediaMeta = normaliseGalleryMedia({
-        url: media.url ?? media.src ?? media.image,
-        alt: media.alt ?? media.description ?? '',
-        credit: media.credit ?? '',
-        creditUrl: media.creditUrl ?? media.creditURL ?? '',
-      });
-      if (mediaMeta.url) {
-        const img = document.createElement('img');
-        img.dataset.remoteSrc = mediaMeta.url;
-        img.alt = mediaMeta.alt || 'Illustration';
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        figure.appendChild(img);
-      }
-      if (normalised.caption) {
-        const figcaption = document.createElement('figcaption');
-        figcaption.textContent = normalised.caption;
-        figure.appendChild(figcaption);
-      }
-      container.appendChild(figure);
-      return true;
-    }
-    case 'callout': {
-      const card = document.createElement('div');
-      card.className = 'card stack stack-sm';
-      const heading = trimText(normalised.headline);
-      if (heading) {
-        const titleEl = document.createElement('h3');
-        titleEl.textContent = heading;
-        card.appendChild(titleEl);
-      }
-      const description = trimText(normalised.description);
-      if (description) {
-        const descEl = document.createElement('p');
-        descEl.textContent = description;
-        card.appendChild(descEl);
-      }
-      if (Array.isArray(normalised.body) && normalised.body.length) {
-        normalised.body.forEach((line) => {
-          const paragraph = document.createElement('p');
-          paragraph.textContent = line;
-          card.appendChild(paragraph);
-        });
-      }
-      container.appendChild(card);
-      return true;
-    }
-    case 'paragraph':
-    default: {
-      const paragraph = document.createElement('p');
-      paragraph.textContent = normalised.text;
-      container.appendChild(paragraph);
-      return true;
-    }
-  }
-}
-
-function appendContentBlocks(container, blocks) {
-  if (!Array.isArray(blocks)) {
-    return appendContentBlock(container, blocks);
-  }
-  let appended = false;
-  blocks.forEach((block) => {
-    appended = appendContentBlock(container, block) || appended;
-  });
-  return appended;
-}
-
-function parseHexColor(value) {
-  if (typeof value !== "string") {
-    return null;
-  }
-  const hex = value.trim().replace(/^#/, "");
-  if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) {
-    return null;
-  }
-  const normalized = hex.length === 3
-    ? hex
-        .split("")
-        .map((char) => char + char)
-        .join("")
-    : hex;
-  const int = Number.parseInt(normalized, 16);
-  return {
-    r: (int >> 16) & 255,
-    g: (int >> 8) & 255,
-    b: int & 255,
-  };
-}
-
-function resolveOverlayTintValue(tint, opacity) {
-  const resolvedTint = trimText(tint);
-  if (!resolvedTint && !(typeof opacity === "number" || typeof opacity === "string")) {
-    return "";
-  }
-
-  if (resolvedTint.startsWith("linear-gradient")) {
-    return resolvedTint;
-  }
-
-  const resolvedOpacity = resolveOverlayOpacity(opacity ?? 65);
-  if (!resolvedTint) {
-    return `rgba(14, 30, 20, ${resolvedOpacity || 0.6})`;
-  }
-
-  if (resolvedTint.startsWith("rgba") || resolvedTint.startsWith("rgb")) {
-    return resolvedTint;
-  }
-
-  if (resolvedTint.startsWith("hsla") || resolvedTint.startsWith("hsl")) {
-    return resolvedTint;
-  }
-
-  const parsed = parseHexColor(resolvedTint);
-  if (parsed) {
-    const channelOpacity = resolvedOpacity || 0.6;
-    return `rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${channelOpacity})`;
-  }
-
-  return resolvedTint;
-}
-
-function normaliseHeroOverlayImage({ image, alt, credit, creditUrl } = {}) {
-  const resolved = {
-    url: "",
-    alt: trimText(alt),
-    credit: trimText(credit),
-    creditUrl: trimText(creditUrl),
-  };
-
-  const assignFromObject = (source = {}) => {
-    if (!source || typeof source !== "object") {
-      return;
-    }
-    if (!resolved.url) {
-      resolved.url =
-        trimText(source.url ?? source.src ?? source.image ?? source.href ?? "") || resolved.url;
-    }
-    if (!resolved.alt) {
-      resolved.alt = trimText(source.alt ?? source.label ?? "");
-    }
-    if (!resolved.credit) {
-      resolved.credit = trimText(source.credit ?? "");
-    }
-    if (!resolved.creditUrl) {
-      resolved.creditUrl = trimText(source.creditUrl ?? source.creditURL ?? "");
-    }
-  };
-
-  if (typeof image === "string") {
-    resolved.url = trimText(image);
-  } else if (Array.isArray(image)) {
-    for (const entry of image) {
-      assignFromObject(entry);
-      if (resolved.url) {
-        break;
-      }
-    }
-  } else {
-    assignFromObject(image);
-  }
-
-  return resolved;
-}
-
-function createHeroOverlaySlide({
-  pill,
-  pillIcon,
-  headline,
-  subtitle,
-  overlayTint,
-  overlayOpacity,
-  alignment,
-  cardWidth,
-  image,
-  alt,
-  credit,
-  creditUrl,
-  icon,
-  iconClass,
+function createLearningObjectivesSlide({
+  title = 'Learning Outcomes',
+  goals = [],
+  communicativeGoal = '',
+  goalIcon = '',
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide("hero-overlay", { iconClass: resolvedIcon });
+  const { slide, inner } = createBaseLessonSlide('learning-objectives', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('learning-objectives', layoutIcon),
+  });
 
-  slide.classList.add("full-width-bg");
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
 
-  const media = document.createElement("div");
-  media.className = "bg-media";
-  slide.insertBefore(media, inner);
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Learning Outcomes';
+  header.appendChild(heading);
 
-  const overlay = document.createElement("div");
-  overlay.className = "img-overlay";
-  const overlayValue = resolveOverlayTintValue(overlayTint, overlayOpacity);
-  if (overlayValue) {
-    overlay.style.background = overlayValue;
+  const goalText = trimText(communicativeGoal);
+  if (goalText) {
+    const goalElement = document.createElement('p');
+    goalElement.className = 'lesson-communicative';
+    const lead = document.createElement('strong');
+    lead.textContent = 'So you can';
+    goalElement.appendChild(lead);
+    goalElement.appendChild(document.createTextNode(` ${goalText}`));
+    header.appendChild(goalElement);
   }
-  slide.insertBefore(overlay, inner);
 
-  const imageMeta = normaliseHeroOverlayImage({ image, alt, credit, creditUrl });
-  if (imageMeta.url) {
-    const img = document.createElement("img");
-    img.dataset.remoteSrc = imageMeta.url;
-    img.alt = imageMeta.alt || "Hero background";
-    img.loading = "lazy";
-    img.decoding = "async";
-    media.appendChild(img);
+  const body = document.createElement('div');
+  body.className = 'lesson-body';
+  inner.appendChild(body);
+
+  const cleanedGoals = Array.isArray(goals) ? goals.map((goal) => trimText(goal)).filter(Boolean) : [];
+  const goalIconClass =
+    normaliseIconClass(goalIcon) ||
+    getLayoutFieldIconDefault('learning-objectives', 'learningGoalIcon') ||
+    'fas fa-bullseye';
+  if (cleanedGoals.length) {
+    const card = document.createElement('div');
+    card.className = 'card lesson-goals-card';
+    const list = document.createElement('ul');
+    list.className = 'lesson-goals';
+    cleanedGoals.forEach((goal, index) => {
+      const item = document.createElement('li');
+      const icon = document.createElement('span');
+      icon.className = 'lesson-goal-icon';
+      const iconGlyph = document.createElement('i');
+      iconGlyph.className = goalIconClass;
+      iconGlyph.setAttribute('aria-hidden', 'true');
+      const iconLabel = document.createElement('span');
+      iconLabel.className = 'sr-only';
+      iconLabel.textContent = `Goal ${index + 1}`;
+      icon.appendChild(iconGlyph);
+      icon.appendChild(iconLabel);
+      const text = document.createElement('p');
+      text.textContent = goal;
+      item.appendChild(icon);
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    card.appendChild(list);
+    body.appendChild(card);
   } else {
-    media.classList.add("remote-image-fallback");
-  }
-
-  if (imageMeta.credit) {
-    slide.dataset.imageCredit = imageMeta.credit;
-  }
-  if (imageMeta.creditUrl) {
-    slide.dataset.imageCreditUrl = imageMeta.creditUrl;
-  }
-
-  inner.innerHTML = "";
-  const content = document.createElement("div");
-  content.className = "bg-content";
-  const resolvedAlignment = trimText(alignment).toLowerCase();
-  let overlayAlignment = "overlay-align-left";
-  if (resolvedAlignment === "center" || resolvedAlignment === "centre") {
-    overlayAlignment = "overlay-align-center";
-    inner.style.justifyContent = "center";
-  } else if (resolvedAlignment === "end" || resolvedAlignment === "right") {
-    overlayAlignment = "overlay-align-right";
-    inner.style.justifyContent = "flex-end";
-  } else {
-    inner.style.justifyContent = "flex-start";
-  }
-  content.classList.add(overlayAlignment);
-  inner.appendChild(content);
-
-  const card = document.createElement("div");
-  card.className = "overlay-card";
-  if (overlayAlignment === "overlay-align-center") {
-    card.classList.add("centered");
-  }
-  const resolvedCardWidth =
-    typeof cardWidth === "number" && !Number.isNaN(cardWidth)
-      ? `${cardWidth}px`
-      : trimText(cardWidth);
-  if (resolvedCardWidth) {
-    card.style.maxWidth = resolvedCardWidth;
-  }
-  content.appendChild(card);
-
-  const pillText = trimText(pill) || "Session partnership";
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement("span");
-    pillEl.className = "pill overlay-pill";
-    if (pillIconClass) {
-      const iconEl = document.createElement("i");
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute("aria-hidden", "true");
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(" "));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    card.appendChild(pillEl);
-  }
-
-  const resolvedHeadline = trimText(headline) || "Set the tone for today's session";
-  const headingEl = document.createElement("h1");
-  headingEl.textContent = resolvedHeadline;
-  card.appendChild(headingEl);
-
-  const resolvedSubtitle = trimText(subtitle);
-  if (resolvedSubtitle) {
-    const subtitleEl = document.createElement("p");
-    subtitleEl.className = "deck-subtitle";
-    subtitleEl.textContent = resolvedSubtitle;
-    card.appendChild(subtitleEl);
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the lesson goals to orient learners.';
+    body.appendChild(placeholder);
   }
 
   return slide;
 }
 
-function normaliseGalleryMedia(entry = {}) {
-  const resolved = {
-    url: '',
-    alt: '',
-    credit: '',
-    creditUrl: '',
-  };
-  if (!entry || typeof entry !== 'object') {
-    return resolved;
-  }
-  if (typeof entry.url === 'string') {
-    resolved.url = trimText(entry.url);
-  }
-  if (!resolved.url && typeof entry.src === 'string') {
-    resolved.url = trimText(entry.src);
-  }
-  if (!resolved.url && typeof entry.image === 'string') {
-    resolved.url = trimText(entry.image);
-  }
-  if (!resolved.alt && typeof entry.alt === 'string') {
-    resolved.alt = trimText(entry.alt);
-  }
-  if (!resolved.credit && typeof entry.credit === 'string') {
-    resolved.credit = trimText(entry.credit);
-  }
-  if (!resolved.creditUrl && typeof entry.creditUrl === 'string') {
-    resolved.creditUrl = trimText(entry.creditUrl);
-  }
-  if (!resolved.creditUrl && typeof entry.creditURL === 'string') {
-    resolved.creditUrl = trimText(entry.creditURL);
-  }
-  return resolved;
-}
-
-function applyMosaicStyleClass(target, value) {
-  if (!(target instanceof HTMLElement)) {
-    return;
-  }
-  const slug = trimText(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-+|-+$/g, '');
-  if (slug) {
-    target.classList.add(`mosaic-style-${slug}`);
-  }
-}
-
-function createPillWithGallerySlide({
-  pill,
-  pillIcon,
-  title,
-  description,
-  gallery,
-  actions,
-  mosaicStyle,
-  actionIcon,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-  icon,
-  iconClass,
+function createModelDialogueSlide({
+  title = 'Model dialogue',
+  instructions = '',
+  imageUrl = '',
+  audioUrl = '',
+  turns = [],
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('pill-with-gallery', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
+  const { slide, inner } = createBaseLessonSlide('model-dialogue', {
+    imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('model-dialogue', layoutIcon),
   });
 
-  inner.classList.add('stack', 'stack-lg');
+  const resolvedImage = trimText(imageUrl);
 
   const header = document.createElement('header');
-  header.className = 'lesson-header pill-gallery-header stack stack-sm';
+  header.className = 'lesson-header';
   inner.appendChild(header);
 
-  const pillText = trimText(pill) || 'Scenario spotlight';
-  const pillIconClass = resolveLayoutIconField('pill-with-gallery', 'pillGalleryPillIcon', pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill pill-gallery-pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    header.appendChild(pillEl);
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Model dialogue';
+  header.appendChild(heading);
+
+  const instructionText = trimText(instructions);
+  if (instructionText) {
+    const instructionEl = document.createElement('p');
+    instructionEl.className = 'lesson-instructions';
+    instructionEl.textContent = instructionText;
+    header.appendChild(instructionEl);
   }
 
-  const resolvedTitle = trimText(title) || 'Show the sprint momentum at a glance';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  header.appendChild(headingEl);
+  const body = document.createElement('div');
+  body.className = 'lesson-dialogue';
+  inner.appendChild(body);
 
-  const resolvedDescription = trimText(description);
-  if (resolvedDescription) {
-    const leadEl = document.createElement('p');
-    leadEl.className = 'pill-gallery-lead';
-    leadEl.textContent = resolvedDescription;
-    header.appendChild(leadEl);
-  }
+  const dialogueWrap = document.createElement('div');
+  dialogueWrap.className = 'lesson-dialogue-text';
+  body.appendChild(dialogueWrap);
 
-  const grid = document.createElement('div');
-  grid.className = 'pill-gallery-grid';
-  applyMosaicStyleClass(grid, mosaicStyle);
-  inner.appendChild(grid);
+  const cleanedTurns = Array.isArray(turns)
+    ? turns
+        .map((turn) => ({ speaker: trimText(turn?.speaker), line: trimText(turn?.line) }))
+        .filter((turn) => turn.speaker || turn.line)
+    : [];
 
-  const items = Array.isArray(gallery) ? gallery : [];
-  if (!items.length) {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'pill-gallery-empty';
-    placeholder.textContent = 'Add gallery tiles to spotlight the build.';
-    grid.appendChild(placeholder);
-  } else {
-    items.forEach((item, index) => {
-      if (!item || typeof item !== 'object') {
-        return;
-      }
-      const figure = document.createElement('figure');
-      figure.className = 'pill-gallery-item';
-      grid.appendChild(figure);
-
-      const imageMeta = (() => {
-        if (typeof item.image === 'string') {
-          return normaliseGalleryMedia({ url: item.image });
-        }
-        if (item.image && typeof item.image === 'object') {
-          return normaliseGalleryMedia(item.image);
-        }
-        return normaliseGalleryMedia({});
-      })();
-      if (!imageMeta.url && typeof item.media === 'object') {
-        Object.assign(imageMeta, normaliseGalleryMedia(item.media));
-      }
-      const fallbackAlt = trimText(item.alt);
-      if (fallbackAlt) {
-        imageMeta.alt = fallbackAlt;
-      }
-      const fallbackCredit = trimText(item.credit);
-      if (fallbackCredit) {
-        imageMeta.credit = fallbackCredit;
-      }
-      const fallbackCreditUrl = trimText(item.creditUrl);
-      if (fallbackCreditUrl) {
-        imageMeta.creditUrl = fallbackCreditUrl;
-      }
-
-      if (imageMeta.url) {
-        const media = document.createElement('div');
-        media.className = 'pill-gallery-media';
-        const img = document.createElement('img');
-        img.dataset.remoteSrc = imageMeta.url;
-        img.alt = imageMeta.alt || trimText(item.caption) || `Gallery item ${index + 1}`;
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        media.appendChild(img);
-        figure.appendChild(media);
-      } else {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'pill-gallery-placeholder';
-        placeholder.textContent = 'Add evidence image';
-        figure.appendChild(placeholder);
-      }
-
-      const caption = trimText(item.caption);
-      const detail = trimText(item.detail ?? item.description ?? item.note);
-      const creditText = imageMeta.credit;
-      const creditUrl = imageMeta.creditUrl;
-      const badge = trimText(item.tag ?? item.badge ?? '');
-      const badgeIcon = normaliseIconClass(item.tagIcon ?? item.badgeIcon);
-      const itemIcon = normaliseIconClass(item.icon) ||
-        resolveLayoutIconField('pill-with-gallery', 'pillGalleryItemIcon', item.icon);
-
-      if (caption || detail || creditText || badge || itemIcon) {
-        const figcaption = document.createElement('figcaption');
-        figcaption.className = 'pill-gallery-caption';
-        figure.appendChild(figcaption);
-
-        if (itemIcon) {
-          const iconWrap = document.createElement('span');
-          iconWrap.className = 'pill-gallery-icon';
-          const iconEl = document.createElement('i');
-          iconEl.className = itemIcon;
-          iconEl.setAttribute('aria-hidden', 'true');
-          iconWrap.appendChild(iconEl);
-          figcaption.appendChild(iconWrap);
-        }
-
-        const textWrap = document.createElement('div');
-        textWrap.className = 'pill-gallery-text';
-        figcaption.appendChild(textWrap);
-
-        if (badge) {
-          const badgeEl = document.createElement('span');
-          badgeEl.className = 'pill-gallery-badge';
-          if (badgeIcon) {
-            const badgeIconEl = document.createElement('i');
-            badgeIconEl.className = badgeIcon;
-            badgeIconEl.setAttribute('aria-hidden', 'true');
-            badgeEl.appendChild(badgeIconEl);
-            badgeEl.appendChild(document.createTextNode(' '));
-          }
-          badgeEl.appendChild(document.createTextNode(badge));
-          textWrap.appendChild(badgeEl);
-        }
-
-        if (caption) {
-          const captionEl = document.createElement('p');
-          captionEl.className = 'pill-gallery-caption-text';
-          captionEl.textContent = caption;
-          textWrap.appendChild(captionEl);
-        }
-
-        if (detail) {
-          const detailEl = document.createElement('p');
-          detailEl.className = 'pill-gallery-detail';
-          detailEl.textContent = detail;
-          textWrap.appendChild(detailEl);
-        }
-
-        if (creditText) {
-          const creditEl = document.createElement('p');
-          creditEl.className = 'pill-gallery-credit';
-          if (creditUrl) {
-            const link = document.createElement('a');
-            link.href = creditUrl;
-            link.target = '_blank';
-            link.rel = 'noreferrer noopener';
-            link.textContent = creditText;
-            creditEl.appendChild(link);
-          } else {
-            creditEl.textContent = creditText;
-          }
-          textWrap.appendChild(creditEl);
-        }
-      }
+  if (cleanedTurns.length) {
+    cleanedTurns.forEach((turn) => {
+      const block = document.createElement('div');
+      block.className = 'dialogue-turn';
+      const speaker = document.createElement('span');
+      speaker.className = 'dialogue-speaker';
+      speaker.textContent = turn.speaker || 'Speaker';
+      const line = document.createElement('p');
+      line.className = 'dialogue-line';
+      line.textContent = turn.line || '';
+      block.appendChild(speaker);
+      block.appendChild(line);
+      dialogueWrap.appendChild(block);
     });
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add dialogue turns so learners can analyse the model.';
+    dialogueWrap.appendChild(placeholder);
   }
 
-  const actionItems = Array.isArray(actions) ? actions : [];
-  const hasAction = actionItems.some(
-    (action) => action && (trimText(action.label) || trimText(action.description)),
+  if (resolvedImage) {
+    const visual = document.createElement('div');
+    visual.className = 'lesson-dialogue-visual';
+    const img = document.createElement('img');
+    img.src = resolvedImage;
+    img.alt = trimText(title) || 'Dialogue context';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    visual.appendChild(img);
+    body.appendChild(visual);
+  }
+
+  const audioSource = trimText(audioUrl);
+  if (audioSource) {
+    const audioWrap = document.createElement('div');
+    audioWrap.className = 'lesson-audio';
+    const audioEl = document.createElement('audio');
+    audioEl.controls = true;
+    audioEl.src = audioSource;
+    audioWrap.appendChild(audioEl);
+    inner.appendChild(audioWrap);
+  }
+
+  return slide;
+}
+
+function createCommunicativeTaskSlide({
+  title = 'Communicative task',
+  imageUrl = '',
+  preparation = '',
+  performance = '',
+  scaffolding = [],
+  preparationIcon = '',
+  performanceIcon = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('communicative-task', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('communicative-task', layoutIcon),
+  });
+  slide.dataset.type = 'communicative-task';
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Communicative task';
+  header.appendChild(heading);
+
+  const splitPreparationText = (text) => {
+    const value = trimText(text);
+    if (!value) {
+      return { scenario: '', remainder: '' };
+    }
+    const newlineIndex = value.indexOf('\n');
+    if (newlineIndex !== -1) {
+      const scenario = trimText(value.slice(0, newlineIndex));
+      const remainder = trimText(value.slice(newlineIndex + 1));
+      if (scenario && remainder) {
+        return { scenario, remainder };
+      }
+    }
+    const sentenceMatch = value.match(/^(.+?[.!?])\s+([\s\S]+)$/);
+    if (sentenceMatch) {
+      const [, scenario, remainder] = sentenceMatch;
+      const trimmedScenario = trimText(scenario);
+      const trimmedRemainder = trimText(remainder);
+      if (trimmedScenario && trimmedRemainder) {
+        return { scenario: trimmedScenario, remainder: trimmedRemainder };
+      }
+    }
+    return { scenario: '', remainder: value };
+  };
+
+  const body = document.createElement('div');
+  body.className = 'task-body';
+  inner.appendChild(body);
+
+  const mainCard = document.createElement('div');
+  mainCard.className = 'card communicative-task-card';
+  body.appendChild(mainCard);
+
+  const { scenario: scenarioText, remainder: preparationRemainder } = splitPreparationText(
+    preparation,
   );
-  if (hasAction) {
-    const row = document.createElement('div');
-    row.className = 'pill-gallery-cta-row';
-    inner.appendChild(row);
 
-    actionItems.forEach((action) => {
-      if (!action || (!trimText(action.label) && !trimText(action.description))) {
-        return;
-      }
-      const href = trimText(action.href ?? action.url);
-      const actionIconClass = normaliseIconClass(action.icon) ||
-        resolveLayoutIconField('pill-with-gallery', 'pillGalleryActionIcon', actionIcon);
-      const itemEl = href ? document.createElement('a') : document.createElement('div');
-      itemEl.className = 'pill-gallery-cta';
-      if (href) {
-        itemEl.href = href;
-        itemEl.target = '_blank';
-        itemEl.rel = 'noreferrer noopener';
-      }
-      if (actionIconClass) {
-        const iconWrap = document.createElement('span');
-        iconWrap.className = 'pill-gallery-cta-icon';
-        const iconEl = document.createElement('i');
-        iconEl.className = actionIconClass;
-        iconEl.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconEl);
-        itemEl.appendChild(iconWrap);
-      }
-      const textWrap = document.createElement('span');
-      textWrap.className = 'pill-gallery-cta-text';
-      const label = trimText(action.label);
-      if (label) {
-        const labelEl = document.createElement('span');
-        labelEl.className = 'pill-gallery-cta-label';
-        labelEl.textContent = label;
-        textWrap.appendChild(labelEl);
-      }
-      const descriptionText = trimText(action.description ?? action.detail);
-      if (descriptionText) {
-        const descEl = document.createElement('span');
-        descEl.className = 'pill-gallery-cta-description';
-        descEl.textContent = descriptionText;
-        textWrap.appendChild(descEl);
-      }
-      itemEl.appendChild(textWrap);
-      row.appendChild(itemEl);
-    });
+  if (scenarioText) {
+    const scenarioCard = document.createElement('div');
+    scenarioCard.className = 'column-card task-scenario';
+    const scenarioHeading = document.createElement('h3');
+    scenarioHeading.textContent = 'Scenario';
+    const scenarioParagraph = document.createElement('p');
+    scenarioParagraph.textContent = scenarioText;
+    scenarioCard.appendChild(scenarioHeading);
+    scenarioCard.appendChild(scenarioParagraph);
+    mainCard.appendChild(scenarioCard);
   }
 
-  return slide;
-}
+  const instructionList = document.createElement('ul');
+  instructionList.className = 'instruction-list task-instruction-list';
+  mainCard.appendChild(instructionList);
 
-function createReflectionBoardSlide({
-  pill,
-  pillIcon,
-  title,
-  description,
-  boardNote,
-  columns,
-  footer,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-  icon,
-  iconClass,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('reflection-board', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
+  const preparationIconClass =
+    normaliseIconClass(preparationIcon) ||
+    getLayoutFieldIconDefault('communicative-task', 'taskPreparationIcon') ||
+    'fa-solid fa-list-check';
+  const performanceIconClass =
+    normaliseIconClass(performanceIcon) ||
+    getLayoutFieldIconDefault('communicative-task', 'taskPerformanceIcon') ||
+    'fa-solid fa-people-group';
 
-  inner.classList.add('stack', 'stack-lg');
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header reflection-board-header stack stack-sm';
-  inner.appendChild(header);
-
-  const pillText = trimText(pill) || 'Reflection board';
-  const pillIconClass = resolveLayoutIconField('reflection-board', 'reflectionBoardPillIcon', pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill reflection-board-pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    header.appendChild(pillEl);
-  }
-
-  const resolvedTitle = trimText(title) || 'Surface glow and grow insights';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  header.appendChild(headingEl);
-
-  const resolvedDescription = trimText(description);
-  if (resolvedDescription) {
-    const lead = document.createElement('p');
-    lead.className = 'reflection-board-lead';
-    lead.textContent = resolvedDescription;
-    header.appendChild(lead);
-  }
-
-  const columnsContainer = document.createElement('div');
-  columnsContainer.className = 'reflection-board-grid';
-  inner.appendChild(columnsContainer);
-
-  const columnEntries = Array.isArray(columns) ? columns : [];
-  if (!columnEntries.length) {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'reflection-board-empty';
-    placeholder.textContent = 'Add glow and grow columns to guide the reflection.';
-    columnsContainer.appendChild(placeholder);
-  } else {
-    columnEntries.forEach((column, index) => {
-      if (!column || typeof column !== 'object') {
-        return;
-      }
-      const columnEl = document.createElement('section');
-      columnEl.className = 'reflection-board-column stack stack-sm';
-      columnsContainer.appendChild(columnEl);
-
-      const columnHeader = document.createElement('header');
-      columnHeader.className = 'reflection-board-column-header';
-      columnEl.appendChild(columnHeader);
-
-      const columnIconClass = normaliseIconClass(column.icon) ||
-        resolveLayoutIconField('reflection-board', 'reflectionBoardColumnIcon', index === 0 ? column.icon : undefined);
-      if (columnIconClass) {
-        const iconWrap = document.createElement('span');
-        iconWrap.className = 'reflection-board-column-icon';
-        const iconEl = document.createElement('i');
-        iconEl.className = columnIconClass;
-        iconEl.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconEl);
-        columnHeader.appendChild(iconWrap);
-      }
-
-      const columnTitle = trimText(column.title) || `Column ${index + 1}`;
-      const columnTitleEl = document.createElement('h3');
-      columnTitleEl.textContent = columnTitle;
-      columnHeader.appendChild(columnTitleEl);
-
-      const emphasis = trimText(column.emphasis ?? column.summary);
-      if (emphasis) {
-        const emphasisEl = document.createElement('p');
-        emphasisEl.className = 'reflection-board-emphasis';
-        emphasisEl.textContent = emphasis;
-        columnEl.appendChild(emphasisEl);
-      }
-
-      const cardsList = document.createElement('ul');
-      cardsList.className = 'reflection-board-cards';
-      columnEl.appendChild(cardsList);
-
-      const cards = Array.isArray(column.cards) ? column.cards : [];
-      if (!cards.length) {
-        const emptyCard = document.createElement('li');
-        emptyCard.className = 'reflection-board-card reflection-board-card--empty';
-        emptyCard.textContent = 'Add reflection prompts or note cards.';
-        cardsList.appendChild(emptyCard);
-      } else {
-        cards.forEach((card) => {
-          if (!card || typeof card !== 'object') {
-            return;
-          }
-          const label = trimText(card.title ?? card.label);
-          const descriptionText = trimText(card.description ?? card.detail ?? card.note);
-          if (!label && !descriptionText) {
-            return;
-          }
-          const cardEl = document.createElement('li');
-          cardEl.className = 'reflection-board-card';
-          cardsList.appendChild(cardEl);
-
-          const iconClass = normaliseIconClass(card.icon) ||
-            resolveLayoutIconField('reflection-board', 'reflectionBoardCardIcon', card.icon);
-          if (iconClass) {
-            const iconWrap = document.createElement('span');
-            iconWrap.className = 'reflection-board-card-icon';
-            const iconEl = document.createElement('i');
-            iconEl.className = iconClass;
-            iconEl.setAttribute('aria-hidden', 'true');
-            iconWrap.appendChild(iconEl);
-            cardEl.appendChild(iconWrap);
-          }
-
-          const textWrap = document.createElement('div');
-          textWrap.className = 'reflection-board-card-text';
-          cardEl.appendChild(textWrap);
-
-          if (label) {
-            const labelEl = document.createElement('h4');
-            labelEl.textContent = label;
-            textWrap.appendChild(labelEl);
-          }
-
-          if (descriptionText) {
-            const descEl = document.createElement('p');
-            descEl.textContent = descriptionText;
-            textWrap.appendChild(descEl);
-          }
-        });
-      }
-    });
-  }
-
-  const note = trimText(boardNote);
-  if (note) {
-    const noteEl = document.createElement('p');
-    noteEl.className = 'reflection-board-note';
-    noteEl.textContent = note;
-    inner.appendChild(noteEl);
-  }
-
-  if (footer && typeof footer === 'object') {
-    const footerLabel = trimText(footer.label);
-    const footerDescription = trimText(footer.description ?? footer.detail);
-    if (footerLabel || footerDescription) {
-      const footerEl = document.createElement('div');
-      footerEl.className = 'reflection-board-footer';
-      inner.appendChild(footerEl);
-      if (footerLabel) {
-        const labelEl = document.createElement('span');
-        labelEl.className = 'reflection-board-footer-label';
-        labelEl.textContent = footerLabel;
-        footerEl.appendChild(labelEl);
-      }
-      if (footerDescription) {
-        const descEl = document.createElement('p');
-        descEl.className = 'reflection-board-footer-description';
-        descEl.textContent = footerDescription;
-        footerEl.appendChild(descEl);
-      }
-    }
-  }
-
-  return slide;
-}
-
-function createSplitGridSlide({
-  pill,
-  pillIcon,
-  title,
-  description,
-  columns,
-  footerNote,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-  icon,
-  iconClass,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('split-grid', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const header = document.createElement('header');
-  header.className = 'lesson-header split-grid-header stack stack-sm';
-  inner.appendChild(header);
-
-  const pillText = trimText(pill) || 'Dual recap';
-  const pillIconClass = resolveLayoutIconField('split-grid', 'splitGridPillIcon', pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill split-grid-pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    header.appendChild(pillEl);
-  }
-
-  const resolvedTitle = trimText(title) || 'Balance glow and grow moves';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  header.appendChild(headingEl);
-
-  const resolvedDescription = trimText(description);
-  if (resolvedDescription) {
-    const lead = document.createElement('p');
-    lead.className = 'split-grid-lead';
-    lead.textContent = resolvedDescription;
-    header.appendChild(lead);
-  }
-
-  const columnsWrap = document.createElement('div');
-  columnsWrap.className = 'split-grid-columns';
-  inner.appendChild(columnsWrap);
-
-  const columnEntries = Array.isArray(columns) ? columns : [];
-  if (!columnEntries.length) {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'split-grid-empty';
-    placeholder.textContent = 'Add glow and grow columns to complete the recap.';
-    columnsWrap.appendChild(placeholder);
-  } else {
-    columnEntries.forEach((column, index) => {
-      if (!column || typeof column !== 'object') {
-        return;
-      }
-      const columnEl = document.createElement('section');
-      columnEl.className = 'split-grid-column stack stack-sm';
-      columnsWrap.appendChild(columnEl);
-
-      const columnHeader = document.createElement('header');
-      columnHeader.className = 'split-grid-column-header';
-      columnEl.appendChild(columnHeader);
-
-      let defaultField = 'splitGridItemIcon';
-      if (index === 0) {
-        defaultField = 'splitGridLeftIcon';
-      } else if (index === 1) {
-        defaultField = 'splitGridRightIcon';
-      }
-      const columnIconClass = normaliseIconClass(column.icon) ||
-        resolveLayoutIconField('split-grid', defaultField, column.icon);
-      if (columnIconClass) {
-        const iconWrap = document.createElement('span');
-        iconWrap.className = 'split-grid-column-icon';
-        const iconEl = document.createElement('i');
-        iconEl.className = columnIconClass;
-        iconEl.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconEl);
-        columnHeader.appendChild(iconWrap);
-      }
-
-      const columnTitle = trimText(column.title) || `Column ${index + 1}`;
-      const columnTitleEl = document.createElement('h3');
-      columnTitleEl.textContent = columnTitle;
-      columnHeader.appendChild(columnTitleEl);
-
-      const columnDescription = trimText(column.description ?? column.summary);
-      if (columnDescription) {
-        const descEl = document.createElement('p');
-        descEl.className = 'split-grid-column-description';
-        descEl.textContent = columnDescription;
-        columnEl.appendChild(descEl);
-      }
-
-      const list = document.createElement('ul');
-      list.className = 'split-grid-items';
-      columnEl.appendChild(list);
-
-      const items = Array.isArray(column.items) ? column.items : [];
-      if (!items.length) {
-        const emptyItem = document.createElement('li');
-        emptyItem.className = 'split-grid-item split-grid-item--empty';
-        emptyItem.textContent = 'Add recap notes or next steps.';
-        list.appendChild(emptyItem);
-      } else {
-        items.forEach((item) => {
-          if (!item || typeof item !== 'object') {
-            return;
-          }
-          const label = trimText(item.title ?? item.label);
-          const detail = trimText(item.detail ?? item.description ?? item.note);
-          if (!label && !detail) {
-            return;
-          }
-          const itemEl = document.createElement('li');
-          itemEl.className = 'split-grid-item';
-          list.appendChild(itemEl);
-
-          const iconClass = normaliseIconClass(item.icon) ||
-            resolveLayoutIconField('split-grid', 'splitGridItemIcon', item.icon);
-          if (iconClass) {
-            const iconWrap = document.createElement('span');
-            iconWrap.className = 'split-grid-item-icon';
-            const iconEl = document.createElement('i');
-            iconEl.className = iconClass;
-            iconEl.setAttribute('aria-hidden', 'true');
-            iconWrap.appendChild(iconEl);
-            itemEl.appendChild(iconWrap);
-          }
-
-          const textWrap = document.createElement('div');
-          textWrap.className = 'split-grid-item-text';
-          itemEl.appendChild(textWrap);
-
-          if (label) {
-            const labelEl = document.createElement('h4');
-            labelEl.textContent = label;
-            textWrap.appendChild(labelEl);
-          }
-
-          if (detail) {
-            const detailEl = document.createElement('p');
-            detailEl.textContent = detail;
-            textWrap.appendChild(detailEl);
-          }
-        });
-      }
-    });
-  }
-
-  const footerText = trimText(footerNote);
-  if (footerText) {
-    const footerEl = document.createElement('p');
-    footerEl.className = 'split-grid-footer-note';
-    footerEl.textContent = footerText;
-    inner.appendChild(footerEl);
-  }
-
-  return slide;
-}
-
-function createCenteredCalloutSlide({
-  pill,
-  pillLabel,
-  accentPill,
-  pillIcon,
-  icon,
-  iconClass,
-  headline,
-  title,
-  supportingText,
-  supporting_text,
-  description,
-  body,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('centered-callout', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  slide.classList.add('is-centered-stage');
-  inner.classList.add('align-center', 'stack', 'stack-md');
-
-  const pillText = trimText(
-    getPlainText(pillLabel ?? accentPill ?? pill ?? '') || '',
-  );
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedHeadline =
-    trimText(getPlainText(headline ?? title ?? '')) || 'Center the class on this prompt';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedHeadline;
-  inner.appendChild(headingEl);
-
-  const calloutCard = document.createElement('div');
-  calloutCard.className = 'card stack stack-sm';
-  inner.appendChild(calloutCard);
-
-  const supportingEntries = [
-    ...normaliseTextArray(supportingText ?? supporting_text ?? []),
-    ...normaliseTextArray(description ?? body ?? []),
+  const steps = [
+    {
+      label: 'Preparation',
+      icon: preparationIconClass,
+      text: trimText(preparationRemainder) || 'Describe how learners should get ready together.',
+    },
+    {
+      label: 'Performance',
+      icon: performanceIconClass,
+      text: trimText(performance) || 'Explain how learners will carry out the task.',
+    },
   ];
 
-  if (supportingEntries.length) {
-    supportingEntries.forEach((entry) => appendContentBlock(calloutCard, entry));
+  steps
+    .filter((step) => Boolean(step.text))
+    .forEach(({ label, icon, text }) => {
+      const item = document.createElement('li');
+      const iconEl = document.createElement('i');
+      iconEl.className = icon;
+      iconEl.setAttribute('aria-hidden', 'true');
+      item.appendChild(iconEl);
+      const content = document.createElement('div');
+      content.className = 'instruction-content';
+      const stepHeading = document.createElement('h4');
+      stepHeading.textContent = label;
+      const stepText = document.createElement('p');
+      stepText.textContent = text;
+      content.appendChild(stepHeading);
+      content.appendChild(stepText);
+      item.appendChild(content);
+      instructionList.appendChild(item);
+    });
+
+  const scaffoldingItems = Array.isArray(scaffolding)
+    ? scaffolding.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  const scaffoldingCard = document.createElement('div');
+  scaffoldingCard.className = 'column-card task-scaffolding';
+  const scaffoldHeading = document.createElement('h3');
+  scaffoldHeading.textContent = 'Language support';
+  scaffoldingCard.appendChild(scaffoldHeading);
+  if (scaffoldingItems.length) {
+    const list = document.createElement('ul');
+    list.className = 'task-scaffolding-list';
+    scaffoldingItems.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    scaffoldingCard.appendChild(list);
   } else {
     const placeholder = document.createElement('p');
     placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add supporting prompts to complete the callout.';
-    calloutCard.appendChild(placeholder);
+    placeholder.textContent = 'Add sentence stems or prompts to support learners during the task.';
+    scaffoldingCard.appendChild(placeholder);
+  }
+  body.appendChild(scaffoldingCard);
+
+  return slide;
+}
+
+function createPronunciationFocusSlide({
+  title = 'Pronunciation focus',
+  target = '',
+  words = [],
+  sentences = [],
+  practice = '',
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('pronunciation-focus', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('pronunciation-focus', layoutIcon),
+  });
+  slide.dataset.type = 'pronunciation';
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Pronunciation focus';
+  header.appendChild(heading);
+
+  const targetText = trimText(target);
+  if (targetText) {
+    const targetEl = document.createElement('p');
+    targetEl.className = 'pronunciation-target';
+    targetEl.textContent = targetText;
+    header.appendChild(targetEl);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'pronunciation-focus-card';
+  inner.appendChild(card);
+
+  const wordList = Array.isArray(words) ? words.map((word) => trimText(word)).filter(Boolean) : [];
+  if (wordList.length) {
+    const wordsEl = document.createElement('div');
+    wordsEl.className = 'pronunciation-words';
+    wordList.forEach((word) => {
+      const span = document.createElement('span');
+      span.textContent = word;
+      wordsEl.appendChild(span);
+    });
+    card.appendChild(wordsEl);
+  }
+
+  const sentenceList = Array.isArray(sentences)
+    ? sentences.map((sentence) => trimText(sentence)).filter(Boolean)
+    : [];
+  if (sentenceList.length) {
+    const sentenceEl = document.createElement('div');
+    sentenceEl.className = 'pronunciation-examples';
+    sentenceList.forEach((sentence) => {
+      const example = document.createElement('span');
+      example.textContent = sentence;
+      sentenceEl.appendChild(example);
+    });
+    card.appendChild(sentenceEl);
+  }
+
+  const practiceText = trimText(practice);
+  const practiceEl = document.createElement('div');
+  practiceEl.className = 'pronunciation-practice';
+  practiceEl.textContent = practiceText || 'Describe how learners should practise the target sound.';
+  card.appendChild(practiceEl);
+
+  return slide;
+}
+
+function createReflectionSlide({
+  title = 'Reflection',
+  prompts = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('reflection', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('reflection', layoutIcon),
+  });
+  slide.dataset.type = 'reflection';
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Reflection';
+  header.appendChild(heading);
+
+  const body = document.createElement('div');
+  body.className = 'reflection-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(prompts) ? prompts.map((prompt) => trimText(prompt)).filter(Boolean) : [];
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reflection-prompts';
+    promptList.forEach((prompt) => {
+      const li = document.createElement('li');
+      li.textContent = prompt;
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add reflection prompts to guide learners.';
+    body.appendChild(placeholder);
   }
 
   return slide;
 }
 
-function createCenteredDialogueSlide({
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  headline,
-  title,
-  dialogue,
-  dialogueBox,
-  dialogue_box,
-  stageDirection,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
+function createGroundingActivitySlide({
+  title = 'Grounding activity',
+  subtitle = '',
+  steps = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
 } = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('centered-dialogue', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
+  const { slide, inner } = createBaseLessonSlide('grounding-activity', {
+    imageUrl,
     overlayColor,
     overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('grounding-activity', layoutIcon),
   });
+  const header = document.createElement('header');
+  header.className = 'lesson-header grounding-header';
+  inner.appendChild(header);
 
-  slide.classList.add('is-centered-stage');
-  inner.classList.add('align-center', 'stack', 'stack-md');
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Grounding activity';
+  header.appendChild(heading);
 
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
+  const subtitleText = trimText(subtitle);
+  if (subtitleText) {
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'grounding-subtitle';
+    subtitleEl.textContent = subtitleText;
+    header.appendChild(subtitleEl);
   }
 
-  const resolvedHeadline =
-    trimText(getPlainText(headline ?? title ?? '')) || 'Model the target conversation';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedHeadline;
-  inner.appendChild(headingEl);
+  const body = document.createElement('div');
+  body.className = 'grounding-body';
+  inner.appendChild(body);
 
-  const dialogueCard = document.createElement('div');
-  dialogueCard.className = 'card stack stack-sm';
-  inner.appendChild(dialogueCard);
-
-  const dialogueSection = document.createElement('div');
-  dialogueSection.className = 'lesson-dialogue';
-  dialogueCard.appendChild(dialogueSection);
-
-  const textColumn = document.createElement('div');
-  textColumn.className = 'lesson-dialogue-text';
-  dialogueSection.appendChild(textColumn);
-
-  const linesSource = dialogue_box ?? dialogueBox ?? dialogue ?? {};
-  const lines = Array.isArray(linesSource?.lines) ? linesSource.lines : [];
-  let appendedLine = false;
-
-  lines.forEach((line) => {
-    const speaker = trimText(getPlainText(line?.speaker ?? line?.name ?? ''));
-    const text = trimText(getPlainText(line?.text ?? line?.content ?? ''));
-    if (!text && !speaker) {
-      return;
-    }
-    const turn = document.createElement('div');
-    turn.className = 'dialogue-turn';
-    if (speaker) {
-      const speakerEl = document.createElement('span');
-      speakerEl.className = 'dialogue-speaker';
-      speakerEl.textContent = speaker;
-      turn.appendChild(speakerEl);
-    }
-    if (text) {
-      const textEl = document.createElement('p');
-      textEl.className = 'dialogue-line';
-      textEl.textContent = text;
-      turn.appendChild(textEl);
-    }
-    textColumn.appendChild(turn);
-    appendedLine = true;
-  });
-
-  if (!appendedLine) {
+  const stepsList = Array.isArray(steps) ? steps.map((step) => trimText(step)).filter(Boolean) : [];
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'grounding-steps';
+    stepsList.forEach((step, index) => {
+      const item = document.createElement('li');
+      const badge = document.createElement('span');
+      badge.className = 'grounding-step-badge';
+      badge.textContent = index + 1;
+      item.appendChild(badge);
+      const text = document.createElement('p');
+      text.textContent = step;
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
     const placeholder = document.createElement('p');
     placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add dialogue lines to spotlight the exchange.';
-    textColumn.appendChild(placeholder);
+    placeholder.textContent = 'Add a short grounding script or sequence.';
+    body.appendChild(placeholder);
   }
 
-  const directionText =
-    trimText(getPlainText(stageDirection ?? linesSource?.stage_direction ?? ''));
-  if (directionText) {
-    const directionEl = document.createElement('p');
-    directionEl.className = 'lesson-instructions';
-    directionEl.textContent = directionText;
-    dialogueCard.appendChild(directionEl);
+  return slide;
+}
+
+function createTopicIntroductionSlide({
+  title = 'Today we explore',
+  hook = '',
+  context = '',
+  essentialQuestion = '',
+  keyVocabulary = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('topic-introduction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('topic-introduction', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header topic-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Today we explore';
+  header.appendChild(heading);
+
+  const hookText = trimText(hook);
+  if (hookText) {
+    const hookEl = document.createElement('p');
+    hookEl.className = 'topic-hook';
+    hookEl.textContent = hookText;
+    header.appendChild(hookEl);
   }
+
+  const body = document.createElement('div');
+  body.className = 'topic-body';
+  inner.appendChild(body);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'topic-context';
+    contextEl.textContent = contextText;
+    body.appendChild(contextEl);
+  }
+
+  const questionText = trimText(essentialQuestion);
+  if (questionText) {
+    const question = document.createElement('div');
+    question.className = 'topic-question-card';
+    const label = document.createElement('span');
+    label.className = 'topic-question-label';
+    label.textContent = 'Essential question';
+    question.appendChild(label);
+    const text = document.createElement('p');
+    text.textContent = questionText;
+    question.appendChild(text);
+    body.appendChild(question);
+  }
+
+  const vocabList = Array.isArray(keyVocabulary)
+    ? keyVocabulary.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  const vocabSection = document.createElement('section');
+  vocabSection.className = 'topic-vocabulary';
+  const vocabHeading = document.createElement('h3');
+  vocabHeading.textContent = 'Key vocabulary';
+  vocabSection.appendChild(vocabHeading);
+  if (vocabList.length) {
+    const list = document.createElement('ul');
+    list.className = 'topic-vocabulary-list';
+    vocabList.forEach((term) => {
+      const item = document.createElement('li');
+      item.textContent = term;
+      list.appendChild(item);
+    });
+    vocabSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List 3-5 terms learners should notice today.';
+    vocabSection.appendChild(placeholder);
+  }
+  body.appendChild(vocabSection);
+
+  return slide;
+}
+
+function createGuidedDiscoverySlide({
+  title = 'Guided discovery',
+  context = '',
+  discoveryPrompts = [],
+  noticingQuestions = [],
+  sampleLanguage = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('guided-discovery', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('guided-discovery', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header discovery-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Guided discovery';
+  header.appendChild(heading);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'discovery-context';
+    contextEl.textContent = contextText;
+    header.appendChild(contextEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'discovery-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(discoveryPrompts)
+    ? discoveryPrompts.map((prompt) => trimText(prompt)).filter(Boolean)
+    : [];
+  const promptsSection = document.createElement('section');
+  promptsSection.className = 'discovery-section';
+  const promptsHeading = document.createElement('h3');
+  promptsHeading.textContent = 'Explore the text';
+  promptsSection.appendChild(promptsHeading);
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-prompt-list';
+    promptList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    promptsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add a short sequence of noticing tasks.';
+    promptsSection.appendChild(placeholder);
+  }
+  body.appendChild(promptsSection);
+
+  const noticingSection = document.createElement('section');
+  noticingSection.className = 'discovery-section';
+  const noticingHeading = document.createElement('h3');
+  noticingHeading.textContent = 'What do you notice?';
+  noticingSection.appendChild(noticingHeading);
+  const questionList = Array.isArray(noticingQuestions)
+    ? noticingQuestions.map((question) => trimText(question)).filter(Boolean)
+    : [];
+  if (questionList.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-question-list';
+    questionList.forEach((question) => {
+      const item = document.createElement('li');
+      item.textContent = question;
+      list.appendChild(item);
+    });
+    noticingSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add questions that guide pattern noticing.';
+    noticingSection.appendChild(placeholder);
+  }
+  body.appendChild(noticingSection);
+
+  const sampleSection = document.createElement('section');
+  sampleSection.className = 'discovery-section';
+  const sampleHeading = document.createElement('h3');
+  sampleHeading.textContent = 'Sample language';
+  sampleSection.appendChild(sampleHeading);
+  const languageItems = Array.isArray(sampleLanguage)
+    ? sampleLanguage.map((sample) => trimText(sample)).filter(Boolean)
+    : [];
+  if (languageItems.length) {
+    const list = document.createElement('ul');
+    list.className = 'discovery-language-list';
+    languageItems.forEach((sample) => {
+      const item = document.createElement('li');
+      item.textContent = sample;
+      list.appendChild(item);
+    });
+    sampleSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Collect two lines that model the target language.';
+    sampleSection.appendChild(placeholder);
+  }
+  body.appendChild(sampleSection);
+
+  return slide;
+}
+
+function createCreativePracticeSlide({
+  title = 'Creative practice',
+  brief = '',
+  materials = [],
+  makingSteps = [],
+  sharingOptions = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('creative-practice', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('creative-practice', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header creative-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Creative practice';
+  header.appendChild(heading);
+
+  const briefText = trimText(brief);
+  if (briefText) {
+    const briefEl = document.createElement('p');
+    briefEl.className = 'creative-brief';
+    briefEl.textContent = briefText;
+    header.appendChild(briefEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'creative-body';
+  inner.appendChild(body);
+
+  const materialsList = Array.isArray(materials)
+    ? materials.map((material) => trimText(material)).filter(Boolean)
+    : [];
+  if (materialsList.length) {
+    const materialsSection = document.createElement('section');
+    materialsSection.className = 'creative-section materials-section';
+    const materialsHeading = document.createElement('h3');
+    materialsHeading.textContent = 'Gather your materials';
+    materialsSection.appendChild(materialsHeading);
+    const chips = document.createElement('ul');
+    chips.className = 'creative-materials';
+    materialsList.forEach((material) => {
+      const item = document.createElement('li');
+      item.textContent = material;
+      chips.appendChild(item);
+    });
+    materialsSection.appendChild(chips);
+    body.appendChild(materialsSection);
+  }
+
+  const stepsList = Array.isArray(makingSteps)
+    ? makingSteps.map((step) => trimText(step)).filter(Boolean)
+    : [];
+  const stepsSection = document.createElement('section');
+  stepsSection.className = 'creative-section';
+  const stepsHeading = document.createElement('h3');
+  stepsHeading.textContent = 'Make together';
+  stepsSection.appendChild(stepsHeading);
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'creative-steps';
+    stepsList.forEach((step) => {
+      const item = document.createElement('li');
+      item.textContent = step;
+      list.appendChild(item);
+    });
+    stepsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Outline the creative steps learners follow.';
+    stepsSection.appendChild(placeholder);
+  }
+  body.appendChild(stepsSection);
+
+  const sharingList = Array.isArray(sharingOptions)
+    ? sharingOptions.map((option) => trimText(option)).filter(Boolean)
+    : [];
+  const sharingSection = document.createElement('section');
+  sharingSection.className = 'creative-section';
+  const sharingHeading = document.createElement('h3');
+  sharingHeading.textContent = 'Share your work';
+  sharingSection.appendChild(sharingHeading);
+  if (sharingList.length) {
+    const list = document.createElement('ul');
+    list.className = 'creative-sharing';
+    sharingList.forEach((option) => {
+      const item = document.createElement('li');
+      item.textContent = option;
+      list.appendChild(item);
+    });
+    sharingSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Suggest how learners will present their creations.';
+    sharingSection.appendChild(placeholder);
+  }
+  body.appendChild(sharingSection);
+
+  return slide;
+}
+
+function createTaskDividerSlide({
+  title = 'Task cycle',
+  subtitle = '',
+  timing = '',
+  focus = '',
+  actions = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('task-divider', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('task-divider', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header divider-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Task cycle';
+  header.appendChild(heading);
+
+  const subtitleText = trimText(subtitle);
+  if (subtitleText) {
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'divider-subtitle';
+    subtitleEl.textContent = subtitleText;
+    header.appendChild(subtitleEl);
+  }
+
+  const focusText = trimText(focus);
+  if (focusText || trimText(timing)) {
+    const banner = document.createElement('div');
+    banner.className = 'divider-banner';
+    const timeText = trimText(timing);
+    if (timeText) {
+      const timeEl = document.createElement('span');
+      timeEl.className = 'divider-timing';
+      timeEl.textContent = timeText;
+      banner.appendChild(timeEl);
+    }
+    if (focusText) {
+      const focusEl = document.createElement('p');
+      focusEl.textContent = focusText;
+      banner.appendChild(focusEl);
+    }
+    inner.appendChild(banner);
+  }
+
+  const actionsList = Array.isArray(actions)
+    ? actions.map((action) => trimText(action)).filter(Boolean)
+    : [];
+  const body = document.createElement('div');
+  body.className = 'divider-body';
+  inner.appendChild(body);
+
+  if (actionsList.length) {
+    const list = document.createElement('ul');
+    list.className = 'divider-actions';
+    actionsList.forEach((action) => {
+      const item = document.createElement('li');
+      item.textContent = action;
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Outline what learners should do during this phase.';
+    body.appendChild(placeholder);
+  }
+
+  return slide;
+}
+
+function createTaskReportingSlide({
+  title = 'Task reporting',
+  goal = '',
+  prompts = [],
+  roles = [],
+  evidence = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('task-reporting', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('task-reporting', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header reporting-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Task reporting';
+  header.appendChild(heading);
+
+  const goalText = trimText(goal);
+  if (goalText) {
+    const goalEl = document.createElement('p');
+    goalEl.className = 'reporting-goal';
+    goalEl.textContent = goalText;
+    header.appendChild(goalEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'reporting-body';
+  inner.appendChild(body);
+
+  const promptList = Array.isArray(prompts)
+    ? prompts.map((prompt) => trimText(prompt)).filter(Boolean)
+    : [];
+  const promptsSection = document.createElement('section');
+  promptsSection.className = 'reporting-section';
+  const promptsHeading = document.createElement('h3');
+  promptsHeading.textContent = 'Share this';
+  promptsSection.appendChild(promptsHeading);
+  if (promptList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reporting-prompts';
+    promptList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    promptsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Add 2-3 reporting prompts or questions.';
+    promptsSection.appendChild(placeholder);
+  }
+  body.appendChild(promptsSection);
+
+  const rolesSection = document.createElement('section');
+  rolesSection.className = 'reporting-section';
+  const rolesHeading = document.createElement('h3');
+  rolesHeading.textContent = 'Roles';
+  rolesSection.appendChild(rolesHeading);
+  const roleEntries = Array.isArray(roles)
+    ? roles
+        .map((role) => ({ label: trimText(role?.label), value: trimText(role?.value) }))
+        .filter((role) => role.label || role.value)
+    : [];
+  if (roleEntries.length) {
+    const table = document.createElement('table');
+    table.className = 'reporting-role-table';
+    const tbody = document.createElement('tbody');
+    roleEntries.forEach((role) => {
+      const row = document.createElement('tr');
+      const roleCell = document.createElement('th');
+      roleCell.scope = 'row';
+      roleCell.textContent = role.label || 'Role';
+      row.appendChild(roleCell);
+      const valueCell = document.createElement('td');
+      valueCell.textContent = role.value || '';
+      row.appendChild(valueCell);
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    rolesSection.appendChild(table);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Define who facilitates, records, or shares back.';
+    rolesSection.appendChild(placeholder);
+  }
+  body.appendChild(rolesSection);
+
+  const evidenceList = Array.isArray(evidence)
+    ? evidence.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (evidenceList.length) {
+    const evidenceSection = document.createElement('section');
+    evidenceSection.className = 'reporting-section';
+    const evidenceHeading = document.createElement('h3');
+    evidenceHeading.textContent = 'Capture evidence';
+    evidenceSection.appendChild(evidenceHeading);
+    const list = document.createElement('ul');
+    list.className = 'reporting-evidence';
+    evidenceList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    evidenceSection.appendChild(list);
+    body.appendChild(evidenceSection);
+  }
+
+  return slide;
+}
+
+function createGenreDeconstructionSlide({
+  title = 'Genre deconstruction',
+  genre = '',
+  purpose = '',
+  features = [],
+  mentorText = '',
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('genre-deconstruction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('genre-deconstruction', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header genre-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Genre deconstruction';
+  header.appendChild(heading);
+
+  if (trimText(genre) || trimText(purpose)) {
+    const meta = document.createElement('p');
+    meta.className = 'genre-meta';
+    const genreText = trimText(genre);
+    if (genreText) {
+      const genreSpan = document.createElement('span');
+      genreSpan.className = 'genre-type';
+      genreSpan.textContent = genreText;
+      meta.appendChild(genreSpan);
+    }
+    const purposeText = trimText(purpose);
+    if (purposeText) {
+      const purposeSpan = document.createElement('span');
+      purposeSpan.textContent = purposeText;
+      meta.appendChild(purposeSpan);
+    }
+    header.appendChild(meta);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'genre-body';
+  inner.appendChild(body);
+
+  const featuresSection = document.createElement('section');
+  featuresSection.className = 'genre-section';
+  const featuresHeading = document.createElement('h3');
+  featuresHeading.textContent = 'Text moves to notice';
+  featuresSection.appendChild(featuresHeading);
+  const featureEntries = Array.isArray(features)
+    ? features
+        .map((feature) => ({ label: trimText(feature?.label), value: trimText(feature?.value) }))
+        .filter((feature) => feature.label || feature.value)
+    : [];
+  if (featureEntries.length) {
+    const list = document.createElement('ul');
+    list.className = 'genre-feature-list';
+    featureEntries.forEach((feature) => {
+      const item = document.createElement('li');
+      const label = document.createElement('strong');
+      label.textContent = feature.label || 'Feature';
+      item.appendChild(label);
+      if (feature.value) {
+        const text = document.createElement('p');
+        text.textContent = feature.value;
+        item.appendChild(text);
+      }
+      list.appendChild(item);
+    });
+    featuresSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the structural moves in this genre.';
+    featuresSection.appendChild(placeholder);
+  }
+  body.appendChild(featuresSection);
+
+  const mentorTextValue = trimText(mentorText);
+  if (mentorTextValue) {
+    const mentorSection = document.createElement('section');
+    mentorSection.className = 'genre-section';
+    const mentorHeading = document.createElement('h3');
+    mentorHeading.textContent = 'Mentor text excerpt';
+    mentorSection.appendChild(mentorHeading);
+    const block = document.createElement('blockquote');
+    block.className = 'genre-mentor-text';
+    block.textContent = mentorTextValue;
+    mentorSection.appendChild(block);
+    body.appendChild(mentorSection);
+  }
+
+  return slide;
+}
+
+function createLinguisticFeatureHuntSlide({
+  title = 'Feature hunt',
+  sourceText = '',
+  features = [],
+  reflection = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('linguistic-feature-hunt', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('linguistic-feature-hunt', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header feature-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Feature hunt';
+  header.appendChild(heading);
+
+  const body = document.createElement('div');
+  body.className = 'feature-body';
+  inner.appendChild(body);
+
+  const textValue = trimText(sourceText);
+  if (textValue) {
+    const excerpt = document.createElement('div');
+    excerpt.className = 'feature-source';
+    const label = document.createElement('span');
+    label.className = 'feature-source-label';
+    label.textContent = 'Text excerpt';
+    excerpt.appendChild(label);
+    const paragraph = document.createElement('p');
+    paragraph.textContent = textValue;
+    excerpt.appendChild(paragraph);
+    body.appendChild(excerpt);
+  }
+
+  const featureList = Array.isArray(features)
+    ? features.map((feature) => trimText(feature)).filter(Boolean)
+    : [];
+  const huntSection = document.createElement('section');
+  huntSection.className = 'feature-section';
+  const huntHeading = document.createElement('h3');
+  huntHeading.textContent = 'Hunt for';
+  huntSection.appendChild(huntHeading);
+  if (featureList.length) {
+    const list = document.createElement('ul');
+    list.className = 'feature-targets';
+    featureList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    huntSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List two features learners should highlight.';
+    huntSection.appendChild(placeholder);
+  }
+  body.appendChild(huntSection);
+
+  const reflectionList = Array.isArray(reflection)
+    ? reflection.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (reflectionList.length) {
+    const reflectionSection = document.createElement('section');
+    reflectionSection.className = 'feature-section';
+    const reflectionHeading = document.createElement('h3');
+    reflectionHeading.textContent = 'Reflect together';
+    reflectionSection.appendChild(reflectionHeading);
+    const list = document.createElement('ul');
+    list.className = 'feature-reflection';
+    reflectionList.forEach((prompt) => {
+      const item = document.createElement('li');
+      item.textContent = prompt;
+      list.appendChild(item);
+    });
+    reflectionSection.appendChild(list);
+    body.appendChild(reflectionSection);
+  }
+
+  return slide;
+}
+
+function createTextReconstructionSlide({
+  title = 'Text reconstruction',
+  context = '',
+  steps = [],
+  segments = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('text-reconstruction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('text-reconstruction', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header reconstruction-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Text reconstruction';
+  header.appendChild(heading);
+
+  const contextText = trimText(context);
+  if (contextText) {
+    const contextEl = document.createElement('p');
+    contextEl.className = 'reconstruction-context';
+    contextEl.textContent = contextText;
+    header.appendChild(contextEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'reconstruction-body';
+  inner.appendChild(body);
+
+  const stepsList = Array.isArray(steps)
+    ? steps.map((step) => trimText(step)).filter(Boolean)
+    : [];
+  const stepsSection = document.createElement('section');
+  stepsSection.className = 'reconstruction-section';
+  const stepsHeading = document.createElement('h3');
+  stepsHeading.textContent = 'Follow these steps';
+  stepsSection.appendChild(stepsHeading);
+  if (stepsList.length) {
+    const list = document.createElement('ol');
+    list.className = 'reconstruction-steps';
+    stepsList.forEach((step) => {
+      const item = document.createElement('li');
+      item.textContent = step;
+      list.appendChild(item);
+    });
+    stepsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the routine learners should follow.';
+    stepsSection.appendChild(placeholder);
+  }
+  body.appendChild(stepsSection);
+
+  const segmentList = Array.isArray(segments)
+    ? segments.map((segment) => trimText(segment)).filter(Boolean)
+    : [];
+  const segmentsSection = document.createElement('section');
+  segmentsSection.className = 'reconstruction-section';
+  const segmentsHeading = document.createElement('h3');
+  segmentsHeading.textContent = 'Sentence strips';
+  segmentsSection.appendChild(segmentsHeading);
+  if (segmentList.length) {
+    const list = document.createElement('ul');
+    list.className = 'reconstruction-segments';
+    segmentList.forEach((segment, index) => {
+      const item = document.createElement('li');
+      const badge = document.createElement('span');
+      badge.className = 'reconstruction-badge';
+      badge.textContent = index + 1;
+      item.appendChild(badge);
+      const text = document.createElement('p');
+      text.textContent = segment;
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    segmentsSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Paste the strips or clues learners will reorder.';
+    segmentsSection.appendChild(placeholder);
+  }
+  body.appendChild(segmentsSection);
+
+  return slide;
+}
+
+function createJumbledTextSequencingSlide({
+  title = 'Sequence the text',
+  instructions = '',
+  segments = [],
+  supportTips = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('jumbled-text-sequencing', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('jumbled-text-sequencing', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header sequencing-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Sequence the text';
+  header.appendChild(heading);
+
+  const instructionsText = trimText(instructions);
+  if (instructionsText) {
+    const instructionsEl = document.createElement('p');
+    instructionsEl.className = 'sequencing-instructions';
+    instructionsEl.textContent = instructionsText;
+    header.appendChild(instructionsEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'sequencing-body';
+  inner.appendChild(body);
+
+  const segmentList = Array.isArray(segments)
+    ? segments.map((segment) => trimText(segment)).filter(Boolean)
+    : [];
+  if (segmentList.length) {
+    const list = document.createElement('ol');
+    list.className = 'sequencing-segments';
+    segmentList.forEach((segment) => {
+      const item = document.createElement('li');
+      item.textContent = segment;
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List the jumbled statements learners will order.';
+    body.appendChild(placeholder);
+  }
+
+  const supportList = Array.isArray(supportTips)
+    ? supportTips.map((tip) => trimText(tip)).filter(Boolean)
+    : [];
+  if (supportList.length) {
+    const supportSection = document.createElement('section');
+    supportSection.className = 'sequencing-support';
+    const supportHeading = document.createElement('h3');
+    supportHeading.textContent = 'Support tips';
+    supportSection.appendChild(supportHeading);
+    const list = document.createElement('ul');
+    supportList.forEach((tip) => {
+      const item = document.createElement('li');
+      item.textContent = tip;
+      list.appendChild(item);
+    });
+    supportSection.appendChild(list);
+    body.appendChild(supportSection);
+  }
+
+  return slide;
+}
+
+function createScaffoldedJointConstructionSlide({
+  title = 'Scaffolded joint construction',
+  mentorFocus = '',
+  sharedOutcome = '',
+  teacherMoves = [],
+  learnerMoves = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('scaffolded-joint-construction', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('scaffolded-joint-construction', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header joint-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Scaffolded joint construction';
+  header.appendChild(heading);
+
+  if (trimText(mentorFocus) || trimText(sharedOutcome)) {
+    const meta = document.createElement('p');
+    meta.className = 'joint-meta';
+    const mentorText = trimText(mentorFocus);
+    if (mentorText) {
+      const mentorSpan = document.createElement('span');
+      mentorSpan.className = 'joint-mentor';
+      mentorSpan.textContent = mentorText;
+      meta.appendChild(mentorSpan);
+    }
+    const outcomeText = trimText(sharedOutcome);
+    if (outcomeText) {
+      const outcomeSpan = document.createElement('span');
+      outcomeSpan.textContent = outcomeText;
+      meta.appendChild(outcomeSpan);
+    }
+    header.appendChild(meta);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'joint-body';
+  inner.appendChild(body);
+
+  const columns = document.createElement('div');
+  columns.className = 'joint-columns';
+  body.appendChild(columns);
+
+  const teacherList = Array.isArray(teacherMoves)
+    ? teacherMoves.map((move) => trimText(move)).filter(Boolean)
+    : [];
+  const teacherColumn = document.createElement('section');
+  teacherColumn.className = 'joint-column';
+  const teacherHeading = document.createElement('h3');
+  teacherHeading.textContent = 'Teacher moves';
+  teacherColumn.appendChild(teacherHeading);
+  if (teacherList.length) {
+    const list = document.createElement('ul');
+    teacherList.forEach((move) => {
+      const item = document.createElement('li');
+      item.textContent = move;
+      list.appendChild(item);
+    });
+    teacherColumn.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Note how you will model and guide the text.';
+    teacherColumn.appendChild(placeholder);
+  }
+  columns.appendChild(teacherColumn);
+
+  const learnerList = Array.isArray(learnerMoves)
+    ? learnerMoves.map((move) => trimText(move)).filter(Boolean)
+    : [];
+  const learnerColumn = document.createElement('section');
+  learnerColumn.className = 'joint-column';
+  const learnerHeading = document.createElement('h3');
+  learnerHeading.textContent = 'Learner moves';
+  learnerColumn.appendChild(learnerHeading);
+  if (learnerList.length) {
+    const list = document.createElement('ul');
+    learnerList.forEach((move) => {
+      const item = document.createElement('li');
+      item.textContent = move;
+      list.appendChild(item);
+    });
+    learnerColumn.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'Describe what learners contribute together.';
+    learnerColumn.appendChild(placeholder);
+  }
+  columns.appendChild(learnerColumn);
+
+  return slide;
+}
+
+function createIndependentConstructionChecklistSlide({
+  title = 'Independent construction',
+  reminder = '',
+  checklist = [],
+  stretchGoals = [],
+  imageUrl = '',
+  overlayColor = '',
+  overlayOpacity = 0,
+  layoutIcon = '',
+} = {}) {
+  const { slide, inner } = createBaseLessonSlide('independent-construction-checklist', {
+    imageUrl,
+    overlayColor,
+    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('independent-construction-checklist', layoutIcon),
+  });
+
+  const header = document.createElement('header');
+  header.className = 'lesson-header checklist-header';
+  inner.appendChild(header);
+
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Independent construction';
+  header.appendChild(heading);
+
+  const reminderText = trimText(reminder);
+  if (reminderText) {
+    const reminderEl = document.createElement('p');
+    reminderEl.className = 'checklist-reminder';
+    reminderEl.textContent = reminderText;
+    header.appendChild(reminderEl);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'checklist-body';
+  inner.appendChild(body);
+
+  const checklistItems = Array.isArray(checklist)
+    ? checklist.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  const checklistSection = document.createElement('section');
+  checklistSection.className = 'checklist-section';
+  const checklistHeading = document.createElement('h3');
+  checklistHeading.textContent = 'Before you submit';
+  checklistSection.appendChild(checklistHeading);
+  if (checklistItems.length) {
+    const list = document.createElement('ul');
+    list.className = 'checklist-items';
+    checklistItems.forEach((item) => {
+      const li = document.createElement('li');
+      const icon = document.createElement('span');
+      icon.className = 'checklist-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = '☑';
+      li.appendChild(icon);
+      const text = document.createElement('span');
+      text.textContent = item;
+      li.appendChild(text);
+      list.appendChild(li);
+    });
+    checklistSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement('p');
+    placeholder.className = 'lesson-empty';
+    placeholder.textContent = 'List success criteria learners can self-check.';
+    checklistSection.appendChild(placeholder);
+  }
+  body.appendChild(checklistSection);
+
+  const stretchList = Array.isArray(stretchGoals)
+    ? stretchGoals.map((item) => trimText(item)).filter(Boolean)
+    : [];
+  if (stretchList.length) {
+    const stretchSection = document.createElement('section');
+    stretchSection.className = 'checklist-section';
+    const stretchHeading = document.createElement('h3');
+    stretchHeading.textContent = 'Stretch goals';
+    stretchSection.appendChild(stretchHeading);
+    const list = document.createElement('ul');
+    list.className = 'checklist-stretch';
+    stretchList.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+    stretchSection.appendChild(list);
+    body.appendChild(stretchSection);
+  }
+
+  return slide;
+}
+
+function applyInteractivePracticeType(slide, type) {
+  if (!(slide instanceof HTMLElement)) {
+    return;
+  }
+  const resolvedType = trimText(type) || 'multiple-choice';
+  slide.dataset.activityType = resolvedType;
+  const typeBadge = slide.querySelector('.practice-type');
+  if (typeBadge instanceof HTMLElement) {
+    typeBadge.textContent = getModuleTypeLabel(resolvedType);
+  }
+}
+
+function createInteractivePracticeSlide({
+  title,
+  instructions,
+  activityType,
+  questions = [],
+  layoutIcon = '',
+} = {}) {
+  const resolvedTitle = trimText(title) || "Practice";
+  const resolvedInstructions = trimText(instructions);
+  const resolvedType = trimText(activityType) || "multiple-choice";
+  const resolvedQuestions = Array.isArray(questions)
+    ? questions.filter((q) => q && (q.prompt || q.options?.length))
+    : [];
+
+  const slide = document.createElement("div");
+  slide.className = "slide-stage hidden interactive-practice-slide";
+  slide.dataset.type = "interactive-practice";
+
+  attachLayoutIconBadge(slide, getEffectiveLayoutIcon('interactive-practice', layoutIcon));
+
+  const inner = document.createElement("div");
+  inner.className = "slide-inner interactive-practice-inner";
+  slide.appendChild(inner);
+
+  const header = document.createElement("header");
+  header.className = "practice-header";
+  inner.appendChild(header);
+
+  const heading = document.createElement("h2");
+  heading.textContent = resolvedTitle;
+  header.appendChild(heading);
+
+  const typeBadge = document.createElement("span");
+  typeBadge.className = "practice-type";
+  header.appendChild(typeBadge);
+
+  const body = document.createElement("div");
+  body.className = "practice-body";
+  inner.appendChild(body);
+
+  const instructionSection = document.createElement("section");
+  instructionSection.className = "practice-instructions";
+  if (resolvedInstructions) {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = resolvedInstructions;
+    instructionSection.appendChild(paragraph);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "Describe how learners should complete the activity.";
+    instructionSection.appendChild(placeholder);
+  }
+  body.appendChild(instructionSection);
+
+  const questionSection = document.createElement("section");
+  questionSection.className = "practice-questions";
+  body.appendChild(questionSection);
+
+  if (resolvedQuestions.length) {
+    const list = document.createElement("ol");
+    resolvedQuestions.forEach(({ prompt, options = [], answer }, index) => {
+      const item = document.createElement("li");
+      item.className = "practice-question";
+      const promptEl = document.createElement("p");
+      promptEl.className = "practice-question-text";
+      promptEl.textContent = prompt || `Question ${index + 1}`;
+      item.appendChild(promptEl);
+      const optionList = Array.isArray(options) ? options.filter(Boolean) : [];
+      if (optionList.length) {
+        const optionsEl = document.createElement("ul");
+        optionsEl.className = "practice-options";
+        optionList.forEach((opt) => {
+          const optLi = document.createElement("li");
+          optLi.textContent = opt;
+          optionsEl.appendChild(optLi);
+        });
+        item.appendChild(optionsEl);
+      }
+      const answerText = trimText(answer);
+      if (answerText) {
+        const answerEl = document.createElement("p");
+        answerEl.className = "practice-answer";
+        answerEl.textContent = `Correct: ${answerText}`;
+        item.appendChild(answerEl);
+      }
+      list.appendChild(item);
+    });
+    questionSection.appendChild(list);
+  } else {
+    const placeholder = document.createElement("p");
+    placeholder.className = "lesson-empty";
+    placeholder.textContent = "List the prompts or stems learners will respond to.";
+    questionSection.appendChild(placeholder);
+  }
+
+  const moduleArea = document.createElement("div");
+  moduleArea.className = "practice-module";
+  moduleArea.dataset.role = "practice-module-area";
+  inner.appendChild(moduleArea);
+
+  const moduleHost = document.createElement("div");
+  moduleHost.className = "practice-module-host";
+  moduleHost.dataset.role = "practice-module-host";
+  moduleArea.appendChild(moduleHost);
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "activity-btn";
+  addBtn.dataset.action = "add-module";
+  addBtn.innerHTML = '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
+  moduleArea.appendChild(addBtn);
+
+  applyInteractivePracticeType(slide, resolvedType);
 
   return slide;
 }
 
 function createCardStackSlide({
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  title,
-  headline,
-  description,
-  cards,
-  card_body,
-  cardIcon,
-  footnote,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
+  pill = '',
+  pillIcon = '',
+  title = 'Card stack',
+  description = '',
+  cards = [],
+  cardIcon = '',
+  layoutIcon = '',
 } = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
   const { slide, inner } = createBaseLessonSlide('card-stack', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
+    iconClass: getEffectiveLayoutIcon('card-stack', layoutIcon),
   });
 
-  inner.classList.add('stack', 'stack-lg');
+  inner.classList.add('stack', 'card-stack-layout');
 
   const header = document.createElement('header');
   header.className = 'lesson-header card-stack-header stack stack-sm';
   inner.appendChild(header);
 
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = resolveLayoutIconField('card-stack', 'cardStackPillIcon', pillIcon);
-  if (pillText || pillIconClass) {
+  const pillText = trimText(pill);
+  const pillIconClass =
+    normaliseIconClass(pillIcon) ||
+    getLayoutFieldIconDefault('card-stack', 'cardStackPillIcon') ||
+    'fa-solid fa-bookmark';
+  if (pillText) {
     const pillEl = document.createElement('span');
     pillEl.className = 'pill card-stack-pill';
     if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
+      const icon = document.createElement('i');
+      icon.className = pillIconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(icon);
     }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
+    pillEl.appendChild(document.createTextNode(` ${pillText}`));
     header.appendChild(pillEl);
   }
 
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Stack the workflow cards';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  header.appendChild(headingEl);
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Card stack';
+  header.appendChild(heading);
 
-  const resolvedDescription = trimText(getPlainText(description ?? ''));
-  if (resolvedDescription) {
+  const leadCopy = trimText(description);
+  if (leadCopy) {
     const lead = document.createElement('p');
     lead.className = 'card-stack-lead';
-    lead.textContent = resolvedDescription;
+    lead.textContent = leadCopy;
     header.appendChild(lead);
   }
 
@@ -12053,1350 +13414,217 @@ function createCardStackSlide({
   list.className = 'card-stack-list stack stack-md';
   inner.appendChild(list);
 
-  const cardEntries = Array.isArray(cards)
+  const resolvedIcon =
+    normaliseIconClass(cardIcon) ||
+    getLayoutFieldIconDefault('card-stack', 'cardStackItemIcon') ||
+    'fa-solid fa-circle-dot';
+
+  const stackItems = Array.isArray(cards)
     ? cards
-    : Array.isArray(card_body)
-      ? card_body.map((entry) => ({ description: getPlainText(entry) }))
-      : [];
+        .map((card, index) => ({
+          title: trimText(card?.title) || `Card ${index + 1}`,
+          description: trimText(card?.description) || '',
+        }))
+        .filter((card) => card.title || card.description)
+    : [];
 
-  if (cardEntries.length) {
-    cardEntries.forEach((card, index) => {
-      const titleText = trimText(getPlainText(card?.title ?? card?.heading ?? ''));
-      const descriptionText = trimText(
-        getPlainText(card?.description ?? card?.detail ?? card?.text ?? ''),
-      );
-      if (!titleText && !descriptionText) {
-        return;
-      }
-      const cardEl = document.createElement('article');
-      cardEl.className = 'card stack-card';
-      const headerEl = document.createElement('div');
-      headerEl.className = 'stack-card-header';
-      cardEl.appendChild(headerEl);
-
+  if (stackItems.length) {
+    stackItems.forEach((card, index) => {
+      const article = document.createElement('article');
+      article.className = 'card stack-card';
+      const headerRow = document.createElement('div');
+      headerRow.className = 'stack-card-header';
       const iconWrap = document.createElement('span');
       iconWrap.className = 'stack-card-icon';
-      const itemIconClass =
-        normaliseIconClass(card?.icon) ||
-        resolveLayoutIconField('card-stack', 'cardStackItemIcon', cardIcon);
-      if (itemIconClass) {
-        const iconEl = document.createElement('i');
-        iconEl.className = itemIconClass;
-        iconEl.setAttribute('aria-hidden', 'true');
-        iconWrap.appendChild(iconEl);
+      if (resolvedIcon) {
+        const iconGlyph = document.createElement('i');
+        iconGlyph.className = resolvedIcon;
+        iconGlyph.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconGlyph);
       }
-      const srLabel = document.createElement('span');
-      srLabel.className = 'sr-only';
-      srLabel.textContent = `Card ${index + 1}`;
-      iconWrap.appendChild(srLabel);
-      headerEl.appendChild(iconWrap);
-
-      const heading = document.createElement('h3');
-      heading.textContent = titleText || `Stack item ${index + 1}`;
-      headerEl.appendChild(heading);
-
-      if (descriptionText) {
-        const bodyEl = document.createElement('p');
-        bodyEl.textContent = descriptionText;
-        cardEl.appendChild(bodyEl);
+      const iconLabel = document.createElement('span');
+      iconLabel.className = 'sr-only';
+      iconLabel.textContent = `Card ${index + 1}`;
+      iconWrap.appendChild(iconLabel);
+      headerRow.appendChild(iconWrap);
+      const titleEl = document.createElement('h3');
+      titleEl.textContent = card.title || `Card ${index + 1}`;
+      headerRow.appendChild(titleEl);
+      article.appendChild(headerRow);
+      if (card.description) {
+        const detail = document.createElement('p');
+        detail.textContent = card.description;
+        article.appendChild(detail);
       }
-
-      list.appendChild(cardEl);
+      list.appendChild(article);
     });
   } else {
     const placeholder = document.createElement('p');
     placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add cards to build the stack sequence.';
+    placeholder.textContent = 'Outline each workflow card so learners can preview the sprint flow.';
     list.appendChild(placeholder);
   }
 
-  const footnoteText = trimText(getPlainText(footnote ?? ''));
-  if (footnoteText) {
-    const footnoteEl = document.createElement('p');
-    footnoteEl.className = 'lesson-instructions';
-    footnoteEl.textContent = footnoteText;
-    inner.appendChild(footnoteEl);
-  }
-
   return slide;
 }
 
-function createPillSimpleSlide({
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  title,
-  headline,
-  body,
-  bodyCopy,
-  body_copy,
-  description,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
+function createPillWithGallerySlide({
+  pill = '',
+  pillIcon = '',
+  title = 'Scenario gallery',
+  description = '',
+  gallery = [],
+  itemIcon = '',
+  layoutIcon = '',
 } = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('pill-simple', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
+  const { slide, inner } = createBaseLessonSlide('pill-with-gallery', {
+    iconClass: getEffectiveLayoutIcon('pill-with-gallery', layoutIcon),
   });
 
-  inner.classList.add('stack', 'stack-lg');
+  inner.classList.add('stack', 'pill-gallery-layout');
 
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
+  const header = document.createElement('header');
+  header.className = 'lesson-header pill-gallery-header stack stack-sm';
+  inner.appendChild(header);
+
+  const pillText = trimText(pill);
+  const pillIconClass =
+    normaliseIconClass(pillIcon) ||
+    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryPillIcon') ||
+    'fa-solid fa-camera-retro';
+  if (pillText) {
     const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
+    pillEl.className = 'pill pill-gallery-pill';
     if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
+      const icon = document.createElement('i');
+      icon.className = pillIconClass;
+      icon.setAttribute('aria-hidden', 'true');
+      pillEl.appendChild(icon);
     }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
+    pillEl.appendChild(document.createTextNode(` ${pillText}`));
+    header.appendChild(pillEl);
   }
 
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Frame the task for the class';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
+  const heading = document.createElement('h2');
+  heading.textContent = trimText(title) || 'Scenario gallery';
+  header.appendChild(heading);
 
-  const card = document.createElement('div');
-  card.className = 'card stack stack-sm';
-  inner.appendChild(card);
-
-  const blocks = [];
-  blocks.push(...normaliseTextArray(body ?? []));
-  blocks.push(...normaliseTextArray(bodyCopy ?? body_copy ?? []));
-  blocks.push(...normaliseTextArray(description ?? []));
-
-  let appended = false;
-  blocks.forEach((entry) => {
-    if (appendContentBlock(card, entry)) {
-      appended = true;
-    }
-  });
-
-  if (!appended) {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add lesson copy to populate the card body.';
-    card.appendChild(placeholder);
-  }
-
-  return slide;
-}
-
-function createWorkspaceGridSlide({
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  title,
-  headline,
-  description,
-  intro,
-  gridSlots,
-  grid_slots,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('workspace-grid', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Collaborate in the workspace';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const resolvedDescription = trimText(getPlainText(description ?? intro ?? ''));
-  if (resolvedDescription) {
-    const descriptionEl = document.createElement('p');
-    descriptionEl.className = 'lesson-instructions';
-    descriptionEl.textContent = resolvedDescription;
-    inner.appendChild(descriptionEl);
+  const leadCopy = trimText(description);
+  if (leadCopy) {
+    const lead = document.createElement('p');
+    lead.className = 'pill-gallery-lead';
+    lead.textContent = leadCopy;
+    header.appendChild(lead);
   }
 
   const grid = document.createElement('div');
-  grid.className = 'gallery-grid';
+  grid.className = 'pill-gallery-grid';
   inner.appendChild(grid);
 
-  const slots = Array.isArray(gridSlots) ? gridSlots : Array.isArray(grid_slots) ? grid_slots : [];
+  const resolvedIcon =
+    normaliseIconClass(itemIcon) ||
+    getLayoutFieldIconDefault('pill-with-gallery', 'pillGalleryItemIcon') ||
+    'fa-solid fa-image';
 
-  if (slots.length) {
-    slots.forEach((slot, index) => {
-      if (!slot || typeof slot !== 'object') {
-        return;
-      }
-      const slotEl = document.createElement('article');
-      slotEl.className = 'note-card';
-      const slotId = trimText(slot.id) || `slot-${index + 1}`;
-      slotEl.dataset.slotId = slotId;
-      if (slot.aria_label) {
-        slotEl.setAttribute('aria-label', slot.aria_label);
-      }
-      const titleText = trimText(getPlainText(slot.title ?? ''));
-      if (titleText) {
-        const titleEl = document.createElement('h3');
-        titleEl.textContent = titleText;
-        slotEl.appendChild(titleEl);
-      }
+  const galleryItems = Array.isArray(gallery)
+    ? gallery
+        .map((item, index) => ({
+          image: trimText(item?.image),
+          alt: trimText(item?.alt) || `Gallery image ${index + 1}`,
+          caption: trimText(item?.caption) || '',
+        }))
+        .filter((item) => item.image || item.caption)
+    : [];
 
-      const bodyContent = slot.body ?? slot.description ?? '';
-      if (!appendContentBlock(slotEl, bodyContent)) {
-        const placeholder = document.createElement('p');
-        placeholder.className = 'lesson-empty';
-        placeholder.textContent = 'Add notes or editable guidance to this workspace card.';
-        slotEl.appendChild(placeholder);
+  if (galleryItems.length) {
+    galleryItems.forEach((item, index) => {
+      const figure = document.createElement('figure');
+      figure.className = 'pill-gallery-item';
+      if (item.image) {
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.alt || `Gallery image ${index + 1}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        figure.appendChild(img);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'pill-gallery-placeholder';
+        placeholder.textContent = 'Add an image URL to showcase this moment.';
+        figure.appendChild(placeholder);
       }
-
-      if (slot.media) {
-        appendContentBlock(slotEl, { type: 'media', media: slot.media });
+      const caption = document.createElement('figcaption');
+      caption.className = 'pill-gallery-caption';
+      if (resolvedIcon) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'pill-gallery-icon';
+        const iconGlyph = document.createElement('i');
+        iconGlyph.className = resolvedIcon;
+        iconGlyph.setAttribute('aria-hidden', 'true');
+        iconWrap.appendChild(iconGlyph);
+        const iconLabel = document.createElement('span');
+        iconLabel.className = 'sr-only';
+        iconLabel.textContent = `Gallery item ${index + 1}`;
+        iconWrap.appendChild(iconLabel);
+        caption.appendChild(iconWrap);
       }
-
-      grid.appendChild(slotEl);
+      const captionText = document.createElement('p');
+      captionText.textContent = item.caption || 'Describe the visible evidence or learner action.';
+      caption.appendChild(captionText);
+      const creditText = trimText(item.credit);
+      if (creditText) {
+        const creditLine = document.createElement('p');
+        creditLine.className = 'pill-gallery-credit';
+        const creditUrl = trimText(item.creditUrl);
+        if (creditUrl) {
+          const link = document.createElement('a');
+          link.href = creditUrl;
+          link.target = '_blank';
+          link.rel = 'noreferrer noopener';
+          link.textContent = creditText;
+          creditLine.appendChild(link);
+        } else {
+          creditLine.textContent = creditText;
+        }
+        caption.appendChild(creditLine);
+      }
+      figure.appendChild(caption);
+      grid.appendChild(figure);
     });
   } else {
     const placeholder = document.createElement('p');
     placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add workspace cards to populate the grid.';
+    placeholder.textContent = 'List gallery items so learners can see the scenario in action.';
     grid.appendChild(placeholder);
   }
 
   return slide;
 }
 
-function createContentWrapperSlide({
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  title,
-  headline,
-  header,
-  body,
-  footer,
-  contentBlocks,
-  content_blocks,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('content-wrapper', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-md');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle = trimText(getPlainText(title ?? headline ?? ''));
-  if (resolvedTitle) {
-    const headingEl = document.createElement('h2');
-    headingEl.textContent = resolvedTitle;
-    inner.appendChild(headingEl);
-  }
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'content-wrapper';
-  inner.appendChild(wrapper);
-
-  const headerEl = document.createElement('div');
-  headerEl.className = 'content-header stack stack-sm';
-  const bodyEl = document.createElement('div');
-  bodyEl.className = 'content-body stack stack-sm';
-  const footerEl = document.createElement('div');
-  footerEl.className = 'content-footer stack stack-sm';
-
-  const blocks = [];
-  if (Array.isArray(header)) {
-    header.forEach((block) => blocks.push({ ...block, region: 'header' }));
-  }
-  if (Array.isArray(body)) {
-    body.forEach((block) => blocks.push({ ...block, region: 'body' }));
-  }
-  if (Array.isArray(footer)) {
-    footer.forEach((block) => blocks.push({ ...block, region: 'footer' }));
-  }
-  const wrapperBlocks = Array.isArray(contentBlocks)
-    ? contentBlocks
-    : Array.isArray(content_blocks)
-      ? content_blocks
-      : [];
-  blocks.push(...wrapperBlocks);
-
-  blocks.forEach((block) => {
-    const normalised = normaliseContentBlock(block);
-    if (!normalised) {
-      return;
-    }
-    const region = normalised.region?.toLowerCase();
-    const target =
-      region === 'header'
-        ? headerEl
-        : region === 'footer'
-          ? footerEl
-          : bodyEl;
-    appendContentBlock(target, block);
-  });
-
-  if (!headerEl.childElementCount && headerEl.textContent.trim() === '') {
-    headerEl.remove();
-  } else {
-    wrapper.appendChild(headerEl);
-  }
-
-  if (!bodyEl.childElementCount && bodyEl.textContent.trim() === '') {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add paragraphs, lists, or media to populate the content body.';
-    bodyEl.appendChild(placeholder);
-  }
-  wrapper.appendChild(bodyEl);
-
-  if (!footerEl.childElementCount && footerEl.textContent.trim() === '') {
-    footerEl.remove();
-  } else {
-    wrapper.appendChild(footerEl);
-  }
-
-  return slide;
-}
-
-function createInteractiveActivityCardSlide({
-  pillLabel,
-  pill,
-  pillIcon,
-  icon,
-  iconClass,
-  title,
-  headline,
-  instructions,
-  actionBar,
-  action_bar,
-  timerHint,
-  timer_hint,
-  accessibility = {},
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-activity-card', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Facilitate the interactive task';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const card = document.createElement('div');
-  card.className = 'card stack stack-sm';
-  inner.appendChild(card);
-
-  const instructionsList = document.createElement('ul');
-  instructionsList.className = 'instruction-list';
-  const instructionEntries = normaliseTextArray(instructions ?? []);
-  if (instructionEntries.length) {
-    instructionEntries.forEach((entry) => {
-      const item = document.createElement('li');
-      item.textContent = entry;
-      instructionsList.appendChild(item);
-    });
-  } else {
-    const placeholder = document.createElement('li');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add activity instructions to guide learners.';
-    instructionsList.appendChild(placeholder);
-  }
-  card.appendChild(instructionsList);
-
-  const resolvedTimer = trimText(getPlainText(timerHint ?? timer_hint ?? ''));
-  if (resolvedTimer) {
-    const timerEl = document.createElement('p');
-    timerEl.className = 'lesson-instructions';
-    timerEl.textContent = resolvedTimer;
-    card.appendChild(timerEl);
-  }
-
-  const actions = actionBar ?? action_bar ?? {};
-  const actionsWrap = document.createElement('div');
-  actionsWrap.className = 'activity-actions';
-
-  const createActionBtn = (config, fallback, tone) => {
-    const label = trimText(getPlainText(config?.label ?? '')) || fallback;
-    if (!label) {
-      return null;
-    }
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `activity-btn${tone === 'secondary' ? ' secondary' : ''}`;
-    const slug = label.toLowerCase();
-    if (slug.includes('check')) {
-      button.dataset.action = 'check';
-    } else if (slug.includes('reset') || slug.includes('clear')) {
-      button.dataset.action = 'reset';
-    } else if (slug.includes('hint')) {
-      button.dataset.action = 'hint';
-    }
-    if (config?.aria_label) {
-      button.setAttribute('aria-label', config.aria_label);
-    }
-    if (config?.icon) {
-      const iconEl = document.createElement('i');
-      iconEl.className = normaliseIconClass(config.icon);
-      iconEl.setAttribute('aria-hidden', 'true');
-      button.appendChild(iconEl);
-      button.appendChild(document.createTextNode(' '));
-    }
-    button.appendChild(document.createTextNode(label));
-    return button;
-  };
-
-  [
-    createActionBtn(actions.secondary, '', 'secondary'),
-    createActionBtn(actions.primary, 'Check', 'primary'),
-    createActionBtn(actions.tertiary, '', 'secondary'),
-  ]
-    .filter(Boolean)
-    .forEach((btn) => actionsWrap.appendChild(btn));
-
-  if (actionsWrap.childElementCount) {
-    card.appendChild(actionsWrap);
-  }
-
-  const feedback = document.createElement('div');
-  feedback.className = 'feedback-msg';
-  feedback.setAttribute('aria-live', accessibility?.aria_live ?? 'polite');
-  if (accessibility?.instructions) {
-    feedback.dataset.instructions = getPlainText(accessibility.instructions);
-  }
-  card.appendChild(feedback);
-
-  return slide;
-}
-
-function createInteractiveTokenBoardSlide({
-  title,
-  headline,
-  description,
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  tokenBank,
-  token_bank,
-  dropzones,
-  actionBar,
-  action_bar,
-  feedbackRegion,
-  feedback_region,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-token-board', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Sort each token into the matching column';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const resolvedDescription = trimText(getPlainText(description ?? ''));
-  if (resolvedDescription) {
-    const descriptionEl = document.createElement('p');
-    descriptionEl.className = 'lesson-instructions';
-    descriptionEl.textContent = resolvedDescription;
-    inner.appendChild(descriptionEl);
-  }
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.activity = 'categorization';
-  inner.appendChild(card);
-
-  const bank = document.createElement('div');
-  bank.className = 'token-bank';
-  card.appendChild(bank);
-
-  const tokenEntries = Array.isArray(tokenBank)
-    ? tokenBank
-    : Array.isArray(token_bank)
-      ? token_bank
-      : [];
-  const zones = Array.isArray(dropzones) ? dropzones : [];
-
-  tokenEntries.forEach((token) => {
-    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
-    if (!label) {
-      return;
-    }
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'click-token';
-    const tokenId = trimText(token?.id ?? '');
-    if (tokenId) {
-      button.dataset.tokenId = tokenId;
-    }
-    const matchingZone = zones.find((zone) =>
-      Array.isArray(zone?.accepts) && zone.accepts.includes(tokenId),
-    );
-    if (matchingZone?.id) {
-      button.dataset.category = matchingZone.id;
-    }
-    if (token?.aria_label) {
-      button.setAttribute('aria-label', token.aria_label);
-    }
-    button.textContent = label;
-    bank.appendChild(button);
-  });
-
-  const columnsWrap = document.createElement('div');
-  columnsWrap.className = 'category-columns';
-  card.appendChild(columnsWrap);
-
-  if (zones.length) {
-    zones.forEach((zone) => {
-      const column = document.createElement('div');
-      column.className = 'category-column';
-      const zoneId = trimText(zone?.id ?? '');
-      if (zoneId) {
-        column.dataset.category = zoneId;
-      }
-      const heading = trimText(getPlainText(zone?.title ?? ''));
-      if (heading) {
-        const headingEl = document.createElement('h4');
-        headingEl.textContent = heading;
-        column.appendChild(headingEl);
-      }
-      const zoneInstructions = trimText(getPlainText(zone?.instructions ?? ''));
-      if (zoneInstructions) {
-        const note = document.createElement('p');
-        note.className = 'lesson-instructions';
-        note.textContent = zoneInstructions;
-        column.appendChild(note);
-      }
-      const drop = document.createElement('div');
-      drop.className = 'drop-zone';
-      drop.setAttribute('aria-label', heading ? `Drop zone for ${heading}` : 'Drop zone');
-      column.appendChild(drop);
-      columnsWrap.appendChild(column);
-    });
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add category columns so learners can sort tokens.';
-    columnsWrap.appendChild(placeholder);
-  }
-
-  const actions = actionBar ?? action_bar ?? {};
-  const actionsWrap = document.createElement('div');
-  actionsWrap.className = 'activity-actions';
-
-  const resetBtn = document.createElement('button');
-  resetBtn.type = 'button';
-  resetBtn.className = 'activity-btn secondary';
-  resetBtn.dataset.action = 'reset';
-  resetBtn.textContent = trimText(getPlainText(actions?.secondary?.label ?? 'Reset')) || 'Reset';
-  actionsWrap.appendChild(resetBtn);
-
-  const checkBtn = document.createElement('button');
-  checkBtn.type = 'button';
-  checkBtn.className = 'activity-btn';
-  checkBtn.dataset.action = 'check';
-  checkBtn.textContent = trimText(getPlainText(actions?.primary?.label ?? 'Check')) || 'Check';
-  actionsWrap.appendChild(checkBtn);
-
-  if (actions?.tertiary?.label) {
-    const tertiaryBtn = document.createElement('button');
-    tertiaryBtn.type = 'button';
-    tertiaryBtn.className = 'activity-btn secondary';
-    tertiaryBtn.textContent = getPlainText(actions.tertiary.label);
-    actionsWrap.appendChild(tertiaryBtn);
-  }
-
-  card.appendChild(actionsWrap);
-
-  const feedback = feedbackRegion ?? feedback_region ?? {};
-  const feedbackEl = document.createElement('div');
-  feedbackEl.className = 'feedback-msg';
-  feedbackEl.setAttribute('aria-live', 'polite');
-  if (feedback?.positive) {
-    feedbackEl.dataset.positive = getPlainText(feedback.positive);
-  }
-  if (feedback?.negative) {
-    feedbackEl.dataset.negative = getPlainText(feedback.negative);
-  }
-  if (feedback?.neutral) {
-    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
-  }
-  card.appendChild(feedbackEl);
-
-  return slide;
-}
-
-function createInteractiveTokenTableSlide({
-  title,
-  headline,
-  description,
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  tokenBank,
-  token_bank,
-  tableShell,
-  table_shell,
-  actionBar,
-  action_bar,
-  accessibility = {},
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-token-table', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Complete the table using the tokens';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const resolvedDescription = trimText(getPlainText(description ?? ''));
-  if (resolvedDescription) {
-    const descriptionEl = document.createElement('p');
-    descriptionEl.className = 'lesson-instructions';
-    descriptionEl.textContent = resolvedDescription;
-    inner.appendChild(descriptionEl);
-  }
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.activity = 'table-completion';
-  inner.appendChild(card);
-
-  const shell = tableShell ?? table_shell ?? {};
-  const columns = Array.isArray(shell.columns) ? shell.columns : [];
-  const rows = Array.isArray(shell.rows) ? shell.rows : [];
-
-  const tableWrap = document.createElement('div');
-  tableWrap.className = 'table-responsive';
-  const table = document.createElement('table');
-  tableWrap.appendChild(table);
-  card.appendChild(tableWrap);
-
-  if (columns.length) {
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    columns.forEach((columnText) => {
-      const th = document.createElement('th');
-      th.textContent = getPlainText(columnText) || '';
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-  }
-
-  const tbody = document.createElement('tbody');
-  table.appendChild(tbody);
-
-  if (rows.length) {
-    rows.forEach((row) => {
-      const tr = document.createElement('tr');
-      const promptCell = document.createElement('td');
-      promptCell.textContent = getPlainText(row?.prompt ?? '');
-      tr.appendChild(promptCell);
-
-      const cellKeys = Array.isArray(row?.cell_keys) ? row.cell_keys : [];
-      const dropZoneCount = Math.max(cellKeys.length, Math.max(columns.length - 1, 1));
-      for (let index = 0; index < dropZoneCount; index += 1) {
-        const td = document.createElement('td');
-        const drop = document.createElement('button');
-        drop.type = 'button';
-        drop.className = 'drop-zone placeholder';
-        const answer = cellKeys[index] ?? '';
-        if (answer) {
-          drop.dataset.answer = answer;
-        }
-        drop.dataset.placeholder = 'Select';
-        drop.textContent = 'Select';
-        drop.setAttribute(
-          'aria-label',
-          `Table cell ${index + 1} for ${getPlainText(row?.prompt ?? 'table row')}`,
-        );
-        td.appendChild(drop);
-        tr.appendChild(td);
-      }
-      tbody.appendChild(tr);
-    });
-  } else {
-    const emptyRow = document.createElement('tr');
-    const cell = document.createElement('td');
-    cell.colSpan = Math.max(columns.length, 2);
-    cell.className = 'lesson-empty';
-    cell.textContent = 'Add table rows to configure the activity.';
-    emptyRow.appendChild(cell);
-    tbody.appendChild(emptyRow);
-  }
-
-  const tokenEntries = Array.isArray(tokenBank)
-    ? tokenBank
-    : Array.isArray(token_bank)
-      ? token_bank
-      : [];
-  const bank = document.createElement('div');
-  bank.className = 'token-bank';
-  bank.setAttribute('aria-label', accessibility?.summary ?? 'Token options');
-  tokenEntries.forEach((token) => {
-    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
-    if (!label) {
-      return;
-    }
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'click-token';
-    const tokenId = trimText(token?.id ?? '');
-    if (tokenId) {
-      button.dataset.tokenId = tokenId;
-      button.dataset.value = tokenId;
-    } else {
-      button.dataset.value = label;
-    }
-    button.textContent = label;
-    bank.appendChild(button);
-  });
-  card.appendChild(bank);
-
-  const actions = actionBar ?? action_bar ?? {};
-  const actionsWrap = document.createElement('div');
-  actionsWrap.className = 'activity-actions';
-
-  const resetBtn = document.createElement('button');
-  resetBtn.type = 'button';
-  resetBtn.className = 'activity-btn secondary';
-  resetBtn.dataset.action = 'reset';
-  resetBtn.textContent = trimText(getPlainText(actions?.secondary?.label ?? 'Reset')) || 'Reset';
-  actionsWrap.appendChild(resetBtn);
-
-  const checkBtn = document.createElement('button');
-  checkBtn.type = 'button';
-  checkBtn.className = 'activity-btn';
-  checkBtn.dataset.action = 'check';
-  checkBtn.textContent = trimText(getPlainText(actions?.primary?.label ?? 'Check')) || 'Check';
-  actionsWrap.appendChild(checkBtn);
-
-  card.appendChild(actionsWrap);
-
-  const feedback = document.createElement('div');
-  feedback.className = 'feedback-msg';
-  feedback.setAttribute('aria-live', 'polite');
-  card.appendChild(feedback);
-
-  return slide;
-}
-
-function createInteractiveTokenQuizSlide({
-  title,
-  headline,
-  description,
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  tokenBank,
-  token_bank,
-  quizPrompts,
-  quiz_prompts,
-  completionCopy,
-  completion_copy,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-token-quiz', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Drag each ritual token to answer the quiz';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const resolvedDescription = trimText(getPlainText(description ?? ''));
-  if (resolvedDescription) {
-    const descriptionEl = document.createElement('p');
-    descriptionEl.className = 'lesson-instructions';
-    descriptionEl.textContent = resolvedDescription;
-    inner.appendChild(descriptionEl);
-  }
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.activity = 'token-drop';
-  inner.appendChild(card);
-
-  const prompts = Array.isArray(quizPrompts)
-    ? quizPrompts
-    : Array.isArray(quiz_prompts)
-      ? quiz_prompts
-      : [];
-
-  const promptList = document.createElement('ol');
-  promptList.className = 'practice-prompt-list';
-  prompts.forEach((prompt) => {
-    const question = getPlainText(prompt?.question ?? prompt?.text ?? '');
-    if (!question) {
-      return;
-    }
-    const li = document.createElement('li');
-    const text = document.createElement('p');
-    text.textContent = question;
-    li.appendChild(text);
-
-    const correctIds = Array.isArray(prompt?.correct_token_ids)
-      ? prompt.correct_token_ids
-      : [];
-    const dropCount = Math.max(correctIds.length, 1);
-    for (let index = 0; index < dropCount; index += 1) {
-      const drop = document.createElement('button');
-      drop.type = 'button';
-      drop.className = 'drop-zone placeholder';
-      drop.dataset.placeholder = 'Select';
-      const expectedId = correctIds[index] ?? '';
-      if (expectedId) {
-        drop.dataset.answer = expectedId;
-      }
-      drop.textContent = 'Select';
-      drop.setAttribute('aria-label', `Drop zone for ${question}`);
-      li.appendChild(drop);
-    }
-
-    const rationale = trimText(getPlainText(prompt?.rationale ?? ''));
-    if (rationale) {
-      const rationaleEl = document.createElement('p');
-      rationaleEl.className = 'lesson-instructions';
-      rationaleEl.textContent = rationale;
-      li.appendChild(rationaleEl);
-    }
-
-    promptList.appendChild(li);
-  });
-
-  card.appendChild(promptList);
-
-  const tokenEntries = Array.isArray(tokenBank)
-    ? tokenBank
-    : Array.isArray(token_bank)
-      ? token_bank
-      : [];
-
-  const bank = document.createElement('div');
-  bank.className = 'token-bank';
-  tokenEntries.forEach((token) => {
-    const label = trimText(getPlainText(token?.label ?? token?.text ?? ''));
-    if (!label) {
-      return;
-    }
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'click-token';
-    const tokenId = trimText(token?.id ?? '');
-    if (tokenId) {
-      button.dataset.tokenId = tokenId;
-      button.dataset.value = tokenId;
-    } else {
-      button.dataset.value = label;
-    }
-    if (token?.description) {
-      button.title = getPlainText(token.description);
-    }
-    button.textContent = label;
-    bank.appendChild(button);
-  });
-  card.appendChild(bank);
-
-  const actionsWrap = document.createElement('div');
-  actionsWrap.className = 'activity-actions';
-  const resetBtn = document.createElement('button');
-  resetBtn.type = 'button';
-  resetBtn.className = 'activity-btn secondary';
-  resetBtn.dataset.action = 'reset';
-  resetBtn.textContent = 'Reset';
-  actionsWrap.appendChild(resetBtn);
-  const checkBtn = document.createElement('button');
-  checkBtn.type = 'button';
-  checkBtn.className = 'activity-btn';
-  checkBtn.dataset.action = 'check';
-  checkBtn.textContent = 'Check';
-  actionsWrap.appendChild(checkBtn);
-  card.appendChild(actionsWrap);
-
-  const feedback = completionCopy ?? completion_copy ?? {};
-  const feedbackEl = document.createElement('div');
-  feedbackEl.className = 'feedback-msg';
-  feedbackEl.setAttribute('aria-live', 'polite');
-  if (feedback?.positive) {
-    feedbackEl.dataset.positive = getPlainText(feedback.positive);
-  }
-  if (feedback?.negative) {
-    feedbackEl.dataset.negative = getPlainText(feedback.negative);
-  }
-  if (feedback?.neutral) {
-    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
-  }
-  card.appendChild(feedbackEl);
-
-  return slide;
-}
-
-function createInteractiveQuizFeedbackSlide({
-  title,
-  headline,
-  description,
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  quizItems,
-  quiz_items,
-  feedbackRegion,
-  feedback_region,
-  nextSteps,
-  next_steps,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-quiz-feedback', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Review learner responses and coach next steps';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const resolvedDescription = trimText(getPlainText(description ?? ''));
-  if (resolvedDescription) {
-    const descriptionEl = document.createElement('p');
-    descriptionEl.className = 'lesson-instructions';
-    descriptionEl.textContent = resolvedDescription;
-    inner.appendChild(descriptionEl);
-  }
-
-  const card = document.createElement('div');
-  card.className = 'card stack stack-sm';
-  inner.appendChild(card);
-
-  const items = Array.isArray(quizItems)
-    ? quizItems
-    : Array.isArray(quiz_items)
-      ? quiz_items
-      : [];
-
-  if (items.length) {
-    const list = document.createElement('ul');
-    list.className = 'instruction-list';
-    items.forEach((item) => {
-      const prompt = getPlainText(item?.prompt ?? '');
-      const response = getPlainText(item?.learner_response ?? '');
-      if (!prompt && !response) {
-        return;
-      }
-      const li = document.createElement('li');
-      if (prompt) {
-        const promptEl = document.createElement('strong');
-        promptEl.textContent = prompt;
-        li.appendChild(promptEl);
-      }
-      if (response) {
-        const responseEl = document.createElement('p');
-        responseEl.textContent = `Learner response: ${response}`;
-        li.appendChild(responseEl);
-      }
-      const isCorrect = item?.is_correct === true;
-      li.classList.add(isCorrect ? 'correct' : 'incorrect');
-      const explanation = trimText(getPlainText(item?.explanation ?? ''));
-      if (explanation) {
-        const explanationEl = document.createElement('p');
-        explanationEl.className = 'lesson-instructions';
-        explanationEl.textContent = explanation;
-        li.appendChild(explanationEl);
-      }
-      list.appendChild(li);
-    });
-    card.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add quiz feedback items to review responses.';
-    card.appendChild(placeholder);
-  }
-
-  const feedback = feedbackRegion ?? feedback_region ?? {};
-  const feedbackEl = document.createElement('div');
-  feedbackEl.className = 'feedback-msg';
-  feedbackEl.setAttribute('aria-live', 'polite');
-  if (feedback?.positive) {
-    feedbackEl.dataset.positive = getPlainText(feedback.positive);
-  }
-  if (feedback?.negative) {
-    feedbackEl.dataset.negative = getPlainText(feedback.negative);
-  }
-  if (feedback?.neutral) {
-    feedbackEl.dataset.neutral = getPlainText(feedback.neutral);
-  }
-  card.appendChild(feedbackEl);
-
-  const nextStepsText = trimText(getPlainText(nextSteps ?? next_steps ?? ''));
-  if (nextStepsText) {
-    const nextStepsEl = document.createElement('p');
-    nextStepsEl.className = 'lesson-instructions';
-    nextStepsEl.textContent = nextStepsText;
-    card.appendChild(nextStepsEl);
-  }
-
-  return slide;
-}
-
-function createInteractiveAudioDialogueSlide({
-  title,
-  headline,
-  pill,
-  pillLabel,
-  pillIcon,
-  icon,
-  iconClass,
-  audioPlayer,
-  audio_player,
-  promptCard,
-  prompt_card,
-  backgroundImage,
-  overlayColor,
-  overlayOpacity,
-} = {}) {
-  const resolvedIcon = normaliseIconClass(iconClass ?? icon);
-  const { slide, inner } = createBaseLessonSlide('interactive-audio-dialogue', {
-    iconClass: resolvedIcon,
-    imageUrl: backgroundImage,
-    overlayColor,
-    overlayOpacity,
-  });
-
-  inner.classList.add('stack', 'stack-lg');
-
-  const pillText = trimText(getPlainText(pillLabel ?? pill ?? ''));
-  const pillIconClass = normaliseIconClass(pillIcon);
-  if (pillText || pillIconClass) {
-    const pillEl = document.createElement('span');
-    pillEl.className = 'pill';
-    if (pillIconClass) {
-      const iconEl = document.createElement('i');
-      iconEl.className = pillIconClass;
-      iconEl.setAttribute('aria-hidden', 'true');
-      pillEl.appendChild(iconEl);
-      if (pillText) {
-        pillEl.appendChild(document.createTextNode(' '));
-      }
-    }
-    if (pillText) {
-      pillEl.appendChild(document.createTextNode(pillText));
-    }
-    inner.appendChild(pillEl);
-  }
-
-  const resolvedTitle =
-    trimText(getPlainText(title ?? headline ?? '')) || 'Listen and analyse the dialogue';
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = resolvedTitle;
-  inner.appendChild(headingEl);
-
-  const audioData = audioPlayer ?? audio_player ?? {};
-  if (audioData?.source?.url || audioData?.source?.src) {
-    const audioWrap = document.createElement('div');
-    audioWrap.className = 'lesson-audio';
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.preload = 'none';
-    const source = document.createElement('source');
-    source.src = audioData.source.url ?? audioData.source.src;
-    audio.appendChild(source);
-    audioWrap.appendChild(audio);
-    if (audioData?.transcript) {
-      const transcript = document.createElement('p');
-      transcript.className = 'lesson-instructions';
-      transcript.textContent = getPlainText(audioData.transcript);
-      audioWrap.appendChild(transcript);
-    }
-    inner.appendChild(audioWrap);
-  }
-
-  const prompt = promptCard ?? prompt_card ?? {};
-  const promptContainer = document.createElement('div');
-  promptContainer.className = 'card stack stack-sm';
-  const promptTitle = trimText(getPlainText(prompt?.title ?? ''));
-  if (promptTitle) {
-    const promptHeading = document.createElement('h3');
-    promptHeading.textContent = promptTitle;
-    promptContainer.appendChild(promptHeading);
-  }
-  const instructions = Array.isArray(prompt?.instructions)
-    ? prompt.instructions
-    : [];
-  if (instructions.length) {
-    const list = document.createElement('ul');
-    list.className = 'instruction-list';
-    instructions.forEach((entry) => {
-      const li = document.createElement('li');
-      li.textContent = getPlainText(entry);
-      list.appendChild(li);
-    });
-    promptContainer.appendChild(list);
-  } else {
-    const placeholder = document.createElement('p');
-    placeholder.className = 'lesson-empty';
-    placeholder.textContent = 'Add prompts to accompany the audio dialogue.';
-    promptContainer.appendChild(placeholder);
-  }
-  const supporting = Array.isArray(prompt?.supporting_points)
-    ? prompt.supporting_points
-    : [];
-  supporting.forEach((point) => {
-    const pointEl = document.createElement('p');
-    pointEl.className = 'lesson-instructions';
-    pointEl.textContent = getPlainText(point);
-    promptContainer.appendChild(pointEl);
-  });
-  inner.appendChild(promptContainer);
-
-  return slide;
-}
-
 const LESSON_LAYOUT_RENDERERS = {
   'blank-canvas': () => createBlankSlide(),
-  'hero-overlay': (data) => createHeroOverlaySlide(data),
-  'pill-with-gallery': (data) => createPillWithGallerySlide(data),
-  'reflection-board': (data) => createReflectionBoardSlide(data),
-  'split-grid': (data) => createSplitGridSlide(data),
-  'centered-callout': (data) => createCenteredCalloutSlide(data),
-  'centered-dialogue': (data) => createCenteredDialogueSlide(data),
+  'learning-objectives': (data) => createLearningObjectivesSlide(data),
+  'model-dialogue': (data) => createModelDialogueSlide(data),
+  'interactive-practice': (data) => createInteractivePracticeSlide(data),
+  'communicative-task': (data) => createCommunicativeTaskSlide(data),
+  'pronunciation-focus': (data) => createPronunciationFocusSlide(data),
+  reflection: (data) => createReflectionSlide(data),
+  'grounding-activity': (data) => createGroundingActivitySlide(data),
+  'topic-introduction': (data) => createTopicIntroductionSlide(data),
+  'guided-discovery': (data) => createGuidedDiscoverySlide(data),
+  'creative-practice': (data) => createCreativePracticeSlide(data),
+  'task-divider': (data) => createTaskDividerSlide(data),
+  'task-reporting': (data) => createTaskReportingSlide(data),
+  'genre-deconstruction': (data) => createGenreDeconstructionSlide(data),
+  'linguistic-feature-hunt': (data) => createLinguisticFeatureHuntSlide(data),
+  'text-reconstruction': (data) => createTextReconstructionSlide(data),
+  'jumbled-text-sequencing': (data) => createJumbledTextSequencingSlide(data),
+  'scaffolded-joint-construction': (data) =>
+    createScaffoldedJointConstructionSlide(data),
+  'independent-construction-checklist': (data) =>
+    createIndependentConstructionChecklistSlide(data),
   'card-stack': (data) => createCardStackSlide(data),
-  'pill-simple': (data) => createPillSimpleSlide(data),
-  'workspace-grid': (data) => createWorkspaceGridSlide(data),
-  'content-wrapper': (data) => createContentWrapperSlide(data),
-  'interactive-activity-card': (data) => createInteractiveActivityCardSlide(data),
-  'interactive-token-board': (data) => createInteractiveTokenBoardSlide(data),
-  'interactive-token-table': (data) => createInteractiveTokenTableSlide(data),
-  'interactive-token-quiz': (data) => createInteractiveTokenQuizSlide(data),
-  'interactive-quiz-feedback': (data) => createInteractiveQuizFeedbackSlide(data),
-  'interactive-audio-dialogue': (data) => createInteractiveAudioDialogueSlide(data),
+  'pill-with-gallery': (data) => createPillWithGallerySlide(data),
 };
 
 export const SUPPORTED_LESSON_LAYOUTS = Object.freeze(
@@ -13423,148 +13651,6 @@ export function createLessonSlideFromState({ layout = 'blank-canvas', data = {} 
 
 
 
-const PRACTICE_TYPE_CLASS_PREFIX = "practice-type--";
-const PRACTICE_TYPE_FALLBACK_LABEL = "Interactive module";
-
-function normalisePracticeModuleType(type) {
-  if (type == null) {
-    return "";
-  }
-  const raw =
-    typeof type === "string"
-      ? type
-      : typeof type === "number"
-        ? String(type)
-        : "";
-  const expanded = raw.replace(/([a-z0-9])([A-Z])/g, "$1-$2");
-  const slug = trimText(expanded)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-{2,}/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return slug;
-}
-
-function resolvePracticeModuleLabel(type, slug) {
-  const raw =
-    typeof type === "string"
-      ? type
-      : typeof type === "number"
-        ? String(type)
-        : "";
-  const expanded = raw.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
-  const trimmed = trimText(expanded).replace(/[-_]+/g, " ");
-  if (trimmed) {
-    if (/[A-Z]/.test(trimmed)) {
-      return trimmed.replace(/\s{2,}/g, " ");
-    }
-    return trimmed
-      .split(/\s+/)
-      .filter(Boolean)
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ");
-  }
-  if (!slug) {
-    return PRACTICE_TYPE_FALLBACK_LABEL;
-  }
-  return slug
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function togglePracticeTypeClasses(target, slug) {
-  if (!(target instanceof HTMLElement)) {
-    return;
-  }
-  const removable = [];
-  target.classList.forEach((cls) => {
-    if (cls.startsWith(PRACTICE_TYPE_CLASS_PREFIX)) {
-      removable.push(cls);
-    }
-  });
-  if (removable.length) {
-    target.classList.remove(...removable);
-  }
-  if (slug) {
-    target.classList.add(`${PRACTICE_TYPE_CLASS_PREFIX}${slug}`);
-  }
-}
-
-function applyInteractivePracticeType(slide, type) {
-  const slug = normalisePracticeModuleType(type);
-  const label = resolvePracticeModuleLabel(type, slug);
-
-  if (!(slide instanceof HTMLElement)) {
-    return slug;
-  }
-
-  if (slug) {
-    slide.dataset.activityType = slug;
-  } else {
-    delete slide.dataset.activityType;
-  }
-
-  togglePracticeTypeClasses(slide, slug);
-
-  const labelTargets = slide.querySelectorAll(
-    "[data-role=\"practice-type-label\"], [data-practice-type-label]",
-  );
-  if (labelTargets.length) {
-    labelTargets.forEach((target) => {
-      if (target instanceof HTMLElement) {
-        target.textContent = label;
-      }
-    });
-  }
-
-  const pillTargets = slide.querySelectorAll(
-    "[data-role=\"practice-type\"], .practice-type",
-  );
-  pillTargets.forEach((pill) => {
-    if (!(pill instanceof HTMLElement)) {
-      return;
-    }
-    if (slug) {
-      pill.dataset.activityType = slug;
-    } else if (pill.dataset && "activityType" in pill.dataset) {
-      delete pill.dataset.activityType;
-    }
-    togglePracticeTypeClasses(pill, slug);
-    const pillLabel =
-      pill.querySelector("[data-role=\"practice-type-label\"]") ??
-      pill.querySelector("[data-practice-type-label]");
-    if (pillLabel instanceof HTMLElement) {
-      pillLabel.textContent = label;
-    } else if (!labelTargets.length && pill.childElementCount === 0) {
-      pill.textContent = label;
-    }
-  });
-
-  const moduleArea = slide.querySelector("[data-role=\"practice-module-area\"]");
-  if (moduleArea instanceof HTMLElement) {
-    if (slug) {
-      moduleArea.dataset.activityType = slug;
-    } else {
-      delete moduleArea.dataset.activityType;
-    }
-    togglePracticeTypeClasses(moduleArea, slug);
-  }
-
-  const moduleHost = slide.querySelector("[data-role=\"practice-module-host\"]");
-  if (moduleHost instanceof HTMLElement) {
-    if (slug) {
-      moduleHost.dataset.activityType = slug;
-    } else {
-      delete moduleHost.dataset.activityType;
-    }
-    togglePracticeTypeClasses(moduleHost, slug);
-  }
-
-  return slug;
-}
-
 function ensureInteractivePracticeModuleControls(slide) {
   if (!(slide instanceof HTMLElement)) {
     return {
@@ -13585,9 +13671,6 @@ function ensureInteractivePracticeModuleControls(slide) {
       addBtn: null,
     };
   }
-
-  const ButtonCtor =
-    typeof HTMLButtonElement === 'undefined' ? HTMLElement : HTMLButtonElement;
 
   let moduleArea = slide.querySelector('[data-role="practice-module-area"]');
   if (!(moduleArea instanceof HTMLElement)) {
@@ -13620,7 +13703,7 @@ function ensureInteractivePracticeModuleControls(slide) {
   }
 
   let addBtn = moduleArea.querySelector('[data-action="add-module"]');
-  if (!(addBtn instanceof ButtonCtor)) {
+  if (!(addBtn instanceof HTMLButtonElement)) {
     addBtn = document.createElement('button');
     addBtn.type = 'button';
     addBtn.className = 'activity-btn';
@@ -13661,11 +13744,6 @@ function initialiseInteractivePracticeSlide(slide) {
   }
   slide.__deckPracticeInitialised = true;
 
-  const initialType = applyInteractivePracticeType(slide, slide.dataset.activityType);
-  if (initialType) {
-    slide.dataset.activityType = initialType;
-  }
-
   const { host, addBtn } = ensureInteractivePracticeModuleControls(slide);
 
   const updateState = () => refreshInteractivePracticeModuleState(slide);
@@ -13678,16 +13756,10 @@ function initialiseInteractivePracticeSlide(slide) {
   if (addBtn instanceof HTMLButtonElement && host instanceof HTMLElement) {
     addBtn.addEventListener('click', () => {
       const practiceSlide = addBtn.closest('.interactive-practice-slide');
-      let presetType =
+      const presetType =
         practiceSlide instanceof HTMLElement && practiceSlide.dataset.activityType
           ? practiceSlide.dataset.activityType
           : 'multiple-choice';
-      if (practiceSlide instanceof HTMLElement) {
-        const resolvedPreset = applyInteractivePracticeType(practiceSlide, presetType);
-        if (resolvedPreset) {
-          presetType = resolvedPreset;
-        }
-      }
       const config = presetType ? { type: presetType } : null;
       openModuleOverlay({
         canvas: host,
@@ -13699,12 +13771,7 @@ function initialiseInteractivePracticeSlide(slide) {
             initialiseModuleEmbed(module, { onRemove: updateState });
             if (practiceSlide instanceof HTMLElement) {
               const moduleType = module.dataset.activityType || presetType;
-              const resolvedType = applyInteractivePracticeType(practiceSlide, moduleType);
-              if (resolvedType) {
-                module.dataset.activityType = resolvedType;
-              } else {
-                delete module.dataset.activityType;
-              }
+              applyInteractivePracticeType(practiceSlide, moduleType);
             }
           }
           updateState();
@@ -13842,22 +13909,98 @@ function handleBuilderSubmit(event) {
 
   const state = getBuilderFormState();
   if (!state) {
-    showBuilderStatus("We couldn't read the builder data.", 'error');
+    showBuilderStatus("We couldn't read the builder data.", "error");
     return;
   }
 
-  const slide = createBlankSlide();
+  let slide = null;
+
+  switch (state.layout) {
+    case 'blank-canvas': {
+      slide = createBlankSlide();
+      if (slide instanceof HTMLElement) {
+        attachBlankSlideEvents(slide);
+      }
+      break;
+    }
+    case 'learning-objectives':
+      slide = createLearningObjectivesSlide(state.data);
+      break;
+    case 'model-dialogue':
+      slide = createModelDialogueSlide(state.data);
+      break;
+    case 'interactive-practice':
+      slide = createInteractivePracticeSlide(state.data);
+      break;
+    case 'card-stack':
+      slide = createCardStackSlide(state.data);
+      break;
+    case 'pill-with-gallery':
+      slide = createPillWithGallerySlide(state.data);
+      break;
+    case 'communicative-task':
+      slide = createCommunicativeTaskSlide(state.data);
+      break;
+    case 'pronunciation-focus':
+      slide = createPronunciationFocusSlide(state.data);
+      break;
+    case 'reflection':
+      slide = createReflectionSlide(state.data);
+      break;
+    case 'grounding-activity':
+      slide = createGroundingActivitySlide(state.data);
+      break;
+    case 'topic-introduction':
+      slide = createTopicIntroductionSlide(state.data);
+      break;
+    case 'guided-discovery':
+      slide = createGuidedDiscoverySlide(state.data);
+      break;
+    case 'creative-practice':
+      slide = createCreativePracticeSlide(state.data);
+      break;
+    case 'task-divider':
+      slide = createTaskDividerSlide(state.data);
+      break;
+    case 'task-reporting':
+      slide = createTaskReportingSlide(state.data);
+      break;
+    case 'genre-deconstruction':
+      slide = createGenreDeconstructionSlide(state.data);
+      break;
+    case 'linguistic-feature-hunt':
+      slide = createLinguisticFeatureHuntSlide(state.data);
+      break;
+    case 'text-reconstruction':
+      slide = createTextReconstructionSlide(state.data);
+      break;
+    case 'jumbled-text-sequencing':
+      slide = createJumbledTextSequencingSlide(state.data);
+      break;
+    case 'scaffolded-joint-construction':
+      slide = createScaffoldedJointConstructionSlide(state.data);
+      break;
+    case 'independent-construction-checklist':
+      slide = createIndependentConstructionChecklistSlide(state.data);
+      break;
+    default:
+      showBuilderStatus('Choose a slide layout to continue.', 'error');
+      return;
+  }
+
   if (!(slide instanceof HTMLElement)) {
-    showBuilderStatus("We couldn't build that slide right now.", 'error');
+    showBuilderStatus("We couldn't build that slide right now.", "error");
     return;
   }
 
-  attachBlankSlideEvents(slide);
+  if (state.layout === 'interactive-practice') {
+    initialiseInteractivePracticeSlide(slide);
+  }
+
   insertActivitySlide(slide);
   showBuilderStatus('Slide added to your deck.', 'success');
   closeBuilderOverlay({ reset: true, focus: true });
 }
-
 function initialiseActivityBuilderUI() {
   if (!(builderOverlay instanceof HTMLElement) || !(builderForm instanceof HTMLFormElement)) {
     ensureFallbackAddSlideListener();
@@ -13873,19 +14016,68 @@ function initialiseActivityBuilderUI() {
 
   builderOverlay.__deckBuilderInitialised = true;
 
-  const openBlankLayout = () => {
+  const openForLayout = (layout) => {
     showBuilderStatus('', undefined);
-    openBuilderOverlay({ layout: 'blank-canvas' });
+    openBuilderOverlay({ layout });
   };
 
   addSlideBtn?.addEventListener('click', (event) => {
     event.preventDefault();
-    openBlankLayout();
+    openForLayout('blank-canvas');
   });
 
-  activityBuilderBtn?.addEventListener('click', openBlankLayout);
+  activityBuilderBtn?.addEventListener('click', () => {
+    openForLayout('learning-objectives');
+  });
+
+  if (builderAddDialogueBtn instanceof HTMLButtonElement) {
+    builderAddDialogueBtn.addEventListener('click', () => {
+      const newItem = addDialogueItem();
+      const focusTarget = newItem?.querySelector('input, textarea');
+      if (focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
+      showBuilderStatus('Added a dialogue turn.', 'info');
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
+
+  if (builderAddPracticeBtn instanceof HTMLButtonElement) {
+    builderAddPracticeBtn.addEventListener('click', () => {
+      const newItem = addPracticeItem();
+      const focusTarget = newItem?.querySelector('input, textarea');
+      if (focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
+      showBuilderStatus('Added a practice prompt.', 'info');
+      updateBuilderJsonPreview();
+      updateBuilderPreview();
+    });
+  }
 
   if (Array.isArray(builderLayoutInputs)) {
+    const messages = {
+      'blank-canvas': 'Blank canvas selected.',
+      'learning-objectives': 'Learning objectives layout selected.',
+      'model-dialogue': 'Model dialogue layout selected.',
+      'interactive-practice': 'Interactive practice layout selected.',
+      'communicative-task': 'Communicative task layout selected.',
+      'pronunciation-focus': 'Pronunciation focus layout selected.',
+      reflection: 'Reflection layout selected.',
+      'grounding-activity': 'Grounding activity layout selected.',
+      'topic-introduction': 'Topic introduction layout selected.',
+      'guided-discovery': 'Guided discovery layout selected.',
+      'creative-practice': 'Creative practice layout selected.',
+      'task-divider': 'Task divider layout selected.',
+      'task-reporting': 'Task reporting layout selected.',
+      'genre-deconstruction': 'Genre deconstruction layout selected.',
+      'linguistic-feature-hunt': 'Feature hunt layout selected.',
+      'text-reconstruction': 'Text reconstruction layout selected.',
+      'jumbled-text-sequencing': 'Sequencing layout selected.',
+      'scaffolded-joint-construction': 'Joint construction layout selected.',
+      'independent-construction-checklist': 'Independent checklist layout selected.',
+    };
     builderLayoutInputs.forEach((input) => {
       input.addEventListener('change', (event) => {
         const target = event.target;
@@ -13893,18 +14085,11 @@ function initialiseActivityBuilderUI() {
           return;
         }
         const layoutValue = target.value || 'blank-canvas';
-        setSelectedLayout(layoutValue);
-        applyBuilderLayoutDefaults(layoutValue);
         syncBuilderLayout(layoutValue);
+        applyBuilderLayoutDefaults(layoutValue);
         updateBuilderJsonPreview();
         updateBuilderPreview();
-        const optionLabel =
-          target
-            .closest('.layout-option')
-            ?.querySelector('.layout-option-title')
-            ?.textContent?.trim() ||
-          layoutValue.replace(/-/g, ' ');
-        showBuilderStatus(`${optionLabel} selected.`, 'info');
+        showBuilderStatus(messages[layoutValue] || 'Layout updated.', 'info');
       });
     });
   }
@@ -13928,13 +14113,45 @@ function initialiseActivityBuilderUI() {
     }
   });
 
+  builderImageSearchBtn?.addEventListener('click', () => {
+    handleImageSearch();
+  });
+
+  builderImageSearchInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleImageSearch();
+    }
+  });
+
+  builderImageResults?.addEventListener('click', (event) => {
+    const button = event.target instanceof HTMLElement ? event.target.closest('.image-result') : null;
+    if (button instanceof HTMLElement) {
+      selectImageResult(button);
+    }
+  });
+
   if (builderForm instanceof HTMLFormElement) {
     builderForm.addEventListener('submit', handleBuilderSubmit);
-    builderForm.addEventListener('input', () => {
+    builderForm.addEventListener('input', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('layout-icon-input')) {
+        const layout = target.dataset.layoutIcon;
+        if (layout) {
+          updateLayoutOptionIconPreview(layout, target.value);
+        }
+      }
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
-    builderForm.addEventListener('change', () => {
+    builderForm.addEventListener('change', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('layout-icon-input')) {
+        const layout = target.dataset.layoutIcon;
+        if (layout) {
+          updateLayoutOptionIconPreview(layout, target.value);
+        }
+      }
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
@@ -13944,7 +14161,6 @@ function initialiseActivityBuilderUI() {
   updateBuilderJsonPreview();
   updateBuilderPreview();
 }
-
 async function initialiseDeck() {
   hydrateRemoteImages().catch((error) => {
     console.warn(
@@ -14052,11 +14268,12 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const builderLayoutDefaultKeys = Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {});
-  if (!builderLayoutDefaultKeys.includes('blank-canvas')) {
-    builderLayoutDefaultKeys.unshift('blank-canvas');
-  }
-  const allowedBuilderLayouts = Array.from(new Set(builderLayoutDefaultKeys));
+  const allowedBuilderLayouts = [
+    'blank-canvas',
+    'interactive-practice',
+    'card-stack',
+    'pill-with-gallery',
+  ];
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??

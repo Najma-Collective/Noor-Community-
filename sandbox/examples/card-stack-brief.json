@@ -1,0 +1,27 @@
+{
+  "title": "Studio Sprint Preview",
+  "slides": [
+    {
+      "layout": "card-stack",
+      "data": {
+        "pill": "Sprint preview",
+        "title": "Surface today's build moves",
+        "description": "Use the stack to remind teams where to focus before the gallery walk.",
+        "cards": [
+          {
+            "title": "Prototype check",
+            "description": "List the user stories each group should validate before presenting."
+          },
+          {
+            "title": "Feedback sweep",
+            "description": "Name the peer coaches who will circulate and the lens they should use."
+          },
+          {
+            "title": "Evidence capture",
+            "description": "Describe the artefacts or data the class will collect to document progress."
+          }
+        ]
+      }
+    }
+  ]
+}
