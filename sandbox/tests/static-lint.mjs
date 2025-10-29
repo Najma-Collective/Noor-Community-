@@ -7,6 +7,7 @@ import { DEFAULT_STATES, Generators } from '../activity-builder.js';
 import { SUPPORTED_LESSON_LAYOUTS, createLessonSlideFromState } from '../int-mod.js';
 import { renderLessonDeckToHtml } from '../../automation/render/index.mjs';
 import {
+  collectInlineStyleViolations,
   collectUnknownClasses,
   extractClassesFromCss,
   loadSandboxClassAllowlist,
@@ -62,6 +63,18 @@ function addFailure(message) {
   failures.push(message);
 }
 
+const reportInlineStyleViolations = (root, context) => {
+  const violations = collectInlineStyleViolations(root);
+  if (!violations.length) {
+    return;
+  }
+  violations.forEach(({ property, value, type }) =>
+    addFailure(
+      `${context} includes disallowed inline style (${property}: ${value}) [${type}]`,
+    ),
+  );
+};
+
 const assertNoUnknownClasses = (root, context, isAllowed = isAllowedSandboxClass) => {
   const violations = collectUnknownClasses(root, isAllowed);
   const unknownClasses = Array.from(violations.keys());
@@ -76,6 +89,7 @@ for (const layout of SUPPORTED_LESSON_LAYOUTS) {
     assert.ok(slide instanceof window.HTMLElement, `Layout "${layout}" should create an element`);
     stageViewport.appendChild(slide);
     assertNoUnknownClasses(slide, `Layout ${layout}`);
+    reportInlineStyleViolations(slide, `Layout ${layout}`);
     slide.remove();
   });
   if (errors.length) {
@@ -115,7 +129,9 @@ for (const [type, factory] of Object.entries(DEFAULT_STATES)) {
   });
   const moduleClassAllowlistChecker = (className = '') =>
     isAllowedSandboxClass(className) || localClassAllowlist.has(className);
-  assertNoUnknownClasses(moduleDoc.documentElement, `Module ${type}`, moduleClassAllowlistChecker);
+  const moduleRoot = moduleDoc.documentElement;
+  assertNoUnknownClasses(moduleRoot, `Module ${type}`, moduleClassAllowlistChecker);
+  reportInlineStyleViolations(moduleRoot, `Module ${type}`);
   const externalScripts = moduleDoc.querySelectorAll('script[src]');
   if (externalScripts.length) {
     addFailure(`Module "${type}" should not reference external scripts.`);
@@ -157,9 +173,11 @@ for (const file of exampleFiles) {
     url: 'https://example.com/sandbox/',
     pretendToBeVisual: true,
   });
-  const deckIssues = validateDeckDocument(deckDom.window.document, payload, {
+  const deckDocument = deckDom.window.document;
+  const deckIssues = validateDeckDocument(deckDocument, payload, {
     isAllowedClass: isAllowedSandboxClass,
   });
+  reportInlineStyleViolations(deckDocument, file);
   deckDom.window.close?.();
 
   if (deckIssues.length) {

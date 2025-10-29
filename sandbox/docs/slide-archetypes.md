@@ -1,6 +1,6 @@
 # Slide Archetypes Reference
 
-This document inventories recurring slide components across the A1–C1 reference decks and maps them to the design tokens exported by `sandbox-theme.css`. Use it as a contract when building or refactoring slides so that the shared archetypes stay visually consistent.
+This document inventories recurring slide components across the A1–C1 reference decks and maps them to the design tokens exported by `sandbox-theme.css`. Use it as a contract when building or refactoring slides so that the shared archetypes stay visually consistent. The canonical list of available primitives lives in [`design-tokens.md`](./design-tokens.md).
 
 ## Hero overlay slides
 - **Seen in:** A1/1/A1-1-2/A1-1-2-b.html (Slides 1–2), B2/1/B2-1-1/Strategic-Planning-In-The-NGO-Sector.html (Slides 1–2), C1/1/C1-1-1/C1-1-1.html (title slides).
@@ -24,7 +24,7 @@ This document inventories recurring slide components across the A1–C1 referenc
 - **Tokens:**
   - Typography: headings use `--font-display` with steps `--step-3`/`--step-2`; subtitles inherit `--step-1`; overlay instructions track `--step-1` emphasised weights.【F:sandbox/sandbox-theme.css†L3-L27】【F:sandbox/sandbox-css.css†L1801-L1839】
   - Spacing & radius: overlay cards pad via `clamp` values matching the spacing scale (`--space-4` – `--space-7`) and round with `--radius-lg`; pill chips respect the `--pill-*` sizing vars.【F:sandbox/sandbox-theme.css†L29-L44】【F:sandbox/sandbox-css.css†L1755-L1787】
-  - Colour & elevation: background glass uses `--surface-overlay-strong` (or `.is-light` + `--surface-overlay-light`), borders rely on `--border-soft`, type keeps contrast against `--soft-white`, and shadows elevate via `--shadow-3` (dark) or `--shadow-2` (light). Overlay pills invert using `#fdfbf5` and icon colour from `--primary-sage` when not inverted.【F:sandbox/sandbox-theme.css†L64-L89】【F:sandbox/sandbox-css.css†L1725-L1765】【F:sandbox/sandbox-css.css†L1790-L1798】
+  - Colour & elevation: background glass uses `--surface-overlay-strong` (or `.is-light` + `--surface-overlay-light`), borders rely on `--border-soft`, type keeps contrast with `--soft-white` / `--warm-white-100`, and shadows elevate via `--shadow-3` (dark) or `--shadow-2` (light). Overlay pills invert using `--warm-white-100` with icon colour from `--primary-sage` unless `--status-warning-strong` is applied for emphasis.【F:sandbox/sandbox-theme.css†L64-L114】【F:sandbox/sandbox-css.css†L1725-L1798】
 - **Modifiers:**
   - `.overlay-card.centered` centers content; `.bg-content.overlay-align-{left|right}` realigns without changing the internal stack.【F:sandbox/sandbox-css.css†L1734-L1744】
   - `.overlay-card.is-light` swaps to the light overlay palette; `.overlay-pill` enforces translucent pills on glass backgrounds.【F:sandbox/sandbox-css.css†L1720-L1765】
@@ -43,7 +43,7 @@ This document inventories recurring slide components across the A1–C1 referenc
   ```
 - **Tokens:**
   - Pills use the shared chip primitives (`--pill-min-width`, `--pill-gap`, `--primary-sage`, `--deep-forest`, `--shadow-0`). Overlay variants add translucency via `.overlay-pill` when rendered atop photography.【F:sandbox/sandbox-css.css†L1767-L1798】
-  - Cards inherit `--surface-card`, `--border-soft`, `--radius`, and `--shadow-1`; `card.dense` compresses padding via spacing clamps; `card.transparent` raises elevation with `--shadow-2` for on-photo placement.【F:sandbox/sandbox-theme.css†L64-L89】【F:sandbox/sandbox-css.css†L1853-L1879】
+  - Cards inherit `--surface-card`, `--border-soft`, `--radius`, and `--shadow-1`; `card.dense` compresses padding via spacing clamps; `card.transparent` raises elevation with `--shadow-2` for on-photo placement. Status annotations inside the cards draw from the semantic palette (`--status-success`, `--status-warning-strong`, `--status-error`).【F:sandbox/sandbox-theme.css†L64-L114】【F:sandbox/sandbox-css.css†L1853-L1879】
 - **Modifiers:**
   - `card.dense` for tighter agendas or checklists; `card.transparent` for overlaying on imagery; `column-card` when a pill card needs neutral background in multi-column grids.【F:sandbox/sandbox-css.css†L1869-L1886】
 
@@ -130,7 +130,7 @@ This document inventories recurring slide components across the A1–C1 referenc
   </div>
   ```
 - **Tokens:**
-  - `.dialogue-box` inherits the base card radius and shadow while swapping to a cream fill for contrast; typography sits on the standard type scale so grids can mix narrative paragraphs and highlighted phrases.【F:sandbox/sandbox-css.css†L1898-L1935】【F:B2/1/B2-1-4/B2-1-4-b.html†L2136-L2147】
+  - `.dialogue-box` inherits the base card radius and shadow while swapping to a cream fill for contrast; typography sits on the standard type scale so grids can mix narrative paragraphs and highlighted phrases. The highlighted speaker names use `--status-warning-strong` / `--status-warning-dark` to stay within the semantic range.【F:sandbox/sandbox-css.css†L1898-L1935】【F:B2/1/B2-1-4/B2-1-4-b.html†L2136-L2147】
   - Grid-driven variants lean on `.grid-container` / `.split-grid` helpers to stay responsive without redefining breakpoints.【F:sandbox/sandbox-css.css†L1898-L1935】【F:sandbox/sandbox-css.css†L2009-L2016】
 - **Modifiers:**
   - Swap the grid container for a centered `.dialogue-box` when a single case study should dominate the slide; lists inside the box can reuse `.instruction-list` styling for step-by-step phrasing.【F:B2/1/B2-1-3/B2-1-3-b.html†L208-L216】
@@ -155,8 +155,8 @@ This document inventories recurring slide components across the A1–C1 referenc
   </div>
   ```
 - **Tokens:**
-  - `.token-bank`, `.click-token`, and `.category-column` draw from the same neutral palette and spacing scale as cards, adding dashed borders and chip styling to signal drag/drop affordances.【F:sandbox/sandbox-css.css†L2456-L2480】
-  - Action bars reuse the shared `.activity-actions` flex gap and `.activity-btn` button chroma so controls stay consistent across interactive slides.【F:sandbox/sandbox-css.css†L5743-L5750】
+  - `.token-bank`, `.click-token`, and `.category-column` draw from the same neutral palette and spacing scale as cards, adding dashed borders and chip styling to signal drag/drop affordances. Correct/incorrect states hook into `--status-success` / `--status-error` for feedback labels.【F:sandbox/sandbox-css.css†L2456-L2480】【F:sandbox/sandbox-css.css†L2748-L2765】
+  - Action bars reuse the shared `.activity-actions` flex gap and `.activity-btn` button chroma (`--status-success`, `--status-error`, `--accent-amber`) so controls stay consistent across interactive slides.【F:sandbox/sandbox-css.css†L5743-L5750】
 - **Modifiers:**
   - Attach `.feedback-msg` beneath the board for automated evaluation text and extend the pattern with `.table-completion-wrapper` when tokens should snap into table cells instead of columns.【F:sandbox/sandbox-css.css†L4363-L4376】【F:C1/1/C1-1-2/C1-1-2.html†L332-L361】
 

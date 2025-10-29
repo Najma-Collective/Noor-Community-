@@ -7,6 +7,44 @@ const __dirname = dirname(__filename);
 const SANDBOX_ROOT = join(__dirname, '..', '..');
 
 const CSS_RELATIVE_PATHS = ['sandbox-css.css', 'sandbox-theme.css', 'activity-builder.css'];
+const HEX_COLOR_PATTERN = /#[0-9a-fA-F]{3,8}\b/;
+const DISALLOWED_INLINE_PROPERTIES = new Set([
+  'background-color',
+  'border',
+  'border-color',
+  'box-shadow',
+  'color',
+  'fill',
+  'font',
+  'font-family',
+  'font-size',
+  'font-weight',
+  'letter-spacing',
+  'line-height',
+  'margin',
+  'margin-block',
+  'margin-block-end',
+  'margin-block-start',
+  'margin-bottom',
+  'margin-inline',
+  'margin-inline-end',
+  'margin-inline-start',
+  'margin-left',
+  'margin-right',
+  'margin-top',
+  'padding',
+  'padding-block',
+  'padding-block-end',
+  'padding-block-start',
+  'padding-bottom',
+  'padding-inline',
+  'padding-inline-end',
+  'padding-inline-start',
+  'padding-left',
+  'padding-right',
+  'padding-top',
+  'stroke',
+]);
 
 const FONT_AWESOME_FAMILIES = new Set([
   'fa',
@@ -177,4 +215,61 @@ export function collectUnknownClasses(root, isAllowed) {
     });
   });
   return violations;
+}
+
+export function collectInlineStyleViolations(
+  root,
+  {
+    disallowedProperties = DISALLOWED_INLINE_PROPERTIES,
+    allowCssVariables = true,
+  } = {},
+) {
+  const issues = [];
+  if (!root || typeof root.querySelectorAll !== 'function') {
+    return issues;
+  }
+  const nodes = new Set([root]);
+  root.querySelectorAll('*').forEach((node) => nodes.add(node));
+  nodes.forEach((node) => {
+    if (typeof node?.getAttribute !== 'function') {
+      return;
+    }
+    const style = node.getAttribute('style');
+    if (!style || typeof style !== 'string') {
+      return;
+    }
+    style
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .forEach((declaration) => {
+        const [propertyRaw, valueRaw = ''] = declaration.split(':');
+        const property = propertyRaw?.trim().toLowerCase();
+        const value = valueRaw.trim();
+        if (!property || !value) {
+          return;
+        }
+        if (HEX_COLOR_PATTERN.test(value)) {
+          issues.push({
+            node,
+            property,
+            value,
+            type: 'hex-color',
+          });
+          return;
+        }
+        if (disallowedProperties.has(property)) {
+          if (allowCssVariables && /var\(/.test(value)) {
+            return;
+          }
+          issues.push({
+            node,
+            property,
+            value,
+            type: 'disallowed-property',
+          });
+        }
+      });
+  });
+  return issues;
 }
