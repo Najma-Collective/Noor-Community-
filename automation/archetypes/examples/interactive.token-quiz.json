@@ -1,0 +1,48 @@
+{
+  "slug": "token-quiz",
+  "title": { "text": "Sequencing check" },
+  "archetype": "interactive.token-quiz",
+  "duration_hint": 8,
+  "data": {
+    "token_bank": [
+      { "id": "step-1", "label": { "text": "Invite perspectives" } },
+      { "id": "step-2", "label": { "text": "Align next steps" } },
+      { "id": "step-3", "label": { "text": "Synthesize themes" } }
+    ],
+    "quiz_prompts": [
+      {
+        "id": "prompt-1",
+        "question": {
+          "format": "markdown",
+          "content": "Drag the first step for launching the collaboration sprint."
+        },
+        "correct_token_ids": ["step-1"],
+        "rationale": {
+          "format": "markdown",
+          "content": "Inviting perspectives first establishes psychological safety."
+        }
+      },
+      {
+        "id": "prompt-2",
+        "question": {
+          "format": "markdown",
+          "content": "Which step ensures the group captures shared meaning?"
+        },
+        "correct_token_ids": ["step-3"]
+      },
+      {
+        "id": "prompt-3",
+        "question": {
+          "format": "markdown",
+          "content": "Identify the final step to commit to responsibilities."
+        },
+        "correct_token_ids": ["step-2"]
+      }
+    ],
+    "completion_copy": {
+      "positive": "Sequence locked in—your sprint is ready to run!",
+      "negative": "Check the rationale notes and adjust the order.",
+      "neutral": "Drag a token to each prompt before checking."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "slug": "grid-workspace",
+  "title": { "text": "Collaboration canvas" },
+  "archetype": "grid.workspace",
+  "duration_hint": 10,
+  "data": {
+    "grid_slots": [
+      {
+        "id": "strengths",
+        "title": { "text": "Team strengths" },
+        "body": {
+          "format": "markdown",
+          "content": "List two behaviours you observe when collaboration is thriving."
+        },
+        "aria_label": "Editable notes for team strengths"
+      },
+      {
+        "id": "tensions",
+        "title": { "text": "Potential tensions" },
+        "body": {
+          "format": "markdown",
+          "content": "Capture any friction points that could block progress."
+        }
+      },
+      {
+        "id": "next-steps",
+        "title": { "text": "Next steps" },
+        "body": {
+          "format": "markdown",
+          "content": "Agree on one commitment your group will trial this week."
+        }
+      }
+    ]
+  }
+}

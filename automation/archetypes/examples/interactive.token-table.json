@@ -1,0 +1,52 @@
+{
+  "slug": "token-table",
+  "title": { "text": "Match behaviours" },
+  "archetype": "interactive.token-table",
+  "duration_hint": 9,
+  "data": {
+    "token_bank": [
+      { "id": "token-1", "label": { "text": "Shared agenda" } },
+      { "id": "token-2", "label": { "text": "Solo decision" } },
+      { "id": "token-3", "label": { "text": "Reflective pause" } }
+    ],
+    "table_shell": {
+      "columns": [
+        { "text": "Behaviours" },
+        { "text": "Collaboration impact" }
+      ],
+      "rows": [
+        {
+          "prompt": {
+            "format": "markdown",
+            "content": "Team builds the agenda together."
+          },
+          "cell_keys": ["token-1"]
+        },
+        {
+          "prompt": {
+            "format": "markdown",
+            "content": "One person decides without consultation."
+          },
+          "cell_keys": ["token-2"]
+        },
+        {
+          "prompt": {
+            "format": "markdown",
+            "content": "Group pauses to reflect before voting."
+          },
+          "cell_keys": ["token-3"]
+        }
+      ]
+    },
+    "action_bar": {
+      "primary": { "label": { "text": "Check table" } },
+      "secondary": { "label": { "text": "Clear selections" } }
+    },
+    "accessibility": {
+      "summary": {
+        "format": "markdown",
+        "content": "Select a token, then choose the matching table cell to place it."
+      }
+    }
+  }
+}

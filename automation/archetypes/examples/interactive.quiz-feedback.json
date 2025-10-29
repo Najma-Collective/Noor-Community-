@@ -1,0 +1,49 @@
+{
+  "slug": "quiz-feedback",
+  "title": { "text": "Scenario check" },
+  "archetype": "interactive.quiz-feedback",
+  "duration_hint": 7,
+  "data": {
+    "quiz_items": [
+      {
+        "prompt": {
+          "format": "markdown",
+          "content": "Why is it important to restate agreements in your own words?"
+        },
+        "learner_response": {
+          "format": "markdown",
+          "content": "It confirms shared understanding and surfaces gaps early."
+        },
+        "is_correct": true,
+        "explanation": {
+          "format": "markdown",
+          "content": "Restating agreements ensures everyone hears the commitment again."
+        }
+      },
+      {
+        "prompt": {
+          "format": "markdown",
+          "content": "What should you do when someone is consistently silent?"
+        },
+        "learner_response": {
+          "format": "markdown",
+          "content": "Privately check in after the meeting to avoid calling them out."
+        },
+        "is_correct": false,
+        "explanation": {
+          "format": "markdown",
+          "content": "Offer a gentle invitation during the meeting and provide alternate channels after."
+        }
+      }
+    ],
+    "feedback_region": {
+      "positive": "Nice! Your responses align with the collaboration habits we modelled.",
+      "negative": "Review the explanations to fine-tune your facilitation moves.",
+      "neutral": "Respond to each prompt to unlock feedback."
+    },
+    "next_steps": {
+      "format": "markdown",
+      "content": "Plan a quick retro with your learners to decide on the next experiment."
+    }
+  }
+}

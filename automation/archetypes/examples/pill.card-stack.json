@@ -1,0 +1,31 @@
+{
+  "slug": "pill-card-stack",
+  "title": { "text": "Lesson aims" },
+  "archetype": "pill.card-stack",
+  "duration_hint": 6,
+  "data": {
+    "pill_label": { "text": "Lesson aims" },
+    "headline": {
+      "format": "markdown",
+      "content": "By the end of this session you will…"
+    },
+    "card_body": [
+      {
+        "format": "markdown",
+        "content": "Identify the signals of inclusive collaboration."
+      },
+      {
+        "format": "markdown",
+        "content": "Draft ground rules that balance airtime across voices."
+      },
+      {
+        "format": "markdown",
+        "content": "Commit to a follow-up ritual that checks for participation gaps."
+      }
+    ],
+    "footnote": {
+      "format": "markdown",
+      "content": "Invite learners to add their own measures of success to the stack."
+    }
+  }
+}
