@@ -14597,7 +14597,13 @@ export async function setupInteractiveDeck({
     document.querySelector("#builder-status");
   const allowedBuilderLayouts = [
     'blank-canvas',
+    'topic-introduction',
+    'grounding-activity',
+    'learning-objectives',
+    'communicative-task',
     'interactive-practice',
+    'task-reporting',
+    'reflection',
     'card-stack',
     'pill-with-gallery',
   ];
