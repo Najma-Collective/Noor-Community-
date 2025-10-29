@@ -1,0 +1,146 @@
+{
+  // === Identification & catalogue metadata (required unless noted) ===
+  "id": "GLOBAL-STUDIES-A2-01",
+  "title": "Resilient Communities",
+  "language": "en",
+  "level": "A2",
+  "version": 1,
+
+  // Optional headline copy shown on the cover.
+  "subtitle": "How neighbors support one another in times of need",
+  // Optional marketing blurb or facilitator summary.
+  "description": {
+    "format": "markdown",
+    "content": "Introduce community resilience and guide learners through a collaborative planning exercise."
+  },
+  // Optional facilitator-only notes.
+  "notes": "Ensure learners have sticky notes or digital equivalents for the final activity.",
+
+  // Optional curriculum metadata.
+  "subject": "Global Civics",
+  "theme": "Community resilience",
+  "estimated_duration_minutes": 45,
+  "tags": ["community", "empathy", "planning"],
+
+  // === Learning objectives ===
+  "learning_objectives": [
+    {
+      "format": "markdown",
+      "content": "Learners can **describe** the elements of a resilient community."
+    },
+    {
+      "format": "markdown",
+      "content": "Learners can **compare** how different groups respond to shared challenges."
+    }
+  ],
+
+  // === Contributors ===
+  "contributors": [
+    {
+      "name": "Avery Ramos",
+      "role": "Lead Learning Designer"
+    },
+    {
+      "name": "Samira Chen",
+      "role": "Illustrator"
+    }
+  ],
+  // Optional workflow metadata.
+  "release_status": "draft",
+  "review_notes": "Pending fact-check on local statistics.",
+
+  // === Assets collection ===
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "assets/community-market.jpg",
+      "alt": "A group of neighbors organising supplies in an open-air market"
+    },
+    // Optional hero motion background or explainer video.
+    "hero_video": {
+      "type": "video",
+      "src": "https://videos.example.org/resilience-intro.mp4",
+      "caption": "Community resilience stories from around the world"
+    },
+    // Optional downloads such as facilitator guides or worksheets.
+    "downloads": [
+      {
+        "label": "Facilitator walkthrough",
+        "href": "assets/resilient-communities-facilitator.pdf",
+        "file_type": "pdf"
+      }
+    ]
+  },
+
+  // Optional accessibility and glossary sections can be added when needed.
+  // "accessibility": { ... },
+  // "glossary": [ ... ],
+
+  // === Slides sequence ===
+  "slides": [
+    {
+      "slug": "welcome",
+      "title": "Welcome",
+      "archetype": "hero.overlay",
+      "objective_refs": [0],
+      "duration_hint": 5,
+      "data": {
+        "background_media": {
+          "type": "image",
+          "src": "assets/market-panorama.jpg",
+          "alt": "Community members greeting each other"
+        },
+        "headline": "Resilient communities start with connection",
+        "subhead": "Share one example of neighbors helping neighbors."
+      }
+    },
+    {
+      "slug": "gallery-perspectives",
+      "title": "Who keeps us safe?",
+      "archetype": "grid.workspace",
+      "objective_refs": [0, 1],
+      "duration_hint": 12,
+      "data": {
+        "grid_slots": [
+          {
+            "id": "mutual-aid",
+            "title": "Mutual aid groups",
+            "prompt": "List supplies they coordinate",
+            "type": "note-card"
+          },
+          {
+            "id": "youth-club",
+            "title": "Youth clubs",
+            "prompt": "Capture one way they mentor younger peers",
+            "type": "note-card"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "plan-next-steps",
+      "title": "Plan the next action",
+      "archetype": "interactive.activity-card",
+      "objective_refs": [1],
+      "duration_hint": 15,
+      "data": {
+        "pill_label": "Action planning",
+        "instructions": [
+          "Agree on one challenge that needs attention.",
+          "Choose a support action from the token bank.",
+          "Draft a message inviting others to join."
+        ],
+        "action_bar": {
+          "primary": {
+            "label": "Share plans",
+            "style": "primary"
+          },
+          "secondary": {
+            "label": "Download worksheet",
+            "href": "assets/action-plan-template.pdf"
+          }
+        }
+      }
+    }
+  ]
+}
