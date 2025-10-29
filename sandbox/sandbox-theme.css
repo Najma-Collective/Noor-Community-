@@ -57,15 +57,67 @@
   --ink: #263223;
   --ink-muted: #4f5f4c;
   --ink-subtle: #6a7767;
+  --ink-absolute: #000000;
+  --pure-white: #ffffff;
+  --pure-white-soft: #fff;
+  --warm-white-100: #fdfbf5;
+  --warm-white-200: #fbfaf5;
+  --warm-white-300: #fdfbf7;
+  --cool-white-100: #f8fbff;
+  --cool-white-200: #f5f8ff;
+  --cool-white-300: #f0f7ea;
+  --warm-blush-100: #fff4e3;
+  --warm-blush-200: #fff6f8;
+  --warm-blush-300: #fff7fa;
+  --overlay-forest-950: #0e1511;
+  --overlay-forest-900: #141d12;
+  --overlay-forest-800: #1f2620;
+  --overlay-forest-700: #2f3a2b;
+  --overlay-forest-shadow: #3e4a3a;
+  --status-success: #2e7d32;
+  --status-success-dark: #103019;
+  --status-success-muted: #5f775b;
+  --status-success-subtle: #728d74;
+  --status-success-accent: #6b7d5e;
+  --status-success-border: #3e4a3a;
+  --status-error: #c62828;
+  --status-error-dark: #74211d;
+  --status-error-muted: #622b3b;
+  --status-error-subtle: #9c4a35;
+  --status-error-contrast: #561c0f;
+  --status-warning: #c7934f;
+  --status-warning-strong: #b85c47;
+  --status-warning-muted: #c17a2d;
+  --status-warning-subtle: #bf6a82;
+  --status-warning-dark: #8f2f2a;
+  --status-warning-darker: #6a2c3e;
+  --status-warning-ink: #4a3116;
+  --status-warning-ink-strong: #3d2a12;
+  --status-warning-rose: #a34d67;
+  --info-sky-strong: #4f82c4;
+  --info-sky-base: #3f6ab3;
+  --info-sky-dark: #2c4a72;
+  --info-sky-deep: #234974;
+  --info-navy-root: #102542;
+  --info-slate-base: #4f6072;
+  --info-slate-dark: #2a3b4a;
+  --info-slate-deep: #1f2d3a;
+  --info-indigo-base: #1f3558;
+  --info-indigo-deep: #1f1240;
+  --info-indigo-muted: #5c6f82;
+  --accent-fern-bright: #7aa884;
+  --accent-clay-strong: #5a2332;
+  --forest-highlight: #203124;
+  --warm-cream-200: #f3efe5;
 
   --border-sage: color-mix(in srgb, var(--primary-sage) 26%, transparent);
   --hover-sage: color-mix(in srgb, var(--primary-sage) 22%, transparent);
 
-  --soft-white: #fdfbf7;
+  --soft-white: var(--warm-white-300);
   --warm-cream: #f4efe3;
   --surface-base: #f8f6f0;
-  --surface-card: color-mix(in srgb, var(--surface-base) 96%, white);
-  --surface-muted: color-mix(in srgb, var(--surface-base) 90%, white);
+  --surface-card: color-mix(in srgb, var(--surface-base) 96%, var(--pure-white));
+  --surface-muted: color-mix(in srgb, var(--surface-base) 90%, var(--pure-white));
   --surface-overlay-strong: color-mix(
     in srgb,
     rgba(16, 28, 21, 0.78) 70%,
@@ -93,8 +145,16 @@
     );
 
   /* Gradients */
-  --gradient-sand: linear-gradient(135deg, #fdfbf7 0%, #f3efe5 100%);
-  --gradient-forest: linear-gradient(140deg, #203124 0%, #314736 100%);
+  --gradient-sand: linear-gradient(
+    135deg,
+    var(--soft-white) 0%,
+    var(--warm-cream-200) 100%
+  );
+  --gradient-forest: linear-gradient(
+    140deg,
+    var(--forest-highlight) 0%,
+    var(--primary-forest) 100%
+  );
   --gradient-amber-sky: linear-gradient(135deg, #d8a656 0%, #6aa6b8 100%);
 
   /* Layout tokens */
