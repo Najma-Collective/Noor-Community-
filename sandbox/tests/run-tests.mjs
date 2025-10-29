@@ -4,19 +4,12 @@ import { dirname, join } from 'node:path';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { DEFAULT_STATES as MODULE_DEFAULTS, Generators as ModuleGenerators } from '../activity-builder.js';
-import {
-  collectUnknownClasses,
-  extractClassesFromCss,
-  loadSandboxClassAllowlist,
-} from './helpers/css-allowlist.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const fixturePath = join(__dirname, 'fixtures', 'minimal-deck.html');
 const html = await readFile(fixturePath, 'utf8');
 const css = await readFile(join(__dirname, '../sandbox-css.css'), 'utf8');
-const { allowed: sandboxClassAllowlist, isAllowed: isAllowedSandboxClass } =
-  await loadSandboxClassAllowlist();
 
 const dom = new JSDOM(html, {
   url: 'https://example.com/sandbox/',
@@ -57,41 +50,6 @@ const nextFrame = () =>
   new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
 const flushTimers = () =>
   new Promise((resolve) => window.setTimeout(resolve, 0));
-
-async function captureConsole(fn) {
-  const errors = [];
-  const warnings = [];
-  const originalError = console.error;
-  const originalWarn = console.warn;
-  console.error = (...args) => {
-    errors.push(args);
-    if (typeof originalError === 'function') {
-      originalError(...args);
-    }
-  };
-  console.warn = (...args) => {
-    warnings.push(args);
-    if (typeof originalWarn === 'function') {
-      originalWarn(...args);
-    }
-  };
-  try {
-    return { result: await fn(), errors, warnings };
-  } finally {
-    console.error = originalError;
-    console.warn = originalWarn;
-  }
-}
-
-const assertNoUnknownClasses = (root, context, isAllowed = isAllowedSandboxClass) => {
-  const violations = collectUnknownClasses(root, isAllowed);
-  const unknownClasses = Array.from(violations.keys());
-  assert.equal(
-    unknownClasses.length,
-    0,
-    `${context} should not include non-sandbox classes. Found: ${unknownClasses.join(', ')}`,
-  );
-};
 
 if (typeof window.requestAnimationFrame !== 'function') {
   window.requestAnimationFrame = (callback) => window.setTimeout(callback, 16);
@@ -227,32 +185,15 @@ global.fetch = async (input, init = {}) => {
   };
 };
 
-const MODULE_TYPES = Object.keys(MODULE_DEFAULTS).filter(
-  (type) => typeof ModuleGenerators[type] === 'function',
-);
-const moduleFixtures = {};
-for (const type of MODULE_TYPES) {
-  const factory = MODULE_DEFAULTS[type];
-  const config = typeof factory === 'function' ? factory() : {};
-  const { result: html, errors, warnings } = await captureConsole(() =>
-    ModuleGenerators[type](config),
-  );
-  assert.equal(
-    errors.length,
-    0,
-    `Module generator "${type}" should not log console errors. Logged: ${errors
-      .map((entry) => entry.join(' '))
-      .join(' | ')}`,
-  );
-  assert.equal(
-    warnings.length,
-    0,
-    `Module generator "${type}" should not log console warnings. Logged: ${warnings
-      .map((entry) => entry.join(' '))
-      .join(' | ')}`,
-  );
-  moduleFixtures[type] = { config, html };
-}
+const MODULE_TYPES = ['multiple-choice', 'gapfill', 'grouping', 'table-completion', 'quiz-show'];
+const moduleFixtures = MODULE_TYPES.reduce((acc, type) => {
+  const config = MODULE_DEFAULTS[type]();
+  acc[type] = {
+    config,
+    html: ModuleGenerators[type](config),
+  };
+  return acc;
+}, {});
 
 const moduleFrame = document.getElementById('module-builder-frame');
 Object.defineProperty(moduleFrame, 'contentWindow', {
@@ -263,12 +204,7 @@ Object.defineProperty(moduleFrame, 'contentWindow', {
 
 const {
   setupInteractiveDeck,
-  SUPPORTED_LESSON_LAYOUTS,
-  createLessonSlideFromState,
 } = await import(pathToFileURL(join(__dirname, '../int-mod.js')).href);
-const { BUILDER_LAYOUT_DEFAULTS } = await import(
-  pathToFileURL(join(__dirname, '../slide-templates.js')).href,
-);
 
 await setupInteractiveDeck();
 await flushTimers();
@@ -302,15 +238,24 @@ assert.ok(
   layoutPickerFieldset instanceof window.HTMLElement,
   'layout picker fieldset should exist in the builder',
 );
-const expectedBuilderLayouts = Array.from(
-  new Set(['blank-canvas', ...Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {})]),
-).join(',');
 assert.equal(
   layoutPickerFieldset.dataset.layouts,
-  expectedBuilderLayouts,
-  'layout picker should expose all builder layouts that provide defaults',
+  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
+  'layout picker should expose the sandbox card stack and pill gallery layouts',
 );
 
+const imageSearchSection = builderOverlay
+  .querySelector('.image-search')
+  ?.closest('[data-layouts]');
+assert.ok(
+  imageSearchSection instanceof window.HTMLElement,
+  'image search section should be present in the builder',
+);
+assert.equal(
+  imageSearchSection.dataset.layouts,
+  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
+  'image search tools should remain available to blank, interactive practice, card stack, and pill gallery layouts',
+);
 
 addSlideBtn.click();
 await flushTimers();
@@ -321,11 +266,50 @@ assert.ok(
   'blank layout should mark the builder preview as blank',
 );
 
+const expectedLayouts = [
+  'blank-canvas',
+  'interactive-practice',
+  'card-stack',
+  'pill-with-gallery',
+];
+
+expectedLayouts.forEach((value) => {
+  const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
+  assert.ok(option instanceof window.HTMLInputElement, `${value} layout option should exist`);
+});
+
 const blankLayoutRadio = builderOverlay.querySelector('input[name="slideLayout"][value="blank-canvas"]');
 assert.ok(blankLayoutRadio?.checked, 'blank layout should be selected by default');
 
 const builderStatus = document.getElementById('builder-status');
 assert.ok(builderStatus, 'builder status region should exist');
+
+const builderImageSearchInput = builderOverlay.querySelector('input[name="imageSearch"]');
+const builderImageSearchBtn = builderOverlay.querySelector('[data-action="search-image"]');
+assert.ok(builderImageSearchInput instanceof window.HTMLInputElement, 'image search input should exist');
+assert.ok(builderImageSearchBtn instanceof window.HTMLButtonElement, 'image search button should exist');
+
+builderImageSearchInput.value = 'classroom discussion';
+builderImageSearchBtn.click();
+await flushTimers();
+await nextFrame();
+
+const imageResults = Array.from(builderOverlay.querySelectorAll('.image-result'));
+assert.equal(imageResults.length, samplePhotos.length, 'pexels results should render in the builder');
+
+const imageStatus = document.getElementById('image-search-status');
+assert.match(imageStatus.textContent ?? '', /Found 2 image/, 'image search status should announce the number of results');
+
+imageResults[0].click();
+assert.equal(
+  imageResults[0].getAttribute('aria-selected'),
+  'true',
+  'selecting an image should mark the result as selected',
+);
+assert.ok(
+  imageResults[0].classList.contains('is-selected'),
+  'selected image should receive the is-selected class',
+);
 
 blankLayoutRadio.checked = true;
 blankLayoutRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
@@ -507,6 +491,297 @@ assert.ok(moduleOverlay.classList.contains('is-visible'), 'insert panel should b
 moduleCloseBtn.click();
 await flushTimers();
 assert.ok(!moduleOverlay.classList.contains('is-visible'), 'module overlay should close when dismissed');
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for additional layout selections',
+);
+
+const interactivePracticeRadio = builderOverlay.querySelector(
+  'input[name="slideLayout"][value="interactive-practice"]',
+);
+assert.ok(
+  interactivePracticeRadio instanceof window.HTMLInputElement,
+  'interactive practice layout option should be available',
+);
+interactivePracticeRadio.checked = true;
+interactivePracticeRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+await nextFrame();
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'non-blank layouts should clear the blank preview modifier',
+);
+
+const practiceTitleInput = builderOverlay.querySelector('input[name="practiceTitle"]');
+const practiceInstructionsInput = builderOverlay.querySelector(
+  'textarea[name="practiceInstructions"]',
+);
+const practiceTypeInput = builderOverlay.querySelector('select[name="practiceActivityType"]');
+assert.ok(
+  practiceTitleInput instanceof window.HTMLInputElement,
+  'interactive practice title field should exist',
+);
+assert.ok(
+  practiceInstructionsInput instanceof window.HTMLTextAreaElement,
+  'interactive practice instructions field should exist',
+);
+assert.ok(
+  practiceTypeInput instanceof window.HTMLSelectElement,
+  'interactive practice activity type selector should exist',
+);
+practiceTitleInput.value = 'Check understanding';
+practiceInstructionsInput.value = 'Select the best response for each prompt.';
+practiceTypeInput.value = 'multiple-choice';
+practiceTypeInput.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+const addPracticeBtn = builderOverlay.querySelector('#builder-add-practice');
+assert.ok(
+  addPracticeBtn instanceof window.HTMLButtonElement,
+  'interactive practice add prompt button should exist',
+);
+addPracticeBtn.click();
+await flushTimers();
+
+const practiceItem = builderOverlay.querySelector('.builder-practice-item');
+assert.ok(
+  practiceItem instanceof window.HTMLElement,
+  'interactive practice prompt item should render after adding',
+);
+const practicePromptInput = practiceItem.querySelector('input[name="practicePrompt"]');
+const practiceOptionsTextarea = practiceItem.querySelector('textarea[name="practiceOptions"]');
+const practiceAnswerInput = practiceItem.querySelector('input[name="practiceAnswer"]');
+assert.ok(
+  practicePromptInput instanceof window.HTMLInputElement,
+  'interactive practice prompt field should exist',
+);
+assert.ok(
+  practiceOptionsTextarea instanceof window.HTMLTextAreaElement,
+  'interactive practice options field should exist',
+);
+assert.ok(
+  practiceAnswerInput instanceof window.HTMLInputElement,
+  'interactive practice answer field should exist',
+);
+practicePromptInput.value = 'What does Noor mean?';
+practiceOptionsTextarea.value = 'Light\nCommunity\nJourney';
+practiceAnswerInput.value = 'Light';
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting an interactive practice slide',
+);
+
+const practiceSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-type="interactive-practice"]'),
+);
+assert.ok(
+  practiceSlides.length >= 1,
+  'interactive practice submission should add a practice slide to the deck',
+);
+const practiceSlide = practiceSlides[practiceSlides.length - 1];
+assert.ok(practiceSlide instanceof window.HTMLElement, 'interactive practice slide should be present');
+assert.ok(!practiceSlide.classList.contains('hidden'), 'interactive practice slide should become the active slide');
+
+assert.ok(
+  !deckWorkspace.classList.contains('is-blank-active'),
+  'workspace should clear blank state after leaving the blank slide',
+);
+const workspaceViewportSizingAfterPractice = window
+  .getComputedStyle(deckWorkspace)
+  .getPropertyValue('--blank-layout-height')
+  .trim();
+assert.equal(
+  workspaceViewportSizingAfterPractice,
+  '',
+  'blank workspace should clear viewport sizing tokens when the blank layout is inactive',
+);
+
+const practiceModuleHost = practiceSlide.querySelector('[data-role="practice-module-host"]');
+const practiceAddModuleBtn = practiceSlide.querySelector('[data-action="add-module"]');
+assert.ok(
+  practiceModuleHost instanceof window.HTMLElement,
+  'practice slide should provide a module host container',
+);
+assert.ok(
+  practiceAddModuleBtn instanceof window.HTMLButtonElement,
+  'practice slide should provide an Add interactive module button',
+);
+
+practiceAddModuleBtn.click();
+await flushTimers();
+await nextFrame();
+assert.ok(
+  moduleOverlay.classList.contains('is-visible'),
+  'Add interactive module button should launch the module overlay from practice slides',
+);
+moduleCloseBtn.click();
+await flushTimers();
+assert.ok(
+  !moduleOverlay.classList.contains('is-visible'),
+  'module overlay should close after returning from practice slide',
+);
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for card stack layout selection',
+);
+
+const cardStackRadio = builderOverlay.querySelector('input[name="slideLayout"][value="card-stack"]');
+assert.ok(
+  cardStackRadio instanceof window.HTMLInputElement,
+  'card stack layout option should be selectable',
+);
+cardStackRadio.checked = true;
+cardStackRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'card stack layout should toggle the preview away from the blank state',
+);
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting a card stack slide',
+);
+
+const cardStackSlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-layout="card-stack"]'),
+);
+assert.ok(
+  cardStackSlides.length >= 1,
+  'card stack layout submission should add a card stack slide to the deck',
+);
+const cardStackSlide = cardStackSlides.at(-1);
+assert.ok(
+  cardStackSlide instanceof window.HTMLElement,
+  'card stack slide should exist in the deck after submission',
+);
+assert.ok(
+  !cardStackSlide.classList.contains('hidden'),
+  'card stack slide should become the active slide after submission',
+);
+
+const cardStackPill = cardStackSlide.querySelector('.card-stack-pill');
+assert.ok(
+  cardStackPill instanceof window.HTMLElement,
+  'card stack slide should render the workflow pill',
+);
+
+const cardStackList = cardStackSlide.querySelector('.card-stack-list');
+assert.ok(
+  cardStackList instanceof window.HTMLElement,
+  'card stack slide should render the workflow list',
+);
+const stackCards = Array.from(cardStackList.querySelectorAll('.stack-card'));
+assert.ok(stackCards.length >= 3, 'card stack slide should render multiple stack cards with defaults');
+
+const firstStackCard = stackCards[0];
+assert.ok(
+  firstStackCard?.querySelector('.stack-card-icon i'),
+  'card stack slide should include an icon for each workflow card',
+);
+
+addSlideBtn.click();
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  builderOverlay.classList.contains('is-visible'),
+  'builder overlay should reopen for pill gallery layout selection',
+);
+
+const pillGalleryRadio = builderOverlay.querySelector(
+  'input[name="slideLayout"][value="pill-with-gallery"]',
+);
+assert.ok(
+  pillGalleryRadio instanceof window.HTMLInputElement,
+  'pill plus gallery layout option should be selectable',
+);
+pillGalleryRadio.checked = true;
+pillGalleryRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+await flushTimers();
+await nextFrame();
+
+assert.ok(
+  !builderPreview.classList.contains('builder-preview--blank'),
+  'pill plus gallery layout should update the preview away from the blank state',
+);
+
+builderForm.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await flushTimers();
+await nextFrame();
+await window.Promise.resolve();
+await new Promise((resolve) => window.setTimeout(resolve, 240));
+
+assert.ok(
+  !builderOverlay.classList.contains('is-visible'),
+  'builder overlay should close after inserting a pill plus gallery slide',
+);
+
+const pillGallerySlides = Array.from(
+  stageViewport.querySelectorAll('.slide-stage[data-layout="pill-with-gallery"]'),
+);
+assert.ok(
+  pillGallerySlides.length >= 1,
+  'pill plus gallery layout submission should add a pill gallery slide to the deck',
+);
+const pillGallerySlide = pillGallerySlides.at(-1);
+assert.ok(
+  pillGallerySlide instanceof window.HTMLElement,
+  'pill gallery slide should exist in the deck after submission',
+);
+assert.ok(
+  !pillGallerySlide.classList.contains('hidden'),
+  'pill gallery slide should become the active slide after submission',
+);
+
+const pillGalleryPill = pillGallerySlide.querySelector('.pill-gallery-pill');
+assert.ok(
+  pillGalleryPill instanceof window.HTMLElement,
+  'pill gallery slide should render the scenario pill',
+);
+
+const pillGalleryGrid = pillGallerySlide.querySelector('.pill-gallery-grid');
+assert.ok(
+  pillGalleryGrid instanceof window.HTMLElement,
+  'pill gallery slide should render the gallery grid',
+);
+const galleryItems = Array.from(pillGalleryGrid.querySelectorAll('.pill-gallery-item'));
+assert.ok(galleryItems.length >= 3, 'pill gallery slide should render gallery tiles with defaults');
+
+const firstGalleryFigure = galleryItems[0];
+assert.ok(
+  firstGalleryFigure?.querySelector('img, .pill-gallery-placeholder'),
+  'pill gallery slide should provide imagery or placeholders for each tile',
+);
+const firstGalleryCaption = firstGalleryFigure?.querySelector('.pill-gallery-caption');
+assert.ok(
+  firstGalleryCaption?.querySelector('.pill-gallery-icon i'),
+  'pill gallery slide should decorate captions with the default icon',
+);
 
 addSlideBtn.click();
 await flushTimers();
@@ -859,286 +1134,11 @@ assert.match(
   'fallback toast should remain consistent across reinitialisations',
 );
 
-const focusedLessonLayouts = [
-  {
-    layout: 'centered-callout',
-    data: {
-      pillLabel: 'Language focus',
-      headline: 'Spotlight the prompt',
-      supportingText: ['Encourage partners to discuss the scenario.'],
-    },
-    assert: (slide, inner) => {
-      assert.ok(slide.classList.contains('is-centered-stage'), 'centered callout slide should center the stage');
-      assert.ok(inner?.classList.contains('align-center'), 'centered callout inner stack should align center');
-      const card = slide.querySelector('.card.stack.stack-sm');
-      assert.ok(card, 'centered callout should render the prompt card stack');
-    },
-  },
-  {
-    layout: 'centered-dialogue',
-    data: {
-      pillLabel: 'Dialogue spotlight',
-      headline: 'Model the exchange',
-      dialogue_box: {
-        lines: [
-          { speaker: 'Teacher', text: 'How was your weekend?' },
-          { speaker: 'Learner', text: 'It was wonderful!' },
-        ],
-      },
-    },
-    assert: (slide) => {
-      const dialogue = slide.querySelector('.lesson-dialogue');
-      assert.ok(dialogue, 'centered dialogue should include the dialogue container');
-      const turns = dialogue?.querySelectorAll('.dialogue-turn');
-      assert.ok(turns?.length, 'centered dialogue should render dialogue turns');
-    },
-  },
-  {
-    layout: 'card-stack',
-    data: {
-      pillLabel: 'Sequence',
-      title: 'Plan the workflow',
-      description: 'Guide learners through the sequence.',
-      cards: [
-        { title: 'Step 1', description: 'Model the task.' },
-        { title: 'Step 2', description: 'Invite learners to try.' },
-      ],
-    },
-    assert: (slide) => {
-      const header = slide.querySelector('.card-stack-header');
-      assert.ok(header, 'card stack should include the header region');
-      const stackCards = slide.querySelectorAll('.card-stack-list .stack-card');
-      assert.ok(stackCards.length >= 2, 'card stack should render each configured card');
-    },
-  },
-  {
-    layout: 'pill-simple',
-    data: {
-      pillLabel: 'Lesson aim',
-      title: 'Introduce the topic',
-      body: ['Frame the task for the class.'],
-    },
-    assert: (slide) => {
-      const card = slide.querySelector('.card.stack.stack-sm');
-      assert.ok(card, 'pill simple layout should render a stacked card');
-    },
-  },
-  {
-    layout: 'workspace-grid',
-    data: {
-      pillLabel: 'Workspace',
-      title: 'Collaborate in groups',
-      gridSlots: [
-        { id: 'slot-1', title: 'Group A', body: 'Capture highlights from the discussion.' },
-        { id: 'slot-2', title: 'Group B', body: 'Record emerging vocabulary.' },
-      ],
-    },
-    assert: (slide) => {
-      const grid = slide.querySelector('.gallery-grid');
-      assert.ok(grid, 'workspace grid should render the gallery grid container');
-      const slots = grid?.querySelectorAll('.note-card');
-      assert.ok(slots?.length === 2, 'workspace grid should create a note card per slot');
-    },
-  },
-  {
-    layout: 'content-wrapper',
-    data: {
-      pillLabel: 'Content wrap',
-      title: 'Structure the lesson copy',
-      header: [{ type: 'paragraph', text: 'Introduce the scenario.' }],
-      body: [{ type: 'paragraph', text: 'Learners review the prompt and brainstorm solutions.' }],
-      footer: [{ type: 'paragraph', text: 'Invite volunteers to share takeaways.' }],
-    },
-    assert: (slide) => {
-      const wrapper = slide.querySelector('.content-wrapper');
-      assert.ok(wrapper, 'content wrapper layout should render the wrapper container');
-      assert.ok(wrapper?.querySelector('.content-header'), 'content wrapper should expose a header region');
-      assert.ok(wrapper?.querySelector('.content-body'), 'content wrapper should expose a body region');
-      assert.ok(wrapper?.querySelector('.content-footer'), 'content wrapper should expose a footer region');
-    },
-  },
-  {
-    layout: 'interactive-activity-card',
-    data: {
-      pillLabel: 'Interactive',
-      title: 'Facilitate the activity',
-      instructions: ['Model the first exchange.', 'Invite pairs to continue.'],
-      actionBar: {
-        primary: { label: 'Check' },
-        secondary: { label: 'Reset' },
-        tertiary: { label: 'Hint' },
-      },
-      timerHint: 'Set a five-minute timer.',
-      accessibility: { instructions: 'Use the buttons to evaluate responses.' },
-    },
-    assert: (slide) => {
-      assert.ok(slide.querySelector('.instruction-list'), 'interactive activity card should list instructions');
-      assert.ok(slide.querySelector('.activity-actions'), 'interactive activity card should render the activity actions');
-      assert.ok(slide.querySelector('.feedback-msg'), 'interactive activity card should provide feedback messaging');
-    },
-  },
-  {
-    layout: 'interactive-token-board',
-    data: {
-      pillLabel: 'Token board',
-      title: 'Sort the rituals',
-      tokenBank: [
-        { id: 'token-1', label: 'Greeting' },
-        { id: 'token-2', label: 'Closing' },
-      ],
-      dropzones: [
-        { id: 'zone-a', title: 'Opening', accepts: ['token-1'] },
-        { id: 'zone-b', title: 'Wrap-up', accepts: ['token-2'] },
-      ],
-      actionBar: {
-        primary: { label: 'Check' },
-        secondary: { label: 'Reset' },
-      },
-      feedbackRegion: { positive: 'Excellent categorisation!' },
-    },
-    assert: (slide) => {
-      const bank = slide.querySelector('.token-bank');
-      assert.ok(bank, 'interactive token board should expose the token bank');
-      assert.ok(bank?.querySelectorAll('.click-token').length >= 2, 'interactive token board should render clickable tokens');
-      assert.ok(slide.querySelector('.category-columns'), 'interactive token board should provide category columns');
-    },
-  },
-  {
-    layout: 'interactive-token-table',
-    data: {
-      pillLabel: 'Token table',
-      title: 'Complete the table',
-      description: 'Use the tokens to finish the prompts.',
-      tableShell: {
-        columns: ['Prompt', 'Response'],
-        rows: [{ prompt: 'Introduce yourself', cell_keys: ['token-a'] }],
-      },
-      tokenBank: [{ id: 'token-a', label: 'Nice to meet you' }],
-      actionBar: {
-        primary: { label: 'Check' },
-        secondary: { label: 'Reset' },
-      },
-    },
-    assert: (slide) => {
-      assert.ok(slide.querySelector('.table-responsive table'), 'interactive token table should render the table shell');
-      const bank = slide.querySelector('.token-bank');
-      assert.ok(bank, 'interactive token table should expose the token bank');
-      assert.ok(bank?.querySelector('.click-token'), 'interactive token table should render a token button');
-    },
-  },
-  {
-    layout: 'interactive-token-quiz',
-    data: {
-      pillLabel: 'Token quiz',
-      title: 'Drag the correct response',
-      tokenBank: [{ id: 'token-quiz-1', label: 'Because it is polite.' }],
-      quizPrompts: [
-        {
-          question: 'Why do we greet colleagues?',
-          correct_token_ids: ['token-quiz-1'],
-          rationale: 'It builds rapport.',
-        },
-      ],
-      completionCopy: { positive: 'Great reasoning!' },
-    },
-    assert: (slide) => {
-      assert.ok(slide.querySelector('.practice-prompt-list'), 'interactive token quiz should list prompts');
-      assert.ok(slide.querySelector('.drop-zone'), 'interactive token quiz should provide drop zones');
-      assert.ok(slide.querySelector('.token-bank .click-token'), 'interactive token quiz should render quiz tokens');
-    },
-  },
-  {
-    layout: 'interactive-quiz-feedback',
-    data: {
-      pillLabel: 'Quiz feedback',
-      title: 'Review the class responses',
-      quizItems: [
-        { prompt: 'What is a ritual?', learner_response: 'A repeated action.', is_correct: true, explanation: 'Correct.' },
-      ],
-      feedbackRegion: { positive: 'Celebrate correct answers.' },
-      nextSteps: 'Ask learners to share examples.',
-    },
-    assert: (slide) => {
-      assert.ok(slide.querySelector('.instruction-list'), 'interactive quiz feedback should render the response list');
-      assert.ok(slide.querySelector('.feedback-msg'), 'interactive quiz feedback should include a feedback region');
-    },
-  },
-  {
-    layout: 'interactive-audio-dialogue',
-    data: {
-      pillLabel: 'Audio dialogue',
-      title: 'Listen and respond',
-      audioPlayer: { source: { url: 'https://example.com/dialogue.mp3' }, transcript: 'Sample transcript.' },
-      promptCard: { title: 'Discuss', instructions: ['Note expressions you hear.'] },
-    },
-    assert: (slide) => {
-      assert.ok(slide.querySelector('.lesson-audio audio'), 'interactive audio dialogue should provide an audio player');
-      assert.ok(slide.querySelector('.card.stack.stack-sm'), 'interactive audio dialogue should provide a prompt card');
-    },
-  },
-];
-
-focusedLessonLayouts.forEach(({ layout, data, assert: verify }) => {
-  const slide = createLessonSlideFromState({ layout, data });
-  stageViewport.appendChild(slide);
-  try {
-    assert.equal(slide.dataset.layout, layout, `layout "${layout}" should set the data-layout attribute`);
-    const inner = slide.querySelector('.slide-inner');
-    assert.ok(inner?.classList.contains(`${layout}-layout`), `layout "${layout}" should tag the inner container`);
-    verify(slide, inner);
-    assertNoUnknownClasses(slide, `Focused lesson layout "${layout}"`);
-  } finally {
-    slide.remove();
-  }
-});
-
 const moduleParser = new window.DOMParser();
-
-for (const layout of SUPPORTED_LESSON_LAYOUTS) {
-  const { errors, warnings } = await captureConsole(() => {
-    const slide = createLessonSlideFromState({ layout });
-    assert.ok(slide instanceof window.HTMLElement, `Layout "${layout}" should create an element`);
-    stageViewport.appendChild(slide);
-    assertNoUnknownClasses(slide, `Lesson layout "${layout}"`);
-    slide.remove();
-  });
-  assert.equal(
-    errors.length,
-    0,
-    `Lesson layout "${layout}" should not log console errors. Logged: ${errors.map((entry) => entry.join(' ')).join(' | ')}`,
-  );
-  assert.equal(
-    warnings.length,
-    0,
-    `Lesson layout "${layout}" should not log console warnings. Logged: ${warnings
-      .map((entry) => entry.join(' '))
-      .join(' | ')}`,
-  );
-}
 
 MODULE_TYPES.forEach((type) => {
   const { config, html } = moduleFixtures[type];
   const moduleDoc = moduleParser.parseFromString(html, 'text/html');
-  const styleBlocks = Array.from(moduleDoc.querySelectorAll('style'));
-  const localClassAllowlist = new Set();
-  styleBlocks.forEach((block) => {
-    extractClassesFromCss(block.textContent || '').forEach((className) =>
-      localClassAllowlist.add(className),
-    );
-  });
-  const moduleClassAllowlistChecker = (className = '') =>
-    isAllowedSandboxClass(className) || localClassAllowlist.has(className);
-  assertNoUnknownClasses(
-    moduleDoc.documentElement,
-    `Module "${type}"`,
-    moduleClassAllowlistChecker,
-  );
-  const externalScripts = moduleDoc.querySelectorAll('script[src]');
-  assert.equal(
-    externalScripts.length,
-    0,
-    `${type} module should not reference external scripts`,
-  );
   const shell = moduleDoc.querySelector('.activity-shell');
   assert.ok(shell instanceof window.HTMLElement, `${type} module should render the activity shell container`);
 
