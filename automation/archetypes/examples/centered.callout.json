@@ -1,0 +1,28 @@
+{
+  "slug": "centered-callout",
+  "title": { "text": "Spotlight statement" },
+  "archetype": "centered.callout",
+  "duration_hint": 4,
+  "data": {
+    "headline": {
+      "format": "markdown",
+      "content": "\"We built trust by letting every team voice the blockers first.\""
+    },
+    "supporting_text": [
+      {
+        "format": "markdown",
+        "content": "Invite learners to extract verbs that model collaboration."
+      },
+      {
+        "format": "markdown",
+        "content": "Capture the phrases on the whiteboard for later reference."
+      }
+    ],
+    "illustration": {
+      "type": "image",
+      "src": "https://placehold.co/1280x720/f97316/fff?text=Spotlight+Illustration",
+      "alt": "Two colleagues celebrating a project milestone with a fist bump"
+    },
+    "accent_pill": { "text": "Case study" }
+  }
+}
