@@ -1,0 +1,308 @@
+{
+  "id": "SANDBOX.DESIGN.PIPELINE",
+  "slug": "sandbox-design-pipeline",
+  "title": "Sandbox Lesson Design Pipeline",
+  "subtitle": "From discovery to facilitator handoff",
+  "description": {
+    "format": "markdown",
+    "content": "Guide designers through the refreshed Sandbox workflow so lessons stay aligned with automation and facilitation needs."
+  },
+  "language": "en",
+  "version": "1.0.0",
+  "level": "B2",
+  "subject": "Curriculum Design",
+  "theme": "Studio operations",
+  "estimated_duration_minutes": 45,
+  "tags": ["sandbox", "design", "workflow"],
+  "learning_objectives": [
+    {
+      "format": "markdown",
+      "content": "Translate program insights into Sandbox-aligned lesson objectives."
+    },
+    {
+      "format": "markdown",
+      "content": "Storyboard an end-to-end lesson using approved archetypes."
+    },
+    {
+      "format": "markdown",
+      "content": "Run the Sandbox generator and package materials for facilitator review."
+    }
+  ],
+  "contributors": [
+    { "name": "Noor Curriculum Ops", "role": "Author" }
+  ],
+  "release_status": "draft",
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "https://placehold.co/1600x900/143029/ffffff?text=Sandbox+Design+Pipeline",
+      "alt": "Instructional designers collaborating over journey maps",
+      "credit": "Pexels",
+      "placeholder": true
+    },
+    "thumbnail": {
+      "type": "image",
+      "src": "https://placehold.co/512x512/143029/ffffff?text=Pipeline",
+      "alt": "Icon of connected workflow nodes"
+    },
+    "downloads": [
+      {
+        "label": { "text": "Intake template" },
+        "href": "https://example.org/downloads/sandbox-intake-template.docx",
+        "file_type": "docx"
+      }
+    ],
+    "brand_palette": {
+      "primary": "#143029",
+      "secondary": "#6EA88D",
+      "accent": "#F5C06A"
+    }
+  },
+  "accessibility": {
+    "summary": {
+      "format": "plain",
+      "content": "Read each step aloud and pause after slides with lists so teams can log actions."
+    }
+  },
+  "notes": {
+    "format": "markdown",
+    "content": "Share this deck with new designers during onboarding and pair it with the Sandbox schema reference."
+  },
+  "slides": [
+    {
+      "slug": "cover",
+      "title": { "text": "Welcome" },
+      "archetype": "hero.overlay",
+      "objective_refs": [1, 2, 3],
+      "data": {
+        "background_media": {
+          "type": "image",
+          "src": "https://placehold.co/1920x1080/0f4736/ffffff?text=Design+Studio",
+          "alt": "Design team planning with laptops and sticky notes"
+        },
+        "headline": {
+          "format": "markdown",
+          "content": "Design Sandbox lessons with confidence"
+        },
+        "subhead": "See how briefs become production-ready decks in six focused moves.",
+        "overlay_instructions": {
+          "format": "markdown",
+          "content": "Invite the team to share one challenge they've faced when moving from ideas to Sandbox slides."
+        }
+      }
+    },
+    {
+      "slug": "pipeline-overview",
+      "title": { "text": "Pipeline overview" },
+      "archetype": "pill.card-stack",
+      "objective_refs": [1, 2, 3],
+      "data": {
+        "pill_label": { "text": "Six-move workflow" },
+        "headline": {
+          "format": "markdown",
+          "content": "Your Sandbox lesson delivery pipeline"
+        },
+        "card_body": [
+          {
+            "format": "markdown",
+            "content": "**1. Translate the problem** — Align on learner outcomes, constraints, and success signals with program partners."
+          },
+          {
+            "format": "markdown",
+            "content": "**2. Curate source material** — Collect texts, media, and prompts; tag assets with their target archetype."
+          },
+          {
+            "format": "markdown",
+            "content": "**3. Map the learning arc** — Sequence warmers, skill lifts, and application reps across Sandbox stages."
+          },
+          {
+            "format": "markdown",
+            "content": "**4. Draft slide states** — Write JSON-friendly copy, select icons, and confirm modifier choices per archetype."
+          },
+          {
+            "format": "markdown",
+            "content": "**5. Prototype the deck** — Run the generator, review navigation, and capture UX or accessibility gaps."
+          },
+          {
+            "format": "markdown",
+            "content": "**6. Prepare handoff** — Bundle facilitator notes, assets, and QA checklists for review."
+          }
+        ],
+        "footnote": {
+          "format": "markdown",
+          "content": "Pin this sequence near your workspace; each slide ahead expands on a critical move."
+        }
+      }
+    },
+    {
+      "slug": "insight-foundation",
+      "title": { "text": "Start with insight" },
+      "archetype": "grid.workspace",
+      "objective_refs": [1],
+      "data": {
+        "grid_slots": [
+          {
+            "id": "evidence",
+            "title": { "text": "Evidence sweep" },
+            "body": {
+              "format": "markdown",
+              "content": "Synthesize interviews, diagnostics, and exemplar work. Call out tensions and opportunities."
+            }
+          },
+          {
+            "id": "outcomes",
+            "title": { "text": "Outcome draft" },
+            "body": {
+              "format": "markdown",
+              "content": "Write measurable learner statements linked to badges or progression markers."
+            }
+          },
+          {
+            "id": "stakeholders",
+            "title": { "text": "Stakeholder alignment" },
+            "body": {
+              "format": "markdown",
+              "content": "Confirm priorities with program partners and note any non-negotiables for delivery."
+            }
+          },
+          {
+            "id": "run-of-show",
+            "title": { "text": "Run-of-show sketch" },
+            "body": {
+              "format": "markdown",
+              "content": "Block time, facilitation moves, and group modes so the arc stays focused."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "slug": "storyboard-archetypes",
+      "title": { "text": "Storyboard the arc" },
+      "archetype": "content.wrapper",
+      "objective_refs": [2],
+      "data": {
+        "content_blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "format": "markdown",
+              "content": "Pair each stage with a Sandbox archetype so designers, developers, and facilitators share a visual contract."
+            }
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "format": "markdown",
+                "content": "**Warm-up** → `hero.overlay` or `centered.callout` to surface context and activate prior knowledge."
+              },
+              {
+                "format": "markdown",
+                "content": "**Skill lift** → `card.stack` or `content.wrapper` to unpack models, criteria, and mentor moves."
+              },
+              {
+                "format": "markdown",
+                "content": "**Application** → `interactive.activity-card` or token boards for collaborative practice."
+              },
+              {
+                "format": "markdown",
+                "content": "**Closure** → `pill.card-stack` or `dialogue.stack` to synthesize learning and commit to next steps."
+              }
+            ]
+          },
+          {
+            "type": "callout",
+            "text": {
+              "format": "markdown",
+              "content": "Document modifier selections (e.g., centered alignment, stack density) next to each slide so QA can spot layout drift."
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "format": "markdown",
+              "content": "Build a quick table mapping slide slug → archetype → objective reference. This keeps automation exports tidy."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "slug": "build-and-iterate",
+      "title": { "text": "Build in the sandbox" },
+      "archetype": "card.stack",
+      "objective_refs": [3],
+      "data": {
+        "headline": {
+          "format": "markdown",
+          "content": "Prototype, review, and revise fast"
+        },
+        "card_body": [
+          {
+            "format": "markdown",
+            "content": "**Validate JSON** with the lesson schema lint script before rendering."
+          },
+          {
+            "format": "markdown",
+            "content": "**Generate HTML** using `node sandbox/scripts/create-deck.mjs --input <deck.json>`."
+          },
+          {
+            "format": "markdown",
+            "content": "**Run spot checks** for navigation, keyboard traps, and copyfit on long cards."
+          },
+          {
+            "format": "markdown",
+            "content": "**Capture feedback** directly in the JSON using comments or adjacent notes for the next sprint."
+          }
+        ],
+        "media": {
+          "type": "image",
+          "src": "https://placehold.co/900x600/6ea88d/143029?text=Generator",
+          "alt": "Command line generating a Sandbox deck"
+        }
+      }
+    },
+    {
+      "slug": "handoff-checklist",
+      "title": { "text": "Prepare handoff" },
+      "archetype": "content.wrapper",
+      "objective_refs": [3],
+      "data": {
+        "content_blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "format": "markdown",
+              "content": "Package everything facilitators and QA reviewers need before you archive the sprint." 
+            }
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "format": "markdown",
+                "content": "Attach facilitator annotations, run-of-show timing, and equipment lists."
+              },
+              {
+                "format": "markdown",
+                "content": "Share resolved media assets with alt text plus any outstanding placeholder tickets."
+              },
+              {
+                "format": "markdown",
+                "content": "Log pilot insights and next experiments in the release notes field."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "format": "markdown",
+              "content": "Schedule a retro with design, facilitation, and research to capture glow/grow moments for the next iteration."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
