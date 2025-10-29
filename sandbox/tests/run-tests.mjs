@@ -859,6 +859,239 @@ assert.match(
   'fallback toast should remain consistent across reinitialisations',
 );
 
+const focusedLessonLayouts = [
+  {
+    layout: 'centered-callout',
+    data: {
+      pillLabel: 'Language focus',
+      headline: 'Spotlight the prompt',
+      supportingText: ['Encourage partners to discuss the scenario.'],
+    },
+    assert: (slide, inner) => {
+      assert.ok(slide.classList.contains('is-centered-stage'), 'centered callout slide should center the stage');
+      assert.ok(inner?.classList.contains('align-center'), 'centered callout inner stack should align center');
+      const card = slide.querySelector('.card.stack.stack-sm');
+      assert.ok(card, 'centered callout should render the prompt card stack');
+    },
+  },
+  {
+    layout: 'centered-dialogue',
+    data: {
+      pillLabel: 'Dialogue spotlight',
+      headline: 'Model the exchange',
+      dialogue_box: {
+        lines: [
+          { speaker: 'Teacher', text: 'How was your weekend?' },
+          { speaker: 'Learner', text: 'It was wonderful!' },
+        ],
+      },
+    },
+    assert: (slide) => {
+      const dialogue = slide.querySelector('.lesson-dialogue');
+      assert.ok(dialogue, 'centered dialogue should include the dialogue container');
+      const turns = dialogue?.querySelectorAll('.dialogue-turn');
+      assert.ok(turns?.length, 'centered dialogue should render dialogue turns');
+    },
+  },
+  {
+    layout: 'card-stack',
+    data: {
+      pillLabel: 'Sequence',
+      title: 'Plan the workflow',
+      description: 'Guide learners through the sequence.',
+      cards: [
+        { title: 'Step 1', description: 'Model the task.' },
+        { title: 'Step 2', description: 'Invite learners to try.' },
+      ],
+    },
+    assert: (slide) => {
+      const header = slide.querySelector('.card-stack-header');
+      assert.ok(header, 'card stack should include the header region');
+      const stackCards = slide.querySelectorAll('.card-stack-list .stack-card');
+      assert.ok(stackCards.length >= 2, 'card stack should render each configured card');
+    },
+  },
+  {
+    layout: 'pill-simple',
+    data: {
+      pillLabel: 'Lesson aim',
+      title: 'Introduce the topic',
+      body: ['Frame the task for the class.'],
+    },
+    assert: (slide) => {
+      const card = slide.querySelector('.card.stack.stack-sm');
+      assert.ok(card, 'pill simple layout should render a stacked card');
+    },
+  },
+  {
+    layout: 'workspace-grid',
+    data: {
+      pillLabel: 'Workspace',
+      title: 'Collaborate in groups',
+      gridSlots: [
+        { id: 'slot-1', title: 'Group A', body: 'Capture highlights from the discussion.' },
+        { id: 'slot-2', title: 'Group B', body: 'Record emerging vocabulary.' },
+      ],
+    },
+    assert: (slide) => {
+      const grid = slide.querySelector('.gallery-grid');
+      assert.ok(grid, 'workspace grid should render the gallery grid container');
+      const slots = grid?.querySelectorAll('.note-card');
+      assert.ok(slots?.length === 2, 'workspace grid should create a note card per slot');
+    },
+  },
+  {
+    layout: 'content-wrapper',
+    data: {
+      pillLabel: 'Content wrap',
+      title: 'Structure the lesson copy',
+      header: [{ type: 'paragraph', text: 'Introduce the scenario.' }],
+      body: [{ type: 'paragraph', text: 'Learners review the prompt and brainstorm solutions.' }],
+      footer: [{ type: 'paragraph', text: 'Invite volunteers to share takeaways.' }],
+    },
+    assert: (slide) => {
+      const wrapper = slide.querySelector('.content-wrapper');
+      assert.ok(wrapper, 'content wrapper layout should render the wrapper container');
+      assert.ok(wrapper?.querySelector('.content-header'), 'content wrapper should expose a header region');
+      assert.ok(wrapper?.querySelector('.content-body'), 'content wrapper should expose a body region');
+      assert.ok(wrapper?.querySelector('.content-footer'), 'content wrapper should expose a footer region');
+    },
+  },
+  {
+    layout: 'interactive-activity-card',
+    data: {
+      pillLabel: 'Interactive',
+      title: 'Facilitate the activity',
+      instructions: ['Model the first exchange.', 'Invite pairs to continue.'],
+      actionBar: {
+        primary: { label: 'Check' },
+        secondary: { label: 'Reset' },
+        tertiary: { label: 'Hint' },
+      },
+      timerHint: 'Set a five-minute timer.',
+      accessibility: { instructions: 'Use the buttons to evaluate responses.' },
+    },
+    assert: (slide) => {
+      assert.ok(slide.querySelector('.instruction-list'), 'interactive activity card should list instructions');
+      assert.ok(slide.querySelector('.activity-actions'), 'interactive activity card should render the activity actions');
+      assert.ok(slide.querySelector('.feedback-msg'), 'interactive activity card should provide feedback messaging');
+    },
+  },
+  {
+    layout: 'interactive-token-board',
+    data: {
+      pillLabel: 'Token board',
+      title: 'Sort the rituals',
+      tokenBank: [
+        { id: 'token-1', label: 'Greeting' },
+        { id: 'token-2', label: 'Closing' },
+      ],
+      dropzones: [
+        { id: 'zone-a', title: 'Opening', accepts: ['token-1'] },
+        { id: 'zone-b', title: 'Wrap-up', accepts: ['token-2'] },
+      ],
+      actionBar: {
+        primary: { label: 'Check' },
+        secondary: { label: 'Reset' },
+      },
+      feedbackRegion: { positive: 'Excellent categorisation!' },
+    },
+    assert: (slide) => {
+      const bank = slide.querySelector('.token-bank');
+      assert.ok(bank, 'interactive token board should expose the token bank');
+      assert.ok(bank?.querySelectorAll('.click-token').length >= 2, 'interactive token board should render clickable tokens');
+      assert.ok(slide.querySelector('.category-columns'), 'interactive token board should provide category columns');
+    },
+  },
+  {
+    layout: 'interactive-token-table',
+    data: {
+      pillLabel: 'Token table',
+      title: 'Complete the table',
+      description: 'Use the tokens to finish the prompts.',
+      tableShell: {
+        columns: ['Prompt', 'Response'],
+        rows: [{ prompt: 'Introduce yourself', cell_keys: ['token-a'] }],
+      },
+      tokenBank: [{ id: 'token-a', label: 'Nice to meet you' }],
+      actionBar: {
+        primary: { label: 'Check' },
+        secondary: { label: 'Reset' },
+      },
+    },
+    assert: (slide) => {
+      assert.ok(slide.querySelector('.table-responsive table'), 'interactive token table should render the table shell');
+      const bank = slide.querySelector('.token-bank');
+      assert.ok(bank, 'interactive token table should expose the token bank');
+      assert.ok(bank?.querySelector('.click-token'), 'interactive token table should render a token button');
+    },
+  },
+  {
+    layout: 'interactive-token-quiz',
+    data: {
+      pillLabel: 'Token quiz',
+      title: 'Drag the correct response',
+      tokenBank: [{ id: 'token-quiz-1', label: 'Because it is polite.' }],
+      quizPrompts: [
+        {
+          question: 'Why do we greet colleagues?',
+          correct_token_ids: ['token-quiz-1'],
+          rationale: 'It builds rapport.',
+        },
+      ],
+      completionCopy: { positive: 'Great reasoning!' },
+    },
+    assert: (slide) => {
+      assert.ok(slide.querySelector('.practice-prompt-list'), 'interactive token quiz should list prompts');
+      assert.ok(slide.querySelector('.drop-zone'), 'interactive token quiz should provide drop zones');
+      assert.ok(slide.querySelector('.token-bank .click-token'), 'interactive token quiz should render quiz tokens');
+    },
+  },
+  {
+    layout: 'interactive-quiz-feedback',
+    data: {
+      pillLabel: 'Quiz feedback',
+      title: 'Review the class responses',
+      quizItems: [
+        { prompt: 'What is a ritual?', learner_response: 'A repeated action.', is_correct: true, explanation: 'Correct.' },
+      ],
+      feedbackRegion: { positive: 'Celebrate correct answers.' },
+      nextSteps: 'Ask learners to share examples.',
+    },
+    assert: (slide) => {
+      assert.ok(slide.querySelector('.instruction-list'), 'interactive quiz feedback should render the response list');
+      assert.ok(slide.querySelector('.feedback-msg'), 'interactive quiz feedback should include a feedback region');
+    },
+  },
+  {
+    layout: 'interactive-audio-dialogue',
+    data: {
+      pillLabel: 'Audio dialogue',
+      title: 'Listen and respond',
+      audioPlayer: { source: { url: 'https://example.com/dialogue.mp3' }, transcript: 'Sample transcript.' },
+      promptCard: { title: 'Discuss', instructions: ['Note expressions you hear.'] },
+    },
+    assert: (slide) => {
+      assert.ok(slide.querySelector('.lesson-audio audio'), 'interactive audio dialogue should provide an audio player');
+      assert.ok(slide.querySelector('.card.stack.stack-sm'), 'interactive audio dialogue should provide a prompt card');
+    },
+  },
+];
+
+focusedLessonLayouts.forEach(({ layout, data, assert: verify }) => {
+  const slide = createLessonSlideFromState({ layout, data });
+  stageViewport.appendChild(slide);
+  try {
+    assert.equal(slide.dataset.layout, layout, `layout "${layout}" should set the data-layout attribute`);
+    const inner = slide.querySelector('.slide-inner');
+    assert.ok(inner?.classList.contains(`${layout}-layout`), `layout "${layout}" should tag the inner container`);
+    verify(slide, inner);
+    assertNoUnknownClasses(slide, `Focused lesson layout "${layout}"`);
+  } finally {
+    slide.remove();
+  }
+});
+
 const moduleParser = new window.DOMParser();
 
 for (const layout of SUPPORTED_LESSON_LAYOUTS) {

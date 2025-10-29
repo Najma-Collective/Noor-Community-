@@ -22,7 +22,15 @@ const FONT_AWESOME_FAMILIES = new Set([
   'fa-duotone',
 ]);
 
-const EXTRA_ALLOWED_CLASSES = new Set(['hidden', 'gap']);
+const EXTRA_ALLOWED_CLASSES = new Set([
+  'hidden',
+  'gap',
+  'content-wrapper',
+  'content-header',
+  'content-body',
+  'content-footer',
+  'category-columns',
+]);
 
 const ADDITIONAL_ALLOWED_PATTERNS = [
   /^lesson-slide--/,
