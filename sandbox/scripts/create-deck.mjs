@@ -17,10 +17,11 @@ function printUsage() {
     `Usage: node sandbox/scripts/create-deck.mjs --input <brief.json> [--output <deck.html>] [--pexels-key <key>]\n` +
     `        npx sandbox-create-deck --input <brief.json> ... (if linked via package script)\n\n` +
     `Options:\n` +
-    `  -i, --input        Path to the deck brief JSON file (required)\n` +
+    `  -i, --input        Path to a lesson deck JSON payload that matches automation/schema/lesson-deck.schema.json (required)\n` +
     `  -o, --output       Path to write the generated deck HTML (defaults to <brief-name>.html next to the brief)\n` +
     `  -k, --pexels-key   Pexels API key (falls back to PEXELS_API_KEY env var or brief.pexelsKey)\n` +
-    `  -h, --help         Show this message\n`);
+    `  -h, --help         Show this message\n\n` +
+    `Legacy briefs should be migrated to the schema-aligned archetype format so automation and the CLI stay in sync.\n`);
 }
 
 function parseArgs(argv) {

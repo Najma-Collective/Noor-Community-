@@ -1,0 +1,53 @@
+{
+  "id": "LEGACY-COMPAT-001",
+  "title": "Legacy Compatibility Deck",
+  "language": "en",
+  "level": "A2",
+  "version": "1.0.0",
+  "assets": {
+    "cover_image": {
+      "type": "image",
+      "src": "https://placehold.co/1920x1080?text=Legacy+Cover",
+      "alt": "Legacy cover illustration"
+    }
+  },
+  "contributors": [
+    {
+      "name": "Curriculum QA",
+      "role": "Editor"
+    }
+  ],
+  "slides": [
+    {
+      "slug": "cover",
+      "title": { "text": "Legacy Kickoff" },
+      "archetype": "hero.overlay",
+      "data": {
+        "background_media": {
+          "type": "image",
+          "src": "https://placehold.co/1920x1080?text=Kickoff",
+          "alt": "Facilitator welcoming learners"
+        },
+        "headline": {
+          "format": "markdown",
+          "content": "Legacy Compatibility Session"
+        },
+        "subhead": "Set expectations and welcome learners."
+      }
+    },
+    {
+      "slug": "agenda",
+      "title": { "text": "Session Agenda" },
+      "archetype": "centered.callout",
+      "data": {
+        "accent_pill": { "text": "Agenda" },
+        "headline": "Today's Plan",
+        "supporting_text": [
+          "Warm up and introductions",
+          "Collaborative group activity",
+          "Reflection and wrap up"
+        ]
+      }
+    }
+  ]
+}
