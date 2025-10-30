@@ -18,6 +18,8 @@ The sandbox now ships with a lightweight command-line utility that transforms a 
 
 The script prints the path to the generated HTML deck. Open the file in a browser to review the scaffolded slides. The deck boots `setupInteractiveDeck` automatically, so navigation and editing affordances remain available.
 
+> **Need the exact authoring recipe?** See [`docs/prompt-slide-builder.md`](./docs/prompt-slide-builder.md) for the system prompt that describes how briefs are merged with archetype defaults and how the final HTML shell should be assembled.
+
 ## Brief format
 
 Deck briefs are plain JSON objects with the following top-level shape:
@@ -119,5 +121,7 @@ Generate both decks and compare the resulting HTML to understand how the CLI app
 ## Output structure
 
 The CLI produces an HTML document that already links to the sandbox fonts and styles, injects the standard toolbar shell, and initialises `setupInteractiveDeck` via an inline module script. Slides are rendered into the main stage in the order provided by the brief; the first slide is automatically unhidden.
+
+All generated decks must reference only the Sandbox CSS bundles (`./sandbox-theme.css`, `./sandbox-css.css`) alongside any optional module-specific styles. Legacy bundles such as `../CSS-slides.css` are intentionally excluded from the prompt to avoid regressions.
 
 Because the output reuses the production layout generators, you can safely edit the generated markup further in code or drop it back into the builder without structural drift.
