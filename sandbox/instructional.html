@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Authoring System · Deck Authoring Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-MX58QX8wG7n+9yYvCMpOZXS6jttuPAHyBs+K6TfGsDzpDHK5vVsQt1zArhcXd1LSeX776BF3nf6/3cxguP3R0A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./sandbox-theme.css" />
+    <link rel="stylesheet" href="./sandbox-css.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#lesson-stage">Skip to lesson workspace</a>
+    <div id="deck-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="deck-toast-root" class="deck-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <div class="toolbar-logos" aria-hidden="true">
+            <img src="../assets/noor_logo.webp" alt="" />
+          </div>
+          <span>Noor Authoring System</span>
+        </div>
+        <div id="slide-counter" class="slide-counter">1 / 8</div>
+        <div class="toolbar-actions">
+          <button id="activity-builder-btn" class="toolbar-btn tertiary" type="button">
+            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+            Open Builder
+          </button>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+            Add Blank Slide
+          </button>
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import" aria-hidden="true"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="toolbar-menu" data-role="canvas-tools">
+            <button
+              id="canvas-tools-toggle"
+              class="toolbar-btn tertiary has-caret"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="canvas-tools-menu"
+              disabled
+            >
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+              Canvas Tools
+              <span class="toolbar-caret" aria-hidden="true"></span>
+            </button>
+            <div
+              id="canvas-tools-menu"
+              class="toolbar-dropdown"
+              role="menu"
+              aria-label="Canvas tools"
+              hidden
+            >
+              <div class="toolbar-dropdown-inner" data-role="canvas-tools-options"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main id="lesson-stage" class="deck-workspace">
+        <div class="stage-viewport">
+          <!-- Slide 1: Noor Authoring System -->
+          <div
+            class="slide-stage lesson-slide lesson-slide--topic-introduction lesson-slide--has-image lesson-slide--has-overlay"
+            data-type="lesson"
+            data-layout="topic-introduction"
+            data-layout-icon="fa-solid fa-list-check"
+            style="--lesson-bg-image: url('https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900'); --lesson-overlay-color: #061f4f; --lesson-overlay-opacity: 72;"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner topic-introduction-layout">
+              <header class="lesson-header topic-header">
+                <h2>Noor Authoring System</h2>
+                <p class="topic-hook">Design and ship sandbox-ready decks in minutes.</p>
+              </header>
+              <div class="topic-body">
+                <p class="topic-context">
+                  During this session we move from an instructional outline to a published Noor deck using the sandbox CLI and archetype defaults.
+                </p>
+                <div class="topic-question-card">
+                  <span class="topic-question-label">Essential question</span>
+                  <p>How do we translate a lesson vision into an interactive Noor deck efficiently and with quality safeguards?</p>
+                </div>
+                <section class="topic-vocabulary">
+                  <h3>Key vocabulary</h3>
+                  <ul class="topic-vocabulary-list">
+                    <li>Session plan</li>
+                    <li>JSON brief</li>
+                    <li>Archetype defaults</li>
+                    <li>Media enrichment</li>
+                    <li>QA checklist</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Learning outcomes for facilitators -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--learning-objectives lesson-slide--has-image lesson-slide--has-overlay"
+            data-type="lesson"
+            data-layout="learning-objectives"
+            data-layout-icon="fa-solid fa-bullseye"
+            style="--lesson-bg-image: url('https://images.pexels.com/photos/3761509/pexels-photo-3761509.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900'); --lesson-overlay-color: #102b6b; --lesson-overlay-opacity: 64;"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner learning-objectives-layout">
+              <header class="lesson-header">
+                <h2>Learning outcomes for facilitators</h2>
+                <p class="lesson-communicative">
+                  <strong>So you can</strong> coach teammates to move from raw ideas to publishable Noor decks with confidence.
+                </p>
+              </header>
+              <div class="lesson-body">
+                <div class="card lesson-goals-card">
+                  <ul class="lesson-goals">
+                    <li>
+                      <span class="lesson-goal-icon">
+                        <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+                        <span class="sr-only">Goal 1</span>
+                      </span>
+                      <p>Trace the sandbox workflow from lesson vision to HTML output.</p>
+                    </li>
+                    <li>
+                      <span class="lesson-goal-icon">
+                        <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+                        <span class="sr-only">Goal 2</span>
+                      </span>
+                      <p>Draft JSON briefs that balance archetype defaults with bespoke copy.</p>
+                    </li>
+                    <li>
+                      <span class="lesson-goal-icon">
+                        <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+                        <span class="sr-only">Goal 3</span>
+                      </span>
+                      <p>Apply media, overlay, and accessibility polish before sharing.</p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Grounding activity -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--grounding-activity lesson-slide--has-image lesson-slide--has-overlay"
+            data-type="lesson"
+            data-layout="grounding-activity"
+            data-layout-icon="fa-solid fa-comments"
+            style="--lesson-bg-image: url('https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900'); --lesson-overlay-color: #0b2547; --lesson-overlay-opacity: 60;"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-comments" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner grounding-activity-layout">
+              <header class="lesson-header grounding-header">
+                <h2>Quick connections to the tooling</h2>
+                <p class="grounding-subtitle">5-minute settle</p>
+              </header>
+              <div class="grounding-body">
+                <ol class="grounding-steps">
+                  <li>
+                    <span class="grounding-step-badge">1</span>
+                    <p>Pair up and share one success you’ve had capturing a lesson digitally.</p>
+                  </li>
+                  <li>
+                    <span class="grounding-step-badge">2</span>
+                    <p>Name the biggest friction point you encountered in previous deck builders.</p>
+                  </li>
+                  <li>
+                    <span class="grounding-step-badge">3</span>
+                    <p>Skim the archetype index and circle a slide you’re excited to try.</p>
+                  </li>
+                  <li>
+                    <span class="grounding-step-badge">4</span>
+                    <p>Surface one question you hope the workflow walkthrough will answer.</p>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Card stack -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--card-stack"
+            data-type="lesson"
+            data-layout="card-stack"
+            data-layout-icon="fa-solid fa-layer-group"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner card-stack-layout stack">
+              <header class="lesson-header card-stack-header stack stack-sm">
+                <span class="pill card-stack-pill">
+                  <i class="fa-solid fa-route" aria-hidden="true"></i>
+                  Sandbox flow
+                </span>
+                <h2>From idea to interactive deck</h2>
+                <p class="card-stack-lead">
+                  Each card highlights a checkpoint in the Noor authoring pipeline.
+                </p>
+              </header>
+              <div class="card-stack-list stack stack-md">
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 1</span>
+                    </span>
+                    <h3>Narrative planning</h3>
+                  </div>
+                  <p>Sketch the session arc and map beats to supported archetypes.</p>
+                </article>
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 2</span>
+                    </span>
+                    <h3>JSON brief drafting</h3>
+                  </div>
+                  <p>Translate the plan into layout records, media references, and icons.</p>
+                </article>
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 3</span>
+                    </span>
+                    <h3>Generator run</h3>
+                  </div>
+                  <p>Execute the CLI with the shared Pexels key and review the HTML scaffold.</p>
+                </article>
+                <article class="card stack-card">
+                  <div class="stack-card-header">
+                    <span class="stack-card-icon">
+                      <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+                      <span class="sr-only">Card 4</span>
+                    </span>
+                    <h3>Polish &amp; QA</h3>
+                  </div>
+                  <p>Layer alt-text, overlays, and final copy edits before sharing.</p>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Guided discovery -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--guided-discovery"
+            data-type="lesson"
+            data-layout="guided-discovery"
+            data-layout-icon="fa-solid fa-lightbulb"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner guided-discovery-layout">
+              <header class="lesson-header discovery-header">
+                <h2>Decode the JSON brief</h2>
+                <p class="discovery-context">
+                  Work with a partner to inspect the sample brief and locate the fields that power each slide region.
+                </p>
+              </header>
+              <div class="discovery-body">
+                <section class="discovery-section">
+                  <h3>Explore the text</h3>
+                  <ul class="discovery-prompt-list">
+                    <li>Match agenda beats to the layouts they trigger in the sandbox renderer.</li>
+                    <li>Highlight where overlays, icons, and vocab lists live inside the data object.</li>
+                  </ul>
+                </section>
+                <section class="discovery-section">
+                  <h3>What do you notice?</h3>
+                  <ul class="discovery-question-list">
+                    <li>Which fields fall back to archetype defaults when left empty?</li>
+                    <li>How does the brief capture accessibility copy like alt-text?</li>
+                  </ul>
+                </section>
+                <section class="discovery-section">
+                  <h3>Sample language</h3>
+                  <ul class="discovery-language-list">
+                    <li>"layout": "topic-introduction"</li>
+                    <li>"overlayOpacity": 72</li>
+                    <li>"gallery": [{ "image": "..." }]</li>
+                    <li>"prompts": ["Add reflection prompts to guide learners."]</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Creative practice -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--creative-practice lesson-slide--has-image lesson-slide--has-overlay"
+            data-type="lesson"
+            data-layout="creative-practice"
+            data-layout-icon="fa-solid fa-paintbrush"
+            style="--lesson-bg-image: url('https://images.pexels.com/photos/3861447/pexels-photo-3861447.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900'); --lesson-overlay-color: #102445; --lesson-overlay-opacity: 66;"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-paintbrush" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner creative-practice-layout">
+              <header class="lesson-header creative-header">
+                <h2>Customise your deck</h2>
+                <p class="creative-brief">
+                  Teams remix the generated deck by swapping imagery, updating overlays, and fine-tuning copy in the JSON before rerunning the CLI.
+                </p>
+              </header>
+              <div class="creative-body">
+                <section class="creative-section materials-section">
+                  <h3>Gather your materials</h3>
+                  <ul class="creative-materials">
+                    <li>Generated HTML deck for reference</li>
+                    <li>JSON brief draft with comments</li>
+                    <li>Shared Pexels key for fresh media pulls</li>
+                  </ul>
+                </section>
+                <section class="creative-section">
+                  <h3>Make together</h3>
+                  <ol class="creative-steps">
+                    <li>Choose one slide to personalise and identify the relevant JSON fields.</li>
+                    <li>Adjust copy, icons, and overlays, then rerun the generator.</li>
+                    <li>Document the before/after result and note any styling surprises.</li>
+                  </ol>
+                </section>
+                <section class="creative-section">
+                  <h3>Share your work</h3>
+                  <ul class="creative-sharing">
+                    <li>Drop screenshots of the refreshed slide in the team chat.</li>
+                    <li>Record a quick loom walking through the updates you made.</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Pill with gallery -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--pill-with-gallery"
+            data-type="lesson"
+            data-layout="pill-with-gallery"
+            data-layout-icon="fa-solid fa-image"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-image" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner pill-gallery-layout stack">
+              <header class="lesson-header pill-gallery-header stack stack-sm">
+                <span class="pill pill-gallery-pill">
+                  <i class="fa-solid fa-camera-retro" aria-hidden="true"></i>
+                  Showcase the build
+                </span>
+                <h2>Snapshots of the authoring experience</h2>
+                <p class="pill-gallery-lead">
+                  Use the gallery to celebrate how quickly the sandbox scaffolds high-quality lessons.
+                </p>
+              </header>
+              <div class="pill-gallery-grid">
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Facilitators collaborating around a laptop"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 1</span>
+                    </span>
+                    <p>Plan together · Teams map the agenda onto slide archetypes.</p>
+                    <p class="pill-gallery-credit">
+                      <a href="https://www.pexels.com/photo/people-discussing-3184338/" target="_blank" rel="noreferrer noopener">
+                        Photo · Fauxels
+                      </a>
+                    </p>
+                  </figcaption>
+                </figure>
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/1181359/pexels-photo-1181359.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Hands typing JSON in a code editor"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 2</span>
+                    </span>
+                    <p>Author the brief · Designers refine copy and overlays directly in JSON.</p>
+                    <p class="pill-gallery-credit">
+                      <a href="https://www.pexels.com/photo/person-using-laptop-1181359/" target="_blank" rel="noreferrer noopener">
+                        Photo · Christina Morillo
+                      </a>
+                    </p>
+                  </figcaption>
+                </figure>
+                <figure class="pill-gallery-item">
+                  <img
+                    src="https://images.pexels.com/photos/3861964/pexels-photo-3861964.jpeg?auto=compress&cs=tinysrgb&h=650&w=980"
+                    alt="Instructor presenting slides to a small group"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="pill-gallery-caption">
+                    <span class="pill-gallery-icon">
+                      <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      <span class="sr-only">Gallery item 3</span>
+                    </span>
+                    <p>Launch &amp; iterate · Generated decks are ready for immediate facilitation.</p>
+                    <p class="pill-gallery-credit">
+                      <a href="https://www.pexels.com/photo/people-looking-at-laptop-3861964/" target="_blank" rel="noreferrer noopener">
+                        Photo · Fauxels
+                      </a>
+                    </p>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Reflection -->
+          <div
+            class="slide-stage hidden lesson-slide lesson-slide--reflection lesson-slide--has-image lesson-slide--has-overlay"
+            data-type="reflection"
+            data-layout="reflection"
+            data-layout-icon="fa-solid fa-moon"
+            style="--lesson-bg-image: url('https://images.pexels.com/photos/3780581/pexels-photo-3780581.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900'); --lesson-overlay-color: #111f33; --lesson-overlay-opacity: 58;"
+          >
+            <span class="lesson-layout-icon">
+              <i class="fa-solid fa-moon" aria-hidden="true"></i>
+            </span>
+            <div class="slide-inner lesson-slide-inner reflection-layout">
+              <header class="lesson-header">
+                <h2>Looking ahead</h2>
+              </header>
+              <div class="reflection-body">
+                <ul class="reflection-prompts">
+                  <li>Which archetype will accelerate your next build the most?</li>
+                  <li>What automation or template would further streamline your workflow?</li>
+                  <li>Who needs to review or co-own your next Noor deck?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" type="button" aria-label="Previous slide">
+            <i class="fa-solid fa-circle-arrow-left" aria-hidden="true"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" aria-label="Next slide">
+            <i class="fa-solid fa-circle-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { setupInteractiveDeck } from './int-mod.js';
+      setupInteractiveDeck({ root: document });
+    </script>
+  </body>
+</html>
