@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-hidden="true">
+  <defs>
+    <style>
+      .bg { fill: #f3f5fa; }
+      .header { fill: #dbe7ff; }
+      .card { fill: #ffffff; }
+      .accent { fill: #2f5bea; }
+      .muted { fill: #e5ebf5; }
+      .chip { fill: #c9d6ff; }
+      .placeholder { fill: none; stroke: #9aa9c8; stroke-width: 8; stroke-dasharray: 18 14; }
+      .divider { stroke: #b9c4dd; stroke-width: 6; }
+      .outline { fill: none; stroke: #94a3c7; stroke-width: 6; }
+      .text-line { fill: #b1bed6; }
+      .text-strong { fill: #7a8bb0; }
+      .badge { fill: #2f5bea; opacity: 0.18; }
+      .highlight { fill: #ffe7c2; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  
+      <rect class="header" x="120" y="80" width="1040" height="110" rx="32"/>
+      <rect class="card" x="120" y="210" width="1040" height="430" rx="32"/>
+      <rect class="text-strong" x="160" y="250" width="400" height="28" rx="14"/>
+      <rect class="chip" x="160" y="300" width="920" height="52" rx="24"/>
+      <rect class="chip" x="160" y="372" width="920" height="52" rx="24"/>
+      <rect class="muted" x="160" y="444" width="920" height="140" rx="28"/>
+    
+</svg>

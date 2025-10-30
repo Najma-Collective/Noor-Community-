@@ -2,6 +2,7 @@
 
 This reference summarises the slide layouts available in the sandbox lesson builder. Each entry combines the structure rendered in `int-mod.js`, the form controls surfaced in the builder sections of `exemplar-master.html`, and any modifier controls from `slide-templates.js`. Background imagery and overlays for lesson slides are applied through `createBaseLessonSlide`, which injects CSS variables for `--lesson-bg-image`, `--lesson-overlay-color`, and `--lesson-overlay-opacity` whenever image or colour data is provided. These same helpers attach the layout icon badge to every slide stage, so the icon guidance below applies across layouts. 
 
+> The previews below are lightweight 16:9 SVG schematics that mirror each layout’s structural regions for quick-loading documentation.
 ## Shared conventions
 
 * **Base wrapper.** `createBaseLessonSlide` wraps each lesson slide in `.slide-stage.hidden.lesson-slide` with an inner `.lesson-slide-inner` specific to the layout. The helper automatically applies background image, overlay colour, and opacity tokens when present, and it adds `.lesson-slide--has-image` or `.lesson-slide--has-overlay` for styling hooks.
@@ -47,7 +48,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 - Stage alignment (`top`, `center`).
 - Content alignment (`start`, `center`, `end`).
 
-**Preview.** See [thumbnail preview](./thumbnails.md#blank-canvas).
+**Preview.** ![Provides an empty `.blank-slide` workspace with a controls host and `.blank-canvas` region for free-form authoring. No lesson framing is added until authors layer content manually.](./archetypes/preview-blank-canvas.svg)
 
 ---
 
@@ -62,7 +63,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Goal bullets default to `fa-solid fa-bullseye` when no custom icon is supplied. The layout badge uses the selected `layoutIcon`.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#learning-objectives).
+**Preview.** ![A lesson header with the slide title and optional “So you can…” communicative goal line, followed by a `.lesson-goals-card` listing up to three goals with icon bullets. Placeholders prompt authors to add goals when fields are empty.](./archetypes/preview-learning-objectives.svg)
 
 ---
 
@@ -77,7 +78,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Currently renders text-only dialogue turns; icon fields are captured for future use. The layout badge displays the chosen icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#model-dialogue).
+**Preview.** ![Header with title and optional student instructions, followed by `.lesson-dialogue` containing a dialogue column (speaker/line pairs) and an optional supporting image. An audio player renders beneath the body when an audio URL is provided.](./archetypes/preview-model-dialogue.svg)
 
 ---
 
@@ -92,7 +93,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Layout badge uses the configured icon. The activity type badge text is derived from `activityType`; icon placeholders from the builder are saved but not yet rendered inline.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#interactive-practice).
+**Preview.** ![`.practice-header` with title and an activity type badge, `.practice-instructions` with either the prompt or a placeholder, an ordered list of `.practice-question` items (each may include options and an answer line), and a `.practice-module` region hosting interactive embeds with an “Add interactive module” button.](./archetypes/preview-interactive-practice.svg)
 
 ---
 
@@ -107,7 +108,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Preparation defaults to `fa-solid fa-list-check` and Performance to `fa-solid fa-people-group` when no icon classes are supplied. Stored scaffolding icons are not yet rendered.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#communicative-task).
+**Preview.** ![Header with title, optional scenario callout (extracted from the first line of preparation), and a `.task-body` containing an instruction card (Preparation and Performance steps with icons) plus a `.task-scaffolding` column listing language support items or a placeholder.](./archetypes/preview-communicative-task.svg)
 
 ---
 
@@ -122,7 +123,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** The renderer currently outputs plain text elements; icon classes are recorded for future styling while layout icons surface via the badge.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#pronunciation-focus).
+**Preview.** ![Header with title and target sound line, followed by a `.pronunciation-focus-card` that can show word chips, sentence examples, and a practice instruction block.](./archetypes/preview-pronunciation-focus.svg)
 
 ---
 
@@ -137,7 +138,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Prompts display as plain list items today; the stored icon field supports future custom bullets. Layout badge inherits the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#reflection).
+**Preview.** ![Header plus a `.reflection-body` that renders a bulleted list of prompts or a placeholder when the list is empty.](./archetypes/preview-reflection.svg)
 
 ---
 
@@ -152,7 +153,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Step numbering uses built-in badges; icon data is retained but not rendered yet. Layout badge applies the selected icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#grounding-activity).
+**Preview.** ![Header with title and optional subtitle, followed by `.grounding-body` containing an ordered list of steps with numbered badges.](./archetypes/preview-grounding-activity.svg)
 
 ---
 
@@ -167,7 +168,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Text sections render without icons; builder icon fields are stored for later theming. Layout badge uses the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#topic-introduction).
+**Preview.** ![Header with title and optional hook, `.topic-body` paragraphs for context and an “Essential question” card, plus a vocabulary section listing key terms or a placeholder.](./archetypes/preview-topic-introduction.svg)
 
 ---
 
@@ -182,7 +183,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Sections currently render text-only lists; icon fields are persisted for future styling. Layout badge reflects the chosen icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#guided-discovery).
+**Preview.** ![Header with context blurb, followed by three `.discovery-section` blocks: “Explore the text”, “What do you notice?”, and “Sample language”, each rendering a list or placeholder.](./archetypes/preview-guided-discovery.svg)
 
 ---
 
@@ -197,7 +198,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Sections render chips and lists without icons; the builder captures icon fields for future designs. Layout badge displays the selected icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#creative-practice).
+**Preview.** ![Header introducing the brief, followed by up to three `.creative-section` panels for materials, “Make together” steps, and sharing options.](./archetypes/preview-creative-practice.svg)
 
 ---
 
@@ -212,7 +213,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** No per-field icons; only the layout badge icon appears.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#task-divider).
+**Preview.** ![Header with title and optional subtitle, plus a banner that can show timing and focus text. The `.divider-body` lists learner actions or a placeholder.](./archetypes/preview-task-divider.svg)
 
 ---
 
@@ -227,7 +228,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Sections render text without icons; layout badge uses the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#task-reporting).
+**Preview.** ![Header with title and optional goal statement, plus three `.reporting-section` blocks: prompts list, roles table, and evidence list.](./archetypes/preview-task-reporting.svg)
 
 ---
 
@@ -242,7 +243,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** No dedicated icon fields; the layout badge conveys the chosen icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#genre-deconstruction).
+**Preview.** ![Header showing title plus optional genre and purpose meta, followed by a feature list and an optional mentor text blockquote.](./archetypes/preview-genre-deconstruction.svg)
 
 ---
 
@@ -257,7 +258,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Text renders without icons; layout badge shows the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#linguistic-feature-hunt).
+**Preview.** ![Header plus a `.feature-body` with an optional source text excerpt, a hunt targets list, and an optional reflection list.](./archetypes/preview-linguistic-feature-hunt.svg)
 
 ---
 
@@ -272,7 +273,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** No per-field icons; layout badge communicates the selected icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#text-reconstruction).
+**Preview.** ![Header with title and optional context, a steps section, and a segments grid that displays reconstruction segments or a placeholder.](./archetypes/preview-text-reconstruction.svg)
 
 ---
 
@@ -287,7 +288,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** No per-field icons; layout badge relays the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#jumbled-text-sequencing).
+**Preview.** ![Header with title and optional instructions, followed by an ordered list of segments and an optional support tips section.](./archetypes/preview-jumbled-text-sequencing.svg)
 
 ---
 
@@ -302,7 +303,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** No dedicated icon fields; the layout badge presents the selected icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#scaffolded-joint-construction).
+**Preview.** ![Header optionally showing mentor focus and shared outcome meta, with two columns listing teacher moves and learner moves.](./archetypes/preview-scaffolded-joint-construction.svg)
 
 ---
 
@@ -317,7 +318,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 **Icon hooks.** Checklist bullets use built-in symbols; icon fields captured in the builder are saved for future enhancement. Layout badge uses the configured icon.
 
-**Preview.** See [thumbnail preview](./thumbnails.md#independent-construction-checklist).
+**Preview.** ![Header with title and optional reminder, plus sections for checklist items and optional stretch goals.](./archetypes/preview-independent-construction-checklist.svg)
 
 ---
 
@@ -337,7 +338,7 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 - Stage alignment (`top`, `center`).
 - Card spacing density (`default`, `tight`, `roomy`).
 
-**Preview.** See [thumbnail preview](./thumbnails.md#card-stack).
+**Preview.** ![`.card-stack-layout` with a pill tag, title, optional lead paragraph, and a vertical stack of `.stack-card` articles that include icon badges and supporting text.](./archetypes/preview-card-stack.svg)
 
 ---
 
@@ -357,5 +358,5 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 - Stage alignment (`top`, `center`).
 - Gallery alignment (`start`, `center`).
 
-**Preview.** See [thumbnail preview](./thumbnails.md#pill-with-gallery).
+**Preview.** ![`.pill-gallery-layout` with a pill tag, title, description, and a responsive gallery of figure elements (image, caption with optional icon, and credit line).](./archetypes/preview-pill-with-gallery.svg)
 
