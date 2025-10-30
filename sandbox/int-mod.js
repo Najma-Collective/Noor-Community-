@@ -2,6 +2,7 @@ import {
   BUILDER_LAYOUT_DEFAULTS,
   LAYOUT_FIELD_ICON_DEFAULTS,
   LAYOUT_ICON_DEFAULTS,
+  cloneLayoutDefaults,
   getLayoutFieldIconDefault,
 } from './slide-templates.js';
 
@@ -7433,15 +7434,28 @@ const getEffectiveLayoutIcon = (_layout, iconClass) =>
 
 
 const getBuilderLayoutDefaults = (layout = 'blank-canvas') => {
-  const factory = BUILDER_LAYOUT_DEFAULTS[layout] || BUILDER_LAYOUT_DEFAULTS['blank-canvas'];
-  if (typeof factory === 'function') {
+  const hasLayoutDefaults = typeof BUILDER_LAYOUT_DEFAULTS?.[layout] === 'function';
+  try {
+    const defaults = cloneLayoutDefaults(layout);
+    if (defaults && typeof defaults === 'object') {
+      if (!hasLayoutDefaults && layout !== 'blank-canvas') {
+        console.warn('Falling back to blank-canvas defaults for layout', layout);
+      }
+      return defaults;
+    }
+  } catch (error) {
+    console.warn('Unable to clone builder defaults for layout', layout, error);
+  }
+  const fallbackFactory =
+    BUILDER_LAYOUT_DEFAULTS?.[layout] || BUILDER_LAYOUT_DEFAULTS?.['blank-canvas'];
+  if (typeof fallbackFactory === 'function') {
     try {
-      return factory();
+      return fallbackFactory();
     } catch (error) {
       console.warn('Unable to generate builder defaults for layout', layout, error);
     }
   }
-  return null;
+  return {};
 };
 
 function createDialogueItem({ speaker = '', line = '' } = {}) {

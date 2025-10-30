@@ -1,22 +1,214 @@
-export const LAYOUT_ICON_DEFAULTS = {
+import archetypeConfig from './config/archetypes.json' assert { type: 'json' };
+
+const { _meta: _archetypeMetaIgnored, ...archetypeLayouts } = archetypeConfig ?? {};
+
+const cloneValue = (value) => {
+  if (typeof globalThis.structuredClone === 'function') {
+    return globalThis.structuredClone(value);
+  }
+  if (value === undefined) {
+    return undefined;
+  }
+  return JSON.parse(JSON.stringify(value));
+};
+
+const ensurePlainObject = (value) =>
+  value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+
+const normaliseIconClass = (value) =>
+  (typeof value === 'string' ? value.trim() : '');
+
+const BASE_LAYOUT_ICON_DEFAULTS = {
   'blank-canvas': 'fa-solid fa-border-all',
-  'card-stack': 'fa-solid fa-layer-group',
-  'pill-with-gallery': 'fa-solid fa-images',
 };
 
-export const LAYOUT_FIELD_ICON_DEFAULTS = {
-  'card-stack': {
-    cardStackPillIcon: 'fa-solid fa-bookmark',
-    cardStackItemIcon: 'fa-solid fa-circle-dot',
-  },
-  'pill-with-gallery': {
-    pillGalleryPillIcon: 'fa-solid fa-camera-retro',
-    pillGalleryItemIcon: 'fa-solid fa-image',
-  },
-};
+const LAYOUT_FIELD_ICON_PROPERTY_MAP = Object.freeze({
+  'learning-objectives': Object.freeze({
+    learningGoalIcon: 'goalIcon',
+    learningCommunicativeGoalIcon: 'communicativeGoalIcon',
+  }),
+  'model-dialogue': Object.freeze({
+    dialogueInstructionsIcon: 'instructionsIcon',
+  }),
+  'interactive-practice': Object.freeze({
+    practiceInstructionsIcon: 'instructionsIcon',
+    practiceActivityTypeIcon: 'activityTypeIcon',
+  }),
+  'card-stack': Object.freeze({
+    cardStackPillIcon: 'pillIcon',
+    cardStackItemIcon: 'cardIcon',
+  }),
+  'pill-with-gallery': Object.freeze({
+    pillGalleryPillIcon: 'pillIcon',
+    pillGalleryItemIcon: 'itemIcon',
+  }),
+  'communicative-task': Object.freeze({
+    taskPreparationIcon: 'preparationIcon',
+    taskPerformanceIcon: 'performanceIcon',
+    taskScaffoldingIcon: 'scaffoldingIcon',
+  }),
+  'pronunciation-focus': Object.freeze({
+    pronunciationTargetIcon: 'targetIcon',
+    pronunciationWordsIcon: 'wordsIcon',
+    pronunciationSentencesIcon: 'sentencesIcon',
+    pronunciationPracticeIcon: 'practiceIcon',
+  }),
+  reflection: Object.freeze({
+    reflectionPromptsIcon: 'promptsIcon',
+  }),
+  'grounding-activity': Object.freeze({
+    groundingStepsIcon: 'stepsIcon',
+  }),
+  'topic-introduction': Object.freeze({
+    topicHookIcon: 'hookIcon',
+    topicContextIcon: 'contextIcon',
+    topicQuestionIcon: 'essentialQuestionIcon',
+    topicKeyVocabularyIcon: 'keyVocabularyIcon',
+  }),
+  'guided-discovery': Object.freeze({
+    discoveryContextIcon: 'contextIcon',
+    discoveryPromptsIcon: 'discoveryPromptsIcon',
+    discoveryNoticingQuestionsIcon: 'noticingQuestionsIcon',
+    discoveryLanguageSamplesIcon: 'sampleLanguageIcon',
+  }),
+  'creative-practice': Object.freeze({
+    creativeBriefIcon: 'briefIcon',
+    creativeMaterialsIcon: 'materialsIcon',
+    creativeMakingStepsIcon: 'makingStepsIcon',
+    creativeSharingOptionsIcon: 'sharingOptionsIcon',
+  }),
+  'task-divider': Object.freeze({
+    dividerTimingIcon: 'timingIcon',
+    dividerFocusIcon: 'focusIcon',
+    dividerActionsIcon: 'actionsIcon',
+  }),
+  'task-reporting': Object.freeze({
+    reportingGoalIcon: 'goalIcon',
+    reportingPromptsIcon: 'promptsIcon',
+    reportingRolesIcon: 'rolesIcon',
+    reportingEvidenceIcon: 'evidenceIcon',
+  }),
+  'genre-deconstruction': Object.freeze({
+    genreTypeIcon: 'genreIcon',
+    genrePurposeIcon: 'purposeIcon',
+    genreFeaturesIcon: 'featuresIcon',
+    genreMentorTextIcon: 'mentorTextIcon',
+  }),
+  'linguistic-feature-hunt': Object.freeze({
+    featureSourceTextIcon: 'sourceTextIcon',
+    featureTargetsIcon: 'featuresIcon',
+    featureReflectionIcon: 'reflectionIcon',
+  }),
+  'text-reconstruction': Object.freeze({
+    reconstructionContextIcon: 'contextIcon',
+    reconstructionStepsIcon: 'stepsIcon',
+    reconstructionSegmentsIcon: 'segmentsIcon',
+  }),
+  'jumbled-text-sequencing': Object.freeze({
+    sequencingInstructionsIcon: 'instructionsIcon',
+    sequencingSegmentsIcon: 'segmentsIcon',
+    sequencingSupportTipsIcon: 'supportTipsIcon',
+  }),
+  'scaffolded-joint-construction': Object.freeze({
+    jointMentorIcon: 'mentorFocusIcon',
+    jointSharedOutcomeIcon: 'sharedOutcomeIcon',
+    jointTeacherMovesIcon: 'teacherMovesIcon',
+    jointLearnerMovesIcon: 'learnerMovesIcon',
+  }),
+  'independent-construction-checklist': Object.freeze({
+    checklistReminderIcon: 'reminderIcon',
+    checklistItemsIcon: 'checklistIcon',
+    checklistStretchIcon: 'stretchGoalsIcon',
+  }),
+});
 
-export const getLayoutFieldIconDefault = (layout, field) =>
-  LAYOUT_FIELD_ICON_DEFAULTS?.[layout]?.[field] ?? '';
+const layoutDefaultFactories = {};
+const layoutIconDefaults = { ...BASE_LAYOUT_ICON_DEFAULTS };
+const layoutFieldIconDefaults = {};
+
+for (const [layout, config] of Object.entries(archetypeLayouts)) {
+  const defaults = ensurePlainObject(config?.defaults);
+  layoutDefaultFactories[layout] = () => cloneValue(defaults);
+
+  const layoutIcon = normaliseIconClass(defaults?.layoutIcon);
+  if (layoutIcon) {
+    layoutIconDefaults[layout] = layoutIcon;
+  }
+
+  const propertyMap = LAYOUT_FIELD_ICON_PROPERTY_MAP[layout];
+  if (propertyMap) {
+    for (const [fieldName, propertyKey] of Object.entries(propertyMap)) {
+      const iconClass = normaliseIconClass(defaults?.[propertyKey]);
+      if (!iconClass) {
+        continue;
+      }
+      layoutFieldIconDefaults[layout] ??= {};
+      layoutFieldIconDefaults[layout][fieldName] = iconClass;
+    }
+  }
+}
+
+export const BUILDER_LAYOUT_DEFAULTS = Object.freeze({
+  ...layoutDefaultFactories,
+});
+
+export function cloneLayoutDefaults(layout = 'blank-canvas', { fallback = 'blank-canvas' } = {}) {
+  const factory = BUILDER_LAYOUT_DEFAULTS?.[layout];
+  if (typeof factory === 'function') {
+    return factory();
+  }
+  if (fallback && layout !== fallback) {
+    const fallbackFactory = BUILDER_LAYOUT_DEFAULTS?.[fallback];
+    if (typeof fallbackFactory === 'function') {
+      return fallbackFactory();
+    }
+  }
+  return {};
+}
+
+export const getArchetypeDefaults = cloneLayoutDefaults;
+
+const freezeNested = (object) =>
+  Object.freeze(
+    Object.fromEntries(
+      Object.entries(object).map(([key, value]) => [key, Object.freeze({ ...value })]),
+    ),
+  );
+
+export const LAYOUT_ICON_DEFAULTS = Object.freeze({
+  ...layoutIconDefaults,
+});
+
+export const LAYOUT_FIELD_ICON_DEFAULTS = freezeNested(layoutFieldIconDefaults);
+
+const LAYOUT_ICON_PLACEHOLDERS = new Set([
+  '@layout',
+  '@layoutIcon',
+  '@layout-icon',
+  'layoutIcon',
+  '{layoutIcon}',
+  '{{layoutIcon}}',
+]);
+
+export const getLayoutFieldIconDefault = (layout, field) => {
+  const icons = LAYOUT_FIELD_ICON_DEFAULTS?.[layout];
+  if (!icons) {
+    return '';
+  }
+  const rawValue = icons[field];
+  if (typeof rawValue !== 'string') {
+    return '';
+  }
+  const trimmed = rawValue.trim();
+  if (!trimmed) {
+    return '';
+  }
+  if (LAYOUT_ICON_PLACEHOLDERS.has(trimmed)) {
+    const fallback = LAYOUT_ICON_DEFAULTS?.[layout];
+    return typeof fallback === 'string' ? fallback : '';
+  }
+  return trimmed;
+};
 
 export const SLIDE_TEMPLATE_MODIFIERS = {
   'blank-canvas': [
@@ -87,62 +279,4 @@ export const SLIDE_TEMPLATE_MODIFIERS = {
       ],
     },
   ],
-};
-
-export const BUILDER_LAYOUT_DEFAULTS = {
-  'blank-canvas': () => ({}),
-  'interactive-practice': () => ({
-    activityType: 'multiple-choice',
-    questions: [{}],
-  }),
-  'card-stack': () => ({
-    pill: 'Studio sprint stack',
-    pillIcon: 'fa-solid fa-bookmark',
-    title: 'Preview the next build moves',
-    description:
-      'Skim the stack to confirm the workflow: prep the sprint, collect field notes, and plan the next showcase.',
-    cardIcon: 'fa-solid fa-circle-dot',
-    cards: [
-      {
-        title: 'Prototype ready check',
-        description: 'List the build, blockers, and final tweaks teams need before sharing.',
-      },
-      {
-        title: 'Feedback carousel',
-        description: 'Identify which peers will rotate through and the lens they should use while observing.',
-      },
-      {
-        title: 'Evidence capture',
-        description: 'Note the artefacts, quotes, or data teams will collect to prove the sprint worked.',
-      },
-    ],
-  }),
-  'pill-with-gallery': () => ({
-    pill: 'Scenario spotlight',
-    pillIcon: 'fa-solid fa-camera-retro',
-    title: 'Ground the challenge with vivid artefacts',
-    description:
-      'Pair the scenario pill with a gallery of in-sprint visuals so learners can orient quickly and see real momentum.',
-    itemIcon: 'fa-solid fa-image',
-    gallery: [
-      {
-        image:
-          'https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Students discussing project notes around a table',
-        caption: 'Sprint briefing · Teams outline the user need and pitch rapid ideas.',
-      },
-      {
-        image:
-          'https://images.pexels.com/photos/3182765/pexels-photo-3182765.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Prototype sketches spread across a worktable',
-        caption: 'Iteration lab · Capture early prototypes with quick annotations.',
-      },
-      {
-        image:
-          'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&h=650&w=980',
-        alt: 'Learner presenting to peers with a laptop in hand',
-        caption: 'Gallery walk · Highlight how teams narrate impact evidence.',
-      },
-    ],
-  }),
 };

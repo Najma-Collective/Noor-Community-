@@ -8,7 +8,7 @@ import {
   createLessonSlideFromState,
   SUPPORTED_LESSON_LAYOUTS,
 } from '../int-mod.js';
-import { BUILDER_LAYOUT_DEFAULTS } from '../slide-templates.js';
+import { BUILDER_LAYOUT_DEFAULTS, cloneLayoutDefaults } from '../slide-templates.js';
 
 const DEFAULT_LANGUAGE = 'en';
 const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
@@ -446,8 +446,22 @@ async function buildDeck(brief, options) {
       if (!SUPPORTED_LESSON_LAYOUTS.includes(layout)) {
         throw new Error(`Unsupported layout in brief: ${layout}`);
       }
-      const defaultFactory = BUILDER_LAYOUT_DEFAULTS?.[layout];
-      const defaults = typeof defaultFactory === 'function' ? defaultFactory() : {};
+      const hasDefaultFactory = typeof BUILDER_LAYOUT_DEFAULTS?.[layout] === 'function';
+      if (!hasDefaultFactory && layout !== 'blank-canvas') {
+        console.warn(
+          `No defaults registered for layout "${layout}", falling back to blank-canvas.`,
+        );
+      }
+      let defaults = {};
+      try {
+        defaults = cloneLayoutDefaults(layout);
+      } catch (error) {
+        console.warn('Unable to clone defaults for layout', layout, error);
+        const fallbackFactory = BUILDER_LAYOUT_DEFAULTS?.['blank-canvas'];
+        if (typeof fallbackFactory === 'function') {
+          defaults = fallbackFactory();
+        }
+      }
       const overrides = slideDefinition.data ? clone(slideDefinition.data) : undefined;
       const merged = mergeDefaults(defaults, overrides ?? {});
       const resolvedData = await resolveMediaPlaceholders(merged, {
