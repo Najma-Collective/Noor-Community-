@@ -118,6 +118,29 @@ Two ready-to-run briefs live in [`sandbox/examples/`](./examples/):
 
 Generate both decks and compare the resulting HTML to understand how the CLI applies defaults, merges overrides, and captures Pexels metadata for you.
 
+## Deck compliance checks
+
+Automated structure checks ensure generated decks keep the documented affordances intact. The
+[compliance specification](./tests/deck-compliance.md) lists every selector and behaviour we assert
+across the core lesson archetypes (blank canvas, learning objectives, model dialogue, and interactive
+practice).
+
+Run the compliance runner with:
+
+```bash
+npm run test:deck
+```
+
+Or execute the full suite (builder regression tests plus deck compliance) via:
+
+```bash
+npm test
+```
+
+The test runner consumes JSON briefs from [`tests/fixtures/briefs/`](./tests/fixtures/briefs/),
+generates a deck inside JSDOM, loads the production Sandbox CSS/JS, and reports actionable diffs for
+missing classes, misconfigured layout metadata, or absent authoring tooling.
+
 ## Output structure
 
 The CLI produces an HTML document that already links to the sandbox fonts and styles, injects the standard toolbar shell, and initialises `setupInteractiveDeck` via an inline module script. Slides are rendered into the main stage in the order provided by the brief; the first slide is automatically unhidden.

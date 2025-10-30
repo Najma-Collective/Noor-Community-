@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node tests/run-tests.mjs"
+    "test": "npm run test:builder && npm run test:deck",
+    "test:builder": "node tests/run-tests.mjs",
+    "test:deck": "node tests/validate-deck.mjs"
   },
   "devDependencies": {
     "jsdom": "^23.2.0"

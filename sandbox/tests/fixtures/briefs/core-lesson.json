@@ -1,0 +1,63 @@
+{
+  "title": "Core lesson archetypes",
+  "slides": [
+    {
+      "layout": "blank-canvas",
+      "data": {}
+    },
+    {
+      "layout": "learning-objectives",
+      "data": {
+        "title": "Strategic critique language",
+        "goals": [
+          "Identify distancing phrases in NGO feedback.",
+          "Reframe direct criticism using hedging structures.",
+          "Plan collaborative critiques that balance glow and grow notes."
+        ],
+        "communicativeGoal": "Deliver nuanced project feedback during sprint reviews.",
+        "goalIcon": "fa-solid fa-bullseye",
+        "communicativeGoalIcon": "fa-solid fa-comments"
+      }
+    },
+    {
+      "layout": "model-dialogue",
+      "data": {
+        "title": "Model distancing moves",
+        "instructions": "Read the excerpt aloud and notice how each speaker softens direct critique.",
+        "turns": [
+          { "speaker": "Advisor", "line": "It appears the pilot timeline may need another iteration." },
+          { "speaker": "Coordinator", "line": "One might argue the volunteer onboarding plan lacks detail." },
+          { "speaker": "Advisor", "line": "Could we surface more user evidence before the next pitch?" }
+        ]
+      }
+    },
+    {
+      "layout": "interactive-practice",
+      "data": {
+        "title": "Choose the distancing upgrade",
+        "activityType": "multiple-choice",
+        "instructions": "Select the option that reframes the blunt critique into distancing language.",
+        "questions": [
+          {
+            "prompt": "That budget is impossible to defend.",
+            "options": [
+              "It appears the budget needs stronger justification.",
+              "The budget is hopeless.",
+              "We should abandon the budget."
+            ],
+            "answer": "It appears the budget needs stronger justification."
+          },
+          {
+            "prompt": "They forgot to involve community partners.",
+            "options": [
+              "Perhaps the community engagement strategy could be expanded.",
+              "Community partners were forgotten.",
+              "The community wants nothing to do with it."
+            ],
+            "answer": "Perhaps the community engagement strategy could be expanded."
+          }
+        ]
+      }
+    }
+  ]
+}
