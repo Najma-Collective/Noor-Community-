@@ -1,0 +1,261 @@
+{
+  "sessionTitle": "Noor Authoring System",
+  "durationMinutes": 60,
+  "audience": "Instructional designers and facilitators onboarding to the Noor Sandbox authoring workflow.",
+  "prerequisites": [
+    "Familiarity with drafting lesson plans or facilitation scripts",
+    "Basic comfort running Node.js scripts in a terminal"
+  ],
+  "learningObjectives": [
+    "Describe the Noor authoring pipeline from planning through publication.",
+    "Map facilitation beats into a JSON brief that the sandbox CLI can ingest.",
+    "Execute the deck generator with media hydration and compliance validation."
+  ],
+  "materials": [
+    "Sample session storyboard and JSON template",
+    "Terminal with sandbox repository access",
+    "Shared Pexels API key",
+    "Live deck from this session"
+  ],
+  "segments": [
+    {
+      "title": "Welcome & orientation",
+      "durationMinutes": 8,
+      "focus": "Frame the Noor Authoring System and surface participant goals.",
+      "facilitationNotes": [
+        "Show the finished Noor deck to anchor expectations.",
+        "Invite participants to name current authoring challenges."
+      ],
+      "evidenceOfLearning": "Participants articulate at least one goal for the workflow tour.",
+      "slideLayout": "topic-introduction"
+    },
+    {
+      "title": "Map the narrative",
+      "durationMinutes": 12,
+      "focus": "Translate the lesson vision into a storyboard of learner moves.",
+      "facilitationNotes": [
+        "Model rapid storyboard techniques with sticky notes or digital cards.",
+        "Tag each moment with timings and modality."
+      ],
+      "evidenceOfLearning": "Groups capture three anchor moments that must appear in the deck.",
+      "slideLayout": "learning-objectives"
+    },
+    {
+      "title": "JSON brief deep dive",
+      "durationMinutes": 15,
+      "focus": "Align storyboard beats with sandbox layouts and data fields.",
+      "facilitationNotes": [
+        "Demonstrate how defaults fill missing fields.",
+        "Highlight required keys like `layout`, `data`, and gallery credits."
+      ],
+      "evidenceOfLearning": "Pairs populate a JSON template with layout names and core copy.",
+      "slideLayout": "pill-with-gallery"
+    },
+    {
+      "title": "Generator walkthrough",
+      "durationMinutes": 15,
+      "focus": "Run the sandbox CLI, hydrate imagery, and review the output deck.",
+      "facilitationNotes": [
+        "Execute `create-deck.mjs` with the shared Pexels key.",
+        "Inspect the generated HTML to verify structure and credits."
+      ],
+      "evidenceOfLearning": "Learners identify where their JSON content appears in the deck.",
+      "slideLayout": "card-stack"
+    },
+    {
+      "title": "Knowledge check",
+      "durationMinutes": 5,
+      "focus": "Reinforce key JSON brief concepts through a quick quiz.",
+      "facilitationNotes": [
+        "Let partners discuss each multiple-choice item before revealing answers.",
+        "Explain why the correct answer matters for the pipeline."
+      ],
+      "evidenceOfLearning": "Groups justify the correct option for each quiz item.",
+      "slideLayout": "interactive-practice"
+    },
+    {
+      "title": "Reflection & commitments",
+      "durationMinutes": 5,
+      "focus": "Plan immediate next steps and surface support needs.",
+      "facilitationNotes": [
+        "Prompt individual commitments for upcoming lessons.",
+        "Capture outstanding questions for follow-up resources."
+      ],
+      "evidenceOfLearning": "Participants log one action they will take after the session.",
+      "slideLayout": "reflection"
+    }
+  ],
+  "assessment": {
+    "method": "Peer discussion and facilitator observation during the knowledge check slide.",
+    "evidence": "Correct explanations of key JSON fields and generator options."
+  },
+  "followUp": {
+    "resources": [
+      "Sandbox README quick-start and brief format reference",
+      "Prompt-slide-builder system prompt for HTML scaffolding",
+      "Deck compliance test runner instructions"
+    ],
+    "nextActions": [
+      "Schedule office hours for first-deck reviews",
+      "Share template briefs tailored to local curricula"
+    ]
+  },
+  "deckBrief": {
+    "title": "Noor Authoring System Deck",
+    "lang": "en",
+    "brand": {
+      "label": "Noor Authoring System"
+    },
+    "pexelsKey": "ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd",
+    "slides": [
+      {
+        "layout": "topic-introduction",
+        "data": {
+          "title": "Noor Authoring System",
+          "hook": "Authoring from plan to immersive deck",
+          "context": "Walk the end-to-end workflow for translating a facilitation narrative into a Noor deck that is ready to share.",
+          "essentialQuestion": "How do we move from session vision to a shareable Noor deck in minutes?",
+          "keyVocabulary": [
+            "Session plan",
+            "JSON brief",
+            "Deck generator",
+            "Pexels automation"
+          ],
+          "imageUrl": "https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+          "overlayColor": "#041f43",
+          "overlayOpacity": 0.68,
+          "layoutIcon": "fa-solid fa-compass"
+        }
+      },
+      {
+        "layout": "learning-objectives",
+        "data": {
+          "title": "Learning outcomes",
+          "communicativeGoal": "Guide colleagues to author and launch Noor decks confidently.",
+          "goals": [
+            "Outline the Noor authoring pipeline from planning to publication.",
+            "Map narrative beats into structured JSON that the sandbox CLI understands.",
+            "Trigger the deck generator with media sourcing and compliance checkpoints."
+          ],
+          "goalIcon": "fa-solid fa-bullseye",
+          "imageUrl": "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+          "overlayColor": "#0b1d33",
+          "overlayOpacity": 0.55,
+          "layoutIcon": "fa-solid fa-bullseye"
+        }
+      },
+      {
+        "layout": "pill-with-gallery",
+        "data": {
+          "pill": "Authoring Pillars",
+          "pillIcon": "fa-solid fa-camera-retro",
+          "title": "From narrative to assets",
+          "description": "Surface the building blocks that keep the Noor pipeline cohesive and learner-centered.",
+          "gallery": [
+            {
+              "image": "https://images.pexels.com/photos/3861972/pexels-photo-3861972.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+              "alt": "Designer highlighting sticky notes on a wall",
+              "caption": "Storyboard · Capture the facilitation beats before you touch JSON.",
+              "credit": "Photo · Polina Zimmerman",
+              "creditUrl": "https://www.pexels.com/photo/person-writing-on-a-sticky-note-3861972/"
+            },
+            {
+              "image": "https://images.pexels.com/photos/6476587/pexels-photo-6476587.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+              "alt": "Laptop displaying JSON code beside notebook",
+              "caption": "Structure · Translate each beat into layout-ready data.",
+              "credit": "Photo · cottonbro studio",
+              "creditUrl": "https://www.pexels.com/photo/person-using-a-laptop-6476587/"
+            },
+            {
+              "image": "https://images.pexels.com/photos/3184630/pexels-photo-3184630.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+              "alt": "Facilitator presenting slides to a small team",
+              "caption": "Share · Launch the deck and invite feedback for iteration.",
+              "credit": "Photo · fauxels",
+              "creditUrl": "https://www.pexels.com/photo/photo-of-women-smiling-3184630/"
+            }
+          ],
+          "itemIcon": "fa-solid fa-image",
+          "layoutIcon": "fa-solid fa-images"
+        }
+      },
+      {
+        "layout": "card-stack",
+        "data": {
+          "pill": "Workflow",
+          "pillIcon": "fa-solid fa-layer-group",
+          "title": "Sandbox pipeline at-a-glance",
+          "description": "Sequence the authoring moves you will model throughout the training.",
+          "cards": [
+            {
+              "title": "Design the learning arc",
+              "description": "Draft the facilitation beats, timings, and learner moves that anchor the session."
+            },
+            {
+              "title": "Structure the JSON brief",
+              "description": "Translate each beat into layout-ready data, add media cues, and surface key metadata."
+            },
+            {
+              "title": "Generate and refine the deck",
+              "description": "Run `create-deck` with the shared Pexels key, then polish copy, credits, and accessibility."
+            }
+          ],
+          "cardIcon": "fa-solid fa-circle-dot",
+          "layoutIcon": "fa-solid fa-layer-group"
+        }
+      },
+      {
+        "layout": "interactive-practice",
+        "data": {
+          "title": "Knowledge check · JSON mapping",
+          "instructions": "With a partner, choose the best answer for each question, then justify your choice.",
+          "activityType": "multiple-choice",
+          "questions": [
+            {
+              "prompt": "Which field ensures the toolbar shows the correct brand label?",
+              "options": [
+                "brand.label",
+                "title",
+                "lang"
+              ],
+              "answer": "brand.label"
+            },
+            {
+              "prompt": "Where do you declare the layout for each slide?",
+              "options": [
+                "slides[].layout",
+                "slides[].icon",
+                "layoutDefaults"
+              ],
+              "answer": "slides[].layout"
+            },
+            {
+              "prompt": "How can you provide your media API credential when generating decks?",
+              "options": [
+                "Add pexelsKey to the brief",
+                "Embed the API key in gallery captions",
+                "Rename package-lock.json"
+              ],
+              "answer": "Add pexelsKey to the brief"
+            }
+          ],
+          "layoutIcon": "fa-solid fa-circle-question"
+        }
+      },
+      {
+        "layout": "reflection",
+        "data": {
+          "title": "Wrap-up & next moves",
+          "prompts": [
+            "Which step of the Noor Authoring System will you prototype with your next lesson?",
+            "What automation or template would make your JSON authoring smoother?",
+            "How will you evidence learner readiness before publishing the deck?"
+          ],
+          "imageUrl": "https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+          "overlayColor": "#021b36",
+          "overlayOpacity": 0.6,
+          "layoutIcon": "fa-solid fa-comments"
+        }
+      }
+    ]
+  }
+}

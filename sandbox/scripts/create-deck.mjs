@@ -135,6 +135,29 @@ function mergeDefaults(defaultValue, overrides) {
   return clone(overrides);
 }
 
+function normalizeDeckBrief(rawBrief) {
+  if (!isPlainObject(rawBrief)) {
+    throw new Error('The brief must be a JSON object.');
+  }
+  if (isPlainObject(rawBrief.deckBrief)) {
+    const deck = clone(rawBrief.deckBrief);
+    if (!deck.title && typeof rawBrief.title === 'string') {
+      deck.title = rawBrief.title;
+    }
+    if (!deck.lang && typeof rawBrief.lang === 'string') {
+      deck.lang = rawBrief.lang;
+    }
+    if (!deck.brand && isPlainObject(rawBrief.brand)) {
+      deck.brand = clone(rawBrief.brand);
+    }
+    if (!deck.pexelsKey && typeof rawBrief.pexelsKey === 'string') {
+      deck.pexelsKey = rawBrief.pexelsKey;
+    }
+    return deck;
+  }
+  return clone(rawBrief);
+}
+
 async function fetchPexelsImage(query, apiKey, options = {}) {
   if (!apiKey) {
     throw new Error('A Pexels API key is required to fetch imagery.');
@@ -428,7 +451,8 @@ function createDeckShell(document, brief, slideCount) {
   return { deckApp, stageViewport };
 }
 
-async function buildDeck(brief, options) {
+async function buildDeck(rawBrief, options) {
+  const brief = clone(rawBrief);
   const { dom, previousGlobals } = ensureDomEnvironment();
   try {
     const document = dom.window.document;
@@ -513,15 +537,17 @@ async function main() {
     throw error;
   }
 
-  const pexelsKey = args.pexelsKey || process.env.PEXELS_API_KEY || brief.pexelsKey || '';
-  const requiresMedia = JSON.stringify(brief).includes('pexelsQuery');
+  const deckBrief = normalizeDeckBrief(brief);
+  const pexelsKey =
+    args.pexelsKey || process.env.PEXELS_API_KEY || deckBrief.pexelsKey || brief.pexelsKey || '';
+  const requiresMedia = JSON.stringify(deckBrief).includes('pexelsQuery');
   if (requiresMedia && !pexelsKey) {
     throw new Error(
       'The brief requests Pexels imagery but no API key was provided. Pass --pexels-key or set PEXELS_API_KEY.',
     );
   }
 
-  const html = await buildDeck(brief, { pexelsKey });
+  const html = await buildDeck(deckBrief, { pexelsKey });
   const outputPath = path.resolve(
     process.cwd(),
     args.output || path.join(path.dirname(inputPath), `${path.parse(inputPath).name}.html`),
