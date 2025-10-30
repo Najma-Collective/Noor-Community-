@@ -9,7 +9,7 @@ The sandbox now ships with a lightweight command-line utility that transforms a 
    cd sandbox
    npm install
    ```
-2. Author a brief (see [Brief format](#brief-format)). You can start from the samples in [`sandbox/examples/`](./examples/).
+2. Author a brief (see [Brief format](#brief-format) or the detailed [schema reference](./docs/brief-schema.md)). You can start from the samples in [`sandbox/examples/`](./examples/).
 3. Run the generator:
    ```bash
    node scripts/create-deck.mjs --input examples/card-stack-brief.json --output decks/card-stack.html \
@@ -115,8 +115,14 @@ Two ready-to-run briefs live in [`sandbox/examples/`](./examples/):
 
 - [`card-stack-brief.json`](./examples/card-stack-brief.json) – generates a workflow preview stack.
 - [`pill-gallery-brief.json`](./examples/pill-gallery-brief.json) – demonstrates auto-populated gallery imagery with credits.
+- [`pilot-community-garden.json`](./examples/pilot-community-garden.json) – pilot conversion covering topic introduction and task reporting.
+- [`pilot-pitch-voice.json`](./examples/pilot-pitch-voice.json) – pilot conversion pairing pronunciation work with a media gallery.
 
 Generate both decks and compare the resulting HTML to understand how the CLI applies defaults, merges overrides, and captures Pexels metadata for you.
+
+## Prompting Google AI Studio
+
+If you plan to automate brief creation with Google AI Studio, start from the curated [system prompt](./docs/prompt-google-ai-studio.md). It summarises every archetype, field constraint, and validation check so the model returns schema-compliant JSON on the first pass.
 
 ## Output structure
 

@@ -1,0 +1,65 @@
+{
+  "title": "Pitch Voice Precision",
+  "slides": [
+    {
+      "layout": "pronunciation-focus",
+      "data": {
+        "title": "Balance /b/ and /p/ for confident pitches",
+        "target": "Contrast voiced and voiceless bilabial stops in key fundraising phrases.",
+        "words": [
+          "pledge",
+          "partners",
+          "build",
+          "plan"
+        ],
+        "sentences": [
+          "We plan to build a better playground for Beit Sahour.",
+          "Please partner with us by pledging before payday."
+        ],
+        "practice": [
+          "Record yourself reading the pitch opening and mark mispronunciations.",
+          "Swap scripts with a peer and drill the toughest line three times."
+        ],
+        "layoutIcon": "fa-solid fa-microphone-lines"
+      }
+    },
+    {
+      "layout": "pill-with-gallery",
+      "data": {
+        "pill": "Outreach inspiration",
+        "title": "Show how clear speech moves people",
+        "description": "Use visuals from last year's outreach to plan your new storytelling assets.",
+        "gallery": [
+          {
+            "image": {
+              "pexelsQuery": "community event volunteers smiling",
+              "orientation": "landscape"
+            },
+            "alt": "Volunteers smiling at a booth",
+            "caption": "Warm welcomes begin with crisp introductions.",
+            "creditPrefix": "Photo"
+          },
+          {
+            "image": {
+              "pexelsQuery": "public speaking youth group",
+              "orientation": "landscape"
+            },
+            "alt": "Speaker presenting to neighbours",
+            "caption": "Project leads rehearse their closing ask together.",
+            "creditPrefix": "Photo"
+          },
+          {
+            "image": {
+              "pexelsQuery": "community fundraising poster",
+              "orientation": "landscape"
+            },
+            "alt": "Poster board with donation goals",
+            "caption": "Visual cues reinforce every spoken promise.",
+            "creditPrefix": "Photo"
+          }
+        ],
+        "layoutIcon": "fa-solid fa-camera-retro"
+      }
+    }
+  ]
+}

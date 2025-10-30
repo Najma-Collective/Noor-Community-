@@ -1,0 +1,51 @@
+{
+  "title": "Community Garden Sprint",
+  "slides": [
+    {
+      "layout": "topic-introduction",
+      "data": {
+        "title": "Why a community garden now?",
+        "hook": "Urban gardens boost food security and spark neighbourhood pride.",
+        "context": "Our vacant lot sits between two apartment blocks and currently collects trash after the weekend market.",
+        "essentialQuestion": "How can we convert the lot into a productive shared space within six weeks?",
+        "keyVocabulary": [
+          "compost bins",
+          "irrigation lines",
+          "raised beds"
+        ],
+        "layoutIcon": "fa-solid fa-seedling"
+      }
+    },
+    {
+      "layout": "task-reporting",
+      "data": {
+        "title": "Pitch your garden lane",
+        "goal": "Share the priority that will make your design work for neighbours and volunteers.",
+        "prompts": [
+          "What evidence convinced you this priority matters?",
+          "Who will benefit first if we get this right?",
+          "What support do you need from partner teams?"
+        ],
+        "roles": [
+          {
+            "label": "Soil health team",
+            "value": "Show soil test notes and your raised bed layout."
+          },
+          {
+            "label": "Water and irrigation",
+            "value": "Explain how you will tap the existing spigot and keep hoses safe."
+          },
+          {
+            "label": "Storytellers",
+            "value": "Share a resident quote and propose a sign or social post."
+          }
+        ],
+        "evidence": [
+          "Upload sketches or diagrams to the shared folder before reporting.",
+          "Capture at least one community voice in your summary."
+        ],
+        "layoutIcon": "fa-solid fa-people-group"
+      }
+    }
+  ]
+}
