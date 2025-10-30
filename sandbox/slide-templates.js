@@ -1,4 +1,4 @@
-import archetypeConfig from './config/archetypes.json' assert { type: 'json' };
+import archetypeConfig from './config/archetypes.json' with { type: 'json' };
 
 const { _meta: _archetypeMetaIgnored, ...archetypeLayouts } = archetypeConfig ?? {};
 

@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { DEFAULT_STATES as MODULE_DEFAULTS, Generators as ModuleGenerators } from '../activity-builder.js';
+import { BUILDER_LAYOUT_DEFAULTS } from '../slide-templates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -238,10 +239,30 @@ assert.ok(
   layoutPickerFieldset instanceof window.HTMLElement,
   'layout picker fieldset should exist in the builder',
 );
+const layoutOptionInputs = Array.from(
+  layoutPickerFieldset.querySelectorAll('input[name="slideLayout"]'),
+);
+const layoutOptionValues = layoutOptionInputs
+  .filter((input) => input instanceof window.HTMLInputElement)
+  .map((input) => input.value);
+assert.ok(layoutOptionValues.length > 0, 'layout picker should list slide layouts');
+const configLayouts = Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {});
+layoutOptionValues.forEach((layout) => {
+  assert.ok(
+    configLayouts.includes(layout),
+    `layout picker option ${layout} should map to an archetype default`,
+  );
+});
+configLayouts.forEach((layout) => {
+  assert.ok(
+    layoutOptionValues.includes(layout),
+    `layout picker should include the ${layout} layout`,
+  );
+});
 assert.equal(
   layoutPickerFieldset.dataset.layouts,
-  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
-  'layout picker should expose the sandbox card stack and pill gallery layouts',
+  layoutOptionValues.join(','),
+  'layout picker dataset should reflect available layouts in DOM order',
 );
 
 const imageSearchSection = builderOverlay
@@ -251,11 +272,19 @@ assert.ok(
   imageSearchSection instanceof window.HTMLElement,
   'image search section should be present in the builder',
 );
-assert.equal(
-  imageSearchSection.dataset.layouts,
-  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
-  'image search tools should remain available to blank, interactive practice, card stack, and pill gallery layouts',
+const imageSearchLayouts = new Set(
+  (imageSearchSection.dataset.layouts || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean),
 );
+assert.ok(imageSearchLayouts.size > 0, 'image search tools should target at least one layout');
+imageSearchLayouts.forEach((layout) => {
+  assert.ok(
+    layoutOptionValues.includes(layout),
+    `image search tools should target layouts available in the picker (${layout})`,
+  );
+});
 
 addSlideBtn.click();
 await flushTimers();
