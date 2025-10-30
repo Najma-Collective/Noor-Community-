@@ -7597,7 +7597,24 @@ function applyBuilderLayoutDefaults(layout, { updatePreview = false } = {}) {
     if (!field) {
       return;
     }
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+    if (field instanceof HTMLInputElement) {
+      if (field.type === 'color') {
+        if (typeof value === 'string' && value.trim().length) {
+          field.value = value;
+          delete field.dataset.emptyColor;
+        } else {
+          field.value = '#000000';
+          field.dataset.emptyColor = 'true';
+        }
+        return;
+      }
+      delete field.dataset.emptyColor;
+    }
+    if (
+      field instanceof HTMLInputElement ||
+      field instanceof HTMLTextAreaElement ||
+      field instanceof HTMLSelectElement
+    ) {
       field.value = value ?? '';
     }
   };
@@ -8287,6 +8304,17 @@ function getBuilderFormState() {
   const layout = (formData.get('slideLayout') || getSelectedLayout() || 'blank-canvas').toString();
   const layoutIcon = resolveLayoutIconClass(layout);
   const state = { layout, icon: layoutIcon };
+  const readColorField = (fieldName, rawValue) => {
+    const field = builderForm.elements.namedItem?.(fieldName);
+    if (
+      field instanceof HTMLInputElement &&
+      field.type === 'color' &&
+      field.dataset.emptyColor === 'true'
+    ) {
+      return '';
+    }
+    return trimText(rawValue);
+  };
   switch (layout) {
     case 'learning-objectives': {
       const goals = [
@@ -8309,7 +8337,7 @@ function getBuilderFormState() {
         goals,
         communicativeGoal: trimText(formData.get('learningCommunicativeGoal')),
         imageUrl: trimText(formData.get('learningImageUrl')),
-        overlayColor: trimText(formData.get('learningOverlayColor')),
+        overlayColor: readColorField('learningOverlayColor', formData.get('learningOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('learningOverlayOpacity'),
         ),
@@ -8340,7 +8368,7 @@ function getBuilderFormState() {
         title: trimText(formData.get('dialogueTitle')) || 'Model dialogue',
         instructions: trimText(formData.get('dialogueInstructions')),
         imageUrl: trimText(formData.get('dialogueImageUrl')),
-        overlayColor: trimText(formData.get('dialogueOverlayColor')),
+        overlayColor: readColorField('dialogueOverlayColor', formData.get('dialogueOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('dialogueOverlayOpacity'),
         ),
@@ -8449,7 +8477,7 @@ function getBuilderFormState() {
       state.data = {
         title: trimText(formData.get('taskTitle')) || 'Communicative task',
         imageUrl: trimText(formData.get('taskImageUrl')),
-        overlayColor: trimText(formData.get('taskOverlayColor')),
+        overlayColor: readColorField('taskOverlayColor', formData.get('taskOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('taskOverlayOpacity'),
         ),
@@ -8499,7 +8527,10 @@ function getBuilderFormState() {
         sentences,
         practice: trimText(formData.get('pronunciationPractice')),
         imageUrl: trimText(formData.get('pronunciationImageUrl')),
-        overlayColor: trimText(formData.get('pronunciationOverlayColor')),
+        overlayColor: readColorField(
+          'pronunciationOverlayColor',
+          formData.get('pronunciationOverlayColor'),
+        ),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('pronunciationOverlayOpacity'),
         ),
@@ -8526,7 +8557,7 @@ function getBuilderFormState() {
         title: trimText(formData.get('reflectionTitle')) || 'Reflection',
         prompts,
         imageUrl: trimText(formData.get('reflectionImageUrl')),
-        overlayColor: trimText(formData.get('reflectionOverlayColor')),
+        overlayColor: readColorField('reflectionOverlayColor', formData.get('reflectionOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reflectionOverlayOpacity'),
         ),
@@ -8546,7 +8577,7 @@ function getBuilderFormState() {
         subtitle: trimText(formData.get('groundingSubtitle')),
         steps: splitMultiline(formData.get('groundingSteps')),
         imageUrl: trimText(formData.get('groundingBackgroundImage')),
-        overlayColor: trimText(formData.get('groundingOverlayColor')),
+        overlayColor: readColorField('groundingOverlayColor', formData.get('groundingOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('groundingOverlayOpacity'),
         ),
@@ -8583,7 +8614,7 @@ function getBuilderFormState() {
         essentialQuestion: trimText(formData.get('topicQuestion')),
         keyVocabulary: splitMultiline(formData.get('topicKeyVocabulary')),
         imageUrl: trimText(formData.get('topicBackgroundImage')),
-        overlayColor: trimText(formData.get('topicOverlayColor')),
+        overlayColor: readColorField('topicOverlayColor', formData.get('topicOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('topicOverlayOpacity'),
         ),
@@ -8627,7 +8658,7 @@ function getBuilderFormState() {
           formData.get('discoveryLanguageSamples'),
         ),
         imageUrl: trimText(formData.get('discoveryBackgroundImage')),
-        overlayColor: trimText(formData.get('discoveryOverlayColor')),
+        overlayColor: readColorField('discoveryOverlayColor', formData.get('discoveryOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('discoveryOverlayOpacity'),
         ),
@@ -8669,7 +8700,7 @@ function getBuilderFormState() {
           formData.get('creativeSharingOptions'),
         ),
         imageUrl: trimText(formData.get('creativeBackgroundImage')),
-        overlayColor: trimText(formData.get('creativeOverlayColor')),
+        overlayColor: readColorField('creativeOverlayColor', formData.get('creativeOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('creativeOverlayOpacity'),
         ),
@@ -8704,7 +8735,7 @@ function getBuilderFormState() {
         focus: trimText(formData.get('dividerFocus')),
         actions: splitMultiline(formData.get('dividerActions')),
         imageUrl: trimText(formData.get('dividerBackgroundImage')),
-        overlayColor: trimText(formData.get('dividerOverlayColor')),
+        overlayColor: readColorField('dividerOverlayColor', formData.get('dividerOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('dividerOverlayOpacity'),
         ),
@@ -8727,7 +8758,7 @@ function getBuilderFormState() {
         }),
         evidence: splitMultiline(formData.get('reportingEvidence')),
         imageUrl: trimText(formData.get('reportingBackgroundImage')),
-        overlayColor: trimText(formData.get('reportingOverlayColor')),
+        overlayColor: readColorField('reportingOverlayColor', formData.get('reportingOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reportingOverlayOpacity'),
         ),
@@ -8767,7 +8798,7 @@ function getBuilderFormState() {
         }),
         mentorText: trimText(formData.get('genreMentorText')),
         imageUrl: trimText(formData.get('genreBackgroundImage')),
-        overlayColor: trimText(formData.get('genreOverlayColor')),
+        overlayColor: readColorField('genreOverlayColor', formData.get('genreOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('genreOverlayOpacity'),
         ),
@@ -8802,7 +8833,7 @@ function getBuilderFormState() {
         features: splitMultiline(formData.get('featureTargets')),
         reflection: splitMultiline(formData.get('featureReflection')),
         imageUrl: trimText(formData.get('featureBackgroundImage')),
-        overlayColor: trimText(formData.get('featureOverlayColor')),
+        overlayColor: readColorField('featureOverlayColor', formData.get('featureOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('featureOverlayOpacity'),
         ),
@@ -8832,7 +8863,10 @@ function getBuilderFormState() {
         steps: splitMultiline(formData.get('reconstructionSteps')),
         segments: splitMultiline(formData.get('reconstructionSegments')),
         imageUrl: trimText(formData.get('reconstructionBackgroundImage')),
-        overlayColor: trimText(formData.get('reconstructionOverlayColor')),
+        overlayColor: readColorField(
+          'reconstructionOverlayColor',
+          formData.get('reconstructionOverlayColor'),
+        ),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('reconstructionOverlayOpacity'),
         ),
@@ -8862,7 +8896,7 @@ function getBuilderFormState() {
         segments: splitMultiline(formData.get('sequencingSegments')),
         supportTips: splitMultiline(formData.get('sequencingSupportTips')),
         imageUrl: trimText(formData.get('sequencingBackgroundImage')),
-        overlayColor: trimText(formData.get('sequencingOverlayColor')),
+        overlayColor: readColorField('sequencingOverlayColor', formData.get('sequencingOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('sequencingOverlayOpacity'),
         ),
@@ -8893,7 +8927,7 @@ function getBuilderFormState() {
         teacherMoves: splitMultiline(formData.get('jointTeacherMoves')),
         learnerMoves: splitMultiline(formData.get('jointLearnerMoves')),
         imageUrl: trimText(formData.get('jointBackgroundImage')),
-        overlayColor: trimText(formData.get('jointOverlayColor')),
+        overlayColor: readColorField('jointOverlayColor', formData.get('jointOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('jointOverlayOpacity'),
         ),
@@ -8928,7 +8962,7 @@ function getBuilderFormState() {
         checklist: splitMultiline(formData.get('checklistItems')),
         stretchGoals: splitMultiline(formData.get('checklistStretch')),
         imageUrl: trimText(formData.get('checklistBackgroundImage')),
-        overlayColor: trimText(formData.get('checklistOverlayColor')),
+        overlayColor: readColorField('checklistOverlayColor', formData.get('checklistOverlayColor')),
         overlayOpacity: normaliseOverlayPercent(
           formData.get('checklistOverlayOpacity'),
         ),
@@ -14155,6 +14189,9 @@ function initialiseActivityBuilderUI() {
           updateLayoutOptionIconPreview(layout, target.value);
         }
       }
+      if (target instanceof HTMLInputElement && target.type === 'color') {
+        delete target.dataset.emptyColor;
+      }
       updateBuilderJsonPreview();
       updateBuilderPreview();
     });
@@ -14282,41 +14319,63 @@ export async function setupInteractiveDeck({
   builderStatusEl =
     builderOverlay?.querySelector("#builder-status") ??
     document.querySelector("#builder-status");
-  const allowedBuilderLayouts = [
-    'blank-canvas',
-    'interactive-practice',
-    'card-stack',
-    'pill-with-gallery',
-  ];
-  const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
-  builderLayoutInputs = Array.from(
+  const layoutInputNodes = Array.from(
     builderOverlay?.querySelectorAll('input[name="slideLayout"]') ??
       document.querySelectorAll('input[name="slideLayout"]'),
   );
-  if (Array.isArray(builderLayoutInputs) && builderLayoutInputs.length) {
-    builderLayoutInputs.forEach((input) => {
-      if (!(input instanceof HTMLInputElement)) {
-        return;
-      }
-      if (!allowedBuilderLayoutSet.has(input.value)) {
-        const option = input.closest('.layout-option');
-        option?.remove();
-      }
-    });
-    builderLayoutInputs = builderLayoutInputs.filter(
-      (input) =>
-        input instanceof HTMLInputElement && allowedBuilderLayoutSet.has(input.value),
+  const configLayouts = Object.keys(BUILDER_LAYOUT_DEFAULTS ?? {});
+  const configLayoutSet = new Set(configLayouts);
+  const layoutInputValues = layoutInputNodes
+    .map((input) => (input instanceof HTMLInputElement ? input.value : ''))
+    .filter((value) => typeof value === 'string' && value.length);
+  let allowedBuilderLayouts = layoutInputValues.filter((value) =>
+    !configLayoutSet.size || configLayoutSet.has(value),
+  );
+  if (!allowedBuilderLayouts.length) {
+    const configLayoutsInMarkup = configLayouts.filter((layout) =>
+      layoutInputValues.includes(layout),
     );
-    if (
-      builderLayoutInputs.length &&
-      !builderLayoutInputs.some((input) => input instanceof HTMLInputElement && input.checked)
-    ) {
-      const blankOption = builderLayoutInputs.find(
-        (input) => input instanceof HTMLInputElement && input.value === 'blank-canvas',
-      );
-      if (blankOption instanceof HTMLInputElement) {
-        blankOption.checked = true;
-      }
+    if (configLayoutsInMarkup.length) {
+      allowedBuilderLayouts = configLayoutsInMarkup;
+    } else if (layoutInputValues.length) {
+      allowedBuilderLayouts = layoutInputValues;
+    } else {
+      allowedBuilderLayouts = ['blank-canvas'];
+    }
+  }
+  if (
+    !allowedBuilderLayouts.includes('blank-canvas') &&
+    layoutInputValues.includes('blank-canvas')
+  ) {
+    allowedBuilderLayouts = [
+      'blank-canvas',
+      ...allowedBuilderLayouts.filter((value) => value !== 'blank-canvas'),
+    ];
+  }
+  allowedBuilderLayouts = allowedBuilderLayouts.filter(
+    (layout, index, source) => source.indexOf(layout) === index,
+  );
+  const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
+  builderLayoutInputs = layoutInputNodes.filter((input) => {
+    if (!(input instanceof HTMLInputElement)) {
+      return false;
+    }
+    if (allowedBuilderLayoutSet.has(input.value)) {
+      return true;
+    }
+    const option = input.closest('.layout-option');
+    option?.remove();
+    return false;
+  });
+  if (
+    builderLayoutInputs.length &&
+    !builderLayoutInputs.some((input) => input instanceof HTMLInputElement && input.checked)
+  ) {
+    const blankOption = builderLayoutInputs.find(
+      (input) => input instanceof HTMLInputElement && input.value === 'blank-canvas',
+    );
+    if (blankOption instanceof HTMLInputElement) {
+      blankOption.checked = true;
     }
   }
   builderLayoutIconInputs = Array.from(
