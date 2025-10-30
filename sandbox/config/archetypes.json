@@ -1,0 +1,544 @@
+{
+    "_meta": {
+        "version": 1,
+        "notes": [
+            "Overlay opacity values are stored as integers between 0 and 100 (values between 0 and 1 are treated as percentages in getBuilderFormState).",
+            "Gallery entries serialise as 'image | alt | caption' lines; each item here documents the {image, alt, caption} shape expected by parsePillGalleryItems.",
+            "Task reporting roles expect {label, value} pairs joined with a pipe when entered through the builder form."
+        ]
+    },
+    "blank-canvas": {
+        "defaults": {}
+    },
+    "learning-objectives": {
+        "defaults": {
+            "title": "By the end of this lesson, you will be able to...",
+            "goals": [
+                "To identify and use distancing language for expressing tentative opinions.",
+                "To use specific vocabulary for evaluating project strengths and weaknesses.",
+                "To apply sentence stress and intonation to show conviction or reservation.",
+                "To critically evaluate an NGO project and present your analysis."
+            ],
+            "communicativeGoal": "Rephrase critiques into diplomatic language during NGO project feedback.",
+            "imageUrl": "https://images.pexels.com/photos/34290767/pexels-photo-34290767.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "goalIcon": "fa-solid fa-bullseye",
+            "communicativeGoalIcon": "fa-solid fa-comments",
+            "layoutIcon": "fa-solid fa-bullseye"
+        }
+    },
+    "model-dialogue": {
+        "defaults": {
+            "title": "Distancing Language: Mini-Critiques",
+            "instructions": "Work in pairs in breakout rooms. Take turns rephrasing the statements into more diplomatic critiques using the language we have studied.",
+            "imageUrl": "https://images.pexels.com/photos/3861962/pexels-photo-3861962.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "audioUrl": "/audio/audio1.mp3",
+            "turns": [
+                {
+                    "speaker": "Student A",
+                    "line": "\"The budget is unrealistic.\""
+                },
+                {
+                    "speaker": "Student B",
+                    "line": "\"One might argue that the financial viability hasn't been fully explored. Could you provide more details on the budget?\""
+                },
+                {
+                    "speaker": "Student A",
+                    "line": "\"They didn't research the local community's needs.\""
+                },
+                {
+                    "speaker": "Student B",
+                    "line": "\"This could be a potential shortcoming in the implementation phase.\""
+                }
+            ],
+            "instructionsIcon": "fa-solid fa-comments",
+            "layoutIcon": "fa-solid fa-comments"
+        }
+    },
+    "interactive-practice": {
+        "defaults": {
+            "activityType": "multiple-choice",
+            "title": "Evaluation Lexis: Choose the Best Word",
+            "instructions": "Read the sentences below. Choose the best word to complete each sentence.",
+            "questions": [
+                {
+                    "prompt": "Before we approve the funding, we must ensure the project is financially ______.",
+                    "options": [
+                        "viable",
+                        "scalable",
+                        "impactful"
+                    ],
+                    "answer": "viable"
+                },
+                {
+                    "prompt": "The main ______ of this initiative will be unemployed youth in the Nablus area.",
+                    "options": [
+                        "stakeholders",
+                        "beneficiaries",
+                        "constraints"
+                    ],
+                    "answer": "beneficiaries"
+                },
+                {
+                    "prompt": "A major concern is whether the project is ______; can we replicate it in other cities like Hebron and Jenin?",
+                    "options": [
+                        "sustainable",
+                        "scalable",
+                        "feasible"
+                    ],
+                    "answer": "scalable"
+                },
+                {
+                    "prompt": "We need to consult with all community ______, not just the local council.",
+                    "options": [
+                        "stakeholders",
+                        "beneficiaries",
+                        "shortcomings"
+                    ],
+                    "answer": "stakeholders"
+                },
+                {
+                    "prompt": "While the idea is excellent, one of its ______ is a lack of a detailed timeline.",
+                    "options": [
+                        "leverage",
+                        "constraints",
+                        "shortcomings"
+                    ],
+                    "answer": "shortcomings"
+                }
+            ],
+            "instructionsIcon": "fa-solid fa-pen-ruler",
+            "activityTypeIcon": "fa-solid fa-pen-ruler",
+            "layoutIcon": "fa-solid fa-pen-ruler"
+        }
+    },
+    "card-stack": {
+        "defaults": {
+            "pill": "Studio Sprint Stack",
+            "pillIcon": "fa-solid fa-bookmark",
+            "title": "Sequence the sprint workflow",
+            "description": "Stack three cards to narrate how teams move from the scenario pill into prototyping and evidence capture. Each card should hold a badge-ready headline and a single actionable note.",
+            "cards": [
+                {
+                    "title": "Set the stage",
+                    "description": "Preview the scenario pill and name the badge learners earn when they surface a bold user insight during share outs."
+                },
+                {
+                    "title": "Prototype carousel",
+                    "description": "List the rotation order and cue the feedback lens so each team knows how to capture glow/grow notes efficiently."
+                },
+                {
+                    "title": "Evidence capture",
+                    "description": "End with the documentation move\u2014call out the artifacts or recordings that teams should collect before the next build."
+                }
+            ],
+            "cardIcon": "fa-solid fa-circle-dot",
+            "layoutIcon": "fa-solid fa-layer-group"
+        }
+    },
+    "pill-with-gallery": {
+        "defaults": {
+            "pill": "Scenario Spotlight",
+            "pillIcon": "fa-solid fa-camera-retro",
+            "title": "Showcase the challenge in action",
+            "description": "Pair the scenario pill with three gallery tiles so learners can see the brief, the build, and the emerging impact at a glance.",
+            "gallery": [
+                {
+                    "image": "https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+                    "alt": "Learners planning a sprint with sticky notes",
+                    "caption": "Briefing circle \u00b7 Teams surface user needs and success criteria."
+                },
+                {
+                    "image": "https://images.pexels.com/photos/3182765/pexels-photo-3182765.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+                    "alt": "Sketches and prototypes on a table",
+                    "caption": "Iteration lab \u00b7 Capture build photos alongside the feedback badge earned."
+                },
+                {
+                    "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+                    "alt": "Student presenting a project to peers",
+                    "caption": "Gallery walk \u00b7 Highlight the reflection question that unlocks the progress badge."
+                }
+            ],
+            "itemIcon": "fa-solid fa-image",
+            "layoutIcon": "fa-solid fa-images"
+        }
+    },
+    "communicative-task": {
+        "defaults": {
+            "title": "NGO Project Review Session",
+            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "preparation": "Time: 12 minutes in breakout groups. Choose one project summary, then analyze it together in the shared Google Doc to outline strengths, weaknesses, and a final recommendation.",
+            "performance": "Present your analysis to a partner group, share your screen, and ensure every member contributes to the briefing.",
+            "scaffolding": [
+                "Context: You are a team of project officers at an NGO's main office in Ramallah.",
+                "Use the shared Google Doc provided by your teacher to organize strengths, weaknesses, and a recommendation.",
+                "Prepare one follow-up question to ask the presenters after each briefing."
+            ],
+            "preparationIcon": "fa-solid fa-list-check",
+            "performanceIcon": "fa-solid fa-person-chalkboard",
+            "scaffoldingIcon": "fa-solid fa-magnifying-glass-chart",
+            "layoutIcon": "fa-solid fa-list-check"
+        }
+    },
+    "pronunciation-focus": {
+        "defaults": {
+            "title": "Pronunciation: What's the Attitude?",
+            "target": "Distinguish convinced and reserved tones while critiquing NGO project proposals.",
+            "words": [
+                "viable",
+                "optimistic",
+                "reservations",
+                "sustainable",
+                "scalable"
+            ],
+            "sentences": [
+                "This is a highly viable project.",
+                "The timeline seems... optimistic.",
+                "The community impact will be significant.",
+                "One might argue that the budget is sufficient.",
+                "I have some reservations about the stakeholders.",
+                "It's a sustainable and scalable solution."
+            ],
+            "practice": "Take turns reading the statements twice\u2014first with a convinced intonation, then with a reserved or doubtful intonation, before creating two of your own sentences.",
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "targetIcon": "fa-solid fa-ear-listen",
+            "wordsIcon": "fa-solid fa-pen-to-square",
+            "sentencesIcon": "fa-solid fa-microphone",
+            "practiceIcon": "fa-solid fa-user-group",
+            "layoutIcon": "fa-solid fa-ear-listen"
+        }
+    },
+    "reflection": {
+        "defaults": {
+            "title": "3-2-1 Reflection",
+            "prompts": [
+                "3 phrases for expressing tentative opinions that you can remember.",
+                "2 vocabulary words for evaluation that were new or useful for you.",
+                "1 question you still have, or something you feel more confident about now."
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "promptsIcon": "fa-solid fa-lightbulb",
+            "layoutIcon": "fa-solid fa-lightbulb"
+        }
+    },
+    "grounding-activity": {
+        "defaults": {
+            "title": "What Makes a Project 'Good'?",
+            "subtitle": "Pre-task A \u00b7 5 minutes",
+            "steps": [
+                "Work in your breakout rooms for 4 minutes.",
+                "Think about a community project you know of and identify its goal.",
+                "Discuss what makes a community project successful or unsuccessful.",
+                "Brainstorm a list of 5-6 words you would use to describe a successful project."
+            ],
+            "imageUrl": "https://images.pexels.com/photos/34290767/pexels-photo-34290767.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "stepsIcon": "fa-solid fa-comments",
+            "layoutIcon": "fa-solid fa-comments"
+        }
+    },
+    "topic-introduction": {
+        "defaults": {
+            "title": "Task",
+            "hook": "Main Task",
+            "context": "You are a team of project officers at an NGO's main office in Ramallah evaluating a new proposal.",
+            "essentialQuestion": "Which project offers the strongest case for funding?",
+            "keyVocabulary": [
+                "viable",
+                "sustainable",
+                "stakeholders",
+                "constraints"
+            ],
+            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "hookIcon": "fa-solid fa-list-check",
+            "contextIcon": "fa-solid fa-building",
+            "essentialQuestionIcon": "fa-solid fa-ear-listen",
+            "keyVocabularyIcon": "fa-solid fa-pen-to-square",
+            "layoutIcon": "fa-solid fa-list-check"
+        }
+    },
+    "guided-discovery": {
+        "defaults": {
+            "title": "Evaluation Lexis: Categorize the Concepts",
+            "context": "Drag and drop the words into the correct category to decide whether each item signals a positive, negative, or neutral aspect.",
+            "discoveryPrompts": [
+                "Sort the vocabulary into Positive Aspects, Negative Aspects, or Neutral / Descriptive terms.",
+                "Discuss why each term fits its category and how it shapes your critique."
+            ],
+            "noticingQuestions": [
+                "Which words communicate praise for a proposal?",
+                "Which terms hint at concerns or constraints?"
+            ],
+            "sampleLanguage": [
+                "viable",
+                "sustainable",
+                "shortcomings",
+                "constraints",
+                "stakeholders",
+                "beneficiaries"
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "contextIcon": "fa-solid fa-layer-group",
+            "discoveryPromptsIcon": "fa-solid fa-lightbulb",
+            "noticingQuestionsIcon": "fa-solid fa-question",
+            "sampleLanguageIcon": "fa-solid fa-book-open",
+            "layoutIcon": "fa-solid fa-layer-group"
+        }
+    },
+    "creative-practice": {
+        "defaults": {
+            "title": "Prototype Carousel",
+            "brief": "Stack the sprint cards so teams can move from the scenario pill into prototyping and evidence capture while narrating their process.",
+            "materials": [
+                "Scenario pill with badge language",
+                "Feedback lens notes for glow/grow comments",
+                "Gallery tiles highlighting build photos"
+            ],
+            "makingSteps": [
+                "Set the stage by previewing the scenario pill and badge.",
+                "Guide the prototype carousel and capture glow/grow notes.",
+                "Close with evidence capture and list the artifacts or recordings to collect."
+            ],
+            "sharingOptions": [
+                "Run a gallery walk to showcase the scenario spotlight tiles.",
+                "Share photo documentation alongside the feedback badge earned."
+            ],
+            "imageUrl": "https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "briefIcon": "fa-solid fa-bookmark",
+            "materialsIcon": "fa-solid fa-circle-dot",
+            "makingStepsIcon": "fa-solid fa-layer-group",
+            "sharingOptionsIcon": "fa-solid fa-image",
+            "layoutIcon": "fa-solid fa-bookmark"
+        }
+    },
+    "task-divider": {
+        "defaults": {
+            "title": "Task cycle",
+            "subtitle": "NGO project review",
+            "timing": "12 minutes preparation \u00b7 10 minutes reporting",
+            "focus": "Guide teams from project analysis to inter-team briefings.",
+            "actions": [
+                "Choose one of the two project summaries to analyze in breakout rooms.",
+                "Use the shared Google Doc to outline strengths, weaknesses, and a recommendation.",
+                "Present to a partner group, share your screen, and ask a follow-up question."
+            ],
+            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "timingIcon": "fa-solid fa-clock",
+            "focusIcon": "fa-solid fa-person-chalkboard",
+            "actionsIcon": "fa-solid fa-arrow-up-right-from-square",
+            "layoutIcon": "fa-solid fa-clock"
+        }
+    },
+    "task-reporting": {
+        "defaults": {
+            "title": "Inter-Team Briefing",
+            "goal": "Share your group's strongest argument and final recommendation.",
+            "prompts": [
+                "What was their strongest argument?",
+                "Do you agree with their final recommendation?",
+                "Prepare one follow-up question to ask the presenters."
+            ],
+            "roles": [
+                {
+                    "label": "Jericho analysts",
+                    "value": "Present to the Bethlehem team and explain your recommendation."
+                },
+                {
+                    "label": "Bethlehem analysts",
+                    "value": "Present to the Jericho team and highlight key evidence."
+                },
+                {
+                    "label": "Listeners",
+                    "value": "Note the strongest argument and craft a follow-up question."
+                }
+            ],
+            "evidence": [
+                "All members should speak during the briefing.",
+                "Share your screen while presenting the Google Doc notes."
+            ],
+            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "goalIcon": "fa-solid fa-person-chalkboard",
+            "promptsIcon": "fa-solid fa-ear-listen",
+            "rolesIcon": "fa-solid fa-people-arrows",
+            "evidenceIcon": "fa-solid fa-arrow-up-right-from-square",
+            "layoutIcon": "fa-solid fa-person-chalkboard"
+        }
+    },
+    "genre-deconstruction": {
+        "defaults": {
+            "title": "Project Summary Analysis",
+            "genre": "NGO project proposal summary",
+            "purpose": "Help evaluators compare funding options for community impact.",
+            "features": [
+                {
+                    "label": "Goal",
+                    "value": "Create a permanent, open-access digital archive of Jericho's heritage."
+                },
+                {
+                    "label": "Beneficiaries",
+                    "value": "Academics, tourists, Palestinian diaspora, local youth."
+                },
+                {
+                    "label": "Budget",
+                    "value": "$75,000 for equipment, staff, and web hosting for 2 years."
+                },
+                {
+                    "label": "Timeline",
+                    "value": "18 months."
+                },
+                {
+                    "label": "Key Activities",
+                    "value": "Purchase 3D scanning equipment, train local students, interview elders, build a website and app."
+                }
+            ],
+            "mentorText": "Project Summary 1: Jericho Digital Heritage Initiative",
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "genreIcon": "fa-solid fa-file-lines",
+            "purposeIcon": "fa-solid fa-bullseye",
+            "featuresIcon": "fa-solid fa-list-check",
+            "mentorTextIcon": "fa-solid fa-book-open",
+            "layoutIcon": "fa-solid fa-file-lines"
+        }
+    },
+    "linguistic-feature-hunt": {
+        "defaults": {
+            "title": "Distancing language in NGO critiques",
+            "sourceText": "It appears that the project's timeline seems to be overly optimistic. There seems to be some concern about the long-term financial viability. One might argue that the proposal doesn't sufficiently address stakeholder engagement.",
+            "features": [
+                "It appears",
+                "There seems to be",
+                "One might argue",
+                "could be a potential shortcoming",
+                "may have underestimated"
+            ],
+            "reflection": [
+                "Which phrases signal uncertainty or reservation?",
+                "How could you rewrite one sentence to sound more confident?"
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "sourceTextIcon": "fa-solid fa-highlighter",
+            "featuresIcon": "fa-solid fa-lightbulb",
+            "reflectionIcon": "fa-solid fa-pen-to-square",
+            "layoutIcon": "fa-solid fa-highlighter"
+        }
+    },
+    "text-reconstruction": {
+        "defaults": {
+            "title": "Distancing Language: Unscramble the Sentences",
+            "context": "Here are sentences from a critique of a project proposal. Put the words in the correct order.",
+            "steps": [
+                "Read each jumbled sentence from the critique.",
+                "Type the sentence in the correct order before checking your answer.",
+                "Use the Check Answers button to confirm your reconstruction."
+            ],
+            "segments": [
+                "It appears that the project's timeline seems to be overly optimistic.",
+                "There seems to be some concern about the long-term financial viability.",
+                "One might argue that the proposal doesn't sufficiently address stakeholder engagement.",
+                "This could be a potential shortcoming in the implementation phase.",
+                "The team may have underestimated the logistical constraints involved."
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "contextIcon": "fa-solid fa-shuffle",
+            "stepsIcon": "fa-solid fa-list-check",
+            "segmentsIcon": "fa-solid fa-pen-to-square",
+            "layoutIcon": "fa-solid fa-shuffle"
+        }
+    },
+    "jumbled-text-sequencing": {
+        "defaults": {
+            "title": "Sequencing the sprint workflow",
+            "instructions": "Stack three cards to narrate how teams move from the scenario pill into prototyping and evidence capture.",
+            "segments": [
+                "Set the stage",
+                "Prototype carousel",
+                "Evidence capture"
+            ],
+            "supportTips": [
+                "Preview the scenario pill and badge language first.",
+                "List the rotation order and cue the feedback lens.",
+                "End with the documentation move and name the artifacts to collect."
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "instructionsIcon": "fa-solid fa-layer-group",
+            "segmentsIcon": "fa-solid fa-circle-dot",
+            "supportTipsIcon": "fa-solid fa-lightbulb",
+            "layoutIcon": "fa-solid fa-layer-group"
+        }
+    },
+    "scaffolded-joint-construction": {
+        "defaults": {
+            "title": "NGO critique rehearsal",
+            "mentorFocus": "Preview the scenario pill and badge language to model distancing strategies.",
+            "sharedOutcome": "Co-create an oral briefing that surfaces strengths, weaknesses, and a final recommendation.",
+            "teacherMoves": [
+                "Preview the scenario pill and name the badge learners earn when surfacing a bold user insight.",
+                "Cue the prototype carousel and feedback lens so each team records glow/grow notes.",
+                "Call out the artifacts or recordings teams should collect before the next build."
+            ],
+            "learnerMoves": [
+                "Name the badge your team earns when you surface a bold user insight during share outs.",
+                "Rotate through the prototype carousel while capturing glow/grow notes.",
+                "Collect artifacts or recordings that document your evidence for the next build."
+            ],
+            "imageUrl": "https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "mentorFocusIcon": "fa-solid fa-bookmark",
+            "sharedOutcomeIcon": "fa-solid fa-person-chalkboard",
+            "teacherMovesIcon": "fa-solid fa-circle-dot",
+            "learnerMovesIcon": "fa-solid fa-pen-to-square",
+            "layoutIcon": "fa-solid fa-bookmark"
+        }
+    },
+    "independent-construction-checklist": {
+        "defaults": {
+            "title": "Practice Activities",
+            "reminder": "Complete the asynchronous homework tasks before the next session.",
+            "checklist": [
+                "Activity 1: Complete the sentences with the best phrase.",
+                "Activity 2: Choose the correct word to complete the evaluation statement.",
+                "Review your answers using the Check Answers buttons."
+            ],
+            "stretchGoals": [
+                "Note one additional hedging phrase you can use in a future critique.",
+                "Share a vocabulary sentence with your teacher in the chat once finished."
+            ],
+            "imageUrl": "",
+            "overlayColor": "",
+            "overlayOpacity": 0,
+            "reminderIcon": "fa-solid fa-house-laptop",
+            "checklistIcon": "fa-solid fa-list-check",
+            "stretchGoalsIcon": "fa-solid fa-lightbulb",
+            "layoutIcon": "fa-solid fa-house-laptop"
+        }
+    }
+}
