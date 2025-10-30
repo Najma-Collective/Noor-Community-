@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-hidden="true">
+  <defs>
+    <style>
+      .bg { fill: #f3f5fa; }
+      .header { fill: #dbe7ff; }
+      .card { fill: #ffffff; }
+      .accent { fill: #2f5bea; }
+      .muted { fill: #e5ebf5; }
+      .chip { fill: #c9d6ff; }
+      .placeholder { fill: none; stroke: #9aa9c8; stroke-width: 8; stroke-dasharray: 18 14; }
+      .divider { stroke: #b9c4dd; stroke-width: 6; }
+      .outline { fill: none; stroke: #94a3c7; stroke-width: 6; }
+      .text-line { fill: #b1bed6; }
+      .text-strong { fill: #7a8bb0; }
+      .badge { fill: #2f5bea; opacity: 0.18; }
+      .highlight { fill: #ffe7c2; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  
+      <rect class="card" x="160" y="140" width="960" height="440" rx="48"/>
+      <rect class="badge" x="360" y="220" width="560" height="200" rx="100"/>
+      <rect class="muted" x="440" y="260" width="400" height="120" rx="60"/>
+      <rect class="text-line" x="320" y="420" width="640" height="32" rx="16"/>
+    
+</svg>

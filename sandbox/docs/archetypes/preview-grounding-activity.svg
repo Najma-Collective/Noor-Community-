@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-hidden="true">
+  <defs>
+    <style>
+      .bg { fill: #f3f5fa; }
+      .header { fill: #dbe7ff; }
+      .card { fill: #ffffff; }
+      .accent { fill: #2f5bea; }
+      .muted { fill: #e5ebf5; }
+      .chip { fill: #c9d6ff; }
+      .placeholder { fill: none; stroke: #9aa9c8; stroke-width: 8; stroke-dasharray: 18 14; }
+      .divider { stroke: #b9c4dd; stroke-width: 6; }
+      .outline { fill: none; stroke: #94a3c7; stroke-width: 6; }
+      .text-line { fill: #b1bed6; }
+      .text-strong { fill: #7a8bb0; }
+      .badge { fill: #2f5bea; opacity: 0.18; }
+      .highlight { fill: #ffe7c2; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  
+      <rect class="header" x="120" y="80" width="1040" height="110" rx="32"/>
+      <rect class="card" x="120" y="210" width="1040" height="430" rx="32"/>
+      <rect class="badge" x="160" y="250" width="80" height="80" rx="40"/>
+      <rect class="text-line" x="260" y="260" width="840" height="24" rx="12"/>
+      <rect class="text-line" x="260" y="304" width="760" height="24" rx="12"/>
+      <rect class="badge" x="160" y="360" width="80" height="80" rx="40"/>
+      <rect class="text-line" x="260" y="370" width="820" height="24" rx="12"/>
+      <rect class="text-line" x="260" y="414" width="760" height="24" rx="12"/>
+      <rect class="badge" x="160" y="470" width="80" height="80" rx="40"/>
+      <rect class="text-line" x="260" y="480" width="820" height="24" rx="12"/>
+      <rect class="text-line" x="260" y="524" width="760" height="24" rx="12"/>
+    
+</svg>
