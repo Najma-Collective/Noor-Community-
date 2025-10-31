@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import process from 'node:process';
 
 import Ajv from 'ajv/dist/2020.js';
@@ -112,6 +112,9 @@ async function runCli(args = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] === __filename) {
+const cliInvocationUrl =
+  process.argv[1] && pathToFileURL(resolve(process.argv[1])).href;
+
+if (cliInvocationUrl === import.meta.url) {
   runCli();
 }
