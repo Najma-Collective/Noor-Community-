@@ -4070,6 +4070,82 @@ export function attachBlankSlideEvents(slide) {
     clearButton.disabled = true;
 
     actions.append(cancelButton, clearButton, saveButton);
+
+    const controlGroup = document.createElement("div");
+    controlGroup.className = "canvas-drawing-controls";
+    Object.assign(controlGroup.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+      paddingLeft: "0.5rem",
+      borderLeft: "1px solid rgba(15, 23, 42, 0.12)",
+      marginLeft: "0.5rem",
+    });
+
+    const strokeColorLabel = document.createElement("label");
+    strokeColorLabel.className = "canvas-drawing-control";
+    strokeColorLabel.textContent = "Stroke color";
+    strokeColorLabel.setAttribute("for", "canvas-drawing-stroke-color");
+    Object.assign(strokeColorLabel.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.4rem",
+      fontSize: "0.85rem",
+      color: "var(--ink-muted, rgba(15, 23, 42, 0.72))",
+    });
+
+    const strokeColorInput = document.createElement("input");
+    strokeColorInput.type = "color";
+    strokeColorInput.id = "canvas-drawing-stroke-color";
+    strokeColorInput.setAttribute("aria-label", "Stroke color");
+    Object.assign(strokeColorInput.style, {
+      width: "2rem",
+      height: "2rem",
+      border: "1px solid rgba(15, 23, 42, 0.18)",
+      borderRadius: "50%",
+      padding: "0",
+      background: "transparent",
+      cursor: "pointer",
+    });
+
+    const strokeWidthLabel = document.createElement("label");
+    strokeWidthLabel.className = "canvas-drawing-control";
+    strokeWidthLabel.textContent = "Stroke width";
+    strokeWidthLabel.setAttribute("for", "canvas-drawing-stroke-width");
+    Object.assign(strokeWidthLabel.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.4rem",
+      fontSize: "0.85rem",
+      color: "var(--ink-muted, rgba(15, 23, 42, 0.72))",
+    });
+
+    const strokeWidthInput = document.createElement("input");
+    strokeWidthInput.type = "range";
+    strokeWidthInput.id = "canvas-drawing-stroke-width";
+    strokeWidthInput.min = "1";
+    strokeWidthInput.max = "12";
+    strokeWidthInput.step = "1";
+    strokeWidthInput.setAttribute("aria-label", "Stroke width");
+    Object.assign(strokeWidthInput.style, {
+      width: "120px",
+    });
+
+    const strokeWidthValue = document.createElement("span");
+    strokeWidthValue.className = "canvas-drawing-stroke-width-value";
+    strokeWidthValue.setAttribute("aria-live", "polite");
+    Object.assign(strokeWidthValue.style, {
+      minWidth: "2ch",
+      textAlign: "right",
+      fontVariantNumeric: "tabular-nums",
+      color: "var(--ink, #0f172a)",
+      fontSize: "0.85rem",
+    });
+
+    strokeColorLabel.appendChild(strokeColorInput);
+    strokeWidthLabel.append(strokeWidthInput, strokeWidthValue);
+    controlGroup.append(strokeColorLabel, strokeWidthLabel);
+    actions.appendChild(controlGroup);
     header.append(title, actions);
 
     const surfaceContainer = document.createElement("div");
@@ -4134,6 +4210,19 @@ export function attachBlankSlideEvents(slide) {
       context.clearRect(0, 0, drawingSurface.width, drawingSurface.height);
     };
 
+    let strokeColor = "#0f172a";
+    let strokeWidth = 3;
+
+    const applyStrokeSettings = () => {
+      if (!context) {
+        return;
+      }
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.lineWidth = strokeWidth;
+      context.strokeStyle = strokeColor;
+    };
+
     const updateSurfaceSize = () => {
       const width = Math.max(
         1,
@@ -4155,12 +4244,7 @@ export function attachBlankSlideEvents(slide) {
         drawingSurface.width = width;
         drawingSurface.height = height;
       }
-      if (context) {
-        context.lineWidth = 3;
-        context.lineCap = "round";
-        context.lineJoin = "round";
-        context.strokeStyle = "var(--ink, #0f172a)";
-      }
+      applyStrokeSettings();
     };
 
     let isDrawing = false;
@@ -4188,6 +4272,7 @@ export function attachBlankSlideEvents(slide) {
       }
       event.preventDefault();
       drawingSurface.setPointerCapture(event.pointerId);
+      applyStrokeSettings();
       const point = getCanvasPoint(event);
       context.beginPath();
       context.moveTo(point.x, point.y);
@@ -4206,6 +4291,7 @@ export function attachBlankSlideEvents(slide) {
       if (!lastPoint) {
         context.moveTo(point.x, point.y);
       }
+      applyStrokeSettings();
       context.lineTo(point.x, point.y);
       context.stroke();
       lastPoint = point;
@@ -4277,6 +4363,9 @@ export function attachBlankSlideEvents(slide) {
       lastTrigger = trigger instanceof HTMLElement ? trigger : null;
       lastOrigin = typeof origin === "string" && origin ? origin : null;
       updateSurfaceSize();
+      strokeColorInput.value = strokeColor;
+      strokeWidthInput.value = String(strokeWidth);
+      strokeWidthValue.textContent = strokeWidth.toString();
       clearSurface();
       overlay.hidden = false;
       overlay.setAttribute("aria-hidden", "false");
@@ -4287,6 +4376,34 @@ export function attachBlankSlideEvents(slide) {
       });
       return true;
     };
+
+    const handleStrokeColorChange = (event) => {
+      const value = typeof event?.target?.value === "string" ? event.target.value : "";
+      if (!value) {
+        return;
+      }
+      strokeColor = value;
+      applyStrokeSettings();
+    };
+
+    const handleStrokeWidthChange = (event) => {
+      const value = Number(event?.target?.value);
+      if (Number.isFinite(value)) {
+        strokeWidth = Math.max(1, Math.min(24, Math.round(value)));
+        strokeWidthInput.value = String(strokeWidth);
+        strokeWidthValue.textContent = strokeWidth.toString();
+        applyStrokeSettings();
+      }
+    };
+
+    strokeColorInput.addEventListener("input", handleStrokeColorChange);
+    strokeColorInput.addEventListener("change", handleStrokeColorChange);
+    strokeWidthInput.addEventListener("input", handleStrokeWidthChange);
+    strokeWidthInput.addEventListener("change", handleStrokeWidthChange);
+
+    strokeColorInput.value = strokeColor;
+    strokeWidthInput.value = String(strokeWidth);
+    strokeWidthValue.textContent = strokeWidth.toString();
 
     drawingSurface.addEventListener("pointerdown", handlePointerDown);
     drawingSurface.addEventListener("pointermove", handlePointerMove);
@@ -4315,6 +4432,10 @@ export function attachBlankSlideEvents(slide) {
 
     registerCleanup(() => {
       overlay.removeEventListener("keydown", handleKeydown);
+      strokeColorInput.removeEventListener("input", handleStrokeColorChange);
+      strokeColorInput.removeEventListener("change", handleStrokeColorChange);
+      strokeWidthInput.removeEventListener("input", handleStrokeWidthChange);
+      strokeWidthInput.removeEventListener("change", handleStrokeWidthChange);
       drawingSurface.removeEventListener("pointerdown", handlePointerDown);
       drawingSurface.removeEventListener("pointermove", handlePointerMove);
       drawingSurface.removeEventListener("pointerup", stopDrawing);
