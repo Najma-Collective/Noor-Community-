@@ -542,14 +542,17 @@ body {
 .builder-overlay {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   display: none;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  padding: clamp(24px, 4vw, 72px);
+  padding: 0;
   background: rgba(47, 58, 43, 0.72);
   background: color-mix(in srgb, #2f3a2b 72%, transparent);
   backdrop-filter: blur(6px) saturate(1.1);
   z-index: 120;
+  overflow: auto;
 }
 
 .builder-overlay.is-visible {
@@ -558,10 +561,12 @@ body {
 
 .builder-dialog {
   position: relative;
-  width: min(960px, 100%);
-  max-height: min(90vh, 960px);
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: none;
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   background: var(--soft-white);
   box-shadow: var(--shadow-2);
   display: flex;
@@ -569,8 +574,10 @@ body {
 }
 
 .module-builder-dialog {
-  width: min(1180px, 100%);
-  max-height: min(92vh, 1100px);
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: none;
 }
 
 .builder-header {
@@ -584,20 +591,28 @@ body {
 }
 
 .module-builder-body {
-  flex: 1;
+  flex: 1 1 auto;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
   padding: var(--space-4);
+  box-sizing: border-box;
   background: var(--soft-white);
   display: flex;
+  overflow: auto;
+  min-height: 0;
 }
 
 .module-builder-body iframe {
   flex: 1;
   width: 100%;
+  height: 100%;
   border: none;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-1);
   background: #fff;
-  min-height: 640px;
+  min-height: 0;
 }
 
 .builder-eyebrow {
