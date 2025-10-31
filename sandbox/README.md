@@ -18,6 +18,11 @@ The sandbox now ships with a lightweight command-line utility that transforms a 
 
 The script prints the path to the generated HTML deck. Open the file in a browser to review the scaffolded slides. The deck boots `setupInteractiveDeck` automatically, so navigation and editing affordances remain available.
 
+## Blank sandbox deck
+
+Open [`blank-master.html`](./blank-master.html) to launch a single-slide deck that already wires up the toolbar, canvas tools, and module builder from `exemplar-master.html`.
+Use the Add Blank Slide button or the Slide Builder overlay to grow the deck without manually stripping demo content.
+
 ## Brief format
 
 Deck briefs are plain JSON objects with the following top-level shape:
