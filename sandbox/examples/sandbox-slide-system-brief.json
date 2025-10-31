@@ -1,0 +1,163 @@
+{
+  "title": "Sandbox Slide System Orientation",
+  "lang": "en",
+  "brand": { "label": "Noor Community" },
+  "theme": "sandbox-runtime-guide",
+  "pexelsKey": "ntFmvz0n4RpCRtHtRVV7HhAcbb4VQLwyEenPsqfIGdvpVvkgagK2dQEd",
+  "slides": [
+    {
+      "layout": "learning-objectives",
+      "data": {
+        "title": "Sandbox slide system orientation",
+        "goals": [
+          "Identify Sandbox lesson archetypes and their builder inputs.",
+          "Explain how the Activity Builder, runtime, and templates collaborate.",
+          "Practise converting plans into validated Sandbox JSON briefs."
+        ],
+        "communicativeGoal": "So you can publish reliable decks that hydrate in the Sandbox runtime."
+      }
+    },
+    {
+      "layout": "topic-introduction",
+      "data": {
+        "title": "Sandbox architecture overview",
+        "hook": "Know the moving pieces",
+        "context": "The Sandbox pairs the Activity Builder shell, deck runtime helpers, layout defaults, slide navigation, and shared CSS and theme bundles to deliver accessible authoring from plan to export.",
+        "essentialQuestion": "How do these components and archetypes combine to deliver consistent slides?",
+        "keyVocabulary": [
+          "Activity Builder shell",
+          "Deck runtime helpers",
+          "Layout defaults",
+          "Slide navigator",
+          "Theme tokens"
+        ]
+      }
+    },
+    {
+      "layout": "card-stack",
+      "data": {
+        "pill": "System components",
+        "title": "What each module provides",
+        "description": "Review how every core file sustains authoring and playback.",
+        "cards": [
+          {
+            "title": "Activity Builder shell",
+            "description": "Declares the builder interface, loads fonts and CSS, and serialises state for previews, exports, and deck hand-off."
+          },
+          {
+            "title": "Deck runtime helpers",
+            "description": "Initialises the viewport, counters, editing affordances, asset search, and module overlays while lazy-loading navigation."
+          },
+          {
+            "title": "Layout defaults",
+            "description": "Clones archetype data, normalises icon fallbacks, and merges slide overrides for consistent visuals."
+          },
+          {
+            "title": "Navigator and theming",
+            "description": "Builds the accessible slide tray and shares CSS tokens for typography, spacing, colours, and surfaces."
+          }
+        ]
+      }
+    },
+    {
+      "layout": "grounding-activity",
+      "data": {
+        "title": "Authoring workflow essentials",
+        "subtitle": "Prompt-led pipeline",
+        "steps": [
+          "Extract deck metadata, language, and asset cues from the lesson brief before drafting slides.",
+          "Map each pedagogical moment to a supported layout before populating fields.",
+          "Break prose into layout fields, arrays, notes, and multimedia references.",
+          "Validate colour directives, module payloads, and text budgets before returning the JSON brief."
+        ]
+      }
+    },
+    {
+      "layout": "interactive-practice",
+      "data": {
+        "activityType": "multiple-choice",
+        "title": "Check your understanding",
+        "instructions": "Choose the best answer about Sandbox functionality.",
+        "questions": [
+          {
+            "prompt": "Which module seeds default JSON blueprints for Activity Builder previews?",
+            "options": [
+              "sandbox/activity-builder.js",
+              "sandbox/int-mod.js",
+              "sandbox/slide-templates.js"
+            ],
+            "answer": "sandbox/activity-builder.js"
+          },
+          {
+            "prompt": "Which file merges archetype defaults into slide briefs?",
+            "options": [
+              "sandbox/slide-templates.js",
+              "sandbox/slide-nav.js",
+              "sandbox/sandbox-css.css"
+            ],
+            "answer": "sandbox/slide-templates.js"
+          },
+          {
+            "prompt": "Which bundle defines the theme tokens shared across layouts?",
+            "options": [
+              "sandbox/sandbox-theme.css",
+              "sandbox/activity-builder.html",
+              "sandbox/int-mod.js"
+            ],
+            "answer": "sandbox/sandbox-theme.css"
+          }
+        ],
+        "moduleTemplate": "multiple-choice",
+        "moduleConfig": {
+          "type": "multiple-choice",
+          "presetId": "multiple-choice",
+          "data": {
+            "title": "Sandbox functionality knowledge check",
+            "instructions": "Choose the best answer about Sandbox functionality.",
+            "rubric": "Award one point per correct selection, then review rationales together.",
+            "questions": [
+              {
+                "prompt": "Which module seeds default JSON blueprints for Activity Builder previews?",
+                "explanation": "sandbox/activity-builder.js seeds the default module JSON so previews load with meaningful content.",
+                "options": [
+                  { "text": "sandbox/activity-builder.js", "correct": true },
+                  { "text": "sandbox/int-mod.js", "correct": false },
+                  { "text": "sandbox/slide-templates.js", "correct": false }
+                ]
+              },
+              {
+                "prompt": "Which file merges archetype defaults into slide briefs?",
+                "explanation": "sandbox/slide-templates.js clones archetypes and normalises icon defaults before applying overrides.",
+                "options": [
+                  { "text": "sandbox/slide-templates.js", "correct": true },
+                  { "text": "sandbox/slide-nav.js", "correct": false },
+                  { "text": "sandbox/sandbox-css.css", "correct": false }
+                ]
+              },
+              {
+                "prompt": "Which bundle defines the theme tokens shared across layouts?",
+                "explanation": "sandbox/sandbox-theme.css provides fonts, spacing, colour tokens, and other shared CSS custom properties.",
+                "options": [
+                  { "text": "sandbox/sandbox-theme.css", "correct": true },
+                  { "text": "sandbox/activity-builder.html", "correct": false },
+                  { "text": "sandbox/int-mod.js", "correct": false }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "layout": "reflection",
+      "data": {
+        "title": "Plan your next steps",
+        "prompts": [
+          "Which layout archetype will you document first and why?",
+          "What runtime helper should you explore deeper after this session?",
+          "How will you validate JSON briefs before sharing them with authors?"
+        ]
+      }
+    }
+  ]
+}
