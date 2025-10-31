@@ -37,6 +37,8 @@ function ensureDomEnvironment() {
     Node: global.Node,
     navigator: global.navigator,
     getComputedStyle: global.getComputedStyle,
+    HTMLScriptElement: global.HTMLScriptElement,
+    HTMLIFrameElement: global.HTMLIFrameElement,
   };
   global.window = dom.window;
   global.document = dom.window.document;
@@ -44,6 +46,8 @@ function ensureDomEnvironment() {
   global.Node = dom.window.Node;
   global.navigator = dom.window.navigator;
   global.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
+  global.HTMLScriptElement = dom.window.HTMLScriptElement;
+  global.HTMLIFrameElement = dom.window.HTMLIFrameElement;
   return { dom, previousGlobals };
 }
 
@@ -55,6 +59,8 @@ function restoreDomEnvironment(dom, previous) {
     global.Node = previous.Node;
     global.navigator = previous.navigator;
     global.getComputedStyle = previous.getComputedStyle;
+    global.HTMLScriptElement = previous.HTMLScriptElement;
+    global.HTMLIFrameElement = previous.HTMLIFrameElement;
   }
   if (dom) {
     dom.window.close();

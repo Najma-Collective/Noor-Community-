@@ -111,7 +111,15 @@
             ],
             "instructionsIcon": "fa-solid fa-pen-ruler",
             "activityTypeIcon": "fa-solid fa-pen-ruler",
-            "layoutIcon": "fa-solid fa-pen-ruler"
+            "layoutIcon": "fa-solid fa-pen-ruler",
+            "moduleTemplate": "multiple-choice",
+            "moduleConfig": {
+                "type": "multiple-choice",
+                "presetId": "multiple-choice",
+                "data": {
+                    "title": "Evaluation Lexis: Choose the Best Word"
+                }
+            }
         }
     },
     "card-stack": {

@@ -656,6 +656,80 @@ const MODULE_TYPE_LABELS = {
   default: 'Interactive activity',
 };
 
+export const MODULE_TEMPLATE_FILES = Object.freeze({
+  'multiple-choice': 'multiple-choice.html',
+  'multiple-choice-grid': 'multiple-choice-grid.html',
+  dropdown: 'dropdown.html',
+  gapfill: 'gapfill',
+  grouping: 'grouping',
+  ranking: 'ranking.html',
+  linking: 'Linking',
+  pelmanism: 'pelmanism.html',
+});
+
+export const MODULE_TEMPLATE_SOURCES = Object.freeze(
+  Object.fromEntries(
+    Object.entries(MODULE_TEMPLATE_FILES).map(([key, fileName]) => [
+      key,
+      `./Templates/${fileName}`,
+    ]),
+  ),
+);
+
+const moduleTemplateHtmlCache = new Map();
+
+const normaliseModuleTemplateKey = (value) =>
+  typeof value === 'string' && value.trim() ? value.trim().toLowerCase() : '';
+
+const getModuleTemplateSource = (key) => {
+  const normalised = normaliseModuleTemplateKey(key);
+  if (!normalised) {
+    return '';
+  }
+  return MODULE_TEMPLATE_SOURCES[normalised] || '';
+};
+
+async function fetchModuleTemplateHtml(key) {
+  const normalised = normaliseModuleTemplateKey(key);
+  if (!normalised) {
+    return '';
+  }
+
+  if (moduleTemplateHtmlCache.has(normalised)) {
+    return moduleTemplateHtmlCache.get(normalised) || '';
+  }
+
+  const source = getModuleTemplateSource(normalised);
+  if (!source) {
+    moduleTemplateHtmlCache.set(normalised, '');
+    return '';
+  }
+
+  const canFetch =
+    typeof window !== 'undefined' &&
+    typeof window.fetch === 'function' &&
+    typeof Request !== 'undefined';
+
+  if (!canFetch) {
+    moduleTemplateHtmlCache.set(normalised, '');
+    return '';
+  }
+
+  try {
+    const response = await window.fetch(source);
+    if (!response.ok) {
+      throw new Error(`Template fetch failed with status ${response.status}`);
+    }
+    const html = await response.text();
+    moduleTemplateHtmlCache.set(normalised, html);
+    return html;
+  } catch (error) {
+    console.warn(`Unable to load module template "${normalised}"`, error);
+    moduleTemplateHtmlCache.set(normalised, '');
+    return '';
+  }
+}
+
 const getModuleTypeLabel = (type) => MODULE_TYPE_LABELS[type] || MODULE_TYPE_LABELS.default;
 
 const DECK_TOAST_TIMEOUT = 3600;
@@ -13300,6 +13374,9 @@ function createInteractivePracticeSlide({
   activityType,
   questions = [],
   layoutIcon = '',
+  moduleTemplate,
+  moduleConfig,
+  moduleHtml,
 } = {}) {
   const resolvedTitle = trimText(title) || "Practice";
   const resolvedInstructions = trimText(instructions);
@@ -13307,10 +13384,48 @@ function createInteractivePracticeSlide({
   const resolvedQuestions = Array.isArray(questions)
     ? questions.filter((q) => q && (q.prompt || q.options?.length))
     : [];
+  const providedTemplate = trimText(moduleTemplate);
+  const normalisedTemplate =
+    normaliseModuleTemplateKey(providedTemplate) || normaliseModuleTemplateKey(resolvedType);
+  const templateToken = providedTemplate || normalisedTemplate;
+  const clonedModuleConfig =
+    moduleConfig && typeof moduleConfig === "object" ? cloneModuleConfig(moduleConfig) : null;
+  const providedHtml =
+    typeof moduleHtml === "string"
+      ? moduleHtml
+      : typeof clonedModuleConfig?.html === "string"
+      ? clonedModuleConfig.html
+      : "";
+  const initialHtml = trimText(providedHtml);
+
+  let resolvedConfig = clonedModuleConfig;
+  if (!resolvedConfig && (normalisedTemplate || resolvedType)) {
+    resolvedConfig = { type: resolvedType, data: {} };
+  }
+  if (resolvedConfig) {
+    if (!resolvedConfig.type && resolvedType) {
+      resolvedConfig.type = resolvedType;
+    }
+    if (!resolvedConfig.data || typeof resolvedConfig.data !== "object") {
+      resolvedConfig.data = {};
+    }
+    if (resolvedTitle && !trimText(resolvedConfig.data.title)) {
+      resolvedConfig.data.title = resolvedTitle;
+    }
+    if (templateToken && !resolvedConfig.presetId) {
+      resolvedConfig.presetId = templateToken;
+    }
+    if (initialHtml && !resolvedConfig.html) {
+      resolvedConfig.html = initialHtml;
+    }
+  }
 
   const slide = document.createElement("div");
   slide.className = "slide-stage hidden interactive-practice-slide";
   slide.dataset.type = "interactive-practice";
+  if (templateToken) {
+    slide.dataset.moduleTemplate = templateToken;
+  }
 
   attachLayoutIconBadge(slide, getEffectiveLayoutIcon('interactive-practice', layoutIcon));
 
@@ -13405,6 +13520,36 @@ function createInteractivePracticeSlide({
   addBtn.dataset.action = "add-module";
   addBtn.innerHTML = '<i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><span>Add interactive module</span>';
   moduleArea.appendChild(addBtn);
+
+  if (resolvedConfig || initialHtml || templateToken) {
+    const moduleElement = createModuleEmbed({
+      html: initialHtml,
+      config: resolvedConfig,
+      activityType: resolvedConfig?.type || resolvedType,
+      title: resolvedConfig?.data?.title || resolvedTitle,
+    });
+    if (moduleElement instanceof HTMLElement) {
+      if (templateToken) {
+        moduleElement.dataset.moduleTemplate = templateToken;
+      }
+      moduleHost.appendChild(moduleElement);
+      addBtn.hidden = true;
+      if (!initialHtml && templateToken) {
+        fetchModuleTemplateHtml(templateToken).then((html) => {
+          const templateHtml = trimText(html);
+          if (!templateHtml) {
+            return;
+          }
+          updateModuleEmbedContent(moduleElement, { html: templateHtml });
+          const storedConfig = getModuleConfigFromElement(moduleElement);
+          if (storedConfig && typeof storedConfig === "object" && !trimText(storedConfig.html)) {
+            storedConfig.html = templateHtml;
+            setModuleConfigOnElement(moduleElement, storedConfig);
+          }
+        });
+      }
+    }
+  }
 
   applyInteractivePracticeType(slide, resolvedType);
 

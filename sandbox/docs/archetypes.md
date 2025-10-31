@@ -90,6 +90,9 @@ This reference summarises the slide layouts available in the sandbox lesson buil
 
 - *Core inputs:* Slide title, Practice instructions, Activity type, Question prompts with optional options/answers.
 - *Optional enrichments:* Instructions icon class, Activity type icon class (stored for badge styling), Interactive module configuration via the module overlay.
+- *Module embed:* `moduleTemplate` selects a prebuilt iframe from `sandbox/Templates/`, while `moduleConfig`/`moduleHtml` can store a fully configured activity export. When omitted, the generator automatically maps `activityType` to the matching template file.
+
+**Authoring notes.** Deck exports now persist module HTML alongside the JSON payload. Any generated slide includes the `<script type="application/json" class="module-embed-config">…</script>` block so downstream builders can reopen the activity without manually re-inserting the iframe.
 
 **Icon hooks.** Layout badge uses the configured icon. The activity type badge text is derived from `activityType`; icon placeholders from the builder are saved but not yet rendered inline.
 
