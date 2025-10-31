@@ -3981,9 +3981,424 @@ export function attachBlankSlideEvents(slide) {
     });
   };
 
-  registerCreationAction("start-drawing", ({ trigger, origin }) =>
-    requestCanvasTool("drawing", { trigger, origin })
-  );
+  const drawingToolInstances = new WeakMap();
+
+  const createDrawingTool = (targetCanvas, registerCleanup, { canvas: hostCanvas, requestImageInsert }) => {
+    if (!(targetCanvas instanceof HTMLElement)) {
+      return null;
+    }
+
+    const overlay = document.createElement("div");
+    overlay.className = "canvas-drawing-overlay";
+    overlay.hidden = true;
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.dataset.canvasTool = "drawing";
+    Object.assign(overlay.style, {
+      position: "absolute",
+      inset: "0",
+      zIndex: "40",
+      display: "flex",
+      flexDirection: "column",
+      gap: "0.75rem",
+      padding: "var(--space-4, 1rem)",
+      background: "rgba(248, 250, 252, 0.96)",
+      backdropFilter: "blur(6px)",
+    });
+
+    const header = document.createElement("div");
+    header.className = "canvas-drawing-header";
+    Object.assign(header.style, {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "0.75rem",
+    });
+
+    const title = document.createElement("div");
+    title.className = "canvas-drawing-title";
+    title.textContent = "Drawing canvas";
+    Object.assign(title.style, {
+      fontWeight: "600",
+      fontSize: "var(--step-0, 1rem)",
+      color: "var(--ink, #0f172a)",
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "canvas-drawing-actions";
+    Object.assign(actions.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+    });
+
+    const createActionButton = (label, { primary = false } = {}) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.className = primary
+        ? "canvas-drawing-action canvas-drawing-action-primary"
+        : "canvas-drawing-action";
+      Object.assign(button.style, {
+        appearance: "none",
+        borderRadius: "999px",
+        border: primary
+          ? "1px solid var(--primary-sage, #047857)"
+          : "1px solid rgba(15, 23, 42, 0.18)",
+        background: primary
+          ? "var(--primary-sage, #047857)"
+          : "rgba(255, 255, 255, 0.92)",
+        color: primary ? "var(--surface-base, #fff)" : "var(--ink, #0f172a)",
+        fontWeight: "600",
+        fontSize: "0.95rem",
+        lineHeight: "1.4",
+        padding: "0.4rem 1rem",
+        cursor: "pointer",
+        boxShadow: primary
+          ? "0 4px 12px rgba(4, 120, 87, 0.24)"
+          : "0 2px 6px rgba(15, 23, 42, 0.08)",
+        transition: "background 120ms ease, color 120ms ease, box-shadow 120ms ease",
+      });
+      return button;
+    };
+
+    const cancelButton = createActionButton("Cancel");
+    const clearButton = createActionButton("Clear");
+    const saveButton = createActionButton("Insert drawing", { primary: true });
+    saveButton.disabled = true;
+    clearButton.disabled = true;
+
+    actions.append(cancelButton, clearButton, saveButton);
+    header.append(title, actions);
+
+    const surfaceContainer = document.createElement("div");
+    surfaceContainer.className = "canvas-drawing-surface";
+    Object.assign(surfaceContainer.style, {
+      position: "relative",
+      flex: "1",
+      borderRadius: "1rem",
+      background: "var(--surface-base, #fff)",
+      boxShadow: "inset 0 0 0 1px rgba(15, 23, 42, 0.08)",
+      overflow: "hidden",
+      minHeight: "220px",
+    });
+
+    const drawingSurface = document.createElement("canvas");
+    drawingSurface.setAttribute("aria-label", "Drawing surface");
+    drawingSurface.tabIndex = 0;
+    Object.assign(drawingSurface.style, {
+      width: "100%",
+      height: "100%",
+      touchAction: "none",
+      cursor: "crosshair",
+      background: "transparent",
+      display: "block",
+    });
+
+    surfaceContainer.appendChild(drawingSurface);
+
+    const instructions = document.createElement("p");
+    instructions.className = "canvas-drawing-instructions";
+    instructions.textContent = "Draw with your mouse or stylus, then insert the image onto the slide.";
+    Object.assign(instructions.style, {
+      margin: "0",
+      fontSize: "0.9rem",
+      color: "var(--ink-muted, rgba(15, 23, 42, 0.7))",
+    });
+
+    overlay.append(header, surfaceContainer, instructions);
+
+    let restorePosition = null;
+    try {
+      const computed = window.getComputedStyle(targetCanvas);
+      if (computed.position === "static") {
+        restorePosition = targetCanvas.style.position || "";
+        targetCanvas.style.position = "relative";
+      }
+    } catch (error) {
+      restorePosition = null;
+    }
+
+    targetCanvas.appendChild(overlay);
+
+    const context = drawingSurface.getContext("2d", { willReadFrequently: true });
+    if (!context) {
+      console.warn("Drawing surface unavailable: unable to obtain 2D context");
+    }
+
+    const resetSurface = () => {
+      if (!(context && drawingSurface instanceof HTMLCanvasElement)) {
+        return;
+      }
+      context.clearRect(0, 0, drawingSurface.width, drawingSurface.height);
+    };
+
+    const updateSurfaceSize = () => {
+      const width = Math.max(
+        1,
+        Math.round(
+          surfaceContainer.clientWidth ||
+            (hostCanvas instanceof HTMLElement ? hostCanvas.clientWidth : 0) ||
+            640,
+        ),
+      );
+      const height = Math.max(
+        1,
+        Math.round(
+          surfaceContainer.clientHeight ||
+            (hostCanvas instanceof HTMLElement ? hostCanvas.clientHeight : 0) ||
+            360,
+        ),
+      );
+      if (drawingSurface.width !== width || drawingSurface.height !== height) {
+        drawingSurface.width = width;
+        drawingSurface.height = height;
+      }
+      if (context) {
+        context.lineWidth = 3;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.strokeStyle = "var(--ink, #0f172a)";
+      }
+    };
+
+    let isDrawing = false;
+    let hasChanges = false;
+    let lastPoint = null;
+    let lastTrigger = null;
+    let lastOrigin = null;
+
+    const updateActionState = () => {
+      clearButton.disabled = !hasChanges;
+      saveButton.disabled = !hasChanges;
+    };
+
+    const getCanvasPoint = (event) => {
+      const rect = drawingSurface.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+    };
+
+    const handlePointerDown = (event) => {
+      if (!(context && event.isPrimary)) {
+        return;
+      }
+      event.preventDefault();
+      drawingSurface.setPointerCapture(event.pointerId);
+      const point = getCanvasPoint(event);
+      context.beginPath();
+      context.moveTo(point.x, point.y);
+      lastPoint = point;
+      isDrawing = true;
+      hasChanges = true;
+      updateActionState();
+    };
+
+    const handlePointerMove = (event) => {
+      if (!isDrawing || !context) {
+        return;
+      }
+      event.preventDefault();
+      const point = getCanvasPoint(event);
+      if (!lastPoint) {
+        context.moveTo(point.x, point.y);
+      }
+      context.lineTo(point.x, point.y);
+      context.stroke();
+      lastPoint = point;
+    };
+
+    const stopDrawing = (event) => {
+      if (!isDrawing || !context) {
+        return;
+      }
+      event.preventDefault();
+      try {
+        drawingSurface.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        /* ignore */
+      }
+      context.closePath();
+      isDrawing = false;
+      lastPoint = null;
+    };
+
+    const clearSurface = () => {
+      resetSurface();
+      hasChanges = false;
+      updateActionState();
+      if (!overlay.hidden) {
+        drawingSurface.focus({ preventScroll: true });
+      }
+    };
+
+    const closeOverlay = ({ focus = true, reset = false } = {}) => {
+      overlay.hidden = true;
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.classList.remove("is-visible");
+      if (reset) {
+        clearSurface();
+      }
+      if (focus && lastTrigger instanceof HTMLElement) {
+        lastTrigger.focus({ preventScroll: true });
+      }
+    };
+
+    const insertDrawing = async () => {
+      if (!hasChanges || !(drawingSurface instanceof HTMLCanvasElement)) {
+        closeOverlay({ focus: true, reset: true });
+        return;
+      }
+      const dataUrl = drawingSurface.toDataURL("image/png");
+      if (!dataUrl) {
+        closeOverlay({ focus: true, reset: false });
+        return;
+      }
+      saveButton.disabled = true;
+      try {
+        await requestImageInsert(dataUrl, {
+          name: "Canvas drawing",
+          type: "image/png",
+          source: lastOrigin ? `drawing-${lastOrigin}` : "drawing-tool",
+          naturalWidth: drawingSurface.width,
+          naturalHeight: drawingSurface.height,
+        });
+      } catch (error) {
+        console.warn("Unable to insert drawing", error);
+      } finally {
+        closeOverlay({ focus: true, reset: true });
+      }
+    };
+
+    const openOverlay = ({ trigger, origin } = {}) => {
+      lastTrigger = trigger instanceof HTMLElement ? trigger : null;
+      lastOrigin = typeof origin === "string" && origin ? origin : null;
+      updateSurfaceSize();
+      clearSurface();
+      overlay.hidden = false;
+      overlay.setAttribute("aria-hidden", "false");
+      overlay.classList.add("is-visible");
+      requestAnimationFrame(() => {
+        updateSurfaceSize();
+        drawingSurface.focus({ preventScroll: true });
+      });
+      return true;
+    };
+
+    drawingSurface.addEventListener("pointerdown", handlePointerDown);
+    drawingSurface.addEventListener("pointermove", handlePointerMove);
+    drawingSurface.addEventListener("pointerup", stopDrawing);
+    drawingSurface.addEventListener("pointercancel", stopDrawing);
+    drawingSurface.addEventListener("pointerleave", stopDrawing);
+
+    const handleCancel = () => closeOverlay({ focus: true, reset: true });
+    const handleClear = () => clearSurface();
+    const handleSave = () => {
+      insertDrawing();
+    };
+
+    cancelButton.addEventListener("click", handleCancel);
+    clearButton.addEventListener("click", handleClear);
+    saveButton.addEventListener("click", handleSave);
+
+    const handleKeydown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeOverlay({ focus: true, reset: true });
+      }
+    };
+
+    overlay.addEventListener("keydown", handleKeydown);
+
+    registerCleanup(() => {
+      overlay.removeEventListener("keydown", handleKeydown);
+      drawingSurface.removeEventListener("pointerdown", handlePointerDown);
+      drawingSurface.removeEventListener("pointermove", handlePointerMove);
+      drawingSurface.removeEventListener("pointerup", stopDrawing);
+      drawingSurface.removeEventListener("pointercancel", stopDrawing);
+      drawingSurface.removeEventListener("pointerleave", stopDrawing);
+      cancelButton.removeEventListener("click", handleCancel);
+      clearButton.removeEventListener("click", handleClear);
+      saveButton.removeEventListener("click", handleSave);
+      overlay.remove();
+      if (restorePosition !== null) {
+        targetCanvas.style.position = restorePosition;
+      }
+      drawingToolInstances.delete(targetCanvas);
+    });
+
+    const resizeObserver = typeof ResizeObserver === "function"
+      ? new ResizeObserver(() => {
+          if (!overlay.hidden) {
+            updateSurfaceSize();
+          }
+        })
+      : null;
+
+    if (resizeObserver) {
+      resizeObserver.observe(surfaceContainer);
+      registerCleanup(() => {
+        resizeObserver.disconnect();
+      });
+    }
+
+    return {
+      open: openOverlay,
+      close: closeOverlay,
+    };
+  };
+
+  const ensureDrawingTool = () => {
+    if (!(canvas instanceof HTMLElement)) {
+      return null;
+    }
+    let tool = drawingToolInstances.get(canvas);
+    if (!tool) {
+      tool = createDrawingTool(canvas, registerCleanup, {
+        canvas,
+        requestImageInsert: (dataUrl, metadata) => ingestImageFromDataUrl(dataUrl, metadata),
+      });
+      if (tool) {
+        drawingToolInstances.set(canvas, tool);
+      }
+    }
+    return tool || null;
+  };
+
+  const openDrawingTool = ({ trigger, origin } = {}) => {
+    const tool = ensureDrawingTool();
+    if (!tool || typeof tool.open !== "function") {
+      console.warn("Drawing tool is unavailable.");
+      return false;
+    }
+    return tool.open({ trigger, origin }) !== false;
+  };
+
+  const handleDrawingToolRequest = (event) => {
+    const detail = event?.detail;
+    if (!detail || detail.tool !== "drawing") {
+      return;
+    }
+    if (openDrawingTool({ trigger: detail.trigger, origin: detail.origin })) {
+      detail.handled = true;
+      event.preventDefault();
+    }
+  };
+
+  canvas.addEventListener("deck:canvas-tool-request", handleDrawingToolRequest);
+  registerCleanup(() => {
+    canvas.removeEventListener("deck:canvas-tool-request", handleDrawingToolRequest);
+  });
+
+  registerCreationAction("start-drawing", ({ trigger, origin }) => {
+    if (requestCanvasTool("drawing", { trigger, origin })) {
+      return true;
+    }
+    return openDrawingTool({ trigger, origin });
+  });
 
   registerCreationAction("add-free-text", ({ origin }) => {
     const textbox = createTextbox();
