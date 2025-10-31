@@ -11656,6 +11656,10 @@ function applyLessonBackground(
   if (!(slide instanceof HTMLElement)) {
     return;
   }
+  slide.classList.remove('lesson-slide--has-image', 'lesson-slide--has-overlay');
+  slide.style.removeProperty('--lesson-bg-image');
+  slide.style.removeProperty('--lesson-overlay-color');
+  slide.style.removeProperty('--lesson-overlay-opacity');
   const resolvedImage = trimText(imageUrl);
   if (resolvedImage) {
     slide.classList.add('lesson-slide--has-image');
@@ -11669,8 +11673,6 @@ function applyLessonBackground(
   if (resolvedOpacity > 0) {
     slide.classList.add('lesson-slide--has-overlay');
     slide.style.setProperty('--lesson-overlay-opacity', String(resolvedOpacity));
-  } else {
-    slide.style.removeProperty('--lesson-overlay-opacity');
   }
 }
 

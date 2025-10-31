@@ -19,7 +19,7 @@
                 "To apply sentence stress and intonation to show conviction or reservation."
             ],
             "communicativeGoal": "Rephrase critiques into diplomatic language during NGO project feedback.",
-            "imageUrl": "https://images.pexels.com/photos/34290767/pexels-photo-34290767.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "goalIcon": "fa-solid fa-bullseye",
@@ -31,7 +31,7 @@
         "defaults": {
             "title": "Distancing Language: Mini-Critiques",
             "instructions": "Work in pairs in breakout rooms. Take turns rephrasing the statements into more diplomatic critiques using the language we have studied.",
-            "imageUrl": "https://images.pexels.com/photos/3861962/pexels-photo-3861962.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "audioUrl": "/audio/audio1.mp3",
@@ -168,7 +168,7 @@
     "communicative-task": {
         "defaults": {
             "title": "NGO Project Review Session",
-            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "preparation": "Time: 12 minutes in breakout groups. Choose one project summary, then analyze it together in the shared Google Doc to outline strengths, weaknesses, and a final recommendation.",
@@ -309,7 +309,7 @@
                 "Run a gallery walk to showcase the scenario spotlight tiles.",
                 "Share photo documentation alongside the feedback badge earned."
             ],
-            "imageUrl": "https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "briefIcon": "fa-solid fa-bookmark",
@@ -330,7 +330,7 @@
                 "Use the shared Google Doc to outline strengths, weaknesses, and a recommendation.",
                 "Present to a partner group, share your screen, and ask a follow-up question."
             ],
-            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "timingIcon": "fa-solid fa-clock",
@@ -366,7 +366,7 @@
                 "All members should speak during the briefing.",
                 "Share your screen while presenting the Google Doc notes."
             ],
-            "imageUrl": "https://images.pexels.com/photos/959325/pexels-photo-959325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "goalIcon": "fa-solid fa-person-chalkboard",
@@ -501,7 +501,7 @@
                 "Rotate through the prototype carousel while capturing glow/grow notes.",
                 "Collect artifacts or recordings that document your evidence for the next build."
             ],
-            "imageUrl": "https://images.pexels.com/photos/1181265/pexels-photo-1181265.jpeg?auto=compress&cs=tinysrgb&h=650&w=980",
+            "imageUrl": "",
             "overlayColor": "",
             "overlayOpacity": 0,
             "mentorFocusIcon": "fa-solid fa-bookmark",
