@@ -3,6 +3,61 @@
 Use the following system prompt when instructing a model to assemble Sandbox slide decks from JSON briefs. The guidance mirrors
 how `sandbox/int-mod.js`, `sandbox/slide-templates.js`, and `sandbox/slide-nav.js` process data so the generated output slots directly into the runtime.
 
+## Lesson plan → JSON prompt
+
+When converting narrative lesson plans or facilitator briefs into structured JSON, instruct the AI to:
+
+1. **Extract deck metadata.** Parse any introductory context for the deck title, language, theme, and partner branding notes. Capture explicit asset references such as Pexels queries or audio clips so they can populate `pexelsKey`, `assetManifest`, or `assets` when supplied.
+2. **Determine slide layouts.** Identify each pedagogical moment (warmers, input, practice, reflection) and map it to the closest supported layout (`learning-objectives`, `model-dialogue`, `interactive-practice`, etc.). Create a slide object for every distinct activity, selecting modifiers and layout icons only when the plan calls them out.
+3. **Populate data slots.** Break down prose instructions into layout-specific fields. Convert bullet lists into arrays (`goals[]`, `questions[]`, `pairs[]`), split dialogue turns into `{ speaker, line }`, and transform facilitator guidance into `notes` when it should not surface to learners.
+4. **Log multimedia references.** Translate described imagery, video, audio, or overlay treatments into the relevant fields (`imageUrl`, `overlayColor`, `overlayOpacity`, `audioUrl`). Prefer structured objects for lookups—for example `{ "pexelsQuery": "community garden" }` instead of a plain string when the plan only specifies a concept.
+
+### Prompt template
+
+Use the following prompt pair when orchestrating the conversion workflow. The system prompt establishes formatting rules; the user prompt feeds the raw lesson plan.
+
+```
+System prompt:
+You are the Noor Community slide architect. Turn narrative lesson plans into valid Sandbox deck briefs. Follow the deck JSON schema and return a single JSON object that includes: (1) root deck metadata (`title`, `lang`, `brand`, `theme`, `pexelsKey` when available), (2) an ordered `slides[]` array where each entry has `layout`, `data`, optional `notes`, and any required `modifiers`, (3) per-layout fields populated according to the schema (titles, goals, questions, turns, etc.), (4) fully specified `moduleConfig` objects whenever an interactive module is described, (5) colour and overlay directives normalised to `#RRGGBB` or named tokens, and (6) descriptive text counts (`characterCount`, `wordCount`) for each major text field when the plan requests limits.
+
+User prompt template:
+Lesson plan:
+<paste narrative plan>
+
+Return JSON with:
+- `metadata`: summary object containing deck-level fields and any provided asset keys.
+- `slides`: ordered array of slide objects derived from the plan.
+- `layouts`: map describing field expectations per layout encountered (include required/optional notes).
+- `modules`: array of interactive module configs surfaced across slides.
+- `visualDirectives`: consolidated colour, overlay, and imagery guidance.
+- `textBudgets`: table of field identifiers and their word/character counts.
+```
+
+### Worked example
+
+Narrative excerpt → structured fields:
+
+> *Objectives: Learners summarise NGO success stories and practice diplomatic feedback.*
+> *Warm-up: Facilitator asks “How do NGOs measure impact?”—collect two learner responses.*
+> *Model dialogue between Aya (NGO director) and Luis (project officer). Include three exchanges about project setbacks and solutions.*
+> *Interactive quiz: Multiple-choice with two questions about funding strategies; each question needs three options and one correct answer.*
+
+- The objectives sentence becomes `slides[0]` with `layout: "learning-objectives"`, mapping the clause to `communicativeGoal` and splitting implicit goals into `goals[]` entries such as `"Summarise NGO success stories"` and `"Offer diplomatic feedback"`.
+- The warm-up prompt maps to `slides[1]` with `layout: "discussion"` (or your chosen warm-up archetype) and populates `data.questions[]` with the facilitator question plus an instruction to capture two responses, while `notes` records coaching tips.
+- The dialogue request yields `slides[2]` using `layout: "model-dialogue"`. Create three `{ speaker, line }` objects under `data.turns[]` labelled `Aya` and `Luis`, ensuring tone and topic reflect setbacks/solutions. If the plan hints at audio, place the file URL into `data.audioUrl`.
+- The multiple-choice quiz becomes `slides[3]` with `layout: "interactive-practice"`. Each bullet converts to a `questions[]` entry containing `{ "prompt": "…", "options": ["…"], "answer": "…" }`. Also build a `moduleConfig` object matching the `multiple-choice` template and set `activityType` accordingly.
+
+### Validation checklist for the AI
+
+Before returning the JSON brief, the AI should:
+
+1. Confirm every slide includes a non-empty `data.title` (or layout-specific title key) and fallback to archetype defaults only when the plan provides no alternative.
+2. Ensure `layoutIcon` is provided when the plan specifies a custom icon; otherwise omit it so runtime defaults apply.
+3. Normalise all colour strings to lowercase hex (`#rrggbb`) or documented tokens (`sage`, `wheat`, `sky`, `rose`, `slate`). Clamp overlay opacity to `0–92` and include numeric values only.
+4. Verify interactive slides include populated `activityType`, matching `moduleTemplate` (when needed), and fully-formed `moduleConfig` payloads with required fields.
+5. Cross-check that text fields flagged with budgets report `wordCount`/`characterCount` entries that align with the composed copy.
+6. Surface any referenced media (audio URLs, Pexels queries, video links) in the appropriate slide fields or deck-level assets so downstream hydration succeeds.
+
 ## Deck JSON reference
 
 ### Root object
