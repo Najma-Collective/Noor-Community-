@@ -2387,60 +2387,17 @@
     </script>
     <script type="module">
       import { setupInteractiveDeck } from "./int-mod.js";
-      import { VisualSlideEditor, enableVisualEditingOnClick } from "./visual-editor.js";
-      import { openActivityBuilder } from "./activity-visual-builder.js";
+      import { initVisualEditing, makeSlideVisuallyEditable } from "./simple-visual-editor.js";
 
       // Initialize the deck
-      const deck = setupInteractiveDeck();
+      setupInteractiveDeck();
 
-      // Enable visual editing mode
-      // When a user clicks on a slide, enable visual editing
-      const visualEditor = enableVisualEditingOnClick(deck);
+      // Enable visual editing for all slides
+      // This makes all text, icons, and lists directly editable
+      initVisualEditing();
 
-      // Override the activity builder to use visual builder
-      // Replace the iframe-based activity builder with the visual builder
-      window.openVisualActivityBuilder = function() {
-        openActivityBuilder((activityData) => {
-          console.log('Activity saved:', activityData);
-          // TODO: Insert activity into current slide
-          // This would need integration with the deck's activity insertion logic
-        });
-      };
-
-      // Add visual editing button to toolbar
-      const toolbar = document.querySelector('.toolbar-actions');
-      if (toolbar) {
-        const editModeBtn = document.createElement('button');
-        editModeBtn.id = 'visual-edit-mode-btn';
-        editModeBtn.className = 'toolbar-btn';
-        editModeBtn.type = 'button';
-        editModeBtn.innerHTML = `
-          <i class="fa-solid fa-pen-to-square"></i>
-          Visual Edit Mode
-        `;
-        editModeBtn.title = 'Click on any slide to edit it visually';
-
-        editModeBtn.addEventListener('click', () => {
-          // Toggle visual editing mode
-          if (visualEditor.editMode) {
-            visualEditor.disableEditMode();
-            editModeBtn.classList.remove('active');
-          } else {
-            // Show hint to user
-            alert('Click on any slide to start editing visually. You can:\n\n• Click text to edit\n• Click icons to change them\n• Click images to replace them\n• Add/remove list items\n• For grounding-activity slides: change background images');
-          }
-        });
-
-        // Insert after the "Add Blank Slide" button
-        const addSlideBtn = document.getElementById('add-slide-btn');
-        if (addSlideBtn) {
-          addSlideBtn.after(editModeBtn);
-        } else {
-          toolbar.appendChild(editModeBtn);
-        }
-      }
-
-      console.log('Visual Slide Editor initialized');
+      console.log('✅ Sandbox deck builder ready with visual editing');
+      console.log('💡 All slides are now editable - just click and type!');
     </script>
 
   </body>
