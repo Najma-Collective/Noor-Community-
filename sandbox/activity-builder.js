@@ -1683,7 +1683,7 @@ class ActivityBuilder {
         <div class="preset-toolbar">
           <label class="field">
             <span class="field-label"><i class="fa-solid fa-folder-open"></i> Saved presets</span>
-            <select id="preset-select" aria-label="Saved presets">
+            <select id="preset-select" class="type-select type-select--compact" aria-label="Saved presets">
               ${presetOptions}
             </select>
           </label>
@@ -2263,7 +2263,7 @@ class ActivityBuilder {
               </label>
               <label class="field">
                 <span class="field-label"><i class="fa-solid fa-circle-check"></i> Correct column</span>
-                <select data-field="grid-row-correct">
+                <select class="type-select type-select--compact" data-field="grid-row-correct">
                   ${options}
                 </select>
               </label>
