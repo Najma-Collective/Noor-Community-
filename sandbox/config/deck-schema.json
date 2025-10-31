@@ -1,0 +1,1493 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noor.community/schemas/sandbox-deck.json",
+  "title": "Sandbox Deck Brief",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lang": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+    },
+    "brand": {
+      "$ref": "#/$defs/brand"
+    },
+    "theme": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pexelsKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetManifest": {
+      "type": "object"
+    },
+    "assets": {
+      "type": "object"
+    },
+    "deckBrief": {
+      "type": "object"
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/slide"
+      }
+    }
+  },
+  "required": ["slides"],
+  "$defs": {
+    "brand": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "logo": {
+          "$ref": "#/$defs/imageSource"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "accentColor": {
+          "$ref": "#/$defs/colorToken"
+        }
+      }
+    },
+    "colorToken": {
+      "type": "string",
+      "pattern": "^(#[0-9A-Fa-f]{3}(?:[0-9A-Fa-f]{3})?|[a-zA-Z][a-zA-Z0-9-]*)$"
+    },
+    "iconClass": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imageSource": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "pexelsQuery": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fallback": {
+              "type": "string",
+              "minLength": 1
+            },
+            "alt": {
+              "type": "string"
+            },
+            "credit": {
+              "type": "string"
+            },
+            "photoId": {
+              "type": ["string", "integer"]
+            },
+            "src": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "includeCredit": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["pexelsQuery"]
+        }
+      ]
+    },
+    "linkUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "speaker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["speaker", "line"]
+    },
+    "mcQuestion": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "options": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "required": ["prompt", "options", "answer"]
+    },
+    "cardItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconClass"
+        }
+      },
+      "required": ["title"]
+    },
+    "galleryItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "image": {
+          "$ref": "#/$defs/imageSource"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "credit": {
+          "type": "string"
+        }
+      },
+      "required": ["image"]
+    },
+    "roleItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": ["label", "value"]
+    },
+    "featureItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["label", "value"]
+    },
+    "moduleConfig": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "presetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "type": "object"
+        },
+        "html": {
+          "type": "string"
+        }
+      }
+    },
+    "layoutData": {
+      "blank-canvas": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "learning-objectives": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "goals": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "communicativeGoal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "goalIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "communicativeGoalIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "goals", "communicativeGoal"]
+      },
+      "model-dialogue": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "audioUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "turns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/turn"
+            },
+            "minItems": 1
+          },
+          "instructionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "turns"]
+      },
+      "interactive-practice": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "activityType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/mcQuestion"
+            },
+            "minItems": 1
+          },
+          "moduleTemplate": {
+            "type": "string",
+            "minLength": 1
+          },
+          "moduleConfig": {
+            "$ref": "#/$defs/moduleConfig"
+          },
+          "moduleHtml": {
+            "type": "string"
+          },
+          "instructionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "activityTypeIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "activityType", "questions"]
+      },
+      "card-stack": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "pill": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pillIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/cardItem"
+            },
+            "minItems": 1
+          },
+          "cardIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["pill", "title", "cards"]
+      },
+      "pill-with-gallery": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "pill": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pillIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/galleryItem"
+            },
+            "minItems": 1
+          },
+          "itemIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["pill", "title", "gallery"]
+      },
+      "communicative-task": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "preparation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "performance": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scaffolding": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "preparationIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "performanceIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "scaffoldingIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "preparation", "performance", "scaffolding"]
+      },
+      "pronunciation-focus": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "words": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "sentences": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "practice": {
+            "type": "string",
+            "minLength": 1
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "targetIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "wordsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "sentencesIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "practiceIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "target", "words", "sentences", "practice"]
+      },
+      "reflection": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompts": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "promptsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "prompts"]
+      },
+      "grounding-activity": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "steps": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "stepsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "steps"]
+      },
+      "topic-introduction": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hook": {
+            "type": "string",
+            "minLength": 1
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "essentialQuestion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "keyVocabulary": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "hookIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "contextIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "essentialQuestionIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "keyVocabularyIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": [
+          "title",
+          "hook",
+          "context",
+          "essentialQuestion",
+          "keyVocabulary"
+        ]
+      },
+      "guided-discovery": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "discoveryPrompts": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "noticingQuestions": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "sampleLanguage": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "contextIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "discoveryPromptsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "noticingQuestionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "sampleLanguageIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": [
+          "title",
+          "context",
+          "discoveryPrompts",
+          "noticingQuestions",
+          "sampleLanguage"
+        ]
+      },
+      "creative-practice": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "brief": {
+            "type": "string",
+            "minLength": 1
+          },
+          "materials": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "makingSteps": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "sharingOptions": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "briefIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "materialsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "makingStepsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "sharingOptionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": [
+          "title",
+          "brief",
+          "materials",
+          "makingSteps",
+          "sharingOptions"
+        ]
+      },
+      "task-divider": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "timing": {
+            "type": "string",
+            "minLength": 1
+          },
+          "focus": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actions": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "timingIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "focusIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "actionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "timing", "focus", "actions"]
+      },
+      "task-reporting": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompts": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/roleItem"
+            },
+            "minItems": 1
+          },
+          "evidence": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "goalIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "promptsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "rolesIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "evidenceIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "goal", "prompts", "roles", "evidence"]
+      },
+      "genre-deconstruction": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "genre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/featureItem"
+            },
+            "minItems": 1
+          },
+          "mentorText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "genreIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "purposeIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "featuresIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "mentorTextIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "genre", "purpose", "features", "mentorText"]
+      },
+      "linguistic-feature-hunt": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "features": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "reflection": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "sourceTextIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "featuresIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "reflectionIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "sourceText", "features", "reflection"]
+      },
+      "text-reconstruction": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "steps": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "segments": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "contextIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "stepsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "segmentsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "context", "steps", "segments"]
+      },
+      "jumbled-text-sequencing": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instructions": {
+            "type": "string",
+            "minLength": 1
+          },
+          "segments": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "supportTips": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "instructionsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "segmentsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "supportTipsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "instructions", "segments", "supportTips"]
+      },
+      "scaffolded-joint-construction": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mentorFocus": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sharedOutcome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "teacherMoves": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "learnerMoves": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "mentorFocusIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "sharedOutcomeIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "teacherMovesIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "learnerMovesIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": [
+          "title",
+          "mentorFocus",
+          "sharedOutcome",
+          "teacherMoves",
+          "learnerMoves"
+        ]
+      },
+      "independent-construction-checklist": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reminder": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checklist": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "stretchGoals": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "imageUrl": {
+            "$ref": "#/$defs/imageSource"
+          },
+          "overlayColor": {
+            "$ref": "#/$defs/colorToken"
+          },
+          "overlayOpacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "reminderIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "checklistIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "stretchGoalsIcon": {
+            "$ref": "#/$defs/iconClass"
+          },
+          "layoutIcon": {
+            "$ref": "#/$defs/iconClass"
+          }
+        },
+        "required": ["title", "reminder", "checklist", "stretchGoals"]
+      }
+    },
+    "slide": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layout": {
+          "type": "string",
+          "enum": [
+            "blank-canvas",
+            "learning-objectives",
+            "model-dialogue",
+            "interactive-practice",
+            "card-stack",
+            "pill-with-gallery",
+            "communicative-task",
+            "pronunciation-focus",
+            "reflection",
+            "grounding-activity",
+            "topic-introduction",
+            "guided-discovery",
+            "creative-practice",
+            "task-divider",
+            "task-reporting",
+            "genre-deconstruction",
+            "linguistic-feature-hunt",
+            "text-reconstruction",
+            "jumbled-text-sequencing",
+            "scaffolded-joint-construction",
+            "independent-construction-checklist"
+          ]
+        },
+        "data": {
+          "type": "object"
+        },
+        "notes": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          ]
+        },
+        "assets": {
+          "type": "object"
+        },
+        "modifiers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "boolean", "number"]
+          }
+        }
+      },
+      "required": ["layout", "data"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "blank-canvas" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/blank-canvas" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "learning-objectives" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/learning-objectives" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "model-dialogue" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/model-dialogue" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "interactive-practice" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/interactive-practice" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "card-stack" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/card-stack" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "pill-with-gallery" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/pill-with-gallery" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "communicative-task" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/communicative-task" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "pronunciation-focus" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/pronunciation-focus" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "reflection" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/reflection" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "grounding-activity" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/grounding-activity" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "topic-introduction" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/topic-introduction" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "guided-discovery" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/guided-discovery" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "creative-practice" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/creative-practice" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "task-divider" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/task-divider" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "task-reporting" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/task-reporting" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "genre-deconstruction" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/genre-deconstruction" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "linguistic-feature-hunt" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/linguistic-feature-hunt" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "text-reconstruction" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/text-reconstruction" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "jumbled-text-sequencing" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/jumbled-text-sequencing" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "scaffolded-joint-construction" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/scaffolded-joint-construction" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layout": { "const": "independent-construction-checklist" }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": { "$ref": "#/$defs/layoutData/independent-construction-checklist" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -60,6 +60,14 @@ Before returning the JSON brief, the AI should:
 
 ## Deck JSON reference
 
+The authoritative contract for generated briefs is codified in
+[`sandbox/config/deck-schema.json`](../config/deck-schema.json). Pair the prompt
+guidance below with the schema so the model can target the same structure that
+our automated validator enforces. To test briefs locally, run
+`node ../scripts/validate-brief-schema.mjs <path-to-brief.json>` from the
+`sandbox/scripts/` directory; the script surfaces precise errors for any
+missing or invalid fields before the deck reaches the renderer.
+
 ### Root object
 
 Deck briefs are plain JSON objects. Any unknown keys are preserved by `normalizeDeckBrief` but ignored by the generator, so explicitly set only the fields you need.【F:sandbox/scripts/create-deck.mjs†L150-L188】【F:sandbox/scripts/create-deck.mjs†L430-L534】
