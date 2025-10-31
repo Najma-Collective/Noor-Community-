@@ -332,6 +332,8 @@ const escapeHtml = (unsafe = '') =>
 
 const formatMultiline = (value = '') => escapeHtml(value).replace(/\n/g, '<br>');
 
+const serialiseConfig = (value) => escapeHtml(JSON.stringify(value));
+
 class ActivityBuilder {
   constructor() {
     this.state = {
@@ -2616,7 +2618,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="mc-activity">
+      <div class="mc-activity" data-module="multiple-choice">
         ${questionsMarkup}
         <div class="activity-actions">
           <button id="mc-check" class="activity-btn">Check answers</button>
@@ -2629,78 +2631,7 @@ const Generators = {
           <button id="mc-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const toArray = (nodeList) => Array.prototype.slice.call(nodeList);
-          const questions = toArray(document.querySelectorAll('.mc-question'));
-          const checkBtn = document.getElementById('mc-check');
-          const resetBtn = document.getElementById('mc-reset');
-          const feedback = document.getElementById('mc-feedback');
-          const scoreLine = document.getElementById('mc-score');
-          const details = document.getElementById('mc-details');
-          const closeBtn = document.getElementById('mc-close');
-
-          const evaluate = () => {
-            let correctCount = 0;
-            let totalCount = questions.length;
-            details.innerHTML = '';
-
-            questions.forEach((question, index) => {
-              const options = toArray(question.querySelectorAll('.mc-option'));
-              const expected = options.filter((opt) => opt.dataset.correct === 'true').map((opt) => options.indexOf(opt));
-              const selected = options
-                .map((opt, idx) => ({ opt, idx }))
-                .filter(({ opt }) => opt.querySelector('input').checked)
-                .map(({ idx }) => idx);
-
-              const isCorrect = expected.length === selected.length && expected.every((value) => selected.includes(value));
-              if (isCorrect) {
-                correctCount += 1;
-              }
-              const learnerAnswer = selected.length
-                ? selected.map((idx) => options[idx].innerText.trim()).join(', ')
-                : 'No response';
-              const correctAnswer = expected.length
-                ? expected.map((idx) => options[idx].innerText.trim()).join(', ')
-                : 'No correct answer provided';
-              const detail = document.createElement('div');
-              detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              const correctAnswerMarkup = isCorrect
-                ? ''
-                : '<p><strong>Correct answer:</strong> ' + correctAnswer + '</p>';
-              detail.innerHTML =
-                '<h4>' +
-                question.querySelector('.mc-question-title').innerText +
-                '</h4>' +
-                '<p><strong>Your answer:</strong> ' +
-                learnerAnswer +
-                '</p>' +
-                correctAnswerMarkup +
-                '<p class="explanation">' +
-                (question.dataset.explanation || '') +
-                '</p>';
-              details.appendChild(detail);
-            });
-
-            scoreLine.textContent =
-              'You answered ' + correctCount + ' of ' + totalCount + ' correctly.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
-
-          checkBtn.addEventListener('click', evaluate);
-          closeBtn.addEventListener('click', () => (feedback.hidden = true));
-          resetBtn.addEventListener('click', () => {
-            details.innerHTML = '';
-            feedback.hidden = true;
-            document.querySelectorAll('.mc-options input').forEach((input) => {
-              if (input.type === 'radio' || input.type === 'checkbox') {
-                input.checked = false;
-              }
-            });
-          });
-        })();
-      </script>
+      <script type="module" src="./modules/multiple-choice.js"></script>
     `);
   },
   linking: (config) => {
@@ -2725,7 +2656,7 @@ const Generators = {
     const rowsMarkup = pairs
       .map(
         (pair, index) => `
-          <div class="linking-row" data-index="${index}">
+          <div class="linking-row" data-index="${index}" data-answer="${escapeHtml(pair.match)}">
             <div class="linking-prompt">
               <span class="linking-pill">${index + 1}</span>
               <div class="linking-text">
@@ -2745,7 +2676,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="linking-activity">
+      <div class="linking-activity" data-module="linking" data-config="${serialiseConfig({ pairs })}">
         ${rowsMarkup}
         <div class="activity-actions">
           <button id="linking-check" class="activity-btn">Check links</button>
@@ -2758,112 +2689,7 @@ const Generators = {
           <button id="linking-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const pairs = ${JSON.stringify(pairs)};
-          const selects = Array.from(document.querySelectorAll('.linking-select'));
-          if (!pairs.length || !selects.length) return;
-          const baseOptions = pairs.map((pair, index) => ({ value: String(index), label: pair.match }));
-          const answerMap = new Map(baseOptions.map((entry) => [entry.value, entry.label]));
-          const shuffle = (items) => {
-            const copy = items.slice();
-            for (let i = copy.length - 1; i > 0; i -= 1) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [copy[i], copy[j]] = [copy[j], copy[i]];
-            }
-            return copy;
-          };
-          const buildOptions = (select) => {
-            const current = select.value;
-            select.innerHTML = '';
-            const placeholder = document.createElement('option');
-            placeholder.value = '';
-            placeholder.textContent = 'Choose match';
-            select.appendChild(placeholder);
-            shuffle(baseOptions).forEach((entry) => {
-              const option = document.createElement('option');
-              option.value = entry.value;
-              option.textContent = entry.label;
-              select.appendChild(option);
-            });
-            if (current && answerMap.has(current)) {
-              select.value = current;
-            }
-          };
-
-          const feedback = document.getElementById('linking-feedback');
-          const summary = document.getElementById('linking-summary');
-          const details = document.getElementById('linking-details');
-          const checkBtn = document.getElementById('linking-check');
-          const resetBtn = document.getElementById('linking-reset');
-          const closeBtn = document.getElementById('linking-close');
-
-          const resetRows = () => {
-            selects.forEach((select) => {
-              buildOptions(select);
-              select.value = '';
-              const row = select.closest('.linking-row');
-              if (row) {
-                row.classList.remove('correct', 'incorrect');
-              }
-            });
-            if (feedback) {
-              feedback.hidden = true;
-            }
-            if (details) {
-              details.innerHTML = '';
-            }
-          };
-
-          resetRows();
-
-          const evaluate = () => {
-            if (!feedback || !summary || !details) return;
-            let score = 0;
-            details.innerHTML = '';
-            selects.forEach((select, index) => {
-              const row = select.closest('.linking-row');
-              if (row) {
-                row.classList.remove('correct', 'incorrect');
-              }
-              const value = select.value;
-              const isCorrect = value && Number(value) === index;
-              if (row) {
-                row.classList.add(isCorrect ? 'correct' : 'incorrect');
-              }
-              if (isCorrect) {
-                score += 1;
-              }
-              const item = document.createElement('li');
-              const prompt = document.createElement('strong');
-              prompt.textContent = pairs[index].prompt;
-              item.appendChild(prompt);
-              const span = document.createElement('span');
-              const chosen = value ? answerMap.get(value) : 'No selection';
-              span.textContent = ' — You chose: ' + chosen + '. Correct: ' + answerMap.get(String(index)) + '.';
-              item.appendChild(span);
-              details.appendChild(item);
-            });
-            summary.textContent = 'You linked ' + score + ' of ' + pairs.length + ' correctly.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
-
-          if (checkBtn) {
-            checkBtn.addEventListener('click', evaluate);
-          }
-          if (resetBtn) {
-            resetBtn.addEventListener('click', () => resetRows());
-          }
-          if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-              if (feedback) {
-                feedback.hidden = true;
-              }
-            });
-          }
-        })();
-      </script>
+      <script type="module" src="./modules/linking.js"></script>
     `);
   },
   dropdown: (config) => {
@@ -2915,7 +2741,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="dropdown-activity">
+      <div class="dropdown-activity" data-module="dropdown">
         ${itemsMarkup}
         <div class="activity-actions">
           <button id="dropdown-check" class="activity-btn">Check answers</button>
@@ -2928,85 +2754,7 @@ const Generators = {
           <button id="dropdown-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const items = ${JSON.stringify(items)};
-          const nodes = Array.from(document.querySelectorAll('.dropdown-item'));
-          if (!items.length || !nodes.length) return;
-          const checkBtn = document.getElementById('dropdown-check');
-          const resetBtn = document.getElementById('dropdown-reset');
-          const closeBtn = document.getElementById('dropdown-close');
-          const feedback = document.getElementById('dropdown-feedback');
-          const summary = document.getElementById('dropdown-summary');
-          const details = document.getElementById('dropdown-details');
-
-          const reset = () => {
-            nodes.forEach((node) => {
-              const select = node.querySelector('select');
-              if (select) {
-                select.value = '';
-              }
-              node.classList.remove('correct', 'incorrect');
-            });
-            if (feedback) {
-              feedback.hidden = true;
-            }
-            if (details) {
-              details.innerHTML = '';
-            }
-          };
-
-          const evaluate = () => {
-            if (!feedback || !summary || !details) return;
-            let score = 0;
-            details.innerHTML = '';
-            nodes.forEach((node, index) => {
-              const select = node.querySelector('select');
-              node.classList.remove('correct', 'incorrect');
-              const correctIndex = items[index].options.findIndex((opt) => opt.correct);
-              const selectedValue = select ? select.value : '';
-              const isCorrect = selectedValue !== '' && Number(selectedValue) === correctIndex;
-              node.classList.add(isCorrect ? 'correct' : 'incorrect');
-              if (isCorrect) {
-                score += 1;
-              }
-              const detail = document.createElement('li');
-              const prompt = document.createElement('strong');
-              prompt.textContent = items[index].prompt;
-              detail.appendChild(prompt);
-              const span = document.createElement('span');
-              const chosen = selectedValue !== '' ? items[index].options[Number(selectedValue)].text : 'No selection';
-              const correctLabel = correctIndex >= 0 ? items[index].options[correctIndex].text : 'Not set';
-              span.textContent = ' — You chose: ' + chosen + '. Correct: ' + correctLabel + '.';
-              detail.appendChild(span);
-              if (items[index].feedback) {
-                const note = document.createElement('p');
-                note.className = 'detail-note';
-                note.textContent = items[index].feedback;
-                detail.appendChild(note);
-              }
-              details.appendChild(detail);
-            });
-            summary.textContent = 'You answered ' + score + ' of ' + items.length + ' correctly.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
-
-          if (checkBtn) {
-            checkBtn.addEventListener('click', evaluate);
-          }
-          if (resetBtn) {
-            resetBtn.addEventListener('click', reset);
-          }
-          if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-              if (feedback) {
-                feedback.hidden = true;
-              }
-            });
-          }
-        })();
-      </script>
+      <script type="module" src="./modules/dropdown.js"></script>
     `);
   },
   'quiz-show': (config) => {
@@ -3427,7 +3175,7 @@ const Generators = {
           }
         }
       </style>
-      <div class="quiz-show">
+      <div class="quiz-show" data-module="quiz-show">
         <div class="quiz-stage" data-default-time="${defaultTime}">
           <aside class="quiz-scoreboard" aria-label="Scoreboard">
             <div class="scoreboard-header">
@@ -3455,174 +3203,7 @@ const Generators = {
             </div>
           </div>
         </div>
-      </div>
-      <script>
-        (() => {
-          const stage = document.querySelector('.quiz-stage');
-          if (!stage) return;
-          const slides = Array.from(stage.querySelectorAll('.quiz-slide'));
-          if (!slides.length) return;
-          const defaultTime = Number(stage.dataset.defaultTime) || ${defaultTime};
-          const prevBtn = document.getElementById('quiz-prev');
-          const nextBtn = document.getElementById('quiz-next');
-          const timerDisplay = document.getElementById('quiz-timer-value');
-          const progressDisplay = document.getElementById('quiz-progress');
-          let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
-          if (activeIndex < 0) activeIndex = 0;
-          let timerId = null;
-          let remaining = 0;
-
-          const getSlideTime = (slide) => {
-            const raw = Number(slide.dataset.time);
-            if (Number.isFinite(raw) && raw > 0) {
-              return Math.round(raw);
-            }
-            return defaultTime;
-          };
-
-          const updateButtons = () => {
-            if (prevBtn) {
-              prevBtn.disabled = activeIndex === 0;
-            }
-            if (nextBtn) {
-              const label = nextBtn.querySelector('span');
-              if (label) {
-                label.textContent = activeIndex === slides.length - 1 ? 'Restart' : 'Next';
-              }
-            }
-          };
-
-          const setProgress = () => {
-            if (!progressDisplay) return;
-            progressDisplay.textContent = 'Question ' + (activeIndex + 1) + ' of ' + slides.length;
-          };
-
-          const updateTimerLabel = () => {
-            const value = Math.max(0, Math.ceil(remaining)) + 's';
-            if (timerDisplay) {
-              timerDisplay.textContent = value;
-            }
-            const currentSlide = slides[activeIndex];
-            const slideTimer = currentSlide ? currentSlide.querySelector('[data-slide-timer]') : null;
-            if (slideTimer) {
-              slideTimer.textContent = value;
-            }
-          };
-
-          const clearTimer = () => {
-            if (timerId) {
-              window.clearInterval(timerId);
-              timerId = null;
-            }
-          };
-
-          const startTimer = (duration) => {
-            clearTimer();
-            remaining = duration;
-            updateTimerLabel();
-            timerId = window.setInterval(() => {
-              remaining -= 1;
-              if (remaining <= 0) {
-                remaining = 0;
-                updateTimerLabel();
-                clearTimer();
-                const current = slides[activeIndex];
-                if (current) {
-                  current.classList.add('time-up');
-                }
-              } else {
-                updateTimerLabel();
-              }
-            }, 1000);
-          };
-
-          const activateSlide = (index) => {
-            if (index < 0 || index >= slides.length) return;
-            slides.forEach((slide, idx) => {
-              slide.classList.toggle('is-active', idx === index);
-              if (idx === index) {
-                slide.classList.remove('is-revealed', 'time-up');
-              }
-            });
-            activeIndex = index;
-            setProgress();
-            updateButtons();
-            startTimer(getSlideTime(slides[activeIndex]));
-          };
-
-          if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-              if (activeIndex > 0) {
-                activateSlide(activeIndex - 1);
-              }
-            });
-          }
-
-          if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-              if (activeIndex === slides.length - 1) {
-                activateSlide(0);
-              } else {
-                activateSlide(activeIndex + 1);
-              }
-            });
-          }
-
-          stage.addEventListener('click', (event) => {
-            const revealBtn = event.target.closest('[data-role="reveal"]');
-            if (!revealBtn) return;
-            const slide = revealBtn.closest('.quiz-slide');
-            if (!slide) return;
-            const isRevealed = slide.classList.toggle('is-revealed');
-            const labelSpan = revealBtn.querySelector('span');
-            if (labelSpan) {
-              labelSpan.textContent = isRevealed ? 'Hide answer' : 'Reveal answer';
-            }
-            const icon = revealBtn.querySelector('i');
-            if (icon) {
-              icon.classList.toggle('fa-eye', !isRevealed);
-              icon.classList.toggle('fa-eye-slash', isRevealed);
-            }
-            if (isRevealed) {
-              clearTimer();
-              remaining = 0;
-              updateTimerLabel();
-            } else {
-              startTimer(getSlideTime(slide));
-            }
-          });
-
-          const scoreboard = stage.querySelector('.quiz-scoreboard');
-          if (scoreboard) {
-            scoreboard.addEventListener('click', (event) => {
-              const button = event.target.closest('.score-btn');
-              if (!button) return;
-              const teamCard = button.closest('.team-card');
-              if (!teamCard) return;
-              const teamName = teamCard.querySelector('.team-name')?.textContent || 'team';
-              const scoreEl = teamCard.querySelector('[data-role="score"]');
-              let score = Number(teamCard.dataset.score || '0');
-              score += 1;
-              teamCard.dataset.score = score;
-              if (scoreEl) {
-                scoreEl.textContent = score;
-              }
-              teamCard.classList.remove('bursting');
-              void teamCard.offsetWidth;
-              teamCard.classList.add('bursting');
-              button.setAttribute('aria-label', 'Add a point to ' + teamName + ' (current: ' + score + ')');
-            });
-
-            scoreboard.addEventListener('animationend', (event) => {
-              if (event.target.classList.contains('burst')) {
-                event.target.parentElement?.classList.remove('bursting');
-              }
-            });
-          }
-
-          activateSlide(activeIndex);
-        })();
-      </script>
+      <script type="module" src="./modules/quiz-show.js"></script>
     `);
   },
   gapfill: (config) => {
@@ -3647,7 +3228,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="gapfill-activity">
+      <div class="gapfill-activity" data-module="gapfill">
         <p class="gapfill-text">${passageMarkup}</p>
         <div class="activity-actions">
           <button id="gap-check" class="activity-btn">Check answers</button>
@@ -3660,78 +3241,7 @@ const Generators = {
           <button id="gap-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const gaps = Array.from(document.querySelectorAll('.gap'));
-          const checkBtn = document.getElementById('gap-check');
-          const resetBtn = document.getElementById('gap-reset');
-          const feedback = document.getElementById('gap-feedback');
-          const scoreLine = document.getElementById('gap-score');
-          const details = document.getElementById('gap-details');
-          const closeBtn = document.getElementById('gap-close');
-
-          const normalise = (value) => value.trim().toLowerCase();
-
-          checkBtn.addEventListener('click', () => {
-            let correct = 0;
-            let attempted = 0;
-            details.innerHTML = '';
-
-            gaps.forEach((gap, index) => {
-              const input = gap.querySelector('input');
-              const learnerValue = normalise(input.value);
-              const answers = gap.dataset.answers.split('|').map((ans) => normalise(ans));
-              if (!learnerValue) {
-                input.classList.remove('correct', 'incorrect');
-                return;
-              }
-              attempted += 1;
-              const isCorrect = answers.includes(learnerValue);
-              if (isCorrect) correct += 1;
-              input.classList.toggle('correct', isCorrect);
-              input.classList.toggle('incorrect', !isCorrect);
-              const detail = document.createElement('div');
-              detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              const acceptableAnswersMarkup = isCorrect
-                ? ''
-                :
-                    '<p><strong>Acceptable answers:</strong> ' +
-                    gap.dataset.answers.replace(/\\|/g, ', ') +
-                    '</p>';
-              detail.innerHTML =
-                '<h4>Blank ' +
-                (index + 1) +
-                '</h4>' +
-                '<p><strong>Your answer:</strong> ' +
-                (input.value || 'No response') +
-                '</p>' +
-                acceptableAnswersMarkup;
-              details.appendChild(detail);
-            });
-
-            if (attempted === 0) {
-              scoreLine.textContent = 'Please complete at least one blank before checking.';
-            } else {
-              scoreLine.textContent =
-                'You answered ' + correct + ' of ' + attempted + ' correctly.';
-            }
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          });
-
-          resetBtn.addEventListener('click', () => {
-            gaps.forEach((gap) => {
-              const input = gap.querySelector('input');
-              input.value = '';
-              input.classList.remove('correct', 'incorrect');
-            });
-            feedback.hidden = true;
-            details.innerHTML = '';
-          });
-
-          closeBtn.addEventListener('click', () => (feedback.hidden = true));
-        })();
-      </script>
+      <script type="module" src="./modules/gapfill.js"></script>
     `);
   },
   grouping: (config) => {
@@ -3766,7 +3276,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="grouping-activity">
+      <div class="grouping-activity" data-module="grouping">
         <div class="group-source" aria-label="Cards to sort">${itemMarkup}</div>
         <div class="group-targets">${categoryMarkup}</div>
         <div class="activity-actions">
@@ -3780,97 +3290,7 @@ const Generators = {
           <button id="group-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const dragItems = Array.from(document.querySelectorAll('.group-item'));
-          const dropZones = Array.from(document.querySelectorAll('.drop-zone'));
-          const checkBtn = document.getElementById('group-check');
-          const resetBtn = document.getElementById('group-reset');
-          const feedback = document.getElementById('group-feedback');
-          const scoreLine = document.getElementById('group-score');
-          const details = document.getElementById('group-details');
-          const closeBtn = document.getElementById('group-close');
-          const sourceContainer = document.querySelector('.group-source');
-
-          dragItems.forEach((item) => {
-            item.addEventListener('dragstart', (event) => {
-              event.dataTransfer.setData('text/plain', item.id);
-              setTimeout(() => item.classList.add('dragging'), 0);
-            });
-            item.addEventListener('dragend', () => item.classList.remove('dragging'));
-          });
-
-          const allowDrop = (event) => {
-            event.preventDefault();
-          };
-
-          dropZones.forEach((zone) => {
-            zone.addEventListener('dragover', allowDrop);
-            zone.addEventListener('drop', (event) => {
-              event.preventDefault();
-              const id = event.dataTransfer.getData('text/plain');
-              const dragged = document.getElementById(id);
-              if (dragged) {
-                zone.appendChild(dragged);
-              }
-            });
-          });
-
-          sourceContainer.addEventListener('dragover', allowDrop);
-          sourceContainer.addEventListener('drop', (event) => {
-            event.preventDefault();
-            const id = event.dataTransfer.getData('text/plain');
-            const dragged = document.getElementById(id);
-            if (dragged) {
-              sourceContainer.appendChild(dragged);
-            }
-          });
-
-          checkBtn.addEventListener('click', () => {
-            let correct = 0;
-            let total = dragItems.length;
-            details.innerHTML = '';
-
-            dropZones.forEach((zone) => {
-              const expected = zone.parentElement.querySelector('h3').innerText.trim();
-              Array.from(zone.children).forEach((item) => {
-                const isCorrect = item.dataset.category === expected;
-                item.classList.toggle('correct', isCorrect);
-                item.classList.toggle('incorrect', !isCorrect);
-                if (isCorrect) correct += 1;
-                const detail = document.createElement('div');
-                detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-                detail.innerHTML =
-                  '<h4>' +
-                  item.innerText.trim() +
-                  '</h4>' +
-                  '<p>' +
-                  (isCorrect
-                    ? 'Placed correctly'
-                    : 'Should be in ' + item.dataset.category) +
-                  '</p>';
-                details.appendChild(detail);
-              });
-            });
-
-            scoreLine.textContent =
-              'You sorted ' + correct + ' of ' + total + ' cards correctly.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          });
-
-          resetBtn.addEventListener('click', () => {
-            dragItems.forEach((item) => {
-              item.classList.remove('correct', 'incorrect');
-              sourceContainer.appendChild(item);
-            });
-            details.innerHTML = '';
-            feedback.hidden = true;
-          });
-
-          closeBtn.addEventListener('click', () => (feedback.hidden = true));
-        })();
-      </script>
+      <script type="module" src="./modules/grouping.js"></script>
     `);
   },
   'multiple-choice-grid': (config) => {
@@ -3936,7 +3356,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="grid-activity">
+      <div class="grid-activity" data-module="multiple-choice-grid" data-columns="${serialiseConfig(safeColumns)}">
         <div class="table-wrapper">
           <table class="grid-table">
             <thead>
@@ -3961,86 +3381,7 @@ const Generators = {
           <button id="grid-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const rows = Array.from(document.querySelectorAll('.grid-row'));
-          if (!rows.length) return;
-          const columns = ${JSON.stringify(safeColumns)};
-          const checkBtn = document.getElementById('grid-check');
-          const resetBtn = document.getElementById('grid-reset');
-          const closeBtn = document.getElementById('grid-close');
-          const feedback = document.getElementById('grid-feedback');
-          const summary = document.getElementById('grid-summary');
-          const details = document.getElementById('grid-details');
-
-          const reset = () => {
-            rows.forEach((row) => {
-              row.classList.remove('correct', 'incorrect');
-              row.querySelectorAll('input[type="radio"]').forEach((input) => {
-                input.checked = false;
-              });
-            });
-            if (feedback) {
-              feedback.hidden = true;
-            }
-            if (details) {
-              details.innerHTML = '';
-            }
-          };
-
-          const evaluate = () => {
-            if (!feedback || !summary || !details) return;
-            let score = 0;
-            details.innerHTML = '';
-            rows.forEach((row, index) => {
-              const correctIndex = Number(row.dataset.correct);
-              const selected = Array.from(row.querySelectorAll('input[type="radio"]')).find((input) => input.checked);
-              const selectedIndex = selected ? Number(selected.value) : NaN;
-              const isCorrect = Number.isFinite(correctIndex) && selectedIndex === correctIndex;
-              row.classList.toggle('correct', isCorrect);
-              row.classList.toggle('incorrect', !isCorrect);
-              if (isCorrect) {
-                score += 1;
-              }
-              const detail = document.createElement('li');
-              const prompt = row.querySelector('.grid-row-label');
-              const heading = document.createElement('strong');
-              heading.textContent = prompt ? prompt.textContent : 'Row ' + (index + 1);
-              detail.appendChild(heading);
-              const span = document.createElement('span');
-              const chosenLabel = Number.isFinite(selectedIndex) ? columns[selectedIndex] : 'No selection';
-              const correctLabel = Number.isFinite(correctIndex) ? columns[correctIndex] : 'Not set';
-              span.textContent = ' — You chose: ' + chosenLabel + '. Correct: ' + correctLabel + '.';
-              detail.appendChild(span);
-              const note = row.querySelector('.grid-row-note');
-              if (note) {
-                const detailNote = document.createElement('p');
-                detailNote.className = 'detail-note';
-                detailNote.textContent = note.textContent;
-                detail.appendChild(detailNote);
-              }
-              details.appendChild(detail);
-            });
-            summary.textContent = 'You matched ' + score + ' of ' + rows.length + ' correctly.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
-
-          if (checkBtn) {
-            checkBtn.addEventListener('click', evaluate);
-          }
-          if (resetBtn) {
-            resetBtn.addEventListener('click', reset);
-          }
-          if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-              if (feedback) {
-                feedback.hidden = true;
-              }
-            });
-          }
-        })();
-      </script>
+      <script type="module" src="./modules/multiple-choice-grid.js"></script>
     `);
   },
   ranking: (config) => {
@@ -4056,9 +3397,10 @@ const Generators = {
       : fallback.items;
 
     const itemsMarkup = items
-      .map(
-        (item, index) => `
-          <li class="ranking-item" data-answer-index="${index}">
+      .map((item, index) => {
+        const noteAttr = item.note ? ` data-item-note="${escapeHtml(item.note)}"` : '';
+        return `
+          <li class="ranking-item" data-answer-index="${index}" data-item-text="${escapeHtml(item.text)}"${noteAttr}>
             <div class="ranking-card">
               <span class="ranking-number">${index + 1}</span>
               <div class="ranking-body">
@@ -4075,12 +3417,12 @@ const Generators = {
               </div>
             </div>
           </li>
-        `
-      )
+        `;
+      })
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="ranking-activity">
+      <div class="ranking-activity" data-module="ranking">
         <ol class="ranking-list">
           ${itemsMarkup}
         </ol>
@@ -4095,140 +3437,7 @@ const Generators = {
           <button id="ranking-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const list = document.querySelector('.ranking-list');
-          if (!list) return;
-          const items = ${JSON.stringify(items)};
-          const entries = Array.from(list.children);
-          if (!entries.length) return;
-          const checkBtn = document.getElementById('ranking-check');
-          const resetBtn = document.getElementById('ranking-reset');
-          const closeBtn = document.getElementById('ranking-close');
-          const feedback = document.getElementById('ranking-feedback');
-          const summary = document.getElementById('ranking-summary');
-          const details = document.getElementById('ranking-details');
-
-          const shuffle = (array) => {
-            const copy = array.slice();
-            for (let i = copy.length - 1; i > 0; i -= 1) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [copy[i], copy[j]] = [copy[j], copy[i]];
-            }
-            return copy;
-          };
-
-          const refreshNumbers = () => {
-            Array.from(list.children).forEach((item, index) => {
-              const badge = item.querySelector('.ranking-number');
-              if (badge) {
-                badge.textContent = index + 1;
-              }
-            });
-          };
-
-          const updateControls = () => {
-            const children = Array.from(list.children);
-            children.forEach((item, index) => {
-              const upBtn = item.querySelector('button[data-role="rank-up"]');
-              const downBtn = item.querySelector('button[data-role="rank-down"]');
-              if (upBtn) {
-                upBtn.disabled = index === 0;
-              }
-              if (downBtn) {
-                downBtn.disabled = index === children.length - 1;
-              }
-            });
-          };
-
-          const reset = () => {
-            const shuffled = shuffle(entries);
-            shuffled.forEach((item) => {
-              item.classList.remove('correct', 'incorrect');
-              list.appendChild(item);
-            });
-            if (feedback) {
-              feedback.hidden = true;
-            }
-            if (details) {
-              details.innerHTML = '';
-            }
-            refreshNumbers();
-            updateControls();
-          };
-
-          list.addEventListener('click', (event) => {
-            const button = event.target.closest('button[data-role]');
-            if (!button) return;
-            const item = button.closest('.ranking-item');
-            if (!item) return;
-            if (button.dataset.role === 'rank-up') {
-              const previous = item.previousElementSibling;
-              if (previous) {
-                list.insertBefore(item, previous);
-              }
-            } else if (button.dataset.role === 'rank-down') {
-              const next = item.nextElementSibling;
-              if (next) {
-                list.insertBefore(next, item);
-              }
-            }
-            refreshNumbers();
-            updateControls();
-          });
-
-          const evaluate = () => {
-            if (!feedback || !summary || !details) return;
-            const ordered = Array.from(list.children);
-            let score = 0;
-            details.innerHTML = '';
-            ordered.forEach((item, position) => {
-              const answerIndex = Number(item.dataset.answerIndex);
-              const isCorrect = answerIndex === position;
-              item.classList.toggle('correct', isCorrect);
-              item.classList.toggle('incorrect', !isCorrect);
-              if (isCorrect) {
-                score += 1;
-              }
-              const detail = document.createElement('li');
-              const title = document.createElement('strong');
-              title.textContent = position + 1 + '. ' + items[answerIndex].text;
-              detail.appendChild(title);
-              if (!isCorrect) {
-                const span = document.createElement('span');
-                span.textContent = ' — Correct position: ' + (answerIndex + 1);
-                detail.appendChild(span);
-              }
-              if (items[answerIndex].note) {
-                const note = document.createElement('p');
-                note.className = 'detail-note';
-                note.textContent = items[answerIndex].note;
-                detail.appendChild(note);
-              }
-              details.appendChild(detail);
-            });
-            summary.textContent = 'You placed ' + score + ' of ' + ordered.length + ' in the correct position.';
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
-
-          if (checkBtn) {
-            checkBtn.addEventListener('click', evaluate);
-          }
-          if (resetBtn) {
-            resetBtn.addEventListener('click', reset);
-          }
-          if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-              if (feedback) {
-                feedback.hidden = true;
-              }
-            });
-          }
-
-          reset();
-        })();
-      </script>
+      <script type="module" src="./modules/ranking.js"></script>
     `);
   },
   'table-completion': (config) => {
@@ -4254,7 +3463,7 @@ const Generators = {
       .join('');
 
     return wrapInTemplate(config, `
-      <div class="table-activity">
+      <div class="table-activity" data-module="table-completion">
         <div class="table-wrapper">
           <table>${tableMarkup}<tbody>${bodyMarkup}</tbody></table>
         </div>
@@ -4269,74 +3478,7 @@ const Generators = {
           <button id="table-close" class="activity-btn secondary">Close</button>
         </aside>
       </div>
-      <script>
-        (() => {
-          const inputs = Array.from(document.querySelectorAll('.table-activity input'));
-          const checkBtn = document.getElementById('table-check');
-          const resetBtn = document.getElementById('table-reset');
-          const feedback = document.getElementById('table-feedback');
-          const scoreLine = document.getElementById('table-score');
-          const details = document.getElementById('table-details');
-          const closeBtn = document.getElementById('table-close');
-          const normalise = (value) => value.trim().toLowerCase();
-
-          checkBtn.addEventListener('click', () => {
-            let correct = 0;
-            let attempted = 0;
-            details.innerHTML = '';
-
-            inputs.forEach((input) => {
-              const learnerValue = normalise(input.value);
-              const answer = normalise(input.dataset.answer || '');
-              if (!learnerValue) {
-                input.classList.remove('correct', 'incorrect');
-                return;
-              }
-              attempted += 1;
-              const isCorrect = learnerValue === answer;
-              if (isCorrect) correct += 1;
-              input.classList.toggle('correct', isCorrect);
-              input.classList.toggle('incorrect', !isCorrect);
-              const detail = document.createElement('div');
-              detail.className = 'feedback-item ' + (isCorrect ? 'correct' : 'incorrect');
-              const tableAnswerMarkup = isCorrect
-                ? ''
-                : '<p><strong>Correct answer:</strong> ' + input.dataset.answer + '</p>';
-              detail.innerHTML =
-                '<h4>' +
-                input.closest('tr').querySelector('th').innerText +
-                ' – ' +
-                (input.dataset.header || '') +
-                '</h4>' +
-                '<p><strong>Your answer:</strong> ' +
-                (input.value || 'No response') +
-                '</p>' +
-                tableAnswerMarkup;
-              details.appendChild(detail);
-            });
-
-            if (attempted === 0) {
-              scoreLine.textContent = 'Please complete at least one cell before checking.';
-            } else {
-              scoreLine.textContent =
-                'You answered ' + correct + ' of ' + attempted + ' correctly.';
-            }
-            feedback.hidden = false;
-            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          });
-
-          resetBtn.addEventListener('click', () => {
-            inputs.forEach((input) => {
-              input.value = '';
-              input.classList.remove('correct', 'incorrect');
-            });
-            details.innerHTML = '';
-            feedback.hidden = true;
-          });
-
-          closeBtn.addEventListener('click', () => (feedback.hidden = true));
-        })();
-      </script>
+      <script type="module" src="./modules/table-completion.js"></script>
     `);
   }
 };
@@ -4361,611 +3503,9 @@ const wrapInTemplate = (config, innerMarkup) => `
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   />
-  <style>
-    :root {
-      --bg: #f9faf7;
-      --surface: #ffffff;
-      --border: #d8e0d0;
-      --text: #1f261c;
-      --muted: #6b7a63;
-      --accent: #3d6f5d;
-      --accent-soft: rgba(61, 111, 93, 0.1);
-      --error: #c75c5c;
-      --success: #3d8458;
-      font-family: 'Nunito', 'Segoe UI', sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .activity-shell {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3rem 1.5rem 4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    header.activity-header {
-      background: var(--surface);
-      border-radius: 20px;
-      padding: 2rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 32px rgba(31, 38, 28, 0.08);
-    }
-
-    header.activity-header h1 {
-      margin: 0 0 0.5rem;
-      font-family: 'Questrial', sans-serif;
-      letter-spacing: 0.02em;
-      font-size: 2.1rem;
-    }
-
-    header.activity-header p.instructions {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    header.activity-header .rubric {
-      margin-top: 1.25rem;
-      padding: 1rem 1.25rem;
-      background: var(--accent-soft);
-      border-radius: 14px;
-      border: 1px dashed var(--accent);
-    }
-
-    .activity-body {
-      background: var(--surface);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      padding: 2rem;
-      box-shadow: 0 12px 28px rgba(31, 38, 28, 0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 1.75rem;
-    }
-
-    .activity-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 0.75rem 1.75rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      background: linear-gradient(135deg, var(--accent), #559e86);
-      color: #fff;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .activity-btn:hover,
-    .activity-btn:focus-visible {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 28px rgba(61, 111, 93, 0.25);
-    }
-
-    .activity-btn.secondary {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      box-shadow: none;
-    }
-
-    .activity-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .feedback-item {
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 1rem 1.25rem;
-      background: rgba(255, 255, 255, 0.9);
-      margin-bottom: 0.75rem;
-    }
-
-    .feedback-item.correct {
-      border-left: 5px solid var(--success);
-    }
-
-    .feedback-item.incorrect {
-      border-left: 5px solid var(--error);
-    }
-
-    .feedback-item h4 {
-      margin-top: 0;
-      margin-bottom: 0.35rem;
-      font-size: 1rem;
-    }
-
-    .feedback-item p {
-      margin: 0.15rem 0;
-    }
-
-    .feedback-item .explanation {
-      margin-top: 0.5rem;
-      color: var(--muted);
-    }
-
-    .mc-question,
-    .gapfill-text,
-    .grouping-activity,
-    .table-wrapper {
-      background: rgba(246, 248, 243, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-    }
-
-    .mc-options {
-      display: grid;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .mc-option {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.65rem;
-      align-items: center;
-      background: #fff;
-      padding: 0.75rem 1rem;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-    }
-
-    .mc-feedback,
-    .gap-feedback,
-    .group-feedback,
-    .table-feedback,
-    .linking-feedback,
-    .dropdown-feedback,
-    .grid-feedback,
-    .ranking-feedback {
-      background: var(--surface);
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      padding: 1.5rem;
-      box-shadow: 0 18px 32px rgba(31, 38, 28, 0.08);
-    }
-
-    .feedback-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .feedback-list li {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .feedback-list li strong {
-      font-size: 0.95rem;
-    }
-
-    .detail-note {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .gapfill-text {
-      line-height: 1.9;
-      font-size: 1.05rem;
-    }
-
-    .gapfill-text input {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.35rem 0.5rem;
-      min-width: 120px;
-    }
-
-    .gapfill-text input.correct {
-      border-color: var(--success);
-      background: rgba(61, 132, 88, 0.12);
-    }
-
-    .gapfill-text input.incorrect {
-      border-color: var(--error);
-      background: rgba(199, 92, 92, 0.12);
-    }
-
-    .grouping-activity {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .group-source {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .group-item {
-      background: #fff;
-      border-radius: 999px;
-      padding: 0.55rem 1.15rem;
-      border: 1px solid var(--border);
-      cursor: grab;
-      transition: transform 0.2s ease;
-    }
-
-    .group-item.dragging {
-      opacity: 0.7;
-      transform: scale(0.96);
-    }
-
-    .group-item.correct {
-      border-color: var(--success);
-    }
-
-    .group-item.incorrect {
-      border-color: var(--error);
-    }
-
-    .group-targets {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .linking-activity,
-    .dropdown-activity,
-    .grid-activity,
-    .ranking-activity {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .linking-activity {
-      background: rgba(246, 248, 243, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-    }
-
-    .linking-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-      gap: 1rem;
-      align-items: center;
-      padding: 0.75rem 1rem;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid var(--border);
-    }
-
-    .linking-row.correct {
-      border-color: var(--success);
-      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.25);
-    }
-
-    .linking-row.incorrect {
-      border-color: var(--error);
-      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
-    }
-
-    .linking-prompt {
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-    }
-
-    .linking-pill {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-    }
-
-    .linking-text {
-      display: grid;
-      gap: 0.4rem;
-    }
-
-    .linking-statement {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    .linking-hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .linking-select,
-    .dropdown-select {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 0.5rem 0.75rem;
-      font-size: 1rem;
-      background: #fff;
-    }
-
-    .dropdown-activity {
-      background: rgba(246, 248, 243, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-    }
-
-    .dropdown-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem;
-      display: grid;
-      gap: 0.75rem;
-      background: #fff;
-    }
-
-    .dropdown-item.correct {
-      border-color: var(--success);
-      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.2);
-    }
-
-    .dropdown-item.incorrect {
-      border-color: var(--error);
-      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
-    }
-
-    .dropdown-prompt {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    .dropdown-hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .grid-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .grid-table th,
-    .grid-table td {
-      border: 1px solid var(--border);
-      padding: 0.75rem;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    .grid-table .grid-head {
-      text-align: left;
-      font-weight: 700;
-    }
-
-    .grid-row-text {
-      text-align: left;
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .grid-row-note {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .grid-choice {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .grid-choice-indicator {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: inline-block;
-    }
-
-    .grid-choice input {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .grid-choice input:checked + .grid-choice-indicator {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-    .grid-row.correct {
-      background: rgba(61, 132, 88, 0.08);
-    }
-
-    .grid-row.incorrect {
-      background: rgba(199, 92, 92, 0.08);
-    }
-
-    .ranking-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .ranking-item {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: #fff;
-      transition: transform 0.2s ease;
-    }
-
-    .ranking-item.correct {
-      border-color: var(--success);
-      box-shadow: 0 0 0 2px rgba(61, 132, 88, 0.2);
-    }
-
-    .ranking-item.incorrect {
-      border-color: var(--error);
-      box-shadow: 0 0 0 2px rgba(199, 92, 92, 0.2);
-    }
-
-    .ranking-card {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.9rem 1.1rem;
-    }
-
-    .ranking-number {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-    }
-
-    .ranking-text {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    .ranking-note {
-      margin: 0.25rem 0 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .ranking-controls {
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .ranking-controls button {
-      border: none;
-      background: rgba(61, 111, 93, 0.12);
-      color: var(--accent);
-      border-radius: 10px;
-      padding: 0.35rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .ranking-controls button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .ranking-controls button:not(:disabled):hover,
-    .ranking-controls button:not(:disabled):focus-visible {
-      background: rgba(61, 111, 93, 0.22);
-      outline: none;
-    }
-
-    .group-target header h3 {
-      margin: 0;
-    }
-
-    .group-target header p {
-      margin: 0.25rem 0 0;
-      color: var(--muted);
-    }
-
-    .drop-zone {
-      min-height: 90px;
-      margin-top: 0.75rem;
-      border: 2px dashed var(--border);
-      border-radius: 14px;
-      padding: 0.75rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-      background: rgba(255, 255, 255, 0.6);
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    th,
-    td {
-      border: 1px solid var(--border);
-      padding: 0.75rem;
-      text-align: left;
-    }
-
-    th {
-      background: rgba(61, 111, 93, 0.08);
-    }
-
-    td input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.5rem 0.65rem;
-    }
-
-    td input.correct {
-      border-color: var(--success);
-      background: rgba(61, 132, 88, 0.12);
-    }
-
-    td input.incorrect {
-      border-color: var(--error);
-      background: rgba(199, 92, 92, 0.12);
-    }
-
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (min-width: 900px) {
-      .group-targets {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./sandbox-css.css" />
 </head>
-<body>
+<body class="activity-document">
   <div class="activity-shell">
     <header class="activity-header">
       <h1>${escapeHtml(config.title)}</h1>
