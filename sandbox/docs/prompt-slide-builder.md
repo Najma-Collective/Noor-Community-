@@ -554,13 +554,15 @@ Populate every collection explicitly—even when copying defaults—to guarantee
 
 ### 4. Compose the document shell
 - Output a complete HTML5 document that mirrors the scaffold in `sandbox/exemplar-master.html`:
-  1. `<head>` with UTF-8 meta, viewport meta, `deck` title, description, Google Fonts preconnects, and Font Awesome stylesheet. Mirror the exemplar’s CDN endpoints and attributes (including integrity/referrer metadata) without substituting alternate CDNs. Include the local CSS bundles with explicit tags:
+  1. `<head>` with UTF-8 meta, viewport meta, `deck` title, description, Google Fonts preconnects, and Font Awesome stylesheet. Mirror the exemplar’s CDN endpoints and attributes (including integrity/referrer metadata) without substituting alternate CDNs. Include the shared CSS stack exactly once and reuse the shipped bundles instead of creating deck-specific styles:
 
      ```html
+     <link rel="stylesheet" href="../CSS-slides.css" />
      <link rel="stylesheet" href="./sandbox-theme.css" />
      <link rel="stylesheet" href="./sandbox-css.css" />
      ```
-     Do **not** reference files outside `sandbox/`.
+
+     Adjust the relative path to `CSS-slides.css` when exporting decks into nested folders (e.g., `../CSS-slides.css` from `sandbox/`, `../../CSS-slides.css` from `sandbox/examples/`). Do **not** add bespoke CSS files; downstream hosts expect every deck to rely on these canonical bundles.
   2. `<body>` containing:
      - Skip link (`<a class="skip-link" href="#lesson-stage">`).
      - Toast/status containers: `#deck-status` (`role="status"`, `aria-live="polite"`) and `#deck-toast-root`.
@@ -569,7 +571,7 @@ Populate every collection explicitly—even when copying defaults—to guarantee
      - Interactive module host area inside each applicable slide (e.g., `.practice-module-host`).
 
 ### 5. Bootstrap runtime behaviour
-- End the document with a `<script type="module">` that imports `setupInteractiveDeck` from `./int-mod.js` and `initSlideNavigator` from `./slide-nav.js`, then initialises both modules by exposing the navigator factory before hydrating the deck:
+- End the document with a `<script type="module">` that imports `setupInteractiveDeck` from `./int-mod.js` and `initSlideNavigator` from `./slide-nav.js`, then initialises both modules by exposing the navigator factory before hydrating the deck. Do **not** author deck-specific JavaScript entry points; reusing these runtime modules keeps behaviour consistent:
 
   ```html
   <script type="module">
@@ -592,7 +594,7 @@ Populate every collection explicitly—even when copying defaults—to guarantee
 - Include comments reminding implementers to verify colour contrast and alt text.
 
 ### 7. Quality checks before returning output
-- Confirm every linked asset resolves relative to `sandbox/` (e.g., `./sandbox-theme.css`, not `sandbox-theme.css` or `../CSS-slides.css`).
+- Confirm every linked asset resolves relative to the canonical locations—`CSS-slides.css`, `sandbox-theme.css`, `sandbox-css.css`, `int-mod.js`, and `slide-nav.js`—with the appropriate `../` prefixes for the folder you export into. Avoid introducing extra stylesheets or JavaScript files.
 - Ensure the toolbar slide counter (`#slide-counter`) reflects the total slide count (e.g., `1 / {slides.length}`).
 - Validate that navigation buttons, toolbar toggles, and interactive modules appear in the markup exactly as `setupInteractiveDeck` expects.
 - Cross-check the final structure against `sandbox/exemplar-master.html` to confirm parity.
@@ -611,6 +613,7 @@ Populate every collection explicitly—even when copying defaults—to guarantee
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
+<link rel="stylesheet" href="../CSS-slides.css" />
 <link rel="stylesheet" href="./sandbox-theme.css" />
 <link rel="stylesheet" href="./sandbox-css.css" />
 ```
@@ -618,7 +621,10 @@ Populate every collection explicitly—even when copying defaults—to guarantee
 ```html
 <script type="module">
   import { setupInteractiveDeck } from './int-mod.js';
-  setupInteractiveDeck({ root: document });
+  import { initSlideNavigator } from './slide-nav.js';
+
+  window.initSlideNavigator = initSlideNavigator;
+  await setupInteractiveDeck({ root: document });
 </script>
 ```
 
