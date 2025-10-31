@@ -4160,19 +4160,21 @@ export function attachBlankSlideEvents(slide) {
       minHeight: "220px",
     });
 
-    const drawingSurface = document.createElement("canvas");
-    drawingSurface.setAttribute("aria-label", "Drawing surface");
-    drawingSurface.tabIndex = 0;
-    Object.assign(drawingSurface.style, {
+    const drawingCanvas = document.createElement("canvas");
+    drawingCanvas.setAttribute("aria-label", "Drawing surface");
+    drawingCanvas.tabIndex = 0;
+
+    const originalCanvasTouchAction = drawingCanvas.style.touchAction;
+    const originalCanvasCursor = drawingCanvas.style.cursor;
+
+    Object.assign(drawingCanvas.style, {
       width: "100%",
       height: "100%",
-      touchAction: "none",
-      cursor: "crosshair",
       background: "transparent",
       display: "block",
     });
 
-    surfaceContainer.appendChild(drawingSurface);
+    surfaceContainer.appendChild(drawingCanvas);
 
     const instructions = document.createElement("p");
     instructions.className = "canvas-drawing-instructions";
@@ -4198,16 +4200,16 @@ export function attachBlankSlideEvents(slide) {
 
     targetCanvas.appendChild(overlay);
 
-    const context = drawingSurface.getContext("2d", { willReadFrequently: true });
+    const context = drawingCanvas.getContext("2d", { willReadFrequently: true });
     if (!context) {
       console.warn("Drawing surface unavailable: unable to obtain 2D context");
     }
 
     const resetSurface = () => {
-      if (!(context && drawingSurface instanceof HTMLCanvasElement)) {
+      if (!(context && drawingCanvas instanceof HTMLCanvasElement)) {
         return;
       }
-      context.clearRect(0, 0, drawingSurface.width, drawingSurface.height);
+      context.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
     };
 
     let strokeColor = "#0f172a";
@@ -4240,9 +4242,9 @@ export function attachBlankSlideEvents(slide) {
             360,
         ),
       );
-      if (drawingSurface.width !== width || drawingSurface.height !== height) {
-        drawingSurface.width = width;
-        drawingSurface.height = height;
+      if (drawingCanvas.width !== width || drawingCanvas.height !== height) {
+        drawingCanvas.width = width;
+        drawingCanvas.height = height;
       }
       applyStrokeSettings();
     };
@@ -4259,7 +4261,7 @@ export function attachBlankSlideEvents(slide) {
     };
 
     const getCanvasPoint = (event) => {
-      const rect = drawingSurface.getBoundingClientRect();
+      const rect = drawingCanvas.getBoundingClientRect();
       return {
         x: event.clientX - rect.left,
         y: event.clientY - rect.top,
@@ -4271,7 +4273,7 @@ export function attachBlankSlideEvents(slide) {
         return;
       }
       event.preventDefault();
-      drawingSurface.setPointerCapture(event.pointerId);
+      drawingCanvas.setPointerCapture(event.pointerId);
       applyStrokeSettings();
       const point = getCanvasPoint(event);
       context.beginPath();
@@ -4303,7 +4305,7 @@ export function attachBlankSlideEvents(slide) {
       }
       event.preventDefault();
       try {
-        drawingSurface.releasePointerCapture(event.pointerId);
+        drawingCanvas.releasePointerCapture(event.pointerId);
       } catch (error) {
         /* ignore */
       }
@@ -4317,30 +4319,49 @@ export function attachBlankSlideEvents(slide) {
       hasChanges = false;
       updateActionState();
       if (!overlay.hidden) {
-        drawingSurface.focus({ preventScroll: true });
+        drawingCanvas.focus({ preventScroll: true });
       }
     };
 
-    const closeOverlay = ({ focus = true, reset = false } = {}) => {
+    const applyDrawingCanvasStyles = () => {
+      drawingCanvas.style.touchAction = "none";
+      drawingCanvas.style.cursor = "crosshair";
+    };
+
+    const restoreDrawingCanvasStyles = () => {
+      if (originalCanvasTouchAction) {
+        drawingCanvas.style.touchAction = originalCanvasTouchAction;
+      } else {
+        drawingCanvas.style.removeProperty("touch-action");
+      }
+      if (originalCanvasCursor) {
+        drawingCanvas.style.cursor = originalCanvasCursor;
+      } else {
+        drawingCanvas.style.removeProperty("cursor");
+      }
+    };
+
+    const closeDrawing = ({ focus = true, reset = false } = {}) => {
       overlay.hidden = true;
       overlay.setAttribute("aria-hidden", "true");
       overlay.classList.remove("is-visible");
       if (reset) {
         clearSurface();
       }
+      restoreDrawingCanvasStyles();
       if (focus && lastTrigger instanceof HTMLElement) {
         lastTrigger.focus({ preventScroll: true });
       }
     };
 
     const insertDrawing = async () => {
-      if (!hasChanges || !(drawingSurface instanceof HTMLCanvasElement)) {
-        closeOverlay({ focus: true, reset: true });
+      if (!hasChanges || !(drawingCanvas instanceof HTMLCanvasElement)) {
+        closeDrawing({ focus: true, reset: true });
         return;
       }
-      const dataUrl = drawingSurface.toDataURL("image/png");
+      const dataUrl = drawingCanvas.toDataURL("image/png");
       if (!dataUrl) {
-        closeOverlay({ focus: true, reset: false });
+        closeDrawing({ focus: true, reset: false });
         return;
       }
       saveButton.disabled = true;
@@ -4349,17 +4370,17 @@ export function attachBlankSlideEvents(slide) {
           name: "Canvas drawing",
           type: "image/png",
           source: lastOrigin ? `drawing-${lastOrigin}` : "drawing-tool",
-          naturalWidth: drawingSurface.width,
-          naturalHeight: drawingSurface.height,
+          naturalWidth: drawingCanvas.width,
+          naturalHeight: drawingCanvas.height,
         });
       } catch (error) {
         console.warn("Unable to insert drawing", error);
       } finally {
-        closeOverlay({ focus: true, reset: true });
+        closeDrawing({ focus: true, reset: true });
       }
     };
 
-    const openOverlay = ({ trigger, origin } = {}) => {
+    const openDrawing = ({ trigger, origin } = {}) => {
       lastTrigger = trigger instanceof HTMLElement ? trigger : null;
       lastOrigin = typeof origin === "string" && origin ? origin : null;
       updateSurfaceSize();
@@ -4370,9 +4391,10 @@ export function attachBlankSlideEvents(slide) {
       overlay.hidden = false;
       overlay.setAttribute("aria-hidden", "false");
       overlay.classList.add("is-visible");
+      applyDrawingCanvasStyles();
       requestAnimationFrame(() => {
         updateSurfaceSize();
-        drawingSurface.focus({ preventScroll: true });
+        drawingCanvas.focus({ preventScroll: true });
       });
       return true;
     };
@@ -4405,13 +4427,13 @@ export function attachBlankSlideEvents(slide) {
     strokeWidthInput.value = String(strokeWidth);
     strokeWidthValue.textContent = strokeWidth.toString();
 
-    drawingSurface.addEventListener("pointerdown", handlePointerDown);
-    drawingSurface.addEventListener("pointermove", handlePointerMove);
-    drawingSurface.addEventListener("pointerup", stopDrawing);
-    drawingSurface.addEventListener("pointercancel", stopDrawing);
-    drawingSurface.addEventListener("pointerleave", stopDrawing);
+    drawingCanvas.addEventListener("pointerdown", handlePointerDown);
+    drawingCanvas.addEventListener("pointermove", handlePointerMove);
+    drawingCanvas.addEventListener("pointerup", stopDrawing);
+    drawingCanvas.addEventListener("pointercancel", stopDrawing);
+    drawingCanvas.addEventListener("pointerleave", stopDrawing);
 
-    const handleCancel = () => closeOverlay({ focus: true, reset: true });
+    const handleCancel = () => closeDrawing({ focus: true, reset: true });
     const handleClear = () => clearSurface();
     const handleSave = () => {
       insertDrawing();
@@ -4424,7 +4446,7 @@ export function attachBlankSlideEvents(slide) {
     const handleKeydown = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        closeOverlay({ focus: true, reset: true });
+        closeDrawing({ focus: true, reset: true });
       }
     };
 
@@ -4436,11 +4458,11 @@ export function attachBlankSlideEvents(slide) {
       strokeColorInput.removeEventListener("change", handleStrokeColorChange);
       strokeWidthInput.removeEventListener("input", handleStrokeWidthChange);
       strokeWidthInput.removeEventListener("change", handleStrokeWidthChange);
-      drawingSurface.removeEventListener("pointerdown", handlePointerDown);
-      drawingSurface.removeEventListener("pointermove", handlePointerMove);
-      drawingSurface.removeEventListener("pointerup", stopDrawing);
-      drawingSurface.removeEventListener("pointercancel", stopDrawing);
-      drawingSurface.removeEventListener("pointerleave", stopDrawing);
+      drawingCanvas.removeEventListener("pointerdown", handlePointerDown);
+      drawingCanvas.removeEventListener("pointermove", handlePointerMove);
+      drawingCanvas.removeEventListener("pointerup", stopDrawing);
+      drawingCanvas.removeEventListener("pointercancel", stopDrawing);
+      drawingCanvas.removeEventListener("pointerleave", stopDrawing);
       cancelButton.removeEventListener("click", handleCancel);
       clearButton.removeEventListener("click", handleClear);
       saveButton.removeEventListener("click", handleSave);
@@ -4448,6 +4470,7 @@ export function attachBlankSlideEvents(slide) {
       if (restorePosition !== null) {
         targetCanvas.style.position = restorePosition;
       }
+      restoreDrawingCanvasStyles();
       drawingToolInstances.delete(targetCanvas);
     });
 
@@ -4467,8 +4490,8 @@ export function attachBlankSlideEvents(slide) {
     }
 
     return {
-      open: openOverlay,
-      close: closeOverlay,
+      open: openDrawing,
+      close: closeDrawing,
     };
   };
 
