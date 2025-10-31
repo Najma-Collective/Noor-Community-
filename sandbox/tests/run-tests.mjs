@@ -1,16 +1,45 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { DEFAULT_STATES as MODULE_DEFAULTS, Generators as ModuleGenerators } from '../activity-builder.js';
 import { BUILDER_LAYOUT_DEFAULTS } from '../slide-templates.js';
+import {
+  formatValidationErrors,
+  validateBriefAgainstSchema,
+} from '../scripts/validate-brief-schema.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const fixturePath = join(__dirname, 'fixtures', 'minimal-deck.html');
 const html = await readFile(fixturePath, 'utf8');
 const css = await readFile(join(__dirname, '../sandbox-css.css'), 'utf8');
+
+const briefFixturesDir = join(__dirname, 'fixtures', 'briefs');
+let briefFixtures = [];
+try {
+  const entries = await readdir(briefFixturesDir);
+  briefFixtures = entries.filter((entry) => entry.toLowerCase().endsWith('.json'));
+} catch (error) {
+  if (error?.code !== 'ENOENT') {
+    throw error;
+  }
+}
+
+for (const filename of briefFixtures) {
+  const absolutePath = join(briefFixturesDir, filename);
+  const raw = await readFile(absolutePath, 'utf8');
+  const brief = JSON.parse(raw);
+  const { valid, errors } = await validateBriefAgainstSchema(brief);
+  const errorDetails = formatValidationErrors(errors);
+  assert.ok(
+    valid,
+    `Deck brief fixture ${filename} should match the deck JSON schema${
+      errorDetails ? `\n${errorDetails}` : ''
+    }`,
+  );
+}
 
 const dom = new JSDOM(html, {
   url: 'https://example.com/sandbox/',
