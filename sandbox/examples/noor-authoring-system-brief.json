@@ -209,6 +209,14 @@
           "title": "Knowledge check · JSON mapping",
           "instructions": "With a partner, choose the best answer for each question, then justify your choice.",
           "activityType": "multiple-choice",
+          "moduleTemplate": "multiple-choice",
+          "moduleConfig": {
+            "type": "multiple-choice",
+            "presetId": "multiple-choice",
+            "data": {
+              "title": "Knowledge check · JSON mapping"
+            }
+          },
           "questions": [
             {
               "prompt": "Which field ensures the toolbar shows the correct brand label?",

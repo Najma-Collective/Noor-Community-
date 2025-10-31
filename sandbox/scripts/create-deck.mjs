@@ -2,16 +2,28 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 
 import {
   createLessonSlideFromState,
   SUPPORTED_LESSON_LAYOUTS,
+  MODULE_TEMPLATE_FILES,
 } from '../int-mod.js';
 import { BUILDER_LAYOUT_DEFAULTS, cloneLayoutDefaults } from '../slide-templates.js';
 
 const DEFAULT_LANGUAGE = 'en';
 const PEXELS_SEARCH_URL = 'https://api.pexels.com/v1/search';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const MODULE_TEMPLATE_DIR = path.resolve(__dirname, '..', 'Templates');
+const MODULE_TEMPLATE_PATHS = Object.fromEntries(
+  Object.entries(MODULE_TEMPLATE_FILES).map(([key, fileName]) => [
+    key,
+    path.resolve(MODULE_TEMPLATE_DIR, fileName),
+  ]),
+);
+const moduleTemplateHtmlCache = new Map();
 
 function printUsage() {
   console.log(`Noor Community deck scaffolder\n\n` +
@@ -70,6 +82,8 @@ function ensureDomEnvironment() {
     Node: global.Node,
     navigator: global.navigator,
     getComputedStyle: global.getComputedStyle,
+    HTMLScriptElement: global.HTMLScriptElement,
+    HTMLIFrameElement: global.HTMLIFrameElement,
   };
   global.window = dom.window;
   global.document = dom.window.document;
@@ -77,6 +91,8 @@ function ensureDomEnvironment() {
   global.Node = dom.window.Node;
   global.navigator = dom.window.navigator;
   global.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
+  global.HTMLScriptElement = dom.window.HTMLScriptElement;
+  global.HTMLIFrameElement = dom.window.HTMLIFrameElement;
   return { dom, previousGlobals };
 }
 
@@ -88,6 +104,8 @@ function restoreDomEnvironment(dom, previous) {
     global.Node = previous.Node;
     global.navigator = previous.navigator;
     global.getComputedStyle = previous.getComputedStyle;
+    global.HTMLScriptElement = previous.HTMLScriptElement;
+    global.HTMLIFrameElement = previous.HTMLIFrameElement;
   }
   if (dom) {
     dom.window.close();
@@ -156,6 +174,122 @@ function normalizeDeckBrief(rawBrief) {
     return deck;
   }
   return clone(rawBrief);
+}
+
+const trimValue = (value) => (typeof value === 'string' ? value.trim() : '');
+
+const normaliseModuleTemplateKey = (value) => {
+  const trimmed = trimValue(value);
+  return trimmed ? trimmed.toLowerCase() : '';
+};
+
+async function loadModuleTemplateHtml(templateKey) {
+  const normalised = normaliseModuleTemplateKey(templateKey);
+  if (!normalised) {
+    return null;
+  }
+
+  if (moduleTemplateHtmlCache.has(normalised)) {
+    return moduleTemplateHtmlCache.get(normalised);
+  }
+
+  const seen = new Set();
+  const candidates = [];
+  const mappedPath = MODULE_TEMPLATE_PATHS[normalised];
+  if (mappedPath) {
+    candidates.push(mappedPath);
+    seen.add(mappedPath);
+  }
+
+  const raw = trimValue(templateKey);
+  const candidateNames = [raw, normalised, `${raw}.html`, `${normalised}.html`]
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  candidateNames.forEach((name) => {
+    const resolved = path.resolve(MODULE_TEMPLATE_DIR, name);
+    if (!seen.has(resolved)) {
+      seen.add(resolved);
+      candidates.push(resolved);
+    }
+  });
+
+  for (const candidate of candidates) {
+    try {
+      const html = await readFile(candidate, 'utf8');
+      moduleTemplateHtmlCache.set(normalised, html);
+      return html;
+    } catch (error) {
+      /* try next candidate */
+    }
+  }
+
+  moduleTemplateHtmlCache.set(normalised, null);
+  return null;
+}
+
+async function prepareInteractivePracticeModule(data = {}) {
+  if (!isPlainObject(data)) {
+    return;
+  }
+
+  const rawTemplate = trimValue(data.moduleTemplate);
+  const resolvedType = trimValue(data.activityType);
+  const templateKey = normaliseModuleTemplateKey(rawTemplate) || normaliseModuleTemplateKey(resolvedType);
+  const templateLabel = rawTemplate || templateKey;
+
+  if (templateLabel && !data.moduleTemplate) {
+    data.moduleTemplate = templateLabel;
+  }
+
+  let config = isPlainObject(data.moduleConfig) ? clone(data.moduleConfig) : {};
+  const htmlCandidates = [];
+  if (typeof data.moduleHtml === 'string') {
+    htmlCandidates.push(data.moduleHtml);
+  }
+  if (typeof config.html === 'string') {
+    htmlCandidates.push(config.html);
+  }
+
+  let moduleHtml = htmlCandidates.find((entry) => trimValue(entry)) || '';
+
+  if (!moduleHtml && templateKey) {
+    const loaded = await loadModuleTemplateHtml(templateKey);
+    if (typeof loaded === 'string' && trimValue(loaded)) {
+      moduleHtml = loaded;
+    }
+  }
+
+  if (!trimValue(config.type)) {
+    if (trimValue(data.activityType)) {
+      config.type = trimValue(data.activityType);
+    } else if (templateKey) {
+      config.type = templateKey;
+    }
+  }
+
+  if (!isPlainObject(config.data)) {
+    config.data = {};
+  }
+  if (trimValue(data.title) && !trimValue(config.data.title)) {
+    config.data.title = trimValue(data.title);
+  }
+
+  if (templateLabel && !trimValue(config.presetId)) {
+    config.presetId = templateLabel;
+  }
+
+  if (moduleHtml && !trimValue(config.html)) {
+    config.html = moduleHtml;
+  }
+
+  if (Object.keys(config).length) {
+    data.moduleConfig = config;
+  }
+
+  if (moduleHtml) {
+    data.moduleHtml = moduleHtml;
+  }
 }
 
 async function fetchPexelsImage(query, apiKey, options = {}) {
@@ -491,6 +625,9 @@ async function buildDeck(rawBrief, options) {
       const resolvedData = await resolveMediaPlaceholders(merged, {
         pexelsKey: options.pexelsKey,
       });
+      if (layout === 'interactive-practice') {
+        await prepareInteractivePracticeModule(resolvedData);
+      }
       const slide = createLessonSlideFromState({ layout, data: resolvedData });
       if (!(slide instanceof dom.window.HTMLElement)) {
         throw new Error(`Layout ${layout} did not return a slide element.`);
