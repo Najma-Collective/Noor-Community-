@@ -96,6 +96,94 @@ The tables below enumerate every layout and the fields accepted inside `slide.da
 | `moduleConfig` | object | `{ type: "multiple-choice", presetId: "multiple-choice", data: { title: "Evaluation Lexis: Choose the Best Word" } }` | No | When present the generator injects the embed config and HTML. |
 | `moduleHtml` | string | — | No | Optional pre-rendered module markup. Leave empty to fetch from template files.【F:sandbox/int-mod.js†L13371-L13580】 |
 
+## Interactive modules
+
+Interactive practice slides hydrate sandbox module embeds. The CLI mirrors the runtime logic in `sandbox/int-mod.js`, so use the fields below exactly as the stage expects them.
+
+### Field overview
+
+- **`activityType`** – Sets the module badge and acts as the first lookup key when no explicit template is supplied.【F:sandbox/int-mod.js†L13383-L13405】
+- **`moduleTemplate`** – Optional override that maps directly to `MODULE_TEMPLATE_SOURCES` entries and stamps `data-module-template` onto the slide for later hydration.【F:sandbox/int-mod.js†L659-L689】【F:sandbox/int-mod.js†L13423-L13433】
+- **`moduleConfig`** – Persisted JSON passed to the embed. The runtime serialises it, stores it on `data-module-config`, and injects a `<script type="application/json" class="module-embed-config">` block before the iframe so downstream tooling can recover the payload.【F:sandbox/int-mod.js†L5460-L5498】
+- **`moduleHtml`** – Optional inline HTML that seeds the iframe `srcdoc`. When omitted, the runtime fetches the template file resolved from `moduleTemplate`/`activityType` and caches it.【F:sandbox/int-mod.js†L13393-L13549】
+
+### Template and configuration lookup
+
+`MODULE_TEMPLATE_SOURCES` normalises every supported key to a path under `sandbox/Templates/`. If neither `moduleTemplate` nor `moduleHtml` is supplied, the runtime falls back to the `activityType` key, fetches the HTML file, and writes it into the iframe while also copying the HTML string into the stored config.【F:sandbox/int-mod.js†L659-L689】【F:sandbox/int-mod.js†L13387-L13549】
+
+| `activityType` | Template source | Configuration payload highlights |
+| --- | --- | --- |
+| `multiple-choice` | `./Templates/multiple-choice.html` | `data` should contain `title`, `instructions`, `rubric`, and `questions[]` objects with `prompt`, `options[]`, and optional `explanation` strings.【F:sandbox/activity-builder.js†L2-L32】 |
+| `linking` | `./Templates/Linking` | Provide `title`, `instructions`, `rubric`, and `pairs[]` entries (`prompt`, `match`, optional `hint`).【F:sandbox/activity-builder.js†L33-L56】 |
+| `dropdown` | `./Templates/dropdown.html` | Supply `title`, learner `instructions`, `rubric`, and `items[]` with `prompt`, `options[]` (`text`, `correct`), plus optional `feedback` per item.【F:sandbox/activity-builder.js†L57-L81】 |
+| `gapfill` | `./Templates/gapfill` | Use `title`, `instructions`, `rubric`, and a `passage` string containing `[[prompt|answer]]` tokens to flag blanks.【F:sandbox/activity-builder.js†L83-L91】 |
+| `grouping` | `./Templates/grouping` | Populate `title`, `instructions`, `rubric`, and `categories[]` objects with `name`, `description`, and `items[]` strings to drag into each lane.【F:sandbox/activity-builder.js†L92-L113】 |
+| `multiple-choice-grid` | `./Templates/multiple-choice-grid.html` | Configure `title`, `instructions`, `rubric`, a `columns[]` label array, and `rows[]` objects with `statement`, optional `note`, and `correctIndex` integers.【F:sandbox/activity-builder.js†L114-L137】 |
+| `ranking` | `./Templates/ranking.html` | Provide `title`, `instructions`, `rubric`, and ordered `items[]` where each entry includes `text` plus an optional `note` for coaching copy.【F:sandbox/activity-builder.js†L138-L149】 |
+| `table-completion` | — *(no bundled template; provide `moduleHtml` or hydrate later)* | Store `title`, `instructions`, `rubric`, `columnHeaders[]`, and `rows[]` objects with `label` plus `answers[]` strings per cell.【F:sandbox/activity-builder.js†L150-L169】 |
+| `quiz-show` | — *(no bundled template; provide `moduleHtml` or hydrate later)* | Include `title`, `instructions`, `rubric`, optional `defaultTime`, and `questions[]` with `prompt`, `answer`, optional `feedback`, `image`, `time`, and nested `icons` metadata.【F:sandbox/activity-builder.js†L170-L199】 |
+| `pelmanism` | `./Templates/pelmanism.html` | Provide `title`, `instructions`, `rubric`, and `pairs[]` objects describing `id`, `collocation`, `explanation`, and `example` strings that fuel the memory match deck and feedback sidebar.【F:sandbox/Templates/pelmanism.html†L522-L599】 |
+
+> **Note on shared templates.** Some builder types (e.g., `table-completion`, `quiz-show`) reuse the gap-fill or multiple-choice shell while differentiating themselves through the stored config. The `presetId` recorded in `moduleConfig` keeps track of which generator populated the payload even when the HTML file is shared.【F:sandbox/int-mod.js†L13401-L13419】
+
+### Pelmanism embed example
+
+Declare the activity inside the slide brief and let the runtime inject both the configuration script and iframe:
+
+```jsonc
+{
+  "layout": "interactive-practice",
+  "data": {
+    "title": "Memory match: Sustainable travel",
+    "activityType": "pelmanism",
+    "moduleTemplate": "pelmanism",
+    "moduleConfig": {
+      "type": "pelmanism",
+      "presetId": "pelmanism",
+      "data": {
+        "title": "Memory match: Sustainable travel",
+        "instructions": "Find the collocation that matches each explanation before time runs out.",
+        "rubric": "Celebrate teams that narrate each pairing aloud before flipping the cards.",
+        "pairs": [
+          {
+            "id": "carbon-footprint",
+            "collocation": "reduce your carbon footprint",
+            "explanation": "lower the greenhouse gases you produce when you travel",
+            "example": "I try to reduce my carbon footprint by taking the train to conferences instead of flying."
+          },
+          {
+            "id": "eco-lodge",
+            "collocation": "stay in an eco-lodge",
+            "explanation": "choose accommodation that minimises environmental impact",
+            "example": "We stayed in an eco-lodge that uses solar panels and recycled water."
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+At render time `createInteractivePracticeSlide` stamps the embed:
+
+```html
+<section class="module-embed" data-activity-type="pelmanism" data-activity-title="Memory match: Sustainable travel">
+  <div class="module-embed-header">…</div>
+  <script type="application/json" class="module-embed-config">
+    {"type":"pelmanism","presetId":"pelmanism","data":{…}}
+  </script>
+  <iframe class="module-embed-frame" loading="lazy" title="Memory match: Sustainable travel interactive module"></iframe>
+</section>
+```
+
+The iframe `srcdoc` is hydrated with either the HTML supplied via `moduleHtml` or, more commonly, by fetching `./Templates/pelmanism.html`, caching it, and mirroring the HTML into the stored config when none was provided upfront.【F:sandbox/int-mod.js†L5480-L5498】【F:sandbox/int-mod.js†L13387-L13549】
+
+### Template fallback rules
+
+- When **`moduleTemplate` is omitted**, the runtime lowercases the `activityType` and uses it to look up a source path. If a matching key exists, the fetched HTML is applied to the iframe and saved back onto `moduleConfig.html`.【F:sandbox/int-mod.js†L13383-L13548】
+- If neither key resolves to a known template, the module renders with an empty placeholder document (`MODULE_EMPTY_HTML`) until edited or populated later.【F:sandbox/int-mod.js†L670-L739】【F:sandbox/int-mod.js†L13393-L13549】
+- Providing **`moduleHtml`** skips the fetch entirely. The iframe receives your markup immediately, and the config script mirrors it for downstream editing sessions.【F:sandbox/int-mod.js†L13393-L13420】【F:sandbox/int-mod.js†L5480-L5498】
+
 #### `card-stack`
 
 | Key | Type | Default | Required | Notes |
