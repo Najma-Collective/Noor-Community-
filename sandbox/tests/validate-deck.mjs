@@ -2,7 +2,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { JSDOM } from 'jsdom';
 
@@ -18,13 +18,7 @@ const sandboxRoot = path.resolve(__dirname, '..');
 const fixturesRoot = path.join(__dirname, 'fixtures', 'briefs');
 
 const CSS_FILES = ['sandbox-css.css', 'sandbox-theme.css'];
-const cssAssets = await Promise.all(
-  CSS_FILES.map(async (filename) => {
-    const fullPath = path.join(sandboxRoot, filename);
-    const css = await readFile(fullPath, 'utf8');
-    return { filename, css };
-  }),
-);
+const CSS_ASSET_HREFS = CSS_FILES.map((filename) => `./${filename}`);
 
 function ensureDomEnvironment() {
   const dom = new JSDOM('<!doctype html><html lang="en"><head></head><body></body></html>', {
@@ -65,6 +59,27 @@ function restoreDomEnvironment(dom, previous) {
   if (dom) {
     dom.window.close();
   }
+}
+
+function attachDeckAssets(document) {
+  const head = document.head;
+  CSS_ASSET_HREFS.forEach((href) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    head.appendChild(link);
+  });
+
+  const moduleScript = document.createElement('script');
+  moduleScript.type = 'module';
+  moduleScript.textContent = [
+    "import { setupInteractiveDeck } from './int-mod.js';",
+    "const loadSlideNavigator = () => import('./slide-nav.js');",
+    '// The sandbox runtime initialises elsewhere – this fixture only verifies asset presence.',
+    'void setupInteractiveDeck;',
+    'void loadSlideNavigator;',
+  ].join('\n');
+  document.body.appendChild(moduleScript);
 }
 
 function createDeckShell(document, brief) {
@@ -174,13 +189,6 @@ function buildDeckFromBrief(brief) {
   const { dom, previousGlobals } = ensureDomEnvironment();
   const { document } = dom.window;
 
-  cssAssets.forEach(({ filename, css }) => {
-    const style = document.createElement('style');
-    style.dataset.source = filename;
-    style.textContent = css;
-    document.head.appendChild(style);
-  });
-
   const slides = Array.isArray(brief?.slides) ? [...brief.slides] : [];
   if (slides.length === 0) {
     throw new Error('Deck briefs must include at least one slide.');
@@ -231,6 +239,8 @@ function buildDeckFromBrief(brief) {
 
   slideCounter.textContent = `1 / ${createdSlides.length}`;
 
+  attachDeckAssets(document);
+
   return {
     dom,
     previousGlobals,
@@ -242,6 +252,133 @@ function buildDeckFromBrief(brief) {
 
 function recordFailure(failures, scope, message, detail) {
   failures.push({ scope, message, detail });
+}
+
+function extractModuleReferences(script) {
+  const references = new Set();
+  const src = script.getAttribute('src');
+  if (typeof src === 'string' && src.trim()) {
+    references.add(src.trim());
+  }
+
+  const code = script.textContent || '';
+  const patterns = [
+    /\bimport\s+['"]([^'"]+)['"]/g, // bare import './module.js'
+    /\bfrom\s+['"]([^'"]+)['"]/g, // import ... from './module.js'
+    /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g, // dynamic import('./module.js')
+  ];
+
+  patterns.forEach((pattern) => {
+    pattern.lastIndex = 0;
+    let match;
+    while ((match = pattern.exec(code))) {
+      references.add(match[1]);
+    }
+  });
+
+  return Array.from(references);
+}
+
+async function checkRequiredAssets(document, failures) {
+  const stylesheetCounts = new Map();
+  const linkElements = Array.from(document.querySelectorAll('link[href]'));
+  linkElements.forEach((link) => {
+    const rel = (link.getAttribute('rel') || '').toLowerCase();
+    const relTokens = rel.split(/\s+/).filter(Boolean);
+    if (!relTokens.includes('stylesheet')) {
+      return;
+    }
+    const href = (link.getAttribute('href') || '').trim();
+    if (!href) {
+      return;
+    }
+    stylesheetCounts.set(href, (stylesheetCounts.get(href) || 0) + 1);
+  });
+
+  const missingStyles = [];
+  const duplicateStyles = [];
+  CSS_ASSET_HREFS.forEach((href) => {
+    const count = stylesheetCounts.get(href) || 0;
+    if (count === 0) {
+      missingStyles.push(href);
+    } else if (count > 1) {
+      duplicateStyles.push({ href, count });
+    }
+  });
+
+  if (missingStyles.length > 0) {
+    recordFailure(
+      failures,
+      'assets',
+      'Missing required stylesheet link tags',
+      `Missing: ${missingStyles.join(', ')}`,
+    );
+  }
+
+  duplicateStyles.forEach(({ href, count }) => {
+    recordFailure(
+      failures,
+      'assets',
+      'Stylesheet link tag should appear only once',
+      `${href} referenced ${count} times`,
+    );
+  });
+
+  const moduleScripts = Array.from(document.querySelectorAll('script[type="module"]'));
+  if (moduleScripts.length === 0) {
+    recordFailure(
+      failures,
+      'assets',
+      'Deck should bootstrap via <script type="module">',
+      'no module scripts found',
+    );
+    return;
+  }
+
+  const moduleReferenceCounts = new Map();
+  moduleScripts.forEach((script) => {
+    extractModuleReferences(script).forEach((specifier) => {
+      moduleReferenceCounts.set(specifier, (moduleReferenceCounts.get(specifier) || 0) + 1);
+    });
+  });
+
+  const requiredModules = ['./int-mod.js', './slide-nav.js'];
+  const missingModules = requiredModules.filter((specifier) => {
+    return !moduleReferenceCounts.has(specifier);
+  });
+  if (missingModules.length > 0) {
+    recordFailure(
+      failures,
+      'assets',
+      'Module loader is missing required imports',
+      `Missing: ${missingModules.join(', ')}`,
+    );
+  }
+
+  requiredModules.forEach((specifier) => {
+    const count = moduleReferenceCounts.get(specifier) || 0;
+    if (count > 1) {
+      recordFailure(
+        failures,
+        'assets',
+        'Module loader should import each asset once',
+        `${specifier} referenced ${count} times`,
+      );
+    }
+  });
+
+  if (moduleReferenceCounts.has('./slide-nav.js')) {
+    try {
+      await import(pathToFileURL(path.join(sandboxRoot, 'slide-nav.js')).href);
+    } catch (error) {
+      recordFailure(
+        failures,
+        'assets',
+        'Unable to dynamically import slide navigator module',
+        error?.message || String(error),
+      );
+    }
+  }
 }
 
 function textContent(element) {
@@ -681,6 +818,7 @@ async function validateBrief(name, brief) {
 
   const { dom, previousGlobals, stageViewport, slideCounter, slides } = deck;
   try {
+    await checkRequiredAssets(dom.window.document, failures);
     checkDeckShell(dom.window.document, stageViewport, slideCounter, failures, slides.length);
     validateSlides(brief, slides, failures);
   } finally {
