@@ -373,6 +373,14 @@ Populate every collection explicitly—even when copying defaults—to guarantee
   - `sandbox/int-mod.js`
   - `sandbox/slide-nav.js`
   - `sandbox/exemplar-master.html` (reference only, do not import)
+- Required assets resolve locally during authoring and via GitHub Pages in production:
+
+  | Local path | Deployed URL |
+  | --- | --- |
+  | `sandbox/sandbox-theme.css` | `https://najma-collective.github.io/Noor-Community-/sandbox/sandbox-theme.css` |
+  | `sandbox/sandbox-css.css` | `https://najma-collective.github.io/Noor-Community-/sandbox/sandbox-css.css` |
+  | `sandbox/int-mod.js` | `https://najma-collective.github.io/Noor-Community-/sandbox/int-mod.js` |
+  | `sandbox/slide-nav.js` | `https://najma-collective.github.io/Noor-Community-/sandbox/slide-nav.js` |
 - Reproduce all functional affordances demonstrated in `sandbox/exemplar-master.html`, including the toolbar controls, slide navigator, toast/status regions, skip link, dual-logo branding, and interactive module host.
 
 ### 1. Ingest and validate the brief
@@ -395,7 +403,13 @@ Populate every collection explicitly—even when copying defaults—to guarantee
 
 ### 4. Compose the document shell
 - Output a complete HTML5 document that mirrors the scaffold in `sandbox/exemplar-master.html`:
-  1. `<head>` with UTF-8 meta, viewport meta, `deck` title, description, Google Fonts preconnects, Font Awesome stylesheet (same CDN, integrity, and referrerpolicy as the exemplar), and links to `./sandbox-theme.css` and `./sandbox-css.css`. Do **not** reference files outside `sandbox/`.
+  1. `<head>` with UTF-8 meta, viewport meta, `deck` title, description, Google Fonts preconnects, and Font Awesome stylesheet. Mirror the exemplar’s CDN endpoints and attributes (including integrity/referrer metadata) without substituting alternate CDNs. Include the local CSS bundles with explicit tags:
+
+     ```html
+     <link rel="stylesheet" href="./sandbox-theme.css" />
+     <link rel="stylesheet" href="./sandbox-css.css" />
+     ```
+     Do **not** reference files outside `sandbox/`.
   2. `<body>` containing:
      - Skip link (`<a class="skip-link" href="#lesson-stage">`).
      - Toast/status containers: `#deck-status` (`role="status"`, `aria-live="polite"`) and `#deck-toast-root`.
@@ -404,8 +418,20 @@ Populate every collection explicitly—even when copying defaults—to guarantee
      - Interactive module host area inside each applicable slide (e.g., `.practice-module-host`).
 
 ### 5. Bootstrap runtime behaviour
-- End the document with a `<script type="module">` that imports `setupInteractiveDeck` from `./int-mod.js` and immediately calls `setupInteractiveDeck({ root: document });`.
+- End the document with a `<script type="module">` that imports `setupInteractiveDeck` from `./int-mod.js` and `initSlideNavigator` from `./slide-nav.js`, then initialises both modules by exposing the navigator factory before hydrating the deck:
+
+  ```html
+  <script type="module">
+    import { setupInteractiveDeck } from "./int-mod.js";
+    import { initSlideNavigator } from "./slide-nav.js";
+
+    window.initSlideNavigator = initSlideNavigator;
+    await setupInteractiveDeck({ root: document });
+  </script>
+  ```
+  Top-level `await` is valid in module scripts; use it to ensure deck initialisation completes before other helpers run.
 - Do **not** inline alternate navigation logic; rely on `setupInteractiveDeck` plus the DOM hooks defined in the exemplar (`#save-state-btn`, `#load-state-btn`, `#add-slide-btn`, `#canvas-tools-toggle`, etc.).
+- When additional helpers are needed (e.g., `sandbox/slide-templates.js` or future utilities), import them with same-origin module specifiers such as `import { registerTemplates } from "./slide-templates.js";` inside the module script. Never substitute alternate CDN mirrors or rename the shipped files; the runtime expects the canonical module graph under `sandbox/`.
 - Preserve `data-` attributes (`data-type`, `data-layout`, `data-activity-type`, `data-role`, `data-module`) so `int-mod.js` and other runtime modules can hydrate interactions.
 
 ### 6. Design and accessibility best practices
