@@ -232,20 +232,12 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Present a concise pitch that highlights support for local artisans in Nablus.',
     goalIcon: 'fa-solid fa-bullseye',
     communicativeGoalIcon: 'fa-solid fa-comments',
-    imageUrl:
-      'https://images.pexels.com/photos/3815750/pexels-photo-3815750.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#0f172a',
-    overlayOpacity: 0.62,
   }),
   'model-dialogue': () => ({
     title: 'Model: Designing a hybrid pilot',
     instructions:
       'Read the transcript from Fatima and Yousef as they agree on a digital literacy pilot. Highlight persuasive moves before learners notice patterns.',
     instructionsIcon: 'fa-solid fa-ear-listen',
-    imageUrl:
-      'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#102a43',
-    overlayOpacity: 0.52,
     turns: [
       {
         speaker: 'Fatima',
@@ -312,10 +304,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Note-taking frame: Name · Role · Follow-up idea.',
     ],
     scaffoldingIcon: 'fa-solid fa-language',
-    imageUrl:
-      'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#1f2937',
-    overlayOpacity: 0.58,
   }),
   'pronunciation-focus': () => ({
     title: 'Pronunciation: Word stress for job titles',
@@ -331,10 +319,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
     wordsIcon: 'fa-solid fa-font',
     sentencesIcon: 'fa-solid fa-quote-left',
     practiceIcon: 'fa-solid fa-microphone-lines',
-    imageUrl:
-      'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#111827',
-    overlayOpacity: 0.5,
   }),
   reflection: () => ({
     title: 'Reflection · 3 · 2 · 1',
@@ -344,10 +328,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'One question you still have about building connections.',
     ],
     promptsIcon: 'fa-solid fa-lightbulb',
-    imageUrl:
-      'https://images.pexels.com/photos/3184646/pexels-photo-3184646.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#1e293b',
-    overlayOpacity: 0.45,
   }),
   'grounding-activity': () => ({
     title: 'Arrival breathwork ritual',
@@ -374,10 +354,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
     contextIcon: 'fa-solid fa-map-location-dot',
     essentialQuestionIcon: 'fa-solid fa-question-circle',
     keyVocabularyIcon: 'fa-solid fa-language',
-    imageUrl:
-      'https://images.pexels.com/photos/1428277/pexels-photo-1428277.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#1c2a2f',
-    overlayOpacity: 0.55,
   }),
   'guided-discovery': () => ({
     title: 'Noticing persuasive language',
@@ -401,10 +377,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
     ],
     sampleLanguageIcon: 'fa-solid fa-quote-right',
     contextIcon: 'fa-solid fa-lightbulb',
-    imageUrl:
-      'https://images.pexels.com/photos/3184646/pexels-photo-3184646.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#102a43',
-    overlayOpacity: 0.52,
   }),
   'creative-practice': () => ({
     title: 'Brainstorming community solutions',
@@ -428,10 +400,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Nominate a spokesperson to summarise the top idea live.',
     ],
     creativeSharingOptionsIcon: 'fa-solid fa-share-nodes',
-    imageUrl:
-      'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#1f2937',
-    overlayOpacity: 0.48,
   }),
   'task-divider': () => ({
     title: 'Task launch',
@@ -446,10 +414,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Assign a reporter for the debrief.',
     ],
     actionsIcon: 'fa-solid fa-list',
-    imageUrl:
-      'https://images.pexels.com/photos/5676744/pexels-photo-5676744.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900',
-    overlayColor: '#0b1d3a',
-    overlayOpacity: 0.58,
   }),
   'task-reporting': () => ({
     title: 'Post-event debrief',
@@ -470,10 +434,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Note any follow-up commitments you made.',
     ],
     evidenceIcon: 'fa-solid fa-folder-open',
-    imageUrl:
-      'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#111827',
-    overlayOpacity: 0.55,
   }),
   'genre-deconstruction': () => ({
     title: 'Deconstructing a strategic pitch dialogue',
@@ -490,10 +450,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
     mentorText:
       'Excerpt from Fatima and Yousef agreeing on the Digital Pioneers + Artisan Accelerate pilot.',
     mentorTextIcon: 'fa-solid fa-file-lines',
-    imageUrl:
-      'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#0f172a',
-    overlayOpacity: 0.5,
   }),
   'linguistic-feature-hunt': () => ({
     title: 'Language hunt: persuasive collaboration',
@@ -510,10 +466,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'How do these frames keep the tone collaborative?',
     ],
     reflectionIcon: 'fa-solid fa-person-circle-question',
-    imageUrl:
-      'https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#112d4e',
-    overlayOpacity: 0.5,
   }),
   'text-reconstruction': () => ({
     title: 'Rebuild the project update',
@@ -532,10 +484,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       "Our next step is to recruit mentors and design the first two photography masterclasses.",
     ],
     segmentsIcon: 'fa-solid fa-bars-staggered',
-    imageUrl:
-      'https://images.pexels.com/photos/3184634/pexels-photo-3184634.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#172554',
-    overlayOpacity: 0.5,
   }),
   'jumbled-text-sequencing': () => ({
     title: 'Sequence the pilot roadmap',
@@ -554,10 +502,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Remember mentorship follows training in the hybrid model.',
     ],
     supportTipsIcon: 'fa-solid fa-life-ring',
-    imageUrl:
-      'https://images.pexels.com/photos/3184298/pexels-photo-3184298.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#0f172a',
-    overlayOpacity: 0.48,
   }),
   'scaffolded-joint-construction': () => ({
     title: 'Co-writing the pilot proposal',
@@ -577,10 +521,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Highlight where mentorship benefits are referenced.',
     ],
     learnerMovesIcon: 'fa-solid fa-people-line',
-    imageUrl:
-      'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#111827',
-    overlayOpacity: 0.5,
   }),
   'independent-construction-checklist': () => ({
     title: 'Independent pitch draft checklist',
@@ -597,10 +537,6 @@ export const BUILDER_LAYOUT_DEFAULTS = {
       'Add a measurable target for the first quarter.',
     ],
     stretchGoalsIcon: 'fa-solid fa-mountain',
-    imageUrl:
-      'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1920&h=1080',
-    overlayColor: '#0f172a',
-    overlayOpacity: 0.45,
   }),
   'card-stack': () => ({
     pill: 'Task cycle roadmap',

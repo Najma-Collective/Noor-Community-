@@ -1,0 +1,539 @@
+/**
+ * Visual Editor Styles for Sandbox Deck Builder
+ * Google Slides-like editing experience
+ */
+
+/* Editable elements */
+.visual-editor-editable {
+  position: relative;
+  transition: outline 0.2s ease, background-color 0.2s ease;
+}
+
+.visual-editor-editable:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.visual-editor-hover {
+  outline: 1px dashed #94a3b8;
+  outline-offset: 2px;
+  cursor: text;
+}
+
+.visual-editor-icon-editable.visual-editor-hover,
+.visual-editor-image-editable.visual-editor-hover {
+  outline: 2px dashed #3b82f6;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+
+/* Toolbar */
+.visual-editor-toolbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visual-editor-toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.visual-editor-toolbar-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.visual-editor-toolbar-btn:active {
+  transform: scale(0.98);
+}
+
+.visual-editor-toolbar-btn i {
+  font-size: 16px;
+}
+
+/* List controls */
+.visual-editor-list-controls {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+li:hover .visual-editor-list-controls {
+  opacity: 1;
+}
+
+.visual-editor-btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.visual-editor-btn-sm:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.visual-editor-add-item {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  color: #64748b;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visual-editor-add-item:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+/* Background controls */
+.visual-editor-background-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+
+.visual-editor-btn {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visual-editor-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.visual-editor-btn:active {
+  transform: scale(0.98);
+}
+
+/* Modals */
+.visual-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.visual-editor-modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.visual-editor-modal-small {
+  max-width: 400px;
+}
+
+.visual-editor-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.visual-editor-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.visual-editor-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.visual-editor-modal-close:hover {
+  color: #0f172a;
+}
+
+.visual-editor-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Search input */
+.visual-editor-search {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.visual-editor-search:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.visual-editor-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 12px;
+}
+
+.visual-editor-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Icon grid */
+.visual-editor-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.visual-editor-icon-option {
+  padding: 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 24px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.visual-editor-icon-option:hover {
+  background: #f8fafc;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.visual-editor-icon-option:active {
+  transform: scale(0.95);
+}
+
+/* Tabs */
+.visual-editor-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.visual-editor-tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-family: inherit;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.visual-editor-tab:hover {
+  color: #334155;
+}
+
+.visual-editor-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+/* Image grid */
+.visual-editor-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.visual-editor-image-result {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.visual-editor-image-result:hover {
+  border-color: #3b82f6;
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Upload area */
+.visual-editor-upload-area {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.visual-editor-btn-large {
+  padding: 20px 40px;
+  background: white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.visual-editor-btn-large:hover {
+  background: #f8fafc;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.visual-editor-btn-large i {
+  font-size: 32px;
+}
+
+.visual-editor-hint {
+  color: #94a3b8;
+  font-size: 14px;
+  margin: 12px 0 0;
+}
+
+.visual-editor-loading {
+  text-align: center;
+  color: #64748b;
+  padding: 40px;
+}
+
+.visual-editor-error {
+  text-align: center;
+  color: #ef4444;
+  padding: 20px;
+  background: #fef2f2;
+  border-radius: 8px;
+}
+
+/* Color picker */
+.visual-editor-color-input {
+  width: 100%;
+  height: 60px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.visual-editor-slider {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.visual-editor-modal-body label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+#overlay-opacity-value {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Draggable elements */
+.visual-editor-textbox,
+.visual-editor-icon-container,
+.visual-editor-image-container {
+  position: absolute;
+  padding: 12px;
+  background: white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  cursor: move;
+  transition: border-color 0.2s ease;
+  min-width: 100px;
+  min-height: 50px;
+}
+
+.visual-editor-textbox:hover,
+.visual-editor-icon-container:hover,
+.visual-editor-image-container:hover {
+  border-color: #3b82f6;
+}
+
+.visual-editor-textbox:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .visual-editor-toolbar {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .visual-editor-modal-content {
+    max-width: 100%;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .visual-editor-icon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  }
+
+  .visual-editor-image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.visual-editor-toolbar,
+.visual-editor-background-panel {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Accessibility */
+.visual-editor-btn:focus,
+.visual-editor-toolbar-btn:focus,
+.visual-editor-tab:focus,
+.visual-editor-icon-option:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print - hide visual editor elements */
+@media print {
+  .visual-editor-toolbar,
+  .visual-editor-background-panel,
+  .visual-editor-list-controls,
+  .visual-editor-add-item,
+  .visual-editor-modal {
+    display: none !important;
+  }
+
+  .visual-editor-editable,
+  .visual-editor-icon-editable,
+  .visual-editor-image-editable {
+    outline: none !important;
+  }
+}
