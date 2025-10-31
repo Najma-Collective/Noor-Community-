@@ -785,10 +785,10 @@ function syncBlankToolbarVisibility() {
 
 const INSERT_MENU_OPTIONS = [
   {
-    action: 'add-textbox',
-    icon: 'fa-solid fa-pen-to-square',
-    label: 'Add textbox',
-    description: 'Insert a textbox onto the canvas.',
+    action: 'start-drawing',
+    icon: 'fa-solid fa-pencil',
+    label: 'Start drawing',
+    description: 'Sketch on the canvas with the drawing tools.',
   },
   {
     action: 'add-table',
@@ -797,10 +797,16 @@ const INSERT_MENU_OPTIONS = [
     description: 'Insert a table onto the canvas.',
   },
   {
-    action: 'add-mindmap',
+    action: 'add-flowchart',
     icon: 'fa-solid fa-diagram-project',
-    label: 'Add mind map',
-    description: 'Insert a mind map onto the canvas.',
+    label: 'Add shapes / flowchart',
+    description: 'Plan ideas with connected shapes or flowcharts.',
+  },
+  {
+    action: 'add-free-text',
+    icon: 'fa-solid fa-pen-to-square',
+    label: 'Add free text',
+    description: 'Insert a free-text block onto the canvas.',
   },
   {
     action: 'add-module',
@@ -2504,12 +2510,12 @@ export function attachBlankSlideEvents(slide) {
                 hidden
               ></div>
               <section class="blank-toolbar-section" data-tools-for="textbox" hidden>
-                <h3 class="blank-toolbar-heading">Textbox style</h3>
+                <h3 class="blank-toolbar-heading">Free-text style</h3>
                 <div
                   class="blank-toolbar-actions blank-toolbar-actions--tight"
                   data-role="textbox-formatting"
                   role="toolbar"
-                  aria-label="Textbox formatting"
+                  aria-label="Free-text formatting"
                 ></div>
                 <div
                   class="blank-toolbar-swatches textbox-color-options"
@@ -2669,11 +2675,11 @@ export function attachBlankSlideEvents(slide) {
   const imageSizeValue = toolbarPanel?.querySelector('[data-role="image-size-value"]');
 
   const TOOLBAR_TAB_DETAILS = new Map([
-    ["textbox", { icon: "fa-solid fa-pen-to-square", label: "Textbox tools" }],
+    ["textbox", { icon: "fa-solid fa-pen-to-square", label: "Free-text tools" }],
     ["table", { icon: "fa-solid fa-table", label: "Table tools" }],
     [
       "mindmap",
-      { icon: "fa-solid fa-diagram-project", label: "Mind map tools" },
+      { icon: "fa-solid fa-diagram-project", label: "Flowchart tools" },
     ],
     ["image", { icon: "fa-solid fa-image", label: "Image tools" }],
   ]);
@@ -2747,9 +2753,9 @@ export function attachBlankSlideEvents(slide) {
   const TOOLBAR_EMPTY_PROMPTS = {
     default:
       "Select a canvas item to edit its appearance. Choose a tool icon to continue.",
-    textbox: "Choose a tool icon to style this textbox.",
+    textbox: "Choose a tool icon to style this free-text block.",
     table: "Choose a tool icon to format this table.",
-    mindmap: "Choose a tool icon to colour this branch.",
+    mindmap: "Choose a tool icon to style this flowchart branch.",
     image: "Choose a tool icon to adjust this image.",
   };
 
@@ -2806,7 +2812,7 @@ export function attachBlankSlideEvents(slide) {
           detailParts.push(`“${preview}”`);
         }
         return {
-          summary: "Textbox",
+          summary: "Free-text block",
           detail: detailParts.join(" • "),
         };
       }
@@ -2853,7 +2859,7 @@ export function attachBlankSlideEvents(slide) {
           detailParts.push(`“${notesPreview}”`);
         }
         return {
-          summary: "Mind map branch",
+          summary: "Flowchart branch",
           detail: detailParts.join(" • "),
         };
       }
@@ -3906,6 +3912,53 @@ export function attachBlankSlideEvents(slide) {
     }, 16);
   };
 
+  const missingToolWarnings = new Set();
+
+  const requestCanvasTool = (tool, { trigger, origin } = {}) => {
+    if (typeof tool !== "string" || !tool) {
+      return false;
+    }
+    const detail = {
+      tool,
+      canvas,
+      trigger: trigger instanceof HTMLElement ? trigger : null,
+      origin,
+    };
+    let handled = false;
+
+    try {
+      const event = new CustomEvent("deck:canvas-tool-request", {
+        bubbles: true,
+        cancelable: true,
+        detail,
+      });
+      canvas.dispatchEvent(event);
+      if (event.defaultPrevented || event.detail?.handled === true) {
+        handled = true;
+      }
+    } catch (error) {
+      console.warn(`Canvas tool request for ${tool} failed`, error);
+    }
+
+    if (!handled && typeof window !== "undefined") {
+      const globalRequest = window.deckCanvasTools?.request;
+      if (typeof globalRequest === "function") {
+        try {
+          handled = globalRequest(detail) !== false;
+        } catch (error) {
+          console.warn(`Canvas tool request handler for ${tool} failed`, error);
+        }
+      }
+    }
+
+    if (!handled && !missingToolWarnings.has(tool)) {
+      console.warn(`No handler registered for canvas tool: ${tool}`);
+      missingToolWarnings.add(tool);
+    }
+
+    return handled;
+  };
+
   const registerCreationAction = (action, handler) => {
     insertController.registerAction(action, (context = {}) => {
       const trigger = context.source instanceof HTMLElement ? context.source : null;
@@ -3928,7 +3981,11 @@ export function attachBlankSlideEvents(slide) {
     });
   };
 
-  registerCreationAction("add-textbox", ({ origin }) => {
+  registerCreationAction("start-drawing", ({ trigger, origin }) =>
+    requestCanvasTool("drawing", { trigger, origin })
+  );
+
+  registerCreationAction("add-free-text", ({ origin }) => {
     const textbox = createTextbox();
     canvas.appendChild(textbox);
     prepareTextbox(textbox, { source: origin });
@@ -3962,11 +4019,14 @@ export function attachBlankSlideEvents(slide) {
     updateCanvasInsertOverlay();
   });
 
-  registerCreationAction("add-mindmap", ({ origin }) => {
+  registerCreationAction("add-flowchart", ({ trigger, origin }) => {
+    if (requestCanvasTool("flowchart", { trigger, origin })) {
+      return true;
+    }
     if (canvas.querySelector(".mindmap")) {
       const existing = canvas.querySelector(".mindmap");
       existing?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
+      return true;
     }
     const mindmap = createMindMap(() => {
       updateHintForCanvas();
