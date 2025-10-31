@@ -14270,9 +14270,26 @@ export async function setupInteractiveDeck({
     document.querySelector("#builder-status");
   const allowedBuilderLayouts = [
     'blank-canvas',
+    'grounding-activity',
+    'topic-introduction',
+    'learning-objectives',
+    'model-dialogue',
+    'guided-discovery',
+    'genre-deconstruction',
+    'linguistic-feature-hunt',
+    'text-reconstruction',
+    'jumbled-text-sequencing',
     'interactive-practice',
     'card-stack',
     'pill-with-gallery',
+    'creative-practice',
+    'communicative-task',
+    'task-divider',
+    'task-reporting',
+    'scaffolded-joint-construction',
+    'independent-construction-checklist',
+    'pronunciation-focus',
+    'reflection',
   ];
   const allowedBuilderLayoutSet = new Set(allowedBuilderLayouts);
   builderLayoutInputs = Array.from(

@@ -238,10 +238,40 @@ assert.ok(
   layoutPickerFieldset instanceof window.HTMLElement,
   'layout picker fieldset should exist in the builder',
 );
-assert.equal(
-  layoutPickerFieldset.dataset.layouts,
-  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
-  'layout picker should expose the sandbox card stack and pill gallery layouts',
+
+const expectedLayouts = [
+  'blank-canvas',
+  'grounding-activity',
+  'topic-introduction',
+  'learning-objectives',
+  'model-dialogue',
+  'guided-discovery',
+  'genre-deconstruction',
+  'linguistic-feature-hunt',
+  'text-reconstruction',
+  'jumbled-text-sequencing',
+  'interactive-practice',
+  'card-stack',
+  'pill-with-gallery',
+  'creative-practice',
+  'communicative-task',
+  'task-divider',
+  'task-reporting',
+  'scaffolded-joint-construction',
+  'independent-construction-checklist',
+  'pronunciation-focus',
+  'reflection',
+];
+
+const pickerLayouts = (layoutPickerFieldset.dataset.layouts || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean)
+  .sort();
+assert.deepStrictEqual(
+  pickerLayouts,
+  [...expectedLayouts].sort(),
+  'layout picker should list every documented layout',
 );
 
 const imageSearchSection = builderOverlay
@@ -251,10 +281,34 @@ assert.ok(
   imageSearchSection instanceof window.HTMLElement,
   'image search section should be present in the builder',
 );
-assert.equal(
-  imageSearchSection.dataset.layouts,
-  'blank-canvas,interactive-practice,card-stack,pill-with-gallery',
-  'image search tools should remain available to blank, interactive practice, card stack, and pill gallery layouts',
+const imageSearchLayouts = (imageSearchSection.dataset.layouts || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean)
+  .sort();
+const expectedImageSearchLayouts = [
+  'creative-practice',
+  'communicative-task',
+  'genre-deconstruction',
+  'grounding-activity',
+  'guided-discovery',
+  'independent-construction-checklist',
+  'jumbled-text-sequencing',
+  'learning-objectives',
+  'linguistic-feature-hunt',
+  'model-dialogue',
+  'pronunciation-focus',
+  'reflection',
+  'scaffolded-joint-construction',
+  'task-divider',
+  'task-reporting',
+  'text-reconstruction',
+  'topic-introduction',
+].sort();
+assert.deepStrictEqual(
+  imageSearchLayouts,
+  expectedImageSearchLayouts,
+  'image search tools should be enabled for every background-driven layout',
 );
 
 addSlideBtn.click();
@@ -266,12 +320,14 @@ assert.ok(
   'blank layout should mark the builder preview as blank',
 );
 
-const expectedLayouts = [
-  'blank-canvas',
-  'interactive-practice',
-  'card-stack',
-  'pill-with-gallery',
-];
+const layoutOptions = Array.from(
+  builderOverlay.querySelectorAll('input[name="slideLayout"]'),
+).map((input) => input.value);
+assert.deepStrictEqual(
+  layoutOptions.sort(),
+  [...expectedLayouts].sort(),
+  'slide library should expose every documented layout option',
+);
 
 expectedLayouts.forEach((value) => {
   const option = builderOverlay.querySelector(`input[name="slideLayout"][value="${value}"]`);
