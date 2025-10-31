@@ -138,9 +138,9 @@
             "Trigger the deck generator with media sourcing and compliance checkpoints."
           ],
           "goalIcon": "fa-solid fa-bullseye",
-          "imageUrl": "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
-          "overlayColor": "#0b1d33",
-          "overlayOpacity": 0.55,
+          "imageUrl": "",
+          "overlayColor": "",
+          "overlayOpacity": 0,
           "layoutIcon": "fa-solid fa-bullseye"
         }
       },
@@ -250,9 +250,9 @@
             "What automation or template would make your JSON authoring smoother?",
             "How will you evidence learner readiness before publishing the deck?"
           ],
-          "imageUrl": "https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900",
-          "overlayColor": "#021b36",
-          "overlayOpacity": 0.6,
+          "imageUrl": "",
+          "overlayColor": "",
+          "overlayOpacity": 0,
           "layoutIcon": "fa-solid fa-comments"
         }
       }
