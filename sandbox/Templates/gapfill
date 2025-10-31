@@ -1,422 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Standalone Activity: Gap-Fill Input</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-sage: #7A8471;
-      --secondary-sage: #9CAF88;
-      --tertiary-sage: #B8C5A6;
-      --warm-cream: #F8F6F0;
-      --soft-white: #FEFCF7;
-      --clay-brown: #A0826D;
-      --forest-shadow: #5A6B52;
-      --border-sage: rgba(122, 132, 113, 0.2);
-      --hover-sage: rgba(156, 175, 136, 0.15);
-      --correct-bg: #E8F5E9;
-      --correct-border: #2E7D32;
-      --incorrect-bg: #FFEBEE;
-      --incorrect-border: #C62828;
-      --font-display: 'Questrial', sans-serif;
-      --font-body: 'Nunito', sans-serif;
-      --feedback-width-desktop: 380px;
-    }
-
-    html, body {
-      margin: 0; padding: 0; width: 100%;
-      font-family: var(--font-body);
-      background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
-      overflow-x: hidden;
-    }
-
-    body.feedback-open { overflow: hidden; }
-
-    #app-wrapper {
-      position: relative; display: flex; justify-content: center;
-      align-items: flex-start; padding: 2rem; box-sizing: border-box; width: 100%;
-    }
-
-    #activity-container {
-      width: 100%; max-width: 900px; background: var(--soft-white);
-      padding: 48px; border-radius: 20px;
-      border: 1px solid rgba(122, 132, 113, 0.12);
-      box-shadow: 0 8px 32px rgba(122, 132, 113, 0.08);
-      box-sizing: border-box; transition: margin-right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    @media (min-width: 1024px) {
-      #app-wrapper.feedback-visible #activity-container { margin-right: var(--feedback-width-desktop); }
-    }
-
-    /* --- HEADER LAYOUT --- */
-    #activity-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 32px;
-      margin-bottom: 32px;
-    }
-    #activity-titles { flex-grow: 1; }
-    h1 { font-family: var(--font-display); font-size: 2.5rem; color: var(--forest-shadow); margin: 0 0 8px 0; }
-    h2.rubric { font-family: var(--font-body); font-size: 1.1rem; color: var(--secondary-sage); margin: 0; border-left: 3px solid var(--tertiary-sage); padding-left: 12px; }
-
-    #decorative-image-container {
-      flex-shrink: 0;
-      width: 180px;
-      height: 120px;
-      background-color: var(--warm-cream);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--border-sage);
-    }
-    #decorative-image-container img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-
-    /* --- Gapfill Styles --- */
-    .gapfill-container {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .gapfill-container p {
-      font-size: 1.15rem;
-      line-height: 2.1;
-      color: var(--forest-shadow);
-      background-color: var(--warm-cream);
-      padding: 32px;
-      border-radius: 16px;
-      border: 1px solid var(--border-sage);
-      margin: 0;
-    }
-
-    .gap-wrapper {
-      display: inline-flex;
-      align-items: center;
-      position: relative;
-      margin: 0 4px;
-      padding: 0 2px;
-    }
-
-    .gap-wrapper input[type="text"] {
-      font-family: var(--font-body);
-      font-size: 1.05rem;
-      font-weight: 600;
-      padding: 8px 14px 6px;
-      border-radius: 10px;
-      border: 2px solid var(--tertiary-sage);
-      background-color: var(--soft-white);
-      color: var(--primary-sage);
-      min-width: 120px;
-      text-align: center;
-      transition: border-color 0.2s, background-color 0.2s, color 0.2s;
-    }
-    .gap-wrapper input[type="text"]::placeholder {
-      color: rgba(122, 132, 113, 0.6);
-      font-weight: 400;
-    }
-    .gap-wrapper input[type="text"]:focus {
-      outline: none;
-      border-color: var(--primary-sage);
-      background-color: #ffffff;
-    }
-    .gap-wrapper.correct input[type="text"] {
-      border-color: var(--correct-border);
-      background-color: rgba(76, 175, 80, 0.12);
-      color: var(--correct-border);
-    }
-    .gap-wrapper.incorrect input[type="text"] {
-      border-color: var(--incorrect-border);
-      background-color: rgba(229, 57, 53, 0.08);
-      color: var(--incorrect-border);
-    }
-
-    .inline-hint {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--clay-brown);
-      margin-top: 8px;
-    }
-
-    /* --- Shared Styles --- */
-    .activity-controls { margin-top: 32px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .activity-btn { padding: 12px 24px; border-radius: 12px; border: 1px solid var(--primary-sage); background-color: var(--primary-sage); color: white; font-weight: 600; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-    .activity-btn:hover { background-color: var(--forest-shadow); transform: translateY(-1px); }
-    .activity-btn:disabled { background-color: var(--tertiary-sage); cursor: not-allowed; border-color: var(--tertiary-sage); transform: none; }
-    .activity-btn.secondary { background-color: transparent; color: var(--primary-sage); border-color: var(--tertiary-sage); }
-    .activity-btn.secondary:hover { background-color: var(--hover-sage); }
-
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .placeholder-loader { width: 24px; height: 24px; border: 3px solid var(--hover-sage); border-top-color: var(--secondary-sage); border-radius: 50%; animation: spin 1s linear infinite; }
-
-    /* --- Feedback Sidebar Styles --- */
-    #feedback-sidebar { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: var(--warm-cream); border-left: 1px solid var(--border-sage); box-shadow: -8px 0 32px rgba(90, 107, 82, 0.1); z-index: 1000; transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); display: flex; flex-direction: column; box-sizing: border-box; }
-    @media (min-width: 1024px) { #feedback-sidebar { width: var(--feedback-width-desktop); height: 100vh; } }
-    #app-wrapper.feedback-visible #feedback-sidebar { transform: translateX(0); }
-    .feedback-header { padding: 24px; border-bottom: 1px solid var(--border-sage); }
-    .feedback-header h3 { font-family: var(--font-display); font-size: 1.8rem; color: var(--forest-shadow); margin: 0 0 8px 0; }
-    #feedback-score { font-size: 1.1rem; font-weight: 600; color: var(--primary-sage); }
-    #feedback-details { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-    .feedback-item { background: var(--soft-white); border: 1px solid var(--border-sage); border-left-width: 4px; border-radius: 8px; padding: 16px; }
-    .feedback-item.correct { border-left-color: var(--correct-border); }
-    .feedback-item.incorrect { border-left-color: var(--incorrect-border); }
-    .feedback-item h4 { margin: 0 0 12px 0; font-size: 1.1rem; color: var(--forest-shadow); }
-    .feedback-item p { margin: 0 0 8px 0; font-size: 0.95rem; line-height: 1.6; color: var(--primary-sage); }
-    .feedback-item p strong { color: var(--forest-shadow); }
-    .feedback-item .explanation { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-sage); }
-    .feedback-footer { padding: 24px; border-top: 1px solid var(--border-sage); text-align: center; background: var(--warm-cream); }
-
-    /* --- Mobile Optimisations --- */
-    @media (max-width: 767px) {
-      #app-wrapper { padding: 1rem; }
-      #activity-container { padding: 24px; }
-      #activity-header { flex-direction: column; align-items: center; text-align: center; }
-      h2.rubric { border-left: none; padding-left: 0; }
-      #decorative-image-container { width: 100%; height: 150px; }
-      .gapfill-container p { font-size: 1rem; line-height: 2; padding: 20px; }
-      .gap-wrapper input[type="text"] { font-size: 1rem; min-width: 100px; }
-      .feedback-header, .feedback-details, .feedback-footer { padding: 20px; }
-      .feedback-header h3 { font-size: 1.6rem; }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badge Copy Refinement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-MX58QX8wG7n+9yYvCMpOZXS6jttuPAHyBs+K6TfGsDzpDHK5vVsQt1zArhcXd1LSeX776BF3nf6/3cxguP3R0A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="stylesheet" href="../sandbox-css.css" />
 </head>
-<body>
-
-  <div id="app-wrapper">
-    <div id="activity-container" data-query-theme="collaborative learning classroom">
-
-      <div id="activity-header">
-        <div id="activity-titles">
-          <h1>Designing Collaborative Lessons</h1>
-          <h2 class="rubric">Complete each sentence with the missing key term to review the planning cycle.</h2>
-        </div>
-        <div id="decorative-image-container">
-          <div class="placeholder-loader"></div>
-        </div>
+<body class="activity-document">
+  <div class="activity-shell">
+    <header class="activity-header">
+      <h1>Badge Copy Refinement</h1>
+      <p class="instructions">
+        Preview the mentor text pill, then tighten each badge caption with precise C1 language.
+      </p>
+      <div class="rubric">
+        <strong>Success criteria:</strong>
+        <p>Award one point per correctly completed blank; coach for concision before revealing the model answers.</p>
       </div>
+    </header>
 
-      <div class="gapfill-container">
-        <p>
-          Strong collaborative lessons begin with a clear
-          <span class="gap-wrapper"
-                data-feedback-title="Clear purpose"
-                data-correct-answer="goal|learning goal"
-                data-explanation="Identifying the learning goal first keeps every collaborative task anchored to a meaningful outcome.">
-            <input type="text" placeholder="Type answer" aria-label="Blank 1">
+    <section class="activity-body stack">
+      <div class="gapfill-activity" data-module="gapfill">
+        <p class="gapfill-text">
+          Each slide opens with a
+          <span class="gap" data-answers="scenario|context">
+            <label class="visually-hidden" for="gap-1">Blank 1</label>
+            <input id="gap-1" type="text" aria-label="Blank 1" placeholder="Type answer" />
           </span>
-          that tells learners what success looks like. Once the destination is set, teachers curate accessible
-          <span class="gap-wrapper"
-                data-feedback-title="Curating supports"
-                data-correct-answer="resources|materials"
-                data-explanation="Shared resources such as readings, visuals, or data sets ensure all learners can contribute.">
-            <input type="text" placeholder="Type answer" aria-label="Blank 2">
+          pill that anchors learners in a real brief. To reinforce the voice and tone, pair every action card with a
+          <span class="gap" data-answers="badge|micro-badge">
+            <label class="visually-hidden" for="gap-2">Blank 2</label>
+            <input id="gap-2" type="text" aria-label="Blank 2" placeholder="Type answer" />
           </span>
-          so every student can enter the conversation.
+          label that signals the focus. During the showcase, move from the
+          <span class="gap" data-answers="insight|key insight">
+            <label class="visually-hidden" for="gap-3">Blank 3</label>
+            <input id="gap-3" type="text" aria-label="Blank 3" placeholder="Type answer" />
+          </span>
+          badge into the reflection grid so evidence stays visible.
         </p>
 
-        <p>
-          During group work, learners need structured opportunities to
-          <span class="gap-wrapper"
-                data-feedback-title="Active processing"
-                data-correct-answer="apply|practice"
-                data-explanation="Collaborative tasks should require teams to apply or practice new understanding together.">
-            <input type="text" placeholder="Type answer" aria-label="Blank 3">
-          </span>
-          ideas and space to
-          <span class="gap-wrapper"
-                data-feedback-title="Thinking about learning"
-                data-correct-answer="reflect|reflect on"
-                data-explanation="A reflective pause allows learners to name strategies that supported their collaboration.">
-            <input type="text" placeholder="Type answer" aria-label="Blank 4">
-          </span>
-          on how the team worked. After the activity, celebrate progress and plan for next steps by capturing the class
-          <span class="gap-wrapper"
-                data-feedback-title="Shared understanding"
-                data-correct-answer="takeaways|insights"
-                data-explanation="Collecting shared takeaways reinforces the most important insights and informs future planning.">
-            <input type="text" placeholder="Type answer" aria-label="Blank 5">
-          </span>.
-        </p>
+        <div class="activity-actions">
+          <button id="gap-check" class="activity-btn">Check answers</button>
+          <button id="gap-reset" class="activity-btn secondary" type="button">Reset</button>
+        </div>
+
+        <aside id="gap-feedback" class="gap-feedback" hidden>
+          <h3>Feedback</h3>
+          <p id="gap-score"></p>
+          <div id="gap-details"></div>
+          <button id="gap-close" class="activity-btn secondary">Close</button>
+        </aside>
       </div>
 
-      <div class="activity-controls">
-        <button id="check-answers-btn" class="activity-btn">Check Answers</button>
-        <button id="reset-activity-btn" class="activity-btn secondary" type="button">Reset</button>
-      </div>
-    </div>
-
-    <div id="feedback-sidebar"><!-- Dynamically populated by JS --></div>
+      <figure
+        class="activity-spotlight-figure"
+        data-pexels-query="design collaboration"
+        data-pexels-orientation="landscape"
+      >
+        <div class="activity-spotlight-placeholder" data-role="pexels-placeholder">
+          <i class="fa-solid fa-spinner" aria-hidden="true"></i>
+          <p>Loading studio inspiration…</p>
+        </div>
+        <figcaption>Curate visuals that reinforce the collaborative design brief.</figcaption>
+      </figure>
+    </section>
   </div>
 
-<script>
-const App = {
-  init() {
-    ImageFetcher.initSingleImage();
-    FeedbackPanel.init();
-    GapfillManager.init();
-  }
-};
-
-const ImageFetcher = {
-  API_KEY: 'xgmzSrq1PBV9ELvW4mSlyq6vAf0k6qDrrMd1zIpLrIheWepQ32zN4iJk',
-  async initSingleImage() {
-    const container = document.getElementById('decorative-image-container');
-    const themeQuery = document.getElementById('activity-container').dataset.queryTheme;
-    if (!container || !themeQuery) return;
-
-    const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(themeQuery)}&per_page=1&orientation=landscape`;
-    await this.fetchAndApply(url, container, themeQuery);
-  },
-  async fetchAndApply(url, container, queryForAlt) {
-    try {
-      const response = await fetch(url, { headers: { Authorization: this.API_KEY } });
-      if (!response.ok) throw new Error(`Pexels API error: ${response.statusText}`);
-      const data = await response.json();
-      const photo = data.photos[0];
-
-      if (photo) {
-        const img = document.createElement('img');
-        img.src = photo.src.landscape;
-        img.alt = photo.alt || `Decorative image related to ${queryForAlt}`;
-        img.onload = () => {
-          container.innerHTML = '';
-          container.appendChild(img);
-        };
-        img.onerror = () => { container.innerHTML = 'X'; };
-      } else {
-        container.innerHTML = '?';
-      }
-    } catch (error) {
-      console.error(`Failed to fetch image for "${queryForAlt}":`, error);
-      container.innerHTML = '!';
-    }
-  }
-};
-
-const FeedbackPanel = {
-  dom: {},
-  init() {
-    document.getElementById('feedback-sidebar').innerHTML = `<div class="feedback-header"><h3>Your Results</h3><p id="feedback-score"></p></div><div id="feedback-details"></div><div class="feedback-footer"><button id="feedback-close-btn" class="activity-btn secondary">Try Again</button></div>`;
-    this.dom.appWrapper = document.getElementById('app-wrapper');
-    this.dom.feedbackSidebar = document.getElementById('feedback-sidebar');
-    this.dom.feedbackScore = document.getElementById('feedback-score');
-    this.dom.feedbackDetails = document.getElementById('feedback-details');
-    this.dom.feedbackCloseBtn = document.getElementById('feedback-close-btn');
-    this.bindEvents();
-  },
-  bindEvents() {
-    this.dom.feedbackCloseBtn.addEventListener('click', () => {
-      this.hide();
-      GapfillManager.resetActivity();
-    });
-  },
-  clear() { this.dom.feedbackDetails.innerHTML = ''; },
-  addDetail(data) {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = `feedback-item ${data.isCorrect ? 'correct' : 'incorrect'}`;
-    itemDiv.innerHTML = `<h4>${data.itemName}</h4><p><strong>Your Answer:</strong> ${data.studentAnswer || 'No response'}</p>${!data.isCorrect ? `<p><strong>Correct Answer:</strong> ${data.correctAnswer}</p>` : ''}<div class="explanation"><p>${data.explanation}</p></div>`;
-    this.dom.feedbackDetails.appendChild(itemDiv);
-  },
-  show(score, total) {
-    this.dom.feedbackScore.textContent = total > 0 ? `You scored ${score} out of ${total}.` : `Please answer at least one prompt before checking.`;
-    this.dom.appWrapper.classList.add('feedback-visible');
-    document.body.classList.add('feedback-open');
-  },
-  hide() {
-    this.dom.appWrapper.classList.remove('feedback-visible');
-    document.body.classList.remove('feedback-open');
-  }
-};
-
-const GapfillManager = {
-  init() {
-    this.cacheDOM();
-    this.bindEvents();
-  },
-  cacheDOM() {
-    this.checkBtn = document.getElementById('check-answers-btn');
-    this.resetBtn = document.getElementById('reset-activity-btn');
-    this.gapWrappers = document.querySelectorAll('.gap-wrapper');
-  },
-  bindEvents() {
-    this.checkBtn.addEventListener('click', () => this.checkAnswers());
-    this.resetBtn.addEventListener('click', () => {
-      this.resetActivity();
-      FeedbackPanel.clear();
-      FeedbackPanel.hide();
-    });
-    this.gapWrappers.forEach(wrapper => {
-      const input = wrapper.querySelector('input');
-      input.addEventListener('input', () => {
-        wrapper.classList.remove('correct', 'incorrect');
-        this.checkBtn.disabled = false;
-      });
-    });
-  },
-  normaliseResponse(value) {
-    return value.trim().toLowerCase();
-  },
-  parseCorrectAnswers(wrapper) {
-    return wrapper.dataset.correctAnswer
-      .split('|')
-      .map(ans => ans.trim().toLowerCase())
-      .filter(Boolean);
-  },
-  checkAnswers() {
-    let totalCorrect = 0;
-    let totalAttempted = 0;
-
-    FeedbackPanel.clear();
-    this.gapWrappers.forEach(wrapper => {
-      const input = wrapper.querySelector('input');
-      const learnerResponse = this.normaliseResponse(input.value);
-      if (!learnerResponse) {
-        wrapper.classList.remove('correct', 'incorrect');
-        return;
-      }
-
-      totalAttempted++;
-      const acceptableAnswers = this.parseCorrectAnswers(wrapper);
-      const isCorrect = acceptableAnswers.includes(learnerResponse);
-      const correctAnswerDisplay = wrapper.dataset.correctAnswer.split('|')[0].trim();
-
-      wrapper.classList.toggle('correct', isCorrect);
-      wrapper.classList.toggle('incorrect', !isCorrect);
-      if (isCorrect) totalCorrect++;
-
-      FeedbackPanel.addDetail({
-        isCorrect,
-        itemName: wrapper.dataset.feedbackTitle,
-        studentAnswer: input.value.trim(),
-        correctAnswer: correctAnswerDisplay,
-        explanation: wrapper.dataset.explanation || 'Great effort—keep going!'
-      });
-    });
-
-    FeedbackPanel.show(totalCorrect, totalAttempted);
-    this.checkBtn.disabled = true;
-  },
-  resetActivity() {
-    this.gapWrappers.forEach(wrapper => {
-      const input = wrapper.querySelector('input');
-      input.value = '';
-      wrapper.classList.remove('correct', 'incorrect');
-    });
-    this.checkBtn.disabled = false;
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => App.init());
-</script>
-
+  <script type="module" src="../modules/gapfill.js"></script>
+  <script type="module" src="../modules/decor-image.js"></script>
 </body>
 </html>
