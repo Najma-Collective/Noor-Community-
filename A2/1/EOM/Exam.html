@@ -157,9 +157,17 @@
         .matching-container { display: flex; justify-content: space-between; gap: var(--space-6); }
         .matching-column { width: 48%; }
         .matching-column ul { list-style: none; padding: 0; }
-        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std); }
+        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std); }
         .matching-column li:hover { background-color: var(--hover-sage); }
         .matching-column li.selected { background-color: var(--amber); color: var(--deep-forest); border-color: var(--amber); }
+
+        /* --- NEW: Unique colors for matched pairs --- */
+        .matching-column li.matched-pair-1 { background-color: #e0bbe4; color: #3e2d42; border-color: #3e2d42; }
+        .matching-column li.matched-pair-2 { background-color: #957dad; color: #f3eef7; border-color: #c4b7dc; }
+        .matching-column li.matched-pair-3 { background-color: #d291bc; color: #4e2d42; border-color: #4e2d42; }
+        .matching-column li.matched-pair-4 { background-color: #fec8d8; color: #5e3a45; border-color: #5e3a45; }
+        .matching-column li.matched-pair-5 { background-color: #ffdfd3; color: #5e483f; border-color: #5e483f; }
+
 
         /* Click-to-Move Classification Styles */
         .classification-container { padding: var(--space-4); background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); border-radius: var(--radius); }
@@ -417,67 +425,64 @@
             });
         });
 
-        // ===================================================================
-        // --- START: MATCHING ACTIVITY ENHANCEMENT (DIFFERENT COLORS) ---
-        // ===================================================================
-        const matchColors = ['#c6aa77', '#b8c5a6', '#d1bfa2', '#9caf88', '#e3d6c1', '#a7b499'];
-        let colorIndex = 0;
+        // --- UPDATED: Matching activity logic for unique colors ---
         let selectedMatchItem = null;
+        
+        // Initialize a color counter for each separate matching activity
+        document.querySelectorAll('[data-activity-type="matching"]').forEach(activity => {
+            activity.dataset.matchCounter = 1;
+        });
 
         document.querySelectorAll('.matching-column li').forEach(item => {
             item.addEventListener('click', e => {
-                if (assessmentSubmitted) return;
+                if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
+
                 const currentItem = e.currentTarget;
                 const currentColumn = currentItem.closest('.matching-column');
 
+                // Deselect if clicking the same item again
                 if (currentItem.classList.contains('selected')) {
                     currentItem.classList.remove('selected');
                     selectedMatchItem = null;
                     return;
                 }
 
+                // If nothing is selected, select the current item
                 if (!selectedMatchItem) {
-                    // This is the first item selected in a pair.
-                    // Deselect any other selected item in the same column.
+                    // Deselect others in the same column before selecting a new one
                     currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
                     currentItem.classList.add('selected');
                     selectedMatchItem = currentItem;
-                } else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
-                    // This is the second item, and it's in a different column. A match is made.
-                    
-                    // 1. Get the next color for this pair and increment the index for the next pair.
-                    const pairColor = matchColors[colorIndex % matchColors.length];
-                    colorIndex++;
-
-                    // 2. Log the user's answer for scoring.
+                } 
+                // If an item is selected in the other column, a match is attempted
+                else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                    // A match is made, apply unique color
                     selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
                     currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
 
-                    // 3. Lock both items from being selected again.
+                    const activityCard = currentItem.closest('[data-activity-type="matching"]');
+                    const matchNumber = activityCard.dataset.matchCounter;
+                    const matchClass = `matched-pair-${matchNumber}`;
+
+                    // Add the unique color class to both items
+                    selectedMatchItem.classList.add(matchClass);
+                    currentItem.classList.add(matchClass);
+                    
+                    // Lock both items
                     selectedMatchItem.style.pointerEvents = 'none';
                     currentItem.style.pointerEvents = 'none';
-                    
-                    // 4. Remove the 'selected' look from the first item.
                     selectedMatchItem.classList.remove('selected');
-
-                    // 5. Apply the unique pair color to both items.
-                    selectedMatchItem.style.backgroundColor = pairColor;
-                    currentItem.style.backgroundColor = pairColor;
-                    selectedMatchItem.style.color = 'var(--deep-forest)'; // Ensure text is readable
-                    currentItem.style.color = 'var(--deep-forest)';   // Ensure text is readable
-
-                    // 6. Reset for the next pair.
+                    
+                    // Increment the color counter for the next pair in this specific activity
+                    activityCard.dataset.matchCounter = parseInt(matchNumber, 10) + 1;
+                    
+                    // Reset selection
                     selectedMatchItem = null;
                 }
             });
         });
-        // =================================================================
-        // --- END: MATCHING ACTIVITY ENHANCEMENT ---
-        // =================================================================
-
 
         let selectedWordToken = null;
-        const sourceWordsContainer = document.getElementById('source-words');
         document.querySelectorAll('.word-token').forEach(token => {
             token.addEventListener('click', e => {
                 e.stopPropagation();
@@ -503,36 +508,25 @@
         submitBtn.addEventListener('click', () => handleSubmission(false));
         
         function handleSubmission(isAutoSubmit) {
-            console.log("handleSubmission function started.");
-
-            if (assessmentSubmitted) {
-                console.log("Submission blocked because assessmentSubmitted is true.");
-                return;
-            }
+            if (assessmentSubmitted) return;
             assessmentSubmitted = true;
             clearInterval(timerInterval);
 
             if (!isAutoSubmit) {
-                console.log("Manual submission. Asking for confirmation.");
                 if (!confirm('Are you sure you want to submit?')) {
-                    console.log("User cancelled submission.");
                     assessmentSubmitted = false;
                     startTimer();
                     return;
                 }
             }
 
-            console.log("Proceeding with submission.");
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
             const score = calculateScore();
             const total = 32;
-            console.log(`Score calculated: ${score}/${total}`);
-
-            showFeedback(score, total);
             
-            console.log("Calling submitToGoogleSheet function.");
+            showFeedback(score, total);
             submitToGoogleSheet(studentId, 'A1', `${score}/${total}`);
         }
 
