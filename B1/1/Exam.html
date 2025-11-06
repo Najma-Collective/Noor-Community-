@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B1 Final Assessment: Building Professional Networks</title>
+
+    <!-- 1. Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+
+    <!-- 2. Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- 3. Embedded CSS Theme from Reference Implementation -->
+    <style>
+        /* =====================================================================
+           Noor Community Activities — Enhanced UI System
+           Refined version of the Organic Sage visual language.
+           ===================================================================== */
+
+        /* -------------------------------
+           Design Tokens
+        ----------------------------------*/
+        :root {
+          /* Core Palette */
+          --primary-sage: #7a8471;
+          --secondary-sage: #9caf88;
+          --tertiary-sage: #b8c5a6;
+          --warm-cream: #f8f6f0;
+          --soft-white: #fefcf7;
+          --forest-shadow: #5a6b52;
+          --ink: #2f3a2b;
+          --ink-muted: #5a6b52;
+          --border-sage: rgba(122, 132, 113, 0.2);
+          --hover-sage: rgba(156, 175, 136, 0.15);
+
+          /* Extended Palette */
+          --deep-forest: #3e4a3a;
+          --moss: #6e7a67;
+          --amber: #c6aa77;
+
+          /* Typography */
+          --font-display: "Questrial", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+          --font-body: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+          --font-size-adjustment: 0rem;
+          --step--1: calc(clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem) + var(--font-size-adjustment));
+          --step-0:  calc(clamp(1rem, 0.94rem + 0.28vw, 1.1rem) + var(--font-size-adjustment));
+          --step-1:  calc(clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem) + var(--font-size-adjustment));
+          --step-2:  calc(clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem) + var(--font-size-adjustment));
+          --step-3:  calc(clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem) + var(--font-size-adjustment));
+          --step-4:  calc(clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem) + var(--font-size-adjustment));
+
+          /* Rhythm & Spacing */
+          --space-1: 0.25rem;
+          --space-2: 0.5rem;
+          --space-3: 0.75rem;
+          --space-4: 1rem;
+          --space-5: 1.25rem;
+          --space-6: 1.5rem;
+          --space-7: 2rem;
+          --space-8: 2.5rem;
+          --space-9: 3rem;
+
+          /* Shape & Elevation */
+          --radius-sm: 10px;
+          --radius: 16px;
+          --radius-lg: 20px;
+          --radius-xl: 28px;
+          --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+          --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+          --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.1), 0 20px 60px rgba(34, 41, 32, 0.08);
+          --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
+                   0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #2f3a2b 15%);
+
+          /* Motion */
+          --ease-out: cubic-bezier(.2,.8,.2,1);
+          --transition-fast: 150ms var(--ease-out);
+          --transition-std: 250ms var(--ease-out);
+
+          /* Layout */
+          --target-min: 44px;
+          --container-max: clamp(320px, 92vw, 940px);
+          --container-padding: clamp(1.25rem, 5vw, 2rem);
+        }
+
+        /* -------------------------------
+           Global Reset & Base Styles
+        ----------------------------------*/
+        *, *::before, *::after { box-sizing: border-box; }
+        html { text-size-adjust: 100%; scroll-behavior: smooth; }
+        body { margin: 0; min-height: 100dvh; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--ink); background: var(--warm-cream); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: hidden; }
+        :where(p, h1, h2, h3, h4, h5, h6) { text-wrap: pretty; overflow-wrap: break-word; }
+        :where(h1, h2, h3) { text-wrap: balance; }
+
+        /* -------------------------------
+           Typography & Layout
+        ----------------------------------*/
+        .container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); }
+        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); text-align: center; line-height: 1.1; margin: 0 0 var(--space-3); }
+        h2 { font-family: var(--font-display); font-size: var(--step-3); color: var(--forest-shadow); margin: var(--space-7) 0 var(--space-4); }
+        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-3); letter-spacing: 0.02em; }
+        
+        /* -------------------------------
+           Buttons
+        ----------------------------------*/
+        .activity-btn { min-height: var(--target-min); padding: 0.75rem clamp(1.2rem, 4vw, 1.75rem); border-radius: 999px; border: 1px solid color-mix(in srgb, var(--primary-sage) 65%, #fff 35%); background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest)); color: #fff; font-weight: 700; font-size: var(--step-0); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; -webkit-tap-highlight-color: transparent; transition: transform var(--transition-fast), box-shadow var(--transition-std), background var(--transition-std); box-shadow: var(--shadow-1); }
+        .activity-btn:hover { transform: scale(1.02); box-shadow: var(--shadow-2); background: linear-gradient(180deg, var(--moss), var(--deep-forest)); }
+        .activity-btn:active { transform: scale(0.98); }
+        .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), var(--shadow-2); transform: scale(1.02); }
+        .activity-btn:disabled { background: var(--tertiary-sage); border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #fff 20%); color: color-mix(in srgb, #fff 85%, var(--soft-white) 15%); cursor: not-allowed; opacity: 0.85; transform: none; box-shadow: none; }
+
+        /* -------------------------------
+           Multiple Choice Question Styles
+        ----------------------------------*/
+        .mc-question { padding: clamp(1.25rem, 4vw, 1.75rem); border-radius: var(--radius); border: 1px solid var(--border-sage); background: linear-gradient(180deg, #fff, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%)); box-shadow: var(--shadow-1); margin-bottom: var(--space-6); }
+        .mc-question-text { font-weight: 700; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; margin: 0 0 var(--space-5); }
+        .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
+        .mc-option-item input { display: none; }
+        .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); background: color-mix(in srgb, var(--soft-white) 92%, #fff 8%); transition: all var(--transition-std); -webkit-tap-highlight-color: transparent; }
+        .mc-option-label:hover { background: var(--hover-sage); border-color: color-mix(in srgb, var(--secondary-sage) 50%, transparent); }
+        .mc-option-label .option-control { flex-shrink: 0; width: 24px; height: 24px; border: 2px solid var(--tertiary-sage); background-color: var(--soft-white); transition: all var(--transition-std); position: relative; border-radius: 50%; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7); }
+        .mc-option-label.locked { cursor: not-allowed; background: var(--hover-sage); }
+        .mc-option-item input:checked + .mc-option-label .option-control { border-color: var(--primary-sage); background-color: var(--primary-sage); }
+        .mc-option-item input:checked + .mc-option-label .option-control::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background-color: #fff; }
+        .mc-option-item input:focus-visible + .mc-option-label { outline: none; box-shadow: var(--ring); }
+        .mc-option-label:has(input:checked) { border-color: var(--primary-sage); background: color-mix(in srgb, var(--hover-sage) 30%, #fff 70%); }
+        .mc-option-label:has(input:checked) .mc-option-text { color: var(--deep-forest); font-weight: 600; }
+
+        /* -------------------------------
+           Assessment-Specific Custom Styles
+        ----------------------------------*/
+        .assessment-container { display: none; }
+        #student-id-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #student-id-box { background: var(--soft-white); padding: var(--space-8); border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-3); width: 90%; max-width: 400px; }
+        #student-id-box h2 { margin-top: 0; color: var(--primary-sage); font-family: var(--font-display); }
+        #student-id-input { width: 100%; padding: var(--space-3); margin: var(--space-5) 0; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); font-size: var(--step-0); }
+
+        .timer-bar { position: sticky; top: 0; width: 100%; background-color: var(--deep-forest); color: var(--soft-white); padding: var(--space-3) var(--space-4); text-align: center; font-weight: 700; z-index: 999; box-shadow: var(--shadow-2); }
+        #countdown-timer { background-color: var(--amber); color: var(--deep-forest); padding: var(--space-1) var(--space-2); border-radius: 6px; margin-left: var(--space-2); }
+        
+        .hero-section { position: relative; background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; }
+        .hero-overlay { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.5); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-section h1 { color: white; font-size: var(--step-4); }
+        .pills { display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; }
+        .pill { display: inline-block; padding: var(--space-2) var(--space-4); border-radius: 999px; font-size: var(--step--1); font-weight: 600; background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); }
+        
+        .assessment-section { margin-bottom: var(--space-8); }
+        .instructions { color: var(--ink-muted); font-style: italic; text-align: center; margin-bottom: var(--space-6); }
+        .activity-card { background: var(--soft-white); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); }
+        .activity-card h3 { color: var(--primary-sage); margin-top: 0; border-bottom: 2px solid var(--hover-sage); padding-bottom: var(--space-2); font-size: var(--step-2); }
+        .reading-passage { background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--border-sage); margin-bottom: var(--space-6); line-height: 1.7; }
+
+        .dropdown-question { margin-bottom: var(--space-4); }
+        .dropdown-question select { padding: var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--tertiary-sage); background-color: var(--soft-white); cursor: pointer; font-family: var(--font-body); font-size: var(--step-0); }
+        
+        .matching-container { display: flex; justify-content: space-between; gap: var(--space-6); }
+        .matching-column { width: 48%; }
+        .matching-column ul { list-style: none; padding: 0; margin: 0; }
+        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std); }
+        .matching-column li:hover { background-color: var(--hover-sage); }
+        .matching-column li.selected { background-color: var(--amber); color: var(--deep-forest); border-color: var(--amber); }
+
+        .matching-column li.matched-pair-1 { background-color: #f9c74f; color: #57451b; border-color: #57451b; } /* Gold */
+        .matching-column li.matched-pair-2 { background-color: #90be6d; color: #283618; border-color: #283618; } /* Green */
+        .matching-column li.matched-pair-3 { background-color: #b5a3c8; color: #3e324d; border-color: #3e324d; } /* Purple */
+        .matching-column li.matched-pair-4 { background-color: #e5989b; color: #5e3c3d; border-color: #5e3c3d; } /* Red/Pink */
+
+        /* Click-to-Move Classification & Word Order Styles */
+        .classification-container, .word-order-container { padding: var(--space-4); background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); border-radius: var(--radius); }
+        .source-tokens { padding: var(--space-4); border: 2px dashed var(--tertiary-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: 50px; }
+        .token { padding: var(--space-2) var(--space-4); background-color: var(--soft-white); border: 1px solid var(--border-sage); border-radius: 999px; cursor: pointer; box-shadow: var(--shadow-1); transition: all var(--transition-std); }
+        .token.selected { background-color: var(--amber); color: var(--deep-forest); box-shadow: var(--ring); transform: scale(1.05); }
+        .drop-zones { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+        .drop-zone { padding: var(--space-4); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); background-color: var(--soft-white); min-height: 100px; cursor: pointer; display: flex; flex-wrap: wrap; gap: var(--space-2); align-content: flex-start; }
+        .drop-zone h4 { width: 100%; margin-top: 0; text-align: center; color: var(--primary-sage); pointer-events: none; }
+        .word-order-item { margin-bottom: var(--space-6); }
+        .word-order-item .drop-zone { border-style: dashed; }
+        
+        /* Feedback styling */
+        .feedback-correct { background-color: #d4edda !important; border-color: #c3e6cb !important; }
+        .feedback-incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; }
+        .correct-answer-text { color: #155724; font-weight: bold; margin-left: var(--space-2); }
+        .mc-option-label.feedback-correct { border-color: #155724 !important; background: #d4edda !important; }
+        .mc-option-label.feedback-incorrect { border-color: #721c24 !important; background: #f8d7da !important; }
+        .token.feedback-correct { background-color: #d4edda !important; border-color: #155724 !important; }
+        .token.feedback-incorrect { background-color: #f8d7da !important; border-color: #721c24 !important; }
+
+
+        #submission-area { text-align: center; margin-top: var(--space-7); }
+        #submission-feedback { display: none; padding: var(--space-6); margin-top: var(--space-7); border-radius: var(--radius); text-align: center; }
+        #submission-feedback.success { background-color: #d4edda; color: #155724; }
+        #submission-feedback.error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div id="student-id-modal">
+        <div id="student-id-box">
+            <h2>Final Assessment</h2>
+            <p>Please enter your numeric Student ID to begin.</p>
+            <input type="text" id="student-id-input" placeholder="e.g., 202412345" inputmode="numeric" pattern="[0-9]*">
+            <button id="start-assessment-btn" class="activity-btn" disabled>Start Assessment</button>
+        </div>
+    </div>
+
+    <div class="assessment-container">
+        <div class="timer-bar">
+            Time Remaining: <span id="countdown-timer">60:00</span>
+        </div>
+
+        <header class="hero-section" style="background-image: url('https://images.pexels.com/photos/3182828/pexels-photo-3182828.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content container">
+                <h1>B1 Final Assessment</h1>
+                <div class="pills">
+                    <span class="pill">Level: B1</span>
+                    <span class="pill">Unit Theme: Building Professional Networks</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="container" style="padding-top: 2rem;">
+
+            <section class="assessment-section">
+                <h2>A: Listening Comprehension</h2>
+                <p class="instructions">Listen to the conversation between Omar and Fatima at a virtual conference. You will answer questions based on this audio.</p>
+                
+                <audio controls style="width: 100%; margin-bottom: 1.5rem;">
+                    <source src="https://najma-collective.github.io/Noor-Community-/B1/1/download%20(12).wav" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <div class="activity-card">
+                    <h3>Activity 1: Main Ideas</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Listen to the conversation. Choose the best answer for each question.</p>
+                    <div class="mc-question" data-question-id="1.1" data-correct-answer="b">
+                        <p class="mc-question-text">1. What is the main reason for their conversation?</p>
+                        <div class="mc-options-container">
+                            <div class="mc-option-item"><input type="radio" name="q1.1" value="a" id="q1.1a"><label for="q1.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) They are old friends catching up.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.1" value="b" id="q1.1b"><label for="q1.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) They are networking at a professional event.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.1" value="c" id="q1.1c"><label for="q1.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) They are in a university class together.</span></label></div>
+                        </div>
+                    </div>
+                    <div class="mc-question" data-question-id="1.2" data-correct-answer="b">
+                        <p class="mc-question-text">2. What do Omar and Fatima discover?</p>
+                        <div class="mc-options-container">
+                             <div class="mc-option-item"><input type="radio" name="q1.2" value="a" id="q1.2a"><label for="q1.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) They live in the same city.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.2" value="b" id="q1.2b"><label for="q1.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) They have a shared professional interest.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.2" value="c" id="q1.2c"><label for="q1.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) They have worked on the same project before.</span></label></div>
+                        </div>
+                    </div>
+                    <div class="mc-question" data-question-id="1.3" data-correct-answer="c">
+                        <p class="mc-question-text">3. What is Fatima's job?</p>
+                        <div class="mc-options-container">
+                             <div class="mc-option-item"><input type="radio" name="q1.3" value="a" id="q1.3a"><label for="q1.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) She is a university student.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.3" value="b" id="q1.3b"><label for="q1.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) She is a high school teacher.</span></label></div>
+                            <div class="mc-option-item"><input type="radio" name="q1.3" value="c" id="q1.3c"><label for="q1.3c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) She manages a social enterprise.</span></label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card" data-activity-type="classify">
+                    <h3>Activity 2: Detailed Understanding</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Listen again. Who does what? Click a statement, then click a category to classify it.</p>
+                    <div class="classification-container">
+                        <div class="source-tokens">
+                            <div class="token" data-category="Omar">1. Is a university student from Nablus.</div>
+                            <div class="token" data-category="Fatima">2. Manages a social enterprise in Amman.</div>
+                            <div class="token" data-category="Omar">3. Is interested in digital literacy for high school students.</div>
+                            <div class="token" data-category="Fatima">4. Has recently launched a digital skills workshop.</div>
+                            <div class="token" data-category="Fatima">5. Asks "Have you ever participated in a project like that?"</div>
+                        </div>
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-category="Omar"><h4>Omar</h4></div>
+                            <div class="drop-zone" data-category="Fatima"><h4>Fatima</h4></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>B: Reading Comprehension &amp; Functional Language</h2>
+                <p class="instructions">Read the email from Kareem to Dana after they met at an online event. Answer the questions that follow.</p>
+                <div class="reading-passage">
+                    <p><strong>Subject: Following up from the Palestinian Social Entrepreneurs Conference</strong></p>
+                    <p>Dear Dana,</p>
+                    <p>It was a pleasure to meet you at the conference last week. I really enjoyed our conversation about your work with 'Yalla Code' in Toronto. The mobile apps you develop for diaspora communities sound fascinating.</p>
+                    <p>As I mentioned, my NGO in Amman has a challenge with finding international projects for our students. Your expertise in educational technology is very relevant to our needs.</p>
+                    <p>Have you had any more thoughts about a potential collaboration? Perhaps we could schedule a short call next week to discuss this further. Please let me know if you are available.</p>
+                    <p>I look forward to hearing from you.</p>
+                    <p>Best regards,<br>Kareem</p>
+                </div>
+
+                <div class="activity-card">
+                    <h3>Activity 3: Reading for Detail</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Read the email and choose the correct answer.</p>
+                    <div class="mc-question" data-question-id="3.1" data-correct-answer="b"><p class="mc-question-text">1. Why is Kareem writing this email?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.1" value="a" id="q3.1a"><label for="q3.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) To apply for a job at 'Yalla Code'.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="b" id="q3.1b"><label for="q3.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) To follow up on a conversation and suggest a meeting.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="c" id="q3.1c"><label for="q3.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) To ask for technical support with an app.</span></label></div></div></div>
+                    <div class="mc-question" data-question-id="3.2" data-correct-answer="c"><p class="mc-question-text">2. What problem does Kareem's NGO have?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.2" value="a" id="q3.2a"><label for="q3.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) They don't have enough students.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="b" id="q3.2b"><label for="q3.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) They need to develop mobile apps.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="c" id="q3.2c"><label for="q3.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) They lack international partners for their students.</span></label></div></div></div>
+                    <div class="mc-question" data-question-id="3.3" data-correct-answer="c"><p class="mc-question-text">3. What does Kareem propose?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.3" value="a" id="q3.3a"><label for="q3.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Visiting Dana in Toronto.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="b" id="q3.3b"><label for="q3.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Sending his students to a workshop.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="c" id="q3.3c"><label for="q3.3c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Having a phone or video call next week.</span></label></div></div></div>
+                </div>
+
+                <div class="activity-card" data-activity-type="matching">
+                    <h3>Activity 4: Understanding Email Phrases</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Match the phrases from the email (Column A) with their function (Column B).</p>
+                    <div class="matching-container">
+                        <div class="matching-column"><h4>Column A</h4><ul><li data-match-id="1">1. It was a pleasure to meet you...</li><li data-match-id="2">2. As I mentioned...</li><li data-match-id="3">3. Perhaps we could schedule a short call...</li><li data-match-id="4">4. I look forward to hearing from you.</li></ul></div>
+                        <div class="matching-column"><h4>Column B</h4><ul><li data-match-id="3">a) Making a future suggestion</li><li data-match-id="4">b) A polite closing statement</li><li data-match-id="1">c) A friendly opening to refer to a past meeting</li><li data-match-id="2">d) Reminding the reader of a previous point</li></ul></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>C: Vocabulary</h2>
+                <div class="activity-card">
+                    <h3>Activity 5: Job Roles and Responsibilities</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Read the sentences about different professionals. Choose the correct word or phrase to complete each sentence.</p>
+                    <div class="dropdown-question" data-correct-answer="developer">1. A <select name="q5.1"><option value="">--</option><option>developer</option><option>project manager</option><option>marketing specialist</option></select> is responsible for writing code to build websites and apps.</div>
+                    <div class="dropdown-question" data-correct-answer="in charge of">2. My manager is <select name="q5.2"><option value="">--</option><option>in charge of</option><option>an expert in</option><option>a background in</option></select> the entire team and all our projects.</div>
+                    <div class="dropdown-question" data-correct-answer="handle">3. As a data analyst, I <select name="q5.3"><option value="">--</option><option>handle</option><option>specialize in</option><option>sector</option></select> large datasets to find trends.</div>
+                    <div class="dropdown-question" data-correct-answer="background">4. Her professional <select name="q5.4"><option value="">--</option><option>background</option><option>field</option><option>expertise</option></select> is in finance, but now she works in the tech sector.</div>
+                    <div class="dropdown-question" data-correct-answer="sector">5. He works in the education <select name="q5.5"><option value="">--</option><option>sector</option><option>experience</option><option>role</option></select>, specifically with universities.</div>
+                </div>
+                <div class="activity-card">
+                    <h3>Activity 6: Networking Conversations</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Complete the mini-dialogue with the best phrase.</p>
+                    <div class="dropdown-question" data-correct-answer="what brings you here">A: So, <select name="q6.1"><option value="">--</option><option>what brings you here</option><option>how do you do</option><option>what is your experience</option></select>?<br>B: I'm here to learn about new trends in digital marketing.</div>
+                    <div class="dropdown-question" data-correct-answer="That's interesting!">A: I run a small project that connects Palestinian students with mentors in Canada.<br>B: <select name="q6.2"><option value="">--</option><option>That's interesting!</option><option>I haven't.</option><option>Best regards.</option></select> Tell me more about that.</div>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>D: Grammar</h2>
+                <div class="activity-card">
+                    <h3>Activity 7: Choosing the Correct Form</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Read the conversation between two professionals. Choose the correct verb form to complete each sentence.</p>
+                    <div class="dropdown-question" data-correct-answer="do you do">A: What <select name="q7.1"><option value="">--</option><option>do you do</option><option>are you doing</option><option>did you do</option></select> for a living?</div>
+                    <div class="dropdown-question" data-correct-answer="develops">B: I'm a project manager. My team <select name="q7.2"><option value="">--</option><option>develop</option><option>develops</option><option>is developing</option></select> software for NGOs.</div>
+                    <div class="dropdown-question" data-correct-answer="did you study">A: That's great. Where <select name="q7.3"><option value="">--</option><option>did you study</option><option>do you study</option><option>have you studied</option></select> project management?</div>
+                    <div class="dropdown-question" data-correct-answer="Have you ever worked">B: I studied in the UK. And you? <select name="q7.4"><option value="">--</option><option>Have you ever worked</option><option>Did you ever work</option><option>Do you ever work</option></select> with international clients?</div>
+                    <div class="dropdown-question" data-correct-answer="have">A: Yes, I <select name="q7.5"><option value="">--</option><option>have</option><option>did</option><option>do</option></select>. I worked with a client from Germany last year.</div>
+                </div>
+
+                <div class="activity-card" data-activity-type="word-order">
+                    <h3>Activity 8: Building Questions</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Put the words in the correct order to make questions. Click a word, then click the box to place it.</p>
+                    <div class="word-order-container">
+                        <div class="word-order-item" data-correct-answer="What does your company do?">
+                            <div class="source-tokens"><div class="token">your</div><div class="token">what</div><div class="token">do</div><div class="token">company</div><div class="token">does</div><div class="token">?</div></div>
+                            <div class="drop-zone"></div>
+                        </div>
+                        <div class="word-order-item" data-correct-answer="Where did you get your experience?">
+                            <div class="source-tokens"><div class="token">you</div><div class="token">experience</div><div class="token">get</div><div class="token">where</div><div class="token">did</div><div class="token">your</div><div class="token">?</div></div>
+                            <div class="drop-zone"></div>
+                        </div>
+                        <div class="word-order-item" data-correct-answer="Have you ever managed a project?">
+                            <div class="source-tokens"><div class="token">ever</div><div class="token">you</div><div class="token">have</div><div class="token">a project</div><div class="token">managed</div><div class="token">?</div></div>
+                            <div class="drop-zone"></div>
+                        </div>
+                        <div class="word-order-item" data-correct-answer="What field does she specialize in?">
+                            <div class="source-tokens"><div class="token">she</div><div class="token">specialize</div><div class="token">in</div><div class="token">what</div><div class="token">field</div><div class="token">does</div><div class="token">?</div></div>
+                            <div class="drop-zone"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="submission-area">
+                <button id="submit-assessment-btn" class="activity-btn">Submit Final Assessment</button>
+            </div>
+            <div id="submission-feedback"></div>
+        </main>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        const DURATION = 60 * 60; // 60 minutes
+        let timeRemaining = DURATION;
+        let timerInterval = null;
+        let studentId = '';
+        let assessmentSubmitted = false;
+        
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
+
+        const studentIdModal = document.getElementById('student-id-modal');
+        const studentIdInput = document.getElementById('student-id-input');
+        const startBtn = document.getElementById('start-assessment-btn');
+        const assessmentContainer = document.querySelector('.assessment-container');
+        const timerDisplay = document.getElementById('countdown-timer');
+        const submitBtn = document.getElementById('submit-assessment-btn');
+
+        // Step 1: Student Identification
+        studentIdInput.addEventListener('input', () => {
+            startBtn.disabled = !/^\d+$/.test(studentIdInput.value.trim());
+        });
+        startBtn.addEventListener('click', () => {
+            studentId = studentIdInput.value.trim();
+            studentIdModal.style.display = 'none';
+            assessmentContainer.style.display = 'block';
+            startTimer();
+        });
+
+        // Step 2: Timer Logic
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '00:00';
+                    handleSubmission(true); // Auto-submit
+                }
+            }, 1000);
+        }
+
+        // Step 3: Question Locking Logic
+        document.querySelectorAll('.mc-options-container input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', e => {
+                const container = e.target.closest('.mc-options-container');
+                container.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                    input.nextElementSibling.classList.add('locked');
+                });
+            });
+        });
+        
+        document.querySelectorAll('.dropdown-question select').forEach(select => {
+            select.addEventListener('change', e => { e.target.disabled = true; });
+        });
+
+        // Matching Activity Logic
+        let selectedMatchItem = null;
+        document.querySelectorAll('[data-activity-type="matching"]').forEach(activity => {
+            activity.dataset.matchCounter = 1;
+        });
+        document.querySelectorAll('.matching-column li').forEach(item => {
+            item.addEventListener('click', e => {
+                if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
+                const currentItem = e.currentTarget;
+                const currentColumn = currentItem.closest('.matching-column');
+                if (currentItem.classList.contains('selected')) {
+                    currentItem.classList.remove('selected');
+                    selectedMatchItem = null;
+                    return;
+                }
+                if (!selectedMatchItem) {
+                    currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+                    currentItem.classList.add('selected');
+                    selectedMatchItem = currentItem;
+                } else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                    selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
+                    currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
+                    const activityCard = currentItem.closest('[data-activity-type="matching"]');
+                    const matchNumber = activityCard.dataset.matchCounter;
+                    const matchClass = `matched-pair-${matchNumber}`;
+                    selectedMatchItem.classList.add(matchClass);
+                    currentItem.classList.add(matchClass);
+                    selectedMatchItem.style.pointerEvents = 'none';
+                    currentItem.style.pointerEvents = 'none';
+                    selectedMatchItem.classList.remove('selected');
+                    activityCard.dataset.matchCounter = parseInt(matchNumber, 10) + 1;
+                    selectedMatchItem = null;
+                }
+            });
+        });
+
+        // Classification & Word Order Activity Logic
+        let selectedToken = null;
+        document.querySelectorAll('.token').forEach(token => {
+            token.addEventListener('click', e => {
+                if (assessmentSubmitted) return;
+                e.stopPropagation();
+                if (selectedToken) selectedToken.classList.remove('selected');
+                if (selectedToken === e.target) {
+                    selectedToken = null;
+                } else {
+                    selectedToken = e.target;
+                    selectedToken.classList.add('selected');
+                }
+            });
+        });
+        document.querySelectorAll('.drop-zone, .source-tokens').forEach(zone => {
+            zone.addEventListener('click', e => {
+                if (assessmentSubmitted) return;
+                if (selectedToken && e.currentTarget === zone) {
+                    zone.appendChild(selectedToken);
+                    selectedToken.classList.remove('selected');
+                    selectedToken = null;
+                }
+            });
+        });
+
+        // Step 4: Submission Handling
+        submitBtn.addEventListener('click', () => handleSubmission(false));
+        
+        function handleSubmission(isAutoSubmit) {
+            if (assessmentSubmitted) return;
+            assessmentSubmitted = true;
+            clearInterval(timerInterval);
+
+            if (!isAutoSubmit) {
+                if (!confirm('Are you sure you want to submit your assessment?')) {
+                    assessmentSubmitted = false;
+                    startTimer(); // Resume timer if they cancel
+                    return;
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const score = calculateScore();
+            const total = 31;
+            
+            showFeedback(score, total);
+            submitToGoogleSheet(studentId, 'B1', `${score}/${total}`);
+        }
+
+        function calculateScore() {
+            let score = 0;
+            // MCQs
+            document.querySelectorAll('.mc-question[data-correct-answer]').forEach(q => { if (q.querySelector('input:checked')?.value === q.dataset.correctAnswer) score++; });
+            // Dropdowns
+            document.querySelectorAll('.dropdown-question').forEach(q => { if (q.querySelector('select').value === q.dataset.correctAnswer) score++; });
+            // Matching
+            document.querySelectorAll('[data-activity-type="matching"] .matching-column:first-child li').forEach(item => { if (item.dataset.userMatch && item.dataset.matchId === item.dataset.userMatch) score++; });
+            // Classification
+            document.querySelectorAll('[data-activity-type="classify"] .drop-zone').forEach(zone => { zone.querySelectorAll('.token').forEach(token => { if (token.dataset.category === zone.dataset.category) score++; }); });
+            // Word Order
+            document.querySelectorAll('.word-order-item').forEach(item => {
+                const dropZone = item.querySelector('.drop-zone');
+                const userAnswer = Array.from(dropZone.querySelectorAll('.token')).map(t => t.textContent).join(' ');
+                if (userAnswer === item.dataset.correctAnswer) {
+                    score++;
+                }
+            });
+            return score;
+        }
+
+        function submitToGoogleSheet(id, level, finalScore) {
+            const formData = new FormData();
+            formData.append('Student ID', id);
+            formData.append('Level', level);
+            formData.append('Score', finalScore);
+
+            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' }) // Using no-cors to prevent CORS errors with simple deployments
+            .then(() => {
+                console.log('Success: Submission data sent.');
+                document.getElementById('submission-feedback').innerHTML += `<p>Your results have been successfully recorded.</p>`;
+            })
+            .catch(error => {
+                console.error('Submission Error:', error);
+                const feedbackEl = document.getElementById('submission-feedback');
+                feedbackEl.classList.remove('success');
+                feedbackEl.classList.add('error');
+                feedbackEl.innerHTML += `<p>There was an error saving your results. Please contact your teacher.</p>`;
+            });
+        }
+        
+        function showFeedback(score, total) {
+            const feedbackEl = document.getElementById('submission-feedback');
+            feedbackEl.style.display = 'block';
+            feedbackEl.classList.add('success');
+            feedbackEl.innerHTML = `<h2>Assessment Complete!</h2><p>Your score is <strong>${score} / ${total}</strong>.</p>`;
+            
+            // MCQ Feedback
+            document.querySelectorAll('.mc-question[data-correct-answer]').forEach(q => {
+                q.querySelectorAll('.mc-option-item').forEach(item => {
+                    const radio = item.querySelector('input');
+                    const label = item.querySelector('label');
+                    if (radio.value === q.dataset.correctAnswer) {
+                        label.classList.add('feedback-correct');
+                    } else if (radio.checked) {
+                        label.classList.add('feedback-incorrect');
+                    }
+                });
+            });
+
+            // Dropdown Feedback
+            document.querySelectorAll('.dropdown-question[data-correct-answer]').forEach(q => {
+                const select = q.querySelector('select');
+                if (select.value === q.dataset.correctAnswer) {
+                    select.classList.add('feedback-correct');
+                } else {
+                    select.classList.add('feedback-incorrect');
+                    const correctAnswerSpan = document.createElement('span');
+                    correctAnswerSpan.className = 'correct-answer-text';
+                    correctAnswerSpan.textContent = `(Correct: ${q.dataset.correctAnswer})`;
+                    q.appendChild(correctAnswerSpan);
+                }
+            });
+
+            // Classification Feedback
+            document.querySelectorAll('.token[data-category]').forEach(token => {
+                const parentZone = token.closest('.drop-zone');
+                if(parentZone && parentZone.dataset.category === token.dataset.category) {
+                    token.classList.add('feedback-correct');
+                } else {
+                     token.classList.add('feedback-incorrect');
+                }
+            });
+            
+            // Word Order Feedback
+            document.querySelectorAll('.word-order-item[data-correct-answer]').forEach(item => {
+                const dropZone = item.querySelector('.drop-zone');
+                const userAnswer = Array.from(dropZone.querySelectorAll('.token')).map(t => t.textContent).join(' ');
+                if (userAnswer !== item.dataset.correctAnswer) {
+                    const correctAnswerSpan = document.createElement('p');
+                    correctAnswerSpan.className = 'correct-answer-text';
+                    correctAnswerSpan.innerHTML = `<strong>Correct answer:</strong> ${item.dataset.correctAnswer}`;
+                    item.appendChild(correctAnswerSpan);
+                }
+            });
+
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    })();
+    </script>
+</body>
+</html>
