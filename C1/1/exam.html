@@ -1,0 +1,990 @@
+code
+Html
+play_circle
+download
+content_copy
+expand_less
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Assessment: Strategic Planning in the NGO Sector</title>
+    
+    <!-- Reference Implementation Links -->
+    <link rel="stylesheet" href="https://najma-collective.github.io/Noor-Community-/CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles to ensure high-stakes assessment feel and functionality */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .assessment-container {
+            display: none; /* Hidden until student ID is entered */
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #timer {
+            font-family: 'Questrial', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background-color: var(--light-accent);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
+        
+        #timer.warning {
+            color: #d9534f;
+        }
+
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.pexels.com/photos/3182828/pexels-photo-3182828.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-family: 'Questrial', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero .pills {
+            justify-content: center;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .activity-module h3 {
+            font-family: 'Questrial', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .activity-module .instruction {
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-item p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .mc-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mc-options li {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        
+        .mc-options li:hover {
+             background-color: var(--light-accent);
+        }
+
+        .mc-options input[type="radio"] {
+            margin-right: 1rem;
+        }
+        
+        .mc-options li.correct {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            font-weight: bold;
+        }
+        
+        .mc-options li.incorrect {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
+        select {
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ccc;
+            margin: 0 0.25rem;
+        }
+        
+        select.correct {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        
+        select.incorrect {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
+        .submit-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #submit-btn {
+            font-size: 1.25rem;
+            padding: 1rem 3rem;
+        }
+        
+        /* Student ID Modal */
+        #student-id-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h2 {
+            font-family: 'Questrial', sans-serif;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+        }
+        
+        /* Feedback styles */
+        .feedback-correct { color: #3c763d; font-weight: bold; }
+        .feedback-incorrect { color: #a94442; font-weight: bold; }
+
+        /* Table styles for Activity 2 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f9f9f9;
+            font-weight: 700;
+        }
+        .comparison-table td select {
+            width: 100%;
+        }
+        
+        /* Matching styles for Activity 4 */
+        .matching-activity {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .matching-activity .term {
+            font-weight: bold;
+        }
+        
+        .matching-activity .definition-select {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="student-id-modal">
+        <div class="modal-content">
+            <h2>Enter Your Student ID</h2>
+            <p>Please enter your numeric Student ID to begin the assessment.</p>
+            <input type="text" id="student-id-input" placeholder="e.g., 202412345" aria-label="Student ID Input">
+            <button id="start-assessment-btn" class="btn btn-primary" disabled>Start Assessment</button>
+        </div>
+    </div>
+
+    <div class="assessment-container">
+        <header class="sticky-header">
+            <h3>Final Assessment</h3>
+            <div id="timer">60:00</div>
+        </header>
+
+        <section class="hero">
+            <h1>Final Assessment</h1>
+            <div class="pills">
+                <span class="pill">Level: B2</span>
+                <span class="pill">Unit Theme: Strategic Planning in the NGO Sector</span>
+            </div>
+        </section>
+
+        <main class="container">
+            <form id="assessment-form">
+
+                <!-- Section A: Listening Comprehension -->
+                <section id="section-a" class="card">
+                    <h2>A: Listening Comprehension</h2>
+                    <p class="instruction">You will listen to a dialogue between two NGO workers, Fatima and Yousef, discussing which funding stream to apply for. Listen carefully and answer the questions that follow. You will hear the audio only once.</p>
+                    <audio controls src="https://najma-collective.github.io/Noor-Community-/C1/1/EOM/download%20(14).wav" style="width: 100%; margin-bottom: 2rem;">
+                        Your browser does not support the audio element.
+                    </audio>
+
+                    <div class="activity-module">
+                        <h3>Activity 1: Understanding the Discussion</h3>
+                        <p class="instruction">Listen to the conversation. For each question, choose the best answer.</p>
+                        
+                        <div class="question-item" data-question-id="a1_1">
+                            <p>1. What is the main purpose of Fatima and Yousef's conversation?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_a1_1" value="a"> To plan the content of a coding camp.</label></li>
+                                <li><label><input type="radio" name="q_a1_1" value="b"> To decide which grant to apply for.</label></li>
+                                <li><label><input type="radio" name="q_a1_1" value="c"> To hire a new consultant for their NGO.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="a1_2">
+                            <p>2. What does Yousef see as the main advantage of the EU Culture Grant?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_a1_2" value="a"> It has a simple application.</label></li>
+                                <li><label><input type="radio" name="q_a1_2" value="b"> It is a local fund.</label></li>
+                                <li><label><input type="radio" name="q_a1_2" value="c"> It offers a large amount of money.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="a1_3">
+                            <p>3. According to Fatima, what is the primary disadvantage of the EU Culture Grant?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_a1_3" value="a"> The deadline is too soon.</label></li>
+                                <li><label><input type="radio" name="q_a1_3" value="b"> The application process is complicated.</label></li>
+                                <li><label><input type="radio" name="q_a1_3" value="c"> The funding amount is too small.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="a1_4">
+                            <p>4. What is the main problem with the Local Business Fund?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_a1_4" value="a"> The reporting requirements are very strict.</label></li>
+                                <li><label><input type="radio" name="q_a1_4" value="b"> The application is too long.</label></li>
+                                <li><label><input type="radio" name="q_a1_4" value="c"> The amount of funding is insufficient.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="a1_5">
+                            <p>5. What is their final decision?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_a1_5" value="a"> They decide to apply for the EU Culture Grant.</label></li>
+                                <li><label><input type="radio" name="q_a1_5" value="b"> They decide to apply for the Local Business Fund.</label></li>
+                                <li><label><input type="radio" name="q_a1_5" value="c"> They decide not to apply for either grant.</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section B: Reading Comprehension & Functional Language -->
+                <section id="section-b" class="card">
+                    <h2>B: Reading Comprehension &amp; Functional Language</h2>
+                    <p class="instruction">Read the summaries of two different grant proposals available to an NGO in Nablus. Then, complete the activities that follow.</p>
+                    <div class="reading-text" style="background: #f9f9f9; padding: 1.5rem; border-radius: var(--border-radius); margin-bottom: 2rem;">
+                        <h4>Document 1: Grant Summaries</h4>
+                        <p><strong>Grant A: The Al-Quds Innovation Fund (Local)</strong></p>
+                        <ul>
+                            <li><strong>Objective:</strong> To support youth-led projects that create a direct and measurable impact on the local Nablus economy.</li>
+                            <li><strong>Funding Amount:</strong> Up to $10,000.</li>
+                            <li><strong>Application Deadline:</strong> In 2 weeks.</li>
+                            <li><strong>Reporting Requirements:</strong> This funding stream requires short quarterly progress reports (2 pages max). No external financial audit is necessary, which reduces the administrative burden.</li>
+                            <li><strong>Focus Area:</strong> Priority is given to projects in sustainable agriculture and local crafts. Digital literacy projects are considered but must show a clear link to job creation within the city. If we applied for this, we would have to tailor our proposal significantly.</li>
+                        </ul>
+                        <p><strong>Grant B: The Digital Futures Foundation (International)</strong></p>
+                        <ul>
+                            <li><strong>Objective:</strong> To fund initiatives that align with global digital skills trends and promote remote work opportunities for youth.</li>
+                            <li><strong>Funding Amount:</strong> Up to $50,000.</li>
+                            <li><strong>Application Deadline:</strong> In 3 months.</li>
+                            <li><strong>Reporting Requirements:</strong> Due to being an international donor, this grant demands detailed monthly reports and a full external financial audit at the end of the project timeline.</li>
+                            <li><strong>Focus Area:</strong> The rationale for the project must be connected to international development goals. A partnership with a technical consultancy might strengthen the application. Our project is a perfect fit.</li>
+                        </ul>
+                    </div>
+
+                    <div class="activity-module">
+                        <h3>Activity 2: Comparing the Grants</h3>
+                        <p class="instruction">Based on the text, complete the table by selecting the correct information for each box.</p>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Al-Quds Innovation Fund</th>
+                                    <th>Digital Futures Foundation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-question-id="b2_1">
+                                    <td>Funding Amount</td>
+                                    <td>
+                                        <select name="q_b2_1a">
+                                            <option value="">Select...</option>
+                                            <option value="10k">Up to $10,000</option>
+                                            <option value="50k">Up to $50,000</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="q_b2_1b">
+                                            <option value="">Select...</option>
+                                            <option value="10k">Up to $10,000</option>
+                                            <option value="50k">Up to $50,000</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr data-question-id="b2_2">
+                                    <td>Application Deadline</td>
+                                    <td>
+                                        <select name="q_b2_2a">
+                                            <option value="">Select...</option>
+                                            <option value="2w">In 2 weeks</option>
+                                            <option value="3m">In 3 months</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="q_b2_2b">
+                                            <option value="">Select...</option>
+                                            <option value="2w">In 2 weeks</option>
+                                            <option value="3m">In 3 months</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr data-question-id="b2_3">
+                                    <td>Reporting Style</td>
+                                    <td>
+                                        <select name="q_b2_3a">
+                                            <option value="">Select...</option>
+                                            <option value="short">Short quarterly reports</option>
+                                            <option value="detailed">Detailed monthly reports</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="q_b2_3b">
+                                            <option value="">Select...</option>
+                                            <option value="short">Short quarterly reports</option>
+                                            <option value="detailed">Detailed monthly reports</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="activity-module" style="margin-top: 2rem;">
+                        <h3>Activity 3: Analysis and Functional Language</h3>
+                        <p class="instruction">Read the questions and choose the best answer based on the text and general professional communication.</p>
+                        
+                        <div class="question-item" data-question-id="b3_1">
+                            <p>1. An NGO in Nablus wants to start a new recycling program. Which term from the grant summaries best describes this program's goal of reducing waste by 20%?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_b3_1" value="a"> Funding stream</label></li>
+                                <li><label><input type="radio" name="q_b3_1" value="b"> Measurable outcome</label></li>
+                                <li><label><input type="radio" name="q_b3_1" value="c"> Financial audit</label></li>
+                                <li><label><input type="radio" name="q_b3_1" value="d"> Administrative burden</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="b3_2">
+                            <p>2. The text says a partnership "might strengthen the application" for Grant B. What does this phrase do?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_b3_2" value="a"> It gives a command that a partnership is required.</label></li>
+                                <li><label><input type="radio" name="q_b3_2" value="b"> It guarantees that a partnership will ensure success.</label></li>
+                                <li><label><input type="radio" name="q_b3_2" value="c"> It speculates about a potential positive factor.</label></li>
+                                <li><label><input type="radio" name="q_b3_2" value="d"> It states a definite fact about the application process.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="b3_3">
+                             <p>3. According to the text, what is the 'rationale' for a project applying for Grant B?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_b3_3" value="a"> The reason or justification for the project.</label></li>
+                                <li><label><input type="radio" name="q_b3_3" value="b"> The list of equipment to be purchased.</label></li>
+                                <li><label><input type="radio" name="q_b3_3" value="c"> The schedule of project activities.</label></li>
+                                <li><label><input type="radio" name="q_b3_3" value="d"> The names of the project team members.</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="b3_4">
+                            <p>4. Imagine you are on a video call with the Digital Futures Foundation. Which of the following is the most polite way to ask about the reporting requirements?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_b3_4" value="a"> What are the reporting requirements?</label></li>
+                                <li><label><input type="radio" name="q_b3_4" value="b"> Tell me the reporting requirements now.</label></li>
+                                <li><label><input type="radio" name="q_b3_4" value="c"> Could you tell us a bit more about the reporting requirements?</label></li>
+                                <li><label><input type="radio" name="q_b3_4" value="d"> I need to know the reporting requirements.</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section C: Vocabulary -->
+                <section id="section-c" class="card">
+                    <h2>C: Vocabulary</h2>
+                    
+                    <div class="activity-module">
+                        <h3>Activity 4: Matching Key Terms</h3>
+                        <p class="instruction">Match the vocabulary words with their correct definitions.</p>
+                        <div class="matching-activity">
+                            <!-- Item 1 -->
+                            <div class="term" data-question-id="c4_1">1. Stakeholder</div>
+                            <select name="q_c4_1" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                            <!-- Item 2 -->
+                            <div class="term" data-question-id="c4_2">2. Synergy</div>
+                            <select name="q_c4_2" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                            <!-- Item 3 -->
+                            <div class="term" data-question-id="c4_3">3. Deliverable</div>
+                             <select name="q_c4_3" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                            <!-- Item 4 -->
+                            <div class="term" data-question-id="c4_4">4. Methodology</div>
+                            <select name="q_c4_4" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                            <!-- Item 5 -->
+                            <div class="term" data-question-id="c4_5">5. Mutual benefit</div>
+                            <select name="q_c4_5" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                            <!-- Item 6 -->
+                            <div class="term" data-question-id="c4_6">6. Carbon footprint</div>
+                            <select name="q_c4_6" class="definition-select">
+                                <option value="">Select definition...</option>
+                                <option value="a">a) A specific product or result that a project promises to create.</option>
+                                <option value="b">b) The system of methods and principles used for a particular activity.</option>
+                                <option value="c">c) An advantage that is good for both parties in a partnership.</option>
+                                <option value="d">d) A person, group, or organization that has an interest or concern in a project.</option>
+                                <option value="e">e) The total amount of greenhouse gases generated by our actions.</option>
+                                <option value="f">f) When two groups work together to create a result that is greater than their individual efforts.</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="activity-module" style="margin-top: 2rem;">
+                        <h3>Activity 5: Vocabulary in Context</h3>
+                        <p class="instruction">Complete the sentences by choosing the correct word from the dropdown list.</p>
+                        <div class="question-item" data-question-id="c5_1">
+                            <p>1. Before starting the project, we must conduct a full impact 
+                                <select name="q_c5_1">
+                                    <option value="">...</option>
+                                    <option value="assessment">assessment</option>
+                                    <option value="objective">objective</option>
+                                    <option value="timeline">timeline</option>
+                                </select> 
+                            to understand the potential effects.</p>
+                        </div>
+                        <div class="question-item" data-question-id="c5_2">
+                            <p>2. The two NGOs decided to form a 
+                                <select name="q_c5_2">
+                                    <option value="">...</option>
+                                    <option value="joint venture">joint venture</option>
+                                    <option value="donor relation">donor relation</option>
+                                    <option value="measurable outcome">measurable outcome</option>
+                                </select> 
+                            to apply for the grant together.</p>
+                        </div>
+                        <div class="question-item" data-question-id="c5_3">
+                            <p>3. For the project to be successful, we need to consult 
+                                <select name="q_c5_3">
+                                    <option value="">...</option>
+                                    <option value="with">with</option>
+                                    <option value="at">at</option>
+                                    <option value="for">for</option>
+                                </select> 
+                            all key community leaders.</p>
+                        </div>
+                        <div class="question-item" data-question-id="c5_4">
+                            <p>4. The long-term 
+                                <select name="q_c5_4">
+                                    <option value="">...</option>
+                                    <option value="sustainability">sustainability</option>
+                                    <option value="watershed">watershed</option>
+                                    <option value="MoU">MoU</option>
+                                </select> 
+                            of the project depends on community involvement, not just external funding.</p>
+                        </div>
+                        <div class="question-item" data-question-id="c5_5">
+                            <p>5. The project resulted 
+                                <select name="q_c5_5">
+                                    <option value="">...</option>
+                                    <option value="in">in</option>
+                                    <option value="on">on</option>
+                                    <option value="of">of</option>
+                                </select> 
+                            a 15% increase in youth employment in the technology sector.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section D: Grammar -->
+                <section id="section-d" class="card">
+                    <h2>D: Grammar</h2>
+                    
+                    <div class="activity-module">
+                        <h3>Activity 6: Review of Past Tenses</h3>
+                        <p class="instruction">Read the summary of a project's background. Choose the correct verb form for each gap.</p>
+                        <div class="question-item" data-question-id="d6_1">
+                            <p>1. The initial report, which 
+                                <select name="q_d6_1">
+                                    <option value="">...</option>
+                                    <option value="came out">came out</option>
+                                    <option value="was coming out">was coming out</option>
+                                </select> 
+                            in 2022, showed a clear need for water conservation in the Hebron area.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d6_2">
+                            <p>2. By the time we launched our campaign in May, the municipality 
+                                <select name="q_d6_2">
+                                    <option value="">...</option>
+                                    <option value="already started">already started</option>
+                                    <option value="had already started">had already started</option>
+                                </select> 
+                            its own awareness program.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d6_3">
+                            <p>3. While our team 
+                                <select name="q_d6_3">
+                                    <option value="">...</option>
+                                    <option value="was conducting">was conducting</option>
+                                    <option value="conducted">conducted</option>
+                                </select> 
+                            interviews with farmers, the project manager secured additional funding.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d6_4">
+                            <p>4. The final evaluation demonstrated that the community's water usage 
+                                <select name="q_d6_4">
+                                    <option value="">...</option>
+                                    <option value="didn't improve">didn't improve</option>
+                                    <option value="hadn't improved">hadn't improved</option>
+                                </select> 
+                            as much as we had hoped in the first year.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-module" style="margin-top: 2rem;">
+                        <h3>Activity 7: Modals of Speculation</h3>
+                        <p class="instruction">Read the dialogue about a potential partnership. Choose the best modal verb to complete the sentences.</p>
+                        <div class="question-item" data-question-id="d7_1">
+                            <p>1. Nadia: With your technical expertise and our community network, we 
+                                <select name="q_d7_1">
+                                    <option value="">...</option>
+                                    <option value="must">must</option>
+                                    <option value="might">might</option>
+                                </select> 
+                            create a very strong proposal for the grant.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d7_2">
+                            <p>2. Karim: That's interesting. A joint awareness campaign 
+                                <select name="q_d7_2">
+                                    <option value="">...</option>
+                                    <option value="could">could</option>
+                                    <option value="must">must</option>
+                                </select> 
+                            also be very effective in reaching a wider audience.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d7_3">
+                            <p>3. Nadia: If the first project works well, we 
+                                <select name="q_d7_3">
+                                    <option value="">...</option>
+                                    <option value="may">may</option>
+                                    <option value="will">will</option>
+                                </select> 
+                            even be able to sign a longer-term memorandum of understanding.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d7_4">
+                            <p>4. Karim: I agree. This partnership 
+                                <select name="q_d7_4">
+                                    <option value="">...</option>
+                                    <option value="could">could</option>
+                                    <option value="will">will</option>
+                                </select> 
+                            be the start of a very successful long-term collaboration between Amman and Nablus.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-module" style="margin-top: 2rem;">
+                        <h3>Activity 8: Second Conditional</h3>
+                        <p class="instruction">Read the sentences from a strategy meeting. Choose the option that correctly completes the second conditional sentence.</p>
+                        <div class="question-item" data-question-id="d8_1">
+                            <p>1. If we had a bigger budget for the project, we __________ a full-time communications officer.</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_d8_1" value="a"> will hire</label></li>
+                                <li><label><input type="radio" name="q_d8_1" value="b"> would hire</label></li>
+                                <li><label><input type="radio" name="q_d8_1" value="c"> hired</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="d8_2">
+                            <p>2. We would have a greater impact if we __________ with a local university.</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_d8_2" value="a"> partnered</label></li>
+                                <li><label><input type="radio" name="q_d8_2" value="b"> would partner</label></li>
+                                <li><label><input type="radio" name="q_d8_2" value="c"> will partner</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="d8_3">
+                            <p>3. If the donor __________ for a full financial audit, we would need to hire an external accountant.</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_d8_3" value="a"> would ask</label></li>
+                                <li><label><input type="radio" name="q_d8_3" value="b"> will ask</label></li>
+                                <li><label><input type="radio" name="q_d8_3" value="c"> asked</label></li>
+                            </ul>
+                        </div>
+                        <div class="question-item" data-question-id="d8_4">
+                            <p>4. What __________ if the municipal council rejected our proposal?</p>
+                            <ul class="mc-options">
+                                <li><label><input type="radio" name="q_d8_4" value="a"> would you do</label></li>
+                                <li><label><input type="radio" name="q_d8_4" value="b"> will you do</label></li>
+                                <li><label><input type="radio" name="q_d8_4" value="c"> did you do</label></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="activity-module" style="margin-top: 2rem;">
+                        <h3>Activity 9: Clauses of Purpose and Reason</h3>
+                        <p class="instruction">Complete the sentences from a project proposal by choosing the correct word or phrase.</p>
+                        <div class="question-item" data-question-id="d9_1">
+                            <p>1. We are launching this program 
+                                <select name="q_d9_1">
+                                    <option value="">...</option>
+                                    <option value="so that">so that</option>
+                                    <option value="because">because</option>
+                                </select> 
+                            we want to provide young people with valuable digital skills.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d9_2">
+                            <p>2. We will hold weekly workshops 
+                                <select name="q_d9_2">
+                                    <option value="">...</option>
+                                    <option value="due to">due to</option>
+                                    <option value="in order to">in order to</option>
+                                </select> 
+                            give participants hands-on experience.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d9_3">
+                             <p>3. A detailed timeline is included 
+                                <select name="q_d9_3">
+                                    <option value="">...</option>
+                                    <option value="so that">so that</option>
+                                    <option value="because of">because of</option>
+                                </select> 
+                            the donor can clearly see our project plan and key milestones.</p>
+                        </div>
+                        <div class="question-item" data-question-id="d9_4">
+                            <p>4. The project was delayed 
+                                <select name="q_d9_4">
+                                    <option value="">...</option>
+                                    <option value="due to">due to</option>
+                                    <option value="to">to</option>
+                                </select> 
+                            unforeseen administrative challenges.</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <div class="submit-container">
+                    <button type="button" id="submit-btn" class="btn btn-primary">Submit Assessment</button>
+                </div>
+
+            </form>
+        </main>
+    </div>
+
+    <script>
+    (() => {
+        // --- CONFIGURATION ---
+        const ASSESSMENT_DURATION_MINUTES = 60;
+        const CEFR_LEVEL = 'B2';
+        // IMPORTANT: Replace this with your actual Google Apps Script Web App URL
+        const GOOGLE_SHEET_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbx_YOUR_UNIQUE_ID/exec'; 
+        
+        const correctAnswers = {
+            'q_a1_1': 'b', 'q_a1_2': 'c', 'q_a1_3': 'b', 'q_a1_4': 'c', 'q_a1_5': 'a',
+            'q_b2_1a': '10k', 'q_b2_1b': '50k', 'q_b2_2a': '2w', 'q_b2_2b': '3m', 'q_b2_3a': 'short', 'q_b2_3b': 'detailed',
+            'q_b3_1': 'b', 'q_b3_2': 'c', 'q_b3_3': 'a', 'q_b3_4': 'c',
+            'q_c4_1': 'd', 'q_c4_2': 'f', 'q_c4_3': 'a', 'q_c4_4': 'b', 'q_c4_5': 'c', 'q_c4_6': 'e',
+            'q_c5_1': 'assessment', 'q_c5_2': 'joint venture', 'q_c5_3': 'with', 'q_c5_4': 'sustainability', 'q_c5_5': 'in',
+            'q_d6_1': 'came out', 'q_d6_2': 'had already started', 'q_d6_3': 'was conducting', 'q_d6_4': 'hadn't improved',
+            'q_d7_1': 'might', 'q_d7_2': 'could', 'q_d7_3': 'may', 'q_d7_4': 'could',
+            'q_d8_1': 'b', 'q_d8_2': 'a', 'q_d8_3': 'c', 'q_d8_4': 'a',
+            'q_d9_1': 'because', 'q_d9_2': 'in order to', 'q_d9_3': 'so that', 'q_d9_4': 'due to'
+        };
+
+        // --- STATE ---
+        let studentId = null;
+        let timerInterval = null;
+        let timeRemaining = ASSESSMENT_DURATION_MINUTES * 60;
+        let submitted = false;
+
+        // --- DOM ELEMENTS ---
+        const studentIdModal = document.getElementById('student-id-modal');
+        const studentIdInput = document.getElementById('student-id-input');
+        const startBtn = document.getElementById('start-assessment-btn');
+        const assessmentContainer = document.querySelector('.assessment-container');
+        const timerDisplay = document.getElementById('timer');
+        const form = document.getElementById('assessment-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // --- FUNCTIONS ---
+        function validateStudentId() {
+            const idValue = studentIdInput.value.trim();
+            // Valid if it contains only numbers and is not empty
+            if (/^\d+$/.test(idValue)) {
+                startBtn.disabled = false;
+            } else {
+                startBtn.disabled = true;
+            }
+        }
+
+        function startAssessment() {
+            studentId = studentIdInput.value.trim();
+            studentIdModal.style.display = 'none';
+            assessmentContainer.style.display = 'block';
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitAssessment();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            if (timeRemaining < 300) { // 5 minute warning
+                timerDisplay.classList.add('warning');
+            }
+        }
+
+        function lockQuestion(event) {
+            const input = event.target;
+            const inputName = input.name;
+            
+            // For multiple choice, disable all radio buttons with the same name
+            if (input.type === 'radio') {
+                document.querySelectorAll(`input[name="${inputName}"]`).forEach(radio => {
+                    if (radio !== input) {
+                        radio.disabled = true;
+                        radio.parentElement.style.cursor = 'default';
+                    }
+                });
+            }
+            // For select, just disable the select element itself
+            if (input.tagName === 'SELECT') {
+                input.disabled = true;
+            }
+        }
+
+        function submitAssessment() {
+            if (submitted) return;
+            submitted = true;
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "Submitted";
+
+            const formData = new FormData(form);
+            let score = 0;
+            const totalQuestions = Object.keys(correctAnswers).length;
+
+            // Calculate score
+            for (const [key, correctAnswer] of Object.entries(correctAnswers)) {
+                if (formData.get(key) === correctAnswer) {
+                    score++;
+                }
+            }
+
+            // Display feedback
+            displayFeedback();
+            
+            // Prepare data for submission
+            const submissionData = {
+                studentId: studentId,
+                level: CEFR_LEVEL,
+                score: `${score} / ${totalQuestions}`
+            };
+
+            // Post data to Google Sheet
+            postToGoogleSheet(submissionData);
+
+            // Show final message
+            const finalMessage = document.createElement('div');
+            finalMessage.className = 'card';
+            finalMessage.style.textAlign = 'center';
+            finalMessage.style.backgroundColor = 'var(--primary-color)';
+            finalMessage.style.color = 'white';
+            finalMessage.innerHTML = `<h2>Assessment Submitted</h2><p>Thank you, your assessment has been submitted.</p><h3>Your Score: ${score} / ${totalQuestions}</h3>`;
+            form.insertAdjacentElement('beforebegin', finalMessage);
+            window.scrollTo(0, 0);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submission Complete';
+        }
+
+        function displayFeedback() {
+             const allInputs = form.querySelectorAll('input[type="radio"], select');
+             
+             allInputs.forEach(input => {
+                 input.disabled = true;
+                 
+                 const questionName = input.name;
+                 const correctAnswer = correctAnswers[questionName];
+                 const userAnswer = new FormData(form).get(questionName);
+                 
+                 if (input.type === 'radio') {
+                     const label = input.closest('li');
+                     if (input.value === correctAnswer) {
+                         label.classList.add('correct');
+                         label.innerHTML += ' <span class="feedback-correct"><i class="fa-solid fa-check"></i> Correct Answer</span>';
+                     }
+                     if (input.checked && input.value !== correctAnswer) {
+                         label.classList.add('incorrect');
+                         label.innerHTML += ' <span class="feedback-incorrect"><i class="fa-solid fa-xmark"></i> Your Answer</span>';
+                     }
+                 } else if (input.tagName === 'SELECT') {
+                     if (userAnswer === correctAnswer) {
+                         input.classList.add('correct');
+                     } else if (userAnswer) {
+                         input.classList.add('incorrect');
+                     }
+                     // Add text showing the correct answer
+                     const feedbackSpan = document.createElement('span');
+                     feedbackSpan.className = 'feedback-correct';
+                     feedbackSpan.innerHTML = ` <i class="fa-solid fa-check"></i> Correct: ${correctAnswer}`;
+                     input.parentElement.appendChild(feedbackSpan);
+                 }
+             });
+        }
+
+
+        async function postToGoogleSheet(data) {
+            console.log("Submitting to Google Sheet:", data);
+            
+            // This is a simulation. A real Google Apps Script expects a specific format.
+            // We'll use a simple POST request with JSON data.
+            // The Google Apps Script `doPost(e)` function would need to parse `e.postData.contents`.
+            try {
+                const response = await fetch(GOOGLE_SHEET_SUBMISSION_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for cross-origin requests to Apps Script
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                console.log('Submission attempt complete.');
+            } catch (error) {
+                console.error('Error submitting to Google Sheet:', error);
+                // Inform user of submission failure
+                const errorMsg = document.createElement('p');
+                errorMsg.style.color = 'red';
+                errorMsg.textContent = 'There was an error submitting your score. Please take a screenshot of your results.';
+                submitBtn.parentElement.appendChild(errorMsg);
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        studentIdInput.addEventListener('input', validateStudentId);
+        startBtn.addEventListener('click', startAssessment);
+        submitBtn.addEventListener('click', () => {
+             if (confirm('Are you sure you want to submit your assessment?')) {
+                submitAssessment();
+            }
+        });
+
+        form.addEventListener('change', lockQuestion);
+
+    })();
+    </script>
+
+</body>
+</html>
