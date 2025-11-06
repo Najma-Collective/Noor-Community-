@@ -157,16 +157,18 @@
         .matching-container { display: flex; justify-content: space-between; gap: var(--space-6); }
         .matching-column { width: 48%; }
         .matching-column ul { list-style: none; padding: 0; }
-        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std), border-color var(--transition-std); }
+        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std); }
         .matching-column li:hover { background-color: var(--hover-sage); }
         .matching-column li.selected { background-color: var(--amber); color: var(--deep-forest); border-color: var(--amber); }
 
-        /* --- NEW: Unique color palette for matched pairs --- */
-        .matching-column li.matched-pair-1 { background-color: #EADBC8; color: #5D4037; border-color: #DACDBE; }
-        .matching-column li.matched-pair-2 { background-color: #ADC4CE; color: #2A3D45; border-color: #A0B6BF; }
-        .matching-column li.matched-pair-3 { background-color: #E8C8B7; color: #6D4C41; border-color: #D6B8A9; }
-        .matching-column li.matched-pair-4 { background-color: #A3B899; color: #333D29; border-color: #98AB90; }
-        .matching-column li.matched-pair-5 { background-color: #D3CEDF; color: #3E3B46; border-color: #C5BFD3; }
+        /* =========================================================
+           NEW: High-contrast colors for matched pairs
+           ========================================================= */
+        .matching-column li.matched-pair-1 { background-color: #f9c74f; color: #57451b; border-color: #57451b; } /* Gold */
+        .matching-column li.matched-pair-2 { background-color: #90be6d; color: #283618; border-color: #283618; } /* Green */
+        .matching-column li.matched-pair-3 { background-color: #b5a3c8; color: #3e324d; border-color: #3e324d; } /* Purple */
+        .matching-column li.matched-pair-4 { background-color: #e5989b; color: #5e3c3d; border-color: #5e3c3d; } /* Red/Pink */
+        .matching-column li.matched-pair-5 { background-color: #8ecae6; color: #023047; border-color: #023047; } /* Blue */
 
 
         /* Click-to-Move Classification Styles */
@@ -372,7 +374,7 @@
         let assessmentSubmitted = false;
         
         // ============================================================================================
-        // IMPORTANT: PASTE YOUR NEW WEB APP URL FROM GOOGLE APPS SCRIPT HERE
+        // IMPORTANT: PASTE YOUR WEB APP URL FROM GOOGLE APPS SCRIPT HERE
         // ============================================================================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
         // ============================================================================================
@@ -425,53 +427,51 @@
             });
         });
 
-        // --- UPDATED: Matching activity logic for unique colors ---
+        let selectedMatchItem = null;
+        
         document.querySelectorAll('[data-activity-type="matching"]').forEach(activity => {
-            let selectedMatchItem = null;
-            let matchCounter = 1; // Counter is now local to each activity
-            const items = activity.querySelectorAll('.matching-column li');
-
-            items.forEach(item => {
-                item.addEventListener('click', e => {
-                    if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
-
-                    const currentItem = e.currentTarget;
-                    const currentColumn = currentItem.closest('.matching-column');
-
-                    if (currentItem.classList.contains('selected')) {
-                        currentItem.classList.remove('selected');
-                        selectedMatchItem = null;
-                        return;
-                    }
-
-                    if (!selectedMatchItem) {
-                        activity.querySelectorAll('.matching-column li').forEach(li => {
-                            if (!li.style.pointerEvents) { // only deselect non-matched items
-                                li.classList.remove('selected');
-                            }
-                        });
-                        currentItem.classList.add('selected');
-                        selectedMatchItem = currentItem;
-                    } 
-                    else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
-                        selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
-                        currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
-
-                        const matchClass = `matched-pair-${matchCounter}`;
-                        selectedMatchItem.classList.add(matchClass);
-                        currentItem.classList.add(matchClass);
-                        
-                        selectedMatchItem.style.pointerEvents = 'none';
-                        currentItem.style.pointerEvents = 'none';
-                        selectedMatchItem.classList.remove('selected');
-                        
-                        matchCounter++;
-                        selectedMatchItem = null;
-                    }
-                });
-            });
+            activity.dataset.matchCounter = 1;
         });
 
+        document.querySelectorAll('.matching-column li').forEach(item => {
+            item.addEventListener('click', e => {
+                if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
+
+                const currentItem = e.currentTarget;
+                const currentColumn = currentItem.closest('.matching-column');
+
+                if (currentItem.classList.contains('selected')) {
+                    currentItem.classList.remove('selected');
+                    selectedMatchItem = null;
+                    return;
+                }
+
+                if (!selectedMatchItem) {
+                    currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+                    currentItem.classList.add('selected');
+                    selectedMatchItem = currentItem;
+                } 
+                else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                    selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
+                    currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
+
+                    const activityCard = currentItem.closest('[data-activity-type="matching"]');
+                    const matchNumber = activityCard.dataset.matchCounter;
+                    const matchClass = `matched-pair-${matchNumber}`;
+
+                    selectedMatchItem.classList.add(matchClass);
+                    currentItem.classList.add(matchClass);
+                    
+                    selectedMatchItem.style.pointerEvents = 'none';
+                    currentItem.style.pointerEvents = 'none';
+                    selectedMatchItem.classList.remove('selected');
+                    
+                    activityCard.dataset.matchCounter = parseInt(matchNumber, 10) + 1;
+                    
+                    selectedMatchItem = null;
+                }
+            });
+        });
 
         let selectedWordToken = null;
         document.querySelectorAll('.word-token').forEach(token => {
