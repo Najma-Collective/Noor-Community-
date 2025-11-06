@@ -362,8 +362,12 @@
         let timerInterval = null;
         let studentId = '';
         let assessmentSubmitted = false;
-        // IMPORTANT: Replace this with your actual Google Apps Script URL from your LATEST deployment
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycTz_9x4Qx1jJdJ2sU-v-F2wR3kL7v8n9p0o1bM/exec';
+        
+        // ============================================================================================
+        // IMPORTANT: PASTE YOUR NEW WEB APP URL FROM GOOGLE APPS SCRIPT HERE
+        // ============================================================================================
+        const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE';
+        // ============================================================================================
 
         const studentIdModal = document.getElementById('student-id-modal');
         const studentIdInput = document.getElementById('student-id-input');
@@ -467,9 +471,8 @@
 
         submitBtn.addEventListener('click', () => handleSubmission(false));
         
-        // --- START: NEW DEBUGGING FUNCTION ---
         function handleSubmission(isAutoSubmit) {
-            console.log("handleSubmission function started."); // Log 1: Did the function start?
+            console.log("handleSubmission function started.");
 
             if (assessmentSubmitted) {
                 console.log("Submission blocked because assessmentSubmitted is true.");
@@ -488,20 +491,19 @@
                 }
             }
 
-            console.log("Proceeding with submission."); // Log 2: Did it pass the confirmation?
+            console.log("Proceeding with submission.");
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
             const score = calculateScore();
             const total = 32;
-            console.log(`Score calculated: ${score}/${total}`); // Log 3: Was the score calculated?
+            console.log(`Score calculated: ${score}/${total}`);
 
             showFeedback(score, total);
             
-            console.log("Calling submitToGoogleSheet function."); // Log 4: Is it about to send the data?
+            console.log("Calling submitToGoogleSheet function.");
             submitToGoogleSheet(studentId, 'A1', `${score}/${total}`);
         }
-        // --- END: NEW DEBUGGING FUNCTION ---
 
         function calculateScore() {
             let score = 0;
