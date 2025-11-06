@@ -157,16 +157,16 @@
         .matching-container { display: flex; justify-content: space-between; gap: var(--space-6); }
         .matching-column { width: 48%; }
         .matching-column ul { list-style: none; padding: 0; }
-        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std); }
+        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std), border-color var(--transition-std); }
         .matching-column li:hover { background-color: var(--hover-sage); }
         .matching-column li.selected { background-color: var(--amber); color: var(--deep-forest); border-color: var(--amber); }
 
-        /* --- NEW: Unique colors for matched pairs --- */
-        .matching-column li.matched-pair-1 { background-color: #e0bbe4; color: #3e2d42; border-color: #3e2d42; }
-        .matching-column li.matched-pair-2 { background-color: #957dad; color: #f3eef7; border-color: #c4b7dc; }
-        .matching-column li.matched-pair-3 { background-color: #d291bc; color: #4e2d42; border-color: #4e2d42; }
-        .matching-column li.matched-pair-4 { background-color: #fec8d8; color: #5e3a45; border-color: #5e3a45; }
-        .matching-column li.matched-pair-5 { background-color: #ffdfd3; color: #5e483f; border-color: #5e483f; }
+        /* --- NEW: Unique color palette for matched pairs --- */
+        .matching-column li.matched-pair-1 { background-color: #EADBC8; color: #5D4037; border-color: #DACDBE; }
+        .matching-column li.matched-pair-2 { background-color: #ADC4CE; color: #2A3D45; border-color: #A0B6BF; }
+        .matching-column li.matched-pair-3 { background-color: #E8C8B7; color: #6D4C41; border-color: #D6B8A9; }
+        .matching-column li.matched-pair-4 { background-color: #A3B899; color: #333D29; border-color: #98AB90; }
+        .matching-column li.matched-pair-5 { background-color: #D3CEDF; color: #3E3B46; border-color: #C5BFD3; }
 
 
         /* Click-to-Move Classification Styles */
@@ -426,61 +426,52 @@
         });
 
         // --- UPDATED: Matching activity logic for unique colors ---
-        let selectedMatchItem = null;
-        
-        // Initialize a color counter for each separate matching activity
         document.querySelectorAll('[data-activity-type="matching"]').forEach(activity => {
-            activity.dataset.matchCounter = 1;
-        });
+            let selectedMatchItem = null;
+            let matchCounter = 1; // Counter is now local to each activity
+            const items = activity.querySelectorAll('.matching-column li');
 
-        document.querySelectorAll('.matching-column li').forEach(item => {
-            item.addEventListener('click', e => {
-                if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
+            items.forEach(item => {
+                item.addEventListener('click', e => {
+                    if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
 
-                const currentItem = e.currentTarget;
-                const currentColumn = currentItem.closest('.matching-column');
+                    const currentItem = e.currentTarget;
+                    const currentColumn = currentItem.closest('.matching-column');
 
-                // Deselect if clicking the same item again
-                if (currentItem.classList.contains('selected')) {
-                    currentItem.classList.remove('selected');
-                    selectedMatchItem = null;
-                    return;
-                }
+                    if (currentItem.classList.contains('selected')) {
+                        currentItem.classList.remove('selected');
+                        selectedMatchItem = null;
+                        return;
+                    }
 
-                // If nothing is selected, select the current item
-                if (!selectedMatchItem) {
-                    // Deselect others in the same column before selecting a new one
-                    currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-                    currentItem.classList.add('selected');
-                    selectedMatchItem = currentItem;
-                } 
-                // If an item is selected in the other column, a match is attempted
-                else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
-                    // A match is made, apply unique color
-                    selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
-                    currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
+                    if (!selectedMatchItem) {
+                        activity.querySelectorAll('.matching-column li').forEach(li => {
+                            if (!li.style.pointerEvents) { // only deselect non-matched items
+                                li.classList.remove('selected');
+                            }
+                        });
+                        currentItem.classList.add('selected');
+                        selectedMatchItem = currentItem;
+                    } 
+                    else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                        selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
+                        currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
 
-                    const activityCard = currentItem.closest('[data-activity-type="matching"]');
-                    const matchNumber = activityCard.dataset.matchCounter;
-                    const matchClass = `matched-pair-${matchNumber}`;
-
-                    // Add the unique color class to both items
-                    selectedMatchItem.classList.add(matchClass);
-                    currentItem.classList.add(matchClass);
-                    
-                    // Lock both items
-                    selectedMatchItem.style.pointerEvents = 'none';
-                    currentItem.style.pointerEvents = 'none';
-                    selectedMatchItem.classList.remove('selected');
-                    
-                    // Increment the color counter for the next pair in this specific activity
-                    activityCard.dataset.matchCounter = parseInt(matchNumber, 10) + 1;
-                    
-                    // Reset selection
-                    selectedMatchItem = null;
-                }
+                        const matchClass = `matched-pair-${matchCounter}`;
+                        selectedMatchItem.classList.add(matchClass);
+                        currentItem.classList.add(matchClass);
+                        
+                        selectedMatchItem.style.pointerEvents = 'none';
+                        currentItem.style.pointerEvents = 'none';
+                        selectedMatchItem.classList.remove('selected');
+                        
+                        matchCounter++;
+                        selectedMatchItem = null;
+                    }
+                });
             });
         });
+
 
         let selectedWordToken = null;
         document.querySelectorAll('.word-token').forEach(token => {
