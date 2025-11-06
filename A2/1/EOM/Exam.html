@@ -417,33 +417,64 @@
             });
         });
 
+        // ===================================================================
+        // --- START: MATCHING ACTIVITY ENHANCEMENT (DIFFERENT COLORS) ---
+        // ===================================================================
+        const matchColors = ['#c6aa77', '#b8c5a6', '#d1bfa2', '#9caf88', '#e3d6c1', '#a7b499'];
+        let colorIndex = 0;
         let selectedMatchItem = null;
+
         document.querySelectorAll('.matching-column li').forEach(item => {
             item.addEventListener('click', e => {
                 if (assessmentSubmitted) return;
                 const currentItem = e.currentTarget;
                 const currentColumn = currentItem.closest('.matching-column');
+
                 if (currentItem.classList.contains('selected')) {
                     currentItem.classList.remove('selected');
                     selectedMatchItem = null;
                     return;
                 }
+
                 if (!selectedMatchItem) {
+                    // This is the first item selected in a pair.
+                    // Deselect any other selected item in the same column.
                     currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
                     currentItem.classList.add('selected');
                     selectedMatchItem = currentItem;
                 } else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                    // This is the second item, and it's in a different column. A match is made.
+                    
+                    // 1. Get the next color for this pair and increment the index for the next pair.
+                    const pairColor = matchColors[colorIndex % matchColors.length];
+                    colorIndex++;
+
+                    // 2. Log the user's answer for scoring.
                     selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
                     currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
+
+                    // 3. Lock both items from being selected again.
                     selectedMatchItem.style.pointerEvents = 'none';
                     currentItem.style.pointerEvents = 'none';
+                    
+                    // 4. Remove the 'selected' look from the first item.
                     selectedMatchItem.classList.remove('selected');
-                    selectedMatchItem.style.backgroundColor = 'var(--hover-sage)';
-                    currentItem.style.backgroundColor = 'var(--hover-sage)';
+
+                    // 5. Apply the unique pair color to both items.
+                    selectedMatchItem.style.backgroundColor = pairColor;
+                    currentItem.style.backgroundColor = pairColor;
+                    selectedMatchItem.style.color = 'var(--deep-forest)'; // Ensure text is readable
+                    currentItem.style.color = 'var(--deep-forest)';   // Ensure text is readable
+
+                    // 6. Reset for the next pair.
                     selectedMatchItem = null;
                 }
             });
         });
+        // =================================================================
+        // --- END: MATCHING ACTIVITY ENHANCEMENT ---
+        // =================================================================
+
 
         let selectedWordToken = null;
         const sourceWordsContainer = document.getElementById('source-words');
