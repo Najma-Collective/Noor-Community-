@@ -150,6 +150,11 @@
     <div id="app-wrapper">
         <div id="activity-container">
 
+            <!-- Timer Bar -->
+            <div id="timer-bar" class="screen hidden" style="position: sticky; top: 0; z-index: 999; background: var(--forest-shadow); color: var(--soft-white); padding: var(--space-3); text-align: center; font-weight: 700; box-shadow: var(--shadow-2);">
+                Time Remaining: <span id="countdown-timer" style="background: var(--amber); color: var(--forest-shadow); padding: var(--space-1) var(--space-2); border-radius: 6px; margin-left: var(--space-2);">60:00</span>
+            </div>
+
             <!-- Start Screen -->
             <div id="start-screen" class="screen">
                 <h1>A1 English</h1>
@@ -288,9 +293,14 @@
             const matchingGameContainer = document.getElementById('matching-game');
             const unscrambleContainer = document.getElementById('unscramble-container');
             const allForms = document.querySelectorAll('form');
+            const timerBar = document.getElementById('timer-bar');
+            const timerDisplay = document.getElementById('countdown-timer');
 
             const EXAM_STATE_KEY = 'a1Unit1ExamProgress';
-            
+            const EXAM_DURATION = 60 * 60; // 60 minutes in seconds
+            let timeRemaining = EXAM_DURATION;
+            let timerInterval = null;
+
             const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyOoXDbIcZsHgXUc2PhoHX214tEulsSRFjGGLbogBdJRhn53se-c-vAZ3rq9x-nAR26Xw/exec'; 
 
             const populateStudentIds = () => {
@@ -306,7 +316,27 @@
 
             const showScreen = (screenId) => {
                 screens.forEach(screen => screen.classList.toggle('hidden', screen.id !== screenId));
+                // Show timer when leaving start screen
+                if (screenId !== 'start-screen' && screenId !== 'results-screen') {
+                    timerBar.classList.remove('hidden');
+                }
                 window.scrollTo(0, 0);
+            };
+
+            const startTimer = () => {
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    const minutes = Math.floor(timeRemaining / 60);
+                    const seconds = timeRemaining % 60;
+                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        timerDisplay.textContent = '00:00';
+                        alert('Time is up! Your exam will be submitted automatically.');
+                        submitExam();
+                    }
+                }, 1000);
             };
             
             // --- State Management ---
@@ -391,6 +421,7 @@
                 }
 
                 showScreen('reading-screen');
+                startTimer();
                 saveProgress();
             });
 
@@ -592,6 +623,11 @@
             }
             
             async function submitExam() {
+                // Stop the timer
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+
                 // 1. Find the submit button and disable it to prevent multiple clicks.
                 const submitBtn = document.getElementById('submit-btn'); // Assume the button has id='submit-btn'
                 if (!submitBtn) {
