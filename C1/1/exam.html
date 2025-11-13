@@ -518,9 +518,9 @@
         });
         
         document.querySelectorAll('.dropdown-question select').forEach(select => {
-            select.addEventListener('change', e => { 
-                const parentDiv = e.target.closest('.dropdown-question');
-                parentDiv.querySelectorAll('select').forEach(s => s.disabled = true);
+            select.addEventListener('change', e => {
+                // Only lock the specific select that was changed, not all selects in the parent
+                e.target.disabled = true;
             });
         });
 
