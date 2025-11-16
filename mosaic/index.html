@@ -17,6 +17,37 @@
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="print.css" media="print" />
+    <style data-material-theme>
+      :root {
+        color-scheme: light;
+        --md-ref-typeface-plain: var(--font-body, 'Nunito', system-ui, sans-serif);
+        --md-ref-typeface-brand: var(--font-display, 'Questrial', 'Nunito', system-ui, sans-serif);
+        --md-sys-color-primary: var(--primary-sage, #7a8471);
+        --md-sys-color-on-primary: var(--soft-white, #fefcf7);
+        --md-sys-color-primary-container: color-mix(
+          in srgb,
+          var(--soft-white, #fefcf7) 88%,
+          var(--primary-sage, #7a8471)
+        );
+        --md-sys-color-on-primary-container: var(--forest-shadow, #5a6b52);
+        --md-sys-color-secondary: var(--secondary-sage, #9caf88);
+        --md-sys-color-on-secondary: var(--forest-shadow, #5a6b52);
+        --md-sys-color-tertiary: var(--tertiary-sage, #b8c5a6);
+        --md-sys-color-on-tertiary: var(--forest-shadow, #5a6b52);
+        --md-sys-color-surface: var(--soft-white, #fefcf7);
+        --md-sys-color-surface-container: var(--warm-cream, #f8f6f0);
+        --md-sys-color-background: var(--warm-cream, #f8f6f0);
+        --md-sys-color-on-surface: var(--forest-shadow, #5a6b52);
+        --md-sys-color-on-surface-variant: var(--ink-muted, #5a6b52);
+        --md-sys-color-outline: var(--border-sage, rgba(122, 132, 113, 0.2));
+        --md-sys-color-outline-variant: color-mix(
+          in srgb,
+          var(--border-sage, rgba(122, 132, 113, 0.2)) 70%,
+          white
+        );
+      }
+    </style>
+    <script type="module" src="https://esm.run/@material/web/all.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.8/dist/handlebars.min.js"></script>
   </head>
   <body>
