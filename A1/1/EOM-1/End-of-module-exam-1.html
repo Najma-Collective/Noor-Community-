@@ -3,704 +3,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>End of Module Exam 1</title>
+    <title>A1 Final Assessment: Personal Identity & Introductions</title>
+
+    <!-- 1. Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&family=Questrial&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+
+    <!-- 2. Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- 3. Embedded CSS Theme -->
     <style>
         /* =====================================================================
-           Organic Sage UI — Mobile-first, stable, and soothing
+           Noor Community Activities — Enhanced UI System
+           Refined version of the Organic Sage visual language.
            ===================================================================== */
 
         /* -------------------------------
-           Design tokens
+           Design Tokens
         ----------------------------------*/
         :root {
-          --primary-sage: #7A8471;
-          --secondary-sage: #9CAF88;
-          --tertiary-sage: #B8C5A6;
-          --warm-cream: #F8F6F0;
-          --soft-white: #FEFCF7;
-          --forest-shadow: #5A6B52;
-          --border-sage: rgba(122, 132, 113, 0.20);
+          /* Core Palette */
+          --primary-sage: #7a8471;
+          --secondary-sage: #9caf88;
+          --tertiary-sage: #b8c5a6;
+          --warm-cream: #f8f6f0;
+          --soft-white: #fefcf7;
+          --forest-shadow: #5a6b52;
+          --ink: #2f3a2b;
+          --ink-muted: #5a6b52;
+          --border-sage: rgba(122, 132, 113, 0.2);
           --hover-sage: rgba(156, 175, 136, 0.15);
-          --ink: #2F3A2B;
-          --ink-muted: #5A6B52;
-          --success-green: #3E8E41;
-          --success-bg: #E8F5E9;
-          --error-red: #C62828;
-          --error-bg: #FFEBEE;
-          --amber: #FFA000;
-          --font-display: 'Questrial', system-ui, sans-serif;
-          --font-body: 'Nunito', system-ui, sans-serif;
-          --step-0:  clamp(1rem, 0.96rem + 0.22vw, 1.1rem);
-          --step-1:  clamp(1.125rem, 1.07rem + 0.35vw, 1.3rem);
-          --step-2:  clamp(1.375rem, 1.28rem + 0.55vw, 1.6rem);
-          --step-4:  clamp(2.25rem, 1.98rem + 1.35vw, 2.7rem);
+
+          /* Extended Palette */
+          --deep-forest: #3e4a3a;
+          --moss: #6e7a67;
+          --amber: #c6aa77;
+
+          /* Typography */
+          --font-display: "Questrial", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+          --font-body: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+          --font-size-adjustment: 0rem;
+          --step--1: calc(clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem) + var(--font-size-adjustment));
+          --step-0:  calc(clamp(1rem, 0.94rem + 0.28vw, 1.1rem) + var(--font-size-adjustment));
+          --step-1:  calc(clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem) + var(--font-size-adjustment));
+          --step-2:  calc(clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem) + var(--font-size-adjustment));
+          --step-3:  calc(clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem) + var(--font-size-adjustment));
+          --step-4:  calc(clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem) + var(--font-size-adjustment));
+
+          /* Rhythm & Spacing */
+          --space-1: 0.25rem;
           --space-2: 0.5rem;
           --space-3: 0.75rem;
           --space-4: 1rem;
           --space-5: 1.25rem;
           --space-6: 1.5rem;
           --space-7: 2rem;
+          --space-8: 2.5rem;
+          --space-9: 3rem;
+
+          /* Shape & Elevation */
+          --radius-sm: 10px;
           --radius: 16px;
           --radius-lg: 20px;
+          --radius-xl: 28px;
           --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
           --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
-          --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent), 0 0 0 5px color-mix(in srgb, var(--secondary-sage), #2F3A2B 15%);
-          --ease-ambient: cubic-bezier(.2,.8,.2,1);
-          --dur-2: 200ms;
+          --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.1), 0 20px 60px rgba(34, 41, 32, 0.08);
+          --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
+                   0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #2f3a2b 15%);
+
+          /* Motion */
+          --ease-out: cubic-bezier(.2,.8,.2,1);
+          --transition-fast: 150ms var(--ease-out);
+          --transition-std: 250ms var(--ease-out);
+
+          /* Layout */
           --target-min: 44px;
-          --container-max: 900px;
-          --pair-color-1: #A8D8B9;
-          --pair-color-2: #F3D5A5;
-          --pair-color-3: #B7C6E5;
-          --pair-color-4: #E4B4B4;
-          --pair-color-5: #C3B9A6;
+          --container-max: clamp(320px, 92vw, 940px);
+          --container-padding: clamp(1.25rem, 5vw, 2rem);
         }
 
         /* -------------------------------
-           Global reset
+           Global Reset & Base Styles
         ----------------------------------*/
         *, *::before, *::after { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; width: 100%; min-height: 100dvh; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--forest-shadow); background: linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%); }
-        :where(p, h1, h2, h3, h4) { text-wrap: pretty; overflow-wrap: anywhere; }
-        img, svg, video, audio { display: block; max-width: 100%; }
-        audio { width: 100%; }
+        html { text-size-adjust: 100%; scroll-behavior: smooth; }
+        body { margin: 0; min-height: 100dvh; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--ink); background: var(--warm-cream); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: hidden; }
+        :where(p, h1, h2, h3, h4, h5, h6) { text-wrap: pretty; overflow-wrap: break-word; }
+        :where(h1, h2, h3) { text-wrap: balance; }
 
         /* -------------------------------
-           App shell
+           Typography & Layout
         ----------------------------------*/
-        #app-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: var(--space-7) var(--space-4); width: 100%; min-height: 100dvh; }
-        #activity-container { width: 100%; max-width: var(--container-max); background: color-mix(in srgb, var(--soft-white) 88%, white 12%); padding: clamp(24px, 3.2vw, 48px); border-radius: var(--radius-lg); border: 1px solid rgba(122, 132, 113, 0.12); box-shadow: var(--shadow-2); }
-        .screen.hidden { display: none !important; }
-
-        /* -------------------------------
-           Typography & Headings
-        ----------------------------------*/
-        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); margin: 0 0 var(--space-2) 0; text-align: center; }
-        h2.rubric { font-family: var(--font-body); font-size: var(--step-0); font-weight: 500; color: var(--secondary-sage); margin: 0 0 var(--space-6) 0; text-align: center; line-height: 1.5; }
-        h3.section-title { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: var(--space-6) 0 var(--space-3) 0; border-bottom: 2px solid var(--border-sage); padding-bottom: var(--space-3); margin-bottom: var(--space-6); }
-
-        /* -------------------------------
-           Buttons & Controls
-        ----------------------------------*/
-        .activity-btn { min-height: var(--target-min); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--primary-sage); background: var(--primary-sage); color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all var(--dur-2) var(--ease-ambient); box-shadow: 0 8px 16px rgba(90, 107, 82, 0.20); }
-        .activity-btn:hover { background: var(--forest-shadow); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(90, 107, 82, 0.22); }
-        .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), 0 8px 16px rgba(90, 107, 82, 0.20); }
-        .activity-btn:disabled { background: var(--tertiary-sage); cursor: not-allowed; opacity: 0.8; transform: none; box-shadow: none; }
-        .controls { margin-top: var(--space-7); text-align: center; }
-
-        /* -------------------------------
-           Forms & Inputs
-        ----------------------------------*/
-        .input-group { margin: var(--space-6) 0; }
-        .input-group label { display: block; font-weight: 700; margin-bottom: var(--space-2); color: var(--primary-sage); }
-        input[type="text"], input[type="email"], input[type="number"], textarea, select { width: 100%; min-height: var(--target-min); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--tertiary-sage); background: #fff; font-size: 1rem; font-family: var(--font-body); color: var(--ink); transition: all var(--dur-2) var(--ease-ambient); }
-        select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; appearance: none; }
-        textarea { min-height: 120px; resize: vertical; }
-        input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; border-color: var(--secondary-sage); box-shadow: var(--ring); }
-
-        /* -------------------------------
-           Question Styles
-        ----------------------------------*/
-        .conversation-box, .mc-question, .audio-card { background-color: var(--warm-cream); border: 1px solid var(--border-sage); border-radius: var(--radius); padding: var(--space-5); margin-bottom: var(--space-6); }
-        .mc-question { background: #fff; box-shadow: var(--shadow-1); }
-        .mc-question-text { font-weight: 800; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; margin: 0 0 var(--space-4) 0; }
-        .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
-        .mc-option-item input { display: none; }
-        .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 12px; border-radius: 10px; transition: background-color var(--dur-2) var(--ease-ambient); }
-        .mc-option-label:hover { background-color: var(--hover-sage); }
-        .mc-option-item .option-control { flex-shrink: 0; width: 24px; height: 24px; border: 2px solid var(--tertiary-sage); background-color: var(--soft-white); transition: all var(--dur-2) var(--ease-ambient); position: relative; border-radius: 50%; }
-        .mc-option-item input[type="radio"]:checked + .option-control { border-color: var(--primary-sage); }
-        .mc-option-item input[type="radio"]:checked + .option-control::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background-color: var(--primary-sage); }
-        .ordering-item { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-3); }
-        .ordering-item input[type="number"] { width: 60px; flex-shrink: 0; }
-
-        /* -------------------------------
-           Matching Activity Styles
-        ----------------------------------*/
-        .matching-activity { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-6); }
-        .matching-column { display: flex; flex-direction: column; gap: var(--space-3); }
-        .matching-column h4 { margin: 0 0 var(--space-2) 0; text-align: center; color: var(--primary-sage); }
-        .match-item { padding: 14px; border: 2px solid var(--border-sage); border-radius: 10px; background-color: #fff; cursor: pointer; transition: all var(--dur-2) var(--ease-ambient); text-align: center; user-select: none; }
-        .match-item:hover { background-color: var(--hover-sage); border-color: var(--secondary-sage); }
-        .match-item.selected { border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent 65%); font-weight: 700; transform: scale(1.02); }
-        .match-item.pair-color-1 { border-color: var(--pair-color-1); background-color: var(--pair-color-1); color: var(--forest-shadow); }
-        .match-item.pair-color-2 { border-color: var(--pair-color-2); background-color: var(--pair-color-2); color: var(--forest-shadow); }
-        .match-item.pair-color-3 { border-color: var(--pair-color-3); background-color: var(--pair-color-3); color: var(--forest-shadow); }
-        .match-item.pair-color-4 { border-color: var(--pair-color-4); background-color: var(--pair-color-4); color: var(--forest-shadow); }
-        .match-item.pair-color-5 { border-color: var(--pair-color-5); background-color: var(--pair-color-5); color: var(--forest-shadow); }
-        @media (max-width: 600px) { .matching-activity { grid-template-columns: 1fr; } }
+        .container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); }
+        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); text-align: center; line-height: 1.1; margin: 0 0 var(--space-3); }
+        h2 { font-family: var(--font-display); font-size: var(--step-3); color: var(--forest-shadow); margin: var(--space-7) 0 var(--space-4); }
+        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-3); letter-spacing: 0.02em; }
         
         /* -------------------------------
-           Sentence Unscramble Styles
+           Buttons
         ----------------------------------*/
-        .unscramble-activity { margin-top: var(--space-6); }
-        .unscramble-item { margin-bottom: var(--space-7); }
-        .unscramble-item p { font-weight: 700; color: var(--primary-sage); margin-bottom: var(--space-3); }
-        .drop-zone { display: flex; flex-wrap: wrap; gap: var(--space-3); min-height: 60px; background-color: var(--warm-cream); border: 2px dashed var(--tertiary-sage); border-radius: 10px; padding: var(--space-3); }
-        .word-bank { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); padding: var(--space-3); background-color: #fff; border-radius: 10px; box-shadow: var(--shadow-1); }
-        .word-chip { padding: 10px 16px; background-color: var(--soft-white); border: 1px solid var(--border-sage); border-radius: 8px; font-weight: 500; cursor: pointer; user-select: none; transition: all var(--dur-2) var(--ease-ambient); }
-        .word-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+        .activity-btn { min-height: var(--target-min); padding: 0.75rem clamp(1.2rem, 4vw, 1.75rem); border-radius: 999px; border: 1px solid color-mix(in srgb, var(--primary-sage) 65%, #fff 35%); background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest)); color: #fff; font-weight: 700; font-size: var(--step-0); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; -webkit-tap-highlight-color: transparent; transition: transform var(--transition-fast), box-shadow var(--transition-std), background var(--transition-std); box-shadow: var(--shadow-1); }
+        .activity-btn:hover { transform: scale(1.02); box-shadow: var(--shadow-2); background: linear-gradient(180deg, var(--moss), var(--deep-forest)); }
+        .activity-btn:active { transform: scale(0.98); }
+        .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), var(--shadow-2); transform: scale(1.02); }
+        .activity-btn:disabled { background: var(--tertiary-sage); border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #fff 20%); color: color-mix(in srgb, #fff 85%, var(--soft-white) 15%); cursor: not-allowed; opacity: 0.85; transform: none; box-shadow: none; }
+
+        /* -------------------------------
+           Multiple Choice Question Styles
+        ----------------------------------*/
+        .mc-question { padding: clamp(1.25rem, 4vw, 1.75rem); border-radius: var(--radius); border: 1px solid var(--border-sage); background: linear-gradient(180deg, #fff, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%)); box-shadow: var(--shadow-1); margin-bottom: var(--space-6); }
+        .mc-question-text { font-weight: 700; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; margin: 0 0 var(--space-5); }
+        .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
+        .mc-option-item input { display: none; }
+        .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); background: color-mix(in srgb, var(--soft-white) 92%, #fff 8%); transition: all var(--transition-std); -webkit-tap-highlight-color: transparent; }
+        .mc-option-label:hover { background: var(--hover-sage); border-color: color-mix(in srgb, var(--secondary-sage) 50%, transparent); }
+        .mc-option-label .option-control { flex-shrink: 0; width: 24px; height: 24px; border: 2px solid var(--tertiary-sage); background-color: var(--soft-white); transition: all var(--transition-std); position: relative; border-radius: 50%; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7); }
+        .mc-option-label.locked { cursor: not-allowed; background: var(--hover-sage); }
+        .mc-option-item input:checked + .mc-option-label .option-control { border-color: var(--primary-sage); background-color: var(--primary-sage); }
+        .mc-option-item input:checked + .mc-option-label .option-control::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background-color: #fff; }
+        .mc-option-item input:focus-visible + .mc-option-label { outline: none; box-shadow: var(--ring); }
+        .mc-option-label:has(input:checked) { border-color: var(--primary-sage); background: color-mix(in srgb, var(--hover-sage) 30%, #fff 70%); }
+        .mc-option-label:has(input:checked) .mc-option-text { color: var(--deep-forest); font-weight: 600; }
+
+        /* -------------------------------
+           Assessment-Specific Custom Styles
+        ----------------------------------*/
+        .assessment-container { display: none; }
+        #student-id-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #student-id-box { background: var(--soft-white); padding: var(--space-8); border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-3); width: 90%; max-width: 400px; }
+        #student-id-box h2 { margin-top: 0; color: var(--primary-sage); font-family: var(--font-display); }
+        #student-id-input { width: 100%; padding: var(--space-3); margin: var(--space-5) 0; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); font-size: var(--step-0); }
+
+        .timer-bar { position: sticky; top: 0; width: 100%; background-color: var(--deep-forest); color: var(--soft-white); padding: var(--space-3) var(--space-4); text-align: center; font-weight: 700; z-index: 999; box-shadow: var(--shadow-2); }
+        #countdown-timer { background-color: var(--amber); color: var(--deep-forest); padding: var(--space-1) var(--space-2); border-radius: 6px; margin-left: var(--space-2); }
+        
+        .hero-section { position: relative; background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; }
+        .hero-overlay { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.5); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-section h1 { color: white; font-size: var(--step-4); }
+        .pills { display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; }
+        .pill { display: inline-block; padding: var(--space-2) var(--space-4); border-radius: 999px; font-size: var(--step--1); font-weight: 600; background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); }
+        
+        .assessment-section { margin-bottom: var(--space-8); }
+        .instructions { color: var(--ink-muted); font-style: italic; text-align: center; margin-bottom: var(--space-6); }
+        .activity-card { background: var(--soft-white); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); }
+        .activity-card h3 { color: var(--primary-sage); margin-top: 0; border-bottom: 2px solid var(--hover-sage); padding-bottom: var(--space-2); font-size: var(--step-2); }
+        .reading-passage { background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--border-sage); margin-bottom: var(--space-6); line-height: 1.7; }
+
+        .dropdown-question select { padding: var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--tertiary-sage); background-color: var(--soft-white); cursor: pointer; }
+        .matching-container { display: flex; justify-content: space-between; gap: var(--space-6); }
+        .matching-column { width: 48%; }
+        .matching-column ul { list-style: none; padding: 0; }
+        .matching-column li { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer; transition: background-color var(--transition-std), color var(--transition-std); }
+        .matching-column li:hover { background-color: var(--hover-sage); }
+        .matching-column li.selected { background-color: var(--amber); color: var(--deep-forest); border-color: var(--amber); }
+
+        /* =========================================================
+           NEW: High-contrast colors for matched pairs
+           ========================================================= */
+        .matching-column li.matched-pair-1 { background-color: #f9c74f; color: #57451b; border-color: #57451b; } /* Gold */
+        .matching-column li.matched-pair-2 { background-color: #90be6d; color: #283618; border-color: #283618; } /* Green */
+        .matching-column li.matched-pair-3 { background-color: #b5a3c8; color: #3e324d; border-color: #3e324d; } /* Purple */
+        .matching-column li.matched-pair-4 { background-color: #e5989b; color: #5e3c3d; border-color: #5e3c3d; } /* Red/Pink */
+        .matching-column li.matched-pair-5 { background-color: #8ecae6; color: #023047; border-color: #023047; } /* Blue */
+
+
+        /* Click-to-Move Classification Styles */
+        .classification-container { padding: var(--space-4); background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); border-radius: var(--radius); }
+        #source-words { padding: var(--space-4); border: 2px dashed var(--tertiary-sage); border-radius: var(--radius-sm); margin-bottom: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: 50px; cursor: pointer; }
+        .word-token { padding: var(--space-2) var(--space-4); background-color: var(--soft-white); border: 1px solid var(--border-sage); border-radius: 999px; cursor: pointer; box-shadow: var(--shadow-1); transition: all var(--transition-std); }
+        .word-token.selected { background-color: var(--amber); color: var(--deep-forest); box-shadow: var(--ring); transform: scale(1.05); }
+        .drop-zones { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+        .drop-zone { padding: var(--space-4); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); background-color: var(--soft-white); min-height: 100px; cursor: pointer; }
+        .drop-zone h4 { margin-top: 0; text-align: center; color: var(--primary-sage); pointer-events: none; }
+
+        .table-matrix { width: 100%; border-collapse: collapse; }
+        .table-matrix th, .table-matrix td { border: 1px solid var(--border-sage); padding: var(--space-3); text-align: left; }
+        .table-matrix th { background-color: color-mix(in srgb, var(--warm-cream) 50%, var(--soft-white) 50%); }
+        .table-matrix .options-cell button { background-color: var(--soft-white); border: 1px solid var(--tertiary-sage); padding: var(--space-2) var(--space-3); margin: var(--space-1); border-radius: var(--radius-sm); cursor: pointer; }
+        .table-matrix .options-cell button.selected { background-color: var(--amber); border-color: var(--amber); font-weight: bold; }
+
+        /* Feedback styling */
+        .feedback-correct { background-color: #d4edda !important; border-color: #c3e6cb !important; }
+        .feedback-incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; }
+        .correct-answer-tick::after { content: ' ✔'; color: #155724; font-weight: bold; }
+        .mc-option-label.feedback-correct { border-color: #155724 !important; background: #d4edda !important; }
+        .mc-option-label.feedback-incorrect { border-color: #721c24 !important; background: #f8d7da !important; }
+
+        #submission-area { text-align: center; margin-top: var(--space-7); }
+        #submission-feedback { display: none; padding: var(--space-6); margin-top: var(--space-7); border-radius: var(--radius); text-align: center; }
+        #submission-feedback.success { background-color: #d4edda; color: #155724; }
+        #submission-feedback.error { background-color: #f8d7da; color: #721c24; }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .matching-container { flex-direction: column; }
+            .matching-column { width: 100%; }
+            .table-matrix, .table-matrix tbody, .table-matrix tr, .table-matrix td, .table-matrix th { display: block; }
+            .table-matrix thead { display: none; }
+            .table-matrix tr { margin-bottom: var(--space-4); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); }
+            .table-matrix td { display: flex; justify-content: space-between; align-items: center; border: none; border-bottom: 1px solid var(--border-sage); }
+            .table-matrix td:last-child { border-bottom: none; }
+            .table-matrix td::before { content: attr(data-label); font-weight: bold; margin-right: var(--space-4); }
+        }
     </style>
 </head>
 <body>
-    <div id="app-wrapper">
-        <div id="activity-container">
 
-            <!-- Timer Bar -->
-            <div id="timer-bar" class="screen hidden" style="position: sticky; top: 0; z-index: 999; background: var(--forest-shadow); color: var(--soft-white); padding: var(--space-3); text-align: center; font-weight: 700; box-shadow: var(--shadow-2);">
-                Time Remaining: <span id="countdown-timer" style="background: var(--amber); color: var(--forest-shadow); padding: var(--space-1) var(--space-2); border-radius: 6px; margin-left: var(--space-2);">60:00</span>
-            </div>
-
-            <!-- Start Screen -->
-            <div id="start-screen" class="screen">
-                <h1>A1 English</h1>
-                <h2 class="rubric">Total Time: 60 Minutes | Total Score: 100 Points</h2>
-                <p>Read the instructions for each part carefully. Your answers will be automatically saved as you progress. At the end, your results will be sent to your instructor.</p>
-                <div class="input-group">
-                    <label for="class-code">Choose Your Class</label>
-                    <select id="class-code" name="class-code" required>
-                        <option value="">-- Select a class --</option>
-                        <option value="G.A1">G.A1</option>
-                        <option value="G.A2">G.A2</option>
-                        <option value="G.B1">G.B1</option>
-                        <option value="G.B2">G.B2</option>
-                        <option value="G.C1">G.C1</option>
-                        <option value="WB/O.A1">WB/O.A1</option>
-                        <option value="WB/O.A2">WB/O.A2</option>
-                        <option value="WB/O.B1">WB/O.B1</option>
-                        <option value="WB/O.B2">WB/O.B2</option>
-                        <option value="WB/O.C1">WB/O.C1</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="student-id">Enter Your Student ID (001-150)</label>
-                    <select id="student-id" name="student-id" required>
-                        <option value="">-- Select your ID --</option>
-                    </select>
-                </div>
-                <div class="controls">
-                    <button id="start-btn" class="activity-btn">Start Exam</button>
-                </div>
-            </div>
-
-            <!-- Reading Section -->
-            <div id="reading-screen" class="screen hidden">
-                <h3 class="section-title">Part 1: Reading Comprehension (25 points)</h3>
-                <p><strong>Instructions:</strong> Read the conversation between Omar and Nadia. Then, choose the correct answer for questions 1-5.</p>
-                <div class="conversation-box"><p><strong>Omar:</strong> Hello. My name is Omar. What’s your name?</p><p><strong>Nadia:</strong> Hi Omar. I’m Nadia. Nice to meet you.</p><p><strong>Omar:</strong> Nice to meet you, too. So, what do you do, Nadia?</p><p><strong>Nadia:</strong> I’m a student. I study at Birzeit University. What about you?</p><p><strong>Omar:</strong> I’m a doctor. I work in the city centre.</p><p><strong>Nadia:</strong> That’s interesting. And where do you live, Omar?</p><p><strong>Omar:</strong> I live in Ramallah. And you?</p><p><strong>Nadia:</strong> I live in Ramallah, too. But I am from Nablus.</p></div>
-                <form id="reading-form">
-                    <div class="mc-question"><p class="mc-question-text">1. What is the woman's name?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="a" id="q1a"><span class="option-control"></span><span>Ramallah</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="b" id="q1b"><span class="option-control"></span><span>Nadia</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q1" value="c" id="q1c"><span class="option-control"></span><span>Omar</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">2. What does Nadia do?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="a" id="q2a"><span class="option-control"></span><span>She is a doctor.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="b" id="q2b"><span class="option-control"></span><span>She is a student.</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q2" value="c" id="q2c"><span class="option-control"></span><span>She is a teacher.</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">3. Where does Omar work?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="a" id="q3a"><span class="option-control"></span><span>At Birzeit University</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="b" id="q3b"><span class="option-control"></span><span>In Nablus</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q3" value="c" id="q3c"><span class="option-control"></span><span>In the city centre</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">4. Where does Nadia live?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="a" id="q4a"><span class="option-control"></span><span>In Nablus</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="b" id="q4b"><span class="option-control"></span><span>In the city centre</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q4" value="c" id="q4c"><span class="option-control"></span><span>In Ramallah</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">5. Where is Nadia from?</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="a" id="q5a"><span class="option-control"></span><span>Ramallah</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="b" id="q5b"><span class="option-control"></span><span>Nablus</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q5" value="c" id="q5c"><span class="option-control"></span><span>The city centre</span></label></div></div></div>
-                </form>
-                <div class="controls"><button class="activity-btn next-btn" data-next="listening-screen">Next Section: Listening</button></div>
-            </div>
-
-            <!-- Listening Section -->
-            <div id="listening-screen" class="screen hidden">
-                <h3 class="section-title">Part 2: Listening (25 points)</h3>
-                <p><strong>Instructions:</strong> Listen to the conversation at the Palestinian Museum. Then, complete the form by choosing the correct information from the drop-down menus.</p>
-                <div class="audio-card">
-                    <h4>Listening Audio</h4>
-                    <p>Use the player below to listen to the museum membership conversation.</p>
-                    <audio controls preload="metadata">
-                        <source src="end-of-module-examaudio.wav" type="audio/wav">
-                        Your browser does not support the audio element. <a href="end-of-module-examaudio.wav">Download the audio file</a> instead.
-                    </audio>
-                </div>
-                <form id="listening-form">
-                    <h4>Palestinian Museum Membership Form</h4>
-                    <div class="input-group"><label for="q6">Name:</label><select id="q6" name="q6"><option value="">-- Select a name --</option><option value="Samer Haddad">Samer Haddad</option><option value="Samir Hamad">Samir Hamad</option><option value="Salim Haddad">Salim Haddad</option></select></div>
-                    <div class="input-group"><label for="q7">Nationality:</label><select id="q7" name="q7"><option value="">-- Select a nationality --</option><option value="Jordanian">Jordanian</option><option value="Palestine">Palestine</option><option value="Palestinian">Palestinian</option></select></div>
-                    <div class="input-group"><label for="q8">City:</label><select id="q8" name="q8"><option value="">-- Select a city --</option><option value="Ramallah">Ramallah</option><option value="Nablus">Nablus</option><option value="Hebron">Hebron</option></select></div>
-                    <div class="input-group"><label for="q9">Job:</label><select id="q9" name="q9"><option value="">-- Select a job --</option><option value="An engineer">An engineer</option><option value="A student">A student</option><option value="A doctor">A doctor</option></select></div>
-                    <div class="input-group"><label for="q10">Email Address:</label><select id="q10" name="q10"><option value="">-- Select an email --</option><option value="samer.haddad@email.com">samer.haddad@email.com</option><option value="s.haddad@email.com">s.haddad@email.com</option><option value="samer.h@email.com">samer.h@email.com</option></select></div>
-                </form>
-                <div class="controls"><button class="activity-btn next-btn" data-next="grammar-screen">Next Section: Grammar & Vocabulary</button></div>
-            </div>
-            
-            <!-- Grammar & Vocabulary Section -->
-            <div id="grammar-screen" class="screen hidden">
-                <h3 class="section-title">Part 3: Grammar and Vocabulary (25 points)</h3>
-                <p><strong>Instructions (Task 1):</strong> Choose the correct word to complete sentences 11-15. (15 points)</p>
-                <form id="grammar-form-mcq">
-                    <div class="mc-question"><p class="mc-question-text">11. A: What's ___ name? B: My name is Huda.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="a" id="q11a"><span class="option-control"></span><span>my</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="b" id="q11b"><span class="option-control"></span><span>your</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q11" value="c" id="q11c"><span class="option-control"></span><span>I</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">12. I ___ from Palestine.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="a" id="q12a"><span class="option-control"></span><span>is</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="b" id="q12b"><span class="option-control"></span><span>am</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q12" value="c" id="q12c"><span class="option-control"></span><span>are</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">13. A: Where ___ you from? B: I’m from Gaza.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="a" id="q13a"><span class="option-control"></span><span>am</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="b" id="q13b"><span class="option-control"></span><span>is</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q13" value="c" id="q13c"><span class="option-control"></span><span>are</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">14. I live ___ Hebron.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="a" id="q14a"><span class="option-control"></span><span>in</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="b" id="q14b"><span class="option-control"></span><span>at</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q14" value="c" id="q14c"><span class="option-control"></span><span>on</span></label></div></div></div>
-                    <div class="mc-question"><p class="mc-question-text">15. A: What do you do? B: I am ___ engineer.</p><div class="mc-options-container"><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="a" id="q15a"><span class="option-control"></span><span>a</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="b" id="q15b"><span class="option-control"></span><span>an</span></label></div><div class="mc-option-item"><label class="mc-option-label"><input type="radio" name="q15" value="c" id="q15c"><span class="option-control"></span><span>the</span></label></div></div></div>
-                </form>
-                <p><strong>Instructions (Task 2):</strong> Match the questions in Column A with the correct answers in Column B. Click a question and then click its matching answer to pair them. (10 points)</p>
-                <div class="matching-activity" id="matching-game">
-                    <div class="matching-column" id="matching-questions">
-                        <h4>Column A: Questions</h4>
-                        <div class="match-item" data-match-id="1">What's your name?</div>
-                        <div class="match-item" data-match-id="2">Where are you from?</div>
-                        <div class="match-item" data-match-id="3">What do you do?</div>
-                        <div class="match-item" data-match-id="4">Nice to meet you.</div>
-                        <div class="match-item" data-match-id="5">Goodbye.</div>
-                    </div>
-                    <div class="matching-column" id="matching-answers">
-                        <h4>Column B: Answers</h4>
-                        <div class="match-item" data-match-id="3">I'm a teacher.</div>
-                        <div class="match-item" data-match-id="5">See you later.</div>
-                        <div class="match-item" data-match-id="1">My name is Ali.</div>
-                        <div class="match-item" data-match-id="4">Nice to meet you, too.</div>
-                        <div class="match-item" data-match-id="2">I'm from Jerusalem.</div>
-                    </div>
-                </div>
-                <div class="controls"><button class="activity-btn next-btn" data-next="structure-screen">Next Section: Sentence Structure</button></div>
-            </div>
-            
-            <!-- Sentence Structure Section -->
-            <div id="structure-screen" class="screen hidden">
-                <h3 class="section-title">Part 4: Sentence Structure (25 points)</h3>
-                <p><strong>Instructions (Task 1):</strong> The lines of the conversations are in the wrong order. Write the correct order using numbers 1, 2, and 3. (10 points)</p>
-                <form id="writing-form-ordering">
-                    <div class="mc-question"><p class="mc-question-text">Conversation A</p><div class="ordering-item"><input type="number" min="1" max="3" name="q21a" id="q21a"><span>Hi, Sara. My name is Yousef.</span></div><div class="ordering-item"><input type="number" min="1" max="3" name="q21b" id="q21b"><span>Hello. I'm Sara. What's your name?</span></div><div class="ordering-item"><input type="number" min="1" max="3" name="q21c" id="q21c"><span>Nice to meet you, Yousef.</span></div></div>
-                    <div class="mc-question"><p class="mc-question-text">Conversation B</p><div class="ordering-item"><input type="number" min="1" max="3" name="q22a" id="q22a"><span>You too. Have a good evening!</span></div><div class="ordering-item"><input type="number" min="1" max="3" name="q22b" id="q22b"><span>Bye! See you tomorrow.</span></div><div class="ordering-item"><input type="number" min="1" max="3" name="q22c" id="q22c"><span>OK, I'm going home now. Goodbye!</span></div></div>
-                </form>
-                <hr style="margin: 40px 0; border: none; border-top: 1px solid var(--border-sage);">
-                <p><strong>Instructions (Task 2):</strong> Click the words in the correct order to make sentences. (15 points)</p>
-                <div id="unscramble-container" class="unscramble-activity">
-                    <!-- Sentences will be dynamically generated here -->
-                </div>
-                <div class="controls"><button id="submit-btn" class="activity-btn">Submit Exam</button></div>
-            </div>
-            
-            <!-- Results Screen -->
-            <div id="results-screen" class="screen hidden">
-                <h1>Exam Submitted</h1>
-                <div id="submission-status">
-                    <h2 class="rubric">Thank you for completing the exam.</h2>
-                    <p style="text-align: center;">Your submission has been recorded and sent to your instructor. You may now close this window.</p>
-                </div>
-            </div>
+    <div id="student-id-modal">
+        <div id="student-id-box">
+            <h2>Final Assessment</h2>
+            <p>Please enter your numeric Student ID to begin.</p>
+            <input type="text" id="student-id-input" placeholder="e.g., 202412345" inputmode="numeric" pattern="[0-9]*">
+            <button id="start-assessment-btn" class="activity-btn" disabled>Start Assessment</button>
         </div>
     </div>
 
+    <div class="assessment-container">
+        <div class="timer-bar">
+            Time Remaining: <span id="countdown-timer">60:00</span>
+        </div>
+
+        <header class="hero-section" style="background-image: url('https://images.pexels.com/photos/7233117/pexels-photo-7233117.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content container">
+                <h1>A1 Final Assessment</h1>
+                <div class="pills">
+                    <span class="pill">Level: A1</span>
+                    <span class="pill">Unit Theme: Personal Identity & Introductions</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="container" style="padding-top: 2rem;">
+
+            <section class="assessment-section">
+                <h2>Listening Comprehension</h2>
+                <p class="instructions">Listen to the conversation and answer the questions.</p>
+                
+                <audio controls style="width: 100%; margin-bottom: 1.5rem;">
+                    <source src="https://najma-collective.github.io/Noor-Community-/A2/1/EOM/download%20(11).wav" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <div class="mc-question" data-question-id="1.1" data-correct-answer="b">
+                    <p class="mc-question-text">1. Where are Sara and Omar?</p>
+                    <div class="mc-options-container">
+                        <div class="mc-option-item"><input type="radio" name="q1.1" value="a" id="q1.1a"><label for="q1.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) At a university</span></label></div>
+                        <div class="mc-option-item"><input type="radio" name="q1.1" value="b" id="q1.1b"><label for="q1.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) At a company event</span></label></div>
+                        <div class="mc-option-item"><input type="radio" name="q1.1" value="c" id="q1.1c"><label for="q1.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) In a museum</span></label></div>
+                    </div>
+                </div>
+                <div class="mc-question" data-question-id="1.2" data-correct-answer="a">
+                    <p class="mc-question-text">2. What is the conversation about?</p>
+                    <div class="mc-options-container">
+                         <div class="mc-option-item"><input type="radio" name="q1.2" value="a" id="q1.2a"><label for="q1.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Introducing themselves</span></label></div>
+                        <div class="mc-option-item"><input type="radio" name="q1.2" value="b" id="q1.2b"><label for="q1.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Saying goodbye</span></label></div>
+                        <div class="mc-option-item"><input type="radio" name="q1.2" value="c" id="q1.2c"><label for="q1.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Asking for an address</span></label></div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <h3>Activity 2: Detailed Information</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Click the correct box to complete the table.</p>
+                    <table class="table-matrix">
+                        <thead><tr><th></th><th>Lives in...</th><th>Job is...</th></tr></thead>
+                        <tbody>
+                            <tr data-person="sara">
+                                <th>Sara</th>
+                                <td data-label="Lives in..." class="options-cell" data-category="location" data-correct-answer="Ramallah"><button>Ramallah</button><button>Hebron</button></td>
+                                <td data-label="Job is..." class="options-cell" data-category="job" data-correct-answer="Student"><button>Engineer</button><button>Student</button><button>Doctor</button></td>
+                            </tr>
+                            <tr data-person="omar">
+                                <th>Omar</th>
+                                <td data-label="Lives in..." class="options-cell" data-category="location" data-correct-answer="Hebron"><button>Ramallah</button><button>Hebron</button></td>
+                                <td data-label="Job is..." class="options-cell" data-category="job" data-correct-answer="Engineer"><button>Engineer</button><button>Student</button><button>Doctor</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>Reading Comprehension & Functional Language</h2>
+                <p class="instructions">Read the welcome email and answer the questions.</p>
+                <div class="reading-passage">
+                    <p><strong>Subject: Welcome to the team!</strong></p>
+                    <p>Hi Layla,</p>
+                    <p>My name is Ahmed. Welcome to the Bank of Palestine. I am a manager here.</p>
+                    <p>I am from Nablus, and I live in Ramallah. I am happy to help you with your new job.</p>
+                    <p>Please let me know if you have questions.</p>
+                    <p>See you tomorrow.</p>
+                    <p>Best,<br>Ahmed</p>
+                </div>
+
+                <div class="mc-question" data-question-id="3.1" data-correct-answer="c"><p class="mc-question-text">1. Who is the email for?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.1" value="a" id="q3.1a"><label for="q3.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Ahmed</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="b" id="q3.1b"><label for="q3.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) A manager</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="c" id="q3.1c"><label for="q3.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Layla</span></label></div></div></div>
+                <div class="mc-question" data-question-id="3.2" data-correct-answer="b"><p class="mc-question-text">2. What is Ahmed's job?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.2" value="a" id="q3.2a"><label for="q3.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) He is a new employee.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="b" id="q3.2b"><label for="q3.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) He is a manager.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="c" id="q3.2c"><label for="q3.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) He is a student.</span></label></div></div></div>
+                 <div class="mc-question" data-question-id="3.3" data-correct-answer="b"><p class="mc-question-text">3. Where does Ahmed live?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.3" value="a" id="q3.3a"><label for="q3.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Nablus</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="b" id="q3.3b"><label for="q3.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Ramallah</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="c" id="q3.3c"><label for="q3.3c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Bank of Palestine</span></label></div></div></div>
+                
+                <div class="activity-card" data-activity-type="matching" data-total-pairs="3">
+                    <h3>Activity 4: Language Functions</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Match the phrase to its function.</p>
+                    <div class="matching-container">
+                        <div class="matching-column"><h4>Column A (Phrase)</h4><ul><li data-match-id="1">1. Hi Layla,</li><li data-match-id="2">2. My name is Ahmed.</li><li data-match-id="3">3. See you tomorrow.</li></ul></div>
+                        <div class="matching-column"><h4>Column B (Function)</h4><ul><li data-match-id="2">a) Giving information</li><li data-match-id="3">b) Saying goodbye</li><li data-match-id="1">c) Greeting</li></ul></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>Vocabulary</h2>
+                <div class="activity-card" data-activity-type="matching" data-total-pairs="4">
+                    <h3>Activity 5: Jobs</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Match the job with the description.</p>
+                     <div class="matching-container">
+                        <div class="matching-column"><h4>Column A (Job)</h4><ul><li data-match-id="1">1. a student</li><li data-match-id="2">2. a doctor</li><li data-match-id="3">3. an engineer</li><li data-match-id="4">4. a teacher</li></ul></div>
+                        <div class="matching-column"><h4>Column B (Description)</h4><ul><li data-match-id="2">a) works with sick people.</li><li data-match-id="4">b) helps people learn.</li><li data-match-id="1">c) studies at a university.</li><li data-match-id="3">d) works with buildings and machines.</li></ul></div>
+                    </div>
+                </div>
+                <div class="activity-card" data-activity-type="classify">
+                    <h3>Activity 6: Word Groups</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Click a word, then click a category to move it.</p>
+                    <div class="classification-container">
+                        <div id="source-words">
+                            <div class="word-token" data-category="Greetings">Hello</div><div class="word-token" data-category="Personal Details">email</div><div class="word-token" data-category="Leave-takings">Goodbye</div><div class="word-token" data-category="Personal Details">address</div><div class="word-token" data-category="Greetings">Hi</div><div class="word-token" data-category="Leave-takings">See you later</div><div class="word-token" data-category="Personal Details">nationality</div>
+                        </div>
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-category="Greetings"><h4>Greetings</h4></div>
+                            <div class="drop-zone" data-category="Personal Details"><h4>Personal Details</h4></div>
+                            <div class="drop-zone" data-category="Leave-takings"><h4>Leave-takings</h4></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="assessment-section">
+                <h2>Grammar</h2>
+                <div class="activity-card">
+                    <h3>Activity 7 & 8: Complete Sentences</h3>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Choose the correct word.</p>
+                    <div class="dropdown-question" data-correct-answer="My">1. Hello. <select name="q7.1"><option value="">--</option><option>My</option><option>I</option></select> name is Fatima.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="am">2. I <select name="q7.2"><option value="">--</option><option>am</option><option>is</option></select> from Palestine.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="you">3. Nice to meet <select name="q7.3"><option value="">--</option><option>you</option><option>your</option></select>.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="an">4. He is <select name="q7.4"><option value="">--</option><option>a</option><option>an</option></select> engineer.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="are">5. You <select name="q7.5"><option value="">--</option><option>is</option><option>are</option></select> a student.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="What's">6. A: <select name="q8.1"><option value="">--</option><option>What's</option><option>Where</option></select> your name? B: My name is Ali.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="are">7. A: Where <select name="q8.2"><option value="">--</option><option>are</option><option>do</option></select> you from? B: I'm from Gaza.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="do">8. A: What <select name="q8.3"><option value="">--</option><option>do</option><option>is</option></select> you do? B: I'm a doctor.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
+                    <div class="dropdown-question" data-correct-answer="do">9. A: Where <select name="q8.4"><option value="">--</option><option>do</option><option>are</option></select> you live? B: I live in Jericho.</div>
+                </div>
+            </section>
+
+            <div id="submission-area">
+                <button id="submit-assessment-btn" class="activity-btn">Submit Final Assessment</button>
+            </div>
+            <div id="submission-feedback"></div>
+        </main>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const screens = document.querySelectorAll('.screen');
-            const startBtn = document.getElementById('start-btn');
-            const nextBtns = document.querySelectorAll('.next-btn');
-            const submitBtn = document.getElementById('submit-btn');
-            const studentIdInput = document.getElementById('student-id');
-            const classSelect = document.getElementById('class-code');
-            const matchingGameContainer = document.getElementById('matching-game');
-            const unscrambleContainer = document.getElementById('unscramble-container');
-            const allForms = document.querySelectorAll('form');
-            const timerBar = document.getElementById('timer-bar');
-            const timerDisplay = document.getElementById('countdown-timer');
+    (function() {
+        'use strict';
+        const DURATION = 60 * 60;
+        let timeRemaining = DURATION;
+        let timerInterval = null;
+        let studentId = '';
+        let assessmentSubmitted = false;
+        
+        // ============================================================================================
+        // IMPORTANT: PASTE YOUR WEB APP URL FROM GOOGLE APPS SCRIPT HERE
+        // ============================================================================================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
+        // ============================================================================================
 
-            const EXAM_STATE_KEY = 'a1Unit1ExamProgress';
-            const EXAM_DURATION = 60 * 60; // 60 minutes in seconds
-            let timeRemaining = EXAM_DURATION;
-            let timerInterval = null;
+        const studentIdModal = document.getElementById('student-id-modal');
+        const studentIdInput = document.getElementById('student-id-input');
+        const startBtn = document.getElementById('start-assessment-btn');
+        const assessmentContainer = document.querySelector('.assessment-container');
+        const timerDisplay = document.getElementById('countdown-timer');
+        const submitBtn = document.getElementById('submit-assessment-btn');
 
-            const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyOoXDbIcZsHgXUc2PhoHX214tEulsSRFjGGLbogBdJRhn53se-c-vAZ3rq9x-nAR26Xw/exec';
-
-            const populateStudentIds = () => {
-                const fragment = document.createDocumentFragment();
-                for (let i = 1; i <= 150; i++) {
-                    const option = document.createElement('option');
-                    option.value = i.toString().padStart(3, '0');
-                    option.textContent = option.value;
-                    fragment.appendChild(option);
-                }
-                studentIdInput.appendChild(fragment);
-            };
-
-            const showScreen = (screenId) => {
-                screens.forEach(screen => screen.classList.toggle('hidden', screen.id !== screenId));
-                // Show timer when leaving start screen
-                if (screenId !== 'start-screen' && screenId !== 'results-screen') {
-                    timerBar.classList.remove('hidden');
-                }
-                window.scrollTo(0, 0);
-            };
-
-            const startTimer = () => {
-                timerInterval = setInterval(() => {
-                    timeRemaining--;
-                    const minutes = Math.floor(timeRemaining / 60);
-                    const seconds = timeRemaining % 60;
-                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                    if (timeRemaining <= 0) {
-                        clearInterval(timerInterval);
-                        timerDisplay.textContent = '00:00';
-                        alert('Time is up! Your exam will be submitted automatically.');
-                        submitExam();
-                    }
-                }, 1000);
-            };
-            
-            // --- State Management ---
-            const saveProgress = () => {
-                const answers = { studentId: studentIdInput.value, classCode: classSelect.value };
-                document.querySelectorAll('input[type="radio"]:checked, input[type="number"], select').forEach(input => {
-                    if (input.type === 'radio') {
-                        answers[input.name] = input.value;
-                    } else {
-                        answers[input.id] = input.value;
-                    }
-                });
-                answers.matchPairs = matchPairs;
-                answers.pairColorAssignments = pairColorAssignments;
-                
-                const unscrambledSentences = {};
-                document.querySelectorAll('.drop-zone').forEach(zone => {
-                    const words = Array.from(zone.querySelectorAll('.word-chip')).map(chip => chip.textContent);
-                    unscrambledSentences[zone.id] = words;
-                });
-                answers.unscrambledSentences = unscrambledSentences;
-
-                localStorage.setItem(EXAM_STATE_KEY, JSON.stringify(answers));
-            };
-
-            const loadProgress = () => {
-                const savedState = localStorage.getItem(EXAM_STATE_KEY);
-                if (!savedState) return;
-                const answers = JSON.parse(savedState);
-
-                if (answers.classCode) classSelect.value = answers.classCode;
-                if (answers.studentId) studentIdInput.value = answers.studentId;
-
-                document.querySelectorAll('input[type="number"], select').forEach(input => {
-                    if (answers[input.id]) input.value = answers[input.id];
-                });
-                for (const name in answers) {
-                    if (name.startsWith('q')) {
-                        const radio = document.querySelector(`input[name="${name}"][value="${answers[name]}"]`);
-                        if (radio) radio.checked = true;
-                    }
-                }
-                
-                if (answers.matchPairs) {
-                    matchPairs = answers.matchPairs;
-                }
-                if (answers.pairColorAssignments) {
-                    pairColorAssignments = answers.pairColorAssignments;
-                }
-                updatePairedVisuals();
-
-                if (answers.unscrambledSentences) {
-                    for (const zoneId in answers.unscrambledSentences) {
-                        const dropZone = document.getElementById(zoneId);
-                        const wordBank = document.querySelector(`[data-bank-for="${zoneId}"]`);
-                        if (!dropZone || !wordBank) continue;
-                        
-                        const wordsToMove = answers.unscrambledSentences[zoneId];
-                        wordsToMove.forEach(wordText => {
-                            const chip = Array.from(wordBank.querySelectorAll('.word-chip')).find(c => c.textContent === wordText);
-                            if (chip) dropZone.appendChild(chip);
-                        });
-                    }
-                }
-            };
-
-            // --- Event Listeners ---
-            startBtn.addEventListener('click', () => {
-                const classCode = classSelect.value.trim();
-                const studentId = studentIdInput.value.trim();
-
-                if (!classCode) {
-                    alert('Please choose your class before starting the exam.');
-                    classSelect.focus();
-                    return;
-                }
-
-                if (!studentId || studentId === "") {
-                    alert('Please select your Student ID.');
-                    studentIdInput.focus();
-                    return;
-                }
-
-                showScreen('reading-screen');
-                startTimer();
-                saveProgress();
-            });
-
-            nextBtns.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
-            
-            if (submitBtn) {
-                submitBtn.addEventListener('click', submitExam);
-            }
-
-            allForms.forEach(form => form.addEventListener('change', saveProgress));
-            studentIdInput.addEventListener('change', saveProgress);
-            classSelect.addEventListener('change', saveProgress);
-
-            // --- Matching Game Logic ---
-            const shuffleAnswers = () => {
-                const answersColumn = document.getElementById('matching-answers');
-                const answerItems = Array.from(answersColumn.querySelectorAll('.match-item'));
-                answerItems.forEach(item => item.remove());
-                for (let i = answerItems.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [answerItems[i], answerItems[j]] = [answerItems[j], answerItems[i]];
-                }
-                answerItems.forEach(item => answersColumn.appendChild(item));
-            };
-
-            let selectedQuestion = null;
-            let matchPairs = {};
-            let pairColorAssignments = {};
-            const pairColors = ['pair-color-1', 'pair-color-2', 'pair-color-3', 'pair-color-4', 'pair-color-5'];
-
-            const getNextAvailableColor = () => {
-                const usedColors = new Set(Object.values(pairColorAssignments));
-                for (const colorClass of pairColors) {
-                    if (!usedColors.has(colorClass)) return colorClass;
-                }
-                return pairColors[pairColors.length - 1];
-            };
-
-            function cleanUnusedColorAssignments() {
-                for (const questionId in pairColorAssignments) {
-                    if (!matchPairs[questionId]) {
-                        delete pairColorAssignments[questionId];
-                    }
-                }
-            }
-
-            function updatePairedVisuals() {
-                document.querySelectorAll('.match-item').forEach(item => {
-                    item.classList.remove('selected', ...pairColors);
-                    delete item.dataset.pairColor;
-                });
-
-                cleanUnusedColorAssignments();
-
-                for (const questionId in matchPairs) {
-                    const answerId = matchPairs[questionId];
-                    if (!pairColorAssignments[questionId]) {
-                        pairColorAssignments[questionId] = getNextAvailableColor();
-                    }
-                    const colorClass = pairColorAssignments[questionId];
-
-                    const questionEl = document.querySelector(`#matching-questions .match-item[data-match-id="${questionId}"]`);
-                    const answerEl = document.querySelector(`#matching-answers .match-item[data-match-id="${answerId}"]`);
-
-                    if (questionEl) {
-                        questionEl.classList.add(colorClass);
-                        questionEl.dataset.pairColor = colorClass;
-                    }
-                    if (answerEl) {
-                        answerEl.classList.add(colorClass);
-                        answerEl.dataset.pairColor = colorClass;
-                    }
-                }
-            }
-
-            matchingGameContainer.addEventListener('click', (e) => {
-                const target = e.target.closest('.match-item');
-                if (!target) return;
-
-                const isQuestion = target.closest('#matching-questions');
-                
-                if (isQuestion) {
-                    if (selectedQuestion === target) {
-                        target.classList.remove('selected');
-                        selectedQuestion = null;
-                        return;
-                    }
-                    if (selectedQuestion) selectedQuestion.classList.remove('selected');
-                    selectedQuestion = target;
-                    selectedQuestion.classList.add('selected');
-                } else {
-                    if (!selectedQuestion) return;
-
-                    const questionId = selectedQuestion.dataset.matchId;
-                    const answerId = target.dataset.matchId;
-
-                    for (const qId in matchPairs) {
-                        if (matchPairs[qId] === answerId && qId !== questionId) {
-                            delete matchPairs[qId];
-                            delete pairColorAssignments[qId];
-                        }
-                    }
-
-                    const existingAnswer = matchPairs[questionId];
-                    matchPairs[questionId] = answerId;
-                    if (!pairColorAssignments[questionId]) {
-                        pairColorAssignments[questionId] = getNextAvailableColor();
-                    } else if (existingAnswer && existingAnswer !== answerId) {
-                        pairColorAssignments[questionId] = pairColorAssignments[questionId];
-                    }
-
-                    selectedQuestion.classList.remove('selected');
-                    selectedQuestion = null;
-                    updatePairedVisuals();
-                    saveProgress();
-                }
-            });
-            
-            // --- Sentence Unscramble Logic (Click-to-Move) ---
-            const sentences = [
-                { id: 's1', text: "I am from Palestine." },
-                { id: 's2', text: "What is your name?" },
-                { id: 's3', text: "I work in a hospital." }
-            ];
-
-            const createUnscrambleActivity = () => {
-                sentences.forEach((sentence, index) => {
-                    const words = sentence.text.replace('?', ' ?').split(' ');
-                    const shuffledWords = [...words].sort(() => Math.random() - 0.5);
-
-                    const itemContainer = document.createElement('div');
-                    itemContainer.className = 'unscramble-item';
-                    itemContainer.innerHTML = `
-                        <p>Sentence ${index + 1}</p>
-                        <div class="drop-zone" id="drop-zone-${sentence.id}"></div>
-                        <div class="word-bank" id="word-bank-${sentence.id}" data-bank-for="drop-zone-${sentence.id}"></div>
-                    `;
-                    unscrambleContainer.appendChild(itemContainer);
-
-                    const wordBank = itemContainer.querySelector(`#word-bank-${sentence.id}`);
-                    shuffledWords.forEach(word => {
-                        const wordChip = document.createElement('div');
-                        wordChip.className = 'word-chip';
-                        wordChip.textContent = word;
-                        wordChip.dataset.homeBank = `word-bank-${sentence.id}`;
-                        wordBank.appendChild(wordChip);
-                    });
-                });
-            };
-            
-            unscrambleContainer.addEventListener('click', e => {
-                const chip = e.target;
-                if (!chip.classList.contains('word-chip')) return;
-
-                const currentContainer = chip.parentElement;
-                if (currentContainer.classList.contains('word-bank')) {
-                    const dropZoneId = currentContainer.dataset.bankFor;
-                    document.getElementById(dropZoneId).appendChild(chip);
-                } else if (currentContainer.classList.contains('drop-zone')) {
-                    const homeBankId = chip.dataset.homeBank;
-                    document.getElementById(homeBankId).appendChild(chip);
-                }
-                saveProgress();
-            });
-
-            // --- Scoring and Submission ---
-            const answerKey = {
-                q1: 'b', q2: 'b', q3: 'c', q4: 'c', q5: 'b',
-                q6: 'Samer Haddad', q7: 'Palestinian', q8: 'Hebron', q9: 'An engineer', q10: 'samer.h@email.com',
-                q11: 'b', q12: 'b', q13: 'c', q14: 'a', q15: 'b',
-                q21: ['2', '1', '3'], q22: ['3', '2', '1'],
-                sentences: sentences.reduce((acc, s) => ({ ...acc, [s.id]: s.text }), {})
-            };
-
-            function calculateScore() {
-                let score = 0;
-                // Reading (5 questions x 5 points = 25)
-                for (let i = 1; i <= 5; i++) { if (document.querySelector(`input[name="q${i}"]:checked`)?.value === answerKey[`q${i}`]) score += 5; }
-                // Listening (5 questions x 5 points = 25)
-                for (let i = 6; i <= 10; i++) { if (document.getElementById(`q${i}`)?.value === answerKey[`q${i}`]) score += 5; }
-                // Grammar MCQ (5 questions x 3 points = 15)
-                for (let i = 11; i <= 15; i++) { if (document.querySelector(`input[name="q${i}"]:checked`)?.value === answerKey[`q${i}`]) score += 3; }
-                // Grammar Matching (5 matches x 2 points = 10)
-                let correctMatches = 0;
-                for (const qId in matchPairs) { if (matchPairs[qId] === qId) correctMatches++; }
-                score += correctMatches * 2;
-                // Sentence Ordering (2 questions x 5 points = 10)
-                const q21_order = [document.getElementById('q21a').value, document.getElementById('q21b').value, document.getElementById('q21c').value];
-                if (JSON.stringify(q21_order) === JSON.stringify(answerKey.q21)) score += 5;
-                const q22_order = [document.getElementById('q22a').value, document.getElementById('q22b').value, document.getElementById('q22c').value];
-                if (JSON.stringify(q22_order) === JSON.stringify(answerKey.q22)) score += 5;
-                // Sentence Unscramble (3 questions x 5 points = 15)
-                for(const sentence of sentences) {
-                    const dropZone = document.getElementById(`drop-zone-${sentence.id}`);
-                    const studentAnswer = Array.from(dropZone.querySelectorAll('.word-chip')).map(chip => chip.textContent).join(' ').replace(' ?', '?');
-                    if (studentAnswer === answerKey.sentences[sentence.id]) score += 5;
-                }
-                return Math.round(score);
-            }
-            
-            async function submitExam() {
-                // Stop the timer
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
-
-                // 1. Find the submit button and disable it to prevent multiple clicks.
-                const submitBtn = document.getElementById('submit-btn'); // Assume the button has id='submit-btn'
-                if (!submitBtn) {
-                    alert('Error: Submit button with id="submit-btn" not found.');
-                    return;
-                }
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
-
-                try {
-                    // 2. Get the required values from the form.
-                    const studentIdInput = document.getElementById('student-id');
-                    const classSelect = document.getElementById('class-code');
-                    const studentId = studentIdInput ? studentIdInput.value.trim() : '';
-                    const classCode = classSelect ? classSelect.value.trim() : '';
-                    
-                    if (!studentId || !classCode) {
-                        throw new Error('Student ID or Class Code is missing. Please select them and try again.');
-                    }
-
-                    // 3. Calculate the score using the existing function.
-                    const finalScore = typeof calculateScore === 'function' ? calculateScore() : 0;
-
-                    // 4. Get the Exam Code provided by the user.
-                    const examCode = "EOM1";
-                    
-                    // 5. Construct the data payload.
-                    const submissionData = new FormData();
-                    submissionData.append('timestamp', new Date().toISOString());
-                    submissionData.append('classCode', classCode);
-                    submissionData.append('studentId', studentId);
-                    submissionData.append('exam', examCode);
-                    submissionData.append('score', finalScore.toString());
-
-                    // 6. Send the data using the Fetch API.
-                    await fetch(SUBMISSION_ENDPOINT, {
-                        method: 'POST',
-                        body: submissionData,
-                        mode: 'no-cors'
-                    });
-
-                    // 7. Handle success.
-                    console.log('Submission request sent successfully.');
-                    submitBtn.textContent = 'Submitted Successfully';
-                    // Assume there's a function to show a success screen.
-                    if (typeof showScreen === 'function') {
-                        showScreen('results-screen');
-                    } else {
-                        alert('Exam submitted successfully!');
-                    }
-                    // Optionally, clear saved progress from localStorage.
-                    if (localStorage) {
-                        localStorage.clear();
-                    }
-
-                } catch (error) {
-                    // 8. Handle any errors and re-enable the button.
-                    console.error('Submission failed:', error);
-                    alert('A critical error occurred during submission. Please try again.\n\nDetails: ' + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Exam';
-                }
-            }
-
-            // --- Initialisation ---
-            shuffleAnswers();
-            createUnscrambleActivity();
-            populateStudentIds();
-            loadProgress();
-            updatePairedVisuals();
+        studentIdInput.addEventListener('input', () => { startBtn.disabled = !/^\d+$/.test(studentIdInput.value.trim()); });
+        startBtn.addEventListener('click', () => {
+            studentId = studentIdInput.value.trim();
+            studentIdModal.style.display = 'none';
+            assessmentContainer.style.display = 'block';
+            startTimer();
         });
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '00:00';
+                    handleSubmission(true);
+                }
+            }, 1000);
+        }
+
+        document.querySelectorAll('.mc-options-container input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', e => {
+                const container = e.target.closest('.mc-options-container');
+                container.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                    input.nextElementSibling.classList.add('locked');
+                });
+            });
+        });
+        
+        document.querySelectorAll('.dropdown-question select').forEach(select => { select.addEventListener('change', e => { e.target.disabled = true; }); });
+        document.querySelectorAll('.table-matrix .options-cell button').forEach(button => {
+            button.addEventListener('click', e => {
+                const cell = e.target.parentElement;
+                cell.querySelectorAll('button').forEach(btn => { btn.disabled = true; });
+                e.target.classList.add('selected');
+            });
+        });
+
+        let selectedMatchItem = null;
+        
+        document.querySelectorAll('[data-activity-type="matching"]').forEach(activity => {
+            activity.dataset.matchCounter = 1;
+        });
+
+        document.querySelectorAll('.matching-column li').forEach(item => {
+            item.addEventListener('click', e => {
+                if (assessmentSubmitted || e.currentTarget.style.pointerEvents === 'none') return;
+
+                const currentItem = e.currentTarget;
+                const currentColumn = currentItem.closest('.matching-column');
+
+                if (currentItem.classList.contains('selected')) {
+                    currentItem.classList.remove('selected');
+                    selectedMatchItem = null;
+                    return;
+                }
+
+                if (!selectedMatchItem) {
+                    currentColumn.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+                    currentItem.classList.add('selected');
+                    selectedMatchItem = currentItem;
+                } 
+                else if (selectedMatchItem.closest('.matching-column') !== currentColumn) {
+                    selectedMatchItem.dataset.userMatch = currentItem.dataset.matchId;
+                    currentItem.dataset.userMatch = selectedMatchItem.dataset.matchId;
+
+                    const activityCard = currentItem.closest('[data-activity-type="matching"]');
+                    const matchNumber = activityCard.dataset.matchCounter;
+                    const matchClass = `matched-pair-${matchNumber}`;
+
+                    selectedMatchItem.classList.add(matchClass);
+                    currentItem.classList.add(matchClass);
+                    
+                    selectedMatchItem.style.pointerEvents = 'none';
+                    currentItem.style.pointerEvents = 'none';
+                    selectedMatchItem.classList.remove('selected');
+                    
+                    activityCard.dataset.matchCounter = parseInt(matchNumber, 10) + 1;
+                    
+                    selectedMatchItem = null;
+                }
+            });
+        });
+
+        let selectedWordToken = null;
+        document.querySelectorAll('.word-token').forEach(token => {
+            token.addEventListener('click', e => {
+                e.stopPropagation();
+                if (selectedWordToken) selectedWordToken.classList.remove('selected');
+                if (selectedWordToken === e.target) {
+                    selectedWordToken = null;
+                } else {
+                    selectedWordToken = e.target;
+                    selectedWordToken.classList.add('selected');
+                }
+            });
+        });
+        document.querySelectorAll('.drop-zone, #source-words').forEach(zone => {
+            zone.addEventListener('click', e => {
+                if (selectedWordToken && e.currentTarget === zone) {
+                    zone.appendChild(selectedWordToken);
+                    selectedWordToken.classList.remove('selected');
+                    selectedWordToken = null;
+                }
+            });
+        });
+
+        submitBtn.addEventListener('click', () => handleSubmission(false));
+        
+        function handleSubmission(isAutoSubmit) {
+            if (assessmentSubmitted) return;
+            assessmentSubmitted = true;
+            clearInterval(timerInterval);
+
+            if (!isAutoSubmit) {
+                if (!confirm('Are you sure you want to submit?')) {
+                    assessmentSubmitted = false;
+                    startTimer();
+                    return;
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const score = calculateScore();
+            const total = 32;
+            
+            showFeedback(score, total);
+            submitToGoogleSheet(studentId, 'A1', `${score}/${total}`);
+        }
+
+        function calculateScore() {
+            let score = 0;
+            document.querySelectorAll('.mc-question[data-correct-answer]').forEach(q => { if (q.querySelector('input:checked')?.value === q.dataset.correctAnswer) score++; });
+            document.querySelectorAll('.table-matrix .options-cell').forEach(cell => { if (cell.querySelector('button.selected')?.textContent === cell.dataset.correctAnswer) score++; });
+            document.querySelectorAll('[data-activity-type="matching"] .matching-column:first-child li').forEach(item => { if (item.dataset.userMatch && item.dataset.matchId === item.dataset.userMatch) score++; });
+            document.querySelectorAll('.drop-zone').forEach(zone => { zone.querySelectorAll('.word-token').forEach(token => { if (token.dataset.category === zone.dataset.category) score++; }); });
+            document.querySelectorAll('.dropdown-question').forEach(q => { if (q.querySelector('select').value === q.dataset.correctAnswer) score++; });
+            return score;
+        }
+
+        function submitToGoogleSheet(id, level, finalScore) {
+            const formData = new FormData();
+            formData.append('Student ID', id);
+            formData.append('Level', level);
+            formData.append('Score', finalScore);
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    console.log('Success:', data);
+                    document.getElementById('submission-feedback').innerHTML += `<p>Your results have been successfully recorded.</p>`;
+                } else {
+                    console.error('Submission Error:', data.error);
+                    const feedbackEl = document.getElementById('submission-feedback');
+                    feedbackEl.classList.remove('success');
+                    feedbackEl.classList.add('error');
+                    feedbackEl.innerHTML += `<p>There was an error saving your results. Please contact your teacher.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                const feedbackEl = document.getElementById('submission-feedback');
+                feedbackEl.classList.remove('success');
+                feedbackEl.classList.add('error');
+                feedbackEl.innerHTML += `<p>Could not connect to the server. Please check your internet connection.</p>`;
+            });
+        }
+        
+        function showFeedback(score, total) {
+            const feedbackEl = document.getElementById('submission-feedback');
+            feedbackEl.style.display = 'block';
+            feedbackEl.classList.add('success');
+            feedbackEl.innerHTML = `<h2>Assessment Complete!</h2><p>Your score is <strong>${score}/${total}</strong>.</p>`;
+            window.scrollTo(0, document.body.scrollHeight);
+            document.querySelectorAll('.mc-question[data-correct-answer]').forEach(q => {
+                q.querySelectorAll('.mc-option-item').forEach(item => {
+                    const radio = item.querySelector('input');
+                    const label = item.querySelector('label');
+                    if (radio.value === q.dataset.correctAnswer) {
+                        label.classList.add('feedback-correct');
+                    } else if (radio.checked) {
+                        label.classList.add('feedback-incorrect');
+                    }
+                });
+            });
+        }
+    })();
     </script>
 </body>
 </html>
