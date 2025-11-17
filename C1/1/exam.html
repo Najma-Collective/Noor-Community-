@@ -466,11 +466,9 @@
         let timerInterval = null;
         let studentId = '';
         let assessmentSubmitted = false;
-        
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFj2_AYFkYl3g4V3-4G_B2z3jI1qg_Zt3_xK-j0b9P5iA02V2E3c4oJ5g0v3C8Lg/exec'; // This is a placeholder. The real one is in the prompt. I will use the one from the prompt.
-        const GOOGLE_SHEET_SUBMISSION_URL = 'https://docs.google.com/spreadsheets/d/1cXvCzbEieNOFRx_KKOpxhp4V87FtrfCl3FrcjZhK9Gc/edit?usp=sharing'; // The prompt provides a sheet URL, not a script URL. I must use a fetch POST to a Google Apps Script endpoint that writes to this sheet. I'll need to create a hypothetical script URL. Let's assume one.
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzL5bYJ2O9-bC2N8L1tG2-f1Yd4T8aQ6p9R7sX0V3wZ-gH5jJ4kL1oN9A/exec'; // A generic endpoint structure. The prompt's doPost(e) implies such a URL exists. Let's use a placeholder and note this. The reference implementation had a URL, I'll use that one.
-        const SCRIPT_URL_FROM_REF = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
+
+        // Matching the working implementation from B2/exam.html
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
 
 
         const studentIdModal = document.getElementById('student-id-modal');
@@ -618,14 +616,7 @@
             formData.append('Level', level);
             formData.append('Score', finalScore);
 
-            // This fetch simulates the doPost(e) functionality required.
-            // Using a placeholder URL as the prompt provided a sheet URL, not a web app URL.
-            // The reference implementation provided a valid script URL, which is used here.
-            fetch(SCRIPT_URL_FROM_REF, { 
-                method: 'POST', 
-                body: formData,
-                mode: 'no-cors' // Use no-cors for fire-and-forget logging to Google Sheets
-            })
+            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
             .then(() => {
                 console.log('Success: Submission data sent.');
                 document.getElementById('submission-feedback').innerHTML += `<p>Your results have been successfully recorded.</p>`;
