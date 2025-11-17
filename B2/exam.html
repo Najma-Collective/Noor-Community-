@@ -131,13 +131,13 @@
         /* -------------------------------
            Assessment-Specific Custom Styles
         ----------------------------------*/
-        .assessment-container { display: none; }
+        .assessment-container { display: none; padding-top: 4.5rem; }
         #student-id-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         #student-id-box { background: var(--soft-white); padding: var(--space-8); border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-3); width: 90%; max-width: 400px; }
         #student-id-box h2 { margin-top: 0; color: var(--primary-sage); font-family: var(--font-display); }
         #student-id-input { width: 100%; padding: var(--space-3); margin: var(--space-5) 0; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); font-size: var(--step-0); }
 
-        .timer-bar { position: sticky; top: 0; width: 100%; background-color: var(--deep-forest); color: var(--soft-white); padding: var(--space-3) var(--space-4); text-align: center; font-weight: 700; z-index: 999; box-shadow: var(--shadow-2); }
+        .timer-bar { position: fixed; top: 0; left: 0; width: 100%; background-color: var(--deep-forest); color: var(--soft-white); padding: var(--space-3) var(--space-4); text-align: center; font-weight: 700; z-index: 999; box-shadow: var(--shadow-2); }
         #countdown-timer { background-color: var(--amber); color: var(--deep-forest); padding: var(--space-1) var(--space-2); border-radius: 6px; margin-left: var(--space-2); }
         
         .hero-section { position: relative; background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; }
@@ -191,6 +191,18 @@
         .table-row { display: contents; }
         .table-row .feature-label { text-align: right; font-weight: 600; display: flex; align-items: center; justify-content: flex-end; }
         .table-row .drop-zone { min-height: 60px; justify-content: center; align-items: center; }
+
+        /* Redesigned grant comparison cards */
+        .grant-compare { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }
+        @media (min-width: 720px) { .grant-compare { grid-template-columns: 1fr 1fr; } }
+        .grant-panel { background: color-mix(in srgb, #fff 80%, var(--warm-cream) 20%); border: 1px solid var(--border-sage); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: var(--space-4); }
+        .grant-panel h4 { margin: 0; color: var(--forest-shadow); font-size: var(--step-1); display: flex; align-items: center; gap: var(--space-2); }
+        .grant-row { display: grid; grid-template-columns: 1fr; gap: var(--space-2); align-items: center; }
+        @media (min-width: 540px) { .grant-row { grid-template-columns: 1fr 1.1fr; } }
+        .grant-select { width: 100%; padding: var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--tertiary-sage); background-color: var(--soft-white); font-family: var(--font-body); font-size: var(--step-0); transition: border-color var(--transition-std), box-shadow var(--transition-std); }
+        .grant-select:focus-visible { outline: none; box-shadow: var(--ring); border-color: var(--primary-sage); }
+        .grant-select.feedback-correct { background: #d4edda; border-color: #155724; }
+        .grant-select.feedback-incorrect { background: #f8d7da; border-color: #721c24; }
 
         /* Feedback styling */
         .feedback-correct { background-color: #d4edda !important; border-color: #c3e6cb !important; }
@@ -317,35 +329,62 @@
 
                 <div class="activity-card" data-activity-type="table-completion">
                     <h3>Activity 2: Comparing the Grants</h3>
-                    <p class="instructions" style="text-align:left; font-style:normal;">Based on the text, complete the table by clicking the correct information and then clicking the box where it belongs.</p>
-                    <div class="source-tokens">
-                        <div class="token" data-correct-location="a1">Up to $10,000</div>
-                        <div class="token" data-correct-location="b1">Up to $50,000</div>
-                        <div class="token" data-correct-location="a2">In 2 weeks</div>
-                        <div class="token" data-correct-location="b2">In 3 months</div>
-                        <div class="token" data-correct-location="a3">Short quarterly reports</div>
-                        <div class="token" data-correct-location="b3">Detailed monthly reports</div>
-                    </div>
-                    <div class="table-completion-container">
-                        <div class="table-header">
-                            <span></span>
-                            <span style="text-align:center;"><strong>Al-Quds Innovation Fund</strong></span>
-                            <span style="text-align:center;"><strong>Digital Futures Foundation</strong></span>
+                    <p class="instructions" style="text-align:left; font-style:normal;">Select the correct details for each grant. Each question has two clear options, so no dragging is needed.</p>
+
+                    <div class="grant-compare">
+                        <div class="grant-panel">
+                            <h4>Al-Quds Innovation Fund</h4>
+                            <div class="grant-row" data-correct-answer="10k">
+                                <div class="feature-label">Funding Amount</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the right amount</option>
+                                    <option value="10k">Up to $10,000</option>
+                                    <option value="50k">Up to $50,000</option>
+                                </select>
+                            </div>
+                            <div class="grant-row" data-correct-answer="2w">
+                                <div class="feature-label">Application Deadline</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the deadline</option>
+                                    <option value="2w">In 2 weeks</option>
+                                    <option value="3m">In 3 months</option>
+                                </select>
+                            </div>
+                            <div class="grant-row" data-correct-answer="short">
+                                <div class="feature-label">Reporting Style</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the reporting style</option>
+                                    <option value="short">Short quarterly reports</option>
+                                    <option value="detailed">Detailed monthly reports</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="table-row">
-                            <div class="feature-label">Funding Amount</div>
-                            <div class="drop-zone" data-location="a1"></div>
-                            <div class="drop-zone" data-location="b1"></div>
-                        </div>
-                        <div class="table-row">
-                            <div class="feature-label">Application Deadline</div>
-                            <div class="drop-zone" data-location="a2"></div>
-                            <div class="drop-zone" data-location="b2"></div>
-                        </div>
-                        <div class="table-row">
-                            <div class="feature-label">Reporting Style</div>
-                            <div class="drop-zone" data-location="a3"></div>
-                            <div class="drop-zone" data-location="b3"></div>
+                        <div class="grant-panel">
+                            <h4>Digital Futures Foundation</h4>
+                            <div class="grant-row" data-correct-answer="50k">
+                                <div class="feature-label">Funding Amount</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the right amount</option>
+                                    <option value="10k">Up to $10,000</option>
+                                    <option value="50k">Up to $50,000</option>
+                                </select>
+                            </div>
+                            <div class="grant-row" data-correct-answer="3m">
+                                <div class="feature-label">Application Deadline</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the deadline</option>
+                                    <option value="2w">In 2 weeks</option>
+                                    <option value="3m">In 3 months</option>
+                                </select>
+                            </div>
+                            <div class="grant-row" data-correct-answer="detailed">
+                                <div class="feature-label">Reporting Style</div>
+                                <select class="grant-select">
+                                    <option value="">Choose the reporting style</option>
+                                    <option value="short">Short quarterly reports</option>
+                                    <option value="detailed">Detailed monthly reports</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -567,6 +606,10 @@
             select.addEventListener('change', e => { e.target.disabled = true; });
         });
 
+        document.querySelectorAll('.grant-select').forEach(select => {
+            select.addEventListener('change', e => { e.target.disabled = true; });
+        });
+
         // Matching Activity Logic
         let selectedMatchItem = null;
         const matchingActivities = document.querySelectorAll('[data-activity-type="matching"]');
@@ -602,35 +645,6 @@
             });
         });
 
-        // Table Completion (adapted from Classification) Logic
-        let selectedToken = null;
-        document.querySelectorAll('.token').forEach(token => {
-            token.addEventListener('click', e => {
-                if (assessmentSubmitted || token.parentElement.classList.contains('drop-zone')) return;
-                e.stopPropagation();
-                if (selectedToken) selectedToken.classList.remove('selected');
-                if (selectedToken === e.target) {
-                    selectedToken = null;
-                } else {
-                    selectedToken = e.target;
-                    selectedToken.classList.add('selected');
-                }
-            });
-        });
-        document.querySelectorAll('.drop-zone').forEach(zone => {
-            zone.addEventListener('click', e => {
-                if (assessmentSubmitted || zone.children.length > 0) return;
-                if (selectedToken && e.currentTarget === zone) {
-                    zone.appendChild(selectedToken);
-                    selectedToken.classList.remove('selected');
-                    selectedToken = null;
-                    // Lock the zone and the token inside
-                    zone.style.pointerEvents = 'none';
-                }
-            });
-        });
-        
-
         // Step 4: Submission Handling
         submitBtn.addEventListener('click', () => handleSubmission(false));
         
@@ -651,7 +665,7 @@
             submitBtn.textContent = 'Submitting...';
 
             const score = calculateScore();
-            const total = 39;
+            const total = calculateTotalPoints();
             
             showFeedback(score, total);
             submitToGoogleSheet(studentId, 'B2', `${score}/${total}`);
@@ -665,31 +679,21 @@
             document.querySelectorAll('.dropdown-question').forEach(q => { if (q.querySelector('select').value === q.dataset.correctAnswer) score++; });
             // Matching (Activity 4)
             document.querySelectorAll('#match-col-a li').forEach(item => { if (item.dataset.userMatch && item.dataset.matchId === item.dataset.userMatch) score++; });
-            // Table Completion (Activity 2)
-            document.querySelectorAll('.table-completion-container .drop-zone').forEach(zone => {
-                const token = zone.querySelector('.token');
-                if (token && token.dataset.correctLocation === zone.dataset.location) {
-                    score++;
-                }
+            // Grant comparison selects (Activity 2)
+            document.querySelectorAll('.grant-row').forEach(row => {
+                const select = row.querySelector('select');
+                if (select.value === row.dataset.correctAnswer) score++;
             });
-            // Total questions: 5+6+4+6+5+4+4+4+4 = 42? Let's recount from XML.
-            // A1: 5. B2(table): 6 items. B3: 4. C4: 6. C5: 5. D6: 4. D7: 4. D8: 4. D9: 4.
-            // Total = 5 + 6 + 4 + 6 + 5 + 4 + 4 + 4 + 4 = 42. Wait, B2 is 3 rows. So 3 points.
-            // Total = 5 + 3 + 4 + 6 + 5 + 4 + 4 + 4 + 4 = 39.
-            // My table implementation has 6 drop zones, so 6 points. Let's make it 3 points.
-            let tableScore = 0;
-            if (document.querySelector('.drop-zone[data-location="a1"] .token[data-correct-location="a1"]') && document.querySelector('.drop-zone[data-location="b1"] .token[data-correct-location="b1"]')) tableScore++;
-            if (document.querySelector('.drop-zone[data-location="a2"] .token[data-correct-location="a2"]') && document.querySelector('.drop-zone[data-location="b2"] .token[data-correct-location="b2"]')) tableScore++;
-            if (document.querySelector('.drop-zone[data-location="a3"] .token[data-correct-location="a3"]') && document.querySelector('.drop-zone[data-location="b3"] .token[data-correct-location="b3"]')) tableScore++;
-            
-            // Re-calculate total score
-            score = 0;
-            document.querySelectorAll('.mc-question[data-correct-answer]').forEach(q => { if (q.querySelector('input:checked')?.value === q.dataset.correctAnswer) score++; });
-            document.querySelectorAll('.dropdown-question').forEach(q => { if (q.querySelector('select').value === q.dataset.correctAnswer) score++; });
-            document.querySelectorAll('#match-col-a li').forEach(item => { if (item.dataset.userMatch && item.dataset.matchId === item.dataset.userMatch) score++; });
-            score += tableScore;
 
             return score;
+        }
+
+        function calculateTotalPoints() {
+            const mcCount = document.querySelectorAll('.mc-question[data-correct-answer]').length;
+            const dropdownCount = document.querySelectorAll('.dropdown-question[data-correct-answer]').length;
+            const grantCount = document.querySelectorAll('.grant-row').length;
+            const matchingCount = document.querySelectorAll('#match-col-a li').length;
+            return mcCount + dropdownCount + grantCount + matchingCount;
         }
 
         function submitToGoogleSheet(id, level, finalScore) {
@@ -745,13 +749,18 @@
                 }
             });
 
-            // Table Completion Feedback
-            document.querySelectorAll('.table-completion-container .drop-zone').forEach(zone => {
-                const token = zone.querySelector('.token');
-                if (token && token.dataset.correctLocation === zone.dataset.location) {
-                    token.classList.add('feedback-correct');
-                } else if (token) {
-                     token.classList.add('feedback-incorrect');
+            // Grant comparison feedback
+            document.querySelectorAll('.grant-row').forEach(row => {
+                const select = row.querySelector('select');
+                if (select.value === row.dataset.correctAnswer) {
+                    select.classList.add('feedback-correct');
+                } else {
+                    select.classList.add('feedback-incorrect');
+                    const correctAnswerSpan = document.createElement('span');
+                    correctAnswerSpan.className = 'correct-answer-text';
+                    const correctText = select.querySelector(`option[value="${row.dataset.correctAnswer}"]`)?.textContent || 'Correct answer';
+                    correctAnswerSpan.textContent = ` (Correct: ${correctText})`;
+                    row.appendChild(correctAnswerSpan);
                 }
             });
 
