@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-Class Worksheet A2.2</title>
+  <link rel="stylesheet" href="../../../CSS" />
+  <style id="noor-community-css">
+/* =====================================================================
+   Noor Community Activities — Enhanced UI System
+   Refined version of the Organic Sage visual language.
+   ===================================================================== */
+
+/* -------------------------------
+   Design Tokens
+----------------------------------*/
+:root {
+  /* Core Palette */
+  --primary-sage: #7a8471;
+  --secondary-sage: #9caf88;
+  --tertiary-sage: #b8c5a6;
+  --warm-cream: #f8f6f0;
+  --soft-white: #fefcf7;
+  --forest-shadow: #5a6b52;
+  --ink: #2f3a2b;
+  --ink-muted: #5a6b52;
+  --border-sage: rgba(122, 132, 113, 0.2);
+  --hover-sage: rgba(156, 175, 136, 0.15);
+
+  /* Extended Palette */
+  --deep-forest: #3e4a3a;
+  --moss: #6e7a67;
+  --amber: #c6aa77;
+
+  /* Typography */
+  --font-display: "Questrial", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-adjustment: 0rem;
+  --step--1: calc(clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem) + var(--font-size-adjustment));
+  --step-0:  calc(clamp(1rem, 0.94rem + 0.28vw, 1.1rem) + var(--font-size-adjustment));
+  --step-1:  calc(clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem) + var(--font-size-adjustment));
+  --step-2:  calc(clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem) + var(--font-size-adjustment));
+  --step-3:  calc(clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem) + var(--font-size-adjustment));
+  --step-4:  calc(clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem) + var(--font-size-adjustment));
+
+  /* Rhythm & Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3rem;
+
+  /* Shape & Elevation */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+  --shadow-2: 0 4px 18px rgba(34, 41, 32, 0.08), 0 12px 28px rgba(34, 41, 32, 0.06);
+  --shadow-3: 0 10px 40px rgba(34, 41, 32, 0.1), 0 20px 60px rgba(34, 41, 32, 0.08);
+  --ring: 0 0 0 3px color-mix(in oklab, var(--soft-white) 60%, transparent),
+           0 0 0 5px color-mix(in srgb, var(--secondary-sage) 85%, #2f3a2b 15%);
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+  --transition-fast: 150ms var(--ease-out);
+  --transition-std: 250ms var(--ease-out);
+
+  /* Layout */
+  --target-min: 44px;
+  --container-max: clamp(320px, 92vw, 940px);
+  --container-padding: clamp(1.25rem, 5vw, 3rem);
+}
+
+/* -------------------------------
+   Global Reset & Base Styles
+----------------------------------*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  hanging-punctuation: first last;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain; /* Prevent scroll chaining on iOS */
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--warm-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+:where(p, h1, h2, h3, h4, h5, h6) {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+:where(h1, h2, h3) { text-wrap: balance; }
+
+img, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--primary-sage);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color var(--transition-fast);
+}
+a:hover { color: var(--deep-forest); }
+a:focus-visible {
+  outline: none;
+  border-radius: 6px;
+  box-shadow: var(--ring);
+  color: var(--deep-forest);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* -------------------------------
+   App Shell & Layout
+----------------------------------*/
+#app-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--space-5), 4vw, var(--space-7));
+  padding-block: max(3vh, env(safe-area-inset-top)) clamp(48px, 10vw, 96px);
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  width: 100%;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 650px at 12% -5%, rgba(156, 175, 136, 0.12), transparent 65%),
+    radial-gradient(900px 700px at 88% 105%, rgba(90, 107, 82, 0.08), transparent 70%),
+    linear-gradient(135deg, #F8F6F0 0%, #F5F3ED 100%);
+}
+
+/* NEW: Header for logos */
+.app-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.app-header img {
+  height: clamp(40px, 10vw, 60px); /* Adjust size as needed */
+  width: auto;
+}
+
+#activity-container {
+  width: 100%;
+  max-width: var(--container-max);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-5), 3vw, var(--space-7));
+  background: color-mix(in srgb, var(--soft-white) 80%, transparent);
+  padding: var(--container-padding);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-sage);
+  box-shadow: var(--shadow-2);
+  position: relative;
+  isolation: isolate;
+  scroll-margin-top: var(--space-7);
+  transition: box-shadow var(--transition-std), border-color var(--transition-std);
+}
+
+@supports (backdrop-filter: blur(10px)) {
+  #activity-container {
+    background: color-mix(in srgb, var(--soft-white) 70%, transparent);
+    backdrop-filter: blur(10px) saturate(1.1);
+  }
+}
+
+#activity-container::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(1000px 150px at 50% -2%, rgba(156,175,136,0.15), transparent 60%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.screen.hidden { display: none !important; }
+
+/* -------------------------------
+   Typography
+----------------------------------*/
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  letter-spacing: 0.04em;
+  color: var(--forest-shadow);
+  text-align: center;
+  line-height: 1.1;
+  margin: 0 0 var(--space-3);
+}
+
+h2.rubric {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--secondary-sage);
+  margin: 0 0 var(--space-6);
+  text-align: center;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  color: var(--forest-shadow);
+  margin: var(--space-6) 0 var(--space-3);
+  letter-spacing: 0.02em;
+}
+
+/* -------------------------------
+   Buttons
+----------------------------------*/
+.activity-btn {
+  min-height: var(--target-min);
+  padding: 0.75rem clamp(1.2rem, 4vw, 1.75rem);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary-sage) 65%, #fff 35%);
+  background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest));
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--step-0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-std), background var(--transition-std);
+  box-shadow: var(--shadow-1);
+}
+
+.activity-btn:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-2);
+  background: linear-gradient(180deg, var(--moss), var(--deep-forest));
+}
+.activity-btn:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-1);
+}
+.activity-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring), var(--shadow-2);
+  transform: scale(1.02);
+}
+
+.activity-btn:disabled {
+  background: var(--tertiary-sage);
+  border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #fff 20%);
+  color: color-mix(in srgb, #fff 85%, var(--soft-white) 15%);
+  cursor: not-allowed;
+  opacity: 0.85;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary variant */
+.activity-btn.secondary {
+  background: var(--soft-white);
+  color: var(--primary-sage);
+  border-color: var(--border-sage);
+  box-shadow: none;
+}
+.activity-btn.secondary:hover {
+  background: var(--hover-sage);
+  color: var(--deep-forest);
+}
+.activity-btn.secondary:focus-visible { box-shadow: var(--ring); }
+
+.controls {
+  margin-top: var(--space-7);
+  display: grid;
+  width: 100%;
+  gap: var(--space-3);
+  grid-auto-flow: row;
+  justify-items: center;
+}
+
+/* -------------------------------
+   Forms & Inputs
+----------------------------------*/
+.input-group { margin: var(--space-6) 0; }
+.input-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  color: var(--primary-sage);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: var(--step--1);
+}
+
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  min-height: var(--target-min);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-sage);
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%), #fff);
+  font-size: var(--step-0);
+  font-family: var(--font-body);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color var(--transition-std), box-shadow var(--transition-std), background var(--transition-std);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.8;
+}
+
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none;
+  border-color: var(--secondary-sage);
+  box-shadow: var(--ring);
+  background: color-mix(in srgb, #fff 92%, var(--warm-cream) 8%);
+}
+
+/* Custom select arrow */
+.select-wrapper {
+  position: relative;
+}
+select {
+  padding-right: 2.5rem; /* Space for arrow */
+}
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  color: var(--primary-sage);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color var(--transition-std);
+}
+.select-wrapper:has(select:focus-visible)::after {
+  color: var(--deep-forest);
+}
+
+textarea { resize: vertical; min-height: 120px; }
+
+/* -------------------------------
+   Test Screen
+----------------------------------*/
+.test-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  font-weight: 700;
+}
+#current-level { color: var(--secondary-sage); }
+#timer { font-size: 1.1rem; color: var(--primary-sage); justify-self: end; }
+
+.progress-bar-container {
+  width: 100%;
+  height: 10px;
+  background-color: var(--border-sage);
+  border-radius: 999px;
+  overflow: hidden;
+}
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary-sage), var(--secondary-sage));
+  transition: width 350ms var(--ease-out);
+}
+#progress-text {
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--secondary-sage);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.mc-question {
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-sage);
+  background: linear-gradient(180deg, #fff, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%));
+  box-shadow: var(--shadow-1);
+}
+.mc-question-text {
+  font-weight: 700;
+  font-size: var(--step-1);
+  color: var(--forest-shadow);
+  line-height: 1.45;
+  margin-bottom: var(--space-5);
+}
+.mc-options-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mc-option-item input { display: none; } /* Hide native radio/checkbox */
+
+.mc-option-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-sage);
+  background: color-mix(in srgb, var(--soft-white) 92%, #fff 8%);
+  transition: background-color var(--transition-std), border-color var(--transition-std), box-shadow var(--transition-std);
+  -webkit-tap-highlight-color: transparent;
+}
+.mc-option-label:hover {
+  background: var(--hover-sage);
+  border-color: color-mix(in srgb, var(--secondary-sage) 50%, transparent);
+}
+
+.mc-option-label .option-control {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--tertiary-sage);
+  background-color: var(--soft-white);
+  transition: all var(--transition-std);
+  position: relative;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.mc-option-item input:checked + .option-control {
+  border-color: var(--primary-sage);
+  background-color: var(--primary-sage);
+}
+.mc-option-item input:checked + .option-control::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.mc-option-item input:focus-visible + .option-control,
+.mc-option-label:focus-within {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.mc-option-label:has(input:checked) {
+  border-color: var(--primary-sage);
+  background: color-mix(in srgb, var(--hover-sage) 30%, #fff 70%);
+}
+.mc-option-label:has(input:checked) .mc-option-text {
+  color: var(--deep-forest);
+  font-weight: 600;
+}
+
+.mc-slide-student-controls {
+  margin-top: var(--space-7);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* -------------------------------
+   Responsive Breakpoints
+----------------------------------*/
+@media (min-width: 768px) {
+  .controls {
+    grid-auto-flow: column;
+    justify-content: center;
+  }
+  .test-header {
+    grid-template-columns: 1fr auto auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  #activity-container {
+    box-shadow: var(--shadow-3);
+  }
+  h1 { letter-spacing: 0.05em; }
+}
+
+/* -------------------------------
+   Dark Mode
+----------------------------------*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --soft-white: #1E211C;
+    --warm-cream: #23261F;
+    --forest-shadow: #DDE6D4;
+    --ink: #E9EFE5;
+    --ink-muted: #AEB9AA;
+    --border-sage: rgba(184, 197, 166, 0.2);
+    --hover-sage: rgba(184, 197, 166, 0.1);
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 900px at 15% 10%, rgba(156,175,136,0.06), transparent 60%),
+      linear-gradient(135deg, #191D18 0%, #1B1E19 100%);
+  }
+
+  #activity-container {
+    background: color-mix(in srgb, #23261F 92%, #1B1E19 8%);
+    border-color: rgba(184, 197, 166, 0.15);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  }
+
+  a { color: var(--secondary-sage); }
+  a:hover { color: var(--tertiary-sage); }
+
+  .mc-question {
+    background: linear-gradient(180deg, #20241E, #191D18);
+    border-color: rgba(184, 197, 166, 0.18);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.35);
+  }
+
+  .activity-btn {
+    background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest));
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 18px rgba(0,0,0,0.35);
+  }
+  .activity-btn:hover {
+    background: linear-gradient(180deg, var(--moss), var(--deep-forest));
+  }
+
+  input, textarea, select {
+    background: #141713;
+    border-color: rgba(184, 197, 166, 0.25);
+    color: var(--ink);
+  }
+  input::placeholder, textarea::placeholder { color: var(--ink-muted); }
+
+  .activity-btn.secondary {
+    background: #2a2e27;
+    color: var(--tertiary-sage);
+  }
+  .activity-btn.secondary:hover {
+    background: var(--hover-sage);
+    color: #fff;
+  }
+}
+
+  </style>
+
+  <style>
+    .page { max-width: var(--container-max); width: 100%; display: flex; flex-direction: column; gap: var(--space-6); }
+    .card { background: var(--soft-white); border: 1px solid var(--border-sage); border-radius: var(--radius); box-shadow: var(--shadow-1); padding: clamp(1rem, 3vw, 1.75rem); }
+    .card h2 { margin-top: 0; color: var(--deep-forest); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+    .tag { background: var(--hover-sage); color: var(--deep-forest); border-radius: 999px; padding: 0.25rem 0.75rem; font-weight: 700; font-size: 0.95rem; }
+    .dialogue { display: grid; gap: var(--space-3); }
+    .dialogue-line { padding: var(--space-3); border-radius: var(--radius); background: #f7f8f3; border: 1px solid var(--border-sage); }
+    .dialogue-line strong { color: var(--primary-sage); }
+    .activity { display: grid; gap: var(--space-4); }
+    .choices label { display: block; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--border-sage); margin-bottom: var(--space-2); cursor: pointer; transition: background var(--transition-fast), transform var(--transition-fast); }
+    .choices input { margin-right: var(--space-2); }
+    .choices label:hover { background: var(--hover-sage); transform: translateY(-1px); }
+    .btn { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--primary-sage); color: white; border: none; border-radius: var(--radius-sm); padding: 0.55rem 1rem; font-weight: 700; cursor: pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+    .btn.secondary { background: transparent; color: var(--deep-forest); border: 1px solid var(--border-sage); }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-1); }
+    .feedback { background: var(--hover-sage); border-radius: var(--radius-sm); padding: var(--space-3); border: 1px dashed var(--primary-sage); }
+    .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4); }
+    .match-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); background: #f8f6f0; }
+    .pill { background: white; padding: 0.45rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); font-weight: 700; }
+    select { padding: 0.4rem 0.6rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); font-size: 1rem; }
+    .flex-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .chip { background: white; border: 1px solid var(--border-sage); padding: 0.4rem 0.65rem; border-radius: var(--radius-sm); cursor: pointer; transition: transform var(--transition-fast); }
+    .chip:hover { transform: translateY(-1px); }
+    .drop-zone { min-height: 48px; border: 1px dashed var(--border-sage); border-radius: var(--radius-sm); padding: var(--space-2); display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; background: #f9faf6; }
+    .sentence { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); background: #f7f8f3; }
+    details pre { white-space: pre-wrap; background: #1f1f1f; color: #f6f6f6; padding: var(--space-4); border-radius: var(--radius); overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div id="app-wrapper">
+    <header class="app-header">
+      <div class="logo-title">
+        <h1>Pre-Class Worksheet: A2.2</h1>
+        <p>Model Dialogue and Activities</p>
+      </div>
+    </header>
+
+    <main class="page" id="app">
+      <section class="card" id="model-dialogue">
+        <div class="section-header">
+          <h2>Model Dialogue: A Coffee Break in the Office</h2>
+          <span class="tag">Model</span>
+        </div>
+        <p><strong>Setting:</strong> Laila and Kareem are new colleagues meeting in their office kitchen in Ramallah.</p>
+        <div class="dialogue" aria-label="Dialogue">
+          <div class="dialogue-line"><strong>Laila:</strong> Hello. I'm Laila.</div>
+          <div class="dialogue-line"><strong>Kareem:</strong> Hi Laila! I'm Kareem. Nice to meet you.</div>
+          <div class="dialogue-line"><strong>Laila:</strong> Nice to meet you too. So, Kareem, what do you do?</div>
+          <div class="dialogue-line"><strong>Kareem:</strong> I work in the office here. I answer emails and I answer the phone. What about you?</div>
+          <div class="dialogue-line"><strong>Laila:</strong> I am a teacher.</div>
+          <div class="dialogue-line"><strong>Kareem:</strong> Oh, that's great. Do you want coffee?</div>
+          <div class="dialogue-line"><strong>Laila:</strong> Yes, please. Thank you!</div>
+        </div>
+      </section>
+
+      <section class="card activity" id="activity-1">
+        <div class="section-header">
+          <h2>Activity 1: Check Your Understanding</h2>
+          <span class="tag">Multiple Choice</span>
+        </div>
+        <p>Read the dialogue. Choose the correct answer for each question.</p>
+        <div class="activity-body">
+          <div class="question-block" data-answer="b" data-feedback-a="Not quite. Laila is a teacher, but the dialogue says Kareem works &quot;in the office here.&quot; This is the location of the conversation." data-feedback-c="Good thinking, they talk about coffee, but the setting says they are in their &quot;office kitchen&quot;.">
+            <h3>1. Where are Laila and Kareem talking?</h3>
+            <div class="choices">
+              <label><input type="radio" name="q1" value="a" /> a) In a school</label>
+              <label><input type="radio" name="q1" value="b" /> b) In an office</label>
+              <label><input type="radio" name="q1" value="c" /> c) In a café</label>
+            </div>
+            <div class="feedback visually-hidden"></div>
+          </div>
+          <div class="question-block" data-answer="b" data-feedback-a="This is Laila's job. In the dialogue, she says, &quot;I am a teacher.&quot;" data-feedback-c="He offers to make coffee, but this is not his main job. He says, &quot;I work in the office here.&quot;">
+            <h3>2. What is Kareem's job?</h3>
+            <div class="choices">
+              <label><input type="radio" name="q2" value="a" /> a) He is a teacher.</label>
+              <label><input type="radio" name="q2" value="b" /> b) He works in an office.</label>
+              <label><input type="radio" name="q2" value="c" /> c) He makes coffee.</label>
+            </div>
+            <div class="feedback visually-hidden"></div>
+          </div>
+          <div class="question-block" data-answer="b" data-feedback-a="These are things that happen in the conversation, but they are not his regular job tasks. He says, &quot;I answer emails and I answer the phone.&quot;" data-feedback-c="Laila is a teacher, and Kareem works in an office. These are their jobs, not two tasks Kareem does. Look for the two actions he mentions together.">
+            <h3>3. What are two of Kareem's tasks?</h3>
+            <div class="choices">
+              <label><input type="radio" name="q3" value="a" /> a) Meet Laila and drink coffee.</label>
+              <label><input type="radio" name="q3" value="b" /> b) Answer emails and answer the phone.</label>
+              <label><input type="radio" name="q3" value="c" /> c) Be a teacher and work in an office.</label>
+            </div>
+            <div class="feedback visually-hidden"></div>
+          </div>
+        </div>
+        <button class="btn" data-action="check-mc">Check answers</button>
+      </section>
+
+      <section class="card activity" id="activity-2">
+        <div class="section-header">
+          <h2>Activity 2: Vocabulary Match</h2>
+          <span class="tag">Matching</span>
+        </div>
+        <p>Match the words from the dialogue with the correct pictures.</p>
+        <div class="two-col">
+          <div>
+            <h3>Column A</h3>
+            <div class="match-row"><span class="pill">1.</span><span>office</span><select data-key="1"><option value="">Select</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option></select></div>
+            <div class="match-row"><span class="pill">2.</span><span>emails</span><select data-key="2"><option value="">Select</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option></select></div>
+            <div class="match-row"><span class="pill">3.</span><span>teacher</span><select data-key="3"><option value="">Select</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option></select></div>
+            <div class="match-row"><span class="pill">4.</span><span>phone</span><select data-key="4"><option value="">Select</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option></select></div>
+            <div class="match-row"><span class="pill">5.</span><span>coffee</span><select data-key="5"><option value="">Select</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option></select></div>
+          </div>
+          <div>
+            <h3>Column B</h3>
+            <ul>
+              <li>a) [Picture of a teacher pointing to a whiteboard with 'ABC' on it]</li>
+              <li>b) [Picture of a modern office desk with a computer and chair]</li>
+              <li>c) [Picture of a smartphone screen showing new message notifications]</li>
+              <li>d) [Picture of a steaming cup of coffee next to coffee beans]</li>
+              <li>e) [Picture of an email inbox on a computer screen]</li>
+            </ul>
+          </div>
+        </div>
+        <p class="feedback visually-hidden" id="match-feedback"></p>
+        <div class="flex-wrap">
+          <button class="btn" data-action="check-match">Check matches</button>
+          <button class="btn secondary" data-action="reset-match">Reset</button>
+        </div>
+      </section>
+
+      <section class="card activity" id="activity-3">
+        <div class="section-header">
+          <h2>Activity 3: Grammar Focus: Questions vs. Statements</h2>
+          <span class="tag">Classify</span>
+        </div>
+        <p>Read the sentences from the conversation. Are they a Question or a Statement (an answer/information)? Drag each sentence to the correct box.</p>
+        <div class="two-col">
+          <div>
+            <h3>Question (asks for information)</h3>
+            <div class="drop-zone" data-category="Question (asks for information)" aria-label="Question drop zone"></div>
+          </div>
+          <div>
+            <h3>Statement (gives information)</h3>
+            <div class="drop-zone" data-category="Statement (gives information)" aria-label="Statement drop zone"></div>
+          </div>
+        </div>
+        <div class="flex-wrap" id="classify-bank" aria-label="Sentences to classify">
+          <span class="chip" draggable="true" data-category="Statement">I am a teacher.</span>
+          <span class="chip" draggable="true" data-category="Question">What do you do?</span>
+          <span class="chip" draggable="true" data-category="Statement">I work in the office here.</span>
+          <span class="chip" draggable="true" data-category="Question">Do you want coffee?</span>
+          <span class="chip" draggable="true" data-category="Statement">I'm Kareem.</span>
+        </div>
+        <p class="feedback visually-hidden" id="classify-feedback"></p>
+        <div class="flex-wrap">
+          <button class="btn" data-action="check-classify">Check</button>
+          <button class="btn secondary" data-action="reset-classify">Reset</button>
+        </div>
+      </section>
+
+      <section class="card activity" id="activity-4">
+        <div class="section-header">
+          <h2>Activity 4: Build a Question</h2>
+          <span class="tag">Ranking</span>
+        </div>
+        <p>Put the words in the correct order to make the question Laila asks about Kareem's job.</p>
+        <div class="sentence">
+          <div class="flex-wrap" id="ranking-bank" aria-label="Words to arrange">
+            <span class="chip" data-word="do">do</span>
+            <span class="chip" data-word="?">?</span>
+            <span class="chip" data-word="What">What</span>
+            <span class="chip" data-word="you">you</span>
+            <span class="chip" data-word="do">do</span>
+          </div>
+          <p>Click words to build your question:</p>
+          <div class="drop-zone" id="ranking-drop" aria-label="Build the question"></div>
+        </div>
+        <p class="feedback visually-hidden" id="ranking-feedback"></p>
+        <div class="flex-wrap">
+          <button class="btn" data-action="check-ranking">Check order</button>
+          <button class="btn secondary" data-action="reset-ranking">Reset</button>
+        </div>
+      </section>
+
+      <section class="card activity" id="activity-5">
+        <div class="section-header">
+          <h2>Activity 5: Complete the Dialogue</h2>
+          <span class="tag">Click and Drop</span>
+        </div>
+        <p>Drag the words from the box to complete the key sentences from the dialogue.</p>
+        <div class="flex-wrap" id="word-bank">
+          <span class="chip" draggable="true" data-word="office">office</span>
+          <span class="chip" draggable="true" data-word="answer">answer</span>
+          <span class="chip" draggable="true" data-word="am">am</span>
+          <span class="chip" draggable="true" data-word="Do">Do</span>
+        </div>
+        <div class="sentence">
+          <p>1. I work in the <span class="drop-zone" data-blank="1"></span>.</p>
+          <p>2. I <span class="drop-zone" data-blank="2"></span> emails.</p>
+          <p>3. I <span class="drop-zone" data-blank="3"></span> a teacher.</p>
+          <p>4. <span class="drop-zone" data-blank="4"></span> you want coffee?</p>
+        </div>
+        <p class="feedback visually-hidden" id="fill-feedback"></p>
+        <div class="flex-wrap">
+          <button class="btn" data-action="check-fill">Check</button>
+          <button class="btn secondary" data-action="reset-fill">Reset</button>
+        </div>
+      </section>
+
+      <details class="card">
+        <summary>View original XML content</summary>
+        <pre>
+<?xml version="1.0" encoding="UTF-8"?>
+<Pre_Class_Worksheet>
+    <Model>
+        <Title>Model Dialogue: A Coffee Break in the Office</Title>
+        <Dialogue>
+            **Setting:** Laila and Kareem are new colleagues meeting in their office kitchen in Ramallah.
+            
+            **Laila:** Hello. I'm Laila.
+            
+            **Kareem:** Hi Laila! I'm Kareem. Nice to meet you.
+            
+            **Laila:** Nice to meet you too. So, Kareem, what do you do?
+            
+            **Kareem:** I work in the office here. I answer emails and I answer the phone. What about you?
+            
+            **Laila:** I am a teacher.
+            
+            **Kareem:** Oh, that's great. Do you want coffee?
+            
+            **Laila:** Yes, please. Thank you!
+        </Dialogue>
+    </Model>
+
+    <Activity number="1" name="Check Your Understanding">
+        <Instruction>Read the dialogue. Choose the correct answer for each question.</Instruction>
+        <Module>[Activity_Module: Multiple_Choice]</Module>
+        <Item>
+            <Question>1. Where are Laila and Kareem talking?</Question>
+            <Options>
+                a) In a school
+                b) In an office
+                c) In a café
+            </Options>
+            <Answer>b</Answer>
+            <Feedback>
+                <For_Option name="a">Not quite. Laila is a teacher, but the dialogue says Kareem works "in the office here." This is the location of the conversation.</For_Option>
+                <For_Option name="c">Good thinking, they talk about coffee, but the setting says they are in their "office kitchen".</For_Option>
+            </Feedback>
+        </Item>
+        <Item>
+            <Question>2. What is Kareem's job?</Question>
+            <Options>
+                a) He is a teacher.
+                b) He works in an office.
+                c) He makes coffee.
+            </Options>
+            <Answer>b</Answer>
+            <Feedback>
+                <For_Option name="a">This is Laila's job. In the dialogue, she says, "I am a teacher."</For_Option>
+                <For_Option name="c">He offers to make coffee, but this is not his main job. He says, "I work in the office here."</For_Option>
+            </Feedback>
+        </Item>
+        <Item>
+            <Question>3. What are two of Kareem's tasks?</Question>
+            <Options>
+                a) Meet Laila and drink coffee.
+                b) Answer emails and answer the phone.
+                c) Be a teacher and work in an office.
+            </Options>
+            <Answer>b</Answer>
+            <Feedback>
+                <For_Option name="a">These are things that happen in the conversation, but they are not his regular job tasks. He says, "I answer emails and I answer the phone."</For_Option>
+                <For_Option name="c">Laila is a teacher, and Kareem works in an office. These are their jobs, not two tasks Kareem does. Look for the two actions he mentions together.</For_Option>
+            </Feedback>
+        </Item>
+    </Activity>
+
+    <Activity number="2" name="Vocabulary Match">
+        <Instruction>Match the words from the dialogue with the correct pictures.</Instruction>
+        <Module>[Activity_Module: Matching]</Module>
+        <Item>
+            <Column_A>
+                1. office
+                2. emails
+                3. teacher
+                4. phone
+                5. coffee
+            </Column_A>
+            <Column_B>
+                a) [Picture of a teacher pointing to a whiteboard with 'ABC' on it]
+                b) [Picture of a modern office desk with a computer and chair]
+                c) [Picture of a smartphone screen showing new message notifications]
+                d) [Picture of a steaming cup of coffee next to coffee beans]
+                e) [Picture of an email inbox on a computer screen]
+            </Column_B>
+        </Item>
+        <Answer>1-b, 2-e, 3-a, 4-c, 5-d</Answer>
+        <Feedback>
+             <For_Incorrect_Match>Let's check the meanings. The "office" is the place of work. A "teacher" is the person who teaches. The "phone" and "emails" are for communication. "Coffee" is the drink. Try matching the words to the pictures again.</For_Incorrect_Match>
+        </Feedback>
+    </Activity>
+
+    <Activity number="3" name="Grammar Focus: Questions vs. Statements">
+        <Instruction>Read the sentences from the conversation. Are they a Question or a Statement (an answer/information)? Drag each sentence to the correct box.</Instruction>
+        <Module>[Activity_Module: Classify]</Module>
+        <Categories>
+            <Category name="Question (asks for information)"></Category>
+            <Category name="Statement (gives information)"></Category>
+        </Categories>
+        <Items>
+            <Item category="Statement">I am a teacher.</Item>
+            <Item category="Question">What do you do?</Item>
+            <Item category="Statement">I work in the office here.</Item>
+            <Item category="Question">Do you want coffee?</Item>
+            <Item category="Statement">I'm Kareem.</Item>
+        </Items>
+        <Feedback>
+            <For_Incorrect_Classification item="I am a teacher.">This sentence gives information about Laila's job. It does not ask for information, so it is a Statement.</For_Incorrect_Classification>
+            <For_Incorrect_Classification item="What do you do?">This sentence asks for information about a job and ends with a question mark (?). It is a Question.</For_Incorrect_Classification>
+            <For_Incorrect_Classification item="I work in the office here.">This sentence gives information about where Kareem works. It is a Statement.</For_Incorrect_Classification>
+            <For_Incorrect_Classification item="Do you want coffee?">This sentence asks a 'yes' or 'no' question and ends with a question mark (?). It is a Question.</For_Incorrect_Classification>
+            <For_Incorrect_Classification item="I'm Kareem.">This sentence gives the information of a name. It is a Statement.</For_Incorrect_Classification>
+        </Feedback>
+    </Activity>
+    
+    <Activity number="4" name="Build a Question">
+        <Instruction>Put the words in the correct order to make the question Laila asks about Kareem's job.</Instruction>
+        <Module>[Activity_Module: Ranking]</Module>
+        <Items>
+            <Item>do</Item>
+            <Item>?</Item>
+            <Item>What</Item>
+            <Item>you</Item>
+            <Item>do</Item>
+        </Items>
+        <Answer>What, do, you, do, ?</Answer>
+        <Feedback>
+            <For_Incorrect_Order>Not quite. Remember, questions about jobs often start with the question word 'What'. The pattern is: What + do + you + do? Try arranging the words in that order.</For_Incorrect_Order>
+        </Feedback>
+    </Activity>
+
+    <Activity number="5" name="Complete the Dialogue">
+        <Instruction>Drag the words from the box to complete the key sentences from the dialogue.</Instruction>
+        <Module>[Activity_Module: Click_and_Drop]</Module>
+        <Word_Bank>
+            <Word>office</Word>
+            <Word>answer</Word>
+            <Word>am</Word>
+            <Word>Do</Word>
+        </Word_Bank>
+        <Sentences>
+            <Sentence>1. I work in the [DROP_ZONE].</Sentence>
+            <Sentence>2. I [DROP_ZONE] emails.</Sentence>
+            <Sentence>3. I [DROP_ZONE] a teacher.</Sentence>
+            <Sentence>4. [DROP_ZONE] you want coffee?</Sentence>
+        </Sentences>
+        <Answer>1-office, 2-answer, 3-am, 4-Do</Answer>
+        <Feedback>
+            <For_Incorrect_Drop>Let's check the correct sentences from the dialogue.
+            1. Kareem works in the **office**.
+            2. His job is to **answer** emails.
+            3. Laila says, "I **am** a teacher."
+            4. Kareem's question is "**Do** you want coffee?".
+            Try dragging the words to their correct places again.</For_Incorrect_Drop>
+        </Feedback>
+    </Activity>
+</Pre_Class_Worksheet>
+        </pre>
+      </details>
+    </main>
+  </div>
+
+  <script>
+    const mcButton = document.querySelector('[data-action="check-mc"]');
+    mcButton?.addEventListener('click', () => {
+      document.querySelectorAll('#activity-1 .question-block').forEach((block) => {
+        const answer = block.dataset.answer;
+        const feedback = block.querySelector('.feedback');
+        const checked = block.querySelector('input:checked');
+        if (!checked) {
+          feedback.textContent = 'Please choose an option.';
+          feedback.classList.remove('visually-hidden');
+          return;
+        }
+        const choice = checked.value;
+        if (choice === answer) {
+          feedback.textContent = 'Correct!';
+        } else {
+          const custom = block.dataset[`feedback${choice}`];
+          feedback.textContent = custom || 'Try again.';
+        }
+        feedback.classList.remove('visually-hidden');
+      });
+    });
+
+    const matchAnswers = { 1: 'b', 2: 'e', 3: 'a', 4: 'c', 5: 'd' };
+    const matchFeedback = document.getElementById('match-feedback');
+    document.querySelector('[data-action="check-match"]').addEventListener('click', () => {
+      const selects = Array.from(document.querySelectorAll('#activity-2 select'));
+      const allFilled = selects.every((s) => s.value);
+      if (!allFilled) {
+        matchFeedback.textContent = 'Complete all matches before checking.';
+        matchFeedback.classList.remove('visually-hidden');
+        return;
+      }
+      const allCorrect = selects.every((s) => matchAnswers[s.dataset.key] === s.value);
+      if (allCorrect) {
+        matchFeedback.textContent = 'Great job! Matches: 1-b, 2-e, 3-a, 4-c, 5-d';
+      } else {
+        matchFeedback.textContent = 'Let\'s check the meanings. The "office" is the place of work. A "teacher" is the person who teaches. The "phone" and "emails" are for communication. "Coffee" is the drink. Try matching the words to the pictures again.';
+      }
+      matchFeedback.classList.remove('visually-hidden');
+    });
+    document.querySelector('[data-action="reset-match"]').addEventListener('click', () => {
+      document.querySelectorAll('#activity-2 select').forEach((s) => (s.value = ''));
+      matchFeedback.classList.add('visually-hidden');
+    });
+
+    const dropZones = document.querySelectorAll('#activity-3 .drop-zone');
+    const classifyFeedback = document.getElementById('classify-feedback');
+    const bank = document.getElementById('classify-bank');
+
+    function resetClassify() {
+      dropZones.forEach((zone) => zone.replaceChildren());
+      document.querySelectorAll('#activity-3 .chip').forEach((chip) => {
+        chip.setAttribute('draggable', 'true');
+        bank.appendChild(chip);
+      });
+      classifyFeedback.classList.add('visually-hidden');
+    }
+
+    resetClassify();
+
+    document.addEventListener('dragstart', (event) => {
+      const target = event.target;
+      if (target.classList.contains('chip')) {
+        event.dataTransfer.setData('text/plain', target.dataset.category || target.dataset.word);
+        event.dataTransfer.setData('application/id', target.textContent);
+      }
+    });
+
+    dropZones.forEach((zone) => {
+      zone.addEventListener('dragover', (e) => e.preventDefault());
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const text = e.dataTransfer.getData('application/id');
+        const dragged = Array.from(document.querySelectorAll('#activity-3 .chip, #activity-5 .chip')).find(
+          (chip) => chip.textContent === text
+        );
+        if (dragged && dragged.closest('#activity-3')) {
+          zone.appendChild(dragged);
+        }
+      });
+    });
+
+    document.querySelector('[data-action="check-classify"]').addEventListener('click', () => {
+      const pairs = Array.from(dropZones).map((zone) => ({ category: zone.dataset.category, chips: Array.from(zone.querySelectorAll('.chip')) }));
+      const allPlaced = pairs.every((p) => p.chips.length > 0) && bank.children.length === 0;
+      if (!allPlaced) {
+        classifyFeedback.textContent = 'Place all sentences into the boxes.';
+      } else {
+        const wrong = pairs.some((p) => p.chips.some((chip) => chip.dataset.category !== p.category));
+        if (wrong) {
+          classifyFeedback.textContent = 'Review the sentences: questions end with a question mark and ask for information; statements share information.';
+        } else {
+          classifyFeedback.textContent = 'Correct! Questions and statements are sorted properly.';
+        }
+      }
+      classifyFeedback.classList.remove('visually-hidden');
+    });
+
+    document.querySelector('[data-action="reset-classify"]').addEventListener('click', resetClassify);
+
+    const rankingBank = document.getElementById('ranking-bank');
+    const rankingDrop = document.getElementById('ranking-drop');
+    const rankingFeedback = document.getElementById('ranking-feedback');
+    const rankingAnswer = ['What', 'do', 'you', 'do', '?'];
+
+    function resetRanking() {
+      rankingDrop.replaceChildren();
+      rankingBank.querySelectorAll('.chip').forEach((chip) => {
+        chip.classList.remove('disabled');
+        rankingBank.appendChild(chip);
+      });
+      rankingFeedback.classList.add('visually-hidden');
+    }
+
+    rankingBank.addEventListener('click', (event) => {
+      const chip = event.target.closest('.chip');
+      if (!chip || chip.closest('#ranking-drop')) return;
+      const clone = chip.cloneNode(true);
+      clone.classList.add('from-bank');
+      rankingDrop.appendChild(clone);
+    });
+
+    document.querySelector('[data-action="check-ranking"]').addEventListener('click', () => {
+      const sequence = Array.from(rankingDrop.querySelectorAll('.chip')).map((chip) => chip.dataset.word);
+      if (sequence.length !== rankingAnswer.length) {
+        rankingFeedback.textContent = 'Use all the words to build the question.';
+      } else if (sequence.every((word, idx) => word === rankingAnswer[idx])) {
+        rankingFeedback.textContent = 'Great! The correct question is: What do you do ?';
+      } else {
+        rankingFeedback.textContent = "Not quite. Remember, questions about jobs often start with the question word 'What'. The pattern is: What + do + you + do? Try arranging the words in that order.";
+      }
+      rankingFeedback.classList.remove('visually-hidden');
+    });
+
+    document.querySelector('[data-action="reset-ranking"]').addEventListener('click', resetRanking);
+    resetRanking();
+
+    const fillDropZones = document.querySelectorAll('#activity-5 .drop-zone[data-blank]');
+    const fillFeedback = document.getElementById('fill-feedback');
+    const fillAnswers = { 1: 'office', 2: 'answer', 3: 'am', 4: 'Do' };
+
+    document.querySelectorAll('#word-bank .chip').forEach((chip) => {
+      chip.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', chip.dataset.word);
+      });
+    });
+
+    fillDropZones.forEach((zone) => {
+      zone.addEventListener('dragover', (e) => e.preventDefault());
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const word = e.dataTransfer.getData('text/plain');
+        zone.dataset.value = word;
+        zone.textContent = word;
+      });
+      zone.addEventListener('click', () => {
+        if (zone.dataset.value) {
+          zone.dataset.value = '';
+          zone.textContent = '';
+        }
+      });
+    });
+
+    document.querySelector('[data-action="check-fill"]').addEventListener('click', () => {
+      const allFilled = Array.from(fillDropZones).every((z) => z.dataset.value);
+      if (!allFilled) {
+        fillFeedback.textContent = 'Fill all blanks before checking.';
+      } else {
+        const allCorrect = Array.from(fillDropZones).every((z) => z.dataset.value === fillAnswers[z.dataset.blank]);
+        if (allCorrect) {
+          fillFeedback.textContent = 'Well done! Answers: 1-office, 2-answer, 3-am, 4-Do';
+        } else {
+          fillFeedback.textContent = "Let's check the correct sentences from the dialogue.\n            1. Kareem works in the **office**.\n            2. His job is to **answer** emails.\n            3. Laila says, \"I **am** a teacher.\"\n            4. Kareem's question is \"**Do** you want coffee?\".\n            Try dragging the words to their correct places again.";
+        }
+      }
+      fillFeedback.classList.remove('visually-hidden');
+    });
+
+    document.querySelector('[data-action="reset-fill"]').addEventListener('click', () => {
+      fillDropZones.forEach((zone) => {
+        zone.dataset.value = '';
+        zone.textContent = '';
+      });
+      fillFeedback.classList.add('visually-hidden');
+    });
+  </script>
+</body>
+</html>
