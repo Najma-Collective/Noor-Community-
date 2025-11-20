@@ -73,6 +73,12 @@
         input[type="text"].grammar-input { padding: var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--tertiary-sage); width: 150px; }
         textarea { width: 100%; min-height: 150px; padding: var(--space-4); border: 1px solid var(--tertiary-sage); border-radius: var(--radius); font-family: var(--font-body); font-size: var(--step-0); }
         .rubric { font-size: var(--step--1); color: var(--ink-muted); background-color: var(--warm-cream); padding: var(--space-4); border-radius: var(--radius-sm); margin-top: var(--space-4); }
+
+        /* Reset button styling */
+        .reset-btn { min-height: 36px; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-sage); background: var(--soft-white); color: var(--forest-shadow); font-weight: 600; font-size: var(--step--1); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all var(--transition-std); margin-top: var(--space-3); }
+        .reset-btn:hover { background: var(--hover-sage); border-color: var(--secondary-sage); }
+        .reset-btn:active { transform: scale(0.97); }
+
         .feedback-correct { background-color: #d4edda !important; border-color: #155724 !important; }
         .feedback-incorrect { background-color: #f8d7da !important; border-color: #721c24 !important; }
         .correct-answer-text { color: #155724; font-weight: bold; margin-left: var(--space-3); }
@@ -133,18 +139,21 @@
                     <div class="dropdown-question" data-correct-answer="went">2. We <select name="g1.2"><option value="">--</option><option>went</option><option>go</option></select> to a concert last Saturday. <span class="correct-answer-text"></span></div>
                     <div class="dropdown-question" data-correct-answer="visited">3. She <select name="g1.3"><option value="">--</option><option>visited</option><option>visit</option></select> her family last week. <span class="correct-answer-text"></span></div>
                     <div class="dropdown-question" data-correct-answer="go">4. He didn't <select name="g1.4"><option value="">--</option><option>go</option><option>went</option></select> to work yesterday. <span class="correct-answer-text"></span></div>
+                    <button class="reset-btn" onclick="resetDropdowns(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answers</button>
                 </div>
                 <div class="activity-card">
                     <h3>Activity 2: Describing Past Scenes</h3>
                      <p>Choose the correct word, 'was' or 'were', to complete each sentence.</p>
                     <div class="dropdown-question" data-correct-answer="were">1. At the festival, there <select name="g2.1"><option value="">--</option><option>was</option><option>were</option></select> a lot of people. <span class="correct-answer-text"></span></div>
                     <div class="dropdown-question" data-correct-answer="was">2. There <select name="g2.2"><option value="">--</option><option>was</option><option>were</option></select> live music on a stage. <span class="correct-answer-text"></span></div>
+                    <button class="reset-btn" onclick="resetDropdowns(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answers</button>
                 </div>
                  <div class="activity-card">
                     <h3>Activity 3: Making Questions</h3>
                     <p>Complete the questions with the correct word.</p>
                     <div class="grammar-task" data-correct-answer="Did">1. <input type="text" class="grammar-input" name="g3.1"> you have a good weekend? <span class="correct-answer-text"></span></div>
                     <div class="grammar-task" data-correct-answer="What">2. <input type="text" class="grammar-input" name="g3.2"> did you do on Friday night? <span class="correct-answer-text"></span></div>
+                    <button class="reset-btn" onclick="resetTextInputs(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answers</button>
                 </div>
             </section>
 
@@ -163,8 +172,8 @@
                         <p>See you soon,<br>Omar</p>
                     </div>
 
-                    <div class="mc-question" data-question-id="4.1" data-correct-answer="b"><p class="mc-question-text">1. What is the main idea of the email?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q4.1" value="a" id="q4.1a"><label for="q4.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) A work meeting</span></label></div><div class="mc-option-item"><input type="radio" name="q4.1" value="b" id="q4.1b"><label for="q4.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) A trip Omar took</span></label></div><div class="mc-option-item"><input type="radio" name="q4.1" value="c" id="q4.1c"><label for="q4.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) A new restaurant</span></label></div></div></div>
-                    <div class="mc-question" data-question-id="4.2" data-correct-answer="c"><p class="mc-question-text">2. What did Omar do AFTER he visited the historic building?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q4.2" value="a" id="q4.2a"><label for="q4.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) He went home.</span></label></div><div class="mc-option-item"><input type="radio" name="q4.2" value="b" id="q4.2b"><label for="q4.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) He walked in the market.</span></label></div><div class="mc-option-item"><input type="radio" name="q4.2" value="c" id="q4.2c"><label for="q4.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) He ate lunch.</span></label></div></div></div>
+                    <div class="mc-question" data-question-id="4.1" data-correct-answer="b"><p class="mc-question-text">1. What is the main idea of the email?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q4.1" value="a" id="q4.1a"><label for="q4.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) A work meeting</span></label></div><div class="mc-option-item"><input type="radio" name="q4.1" value="b" id="q4.1b"><label for="q4.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) A trip Omar took</span></label></div><div class="mc-option-item"><input type="radio" name="q4.1" value="c" id="q4.1c"><label for="q4.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) A new restaurant</span></label></div></div><button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button></div>
+                    <div class="mc-question" data-question-id="4.2" data-correct-answer="c"><p class="mc-question-text">2. What did Omar do AFTER he visited the historic building?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q4.2" value="a" id="q4.2a"><label for="q4.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) He went home.</span></label></div><div class="mc-option-item"><input type="radio" name="q4.2" value="b" id="q4.2b"><label for="q4.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) He walked in the market.</span></label></div><div class="mc-option-item"><input type="radio" name="q4.2" value="c" id="q4.2c"><label for="q4.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) He ate lunch.</span></label></div></div><button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button></div>
                 </div>
                 <div class="activity-card">
                     <h3>Activity 5: Sequence the Story</h3>
@@ -173,6 +182,7 @@
                     <div class="dropdown-question" data-correct-answer="1">He walked through the old market. <select name="seq2"><option value="">-- Order --</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
                     <div class="dropdown-question" data-correct-answer="4">He bought souvenirs. <select name="seq3"><option value="">-- Order --</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
                     <div class="dropdown-question" data-correct-answer="2">He visited a historic building. <select name="seq4"><option value="">-- Order --</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+                    <button class="reset-btn" onclick="resetDropdowns(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answers</button>
                 </div>
             </section>
 
@@ -228,7 +238,9 @@
                             <div class="mc-option-item"><input type="radio" name="q7.3" value="a" id="q7.3a"><label for="q7.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) True</span></label></div>
                             <div class="mc-option-item"><input type="radio" name="q7.3" value="b" id="q7.3b"><label for="q7.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) False</span></label></div>
                         </div>
+                        <button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button>
                     </div>
+                    <button class="reset-btn" onclick="resetActivityCard(this)"><i class="fa-solid fa-rotate-left"></i> Reset All Listening Answers</button>
                 </div>
             </section>
 
@@ -241,13 +253,13 @@
     </div>
 
     <script>
+    let assessmentSubmitted = false; // Global variable for reset functions
     (function() {
         'use strict';
         const DURATION = 60 * 60; // 60 minutes
         let timeRemaining = DURATION;
         let timerInterval = null;
         let studentId = '';
-        let assessmentSubmitted = false;
         
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI1FuQM8gdwTSvU3FXVB7eX7EFoJCTWj0njCu2I6ibzCq2PtGQg_raW2gpocIVUuOviw/exec';
 
@@ -401,6 +413,42 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     })();
+
+    // Reset functions for activities
+    function resetMCQuestion(button) {
+        if (assessmentSubmitted) return;
+        const question = button.closest('.mc-question');
+        const inputs = question.querySelectorAll('input[type="radio"]');
+        const labels = question.querySelectorAll('.mc-option-label');
+        inputs.forEach(input => { input.checked = false; input.disabled = false; });
+        labels.forEach(label => label.classList.remove('locked'));
+    }
+
+    function resetDropdowns(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const selects = card.querySelectorAll('select');
+        selects.forEach(select => { select.value = ''; select.disabled = false; });
+    }
+
+    function resetTextInputs(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const inputs = card.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => { input.value = ''; input.disabled = false; });
+    }
+
+    function resetActivityCard(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        // Reset all MC questions in the card
+        card.querySelectorAll('.mc-question').forEach(q => {
+            const inputs = q.querySelectorAll('input[type="radio"]');
+            const labels = q.querySelectorAll('.mc-option-label');
+            inputs.forEach(input => { input.checked = false; input.disabled = false; });
+            labels.forEach(label => label.classList.remove('locked'));
+        });
+    }
     </script>
 </body>
 </html>

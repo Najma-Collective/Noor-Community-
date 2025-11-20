@@ -186,6 +186,11 @@
         .table-matrix .options-cell button { background-color: var(--soft-white); border: 1px solid var(--tertiary-sage); padding: var(--space-2) var(--space-3); margin: var(--space-1); border-radius: var(--radius-sm); cursor: pointer; }
         .table-matrix .options-cell button.selected { background-color: var(--amber); border-color: var(--amber); font-weight: bold; }
 
+        /* Reset button styling */
+        .reset-btn { min-height: 36px; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-sage); background: var(--soft-white); color: var(--forest-shadow); font-weight: 600; font-size: var(--step--1); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all var(--transition-std); margin-top: var(--space-3); }
+        .reset-btn:hover { background: var(--hover-sage); border-color: var(--secondary-sage); }
+        .reset-btn:active { transform: scale(0.97); }
+
         /* Feedback styling */
         .feedback-correct { background-color: #d4edda !important; border-color: #c3e6cb !important; }
         .feedback-incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; }
@@ -256,6 +261,7 @@
                         <div class="mc-option-item"><input type="radio" name="q1.1" value="b" id="q1.1b"><label for="q1.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) At a company event</span></label></div>
                         <div class="mc-option-item"><input type="radio" name="q1.1" value="c" id="q1.1c"><label for="q1.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) In a museum</span></label></div>
                     </div>
+                    <button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button>
                 </div>
                 <div class="mc-question" data-question-id="1.2" data-correct-answer="a">
                     <p class="mc-question-text">2. What is the conversation about?</p>
@@ -264,6 +270,7 @@
                         <div class="mc-option-item"><input type="radio" name="q1.2" value="b" id="q1.2b"><label for="q1.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Saying goodbye</span></label></div>
                         <div class="mc-option-item"><input type="radio" name="q1.2" value="c" id="q1.2c"><label for="q1.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Asking for an address</span></label></div>
                     </div>
+                    <button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button>
                 </div>
 
                 <div class="activity-card">
@@ -284,6 +291,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <button class="reset-btn" onclick="resetTableMatrix(this)"><i class="fa-solid fa-rotate-left"></i> Reset Table</button>
                 </div>
             </section>
 
@@ -300,9 +308,9 @@
                     <p>Best,<br>Ahmed</p>
                 </div>
 
-                <div class="mc-question" data-question-id="3.1" data-correct-answer="c"><p class="mc-question-text">1. Who is the email for?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.1" value="a" id="q3.1a"><label for="q3.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Ahmed</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="b" id="q3.1b"><label for="q3.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) A manager</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="c" id="q3.1c"><label for="q3.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Layla</span></label></div></div></div>
-                <div class="mc-question" data-question-id="3.2" data-correct-answer="b"><p class="mc-question-text">2. What is Ahmed's job?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.2" value="a" id="q3.2a"><label for="q3.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) He is a new employee.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="b" id="q3.2b"><label for="q3.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) He is a manager.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="c" id="q3.2c"><label for="q3.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) He is a student.</span></label></div></div></div>
-                 <div class="mc-question" data-question-id="3.3" data-correct-answer="b"><p class="mc-question-text">3. Where does Ahmed live?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.3" value="a" id="q3.3a"><label for="q3.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Nablus</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="b" id="q3.3b"><label for="q3.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Ramallah</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="c" id="q3.3c"><label for="q3.3c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Bank of Palestine</span></label></div></div></div>
+                <div class="mc-question" data-question-id="3.1" data-correct-answer="c"><p class="mc-question-text">1. Who is the email for?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.1" value="a" id="q3.1a"><label for="q3.1a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Ahmed</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="b" id="q3.1b"><label for="q3.1b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) A manager</span></label></div><div class="mc-option-item"><input type="radio" name="q3.1" value="c" id="q3.1c"><label for="q3.1c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Layla</span></label></div></div><button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button></div>
+                <div class="mc-question" data-question-id="3.2" data-correct-answer="b"><p class="mc-question-text">2. What is Ahmed's job?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.2" value="a" id="q3.2a"><label for="q3.2a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) He is a new employee.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="b" id="q3.2b"><label for="q3.2b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) He is a manager.</span></label></div><div class="mc-option-item"><input type="radio" name="q3.2" value="c" id="q3.2c"><label for="q3.2c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) He is a student.</span></label></div></div><button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button></div>
+                 <div class="mc-question" data-question-id="3.3" data-correct-answer="b"><p class="mc-question-text">3. Where does Ahmed live?</p><div class="mc-options-container"><div class="mc-option-item"><input type="radio" name="q3.3" value="a" id="q3.3a"><label for="q3.3a" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">a) Nablus</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="b" id="q3.3b"><label for="q3.3b" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">b) Ramallah</span></label></div><div class="mc-option-item"><input type="radio" name="q3.3" value="c" id="q3.3c"><label for="q3.3c" class="mc-option-label"><span class="option-control"></span><span class="mc-option-text">c) Bank of Palestine</span></label></div></div><button class="reset-btn" onclick="resetMCQuestion(this)"><i class="fa-solid fa-rotate-left"></i> Reset Answer</button></div>
                 
                 <div class="activity-card" data-activity-type="matching" data-total-pairs="3">
                     <h3>Activity 4: Language Functions</h3>
@@ -311,6 +319,7 @@
                         <div class="matching-column"><h4>Column A (Phrase)</h4><ul><li data-match-id="1">1. Hi Layla,</li><li data-match-id="2">2. My name is Ahmed.</li><li data-match-id="3">3. See you tomorrow.</li></ul></div>
                         <div class="matching-column"><h4>Column B (Function)</h4><ul><li data-match-id="2">a) Giving information</li><li data-match-id="3">b) Saying goodbye</li><li data-match-id="1">c) Greeting</li></ul></div>
                     </div>
+                    <button class="reset-btn" onclick="resetMatching(this)"><i class="fa-solid fa-rotate-left"></i> Reset Matching</button>
                 </div>
             </section>
 
@@ -323,6 +332,7 @@
                         <div class="matching-column"><h4>Column A (Job)</h4><ul><li data-match-id="1">1. a student</li><li data-match-id="2">2. a doctor</li><li data-match-id="3">3. an engineer</li><li data-match-id="4">4. a teacher</li></ul></div>
                         <div class="matching-column"><h4>Column B (Description)</h4><ul><li data-match-id="2">a) works with sick people.</li><li data-match-id="4">b) helps people learn.</li><li data-match-id="1">c) studies at a university.</li><li data-match-id="3">d) works with buildings and machines.</li></ul></div>
                     </div>
+                    <button class="reset-btn" onclick="resetMatching(this)"><i class="fa-solid fa-rotate-left"></i> Reset Matching</button>
                 </div>
                 <div class="activity-card" data-activity-type="classify">
                     <h3>Activity 6: Word Groups</h3>
@@ -337,6 +347,7 @@
                             <div class="drop-zone" data-category="Leave-takings"><h4>Leave-takings</h4></div>
                         </div>
                     </div>
+                    <button class="reset-btn" onclick="resetClassification(this)"><i class="fa-solid fa-rotate-left"></i> Reset Classification</button>
                 </div>
             </section>
 
@@ -354,6 +365,7 @@
                     <div class="dropdown-question" data-correct-answer="are">7. A: Where <select name="q8.2"><option value="">--</option><option>are</option><option>do</option></select> you from? B: I'm from Gaza.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
                     <div class="dropdown-question" data-correct-answer="do">8. A: What <select name="q8.3"><option value="">--</option><option>do</option><option>is</option></select> you do? B: I'm a doctor.</div><hr style="border:0; border-top:1px solid var(--border-sage); margin: var(--space-4) 0;">
                     <div class="dropdown-question" data-correct-answer="do">9. A: Where <select name="q8.4"><option value="">--</option><option>do</option><option>are</option></select> you live? B: I live in Jericho.</div>
+                    <button class="reset-btn" onclick="resetDropdowns(this)"><i class="fa-solid fa-rotate-left"></i> Reset All Answers</button>
                 </div>
             </section>
 
@@ -365,13 +377,13 @@
     </div>
 
     <script>
+    let assessmentSubmitted = false; // Global variable for reset functions
     (function() {
         'use strict';
         const DURATION = 60 * 60;
         let timeRemaining = DURATION;
         let timerInterval = null;
         let studentId = '';
-        let assessmentSubmitted = false;
         
         // ============================================================================================
         // IMPORTANT: PASTE YOUR WEB APP URL FROM GOOGLE APPS SCRIPT HERE
@@ -582,6 +594,75 @@
             });
         }
     })();
+
+    // Reset functions for activities
+    function resetMCQuestion(button) {
+        if (assessmentSubmitted) return;
+        const question = button.closest('.mc-question');
+        const inputs = question.querySelectorAll('input[type="radio"]');
+        const labels = question.querySelectorAll('.mc-option-label');
+
+        inputs.forEach(input => {
+            input.checked = false;
+            input.disabled = false;
+        });
+        labels.forEach(label => {
+            label.classList.remove('locked');
+        });
+    }
+
+    function resetTableMatrix(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const buttons = card.querySelectorAll('.options-cell button');
+
+        buttons.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('selected');
+        });
+    }
+
+    function resetMatching(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const items = card.querySelectorAll('.matching-column li');
+
+        items.forEach(item => {
+            item.classList.remove('selected');
+            item.style.pointerEvents = '';
+            delete item.dataset.userMatch;
+            // Remove all matched-pair classes
+            for (let i = 1; i <= 10; i++) {
+                item.classList.remove(`matched-pair-${i}`);
+            }
+        });
+
+        // Reset match counter
+        card.dataset.matchCounter = 1;
+    }
+
+    function resetClassification(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const sourceWords = card.querySelector('#source-words');
+        const tokens = card.querySelectorAll('.word-token');
+
+        tokens.forEach(token => {
+            token.classList.remove('selected');
+            sourceWords.appendChild(token);
+        });
+    }
+
+    function resetDropdowns(button) {
+        if (assessmentSubmitted) return;
+        const card = button.closest('.activity-card');
+        const selects = card.querySelectorAll('select');
+
+        selects.forEach(select => {
+            select.value = '';
+            select.disabled = false;
+        });
+    }
     </script>
 </body>
 </html>
