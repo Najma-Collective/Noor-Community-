@@ -43,6 +43,8 @@
         .mc-question, .activity-card { padding: clamp(1.25rem, 4vw, 1.75rem); border-radius: var(--radius); border: 1px solid var(--border-sage); background: linear-gradient(180deg, #fff, color-mix(in srgb, #fff 90%, var(--warm-cream) 10%)); box-shadow: var(--shadow-1); margin-bottom: var(--space-6); }
         .mc-question-text, .activity-card h3 { font-weight: 700; font-size: var(--step-1); color: var(--forest-shadow); line-height: 1.45; margin: 0 0 var(--space-5); }
         .activity-card h3 { color: var(--primary-sage); margin-top: 0; padding-bottom: var(--space-2); font-size: var(--step-2); }
+        .reset-btn { background: transparent; color: var(--deep-forest); border: 1px solid var(--secondary-sage); box-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 700; }
+        .reset-btn:hover { background: var(--hover-sage); color: var(--ink); box-shadow: var(--shadow-1); }
         .mc-options-container { display: flex; flex-direction: column; gap: var(--space-3); }
         .mc-option-item input { display: none; }
         .mc-option-label { display: flex; align-items: center; gap: var(--space-3); cursor: pointer; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); background: var(--soft-white); transition: all var(--transition-std); }
@@ -279,6 +281,72 @@
                 }
             }, 1000);
         }
+
+        const matchedPairClasses = ['matched-pair-1','matched-pair-2','matched-pair-3','matched-pair-4','matched-pair-5'];
+
+        function resetContainer(container) {
+            if (assessmentSubmitted) return;
+
+            container.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+                const label = input.nextElementSibling;
+                if (label) label.classList.remove('feedback-correct', 'feedback-incorrect');
+            });
+
+            container.querySelectorAll('select').forEach(select => { select.value = ''; select.disabled = false; });
+            container.querySelectorAll('.grammar-input, textarea').forEach(field => { field.value = ''; field.disabled = false; field.classList.remove('feedback-correct', 'feedback-incorrect'); });
+
+            container.querySelectorAll('.table-matrix .options-cell').forEach(cell => {
+                cell.querySelectorAll('button').forEach(btn => { btn.disabled = false; btn.classList.remove('selected'); });
+            });
+
+            container.querySelectorAll('[data-activity-type="matching"]').forEach(activity => { activity.dataset.matchCounter = 1; });
+            container.querySelectorAll('.matching-column li').forEach(li => {
+                matchedPairClasses.forEach(cls => li.classList.remove(cls));
+                li.classList.remove('selected');
+                li.style.pointerEvents = '';
+                delete li.dataset.userMatch;
+            });
+
+            const sourceWords = document.getElementById('source-words');
+            if (sourceWords) {
+                container.querySelectorAll('.drop-zone .word-token').forEach(token => {
+                    token.classList.remove('selected');
+                    sourceWords.appendChild(token);
+                });
+                container.querySelectorAll('#source-words .word-token').forEach(token => token.classList.remove('selected'));
+            }
+        }
+
+        function injectResetButtons() {
+            document.querySelectorAll('.activity-card').forEach(card => {
+                if (card.querySelector('.reset-btn')) return;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'activity-btn reset-btn';
+                btn.textContent = 'Reset Activity';
+                btn.addEventListener('click', () => resetContainer(card));
+                card.appendChild(btn);
+            });
+
+            document.querySelectorAll('.assessment-section').forEach(section => {
+                const hasStandaloneQuestions = Array.from(section.querySelectorAll('.mc-question')).some(q => !q.closest('.activity-card'));
+                if (!hasStandaloneQuestions) return;
+                if (section.querySelector('.section-reset-btn')) return;
+                const wrapper = document.createElement('div');
+                wrapper.style.textAlign = 'right';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'activity-btn reset-btn section-reset-btn';
+                btn.textContent = 'Reset Section';
+                btn.addEventListener('click', () => resetContainer(section));
+                wrapper.appendChild(btn);
+                section.appendChild(wrapper);
+            });
+        }
+
+        injectResetButtons();
 
         submitBtn.addEventListener('click', () => handleSubmission(false));
         

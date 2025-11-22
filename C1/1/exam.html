@@ -111,6 +111,9 @@
         .activity-btn:focus-visible { outline: none; box-shadow: var(--ring), var(--shadow-2); transform: scale(1.02); }
         .activity-btn:disabled { background: var(--tertiary-sage); border-color: color-mix(in srgb, var(--tertiary-sage) 80%, #fff 20%); color: color-mix(in srgb, #fff 85%, var(--soft-white) 15%); cursor: not-allowed; opacity: 0.85; transform: none; box-shadow: none; }
 
+        .reset-btn { background: transparent; color: var(--deep-forest); border: 1px solid var(--secondary-sage); box-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 700; }
+        .reset-btn:hover { background: var(--hover-sage); color: var(--ink); box-shadow: var(--shadow-1); }
+
         /* -------------------------------
            Multiple Choice Question Styles
         ----------------------------------*/
@@ -504,23 +507,60 @@
             }, 1000);
         }
 
-        // Step 3: Question Locking Logic
-        document.querySelectorAll('.mc-options-container input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', e => {
-                const container = e.target.closest('.mc-options-container');
-                container.querySelectorAll('input[type="radio"]').forEach(input => {
-                    input.disabled = true;
-                    input.nextElementSibling.classList.add('locked');
-                });
+        const matchedPairClasses = ['matched-pair-1','matched-pair-2','matched-pair-3','matched-pair-4','matched-pair-5'];
+
+        function resetContainer(container) {
+            if (assessmentSubmitted) return;
+
+            container.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+                const label = input.nextElementSibling;
+                if (label) label.classList.remove('locked', 'feedback-correct', 'feedback-incorrect');
             });
-        });
-        
-        document.querySelectorAll('.dropdown-question select').forEach(select => {
-            select.addEventListener('change', e => {
-                // Only lock the specific select that was changed, not all selects in the parent
-                e.target.disabled = true;
+
+            container.querySelectorAll('select').forEach(select => { select.value = ''; select.disabled = false; });
+            container.querySelectorAll('.grammar-input, textarea').forEach(field => { field.value = ''; field.disabled = false; field.classList.remove('feedback-correct', 'feedback-incorrect'); });
+
+            container.querySelectorAll('[data-activity-type="matching"]').forEach(activity => { activity.dataset.matchCounter = 1; });
+            container.querySelectorAll('.matching-column li').forEach(li => {
+                li.classList.remove('selected');
+                matchedPairClasses.forEach(cls => li.classList.remove(cls));
+                li.style.pointerEvents = '';
+                delete li.dataset.userMatch;
             });
-        });
+
+            container.querySelectorAll('.mc-option-label').forEach(label => label.classList.remove('feedback-correct', 'feedback-incorrect'));
+        }
+
+        function injectResetButtons() {
+            document.querySelectorAll('.activity-card').forEach(card => {
+                if (card.querySelector('.reset-btn')) return;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'activity-btn reset-btn';
+                btn.textContent = 'Reset Activity';
+                btn.addEventListener('click', () => resetContainer(card));
+                card.appendChild(btn);
+            });
+
+            document.querySelectorAll('.assessment-section').forEach(section => {
+                const hasStandaloneQuestions = Array.from(section.querySelectorAll('.mc-question')).some(q => !q.closest('.activity-card'));
+                if (!hasStandaloneQuestions) return;
+                if (section.querySelector('.section-reset-btn')) return;
+                const wrapper = document.createElement('div');
+                wrapper.style.textAlign = 'right';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'activity-btn reset-btn section-reset-btn';
+                btn.textContent = 'Reset Section';
+                btn.addEventListener('click', () => resetContainer(section));
+                wrapper.appendChild(btn);
+                section.appendChild(wrapper);
+            });
+        }
+
+        injectResetButtons();
 
         // Matching Activity Logic
         let selectedMatchItem = null;
