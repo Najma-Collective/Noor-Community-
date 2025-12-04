@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2.1: The Soap Makers of Nablus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+          --primary-sage: #7a8471; --secondary-sage: #9caf88; --tertiary-sage: #b8c5a6; --warm-cream: #f8f6f0;
+          --soft-white: #fefcf7; --forest-shadow: #5a6b52; --ink: #2f3a2b; --ink-muted: #5a6b52;
+          --border-sage: rgba(122, 132, 113, 0.2); --hover-sage: rgba(156, 175, 136, 0.15); --deep-forest: #3e4a3a;
+          --font-display: "Questrial", system-ui, sans-serif; --font-body: "Nunito", system-ui, sans-serif;
+          --step--1: clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem); --step-0: clamp(1rem, 0.94rem + 0.28vw, 1.1rem);
+          --step-1: clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem); --step-2: clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem);
+          --step-3: clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem); --step-4: clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem);
+          --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-7: 2rem;
+          --radius-sm: 10px; --radius: 16px; --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+          --transition-std: 250ms cubic-bezier(.2,.8,.2,1); --container-max: clamp(320px, 92vw, 940px);
+          --container-padding: clamp(1.25rem, 5vw, 2rem);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--ink); background: var(--warm-cream); }
+        .container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); }
+        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); text-align: center; margin: 0 0 var(--space-3); }
+        h2 { font-family: var(--font-display); font-size: var(--step-3); color: var(--forest-shadow); margin: var(--space-7) 0 var(--space-4); }
+        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-3); }
+        .activity-btn { padding: 0.75rem 1.75rem; border-radius: 999px; border: 1px solid var(--primary-sage); background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest)); color: #fff; font-weight: 700; cursor: pointer; transition: all var(--transition-std); box-shadow: var(--shadow-1); }
+        .activity-btn:hover { transform: scale(1.02); }
+        .reset-btn { background: transparent; color: var(--deep-forest); border: 1px solid var(--secondary-sage); }
+        .hero-section { background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; position: relative; }
+        .hero-overlay { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.4); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-section h1 { color: white; }
+        .pills { display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; }
+        .pill { padding: var(--space-2) var(--space-4); border-radius: 999px; font-size: var(--step--1); font-weight: 600; background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .activity-card { background: var(--soft-white); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); }
+        .activity-card h3 { color: var(--primary-sage); margin-top: 0; border-bottom: 2px solid var(--hover-sage); padding-bottom: var(--space-2); }
+        .instructions { color: var(--ink-muted); font-style: italic; margin-bottom: var(--space-5); }
+        .reading-passage { background-color: var(--warm-cream); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--border-sage); margin-bottom: var(--space-6); line-height: 1.8; }
+        .process-step { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); margin: var(--space-2) 0; background: white; border-radius: var(--radius-sm); border: 1px solid var(--border-sage); }
+        .step-number { width: 50px; height: 50px; background: var(--primary-sage); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--step-1); flex-shrink: 0; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th { background: var(--primary-sage); color: white; padding: var(--space-3); text-align: left; }
+        .comparison-table td { padding: var(--space-3); border: 1px solid var(--border-sage); }
+        .comparison-table input { width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; }
+        .sentence-reorder { padding: var(--space-3); background: white; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin: var(--space-2) 0; }
+        .sentence-reorder input { width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2); }
+        .review-box { background: #f0f8ff; padding: var(--space-5); border-radius: var(--radius); border: 2px solid #4682b4; margin: var(--space-4) 0; }
+        .review-stars { color: gold; font-size: var(--step-2); }
+        #submission-feedback { display: none; padding: var(--space-6); margin-top: var(--space-7); border-radius: var(--radius); text-align: center; }
+        #submission-feedback.success { background-color: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <header class="hero-section" style="background-image: url('https://images.pexels.com/photos/4207892/pexels-photo-4207892.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');">
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <h1>The Soap Makers of Nablus</h1>
+            <div class="pills">
+                <span class="pill">Level: A2</span>
+                <span class="pill">Grammar: Comparative & Superlative Adjectives</span>
+                <span class="pill">Duration: 60 Minutes</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+        <section>
+            <h2>Part 1: Reading - The Factory Infographic</h2>
+            <p class="instructions">Read about the traditional soap-making process in Nablus.</p>
+            <div class="reading-passage">
+                <h3 style="text-align: center; color: var(--primary-sage);"><i class="fas fa-soap"></i> Nabulsi Soap: The Green Gold</h3>
+                <p>Nablus soap is <strong>older than</strong> most soaps in the world. It has been made since the 10th century. The ingredients are simple: pure olive oil, water, and soda.</p>
+
+                <h4 style="color: var(--forest-shadow);">The Process vs. Modern Soap</h4>
+                <p><strong>Cooking:</strong> The mixture is cooked in large vats. This is <strong>the hottest</strong> part of the process.</p>
+                <p><strong>Drying:</strong> The liquid soap is spread on the stone floor. It is <strong>harder than</strong> liquid soap, but it takes time to dry.</p>
+                <p><strong>The Tanana:</strong> Workers stack the soap in towers called Tanana. These towers are <strong>the highest</strong> structures in the factory. They allow air to circulate.</p>
+                <p><strong>Packaging:</strong> The soap is wrapped by hand. This is <strong>slower than</strong> machine packing, but it protects the soap better.</p>
+                <p>Nabulsi soap is <strong>the best</strong> for sensitive skin because it has no chemicals. It is slightly <strong>more expensive than</strong> supermarket soap, but it lasts longer.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 2: Ordering - Soap Making Steps</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Put the steps in the correct order (1-5).</p>
+                <div class="process-step">
+                    <input type="number" id="order1" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
+                    <span>Stacking into Tanana towers</span>
+                </div>
+                <div class="process-step">
+                    <input type="number" id="order2" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
+                    <span>Wrapping by hand</span>
+                </div>
+                <div class="process-step">
+                    <input type="number" id="order3" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
+                    <span>Cooking in large vats</span>
+                </div>
+                <div class="process-step">
+                    <input type="number" id="order4" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
+                    <span>Spreading on the floor</span>
+                </div>
+                <div class="process-step">
+                    <input type="number" id="order5" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
+                    <span>Cutting and stamping</span>
+                </div>
+                <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 3: Grammar Noticing - Table Completion</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Complete the table with the missing forms.</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Adjective</th>
+                            <th>Comparative (2 things)</th>
+                            <th>Superlative (3+ things)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>old</td>
+                            <td><input type="text" id="comp1" placeholder="older"></td>
+                            <td><input type="text" id="super1" placeholder="the oldest"></td>
+                        </tr>
+                        <tr>
+                            <td>hot</td>
+                            <td><input type="text" id="comp2" placeholder="..."></td>
+                            <td>the hottest</td>
+                        </tr>
+                        <tr>
+                            <td>slow</td>
+                            <td>slower</td>
+                            <td><input type="text" id="super3" placeholder="..."></td>
+                        </tr>
+                        <tr>
+                            <td>good</td>
+                            <td><input type="text" id="comp4" placeholder="..."></td>
+                            <td>the best</td>
+                        </tr>
+                        <tr>
+                            <td>expensive</td>
+                            <td><input type="text" id="comp5" placeholder="more expensive"></td>
+                            <td><input type="text" id="super5" placeholder="..."></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: var(--space-5); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
+                    <h4>CCQs - Concept Checking Questions</h4>
+                    <p><strong>Q1:</strong> "Nabulsi soap is older than most soaps." Are we comparing to one soap or many?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Many soaps</p>
+                    <p><strong>Q2:</strong> "The Tanana are the highest structures." Is there any structure higher in the factory?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: No</p>
+                    <p><strong>Q3:</strong> Why do we say "more expensive" and not "expensiver"?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Because it's a long word (3 syllables)</p>
+                </div>
+                <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 4: Unscramble Sentences</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Rearrange the words to make correct sentences.</p>
+                <div class="sentence-reorder">
+                    <p><strong>1.</strong> Ramallah / is / than / busier / Jericho /.</p>
+                    <input type="text" id="unscramble1" placeholder="Write the correct sentence">
+                </div>
+                <div class="sentence-reorder">
+                    <p><strong>2.</strong> soap / The / is / factory / building / oldest / the / city / in /.</p>
+                    <input type="text" id="unscramble2" placeholder="Write the correct sentence">
+                </div>
+                <div class="sentence-reorder">
+                    <p><strong>3.</strong> Olive / oil / is / corn / oil / than / healthier /.</p>
+                    <input type="text" id="unscramble3" placeholder="Write the correct sentence">
+                </div>
+                <div class="sentence-reorder">
+                    <p><strong>4.</strong> Winter / is / the / season / coldest /.</p>
+                    <input type="text" id="unscramble4" placeholder="Write the correct sentence">
+                </div>
+                <div class="sentence-reorder">
+                    <p><strong>5.</strong> Hebron / is / than / larger / Bethlehem /.</p>
+                    <input type="text" id="unscramble5" placeholder="Write the correct sentence">
+                </div>
+                <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>Part 5: Variant Text - Customer Review</h2>
+            <p class="instructions">Read this online review of Nabulsi soap.</p>
+            <div class="review-box">
+                <div class="review-stars">★★★★★</div>
+                <p><strong>User:</strong> Sarah99</p>
+                <p>"I bought this soap last month. It is <strong>much gentler</strong> on my skin than the chemical brands I used to buy. The smell is <strong>stronger</strong> when you first open it, but it becomes <strong>more subtle</strong> after you wash. It is <strong>the most authentic</strong> product I have found. The only problem is that shipping is <strong>slower than</strong> Amazon."</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 6: Creative & Deductive Activities</h3>
+                <div style="margin-bottom: var(--space-5);">
+                    <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);">1. Specific: What is the user's opinion on the smell?</label>
+                    <input type="text" id="creative1" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px;" placeholder="Your answer">
+                </div>
+                <div style="margin-bottom: var(--space-5);">
+                    <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);">2. Deductive: Why does the user mention Amazon?</label>
+                    <input type="text" id="creative2" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px;" placeholder="Your answer">
+                </div>
+                <div style="margin-bottom: var(--space-5);">
+                    <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);">3. Creative: Compare two cities in Palestine or two of your favorite foods. Write 3 sentences using comparatives and 1 sentence using a superlative.</label>
+                    <textarea id="creative3" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 120px;" placeholder="Example: Ramallah is bigger than Bethlehem. It is the most beautiful city."></textarea>
+                </div>
+                <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
+            </div>
+        </section>
+
+        <div style="text-align: center; margin-top: var(--space-7);">
+            <button class="activity-btn" onclick="submitWorksheet()">Complete Worksheet</button>
+        </div>
+        <div id="submission-feedback"></div>
+    </main>
+
+    <script>
+        function resetActivity(part) {
+            if (part === 'part2') {
+                for (let i = 1; i <= 5; i++) document.getElementById('order' + i).value = '';
+            } else if (part === 'part3') {
+                ['comp1', 'super1', 'comp2', 'super3', 'comp4', 'comp5', 'super5'].forEach(id => {
+                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                });
+            } else if (part === 'part4') {
+                for (let i = 1; i <= 5; i++) document.getElementById('unscramble' + i).value = '';
+            } else if (part === 'part6') {
+                ['creative1', 'creative2', 'creative3'].forEach(id => document.getElementById(id).value = '');
+            }
+        }
+        function submitWorksheet() {
+            const feedback = document.getElementById('submission-feedback');
+            feedback.style.display = 'block';
+            feedback.classList.add('success');
+            feedback.innerHTML = '<h2>Worksheet Complete!</h2><p>Well done practicing <strong>Comparative and Superlative Adjectives</strong>!</p>';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
