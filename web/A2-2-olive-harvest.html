@@ -127,6 +127,7 @@
                     </div>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -155,14 +156,34 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> "I woke up early." Is this a complete action or was it still happening?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Complete action</p>
-                    <p><strong>Q2:</strong> "The sun was rising." Was this finished or still in progress when they arrived?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Still in progress</p>
-                    <p><strong>Q3:</strong> Can we use Past Continuous for short, completed actions?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: No, we use Past Simple</p>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> Is "I woke up early" a complete action?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> Was "The sun was rising" still in progress when they arrived?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Do we use Past Continuous for short, completed actions?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -191,6 +212,7 @@
                     6. What <input type="text" id="gap6" style="width: 200px;"> you <input type="text" id="gap6b" style="width: 180px;"> (do) at 3 PM yesterday?
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -223,6 +245,7 @@
                     <textarea id="creative3" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 120px;" placeholder="Your story"></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -237,6 +260,34 @@
         let selectedMatchItem = null;
         let tfSelections = {};
 
+        // Utility Functions
+        function normalizeAnswer(str) {
+            return str.toString().toLowerCase().trim()
+                .replace(/[.,!?;:]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/^(the|a|an)\s+/i, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(answer => normalizeAnswer(answer) === normalized);
+        }
+
+        function setFeedback(element, isCorrect) {
+            if (isCorrect) {
+                element.style.backgroundColor = '#d4edda';
+                element.style.border = '2px solid #28a745';
+            } else {
+                element.style.backgroundColor = '#f8d7da';
+                element.style.border = '2px solid #dc3545';
+            }
+        }
+
+        function clearFeedback(element) {
+            element.style.backgroundColor = '';
+            element.style.border = '';
+        }
+
         function selectTF(button, id, value) {
             const parent = button.parentElement;
             parent.querySelectorAll('button').forEach(btn => {
@@ -244,6 +295,20 @@
             });
             button.classList.add(value ? 'selected-true' : 'selected-false');
             tfSelections[id] = value;
+        }
+
+        // Part 2: True/False Check
+        function checkPart2() {
+            const answers = { tf1: false, tf2: false, tf3: true, tf4: false, tf5: true };
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const isCorrect = tfSelections[key] === answers[key];
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!\n\nCorrect answers:\n1. False (started in the morning)\n2. False (sons prepared after arrival)\n3. True\n4. False (twenty sacks)\n5. True`);
         }
 
         function selectMatch(element) {
@@ -271,6 +336,86 @@
             }
         }
 
+        // Part 3: Matching Check
+        function checkPart3() {
+            const matchedItems = document.querySelectorAll('.matching-item.matched').length;
+            const total = 4; // 4 pairs
+            const correct = matchedItems / 2; // Each pair counts as 2 matched items
+
+            alert(`Part 3 Matching: You matched ${correct} out of ${total} pairs correctly!`);
+        }
+
+        function checkCCQ() {
+            const answers = { ccq1: 'yes', ccq2: 'yes', ccq3: 'no' };
+            let correct = 0;
+            let total = 3;
+
+            for (let key in answers) {
+                const select = document.getElementById(key);
+                const isCorrect = select.value === answers[key];
+                setFeedback(select, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!\n\nQ1: Yes (complete action)\nQ2: Yes (still in progress)\nQ3: No (we use Past Simple)`);
+        }
+
+        // Part 4: Gapfill Check
+        function checkPart4() {
+            const answers = {
+                gap1: ['were picking'],
+                gap2: ['arrived'],
+                gap3: ['told'],
+                gap3b: ['were working'],
+                gap4: ['were playing'],
+                gap5: ['saw'],
+                gap5b: ['was resting'],
+                gap6: ['were'],
+                gap6b: ['doing']
+            };
+
+            let correct = 0;
+            let total = 9;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                if (input) {
+                    const isCorrect = checkAnswer(input.value, answers[key]);
+                    setFeedback(input, isCorrect);
+                    if (isCorrect) correct++;
+                }
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative Activities
+        function checkPart6() {
+            const creative1 = document.getElementById('creative1').value.trim();
+            const creative2 = document.getElementById('creative2').value.trim();
+            const creative3 = document.getElementById('creative3').value.trim();
+
+            let correct = 0;
+            let total = 3;
+
+            // Q1: Three hours
+            const q1Correct = checkAnswer(creative1, ['three hours', '3 hours', 'for three hours']);
+            setFeedback(document.getElementById('creative1'), q1Correct);
+            if (q1Correct) correct++;
+
+            // Q2: To get more help/volunteers
+            const q2Correct = checkAnswer(creative2, ['to get more help', 'to organize more volunteers', 'to call more volunteers', 'she needed more help']);
+            setFeedback(document.getElementById('creative2'), q2Correct);
+            if (q2Correct) correct++;
+
+            // Q3: Creative - check if substantial
+            const q3Correct = creative3.length > 80;
+            setFeedback(document.getElementById('creative3'), q3Correct);
+            if (q3Correct) correct++;
+
+            alert(`Part 6: You got ${correct} out of ${total} correct!\n\nQ1: Three hours\nQ2: To get more volunteers/help\nQ3: Creative answer accepted if substantial`);
+        }
+
         function resetActivity(part) {
             if (part === 'part2') {
                 document.querySelectorAll('.tf-buttons button').forEach(btn => {
@@ -283,13 +428,28 @@
                     item.style.background = '';
                     item.style.pointerEvents = '';
                 });
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
+                });
                 selectedMatchItem = null;
             } else if (part === 'part4') {
                 ['gap1', 'gap2', 'gap3', 'gap3b', 'gap4', 'gap5', 'gap5b', 'gap6', 'gap6b'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
                 });
             } else if (part === 'part6') {
-                ['creative1', 'creative2', 'creative3'].forEach(id => document.getElementById(id).value = '');
+                ['creative1', 'creative2', 'creative3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
+                });
             }
         }
 

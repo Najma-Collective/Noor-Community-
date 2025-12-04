@@ -109,6 +109,7 @@
                     <input type="number" id="order5" min="1" max="5" style="width: 60px; padding: 0.5rem;" placeholder="#">
                     <span>Cutting and stamping</span>
                 </div>
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -154,14 +155,34 @@
                     </tbody>
                 </table>
                 <div style="margin-top: var(--space-5); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
-                    <h4>CCQs - Concept Checking Questions</h4>
-                    <p><strong>Q1:</strong> "Nabulsi soap is older than most soaps." Are we comparing to one soap or many?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Many soaps</p>
-                    <p><strong>Q2:</strong> "The Tanana are the highest structures." Is there any structure higher in the factory?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: No</p>
-                    <p><strong>Q3:</strong> Why do we say "more expensive" and not "expensiver"?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Because it's a long word (3 syllables)</p>
+                    <h4>Concept Checking Questions (CCQs)</h4>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> Are we comparing Nabulsi soap to many soaps?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> Is there any structure higher than the Tanana in the factory?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Do we say "more expensive" because it's a long word?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -190,6 +211,7 @@
                     <p><strong>5.</strong> Hebron / is / than / larger / Bethlehem /.</p>
                     <input type="text" id="unscramble5" placeholder="Write the correct sentence">
                 </div>
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -219,6 +241,7 @@
                     <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);">3. Creative: Compare two cities in Palestine or two of your favorite foods. Write 3 sentences using comparatives and 1 sentence using a superlative.</label>
                     <textarea id="creative3" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 120px;" placeholder="Example: Ramallah is bigger than Bethlehem. It is the most beautiful city."></textarea>
                 </div>
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -230,19 +253,173 @@
     </main>
 
     <script>
-        function resetActivity(part) {
-            if (part === 'part2') {
-                for (let i = 1; i <= 5; i++) document.getElementById('order' + i).value = '';
-            } else if (part === 'part3') {
-                ['comp1', 'super1', 'comp2', 'super3', 'comp4', 'comp5', 'super5'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
-                });
-            } else if (part === 'part4') {
-                for (let i = 1; i <= 5; i++) document.getElementById('unscramble' + i).value = '';
-            } else if (part === 'part6') {
-                ['creative1', 'creative2', 'creative3'].forEach(id => document.getElementById(id).value = '');
+        // Utility Functions
+        function normalizeAnswer(str) {
+            return str.toString().toLowerCase().trim()
+                .replace(/[.,!?;:]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/^(the|a|an)\s+/i, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(answer => normalizeAnswer(answer) === normalized);
+        }
+
+        function setFeedback(element, isCorrect) {
+            if (isCorrect) {
+                element.style.backgroundColor = '#d4edda';
+                element.style.border = '2px solid #28a745';
+            } else {
+                element.style.backgroundColor = '#f8d7da';
+                element.style.border = '2px solid #dc3545';
             }
         }
+
+        function clearFeedback(element) {
+            element.style.backgroundColor = '';
+            element.style.border = '';
+        }
+
+        // Part 2: Ordering Check
+        function checkPart2() {
+            const answers = { order1: '4', order2: '5', order3: '1', order4: '2', order5: '3' };
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                const userAnswer = input.value.trim();
+                const isCorrect = userAnswer === answers[key];
+                setFeedback(input, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!\n\nCorrect order:\n1. Cooking in large vats\n2. Spreading on the floor\n3. Cutting and stamping\n4. Stacking into Tanana towers\n5. Wrapping by hand`);
+        }
+
+        // Part 3: Grammar Table + CCQ Check
+        function checkPart3() {
+            const answers = {
+                comp1: ['older'],
+                super1: ['the oldest', 'oldest'],
+                comp2: ['hotter'],
+                super3: ['the slowest', 'slowest'],
+                comp4: ['better'],
+                comp5: ['more expensive'],
+                super5: ['the most expensive', 'most expensive']
+            };
+
+            let correct = 0;
+            let total = 7;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                if (input) {
+                    const isCorrect = checkAnswer(input.value, answers[key]);
+                    setFeedback(input, isCorrect);
+                    if (isCorrect) correct++;
+                }
+            }
+
+            alert(`Part 3 Grammar: You got ${correct} out of ${total} correct!`);
+        }
+
+        function checkCCQ() {
+            const answers = { ccq1: 'yes', ccq2: 'no', ccq3: 'yes' };
+            let correct = 0;
+            let total = 3;
+
+            for (let key in answers) {
+                const select = document.getElementById(key);
+                const isCorrect = select.value === answers[key];
+                setFeedback(select, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!\n\nQ1: Yes (many soaps)\nQ2: No (Tanana are the highest)\nQ3: Yes (long word = more + adjective)`);
+        }
+
+        // Part 4: Unscramble Sentences
+        function checkPart4() {
+            const answers = {
+                unscramble1: ['Ramallah is busier than Jericho', 'Jericho is busier than Ramallah'],
+                unscramble2: ['The soap factory is the oldest building in the city', 'The factory is the oldest building in the city'],
+                unscramble3: ['Olive oil is healthier than corn oil'],
+                unscramble4: ['Winter is the coldest season'],
+                unscramble5: ['Hebron is larger than Bethlehem']
+            };
+
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                const isCorrect = checkAnswer(input.value, answers[key]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative Activities
+        function checkPart6() {
+            const creative1 = document.getElementById('creative1').value.trim();
+            const creative2 = document.getElementById('creative2').value.trim();
+            const creative3 = document.getElementById('creative3').value.trim();
+
+            let correct = 0;
+            let total = 3;
+
+            // Q1: Strong/stronger when first opened, more subtle after washing
+            const q1Correct = checkAnswer(creative1, ['stronger when you first open it', 'stronger', 'strong at first then more subtle', 'it is stronger then more subtle']);
+            setFeedback(document.getElementById('creative1'), q1Correct);
+            if (q1Correct) correct++;
+
+            // Q2: To compare shipping speed
+            const q2Correct = checkAnswer(creative2, ['to compare shipping speed', 'to show shipping is slower', 'comparison with shipping', 'shipping comparison']);
+            setFeedback(document.getElementById('creative2'), q2Correct);
+            if (q2Correct) correct++;
+
+            // Q3: Creative - just check if substantial
+            const q3Correct = creative3.length > 50;
+            setFeedback(document.getElementById('creative3'), q3Correct);
+            if (q3Correct) correct++;
+
+            alert(`Part 6: You got ${correct} out of ${total} correct!\n\nQ1: The smell is stronger when first opened, then becomes more subtle\nQ2: To compare shipping speed (Nabulsi soap vs Amazon)\nQ3: Creative answer accepted if substantial`);
+        }
+
+        function resetActivity(part) {
+            if (part === 'part2') {
+                for (let i = 1; i <= 5; i++) {
+                    const elem = document.getElementById('order' + i);
+                    elem.value = '';
+                    clearFeedback(elem);
+                }
+            } else if (part === 'part3') {
+                ['comp1', 'super1', 'comp2', 'super3', 'comp4', 'comp5', 'super5', 'ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
+                });
+            } else if (part === 'part4') {
+                for (let i = 1; i <= 5; i++) {
+                    const elem = document.getElementById('unscramble' + i);
+                    elem.value = '';
+                    clearFeedback(elem);
+                }
+            } else if (part === 'part6') {
+                ['creative1', 'creative2', 'creative3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
+                });
+            }
+        }
+
         function submitWorksheet() {
             const feedback = document.getElementById('submission-feedback');
             feedback.style.display = 'block';
