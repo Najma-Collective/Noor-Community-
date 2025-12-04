@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C1.1: Water Scarcity & Environmental Justice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+          --primary-sage: #7a8471; --secondary-sage: #9caf88; --tertiary-sage: #b8c5a6; --warm-cream: #f8f6f0;
+          --soft-white: #fefcf7; --forest-shadow: #5a6b52; --ink: #2f3a2b; --ink-muted: #5a6b52;
+          --border-sage: rgba(122, 132, 113, 0.2); --hover-sage: rgba(156, 175, 136, 0.15); --deep-forest: #3e4a3a;
+          --font-display: "Questrial", system-ui, sans-serif; --font-body: "Nunito", system-ui, sans-serif;
+          --step--1: clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem); --step-0: clamp(1rem, 0.94rem + 0.28vw, 1.1rem);
+          --step-1: clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem); --step-2: clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem);
+          --step-3: clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem); --step-4: clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem);
+          --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-7: 2rem;
+          --radius-sm: 10px; --radius: 16px; --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+          --transition-std: 250ms cubic-bezier(.2,.8,.2,1); --container-max: clamp(320px, 92vw, 940px);
+          --container-padding: clamp(1.25rem, 5vw, 2rem);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--ink); background: var(--warm-cream); }
+        .container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); }
+        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); text-align: center; margin: 0 0 var(--space-3); }
+        h2 { font-family: var(--font-display); font-size: var(--step-3); color: var(--forest-shadow); margin: var(--space-7) 0 var(--space-4); }
+        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-3); }
+        .activity-btn { padding: 0.75rem 1.75rem; border-radius: 999px; border: 1px solid var(--primary-sage); background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest)); color: #fff; font-weight: 700; cursor: pointer; transition: all var(--transition-std); box-shadow: var(--shadow-1); }
+        .activity-btn:hover { transform: scale(1.02); }
+        .reset-btn { background: transparent; color: var(--deep-forest); border: 1px solid var(--secondary-sage); }
+        .hero-section { background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; position: relative; }
+        .hero-overlay { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.5); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-section h1 { color: white; }
+        .pills { display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; }
+        .pill { padding: var(--space-2) var(--space-4); border-radius: 999px; font-size: var(--step--1); font-weight: 600; background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .activity-card { background: var(--soft-white); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); }
+        .activity-card h3 { color: var(--primary-sage); margin-top: 0; border-bottom: 2px solid var(--hover-sage); padding-bottom: var(--space-2); }
+        .instructions { color: var(--ink-muted); font-style: italic; margin-bottom: var(--space-5); }
+        .reading-passage { background-color: var(--warm-cream); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--border-sage); margin-bottom: var(--space-6); line-height: 1.8; }
+        .ngo-report { background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: var(--space-5); border-radius: var(--radius); border-left: 5px solid #1976d2; }
+        .question-box { margin-bottom: var(--space-5); padding: var(--space-4); background: white; border: 1px solid var(--border-sage); border-radius: var(--radius-sm); }
+        .question-box label { display: block; font-weight: 600; margin-bottom: var(--space-2); }
+        .question-box textarea { width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--step-0); min-height: 100px; resize: vertical; }
+        .scrambled-sentence { padding: var(--space-4); background: var(--secondary-sage); color: white; border-radius: var(--radius-sm); margin: var(--space-3) 0; font-weight: 600; }
+        .sentence-input { width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); margin-top: var(--space-2); }
+        .rewrite-exercise { padding: var(--space-4); background: white; border-left: 4px solid var(--primary-sage); border-radius: var(--radius-sm); margin: var(--space-3) 0; }
+        .op-ed { background: linear-gradient(135deg, #fff8e1, #ffecb3); padding: var(--space-5); border-radius: var(--radius); border: 2px solid #ffa726; }
+        .op-ed-author { font-style: italic; text-align: right; color: var(--ink-muted); margin-top: var(--space-4); }
+        #submission-feedback { display: none; padding: var(--space-6); margin-top: var(--space-7); border-radius: var(--radius); text-align: center; }
+        #submission-feedback.success { background-color: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <header class="hero-section" style="background-image: url('https://images.pexels.com/photos/2310641/pexels-photo-2310641.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');">
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <h1>Water Scarcity & Environmental Justice</h1>
+            <div class="pills">
+                <span class="pill">Level: C1</span>
+                <span class="pill">Grammar: Inversion for Emphasis</span>
+                <span class="pill">Duration: 75 Minutes</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+        <section>
+            <h2>Part 1: Reading - NGO Executive Summary</h2>
+            <p class="instructions">Read this report excerpt on water access in the occupied Palestinian territories.</p>
+            <div class="reading-passage">
+                <div class="ngo-report">
+                    <h3 style="margin-top: 0; color: #1976d2;"><i class="fas fa-tint"></i> Water Crisis in Palestine: Executive Summary 2024</h3>
+                    <p style="font-style: italic;">Palestinian Hydrology Group | Published March 2024</p>
+                </div>
+
+                <h4 style="color: var(--primary-sage);">Key Findings</h4>
+                <p><strong>Rarely</strong> has the international community witnessed such stark disparities in water access. In the West Bank, Palestinian per capita consumption averages 73 liters per day - well below the WHO minimum of 100 liters. <strong>Not only</strong> do Israeli settlers consume four times this amount, <strong>but they also</strong> control access to aquifers that lie beneath Palestinian land.</p>
+
+                <p><strong>Under no circumstances</strong> should water be weaponized, yet infrastructure is routinely targeted during military operations. In Gaza, the situation is even more dire. <strong>Scarcely</strong> had the 2014 conflict ended <strong>when</strong> humanitarian groups warned that 97% of the coastal aquifer was unfit for human consumption.</p>
+
+                <p><strong>Never before</strong> have we seen such systematic restrictions. Permits required for well-drilling are <strong>seldom</strong> granted to Palestinians. <strong>Only recently</strong> did international donors secure funding for a desalination plant in Gaza, yet fuel shortages continue to hamper operations.</p>
+
+                <p><strong>Not until</strong> water is recognized as a fundamental human right <strong>will</strong> equitable solutions emerge. <strong>Little</strong> did communities in the Jordan Valley anticipate that their springs would be diverted to settlements. <strong>No sooner</strong> had farmers planted crops <strong>than</strong> irrigation restrictions were imposed.</p>
+
+                <h4 style="color: var(--primary-sage);">Recommendations</h4>
+                <p><strong>Only through</strong> international pressure <strong>can</strong> accountability be achieved. <strong>Nowhere</strong> is the need for climate justice more evident than in Palestine. <strong>Hardly ever</strong> do mainstream media outlets cover this environmental catastrophe with the urgency it deserves.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 2: Open-Ended Analytical Questions</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Answer the following questions with detailed responses.</p>
+
+                <div class="question-box">
+                    <label>1. According to the report, what is the daily water consumption for Palestinians in the West Bank, and how does it compare to the WHO recommendation?</label>
+                    <textarea id="q1" placeholder="Your detailed answer..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>2. What percentage of Gaza's coastal aquifer is reported as unfit for human consumption, and when was this situation identified?</label>
+                    <textarea id="q2" placeholder="Your detailed answer..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>3. Explain the irony present in the phrase "Little did communities in the Jordan Valley anticipate that their springs would be diverted."</label>
+                    <textarea id="q3" placeholder="Your analysis..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>4. Why does the report use inversion structures (like "Rarely has..." and "Never before...")? What rhetorical effect do these create?</label>
+                    <textarea id="q4" placeholder="Your analysis..."></textarea>
+                </div>
+
+                <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 3: Grammar Noticing - Unscramble with Inversion</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Rearrange the words to create sentences with correct inversion structures.</p>
+
+                <div>
+                    <div class="scrambled-sentence">1. rarely / such / seen / have / we / injustice</div>
+                    <input type="text" class="sentence-input" id="unscramble1" placeholder="Write the correct sentence">
+                </div>
+
+                <div>
+                    <div class="scrambled-sentence">2. not only / the / crisis / environmental / is / it / an / but also / political / one</div>
+                    <input type="text" class="sentence-input" id="unscramble2" placeholder="Write the correct sentence">
+                </div>
+
+                <div>
+                    <div class="scrambled-sentence">3. under / circumstances / no / we / should / ignore / this / issue</div>
+                    <input type="text" class="sentence-input" id="unscramble3" placeholder="Write the correct sentence">
+                </div>
+
+                <div>
+                    <div class="scrambled-sentence">4. scarcely / the / ended / drought / had / when / restrictions / began / new</div>
+                    <input type="text" class="sentence-input" id="unscramble4" placeholder="Write the correct sentence">
+                </div>
+
+                <div>
+                    <div class="scrambled-sentence">5. never / have / before / conditions / so / been / dire</div>
+                    <input type="text" class="sentence-input" id="unscramble5" placeholder="Write the correct sentence">
+                </div>
+
+                <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
+                    <h4>Concept Checking Questions (CCQs)</h4>
+                    <p><strong>Q1:</strong> In inversion, what happens to the word order after negative adverbs like "rarely" or "never"?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: The auxiliary verb comes before the subject (e.g., "Rarely have we seen...")</p>
+                    <p><strong>Q2:</strong> Does inversion make the statement more or less emphatic?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: More emphatic/dramatic</p>
+                    <p><strong>Q3:</strong> After "not only...but also," what must follow "not only"?</p>
+                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Auxiliary + subject (inverted order)</p>
+                </div>
+
+                <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 4: Rewrite Using Inversion</h3>
+                <p class="instructions" style="text-align: left; font-style: normal;">Rewrite the following sentences using the inversion structures provided in brackets.</p>
+
+                <div class="rewrite-exercise">
+                    <p><strong>1. Original:</strong> We have rarely seen such cooperation between communities.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Rarely...")</p>
+                    <input type="text" id="rewrite1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Rarely...">
+                </div>
+
+                <div class="rewrite-exercise">
+                    <p><strong>2. Original:</strong> The crisis is not only environmental but also humanitarian.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Not only...")</p>
+                    <input type="text" id="rewrite2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Not only...">
+                </div>
+
+                <div class="rewrite-exercise">
+                    <p><strong>3. Original:</strong> We should not tolerate this situation under any circumstances.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Under no circumstances...")</p>
+                    <input type="text" id="rewrite3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Under no circumstances...">
+                </div>
+
+                <div class="rewrite-exercise">
+                    <p><strong>4. Original:</strong> The wells had scarcely been dug when they were sealed.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Scarcely...")</p>
+                    <input type="text" id="rewrite4" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Scarcely...">
+                </div>
+
+                <div class="rewrite-exercise">
+                    <p><strong>5. Original:</strong> I have never witnessed such resilience before.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Never before...")</p>
+                    <input type="text" id="rewrite5" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Never before...">
+                </div>
+
+                <div class="rewrite-exercise">
+                    <p><strong>6. Original:</strong> Justice can only be achieved through collective action.</p>
+                    <p><strong>Rewrite:</strong> (Begin with "Only through...")</p>
+                    <input type="text" id="rewrite6" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px; margin-top: var(--space-2);" placeholder="Only through...">
+                </div>
+
+                <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>Part 5: Variant Text - Op-Ed</h2>
+            <p class="instructions">Read this opinion piece from a Palestinian environmental journalist.</p>
+            <div class="op-ed">
+                <h3 style="color: #ffa726; margin-top: 0;"><i class="fas fa-newspaper"></i> The Thirst for Justice</h3>
+
+                <p><strong>Seldom</strong> do I write with such urgency, but the water crisis in Palestine demands immediate attention. <strong>Not until</strong> we frame this as a human rights violation <strong>will</strong> policymakers act decisively.</p>
+
+                <p>Last summer, I visited a village near Tubas. <strong>No sooner</strong> had I arrived <strong>than</strong> residents showed me their empty water tanks. "The trucks come once a week," they explained, "and the prices keep rising." <strong>Little</strong> did I know that this family pays ten times more per liter than settlers just kilometers away.</p>
+
+                <p><strong>Nowhere</strong> is the inequality more visible than in the agricultural sector. Farmers in the Jordan Valley - whose ancestors cultivated this land for millennia - <strong>can barely</strong> irrigate their fields, while newly established settlements boast swimming pools and lush lawns. <strong>Rarely</strong> does international media cover these juxtapositions.</p>
+
+                <p><strong>Not only</strong> are communities struggling with scarcity, <strong>but they are also</strong> dealing with contamination. In some areas, nitrate levels exceed safe limits by 400%. <strong>Under no circumstances</strong> should children be drinking this water, yet they have no alternative.</p>
+
+                <p><strong>Only when</strong> the world acknowledges water as a tool of oppression <strong>can</strong> we begin to dismantle these systems. <strong>Never before</strong> has climate justice been more intertwined with political justice. <strong>Hardly ever</strong> do we see such clear-cut cases of environmental discrimination.</p>
+
+                <p>The solution requires political will. <strong>Not until</strong> settlements cease expanding <strong>will</strong> aquifers be shared equitably. <strong>Only by</strong> challenging the status quo <strong>can</strong> we secure water for future generations.</p>
+
+                <p class="op-ed-author">— Tariq Nasser, Environmental Justice Advocate</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="activity-card">
+                <h3>Part 6: Creative & Deductive Activities</h3>
+
+                <div class="question-box">
+                    <label>1. Specific: According to the op-ed, how much more do some Palestinian families pay per liter of water compared to nearby settlers?</label>
+                    <textarea id="creative1" placeholder="Your answer..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>2. Deductive: The author uses the phrase "swimming pools and lush lawns" versus farmers who "can barely irrigate their fields." What contrast is being highlighted, and what is the intended emotional impact?</label>
+                    <textarea id="creative2" placeholder="Your analysis..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>3. Analytical: How does the use of inversion throughout both texts (the NGO report and the op-ed) serve the writers' purposes? Consider tone, emphasis, and persuasive effect.</label>
+                    <textarea id="creative3" style="min-height: 120px;" placeholder="Your analysis..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <label>4. Creative: Choose a social or environmental issue you care about (climate change, education inequality, housing rights, etc.). Write a persuasive paragraph (6-8 sentences) using at least 4 inversion structures to emphasize your points. Use patterns like: Rarely..., Not only..., Under no circumstances..., Never before..., Only through..., etc.</label>
+                    <textarea id="creative4" style="min-height: 180px;" placeholder="Your persuasive paragraph..."></textarea>
+                </div>
+
+                <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
+            </div>
+        </section>
+
+        <div style="text-align: center; margin-top: var(--space-7);">
+            <button class="activity-btn" onclick="submitWorksheet()">Complete Worksheet</button>
+        </div>
+        <div id="submission-feedback"></div>
+    </main>
+
+    <script>
+        function resetActivity(part) {
+            if (part === 'part2') {
+                ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            } else if (part === 'part3') {
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById('unscramble' + i).value = '';
+                }
+            } else if (part === 'part4') {
+                ['rewrite1', 'rewrite2', 'rewrite3', 'rewrite4', 'rewrite5', 'rewrite6'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            } else if (part === 'part6') {
+                ['creative1', 'creative2', 'creative3', 'creative4'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            }
+        }
+
+        function submitWorksheet() {
+            const feedback = document.getElementById('submission-feedback');
+            feedback.style.display = 'block';
+            feedback.classList.add('success');
+            feedback.innerHTML = '<h2>Worksheet Complete!</h2><p>Exceptional work mastering <strong>Inversion</strong>! Your analytical and rhetorical skills have been strengthened!</p>';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
