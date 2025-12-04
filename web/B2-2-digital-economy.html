@@ -144,6 +144,7 @@
                     </div>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -159,14 +160,44 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> Do we use "who" for people or things?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: People</p>
-                    <p><strong>Q2:</strong> What's the difference between "whose" and "who's"?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: "Whose" = possession; "Who's" = who is/who has</p>
-                    <p><strong>Q3:</strong> Can we use "that" for both people and things?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Yes (though "who" is preferred for people)</p>
-                    <p><strong>Q4:</strong> Do we use "where" for places or times?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Places</p>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> Do we use "who" for people?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> Does "whose" show possession?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Can we use "that" for both people and things?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q4:</strong> Do we use "where" for places?</label>
+                        <select id="ccq4" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
@@ -205,6 +236,7 @@
                     </div>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -249,6 +281,7 @@
                     <textarea id="creative3" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 150px;" placeholder="Your professional profile..."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -261,6 +294,31 @@
 
     <script>
         let tfSelections = {};
+
+        // Answer normalization and checking
+        function normalizeAnswer(answer) {
+            return answer.toLowerCase().trim().replace(/[.,!?;:]/g, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(correct => normalizeAnswer(correct) === normalized ||
+                                                   normalized.includes(normalizeAnswer(correct)));
+        }
+
+        function setFeedback(elementId, isCorrect) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            element.style.border = isCorrect ? '2px solid #28a745' : '2px solid #dc3545';
+            element.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+        }
+
+        function clearFeedback(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            element.style.border = '';
+            element.style.backgroundColor = '';
+        }
 
         function selectTF(button, id, value) {
             const parent = button.parentElement;
@@ -275,23 +333,120 @@
             element.classList.toggle('highlighted');
         }
 
+        // Part 2: True/False
+        function checkPart2() {
+            const answers = {tf1: true, tf2: false, tf3: true, tf4: false, tf5: false};
+            let correct = 0;
+            let total = 5;
+
+            for (let id in answers) {
+                if (tfSelections[id] !== undefined) {
+                    const isCorrect = tfSelections[id] === answers[id];
+                    // Visual feedback on the buttons
+                    const buttons = document.querySelectorAll(`[onclick*="${id}"]`);
+                    buttons.forEach(btn => {
+                        btn.style.opacity = isCorrect ? '1' : '0.6';
+                    });
+                    if (isCorrect) correct++;
+                }
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!`);
+        }
+
+        // CCQ
+        function checkCCQ() {
+            const answers = {ccq1: 'yes', ccq2: 'yes', ccq3: 'yes', ccq4: 'yes'};
+            let correct = 0;
+            let total = 4;
+
+            for (let i = 1; i <= 4; i++) {
+                const userAnswer = document.getElementById('ccq' + i).value;
+                const isCorrect = userAnswer === answers['ccq' + i];
+                setFeedback('ccq' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 4: Join sentences
+        function checkPart4() {
+            const answers = {
+                join1: ['i met a developer who works at google', 'developer who works'],
+                join2: ['this is the laptop which i use for programming', 'laptop that i use', 'laptop which i use'],
+                join3: ['the programmer whose app is very popular won the award', 'programmer whose app'],
+                join4: ['ramallah is a city where many tech startups are based', 'city where many'],
+                join5: ['i am reading a book which explains artificial intelligence', 'book that explains', 'book which explains'],
+                join6: ['she hired an employee whose skills matched the requirements', 'employee whose skills']
+            };
+
+            let correct = 0;
+            let total = 6;
+
+            for (let i = 1; i <= 6; i++) {
+                const userAnswer = document.getElementById('join' + i).value;
+                const isCorrect = checkAnswer(userAnswer, answers['join' + i]);
+                setFeedback('join' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative
+        function checkPart6() {
+            const q1 = document.getElementById('creative1').value;
+            const q2 = document.getElementById('creative2').value;
+            const q3 = document.getElementById('creative3').value;
+
+            let feedback = 'Part 6 checked:\n';
+
+            // Q1: 200 projects
+            const q1Correct = checkAnswer(q1, ['200', 'over 200', '200 projects', 'over 200 projects']);
+            setFeedback('creative1', q1Correct);
+            feedback += q1Correct ? '✓ Q1 correct\n' : '✗ Q1: How many projects?\n';
+
+            // Q2 & Q3: Creative - check if filled
+            const q2Filled = q2.length > 30;
+            const q3Filled = q3.length > 80;
+
+            setFeedback('creative2', q2Filled);
+            setFeedback('creative3', q3Filled);
+
+            feedback += q2Filled ? '✓ Q2 answered\n' : '✗ Q2: Please provide a detailed analysis\n';
+            feedback += q3Filled ? '✓ Q3 answered' : '✗ Q3: Please write a complete profile (at least 6 sentences)';
+
+            alert(feedback);
+        }
+
+        // Reset activities
         function resetActivity(part) {
             if (part === 'part2') {
                 document.querySelectorAll('.tf-buttons button').forEach(btn => {
                     btn.classList.remove('selected-true', 'selected-false');
+                    btn.style.opacity = '1';
                 });
                 tfSelections = {};
             } else if (part === 'part3') {
                 document.querySelectorAll('.highlight-word').forEach(word => {
                     word.classList.remove('highlighted');
                 });
+                ['ccq1', 'ccq2', 'ccq3', 'ccq4'].forEach(id => {
+                    if (document.getElementById(id)) {
+                        document.getElementById(id).value = '';
+                        clearFeedback(id);
+                    }
+                });
             } else if (part === 'part4') {
                 ['join1', 'join2', 'join3', 'join4', 'join5', 'join6'].forEach(id => {
                     document.getElementById(id).value = '';
+                    clearFeedback(id);
                 });
             } else if (part === 'part6') {
                 ['creative1', 'creative2', 'creative3'].forEach(id => {
                     document.getElementById(id).value = '';
+                    clearFeedback(id);
                 });
             }
         }

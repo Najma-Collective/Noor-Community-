@@ -120,6 +120,7 @@
                     <input type="text" id="q5" placeholder="Your answer">
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -165,14 +166,34 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> In passive voice, is the focus on who does the action or what happens?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: What happens (the action/result)</p>
-                    <p><strong>Q2:</strong> "The thobe was embroidered." Do we know who embroidered it from this sentence alone?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: No (unless "by..." is added)</p>
-                    <p><strong>Q3:</strong> What is the passive formula? (hint: be + past participle)</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: form of "be" + past participle (+ by agent)</p>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> In passive voice, is the focus on what happens (not who does it)?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> From "The thobe was embroidered" alone, do we know who embroidered it?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Is the passive formula: be + past participle?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -207,6 +228,7 @@
                     <p><strong>Passive:</strong> <input type="text" id="rewrite5" style="width: 80%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: 5px;" placeholder="This dress..."></p>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -235,6 +257,7 @@
                     6. A documentary about tatreez <input type="text" id="gap6"> (film) next month. [future simple]
                 </div>
 
+                <button class="activity-btn" onclick="checkPart5()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part5')">Reset Activity</button>
             </div>
         </section>
@@ -276,6 +299,7 @@
                     <textarea id="creative3" style="min-height: 150px;" placeholder="Your description..."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart7()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part7')">Reset Activity</button>
             </div>
         </section>
@@ -287,26 +311,201 @@
     </main>
 
     <script>
+        // Utility Functions
+        function normalizeAnswer(str) {
+            return str.toString().toLowerCase().trim()
+                .replace(/[.,!?;:]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/^(the|a|an)\s+/i, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(answer => normalizeAnswer(answer) === normalized);
+        }
+
+        function setFeedback(element, isCorrect) {
+            if (isCorrect) {
+                element.style.backgroundColor = '#d4edda';
+                element.style.border = '2px solid #28a745';
+            } else {
+                element.style.backgroundColor = '#f8d7da';
+                element.style.border = '2px solid #dc3545';
+            }
+        }
+
+        function clearFeedback(element) {
+            element.style.backgroundColor = '';
+            element.style.border = '';
+        }
+
+        // Part 2: Short Answer Check
+        function checkPart2() {
+            const answers = {
+                q1: ['Syria and Egypt', 'Egypt and Syria'],
+                q2: ['resilience'],
+                q3: ['started when a girl was young and completed by her wedding day', 'started young completed wedding', 'when young completed wedding'],
+                q4: ['as a form of cultural resistance', 'cultural resistance', 'resistance'],
+                q5: ['2015', 'in 2015']
+            };
+
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                const isCorrect = checkAnswer(input.value, answers[key]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 3: Voice Identification Check
+        function checkPart3() {
+            const answers = { voice1: 'passive', voice2: 'active', voice3: 'passive', voice4: 'passive' };
+            let correct = 0;
+            let total = 4;
+
+            for (let name in answers) {
+                const selected = document.querySelector(`input[name="${name}"]:checked`);
+                if (selected && selected.value === answers[name]) {
+                    correct++;
+                }
+            }
+
+            alert(`Part 3: You got ${correct} out of ${total} correct!\n\n1. Passive\n2. Active\n3. Passive\n4. Passive`);
+        }
+
+        function checkCCQ() {
+            const answers = { ccq1: 'yes', ccq2: 'no', ccq3: 'yes' };
+            let correct = 0;
+            let total = 3;
+
+            for (let key in answers) {
+                const select = document.getElementById(key);
+                const isCorrect = select.value === answers[key];
+                setFeedback(select, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!\n\nQ1: Yes (focus on what happens)\nQ2: No (agent unknown)\nQ3: Yes (be + past participle)`);
+        }
+
+        // Part 4: Rewrite Passive Check
+        function checkPart4() {
+            const answers = {
+                rewrite1: ['Beautiful embroidery is made by women in Hebron', 'Beautiful embroidery is made in Hebron'],
+                rewrite2: ['The collection will be displayed by the museum next month', 'The collection will be displayed next month'],
+                rewrite3: ['This technique has been taught by grandmothers for centuries', 'This technique has been taught for centuries'],
+                rewrite4: ['Tatreez is being used by artists in modern fashion', 'Tatreez is being used in modern fashion'],
+                rewrite5: ['This dress was completed in 1935']
+            };
+
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                const isCorrect = checkAnswer(input.value, answers[key]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 5: Gapfill Passive Tenses
+        function checkPart5() {
+            const answers = {
+                gap1: ['has been used'],
+                gap2: ['was opened'],
+                gap3: ['are being created'],
+                gap4: ['are taught'],
+                gap5: ['was being restored'],
+                gap6: ['will be filmed']
+            };
+
+            let correct = 0;
+            let total = 6;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                if (input) {
+                    const isCorrect = checkAnswer(input.value, answers[key]);
+                    setFeedback(input, isCorrect);
+                    if (isCorrect) correct++;
+                }
+            }
+
+            alert(`Part 5: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 7: Creative Check
+        function checkPart7() {
+            const creative1 = document.getElementById('creative1').value.trim();
+            const creative2 = document.getElementById('creative2').value.trim();
+            const creative3 = document.getElementById('creative3').value.trim();
+
+            let correct = 0;
+            let total = 3;
+
+            // Q1: Milan Fashion Week
+            const q1Correct = checkAnswer(creative1, ['Milan Fashion Week', 'Milan']);
+            setFeedback(document.getElementById('creative1'), q1Correct);
+            if (q1Correct) correct++;
+
+            // Q2: Focus on action/object rather than person doing it
+            const q2Correct = creative2.length > 30;
+            setFeedback(document.getElementById('creative2'), q2Correct);
+            if (q2Correct) correct++;
+
+            // Q3: Creative - check substantial
+            const q3Correct = creative3.length > 100;
+            setFeedback(document.getElementById('creative3'), q3Correct);
+            if (q3Correct) correct++;
+
+            alert(`Part 7: You got ${correct} out of ${total} correct!\n\nQ1: Milan Fashion Week\nQ2: Analysis accepted if substantial\nQ3: Creative answer accepted if substantial`);
+        }
+
         function resetActivity(part) {
             if (part === 'part2') {
                 ['q1', 'q2', 'q3', 'q4', 'q5'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             } else if (part === 'part3') {
                 ['voice1', 'voice2', 'voice3', 'voice4'].forEach(name => {
                     document.querySelectorAll(`input[name="${name}"]`).forEach(radio => radio.checked = false);
                 });
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
+                });
             } else if (part === 'part4') {
                 ['rewrite1', 'rewrite2', 'rewrite3', 'rewrite4', 'rewrite5'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             } else if (part === 'part5') {
                 ['gap1', 'gap2', 'gap3', 'gap4', 'gap5', 'gap6'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
                 });
             } else if (part === 'part7') {
                 ['creative1', 'creative2', 'creative3'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             }
         }

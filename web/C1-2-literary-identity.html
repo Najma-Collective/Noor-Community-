@@ -124,6 +124,7 @@
                     <textarea id="q4" placeholder="Your analysis..."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -154,14 +155,38 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> What is a mixed conditional? Give the formula.</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Past condition (if + past perfect) → Present result (would/wouldn't + base verb)</p>
-                    <p><strong>Q2:</strong> "If he had written more, we would know more now." Is the condition about the past or present?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Past (but the result affects the present)</p>
-                    <p><strong>Q3:</strong> "He must have felt urgency." Does this express certainty or possibility?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Strong certainty/logical deduction about the past</p>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> Does a mixed conditional connect a past condition to a present result?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> In a mixed conditional, is the condition about the past?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Does "must have" express strong certainty or logical deduction?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -190,6 +215,7 @@
                     6. The assassination <input type="text" id="gap6"> (been) random - it was too calculated. [impossibility]
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -219,6 +245,7 @@
                     <input type="text" id="mixed4" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px;" placeholder="we __________ (have) a richer archive today.">
                 </div>
 
+                <button class="activity-btn" onclick="checkPart5()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part5')">Reset Activity</button>
             </div>
         </section>
@@ -270,6 +297,7 @@
                     <textarea id="creative4" style="min-height: 200px;" placeholder="Your biographical paragraph..."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart7()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part7')">Reset Activity</button>
             </div>
         </section>
@@ -283,6 +311,182 @@
     <script>
         let selectedMatchItem = null;
 
+        // Utility function to normalize answers for comparison
+        function normalizeAnswer(text) {
+            return text.toLowerCase()
+                .trim()
+                .replace(/[.,;:!?'"()]/g, '')
+                .replace(/\s+/g, ' ');
+        }
+
+        // Check if answer matches any acceptable variations
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(answer => normalized.includes(normalizeAnswer(answer)));
+        }
+
+        // Visual feedback functions
+        function setFeedback(element, isCorrect) {
+            element.style.border = isCorrect ? '2px solid #28a745' : '2px solid #dc3545';
+            element.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+        }
+
+        function clearFeedback(element) {
+            if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+                element.style.border = '1px solid var(--tertiary-sage)';
+                element.style.backgroundColor = 'white';
+            } else if (element.tagName === 'SELECT') {
+                element.style.border = '1px solid var(--tertiary-sage)';
+                element.style.backgroundColor = 'white';
+            }
+        }
+
+        // Part 2: Analysis Questions
+        function checkPart2() {
+            let score = 0;
+            const totalQuestions = 4;
+
+            // Q1: Character silence represents
+            const q1 = document.getElementById('q1');
+            const q1Correct = checkAnswer(q1.value, ['paralysis', 'dehumanization', 'silence', 'devastating', 'death']);
+            setFeedback(q1, q1Correct);
+            if (q1Correct) score++;
+
+            // Q2: Water tank metaphor
+            const q2 = document.getElementById('q2');
+            const q2Correct = checkAnswer(q2.value, ['borders', 'confinement', 'silence', 'power structures', 'contain']);
+            setFeedback(q2, q2Correct);
+            if (q2Correct) score++;
+
+            // Q3: Mixed conditional analysis (check for reasonable length)
+            const q3 = document.getElementById('q3');
+            const q3Correct = q3.value.trim().length > 40;
+            setFeedback(q3, q3Correct);
+            if (q3Correct) score++;
+
+            // Q4: Modals of deduction (check for reasonable length)
+            const q4 = document.getElementById('q4');
+            const q4Correct = q4.value.trim().length > 40;
+            setFeedback(q4, q4Correct);
+            if (q4Correct) score++;
+
+            alert(`Part 2 Score: ${score}/${totalQuestions}\n\nGreen = Correct\nRed = Needs revision`);
+        }
+
+        // CCQ Checking
+        function checkCCQ() {
+            let score = 0;
+            const totalQuestions = 3;
+
+            const ccq1 = document.getElementById('ccq1');
+            const ccq1Correct = ccq1.value === 'yes';
+            setFeedback(ccq1, ccq1Correct);
+            if (ccq1Correct) score++;
+
+            const ccq2 = document.getElementById('ccq2');
+            const ccq2Correct = ccq2.value === 'yes';
+            setFeedback(ccq2, ccq2Correct);
+            if (ccq2Correct) score++;
+
+            const ccq3 = document.getElementById('ccq3');
+            const ccq3Correct = ccq3.value === 'yes';
+            setFeedback(ccq3, ccq3Correct);
+            if (ccq3Correct) score++;
+
+            alert(`CCQ Score: ${score}/${totalQuestions}\n\nGreen = Correct\nRed = Incorrect`);
+        }
+
+        // Part 3: Match Conditional Halves - Check if all matched
+        function checkPart3() {
+            const matched = document.querySelectorAll('.matching-item.matched').length;
+            const total = 10; // 5 pairs
+
+            if (matched === total) {
+                alert('Part 3: Perfect! All conditionals matched correctly! 5/5');
+            } else {
+                alert(`Part 3: ${matched/2}/5 pairs matched.\n\nKeep matching the conditional clauses!`);
+            }
+        }
+
+        // Part 4: Gapfill - Modals of Deduction
+        function checkPart4() {
+            let score = 0;
+            const totalQuestions = 6;
+
+            const answers = [
+                ['must have been'],
+                ['might have survived', 'could have survived'],
+                ['cant have been', 'couldnt have been', 'cannot have been', 'could not have been'],
+                ['must have interpreted'],
+                ['might have intended', 'could have intended'],
+                ['cant have been', 'couldnt have been', 'cannot have been', 'could not have been']
+            ];
+
+            for (let i = 1; i <= 6; i++) {
+                const input = document.getElementById('gap' + i);
+                const isCorrect = checkAnswer(input.value, answers[i - 1]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) score++;
+            }
+
+            alert(`Part 4 Score: ${score}/${totalQuestions}\n\nGreen = Correct\nRed = Needs revision`);
+        }
+
+        // Part 5: Mixed Conditionals Practice
+        function checkPart5() {
+            let score = 0;
+            const totalQuestions = 4;
+
+            const answers = [
+                ['hadnt written', 'had not written', 'wouldnt have', 'would not have'],
+                ['had been', 'would be'],
+                ['had studied', 'would understand'],
+                ['had preserved', 'would have']
+            ];
+
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById('mixed' + i);
+                const isCorrect = checkAnswer(input.value, answers[i - 1]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) score++;
+            }
+
+            alert(`Part 5 Score: ${score}/${totalQuestions}\n\nGreen = Correct\nRed = Needs revision`);
+        }
+
+        // Part 7: Creative & Deductive Activities
+        function checkPart7() {
+            let score = 0;
+            const totalQuestions = 4;
+
+            // Q1: Specific answer about where Darwish rests
+            const creative1 = document.getElementById('creative1');
+            const c1Correct = checkAnswer(creative1.value, ['ramallah', 'village destroyed', 'al-birwa']);
+            setFeedback(creative1, c1Correct);
+            if (c1Correct) score++;
+
+            // Q2: Deductive evidence (check for reasonable length)
+            const creative2 = document.getElementById('creative2');
+            const c2Correct = creative2.value.trim().length > 40;
+            setFeedback(creative2, c2Correct);
+            if (c2Correct) score++;
+
+            // Q3: Comparative analysis (check for reasonable length)
+            const creative3 = document.getElementById('creative3');
+            const c3Correct = creative3.value.trim().length > 60;
+            setFeedback(creative3, c3Correct);
+            if (c3Correct) score++;
+
+            // Q4: Creative writing with grammar requirements (check for length)
+            const creative4 = document.getElementById('creative4');
+            const c4Correct = creative4.value.trim().length > 200;
+            setFeedback(creative4, c4Correct);
+            if (c4Correct) score++;
+
+            alert(`Part 7 Score: ${score}/${totalQuestions}\n\nGreen = Correct\nRed = Needs more detail`);
+        }
+
+        // Matching functionality
         function selectMatch(element) {
             if (element.classList.contains('matched')) return;
 
@@ -311,7 +515,9 @@
         function resetActivity(part) {
             if (part === 'part2') {
                 ['q1', 'q2', 'q3', 'q4'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             } else if (part === 'part3') {
                 document.querySelectorAll('.matching-item').forEach(item => {
@@ -320,17 +526,30 @@
                     item.style.pointerEvents = '';
                 });
                 selectedMatchItem = null;
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
+                });
             } else if (part === 'part4') {
                 ['gap1', 'gap2', 'gap3', 'gap4', 'gap5', 'gap6'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
                 });
             } else if (part === 'part5') {
                 ['mixed1', 'mixed2', 'mixed3', 'mixed4'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             } else if (part === 'part7') {
                 ['creative1', 'creative2', 'creative3', 'creative4'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
                 });
             }
         }

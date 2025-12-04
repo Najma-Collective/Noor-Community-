@@ -123,14 +123,34 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> "I am going to study engineering." Has she decided already, or is she deciding now?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Already decided (going to = prior plan)</p>
-                    <p><strong>Q2:</strong> "I will probably apply." Is this a definite plan or a prediction?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Prediction (will = uncertain future)</p>
-                    <p><strong>Q3:</strong> "I am meeting the advisor on Tuesday." Is this time already arranged?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Yes (present continuous = fixed arrangement)</p>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> Has she already decided to study engineering?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> Is "I will probably apply" a definite plan?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> Is the advisor meeting already arranged?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -165,6 +185,7 @@
                     <input type="text" class="sentence-input" id="unscramble5" placeholder="Write the correct sentence">
                 </div>
 
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -196,6 +217,7 @@
                     7. The graduation ceremony <input type="text" id="gap7"> (take place) on July 15th every year.
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -242,6 +264,7 @@
                     <textarea id="creative3" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 150px;" placeholder="Your future plans..."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -254,6 +277,34 @@
 
     <script>
         let selectedMatchItem = null;
+
+        // Utility Functions
+        function normalizeAnswer(str) {
+            return str.toString().toLowerCase().trim()
+                .replace(/[.,!?;:]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/^(the|a|an)\s+/i, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(answer => normalizeAnswer(answer) === normalized);
+        }
+
+        function setFeedback(element, isCorrect) {
+            if (isCorrect) {
+                element.style.backgroundColor = '#d4edda';
+                element.style.border = '2px solid #28a745';
+            } else {
+                element.style.backgroundColor = '#f8d7da';
+                element.style.border = '2px solid #dc3545';
+            }
+        }
+
+        function clearFeedback(element) {
+            element.style.backgroundColor = '';
+            element.style.border = '';
+        }
 
         function selectMatch(element) {
             if (element.classList.contains('matched')) return;
@@ -280,6 +331,108 @@
             }
         }
 
+        // Part 2: Matching Check
+        function checkPart2() {
+            const matchedItems = document.querySelectorAll('.matching-item.matched').length;
+            const total = 4;
+            const correct = matchedItems / 2;
+
+            alert(`Part 2 Matching: You matched ${correct} out of ${total} pairs correctly!`);
+        }
+
+        function checkCCQ() {
+            const answers = { ccq1: 'yes', ccq2: 'no', ccq3: 'yes' };
+            let correct = 0;
+            let total = 3;
+
+            for (let key in answers) {
+                const select = document.getElementById(key);
+                const isCorrect = select.value === answers[key];
+                setFeedback(select, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!\n\nQ1: Yes (already decided)\nQ2: No (prediction/uncertain)\nQ3: Yes (fixed arrangement)`);
+        }
+
+        // Part 3: Unscramble Check
+        function checkPart3() {
+            const answers = {
+                unscramble1: ['I am going to apply to university next year'],
+                unscramble2: ['We are meeting the career advisor tomorrow'],
+                unscramble3: ['I think I will become an engineer'],
+                unscramble4: ['The new semester starts in September'],
+                unscramble5: ['She is going to study medicine']
+            };
+
+            let correct = 0;
+            let total = 5;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                const isCorrect = checkAnswer(input.value, answers[key]);
+                setFeedback(input, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 3: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 4: Gapfill Check
+        function checkPart4() {
+            const answers = {
+                gap1: ['am going to study', 'am going to'],
+                gap2: ['starts'],
+                gap3: ['will'],
+                gap3b: ['choose'],
+                gap4: ['are visiting', 'are going to visit'],
+                gap5: ['is going to rain', 'will rain'],
+                gap6: ['am going to be', 'will be'],
+                gap7: ['takes place']
+            };
+
+            let correct = 0;
+            let total = 8;
+
+            for (let key in answers) {
+                const input = document.getElementById(key);
+                if (input) {
+                    const isCorrect = checkAnswer(input.value, answers[key]);
+                    setFeedback(input, isCorrect);
+                    if (isCorrect) correct++;
+                }
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative Check
+        function checkPart6() {
+            const creative1 = document.getElementById('creative1').value.trim();
+            const creative2 = document.getElementById('creative2').value.trim();
+            const creative3 = document.getElementById('creative3').value.trim();
+
+            let correct = 0;
+            let total = 3;
+
+            // Q1: June 15th
+            const q1Correct = checkAnswer(creative1, ['June 15th', 'June 15', '15th June', '15 June']);
+            setFeedback(document.getElementById('creative1'), q1Correct);
+            if (q1Correct) correct++;
+
+            // Q2: Will = general belief/prediction (not certain)
+            const q2Correct = checkAnswer(creative2, ['it is a prediction', 'prediction', 'general belief', 'it is not certain']) || creative2.toLowerCase().includes('prediction') || creative2.toLowerCase().includes('belief');
+            setFeedback(document.getElementById('creative2'), q2Correct);
+            if (q2Correct) correct++;
+
+            // Q3: Creative - check if substantial
+            const q3Correct = creative3.length > 100;
+            setFeedback(document.getElementById('creative3'), q3Correct);
+            if (q3Correct) correct++;
+
+            alert(`Part 6: You got ${correct} out of ${total} correct!\n\nQ1: June 15th\nQ2: Will = prediction/belief (not certain)\nQ3: Creative answer accepted if substantial`);
+        }
+
         function resetActivity(part) {
             if (part === 'part2') {
                 document.querySelectorAll('.matching-item').forEach(item => {
@@ -287,17 +440,34 @@
                     item.style.background = '';
                     item.style.pointerEvents = '';
                 });
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
+                });
                 selectedMatchItem = null;
             } else if (part === 'part3') {
                 for (let i = 1; i <= 5; i++) {
-                    document.getElementById('unscramble' + i).value = '';
+                    const elem = document.getElementById('unscramble' + i);
+                    elem.value = '';
+                    clearFeedback(elem);
                 }
             } else if (part === 'part4') {
                 ['gap1', 'gap2', 'gap3', 'gap3b', 'gap4', 'gap5', 'gap6', 'gap7'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        elem.value = '';
+                        clearFeedback(elem);
+                    }
                 });
             } else if (part === 'part6') {
-                ['creative1', 'creative2', 'creative3'].forEach(id => document.getElementById(id).value = '');
+                ['creative1', 'creative2', 'creative3'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(elem);
+                });
             }
         }
 

@@ -168,6 +168,7 @@
                     <label><input type="radio" name="q4" value="d"> d) Hisham's Palace</label>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -205,14 +206,38 @@
 
                 <div style="margin-top: var(--space-5); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> "The monastery is on the mountain." Is it inside the rock or on the surface?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Surface</p>
-                    <p><strong>Q2:</strong> "People float in the water." Are they surrounded by water?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Yes</p>
-                    <p><strong>Q3:</strong> "Next to the ruins." Are they touching or just very close?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Very close</p>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q1:</strong> "The monastery is on the mountain." Is it on the surface?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q2:</strong> "People float in the water." Are they surrounded by water?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div style="background: white; padding: var(--space-3); margin-bottom: var(--space-3); border-radius: var(--radius-sm);">
+                        <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);"><strong>Q3:</strong> "Next to the ruins." Does "next to" mean touching?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart3()" style="margin-right: var(--space-3);">Check Grouping</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
             </div>
         </section>
@@ -289,6 +314,7 @@
                     the wall.
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -348,6 +374,7 @@
                     <textarea id="creative4" style="width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: 5px; min-height: 80px;" placeholder="Example: I like being in the water."></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -361,22 +388,183 @@
     </main>
 
     <script>
+        // Answer normalization and checking
+        function normalizeAnswer(answer) {
+            return answer.toLowerCase().trim().replace(/[.,!?;:]/g, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(correct => normalizeAnswer(correct) === normalized ||
+                                                   normalized.includes(normalizeAnswer(correct)));
+        }
+
+        function setFeedback(elementId, isCorrect) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            element.style.border = isCorrect ? '2px solid #28a745' : '2px solid #dc3545';
+            element.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+        }
+
+        function setRadioFeedback(questionName, isCorrect) {
+            const labels = document.querySelectorAll(`.mc-question input[name="${questionName}"]`).forEach(radio => {
+                radio.parentElement.style.backgroundColor = '';
+            });
+            const checked = document.querySelector(`input[name="${questionName}"]:checked`);
+            if (checked) {
+                checked.parentElement.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+            }
+        }
+
+        function clearFeedback(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            element.style.border = '';
+            element.style.backgroundColor = '';
+        }
+
+        function clearRadioFeedback(questionName) {
+            document.querySelectorAll(`.mc-question input[name="${questionName}"]`).forEach(radio => {
+                radio.parentElement.style.backgroundColor = '';
+            });
+        }
+
+        // Part 2: Multiple Choice
+        function checkPart2() {
+            const answers = {q1: 'b', q2: 'c', q3: 'b', q4: 'a'};
+            let correct = 0;
+            let total = 4;
+
+            for (let q in answers) {
+                const selected = document.querySelector(`input[name="${q}"]:checked`);
+                const isCorrect = selected && selected.value === answers[q];
+                setRadioFeedback(q, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 3: Grouping + CCQ
+        function checkPart3() {
+            // Expected answers for grouping
+            const answers = {
+                on1: ['the mountain', 'mountain'],
+                in1: ['northern part', 'the city', 'city', 'water', 'the water'],
+                in2: ['the salty water', 'salty water', 'northern part of the city'],
+                at1: ['city center', 'the city center'],
+                next1: ['tel es-sultan', 'ruins', 'tel es-sultan ruins']
+            };
+
+            let correct = 0;
+            let total = 0;
+
+            for (let id in answers) {
+                if (document.getElementById(id)) {
+                    total++;
+                    const userAnswer = document.getElementById(id).value;
+                    if (userAnswer) {
+                        const isCorrect = checkAnswer(userAnswer, answers[id]);
+                        setFeedback(id, isCorrect);
+                        if (isCorrect) correct++;
+                    }
+                }
+            }
+
+            alert(`Grouping: You got ${correct} out of ${total} filled correctly!`);
+        }
+
+        // CCQ for Part 3
+        function checkCCQ() {
+            const answers = {ccq1: 'yes', ccq2: 'yes', ccq3: 'no'};
+            let correct = 0;
+            let total = 3;
+
+            for (let i = 1; i <= 3; i++) {
+                const userAnswer = document.getElementById('ccq' + i).value;
+                const isCorrect = userAnswer === answers['ccq' + i];
+                setFeedback('ccq' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 4: Dropdown
+        function checkPart4() {
+            const answers = {drop1: 'on', drop2: 'in', drop3: 'under', drop4: 'between', drop5: 'at', drop6: 'on'};
+            let correct = 0;
+            let total = 6;
+
+            for (let i = 1; i <= 6; i++) {
+                const userAnswer = document.getElementById('drop' + i).value;
+                const isCorrect = userAnswer === answers['drop' + i];
+                setFeedback('drop' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative
+        function checkPart6() {
+            const q1 = document.getElementById('creative1').value;
+            const q2 = document.getElementById('creative2').value;
+            const q4 = document.getElementById('creative4').value;
+
+            let feedback = 'Part 6 checked:\n';
+
+            // Q1: Under the chair
+            const q1Correct = checkAnswer(q1, ['under the chair', 'under chair']);
+            setFeedback('creative1', q1Correct);
+            feedback += q1Correct ? '✓ Q1 correct\n' : '✗ Q1: Where are the shoes?\n';
+
+            // Q2: Creative - check if filled
+            const q2Filled = q2.length > 10;
+            setFeedback('creative2', q2Filled);
+            feedback += q2Filled ? '✓ Q2 answered\n' : '✗ Q2: Please explain why\n';
+
+            // Q4: Creative - check if filled
+            const q4Filled = q4.length > 15;
+            setFeedback('creative4', q4Filled);
+            feedback += q4Filled ? '✓ Q4 answered' : '✗ Q4: Please write a complete sentence';
+
+            alert(feedback);
+        }
+
+        // Reset activities
         function resetActivity(part) {
             if (part === 'part2') {
                 ['q1', 'q2', 'q3', 'q4'].forEach(name => {
                     document.querySelectorAll(`input[name="${name}"]`).forEach(input => input.checked = false);
+                    clearRadioFeedback(name);
                 });
             } else if (part === 'part3') {
                 ['on1', 'on2', 'in1', 'in2', 'at1', 'at2', 'next1', 'next2'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    if (document.getElementById(id)) {
+                        document.getElementById(id).value = '';
+                        clearFeedback(id);
+                    }
+                });
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    if (document.getElementById(id)) {
+                        document.getElementById(id).value = '';
+                        clearFeedback(id);
+                    }
                 });
             } else if (part === 'part4') {
                 for (let i = 1; i <= 6; i++) {
-                    if (document.getElementById('drop' + i)) document.getElementById('drop' + i).value = '';
+                    if (document.getElementById('drop' + i)) {
+                        document.getElementById('drop' + i).value = '';
+                        clearFeedback('drop' + i);
+                    }
                 }
             } else if (part === 'part6') {
                 ['creative1', 'creative2', 'rank1', 'rank2', 'rank3', 'rank4', 'creative4'].forEach(id => {
-                    if (document.getElementById(id)) document.getElementById(id).value = '';
+                    if (document.getElementById(id)) {
+                        document.getElementById(id).value = '';
+                        clearFeedback(id);
+                    }
                 });
             }
         }

@@ -174,6 +174,7 @@
                     <input type="text" id="q5" placeholder="Your answer">
                 </div>
 
+                <button class="activity-btn" onclick="checkPart2()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part2')">Reset Activity</button>
             </div>
         </section>
@@ -207,12 +208,35 @@
 
                 <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius-sm);">
                     <h4>Concept Checking Questions (CCQs)</h4>
-                    <p><strong>Q1:</strong> "I am Elias." Does this tell us his name or what he owns?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Name/Identity</p>
-                    <p><strong>Q2:</strong> "We have got a garden." Can we say "We are a garden"?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: No</p>
-                    <p><strong>Q3:</strong> "She is a nurse." Is this happening only now or is it her job?</p>
-                    <p style="font-style: italic; color: var(--ink-muted);">Answer: Her job</p>
+
+                    <div class="question-box" style="background: white;">
+                        <label><strong>Q1:</strong> "I am Elias." Does this tell us his name?</label>
+                        <select id="ccq1" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="question-box" style="background: white;">
+                        <label><strong>Q2:</strong> "We have got a garden." Can we say "We are a garden"?</label>
+                        <select id="ccq2" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="question-box" style="background: white;">
+                        <label><strong>Q3:</strong> "She is a nurse." Is this her permanent job (not temporary)?</label>
+                        <select id="ccq3" style="width: 100%; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0);">
+                            <option value="">Choose...</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <button class="activity-btn" onclick="checkCCQ()" style="margin-top: var(--space-3);">Check CCQ Answers</button>
                 </div>
 
                 <button class="activity-btn reset-btn" onclick="resetActivity('part3')">Reset Activity</button>
@@ -250,6 +274,7 @@
                     8. She <input type="text" id="gap8" style="width: 150px;"> blue eyes.
                 </div>
 
+                <button class="activity-btn" onclick="checkPart4()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part4')">Reset Activity</button>
             </div>
         </section>
@@ -317,6 +342,7 @@
                     <textarea id="creative4" placeholder="Your message"></textarea>
                 </div>
 
+                <button class="activity-btn" onclick="checkPart6()" style="margin-right: var(--space-3);">Check Answers</button>
                 <button class="activity-btn reset-btn" onclick="resetActivity('part6')">Reset Activity</button>
             </div>
         </section>
@@ -333,6 +359,127 @@
         let selectedMatchItem = null;
         let matches = [];
 
+        // Answer normalization and checking
+        function normalizeAnswer(answer) {
+            return answer.toLowerCase().trim().replace(/[.,!?;:]/g, '');
+        }
+
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            return correctAnswers.some(correct => normalizeAnswer(correct) === normalized ||
+                                                   normalized.includes(normalizeAnswer(correct)));
+        }
+
+        function setFeedback(elementId, isCorrect) {
+            const element = document.getElementById(elementId);
+            element.style.border = isCorrect ? '2px solid #28a745' : '2px solid #dc3545';
+            element.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+        }
+
+        function clearFeedback(elementId) {
+            const element = document.getElementById(elementId);
+            element.style.border = '';
+            element.style.backgroundColor = '';
+        }
+
+        // Part 2: Specific Information
+        function checkPart2() {
+            const answers = {
+                q1: ['taxi driver', 'a taxi driver', 'he is a taxi driver', 'driver'],
+                q2: ['near the shepherd\'s field', 'near shepherd\'s field', 'beit sahour', 'near the shepherd field'],
+                q3: ['4', 'four', 'they have got four children', 'they have 4 children'],
+                q4: ['mishmish'],
+                q5: ['7:00 am', '7 am', '7:00', '7', 'seven', 'at 7:00 am']
+            };
+
+            let correct = 0;
+            let total = 5;
+
+            for (let i = 1; i <= 5; i++) {
+                const userAnswer = document.getElementById('q' + i).value;
+                const isCorrect = checkAnswer(userAnswer, answers['q' + i]);
+                setFeedback('q' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 2: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 3: CCQ
+        function checkCCQ() {
+            const answers = {ccq1: 'yes', ccq2: 'no', ccq3: 'yes'};
+            let correct = 0;
+            let total = 3;
+
+            for (let i = 1; i <= 3; i++) {
+                const userAnswer = document.getElementById('ccq' + i).value;
+                const isCorrect = userAnswer === answers['ccq' + i];
+                setFeedback('ccq' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`CCQ: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 4: Gapfill
+        function checkPart4() {
+            const answers = {
+                gap1: ['is'],
+                gap2: ['am'],
+                gap3: ['has got', 'has'],
+                gap4: ['are'],
+                gap5: ['have got', 'have'],
+                gap6: ['is'],
+                gap7: ['are'],
+                gap8: ['has got', 'has']
+            };
+
+            let correct = 0;
+            let total = 8;
+
+            for (let i = 1; i <= 8; i++) {
+                const userAnswer = document.getElementById('gap' + i).value;
+                const isCorrect = checkAnswer(userAnswer, answers['gap' + i]);
+                setFeedback('gap' + i, isCorrect);
+                if (isCorrect) correct++;
+            }
+
+            alert(`Part 4: You got ${correct} out of ${total} correct!`);
+        }
+
+        // Part 6: Creative (basic validation - checking for key words)
+        function checkPart6() {
+            const q1 = document.getElementById('creative1').value;
+            const q2 = document.getElementById('creative2').value;
+            const q3 = document.getElementById('creative3').value;
+            const q4 = document.getElementById('creative4').value;
+
+            let feedback = 'Part 6 checked:\n';
+
+            // Q1: Ahmed is at the library
+            const q1Correct = checkAnswer(q1, ['library', 'at the library']);
+            setFeedback('creative1', q1Correct);
+            feedback += q1Correct ? '✓ Q1 correct\n' : '✗ Q1: Check the text - where is Ahmed?\n';
+
+            // Q2: History project
+            const q2Correct = checkAnswer(q2, ['history project', 'project', 'studying']);
+            setFeedback('creative2', q2Correct);
+            feedback += q2Correct ? '✓ Q2 correct\n' : '✗ Q2: What are they doing?\n';
+
+            // Q3 & Q4 are creative - just check if filled
+            const q3Filled = q3.length > 20;
+            const q4Filled = q4.length > 20;
+
+            setFeedback('creative3', q3Filled);
+            setFeedback('creative4', q4Filled);
+
+            feedback += q3Filled ? '✓ Q3 answered\n' : '✗ Q3: Please provide a detailed answer\n';
+            feedback += q4Filled ? '✓ Q4 answered' : '✗ Q4: Please write a complete message';
+
+            alert(feedback);
+        }
+
+        // Matching activity
         function selectMatch(element) {
             if (element.classList.contains('matched')) return;
 
@@ -359,10 +506,13 @@
             }
         }
 
+        // Reset activities
         function resetActivity(part) {
             if (part === 'part2') {
                 ['q1', 'q2', 'q3', 'q4', 'q5'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(id);
                 });
             } else if (part === 'part3') {
                 document.querySelectorAll('.matching-item').forEach(item => {
@@ -370,15 +520,23 @@
                     item.style.background = '';
                     item.style.pointerEvents = '';
                 });
+                ['ccq1', 'ccq2', 'ccq3'].forEach(id => {
+                    document.getElementById(id).value = '';
+                    clearFeedback(id);
+                });
                 selectedMatchItem = null;
                 matches = [];
             } else if (part === 'part4') {
                 for (let i = 1; i <= 8; i++) {
-                    document.getElementById('gap' + i).value = '';
+                    const elem = document.getElementById('gap' + i);
+                    elem.value = '';
+                    clearFeedback('gap' + i);
                 }
             } else if (part === 'part6') {
                 ['creative1', 'creative2', 'creative3', 'creative4'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const elem = document.getElementById(id);
+                    elem.value = '';
+                    clearFeedback(id);
                 });
             }
         }
