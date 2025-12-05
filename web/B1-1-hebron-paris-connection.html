@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7A8471" />
-  <title>Pre-class: Hebron–Paris Connection (B1)</title>
+  <title>French-Palestinian Film Collaboration: A Slice of Life (B1)</title>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -60,54 +60,107 @@
       padding: var(--space-12); box-shadow: 0 10px 40px rgba(0,0,0,0.06);
     }
 
-    header { text-align: center; margin-bottom: var(--space-4); }
-    h1 { font-family: 'Questrial', sans-serif; font-size: clamp(1.8rem, 1.5rem + 1.4vw, 2.4rem); margin: 0; }
-    h2 { font-size: clamp(1.2rem, 1rem + 0.5vw, 1.5rem); margin: 0 0 4px 0; }
-    p { margin: 0 0 10px 0; }
+    header { text-align: center; margin-bottom: var(--space-8); }
+    h1 { font-family: 'Questrial', sans-serif; font-size: clamp(1.8rem, 1.5rem + 1.4vw, 2.4rem); margin: 0 0 8px 0; }
+    h2 { font-size: clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem); margin: 24px 0 12px 0; color: var(--primary-sage); }
+    h3 { font-size: clamp(1.1rem, 1rem + 0.3vw, 1.3rem); margin: 16px 0 8px 0; }
+    p { margin: 0 0 12px 0; }
 
-    .rubric { color: var(--secondary-sage); font-weight: 700; margin-bottom: 4px; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: var(--warm-cream); border: 1px solid var(--border-sage); font-weight: 700; color: var(--forest-shadow); }
-    .instruction-list { margin: 12px 0 0 0; padding-left: 20px; }
+    .rubric { color: var(--secondary-sage); font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--warm-cream); border: 1px solid var(--border-sage); font-weight: 700; color: var(--forest-shadow); margin-bottom: 8px; }
+    .meta-info { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; color: var(--forest-shadow); }
+    .meta-info span { font-weight: 600; }
 
     /* Navigation */
-    .screen-nav { display: flex; align-items: center; gap: 12px; margin: 0 0 var(--space-4) 0; }
+    .screen-nav { display: flex; align-items: center; gap: 12px; margin: 0 0 var(--space-4) 0; position: sticky; top: 16px; z-index: 100; background: var(--soft-white); padding: 12px; border-radius: var(--radius-xl); border: 1px solid var(--border-sage); }
     .progress { flex: 1; }
     .progress-track { position: relative; width: 100%; height: 10px; background: var(--warm-cream); border: 1px solid var(--border-sage); border-radius: 999px; overflow: hidden; }
-    .progress-fill { position: absolute; left: 0; top: 0; height: 100%; width: 25%; background: var(--primary-sage); transition: width 280ms ease; }
-    .nav-btn { border: none; background: var(--primary-sage); color: #fff; border-radius: var(--radius-md); padding: 10px 16px; font-weight: 700; cursor: pointer; transition: transform 120ms ease, background 160ms ease; }
+    .progress-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--primary-sage); transition: width 280ms ease; }
+    .nav-btn { border: none; background: var(--primary-sage); color: #fff; border-radius: var(--radius-md); padding: 10px 16px; font-weight: 700; cursor: pointer; transition: transform 120ms ease, background 160ms ease; font-size: 0.9rem; }
     .nav-btn:disabled { background: var(--tertiary-sage); cursor: not-allowed; }
     .nav-btn:hover:not(:disabled) { transform: translateY(-1px); background: var(--forest-shadow); }
 
-    /* Cards */
-    .card { border: 1px solid var(--border-sage); border-radius: var(--radius-xl); padding: var(--space-4); background: var(--soft-white); }
+    /* Cards & Sections */
+    .part { margin-bottom: var(--space-8); padding: var(--space-4); border-left: 4px solid var(--primary-sage); background: var(--warm-cream); border-radius: var(--radius-md); }
+    .activity { margin-bottom: var(--space-4); padding: var(--space-4); background: white; border: 1px solid var(--border-sage); border-radius: var(--radius-xl); }
+    .email-box { background: var(--warm-cream); border: 1px solid var(--border-sage); border-radius: var(--radius-xl); padding: var(--space-4); margin: 16px 0; font-family: 'Courier New', monospace; font-size: 0.95rem; }
+    .email-header { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--border-sage); }
+    .email-header div { margin: 4px 0; }
+    .email-body { line-height: 1.7; }
+
     .muted { color: #6f7b66; }
-    .context { background: var(--warm-cream); border-radius: var(--radius-xl); padding: var(--space-4); border: 1px solid var(--border-sage); }
-    .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-3); }
+    .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); margin: 16px 0; }
+
+    /* Table styling */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    table th, table td { border: 1px solid var(--border-sage); padding: 10px; text-align: left; }
+    table th { background: var(--warm-cream); font-weight: 700; color: var(--primary-sage); }
 
     /* Inputs */
-    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-sage); border-radius: var(--radius-md); font-size: 1rem; background: white; color: var(--forest-shadow); }
-    input[type="text"]:focus, select:focus { outline: 3px solid var(--focus-ring); outline-offset: 1px; }
-    .inline-input { width: 160px; display: inline-block; margin: 0 6px; }
+    input[type="text"], select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border-sage);
+      border-radius: var(--radius-md); font-size: 1rem; background: white;
+      color: var(--forest-shadow); font-family: 'Nunito', sans-serif;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: 3px solid var(--focus-ring); outline-offset: 1px;
+    }
+    .input-wrapper { margin: 12px 0; }
+    .input-label { font-weight: 600; margin-bottom: 6px; display: block; }
 
-    /* Matching chips */
-    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip { border: 1px solid var(--border-sage); background: var(--warm-cream); border-radius: 14px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
-    .chip.selected { background: var(--secondary-sage); color: #fff; border-color: var(--secondary-sage); }
+    /* Question styling */
+    .question { margin: 16px 0; }
+    .question-text { font-weight: 600; margin-bottom: 8px; }
 
     /* Feedback */
-    .feedback { font-weight: 800; margin-top: 10px; }
-    .feedback.correct { color: #1b5e20; }
-    .feedback.incorrect { color: #b71c1c; }
-    .callout { padding: 12px; border-radius: var(--radius-md); background: var(--warm-cream); border: 1px solid var(--border-sage); }
-    .score-box { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; background: var(--warm-cream); border: 1px solid var(--border-sage); font-weight: 800; }
+    .check-btn {
+      background: var(--secondary-sage); color: white; border: none;
+      padding: 12px 24px; border-radius: var(--radius-md); font-weight: 700;
+      cursor: pointer; margin-top: 12px; font-size: 1rem;
+    }
+    .check-btn:hover { background: var(--primary-sage); }
+    .feedback { font-weight: 700; margin-top: 12px; padding: 12px; border-radius: var(--radius-md); }
+    .feedback.correct { color: #1b5e20; background: var(--correct-bg); border: 1px solid var(--correct-border); }
+    .feedback.incorrect { color: #b71c1c; background: var(--incorrect-bg); border: 1px solid var(--incorrect-border); }
+
+    .callout { padding: 14px; border-radius: var(--radius-md); background: #FFF9E6; border: 1px solid #FFD54F; margin: 16px 0; }
+    .callout strong { color: #F57C00; }
+
+    /* Answer key */
+    .answer-key { background: #E3F2FD; border: 2px solid #1976D2; border-radius: var(--radius-xl); padding: var(--space-4); margin-top: var(--space-8); }
+    .answer-key h2 { color: #1565C0; margin-top: 0; }
+    .answer-item { margin: 12px 0; padding: 10px; background: white; border-radius: var(--radius-md); }
+
+    /* Matching chips */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .chip { border: 1px solid var(--border-sage); background: var(--warm-cream); border-radius: 14px; padding: 10px 16px; font-weight: 600; cursor: pointer; transition: all 150ms ease; }
+    .chip:hover { background: var(--hover-sage); }
+    .chip.selected { background: var(--secondary-sage); color: #fff; border-color: var(--secondary-sage); }
 
     /* Screen control */
     .screen { display: none; }
     .screen.active { display: block; }
 
+    /* Score box */
+    .score-summary {
+      background: var(--warm-cream); border: 2px solid var(--primary-sage);
+      border-radius: var(--radius-xl); padding: var(--space-4);
+      margin-top: var(--space-8); text-align: center;
+    }
+    .score-number { font-size: 2.5rem; font-weight: 800; color: var(--primary-sage); margin: 12px 0; }
+
+    ol, ul { margin: 12px 0; padding-left: 24px; }
+    li { margin: 8px 0; }
+
     @media (max-width: 720px) {
       #app-wrapper { padding: var(--space-4); }
-      .activity-container { padding: var(--space-8); }
+      .activity-container { padding: var(--space-4); }
+      .grid-two { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .screen-nav, .check-btn { display: none; }
+      .screen { display: block !important; }
     }
   </style>
 </head>
@@ -115,12 +168,15 @@
   <div id="app-wrapper">
     <div class="activity-container">
       <header>
-        <p class="pill"><i class="fa-solid fa-film"></i> B1 Pre-class Activity</p>
-        <h1>Hebron–Paris Connection: Pre-class Prep</h1>
-        <p class="muted">Independent, self-marking tasks to activate vocabulary and grammar before class.</p>
+        <p class="pill"><i class="fa-solid fa-film"></i> Level B1 Activity</p>
+        <h1>French-Palestinian Film Collaboration: A Slice of Life</h1>
+        <div class="meta-info">
+          <span><i class="fa-solid fa-signal"></i> Level: B1</span>
+          <span><i class="fa-solid fa-clock"></i> Time: 60 Minutes</span>
+        </div>
       </header>
 
-      <div class="screen-nav" aria-label="Screen navigation">
+      <div class="screen-nav" aria-label="Activity navigation">
         <button id="prev-btn" class="nav-btn" type="button" disabled><i class="fa-solid fa-arrow-left"></i> Back</button>
         <div class="progress">
           <div class="progress-track" aria-hidden="true"><div id="progress-fill" class="progress-fill"></div></div>
@@ -128,137 +184,595 @@
         <button id="next-btn" class="nav-btn" type="button">Next <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
-      <div id="screen-1" class="screen active" role="group" aria-labelledby="screen1-title">
-        <div class="card">
-          <p class="rubric">Screen 1 · Warm-up &amp; Instructions</p>
-          <h2 id="screen1-title">Preview the collaboration</h2>
-          <p>Read the context and follow the instructions before moving to the activities.</p>
-          <div class="context">
-            <p><strong>Context:</strong> Tariq in Hebron and Isabelle in Paris are preparing their co-produced film <em>"Jasmine in Paris"</em>. You will preview their updates, check key details, and practice the verb forms they use.</p>
-            <ul class="instruction-list">
-              <li>Each task marks itself. Use the <strong>Check</strong> buttons to get feedback and corrections.</li>
-              <li>Spelling errors are auto-corrected where possible. You can retry as many times as you like.</li>
-              <li>TensorFlow.js measures meaning similarity for short answers—paraphrases are accepted.</li>
-              <li>Finish all screens to see your score summary.</li>
+      <!-- PART 1: Reading and Comprehension -->
+      <div id="screen-1" class="screen active">
+        <div class="part">
+          <h2><i class="fa-solid fa-book-open"></i> Part 1: Reading and Comprehension (15 minutes)</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 1: Read the email below</p>
+            <p><strong>Rubric:</strong> Read the email from a film company in Hebron to a production company in France.</p>
+
+            <div class="email-box">
+              <div class="email-header">
+                <div><strong>From:</strong> Tariq Abbas (t.abbas@hebronharmonyfilms.ps)</div>
+                <div><strong>To:</strong> Isabelle Dubois (i.dubois@parisianproductions.fr)</div>
+                <div><strong>Subject:</strong> Update on our project: "Jasmine in Paris"</div>
+              </div>
+              <div class="email-body">
+                <p>Dear Isabelle,</p>
+                <p>I hope this email finds you well.</p>
+                <p>I am writing to give you an update on our joint project, "Jasmine in Paris". We have made some good progress since our last conversation.</p>
+                <p>Our lead writer, Fatima, finished the first draft of the script last week. I have read it, and I think it is a beautiful story that really captures the experience of the diaspora. We have sent you the draft in a separate email. Please let us know your thoughts when you have a chance to read it.</p>
+                <p>We have also started to think about casting. We spoke to a few talented actors here in Hebron yesterday. We have not made any decisions yet, of course. We want to discuss the main roles with you first.</p>
+                <p>Could we schedule a video call for next week to discuss the script and our casting ideas? We are available on Tuesday or Wednesday afternoon.</p>
+                <p>I look forward to hearing from you.</p>
+                <p>Best regards,<br>Tariq Abbas<br><em>Hebron Harmony Films</em></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 2: Short Answer Questions -->
+      <div id="screen-2" class="screen">
+        <div class="part">
+          <h2>Part 1 continued...</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 2: Short Answer Questions</p>
+            <p><strong>Rubric:</strong> Answer the following questions with one to three words from the text.</p>
+
+            <div class="grid-two">
+              <div class="question">
+                <div class="question-text">1. What is the name of the project?</div>
+                <input type="text" id="q1" data-answer="jasmine in paris" placeholder="Type your answer">
+              </div>
+              <div class="question">
+                <div class="question-text">2. Who finished the first draft of the script?</div>
+                <input type="text" id="q2" data-answer="fatima" placeholder="Type your answer">
+              </div>
+              <div class="question">
+                <div class="question-text">3. When was the script finished?</div>
+                <input type="text" id="q3" data-answer="last week" placeholder="Type your answer">
+              </div>
+              <div class="question">
+                <div class="question-text">4. What has Tariq sent in a separate email?</div>
+                <input type="text" id="q4" data-answer="the draft" placeholder="Type your answer">
+              </div>
+              <div class="question">
+                <div class="question-text">5. What did the team in Hebron do yesterday?</div>
+                <input type="text" id="q5" data-answer="spoke to actors" placeholder="Type your answer">
+              </div>
+              <div class="question">
+                <div class="question-text">6. Which days are suggested for a video call?</div>
+                <input type="text" id="q6" data-answer="tuesday or wednesday" placeholder="Type your answer">
+              </div>
+            </div>
+
+            <button class="check-btn" onclick="checkActivity2()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act2" class="feedback" style="display:none;"></div>
+          </div>
+
+          <!-- Activity 3: Table Completion -->
+          <div class="activity">
+            <p class="rubric">Activity 3: Table Completion</p>
+            <p><strong>Rubric:</strong> Complete the table with information from the email.</p>
+
+            <table>
+              <tr>
+                <th>Category</th>
+                <th>Information</th>
+              </tr>
+              <tr>
+                <td>Project Title</td>
+                <td><input type="text" id="table1" data-answer="jasmine in paris" placeholder="Enter title"></td>
+              </tr>
+              <tr>
+                <td>Genre</td>
+                <td>French/Palestinian Drama</td>
+              </tr>
+              <tr>
+                <td>Current Script Status</td>
+                <td><input type="text" id="table2" data-answer="first draft finished" placeholder="Enter status"></td>
+              </tr>
+              <tr>
+                <td>Key Discussion Points for next meeting</td>
+                <td>
+                  1. The script<br>
+                  2. <input type="text" id="table3" data-answer="casting ideas" placeholder="Enter second point">
+                </td>
+              </tr>
+            </table>
+
+            <button class="check-btn" onclick="checkActivity3()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act3" class="feedback" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PART 2: Grammar Focus -->
+      <div id="screen-3" class="screen">
+        <div class="part">
+          <h2><i class="fa-solid fa-spell-check"></i> Part 2: Grammar Focus - Present Perfect vs. Past Simple (20 minutes)</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 4: Noticing Grammar</p>
+            <p><strong>Rubric:</strong> Look at the email in Part 1 again. Highlight the verbs in the Past Simple (e.g., finished) in YELLOW. Highlight the verbs in the Present Perfect (e.g., have made) in GREEN.</p>
+
+            <div class="callout">
+              <p><strong><i class="fa-solid fa-lightbulb"></i> Tip:</strong> Scroll back to Screen 1 to review the email. Look for time markers like "last week" (Past Simple) vs. actions with present relevance (Present Perfect).</p>
+            </div>
+
+            <p><strong>Key verbs to identify:</strong></p>
+            <ul>
+              <li><strong>Past Simple (finished time):</strong> finished, spoke</li>
+              <li><strong>Present Perfect (result now):</strong> have made, have read, have sent, have started, have not made</li>
             </ul>
           </div>
+
+          <!-- Activity 5: Understanding the Rules -->
+          <div class="activity">
+            <p class="rubric">Activity 5: Understanding the Rules (Multiple Choice)</p>
+            <p><strong>Rubric:</strong> Read the sentences and choose the correct option to complete the grammar rules.</p>
+
+            <div class="question">
+              <div class="question-text">1. We use the Past Simple for...</div>
+              <select id="mc1" data-answer="b">
+                <option value="">-- Select --</option>
+                <option value="a">an action that happened at an unspecified time in the past.</option>
+                <option value="b">an action that happened at a specific, finished time in the past.</option>
+                <option value="c">an action that started in the past and continues now.</option>
+              </select>
+            </div>
+
+            <div class="question">
+              <div class="question-text">2. We use the Present Perfect for...</div>
+              <select id="mc2" data-answer="b">
+                <option value="">-- Select --</option>
+                <option value="a">an action that happened at a specific, finished time in the past (e.g., yesterday, last week).</option>
+                <option value="b">a past action that has a result or connection to the present.</option>
+                <option value="c">a finished action with no connection to the present.</option>
+              </select>
+            </div>
+
+            <div class="question">
+              <div class="question-text">3. Look at the email: "Fatima finished the first draft of the script last week." Is "last week" a specific, finished time?</div>
+              <select id="mc3" data-answer="a">
+                <option value="">-- Select --</option>
+                <option value="a">Yes</option>
+                <option value="b">No</option>
+              </select>
+            </div>
+
+            <div class="question">
+              <div class="question-text">4. Look at the email: "I have read it." Does this mean the reading is finished and has a result now (Tariq can comment on it)?</div>
+              <select id="mc4" data-answer="a">
+                <option value="">-- Select --</option>
+                <option value="a">Yes</option>
+                <option value="b">No</option>
+              </select>
+            </div>
+
+            <button class="check-btn" onclick="checkActivity5()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act5" class="feedback" style="display:none;"></div>
+          </div>
         </div>
       </div>
 
-      <div id="screen-2" class="screen" role="group" aria-labelledby="screen2-title">
-        <div class="card">
-          <p class="rubric">Screen 2 · Quick checks</p>
-          <h2 id="screen2-title">Emails at a glance</h2>
-          <p class="muted">Choose the option that fits the email extract from Tariq.</p>
-          <div class="grid-two">
-            <div>
-              <p><strong>1.</strong> Tariq mentions the first draft...</p>
-              <select data-answer="b">
-                <option value="">Select</option>
-                <option value="a">is being written now.</option>
-                <option value="b">was finished last week.</option>
-                <option value="c">will start next month.</option>
-              </select>
+      <!-- Activity 6 & 7 -->
+      <div id="screen-4" class="screen">
+        <div class="part">
+          <h2>Part 2 continued...</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 6: Grammar Practice (Gap-fill)</p>
+            <p><strong>Rubric:</strong> Complete the sentences with the correct form of the verb in brackets: Past Simple or Present Perfect.</p>
+
+            <div class="question">
+              <div class="question-text">1. I _______________ (see) three films so far this month.</div>
+              <input type="text" id="gap1" data-answer="have seen" placeholder="Type the verb form">
             </div>
-            <div>
-              <p><strong>2.</strong> The call with Isabelle should happen...</p>
-              <select data-answer="c">
-                <option value="">Select</option>
-                <option value="a">tonight without a time.</option>
-                <option value="b">on any day this month.</option>
-                <option value="c">next week on Tuesday or Wednesday.</option>
-              </select>
+
+            <div class="question">
+              <div class="question-text">2. She _______________ (visit) her family in Lyon last summer.</div>
+              <input type="text" id="gap2" data-answer="visited" placeholder="Type the verb form">
             </div>
-            <div>
-              <p><strong>3.</strong> Casting decisions are...</p>
-              <select data-answer="a">
-                <option value="">Select</option>
-                <option value="a">still open after talking to actors.</option>
-                <option value="b">already fixed for the main roles.</option>
-                <option value="c">waiting for the producer in Paris to approve.</option>
-              </select>
+
+            <div class="question">
+              <div class="question-text">3. We _______________ (not receive) your email yet.</div>
+              <input type="text" id="gap3" data-answer="have not received" placeholder="Type the verb form">
             </div>
+
+            <div class="question">
+              <div class="question-text">4. He _______________ (work) in the film industry for ten years.</div>
+              <input type="text" id="gap4" data-answer="has worked" placeholder="Type the verb form">
+            </div>
+
+            <div class="question">
+              <div class="question-text">5. They _______________ (discuss) the budget yesterday morning.</div>
+              <input type="text" id="gap5" data-answer="discussed" placeholder="Type the verb form">
+            </div>
+
+            <div class="question">
+              <div class="question-text">6. The director _______________ (just/shout) "Cut!"</div>
+              <input type="text" id="gap6" data-answer="has just shouted" placeholder="Type the verb form">
+            </div>
+
+            <button class="check-btn" onclick="checkActivity6()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act6" class="feedback" style="display:none;"></div>
           </div>
-          <button id="mc-check" class="nav-btn" type="button" style="margin-top: 14px;">Check answers</button>
-          <div id="mc-feedback" class="feedback" aria-live="polite"></div>
+
+          <!-- Activity 7: Unscramble -->
+          <div class="activity">
+            <p class="rubric">Activity 7: Unscramble the Sentences</p>
+            <p><strong>Rubric:</strong> Put the words in the correct order to make sentences.</p>
+
+            <div class="question">
+              <div class="question-text">1. you / the / Have / new / seen / ? / film</div>
+              <input type="text" id="unscramble1" data-answer="have you seen the new film" placeholder="Type the sentence in correct order">
+            </div>
+
+            <div class="question">
+              <div class="question-text">2. last / night / I / a / documentary / watched / interesting / .</div>
+              <input type="text" id="unscramble2" data-answer="i watched an interesting documentary last night" placeholder="Type the sentence in correct order">
+            </div>
+
+            <div class="question">
+              <div class="question-text">3. already / He / has / the / tickets / booked / .</div>
+              <input type="text" id="unscramble3" data-answer="he has already booked the tickets" placeholder="Type the sentence in correct order">
+            </div>
+
+            <div class="question">
+              <div class="question-text">4. did / When / ? / arrive / they</div>
+              <input type="text" id="unscramble4" data-answer="when did they arrive" placeholder="Type the sentence in correct order">
+            </div>
+
+            <div class="question">
+              <div class="question-text">5. not / We / have / lunch / had / yet / .</div>
+              <input type="text" id="unscramble5" data-answer="we have not had lunch yet" placeholder="Type the sentence in correct order">
+            </div>
+
+            <button class="check-btn" onclick="checkActivity7()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act7" class="feedback" style="display:none;"></div>
+          </div>
         </div>
       </div>
 
-      <div id="screen-3" class="screen" role="group" aria-labelledby="screen3-title">
-        <div class="card">
-          <p class="rubric">Screen 3 · Short answers</p>
-          <h2 id="screen3-title">Semantic similarity checker</h2>
-          <p class="muted">Answer with 1–5 words. Paraphrases are accepted using TensorFlow.js cosine similarity.</p>
-          <div class="grid-two">
-            <div>
-              <p>1) Who finished the first draft?</p>
-              <input type="text" data-answer="fatima" placeholder="Type a name" />
+      <!-- PART 3: Application and Extension -->
+      <div id="screen-5" class="screen">
+        <div class="part">
+          <h2><i class="fa-solid fa-puzzle-piece"></i> Part 3: Application and Extension (20 minutes)</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 8: Linking</p>
+            <p><strong>Rubric:</strong> Read the follow-up email below, where some sentences are broken. Match the beginning of the sentences (1-4) with the correct ending (a-d).</p>
+
+            <div class="email-box">
+              <div class="email-header">
+                <div><strong>From:</strong> Isabelle Dubois (i.dubois@parisianproductions.fr)</div>
+                <div><strong>To:</strong> Tariq Abbas (t.abbas@hebronharmonyfilms.ps)</div>
+                <div><strong>Subject:</strong> Re: Update on our project: "Jasmine in Paris"</div>
+              </div>
+              <div class="email-body">
+                <p>Dear Tariq,</p>
+                <p>Thank you for the update and for sending the script.</p>
+                <p><strong>1.</strong> I have just finished reading it, _______</p>
+                <p><strong>2.</strong> Our team in Paris discussed your email this morning, _______</p>
+                <p><strong>3.</strong> We have already listened to some composers, _______</p>
+                <p><strong>4.</strong> We have put the meeting in our calendar _______</p>
+              </div>
             </div>
-            <div>
-              <p>2) What was sent separately?</p>
-              <input type="text" data-answer="script draft" placeholder="Type an item" />
+
+            <p><strong>Match with:</strong></p>
+            <p><strong>a.</strong> and we are very excited about the story.<br>
+            <strong>b.</strong> and Wednesday afternoon works perfectly for us.<br>
+            <strong>c.</strong> and we think the music will be very important for this film.<br>
+            <strong>d.</strong> and I am very impressed.</p>
+
+            <div class="grid-two">
+              <div class="question">
+                <div class="question-text">Sentence 1 matches with:</div>
+                <select id="match1" data-answer="d">
+                  <option value="">-- Select --</option>
+                  <option value="a">a. and we are very excited about the story.</option>
+                  <option value="b">b. and Wednesday afternoon works perfectly for us.</option>
+                  <option value="c">c. and we think the music will be very important for this film.</option>
+                  <option value="d">d. and I am very impressed.</option>
+                </select>
+              </div>
+
+              <div class="question">
+                <div class="question-text">Sentence 2 matches with:</div>
+                <select id="match2" data-answer="a">
+                  <option value="">-- Select --</option>
+                  <option value="a">a. and we are very excited about the story.</option>
+                  <option value="b">b. and Wednesday afternoon works perfectly for us.</option>
+                  <option value="c">c. and we think the music will be very important for this film.</option>
+                  <option value="d">d. and I am very impressed.</option>
+                </select>
+              </div>
+
+              <div class="question">
+                <div class="question-text">Sentence 3 matches with:</div>
+                <select id="match3" data-answer="c">
+                  <option value="">-- Select --</option>
+                  <option value="a">a. and we are very excited about the story.</option>
+                  <option value="b">b. and Wednesday afternoon works perfectly for us.</option>
+                  <option value="c">c. and we think the music will be very important for this film.</option>
+                  <option value="d">d. and I am very impressed.</option>
+                </select>
+              </div>
+
+              <div class="question">
+                <div class="question-text">Sentence 4 matches with:</div>
+                <select id="match4" data-answer="b">
+                  <option value="">-- Select --</option>
+                  <option value="a">a. and we are very excited about the story.</option>
+                  <option value="b">b. and Wednesday afternoon works perfectly for us.</option>
+                  <option value="c">c. and we think the music will be very important for this film.</option>
+                  <option value="d">d. and I am very impressed.</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <p>3) When did they speak to actors?</p>
-              <input type="text" data-answer="yesterday" placeholder="Type a time" />
-            </div>
-            <div>
-              <p>4) Where are the actors?</p>
-              <input type="text" data-answer="hebron" placeholder="Type a place" />
-            </div>
+
+            <button class="check-btn" onclick="checkActivity8()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act8" class="feedback" style="display:none;"></div>
           </div>
-          <div class="callout" style="margin-top: 12px;">
-            <p><strong>Tip:</strong> Minor spelling mistakes are corrected automatically. You will see suggestions in the feedback.</p>
-          </div>
-          <button id="sa-check" class="nav-btn" type="button" style="margin-top: 14px;">Check with AI</button>
-          <div id="sa-feedback" class="feedback" aria-live="polite"></div>
         </div>
       </div>
 
-      <div id="screen-4" class="screen" role="group" aria-labelledby="screen4-title">
-        <div class="card">
-          <p class="rubric">Screen 4 · Verb forms</p>
-          <h2 id="screen4-title">Past Simple vs. Present Perfect</h2>
-          <p class="muted">Tap each verb to label the tense. Past = <em>finished time</em>; Present Perfect = <em>past action with result now</em>.</p>
-          <div class="chip-row" id="verb-row" aria-label="Verb chips">
-            <span class="chip" data-tense="past">finished</span>
-            <span class="chip" data-tense="present">have read</span>
-            <span class="chip" data-tense="present">have sent</span>
-            <span class="chip" data-tense="past">spoke</span>
-            <span class="chip" data-tense="present">have started</span>
-            <span class="chip" data-tense="present">have not decided</span>
-          </div>
-          <div class="callout" style="margin-top: 12px;">
-            <p>First tap a tense button, then tap the verb chip. You can clear selections anytime.</p>
-            <div class="chip-row">
-              <button id="past-btn" class="nav-btn" type="button">Mark Past</button>
-              <button id="present-btn" class="nav-btn" type="button">Mark Present Perfect</button>
-              <button id="clear-btn" class="nav-btn" type="button">Clear</button>
+      <!-- Activity 9 & 10 -->
+      <div id="screen-6" class="screen">
+        <div class="part">
+          <h2>Part 3 continued...</h2>
+
+          <div class="activity">
+            <p class="rubric">Activity 9: Complete the Email (Drop-down)</p>
+            <p><strong>Rubric:</strong> Read the final email from Tariq. For each gap, choose the correct word to complete the text.</p>
+
+            <div class="email-box">
+              <div class="email-header">
+                <div><strong>From:</strong> Tariq Abbas (t.abbas@hebronharmonyfilms.ps)</div>
+                <div><strong>To:</strong> Isabelle Dubois (i.dubois@parisianproductions.fr)</div>
+                <div><strong>Subject:</strong> Re: Update on our project: "Jasmine in Paris"</div>
+              </div>
+              <div class="email-body">
+                <p>Dear Isabelle,</p>
+                <p>That is wonderful news. We are so glad you
+                  <select id="email1" data-answer="liked">
+                    <option value="">--CHOOSE--</option>
+                    <option value="liked">liked</option>
+                    <option value="have liked">have liked</option>
+                    <option value="like">like</option>
+                  </select> the script. Fatima worked very hard on it.
+                </p>
+                <p>We
+                  <select id="email2" data-answer="agree">
+                    <option value="">--CHOOSE--</option>
+                    <option value="agreed">agreed</option>
+                    <option value="have agreed">have agreed</option>
+                    <option value="agree">agree</option>
+                  </select> that the music is a key element. We have not thought about composers yet, so we are excited to hear your ideas.
+                </p>
+                <p>We
+                  <select id="email3" data-answer="have booked">
+                    <option value="">--CHOOSE--</option>
+                    <option value="booked">booked</option>
+                    <option value="have booked">have booked</option>
+                    <option value="book">book</option>
+                  </select> the video call for Wednesday at 3:00 PM Hebron time. We have also
+                  <select id="email4" data-answer="prepared">
+                    <option value="">--CHOOSE--</option>
+                    <option value="prepared">prepared</option>
+                    <option value="have prepared">have prepared</option>
+                    <option value="prepare">prepare</option>
+                  </select> a short presentation on our casting ideas. We found a wonderful young actress last week who could be perfect for the role of Jasmine.
+                </p>
+                <p>We look forward to
+                  <select id="email5" data-answer="speaking">
+                    <option value="">--CHOOSE--</option>
+                    <option value="speaking">speaking</option>
+                    <option value="spoke">spoke</option>
+                    <option value="spoken">spoken</option>
+                  </select> to you on Wednesday.
+                </p>
+                <p>Best regards,<br>Tariq</p>
+              </div>
             </div>
+
+            <button class="check-btn" onclick="checkActivity9()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act9" class="feedback" style="display:none;"></div>
           </div>
-          <div id="verb-feedback" class="feedback" aria-live="polite"></div>
+
+          <!-- Activity 10: Ranking -->
+          <div class="activity">
+            <p class="rubric">Activity 10: Ranking</p>
+            <p><strong>Rubric:</strong> Based on all the emails, what are the most important next steps for the production companies? Rank the following actions from 1 (most important) to 3 (least important).</p>
+
+            <table>
+              <tr>
+                <th>Action</th>
+                <th>Rank (1, 2, or 3)</th>
+              </tr>
+              <tr>
+                <td>Discuss casting ideas for the main roles.</td>
+                <td>
+                  <select id="rank1" data-answer="2">
+                    <option value="">--Select--</option>
+                    <option value="1">1 (Most important)</option>
+                    <option value="2">2</option>
+                    <option value="3">3 (Least important)</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Choose a composer for the film's music.</td>
+                <td>
+                  <select id="rank2" data-answer="3">
+                    <option value="">--Select--</option>
+                    <option value="1">1 (Most important)</option>
+                    <option value="2">2</option>
+                    <option value="3">3 (Least important)</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Finalise the first draft of the script.</td>
+                <td>
+                  <select id="rank3" data-answer="1">
+                    <option value="">--Select--</option>
+                    <option value="1">1 (Most important)</option>
+                    <option value="2">2</option>
+                    <option value="3">3 (Least important)</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+
+            <div class="callout">
+              <p><strong><i class="fa-solid fa-info-circle"></i> Note:</strong> This is a slightly open-ended question. A logical ranking would prioritize finalizing the script first (since everything depends on it), then casting, then music composition.</p>
+            </div>
+
+            <button class="check-btn" onclick="checkActivity10()"><i class="fa-solid fa-check"></i> Check Answers</button>
+            <div id="feedback-act10" class="feedback" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANSWER KEY -->
+      <div id="screen-7" class="screen">
+        <div class="answer-key">
+          <h2><i class="fa-solid fa-key"></i> ANSWER KEY</h2>
+
+          <h3>Activity 2: Short Answer Questions</h3>
+          <div class="answer-item">
+            <ol>
+              <li>Jasmine in Paris</li>
+              <li>Fatima</li>
+              <li>Last week</li>
+              <li>The draft</li>
+              <li>Spoke to actors</li>
+              <li>Tuesday or Wednesday</li>
+            </ol>
+          </div>
+
+          <h3>Activity 3: Table Completion</h3>
+          <div class="answer-item">
+            <table>
+              <tr>
+                <th>Category</th>
+                <th>Information</th>
+              </tr>
+              <tr>
+                <td>Project Title</td>
+                <td>"Jasmine in Paris"</td>
+              </tr>
+              <tr>
+                <td>Genre</td>
+                <td>French/Palestinian Drama</td>
+              </tr>
+              <tr>
+                <td>Current Script Status</td>
+                <td>First draft finished</td>
+              </tr>
+              <tr>
+                <td>Key Discussion Points</td>
+                <td>1. The script<br>2. Casting ideas</td>
+              </tr>
+            </table>
+          </div>
+
+          <h3>Activity 4: Noticing Grammar</h3>
+          <div class="answer-item">
+            <p><strong>Past Simple (YELLOW):</strong> finished, spoke</p>
+            <p><strong>Present Perfect (GREEN):</strong> have made, have read, have sent, have also started, have not made</p>
+          </div>
+
+          <h3>Activity 5: Understanding the Rules</h3>
+          <div class="answer-item">
+            <ol>
+              <li>b</li>
+              <li>b</li>
+              <li>a</li>
+              <li>a</li>
+            </ol>
+          </div>
+
+          <h3>Activity 6: Grammar Practice</h3>
+          <div class="answer-item">
+            <ol>
+              <li>have seen</li>
+              <li>visited</li>
+              <li>have not received</li>
+              <li>has worked</li>
+              <li>discussed</li>
+              <li>has just shouted</li>
+            </ol>
+          </div>
+
+          <h3>Activity 7: Unscramble the Sentences</h3>
+          <div class="answer-item">
+            <ol>
+              <li>Have you seen the new film?</li>
+              <li>I watched an interesting documentary last night.</li>
+              <li>He has already booked the tickets.</li>
+              <li>When did they arrive?</li>
+              <li>We have not had lunch yet.</li>
+            </ol>
+          </div>
+
+          <h3>Activity 8: Linking</h3>
+          <div class="answer-item">
+            <ol>
+              <li>d</li>
+              <li>a</li>
+              <li>c</li>
+              <li>b</li>
+            </ol>
+          </div>
+
+          <h3>Activity 9: Complete the Email</h3>
+          <div class="answer-item">
+            <ol>
+              <li>liked</li>
+              <li>agree</li>
+              <li>have booked</li>
+              <li>prepared</li>
+              <li>speaking</li>
+            </ol>
+          </div>
+
+          <h3>Activity 10: Ranking</h3>
+          <div class="answer-item">
+            <p>Suggested ranking:</p>
+            <ol>
+              <li><strong>1 (Most important):</strong> Finalise the first draft of the script (Everything depends on it)</li>
+              <li><strong>2:</strong> Discuss casting ideas for the main roles (Next logical creative step)</li>
+              <li><strong>3 (Least important):</strong> Choose a composer for the film's music (Important, but can happen after script and cast)</li>
+            </ol>
+          </div>
         </div>
 
-        <div class="card" style="margin-top: var(--space-4);">
-          <p class="rubric">Score</p>
-          <h2>Ready to submit?</h2>
-          <p class="muted">When all activities are checked, view your score summary.</p>
-          <div class="score-box" id="score-box" aria-live="polite">
-            <i class="fa-solid fa-clipboard-check"></i>
-            <span id="score-text">Score pending...</span>
-          </div>
+        <div class="score-summary">
+          <h2><i class="fa-solid fa-trophy"></i> Your Score</h2>
+          <div class="score-number" id="final-score">-- / 100</div>
+          <p id="score-message">Complete all activities to see your final score!</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // Navigation
     const screens = Array.from(document.querySelectorAll('.screen'));
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const progressFill = document.getElementById('progress-fill');
     let current = 0;
-    let score = { mc: 0, sa: 0, verb: 0 };
+    let activityScores = {
+      act2: 0, act3: 0, act5: 0, act6: 0, act7: 0, act8: 0, act9: 0, act10: 0
+    };
 
     const updateScreen = () => {
       screens.forEach((s, i) => s.classList.toggle('active', i === current));
@@ -268,159 +782,196 @@
       progressFill.style.width = `${ratio}%`;
     };
 
-    prevBtn.addEventListener('click', () => { current = Math.max(0, current - 1); updateScreen(); });
-    nextBtn.addEventListener('click', () => { current = Math.min(screens.length - 1, current + 1); updateScreen(); });
-
-    // Multiple choice check
-    document.getElementById('mc-check').addEventListener('click', () => {
-      const selects = Array.from(document.querySelectorAll('#screen-2 select'));
-      let correct = 0;
-      selects.forEach(sel => {
-        const expected = sel.dataset.answer;
-        const chosen = sel.value;
-        if (chosen === expected) {
-          correct++;
-          sel.style.borderColor = 'var(--correct-border)';
-          sel.style.background = 'var(--correct-bg)';
-        } else {
-          sel.style.borderColor = 'var(--incorrect-border)';
-          sel.style.background = 'var(--incorrect-bg)';
-        }
-      });
-      score.mc = correct;
-      const feedback = document.getElementById('mc-feedback');
-      feedback.textContent = `${correct} / ${selects.length} correct. Adjust the red items.`;
-      feedback.className = 'feedback ' + (correct === selects.length ? 'correct' : 'incorrect');
-      updateTotal();
+    prevBtn.addEventListener('click', () => {
+      current = Math.max(0, current - 1);
+      updateScreen();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // TensorFlow similarity helpers
-    const clean = (text) => text.toLowerCase().trim();
-    const tokenize = (text) => clean(text).split(/[^a-z]+/).filter(Boolean);
-    const vectorize = (tokens) => {
-      const dict = {};
-      tokens.forEach(tok => { dict[tok] = (dict[tok] || 0) + 1; });
-      const keys = Object.keys(dict);
-      return tf.tensor1d(keys.map(k => dict[k]));
-    };
-    const cosineSim = (aTokens, bTokens) => {
-      const aVec = vectorize(aTokens);
-      const bVec = vectorize(bTokens);
-      const size = Math.max(aVec.size, bVec.size);
-      const aPad = aVec.pad([[0, Math.max(0, size - aVec.size)]]);
-      const bPad = bVec.pad([[0, Math.max(0, size - bVec.size)]]);
-      const sim = tf.tidy(() => {
-        const dot = tf.mul(aPad, bPad).sum();
-        const denom = tf.sqrt(tf.mul(aPad, aPad).sum()).mul(tf.sqrt(tf.mul(bPad, bPad).sum()));
-        return dot.div(denom.add(1e-6)).dataSync()[0];
-      });
-      aVec.dispose(); bVec.dispose(); aPad.dispose(); bPad.dispose();
-      return sim;
+    nextBtn.addEventListener('click', () => {
+      current = Math.min(screens.length - 1, current + 1);
+      updateScreen();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Helper functions
+    const normalize = (text) => text.toLowerCase().trim().replace(/[.,!?;:"']/g, '');
+
+    const cosineSimilarity = (str1, str2) => {
+      const tokens1 = normalize(str1).split(/\s+/);
+      const tokens2 = normalize(str2).split(/\s+/);
+      const set = new Set([...tokens1, ...tokens2]);
+      const vec1 = Array.from(set).map(word => tokens1.filter(t => t === word).length);
+      const vec2 = Array.from(set).map(word => tokens2.filter(t => t === word).length);
+      const dotProduct = vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
+      const mag1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
+      const mag2 = Math.sqrt(vec2.reduce((sum, val) => sum + val * val, 0));
+      return dotProduct / (mag1 * mag2 + 0.0001);
     };
 
-    // simple spelling suggestion using closest token by Levenshtein distance
-    const distance = (a, b) => {
-      const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-      for (let i = 1; i <= a.length; i++) {
-        for (let j = 1; j <= b.length; j++) {
-          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-          dp[i][j] = Math.min(
-            dp[i - 1][j] + 1,
-            dp[i][j - 1] + 1,
-            dp[i - 1][j - 1] + cost
-          );
+    const checkAnswers = (inputs, activityName, maxScore) => {
+      let correct = 0;
+      inputs.forEach(input => {
+        const answer = normalize(input.dataset.answer);
+        const userAnswer = normalize(input.value);
+        const similarity = cosineSimilarity(answer, userAnswer);
+
+        if (similarity > 0.75 || answer === userAnswer) {
+          input.style.borderColor = 'var(--correct-border)';
+          input.style.background = 'var(--correct-bg)';
+          correct++;
+        } else {
+          input.style.borderColor = 'var(--incorrect-border)';
+          input.style.background = 'var(--incorrect-bg)';
         }
+      });
+
+      activityScores[activityName] = correct;
+      updateFinalScore();
+      return { correct, total: inputs.length };
+    };
+
+    const checkSelects = (selects, activityName, maxScore) => {
+      let correct = 0;
+      selects.forEach(select => {
+        const answer = select.dataset.answer;
+        const userAnswer = select.value;
+
+        if (answer === userAnswer) {
+          select.style.borderColor = 'var(--correct-border)';
+          select.style.background = 'var(--correct-bg)';
+          correct++;
+        } else {
+          select.style.borderColor = 'var(--incorrect-border)';
+          select.style.background = 'var(--incorrect-bg)';
+        }
+      });
+
+      activityScores[activityName] = correct;
+      updateFinalScore();
+      return { correct, total: selects.length };
+    };
+
+    const showFeedback = (elementId, correct, total, isCorrect) => {
+      const feedback = document.getElementById(elementId);
+      feedback.style.display = 'block';
+      feedback.textContent = `✓ ${correct} / ${total} correct`;
+      feedback.className = isCorrect ? 'feedback correct' : 'feedback incorrect';
+    };
+
+    // Activity checking functions
+    function checkActivity2() {
+      const inputs = [
+        document.getElementById('q1'),
+        document.getElementById('q2'),
+        document.getElementById('q3'),
+        document.getElementById('q4'),
+        document.getElementById('q5'),
+        document.getElementById('q6')
+      ];
+      const result = checkAnswers(inputs, 'act2', 6);
+      showFeedback('feedback-act2', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity3() {
+      const inputs = [
+        document.getElementById('table1'),
+        document.getElementById('table2'),
+        document.getElementById('table3')
+      ];
+      const result = checkAnswers(inputs, 'act3', 3);
+      showFeedback('feedback-act3', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity5() {
+      const selects = [
+        document.getElementById('mc1'),
+        document.getElementById('mc2'),
+        document.getElementById('mc3'),
+        document.getElementById('mc4')
+      ];
+      const result = checkSelects(selects, 'act5', 4);
+      showFeedback('feedback-act5', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity6() {
+      const inputs = [
+        document.getElementById('gap1'),
+        document.getElementById('gap2'),
+        document.getElementById('gap3'),
+        document.getElementById('gap4'),
+        document.getElementById('gap5'),
+        document.getElementById('gap6')
+      ];
+      const result = checkAnswers(inputs, 'act6', 6);
+      showFeedback('feedback-act6', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity7() {
+      const inputs = [
+        document.getElementById('unscramble1'),
+        document.getElementById('unscramble2'),
+        document.getElementById('unscramble3'),
+        document.getElementById('unscramble4'),
+        document.getElementById('unscramble5')
+      ];
+      const result = checkAnswers(inputs, 'act7', 5);
+      showFeedback('feedback-act7', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity8() {
+      const selects = [
+        document.getElementById('match1'),
+        document.getElementById('match2'),
+        document.getElementById('match3'),
+        document.getElementById('match4')
+      ];
+      const result = checkSelects(selects, 'act8', 4);
+      showFeedback('feedback-act8', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity9() {
+      const selects = [
+        document.getElementById('email1'),
+        document.getElementById('email2'),
+        document.getElementById('email3'),
+        document.getElementById('email4'),
+        document.getElementById('email5')
+      ];
+      const result = checkSelects(selects, 'act9', 5);
+      showFeedback('feedback-act9', result.correct, result.total, result.correct === result.total);
+    }
+
+    function checkActivity10() {
+      const selects = [
+        document.getElementById('rank1'),
+        document.getElementById('rank2'),
+        document.getElementById('rank3')
+      ];
+      const result = checkSelects(selects, 'act10', 3);
+      showFeedback('feedback-act10', result.correct, result.total, result.correct === result.total);
+    }
+
+    function updateFinalScore() {
+      const totalScore = Object.values(activityScores).reduce((sum, score) => sum + score, 0);
+      const maxScore = 6 + 3 + 4 + 6 + 5 + 4 + 5 + 3; // Total possible points
+      const percentage = Math.round((totalScore / maxScore) * 100);
+
+      document.getElementById('final-score').textContent = `${totalScore} / ${maxScore} (${percentage}%)`;
+
+      let message = '';
+      if (percentage === 100) {
+        message = '🎉 Perfect score! Excellent work!';
+      } else if (percentage >= 80) {
+        message = '👏 Great job! You have a strong understanding.';
+      } else if (percentage >= 60) {
+        message = '👍 Good effort! Review the areas you missed.';
+      } else {
+        message = '📚 Keep practicing! Try reviewing the email again.';
       }
-      return dp[a.length][b.length];
-    };
 
-    document.getElementById('sa-check').addEventListener('click', () => {
-      const inputs = Array.from(document.querySelectorAll('#screen-3 input'));
-      let correct = 0;
-      const suggestions = [];
-      inputs.forEach(inp => {
-        const target = clean(inp.dataset.answer);
-        const user = clean(inp.value);
-        if (!user) return;
-        const sim = cosineSim(tokenize(user), tokenize(target));
-        const nearMiss = distance(user, target) === 1;
-        if (sim >= 0.7 || nearMiss) {
-          correct++;
-          inp.style.borderColor = 'var(--correct-border)';
-          inp.style.background = 'var(--correct-bg)';
-        } else {
-          inp.style.borderColor = 'var(--incorrect-border)';
-          inp.style.background = 'var(--incorrect-bg)';
-          suggestions.push(`Try: "${target}"`);
-        }
-      });
-      score.sa = correct;
-      const feedback = document.getElementById('sa-feedback');
-      feedback.textContent = `${correct} / ${inputs.length} answers match. ${suggestions.join(' · ')}`;
-      feedback.className = 'feedback ' + (correct === inputs.length ? 'correct' : 'incorrect');
-      updateTotal();
-    });
-
-    // Verb chips
-    let selectedTense = null;
-    document.getElementById('past-btn').addEventListener('click', () => { selectedTense = 'past'; });
-    document.getElementById('present-btn').addEventListener('click', () => { selectedTense = 'present'; });
-    document.getElementById('clear-btn').addEventListener('click', () => {
-      document.querySelectorAll('#verb-row .chip').forEach(ch => ch.classList.remove('selected', 'correct', 'incorrect'));
-      document.getElementById('verb-feedback').textContent = '';
-      score.verb = 0;
-      updateTotal();
-    });
-
-    document.querySelectorAll('#verb-row .chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        if (!selectedTense) {
-          document.getElementById('verb-feedback').textContent = 'Choose a tense button first.';
-          return;
-        }
-        chip.dataset.user = selectedTense;
-        chip.classList.add('selected');
-        evaluateVerbs();
-      });
-    });
-
-    const evaluateVerbs = () => {
-      const chips = Array.from(document.querySelectorAll('#verb-row .chip'));
-      let correct = 0;
-      chips.forEach(chip => {
-        const expect = chip.dataset.tense;
-        const user = chip.dataset.user;
-        chip.classList.remove('correct', 'incorrect');
-        if (!user) return;
-        if (expect === user) {
-          correct++;
-          chip.classList.add('correct');
-          chip.style.background = 'var(--correct-bg)';
-          chip.style.borderColor = 'var(--correct-border)';
-        } else {
-          chip.classList.add('incorrect');
-          chip.style.background = 'var(--incorrect-bg)';
-          chip.style.borderColor = 'var(--incorrect-border)';
-        }
-      });
-      score.verb = correct;
-      const fb = document.getElementById('verb-feedback');
-      fb.textContent = `${correct} / ${chips.length} verbs labelled correctly. Tap again to adjust.`;
-      fb.className = 'feedback ' + (correct === chips.length ? 'correct' : 'incorrect');
-      updateTotal();
-    };
-
-    const updateTotal = () => {
-      const total = score.mc + score.sa + score.verb;
-      const max = 3 + 4 + 6; // mc + short answers + verbs
-      const percent = Math.round((total / max) * 100);
-      const box = document.getElementById('score-box');
-      const text = document.getElementById('score-text');
-      text.textContent = `Live score: ${total} / ${max} (${percent}%)`;
-      box.style.borderColor = percent === 100 ? 'var(--correct-border)' : 'var(--border-sage)';
-    };
+      document.getElementById('score-message').textContent = message;
+    }
 
     updateScreen();
   </script>
