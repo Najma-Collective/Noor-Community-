@@ -1,1137 +1,800 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B1.1: The Hebron-Paris Connection</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Community | B1 French-Palestinian Film Collaboration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../CSS-slides.css" />
     <style>
-        :root {
-          --primary-sage: #7a8471; --secondary-sage: #9caf88; --tertiary-sage: #b8c5a6; --warm-cream: #f8f6f0;
-          --soft-white: #fefcf7; --forest-shadow: #5a6b52; --ink: #2f3a2b; --ink-muted: #5a6b52;
-          --border-sage: rgba(122, 132, 113, 0.2); --hover-sage: rgba(156, 175, 136, 0.15); --deep-forest: #3e4a3a;
-          --font-display: "Questrial", system-ui, sans-serif; --font-body: "Nunito", system-ui, sans-serif;
-          --step--1: clamp(0.875rem, 0.82rem + 0.18vw, 0.95rem); --step-0: clamp(1rem, 0.94rem + 0.28vw, 1.1rem);
-          --step-1: clamp(1.125rem, 1.04rem + 0.42vw, 1.32rem); --step-2: clamp(1.35rem, 1.18rem + 0.68vw, 1.65rem);
-          --step-3: clamp(1.75rem, 1.42rem + 1.1vw, 2.1rem); --step-4: clamp(2.25rem, 1.8rem + 1.65vw, 2.75rem);
-          --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-7: 2rem;
-          --radius-sm: 10px; --radius: 16px; --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
-          --transition-std: 250ms cubic-bezier(.2,.8,.2,1); --container-max: clamp(320px, 92vw, 940px);
-          --container-padding: clamp(1.25rem, 5vw, 2rem);
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body { margin: 0; font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6; color: var(--ink); background: var(--warm-cream); }
-        .container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); }
-        h1 { font-family: var(--font-display); font-size: var(--step-4); color: var(--forest-shadow); text-align: center; margin: 0 0 var(--space-3); }
-        h2 { font-family: var(--font-display); font-size: var(--step-3); color: var(--forest-shadow); margin: var(--space-7) 0 var(--space-4); }
-        h3 { font-family: var(--font-display); font-size: var(--step-2); color: var(--forest-shadow); margin: 0 0 var(--space-3); }
-        .activity-btn { padding: 0.75rem 1.75rem; border-radius: 999px; border: 1px solid var(--primary-sage); background: linear-gradient(180deg, var(--primary-sage), var(--deep-forest)); color: #fff; font-weight: 700; cursor: pointer; transition: all var(--transition-std); box-shadow: var(--shadow-1); font-family: var(--font-body); font-size: var(--step-0); }
-        .activity-btn:hover { transform: scale(1.02); }
-        .reset-btn { background: transparent; color: var(--deep-forest); border: 1px solid var(--secondary-sage); }
-        .hero-section { background-size: cover; background-position: center; padding: clamp(3rem, 10vw, 6rem) 1.5rem; text-align: center; color: white; position: relative; }
-        .hero-overlay { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.4); }
-        .hero-content { position: relative; z-index: 2; }
-        .hero-section h1 { color: white; }
-        .pills { display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; }
-        .pill { padding: var(--space-2) var(--space-4); border-radius: 999px; font-size: var(--step--1); font-weight: 600; background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .activity-card { background: var(--soft-white); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-1); border: 1px solid var(--border-sage); }
-        .activity-card h3 { color: var(--primary-sage); margin-top: 0; border-bottom: 2px solid var(--hover-sage); padding-bottom: var(--space-2); }
-        .instructions { color: var(--ink-muted); font-style: italic; margin-bottom: var(--space-5); }
-        .reading-passage { background-color: var(--warm-cream); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--border-sage); margin-bottom: var(--space-6); line-height: 1.8; }
-        .email-header { background: var(--soft-white); padding: var(--space-4); border-radius: var(--radius-sm); margin-bottom: var(--space-4); border-left: 4px solid var(--primary-sage); }
-        .email-field { margin-bottom: var(--space-2); }
-        .email-field strong { color: var(--deep-forest); }
-        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
-        .matching-item { padding: var(--space-3); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-std); background: white; }
-        .matching-item:hover { background: var(--hover-sage); }
-        .matching-item.selected { background: #c6aa77; border-color: #c6aa77; color: white; }
-        .matching-item.matched { background: #d4edda; border-color: #28a745; pointer-events: none; }
-        .scrambled-sentence { padding: var(--space-4); background: var(--secondary-sage); color: white; border-radius: var(--radius-sm); margin: var(--space-3) 0; font-weight: 600; }
-        .sentence-input { width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); margin-top: var(--space-2); font-family: var(--font-body); font-size: var(--step-0); }
-        .gapfill-sentence { margin-bottom: var(--space-3); line-height: 2; }
-        .gapfill-sentence input { padding: 0.5rem; border: none; border-bottom: 2px solid var(--primary-sage); background: transparent; font-family: var(--font-body); font-size: var(--step-0); min-width: 150px; }
-        .question-block { background: white; padding: var(--space-4); margin-bottom: var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--border-sage); }
-        .question-block label { font-weight: 600; display: block; margin-bottom: var(--space-2); }
-        .question-block input, .question-block select, .question-block textarea { width: 100%; padding: var(--space-3); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--step-0); }
-        .question-block textarea { min-height: 100px; resize: vertical; }
-        .grammar-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
-        .grammar-table th, .grammar-table td { padding: var(--space-3); border: 1px solid var(--border-sage); text-align: left; }
-        .grammar-table th { background: var(--primary-sage); color: white; font-weight: 600; }
-        .grammar-table td { background: white; }
-        .verb-option { display: inline-block; padding: var(--space-2) var(--space-3); margin: var(--space-2); border: 2px solid var(--border-sage); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-std); background: white; }
-        .verb-option:hover { background: var(--hover-sage); }
-        .verb-option.selected { background: var(--secondary-sage); color: white; border-color: var(--secondary-sage); }
-        .drop-target { min-height: 40px; border: 2px dashed var(--border-sage); border-radius: var(--radius-sm); padding: var(--space-2); margin: var(--space-2) 0; background: var(--soft-white); }
-        .drop-target.has-content { border-style: solid; background: white; }
-        .ranking-item { padding: var(--space-4); border: 1px solid var(--border-sage); border-radius: var(--radius-sm); margin: var(--space-3) 0; background: white; display: flex; align-items: center; gap: var(--space-3); }
-        .ranking-item select { width: 100px; padding: var(--space-2); border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm); font-size: var(--step-0); }
-        .ranking-item .title { flex: 1; font-weight: 600; color: var(--deep-forest); }
-        .vocab-group { margin: var(--space-4) 0; padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius); }
-        .vocab-group h4 { margin-top: 0; color: var(--primary-sage); }
-        .vocab-word { display: inline-block; padding: var(--space-2) var(--space-3); margin: var(--space-2); border: 2px solid var(--border-sage); border-radius: var(--radius-sm); cursor: move; background: white; transition: all var(--transition-std); }
-        .vocab-word:hover { background: var(--hover-sage); }
-        .vocab-word.placed { opacity: 0.3; pointer-events: none; }
-        .vocab-dropzone { min-height: 80px; border: 2px dashed var(--border-sage); border-radius: var(--radius-sm); padding: var(--space-3); margin: var(--space-2) 0; background: white; }
-        .vocab-dropzone.drag-over { background: var(--hover-sage); border-color: var(--primary-sage); }
-        #submission-feedback { display: none; padding: var(--space-6); margin-top: var(--space-7); border-radius: var(--radius); text-align: center; }
-        #submission-feedback.success { background-color: #d4edda; color: #155724; }
-
-        /* Custom Modal */
-        .custom-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
-        .modal-content { background-color: var(--soft-white); margin: 10% auto; padding: var(--space-6); border-radius: var(--radius); max-width: 500px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); border: 2px solid var(--primary-sage); }
-        .modal-header { font-size: var(--step-2); font-weight: 700; color: var(--deep-forest); margin-bottom: var(--space-4); text-align: center; }
-        .modal-body { color: var(--ink); line-height: 1.8; }
-        .modal-close { background: var(--primary-sage); color: white; padding: var(--space-3) var(--space-6); border: none; border-radius: 999px; cursor: pointer; font-weight: 700; margin-top: var(--space-4); width: 100%; font-size: var(--step-0); transition: all var(--transition-std); }
-        .modal-close:hover { background: var(--deep-forest); transform: scale(1.02); }
-
-        .inline-feedback { display: none; padding: var(--space-3); margin-top: var(--space-3); border-radius: var(--radius-sm); font-weight: 600; }
-        .inline-feedback.correct { display: block; background-color: #d4edda; color: #155724; border: 2px solid #28a745; }
-        .inline-feedback.incorrect { display: block; background-color: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+      .hero-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(120deg, rgba(58, 68, 60, 0.85), rgba(122, 132, 113, 0.75));
+        color: #fff;
+        border-radius: var(--radius-lg);
+      }
+      .hero-card .bg-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
+      .hero-card .card-content {
+        position: relative;
+        z-index: 1;
+      }
+      .two-column {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-6);
+        align-items: start;
+      }
+      .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--space-4);
+      }
+      .match-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: var(--space-4);
+      }
+      .match-column button {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .short-answer-card input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-sage);
+        background: #fff;
+      }
+      .feedback {
+        font-weight: 700;
+        color: var(--forest-shadow);
+      }
+      .token {
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--secondary-sage) 30%, #fff 70%);
+      }
+      .sentence-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .dropdown-row {
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: var(--space-3);
+        align-items: center;
+      }
+      .rank-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .rank-table th,
+      .rank-table td {
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--border-sage);
+      }
+      .color-key {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .color-key span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: var(--soft-white);
+        border: 1px solid var(--border-sage);
+      }
+      .color-chip {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
     </style>
-</head>
-<body>
-    <header class="hero-section" style="background-image: url('https://images.pexels.com/photos/2422259/pexels-photo-2422259.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600');">
-        <div class="hero-overlay"></div>
-        <div class="hero-content container">
-            <h1>The Hebron-Paris Connection</h1>
-            <div class="pills">
-                <span class="pill">Level: B1</span>
-                <span class="pill">Grammar: Present Perfect vs. Past Simple</span>
-                <span class="pill">Duration: 60 Minutes</span>
-            </div>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-clapperboard" style="color: var(--primary-sage)"></i>
+          <span>Noor Community · B1 Lesson</span>
         </div>
-    </header>
-
-    <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
-        <!-- Part 1: A New Film Project -->
-        <section>
-            <h2>Part 1: A New Film Project</h2>
-
-            <div class="activity-card">
-                <h3>Activity 1: Getting Started</h3>
-                <p class="instructions">Discuss these questions with a partner. Write a short answer for each one.</p>
-
-                <div class="question-block">
-                    <label>1. What is your favourite Palestinian film? Why do you like it?</label>
-                    <textarea id="q1" placeholder="Write your answer here..."></textarea>
+        <div id="slide-counter" class="slide-counter"></div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="slide-stage" id="slide-1">
+            <div class="slide-inner">
+              <div class="card hero-card">
+                <div class="bg-media">
+                  <img
+                    data-remote-src="https://images.pexels.com/photos/955395/pexels-photo-955395.jpeg"
+                    alt="Film camera and lights"
+                  />
                 </div>
-
-                <div class="question-block">
-                    <label>2. What kind of stories do you think are important to tell about life in Palestine?</label>
-                    <textarea id="q2" placeholder="Write your answer here..."></textarea>
+                <div class="card-content">
+                  <span class="pill"><i class="fa-solid fa-film"></i> B1 · 60 minutes</span>
+                  <h1>French-Palestinian Film Collaboration: A Slice of Life</h1>
+                  <p class="deck-subtitle">Reading, grammar, and collaboration tasks with self-marking support.</p>
+                  <ul class="instruction-list">
+                    <li>AI-assisted short answers (TensorFlow.js, generous marking)</li>
+                    <li>Click-and-drop matching with distinct colours</li>
+                    <li>Vocabulary and grammar focus on Present Perfect vs. Past Simple</li>
+                  </ul>
                 </div>
-
-                <div class="question-block">
-                    <label>3. Have you ever worked on a project with people from another country?</label>
-                    <textarea id="q3" placeholder="Write your answer here..."></textarea>
-                </div>
-
-                <div id="activity1-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity1()" style="margin-right: var(--space-3);">Submit Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity1')">Reset</button>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Activity 2: Reading an Email -->
-        <section>
-            <h2>Activity 2: Reading an Email</h2>
-            <p class="instructions">Read the email below from a film company in Hebron to a production company in Paris.</p>
-
-            <div class="reading-passage">
-                <div class="email-header">
-                    <div class="email-field"><strong>To:</strong> Jean-Luc Moreau</div>
-                    <div class="email-field"><strong>From:</strong> Fatima Al-Faqih</div>
-                    <div class="email-field"><strong>Subject:</strong> Update on our French-Palestinian Co-production</div>
+          <div class="slide-stage hidden" id="slide-2">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Part 1 · Reading &amp; Context</span>
+                <h2>Activity 1: Read the email</h2>
+                <p class="muted">French-Palestinian Film Collaboration: "Jasmine in Paris"</p>
+                <div class="context-block">
+                  <div class="two-column">
+                    <div>
+                      <div class="callout warning">
+                        <p><strong>From:</strong> Tariq Abbas (t.abbas@hebronharmonyfilms.ps)</p>
+                        <p><strong>To:</strong> Isabelle Dubois (i.dubois@parisianproductions.fr)</p>
+                        <p><strong>Subject:</strong> Update on our project: "Jasmine in Paris"</p>
+                      </div>
+                      <p>Dear Isabelle,</p>
+                      <p>I hope this email finds you well.</p>
+                      <p>
+                        I am writing to give you an update on our joint project, "Jasmine in Paris". We have made some good progress since our last conversation.
+                      </p>
+                      <p>
+                        Our lead writer, <mark class="token" data-tense="past">Fatima finished</mark> the first draft of the script last week. I <mark class="token" data-tense="present">have read</mark> it, and I think it is a beautiful story that really captures the experience of the diaspora. We have sent you the draft in a separate email. Please let us know your thoughts when you have a chance to read it.
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        We have also started to think about casting. We <mark class="token" data-tense="past">spoke</mark> to a few talented actors here in Hebron yesterday. We have not made any decisions yet, of course. We want to discuss the main roles with you first.
+                      </p>
+                      <p>
+                        Could we schedule a video call for next week to discuss the script and our casting ideas? We are available on <mark class="token" data-tense="past">Tuesday</mark> or <mark class="token" data-tense="past">Wednesday</mark> afternoon.
+                      </p>
+                      <p>Best regards,</p>
+                      <p><strong>Tariq Abbas</strong><br />Hebron Harmony Films</p>
+                    </div>
+                  </div>
+                  <div class="callout success" style="margin-top: var(--space-4)">
+                    <p><strong>Tip:</strong> Use the highlight tool in the toolbar to colour verbs. Yellow for Past Simple, Green for Present Perfect.</p>
+                  </div>
                 </div>
-
-                <p>Dear Jean-Luc,</p>
-
-                <p>I hope this email finds you well.</p>
-
-                <p>I am writing to give you an update on our project. We <strong>have made</strong> some excellent progress since our last conversation.</p>
-
-                <p>First, we <strong>have found</strong> the perfect lead actress for the role of Laila. Her name is Sama Khalil. We <strong>interviewed</strong> several talented actresses last week, but Sama's audition was incredible. She <strong>has already accepted</strong> the role and she is very excited to start.</p>
-
-                <p>We <strong>have also finished</strong> the final draft of the script. My team <strong>completed</strong> it yesterday. I have attached the document to this email. We <strong>have worked</strong> very hard to show the beauty and complexity of the diaspora experience. We hope you like the changes we <strong>have made</strong>.</p>
-
-                <p>Our location scout, Omar, <strong>has just returned</strong> from his trip to Paris. He <strong>has taken</strong> some beautiful photos of possible filming locations. He <strong>visited</strong> Montmartre and the Latin Quarter. He <strong>found</strong> some wonderful cafes and streets that will be perfect for our scenes there.</p>
-
-                <p>We <strong>haven't booked</strong> the flight tickets for our team yet, but we plan to do that next week.</p>
-
-                <p>Could you please read the script and send us your feedback? We are looking forward to hearing your thoughts.</p>
-
-                <p>Best regards,<br>
-                Fatima Al-Faqih<br>
-                Project Manager<br>
-                Hebron Harmony Films</p>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Activity 3: Checking Your Understanding -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 3: Checking Your Understanding</h3>
-                <p class="instructions">Read the email again and answer the following questions with a full sentence.</p>
-
-                <div class="question-block">
-                    <label>1. Why is Fatima writing to Jean-Luc?</label>
-                    <input type="text" id="comp1" placeholder="Your answer...">
+          <div class="slide-stage hidden" id="slide-3">
+            <div class="slide-inner">
+              <div class="card short-answer-card">
+                <span class="pill">Part 1 · Comprehension</span>
+                <h2>Activity 2: Short Answer Questions</h2>
+                <p class="muted">Answer with one to three words. AI marking uses sentence similarity (TensorFlow.js USE) with generous thresholds.</p>
+                <div class="prompt-grid">
+                  <div>
+                    <label class="input-label" for="sa-project">What is the name of the project?</label>
+                    <input id="sa-project" data-reference="Jasmine in Paris" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-writer">Who finished the first draft?</label>
+                    <input id="sa-writer" data-reference="Fatima" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-when">When was the script finished?</label>
+                    <input id="sa-when" data-reference="last week" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-sent">What was sent separately?</label>
+                    <input id="sa-sent" data-reference="the draft" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-actors">What did the team do yesterday?</label>
+                    <input id="sa-actors" data-reference="spoke to actors" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-days">Which days are suggested for the call?</label>
+                    <input id="sa-days" data-reference="Tuesday or Wednesday" placeholder="Your answer" />
+                  </div>
                 </div>
-
-                <div class="question-block">
-                    <label>2. Who did they choose for the lead role?</label>
-                    <input type="text" id="comp2" placeholder="Your answer...">
+                <div class="btn-row" style="margin-top: var(--space-4)">
+                  <button id="short-answer-check" class="activity-btn" type="button">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Check with AI
+                  </button>
+                  <span id="short-answer-feedback" class="feedback" aria-live="polite"></span>
                 </div>
-
-                <div class="question-block">
-                    <label>3. What did Fatima attach to the email?</label>
-                    <input type="text" id="comp3" placeholder="Your answer...">
-                </div>
-
-                <div class="question-block">
-                    <label>4. Which two places in Paris did the location scout visit?</label>
-                    <input type="text" id="comp4" placeholder="Your answer...">
-                </div>
-
-                <div class="question-block">
-                    <label>5. What does Fatima ask Jean-Luc to do?</label>
-                    <input type="text" id="comp5" placeholder="Your answer...">
-                </div>
-
-                <div id="activity3-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity3()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity3')">Reset</button>
+                <p class="muted" style="margin-top: var(--space-3)">
+                  Model: TensorFlow.js Universal Sentence Encoder · generous acceptance for paraphrases.
+                </p>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Part 2: Grammar Focus -->
-        <section>
-            <h2>Part 2: Grammar Focus - Past and Present</h2>
-
-            <div class="activity-card">
-                <h3>Activity 4: Noticing Grammar</h3>
-                <p class="instructions">Find all the verbs in the Present Perfect (e.g., have made) and the Past Simple (e.g., interviewed) in the email from Fatima. Click on the verbs below to place them in the correct column.</p>
-
-                <div style="margin-bottom: var(--space-4);">
-                    <strong>Click on these verbs to categorize them:</strong><br>
-                    <span class="verb-option" data-verb="have made" data-type="present-perfect" onclick="selectVerb(this)">have made</span>
-                    <span class="verb-option" data-verb="have found" data-type="present-perfect" onclick="selectVerb(this)">have found</span>
-                    <span class="verb-option" data-verb="interviewed" data-type="past-simple" onclick="selectVerb(this)">interviewed</span>
-                    <span class="verb-option" data-verb="has accepted" data-type="present-perfect" onclick="selectVerb(this)">has accepted</span>
-                    <span class="verb-option" data-verb="have finished" data-type="present-perfect" onclick="selectVerb(this)">have finished</span>
-                    <span class="verb-option" data-verb="completed" data-type="past-simple" onclick="selectVerb(this)">completed</span>
-                    <span class="verb-option" data-verb="have worked" data-type="present-perfect" onclick="selectVerb(this)">have worked</span>
-                    <span class="verb-option" data-verb="has returned" data-type="present-perfect" onclick="selectVerb(this)">has returned</span>
-                    <span class="verb-option" data-verb="has taken" data-type="present-perfect" onclick="selectVerb(this)">has taken</span>
-                    <span class="verb-option" data-verb="visited" data-type="past-simple" onclick="selectVerb(this)">visited</span>
-                    <span class="verb-option" data-verb="found" data-type="past-simple" onclick="selectVerb(this)">found</span>
-                    <span class="verb-option" data-verb="haven't booked" data-type="present-perfect" onclick="selectVerb(this)">haven't booked</span>
+          <div class="slide-stage hidden" id="slide-4">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 1 · Table Completion</span>
+                <h2>Activity 3: Complete the table</h2>
+                <p>Fill in the missing notes from Tariq's email.</p>
+                <div class="table like">
+                  <div class="table-row table-header">
+                    <div>Category</div>
+                    <div>Information</div>
+                  </div>
+                  <div class="table-row">
+                    <div>Project Title</div>
+                    <div><input class="full" data-answer="Jasmine in Paris" placeholder="Add title" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Genre</div>
+                    <div><input class="full" data-answer="French/Palestinian Drama" placeholder="Add genre" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Current Script Status</div>
+                    <div><input class="full" data-answer="First draft finished" placeholder="Add status" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Key Discussion Points</div>
+                    <div><input class="full" data-answer="The script; Casting ideas" placeholder="Add points" /></div>
+                  </div>
                 </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="table-check" class="activity-btn" type="button"><i class="fa-solid fa-check"></i> Check</button>
+                  <span id="table-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <table class="grammar-table">
-                    <thead>
-                        <tr>
-                            <th>Present Perfect</th>
-                            <th>Past Simple</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="pp-cell" class="drop-target" onclick="addVerbToCell('pp-cell')">Click verbs to add here</td>
-                            <td id="ps-cell" class="drop-target" onclick="addVerbToCell('ps-cell')">Click verbs to add here</td>
-                        </tr>
-                    </tbody>
+          <div class="slide-stage hidden" id="slide-5">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Grammar Focus</span>
+                <h2>Activity 4: Notice the grammar</h2>
+                <p>Highlight Past Simple in <strong>yellow</strong> and Present Perfect in <strong>green</strong>. Use the toolbar highlighter or tap the quick buttons.</p>
+                <div class="btn-row">
+                  <button id="highlight-past" class="toolbar-btn" type="button">
+                    <i class="fa-solid fa-pen"></i> Mark Past Simple
+                  </button>
+                  <button id="highlight-present" class="toolbar-btn" type="button">
+                    <i class="fa-solid fa-pen-fancy"></i> Mark Present Perfect
+                  </button>
+                  <button id="clear-tense" class="toolbar-btn ghost" type="button">Clear</button>
+                </div>
+                <div class="context-block" style="margin-top: var(--space-4)">
+                  <p class="sentence-strip" id="tense-strip">
+                    <span class="token" data-tense="present">have made</span>
+                    <span class="token" data-tense="past">finished</span>
+                    <span class="token" data-tense="present">have read</span>
+                    <span class="token" data-tense="present">have sent</span>
+                    <span class="token" data-tense="present">have started</span>
+                    <span class="token" data-tense="past">spoke</span>
+                    <span class="token" data-tense="present">have not made</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-6">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Grammar Rules</span>
+                <h2>Activity 5: Understanding the rules</h2>
+                <div class="mc-question">
+                  <p>We use the Past Simple for...</p>
+                  <div class="option-grid" role="group" aria-label="Past Simple uses">
+                    <label><input type="radio" name="past" value="a" /> an action that happened at an unspecified time.</label>
+                    <label><input type="radio" name="past" value="b" /> an action that happened at a specific, finished time.</label>
+                    <label><input type="radio" name="past" value="c" /> an action that started in the past and continues now.</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>We use the Present Perfect for...</p>
+                  <div class="option-grid" role="group" aria-label="Present Perfect uses">
+                    <label><input type="radio" name="present" value="a" /> a specific, finished time in the past.</label>
+                    <label><input type="radio" name="present" value="b" /> a past action with a result or connection now.</label>
+                    <label><input type="radio" name="present" value="c" /> a finished action with no connection to the present.</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>"Fatima finished the first draft of the script last week." Is "last week" a specific, finished time?</p>
+                  <div class="option-grid" role="group" aria-label="Last week question">
+                    <label><input type="radio" name="last-week" value="a" /> Yes</label>
+                    <label><input type="radio" name="last-week" value="b" /> No</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>"I have read it." Does this have a result now (Tariq can comment)?</p>
+                  <div class="option-grid" role="group" aria-label="Result now question">
+                    <label><input type="radio" name="have-read" value="a" /> Yes</label>
+                    <label><input type="radio" name="have-read" value="b" /> No</label>
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button id="mc-check" class="activity-btn" type="button"><i class="fa-solid fa-circle-check"></i> Check</button>
+                  <span id="mc-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-7">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Practice</span>
+                <h2>Activity 6: Gap-fill</h2>
+                <p>Choose Past Simple or Present Perfect.</p>
+                <ul class="instruction-list">
+                  <li>I <input class="inline" data-answer="have seen" placeholder="verb" /> three films so far this month.</li>
+                  <li>She <input class="inline" data-answer="visited" placeholder="verb" /> her family in Lyon last summer.</li>
+                  <li>We <input class="inline" data-answer="have not received" placeholder="verb" /> your email yet.</li>
+                  <li>He <input class="inline" data-answer="has worked" placeholder="verb" /> in the film industry for ten years.</li>
+                  <li>They <input class="inline" data-answer="discussed" placeholder="verb" /> the budget yesterday morning.</li>
+                  <li>The director <input class="inline" data-answer="has just shouted" placeholder="verb" /> "Cut!"</li>
+                </ul>
+                <div class="btn-row">
+                  <button id="gap-check" class="activity-btn" type="button"><i class="fa-solid fa-clipboard-check"></i> Check</button>
+                  <span id="gap-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-8">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Word Order</span>
+                <h2>Activity 7: Unscramble</h2>
+                <div class="prompt-grid">
+                  <div class="card muted">
+                    <p class="muted">you / the / Have / new / seen / ? / film</p>
+                    <input class="full" data-answer="Have you seen the new film?" placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">last / night / I / a / documentary / watched / interesting / .</p>
+                    <input class="full" data-answer="I watched an interesting documentary last night." placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">already / He / has / the / tickets / booked / .</p>
+                    <input class="full" data-answer="He has already booked the tickets." placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">did / When / ? / arrive / they</p>
+                    <input class="full" data-answer="When did they arrive?" placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">not / We / have / lunch / had / yet / .</p>
+                    <input class="full" data-answer="We have not had lunch yet." placeholder="Reorder the sentence" />
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-4)">
+                  <button id="scramble-check" class="activity-btn" type="button"><i class="fa-solid fa-list-check"></i> Check</button>
+                  <span id="scramble-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-9">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Application</span>
+                <h2>Activity 8: Linking (click &amp; drop)</h2>
+                <p class="muted">Select a beginning, then click a matching ending. Each pair locks with a unique colour so you can see your matches.</p>
+                <div class="color-key" id="pair-key"></div>
+                <div class="match-grid" style="margin-top: var(--space-3)">
+                  <div class="match-column">
+                    <h3>Beginnings</h3>
+                    <button class="toolbar-btn ghost match-start" data-id="s1">I have just finished reading it,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s2">Our team in Paris discussed your email this morning,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s3">We have already listened to some composers,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s4">We have put the meeting in our calendar</button>
+                  </div>
+                  <div class="match-column">
+                    <h3>Endings</h3>
+                    <button class="toolbar-btn ghost match-end" data-id="e1">and I am very impressed.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e2">and we think the music will be very important for this film.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e3">and Wednesday afternoon works perfectly for us.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e4">and we are very excited about the story.</button>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="reset-matches" class="toolbar-btn" type="button">Reset pairs</button>
+                  <span id="match-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-10">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Integrate</span>
+                <h2>Activity 9: Complete the email</h2>
+                <p>Choose the best option in each drop-down.</p>
+                <div class="stack">
+                  <div class="dropdown-row">
+                    <span>We are so glad you</span>
+                    <select data-answer="liked">
+                      <option value="">— choose —</option>
+                      <option>liked</option>
+                      <option>have liked</option>
+                      <option>like</option>
+                    </select>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We</span>
+                    <select data-answer="agree">
+                      <option value="">— choose —</option>
+                      <option>agreed</option>
+                      <option>have agreed</option>
+                      <option>agree</option>
+                    </select>
+                    <span>that the music is a key element.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We</span>
+                    <select data-answer="have booked">
+                      <option value="">— choose —</option>
+                      <option>booked</option>
+                      <option>have booked</option>
+                      <option>book</option>
+                    </select>
+                    <span>the video call for Wednesday at 3:00 PM.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We have also</span>
+                    <select data-answer="prepared">
+                      <option value="">— choose —</option>
+                      <option>prepared</option>
+                      <option>have prepared</option>
+                      <option>prepare</option>
+                    </select>
+                    <span>a short presentation on casting ideas.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We look forward to</span>
+                    <select data-answer="speaking">
+                      <option value="">— choose —</option>
+                      <option>speaking</option>
+                      <option>spoke</option>
+                      <option>spoken</option>
+                    </select>
+                    <span>to you on Wednesday.</span>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="dropdown-check" class="activity-btn" type="button"><i class="fa-solid fa-square-check"></i> Check</button>
+                  <span id="dropdown-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-11">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Prioritise</span>
+                <h2>Activity 10: Rank the next steps</h2>
+                <p>Rank 1 (most important) to 3 (least important). Click Check to see a suggested order.</p>
+                <table class="rank-table">
+                  <thead>
+                    <tr><th>Action</th><th>Rank</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Discuss casting ideas for the main roles.</td>
+                      <td><input class="short" data-answer="2" placeholder="1-3" /></td>
+                    </tr>
+                    <tr>
+                      <td>Choose a composer for the film's music.</td>
+                      <td><input class="short" data-answer="3" placeholder="1-3" /></td>
+                    </tr>
+                    <tr>
+                      <td>Finalise the first draft of the script.</td>
+                      <td><input class="short" data-answer="1" placeholder="1-3" /></td>
+                    </tr>
+                  </tbody>
                 </table>
-
-                <div id="activity4-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity4()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity4')">Reset</button>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="rank-check" class="activity-btn" type="button"><i class="fa-solid fa-ranking-star"></i> Check</button>
+                  <span id="rank-feedback" class="feedback"></span>
+                </div>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Activity 5: Understanding the Grammar -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 5: Understanding the Grammar</h3>
-                <p class="instructions">Read the sentences and choose the correct option to complete the rule. These questions will help you understand the difference between the Past Simple and the Present Perfect.</p>
-
-                <div class="question-block">
-                    <label>"We interviewed several talented actresses last week."<br>Does this sentence talk about a finished action at a specific time in the past?</label>
-                    <select id="grammar1">
-                        <option value="">Choose...</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-
-                <div class="question-block">
-                    <label>"We have found the perfect lead actress."<br>Is the specific time of this action mentioned?</label>
-                    <select id="grammar2">
-                        <option value="">Choose...</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-
-                <div class="question-block">
-                    <label>"We have found the perfect lead actress."<br>Is the result of this action (having an actress) important now?</label>
-                    <select id="grammar3">
-                        <option value="">Choose...</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-
-                <div class="question-block">
-                    <label>"My team completed it yesterday."<br>Does this sentence use a specific time word?</label>
-                    <select id="grammar4">
-                        <option value="">Choose...</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-
-                <div class="question-block">
-                    <label>"Omar has just returned from his trip."<br>Does this sentence describe a very recent past action with a result in the present?</label>
-                    <select id="grammar5">
-                        <option value="">Choose...</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-
-                <div class="question-block">
-                    <label><strong>Grammar Rule:</strong> We use the Past Simple for finished actions at a __________ time in the past. We often use time words like yesterday, last week, in 2023. We use the Present Perfect for past actions when the time is not specific, or for recent past actions that have a __________ in the present.</label>
-                    <select id="grammar6">
-                        <option value="">Choose...</option>
-                        <option value="a">a) specific / result</option>
-                        <option value="b">b) general / reason</option>
-                    </select>
-                </div>
-
-                <div id="activity5-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity5()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity5')">Reset</button>
+          <div class="slide-stage hidden" id="slide-12">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h1>Great work!</h1>
+                <p class="deck-subtitle">You have explored reading, grammar, and collaborative planning for "Jasmine in Paris".</p>
+                <p>Save your deck or add your own reflection slide.</p>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Activity 6: Grammar Practice 1 (Gap-fill) -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 6: Grammar Practice 1</h3>
-                <p class="instructions">Complete the sentences below using the correct form of the verb in brackets: the Past Simple or the Present Perfect.</p>
-
-                <div class="gapfill-sentence">
-                    1. The director <input type="text" id="gap1" style="width: 200px;"> (arrive) in Hebron last night.
-                </div>
-                <div class="gapfill-sentence">
-                    2. We <input type="text" id="gap2" style="width: 200px;"> (not receive) the final budget from Paris yet.
-                </div>
-                <div class="gapfill-sentence">
-                    3. I <input type="text" id="gap3" style="width: 200px;"> (speak) to the costume designer a few minutes ago.
-                </div>
-                <div class="gapfill-sentence">
-                    4. She <input type="text" id="gap4" style="width: 200px;"> (live) in France for five years, so her French is excellent.
-                </div>
-                <div class="gapfill-sentence">
-                    5. They <input type="text" id="gap5" style="width: 200px;"> (shoot) the first scene two days ago.
-                </div>
-                <div class="gapfill-sentence">
-                    6. The actors <input type="text" id="gap6" style="width: 200px;"> (read) the new script and they love it.
-                </div>
-
-                <div id="activity6-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity6()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity6')">Reset</button>
-            </div>
-        </section>
-
-        <!-- Activity 7: Grammar Practice 2 (Unscramble) -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 7: Grammar Practice 2</h3>
-                <p class="instructions">Put the words in the correct order to make sentences.</p>
-
-                <div>
-                    <div class="scrambled-sentence">1. you / the / Have / seen / film / latest / ?</div>
-                    <input type="text" class="sentence-input" id="unscramble1" placeholder="Write the correct sentence">
-                </div>
-
-                <div>
-                    <div class="scrambled-sentence">2. the / yesterday / I / script / finished / .</div>
-                    <input type="text" class="sentence-input" id="unscramble2" placeholder="Write the correct sentence">
-                </div>
-
-                <div>
-                    <div class="scrambled-sentence">3. already / He / his / has / lines / learned / .</div>
-                    <input type="text" class="sentence-input" id="unscramble3" placeholder="Write the correct sentence">
-                </div>
-
-                <div>
-                    <div class="scrambled-sentence">4. not / We / the / yet / have / music / chosen / .</div>
-                    <input type="text" class="sentence-input" id="unscramble4" placeholder="Write the correct sentence">
-                </div>
-
-                <div>
-                    <div class="scrambled-sentence">5. did / When / they / contract / the / sign / ?</div>
-                    <input type="text" class="sentence-input" id="unscramble5" placeholder="Write the correct sentence">
-                </div>
-
-                <div id="activity7-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity7()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity7')">Reset</button>
-            </div>
-        </section>
-
-        <!-- Part 3: The Reply from Paris -->
-        <section>
-            <h2>Part 3: The Reply from Paris</h2>
-
-            <div class="activity-card">
-                <h3>Activity 8: A New Email</h3>
-                <p class="instructions">Read the reply from Jean-Luc. Choose the correct word from the options to complete the email.</p>
-
-                <div class="reading-passage">
-                    <div class="email-header">
-                        <div class="email-field"><strong>To:</strong> Fatima Al-Faqih</div>
-                        <div class="email-field"><strong>From:</strong> Jean-Luc Moreau</div>
-                        <div class="email-field"><strong>Subject:</strong> Re: Update on our French-Palestinian Co-production</div>
-                    </div>
-
-                    <p>Dear Fatima,</p>
-
-                    <p>Thank you for the update. It is wonderful to hear about all the progress.</p>
-
-                    <p>I
-                    <select id="email1" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="read">read</option>
-                        <option value="have just read">have just read</option>
-                        <option value="did read">did read</option>
-                    </select>
-                    the new script. It is fantastic! You and your team
-                    <select id="email2" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="did">did</option>
-                        <option value="have done">have done</option>
-                        <option value="done">done</option>
-                    </select>
-                    an amazing job. I especially liked the new scenes set in the old city. I
-                    <select id="email3" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="laughed">laughed</option>
-                        <option value="have laughed">have laughed</option>
-                        <option value="was laughing">was laughing</option>
-                    </select>
-                    and cried while reading it.</p>
-
-                    <p>We
-                    <select id="email4" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="saw">saw</option>
-                        <option value="have saw">have saw</option>
-                        <option value="have seen">have seen</option>
-                    </select>
-                    Sama Khalil's audition tape last month. We agree that she is perfect for the role. We
-                    <select id="email5" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="never worked">never worked</option>
-                        <option value="have never worked">have never worked</option>
-                        <option value="didn't never work">didn't never work</option>
-                    </select>
-                    with her before, but we are very impressed.</p>
-
-                    <p>The photos from Omar are beautiful. The locations he
-                    <select id="email6" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="chose">chose</option>
-                        <option value="has chosen">has chosen</option>
-                        <option value="chosen">chosen</option>
-                    </select>
-                    are exactly what we imagined.</p>
-
-                    <p>I
-                    <select id="email7" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="spoke">spoke</option>
-                        <option value="have spoken">have spoken</option>
-                        <option value="speaked">speaked</option>
-                    </select>
-                    to our finance department this morning. They have confirmed the budget.</p>
-
-                    <p>We are all very excited. I think this
-                    <select id="email8" style="padding: 0.25rem; border: 1px solid var(--tertiary-sage); border-radius: var(--radius-sm);">
-                        <option value="">Choose...</option>
-                        <option value="was">was</option>
-                        <option value="has been">has been</option>
-                        <option value="is being">is being</option>
-                    </select>
-                    a great collaboration so far.</p>
-
-                    <p>Best wishes,<br>Jean-Luc</p>
-                </div>
-
-                <div id="activity8-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity8()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity8')">Reset</button>
-            </div>
-        </section>
-
-        <!-- Activity 9: Linking Ideas -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 9: Linking Ideas</h3>
-                <p class="instructions">Match the beginning of the sentences (1-5) with the endings (a-e).</p>
-
-                <div class="matching-container">
-                    <div>
-                        <h4>Beginnings</h4>
-                        <div class="matching-item" data-id="1" onclick="selectMatch(this, 'linking')">1. The team is happy because</div>
-                        <div class="matching-item" data-id="2" onclick="selectMatch(this, 'linking')">2. Fatima sent the script so that</div>
-                        <div class="matching-item" data-id="3" onclick="selectMatch(this, 'linking')">3. Omar went to Paris because</div>
-                        <div class="matching-item" data-id="4" onclick="selectMatch(this, 'linking')">4. Jean-Luc is impressed since</div>
-                        <div class="matching-item" data-id="5" onclick="selectMatch(this, 'linking')">5. They haven't booked tickets yet, but</div>
-                    </div>
-                    <div>
-                        <h4>Endings</h4>
-                        <div class="matching-item" data-id="1" onclick="selectMatch(this, 'linking')">a. they have found a great lead actress.</div>
-                        <div class="matching-item" data-id="2" onclick="selectMatch(this, 'linking')">b. Jean-Luc could give his feedback.</div>
-                        <div class="matching-item" data-id="3" onclick="selectMatch(this, 'linking')">c. he could find good places to film.</div>
-                        <div class="matching-item" data-id="4" onclick="selectMatch(this, 'linking')">d. he has read the excellent final script.</div>
-                        <div class="matching-item" data-id="5" onclick="selectMatch(this, 'linking')">e. they plan to do it very soon.</div>
-                    </div>
-                </div>
-
-                <div id="activity9-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity9()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity9')">Reset</button>
-            </div>
-        </section>
-
-        <!-- Activity 10: Ranking -->
-        <section>
-            <div class="activity-card">
-                <h3>Activity 10: Ranking</h3>
-                <p class="instructions">The production team is thinking about titles for the film. Rank these titles from 1 (best) to 4 (worst). Be prepared to explain your choice.</p>
-
-                <div class="ranking-item">
-                    <select id="rank1">
-                        <option value="">Rank</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                    <span class="title">A Taste of Home</span>
-                </div>
-
-                <div class="ranking-item">
-                    <select id="rank2">
-                        <option value="">Rank</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                    <span class="title">The Jasmine Letters</span>
-                </div>
-
-                <div class="ranking-item">
-                    <select id="rank3">
-                        <option value="">Rank</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                    <span class="title">Echoes of an Olive Tree</span>
-                </div>
-
-                <div class="ranking-item">
-                    <select id="rank4">
-                        <option value="">Rank</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                    <span class="title">Paris, My Distant Home</span>
-                </div>
-
-                <div class="question-block" style="margin-top: var(--space-5);">
-                    <label>My number 1 choice is:</label>
-                    <input type="text" id="rank-choice" placeholder="Write the title you ranked as #1">
-                </div>
-
-                <div class="question-block">
-                    <label>Because:</label>
-                    <textarea id="rank-reason" placeholder="Explain your choice..."></textarea>
-                </div>
-
-                <div id="activity10-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity10()" style="margin-right: var(--space-3);">Submit Rankings</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity10')">Reset</button>
-            </div>
-        </section>
-
-        <!-- Part 4: Vocabulary Check -->
-        <section>
-            <h2>Part 4: Vocabulary Check</h2>
-
-            <div class="activity-card">
-                <h3>Activity 11: Grouping</h3>
-                <p class="instructions">Put the words from the box into the correct groups below. Drag and drop each word into the appropriate category.</p>
-
-                <div style="margin-bottom: var(--space-5); padding: var(--space-4); background: var(--warm-cream); border-radius: var(--radius);">
-                    <strong>Word Box:</strong><br>
-                    <span class="vocab-word" draggable="true" data-word="script" data-category="production" ondragstart="dragStart(event)">script</span>
-                    <span class="vocab-word" draggable="true" data-word="actress" data-category="people" ondragstart="dragStart(event)">actress</span>
-                    <span class="vocab-word" draggable="true" data-word="location" data-category="production" ondragstart="dragStart(event)">location</span>
-                    <span class="vocab-word" draggable="true" data-word="director" data-category="people" ondragstart="dragStart(event)">director</span>
-                    <span class="vocab-word" draggable="true" data-word="scene" data-category="parts" ondragstart="dragStart(event)">scene</span>
-                    <span class="vocab-word" draggable="true" data-word="budget" data-category="production" ondragstart="dragStart(event)">budget</span>
-                    <span class="vocab-word" draggable="true" data-word="audition" data-category="production" ondragstart="dragStart(event)">audition</span>
-                    <span class="vocab-word" draggable="true" data-word="costume designer" data-category="people" ondragstart="dragStart(event)">costume designer</span>
-                </div>
-
-                <div class="vocab-group">
-                    <h4>People in Film</h4>
-                    <div class="vocab-dropzone" data-category="people" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                        Drop words here
-                    </div>
-                </div>
-
-                <div class="vocab-group">
-                    <h4>Parts of a Film</h4>
-                    <div class="vocab-dropzone" data-category="parts" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                        Drop words here
-                    </div>
-                </div>
-
-                <div class="vocab-group">
-                    <h4>Film Production Terms</h4>
-                    <div class="vocab-dropzone" data-category="production" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-                        Drop words here
-                    </div>
-                </div>
-
-                <div id="activity11-feedback" class="inline-feedback"></div>
-                <button class="activity-btn" onclick="checkActivity11()" style="margin-right: var(--space-3);">Check Answers</button>
-                <button class="activity-btn reset-btn" onclick="resetActivity('activity11')">Reset</button>
-            </div>
-        </section>
-
-        <div style="text-align: center; margin-top: var(--space-7);">
-            <button class="activity-btn" onclick="submitWorksheet()">Complete Worksheet</button>
+          <button class="slide-nav slide-nav-prev" type="button" onclick="navigateSlides(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" onclick="navigateSlides(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
-        <div id="submission-feedback"></div>
-    </main>
-
-    <!-- Custom Modal -->
-    <div id="customModal" class="custom-modal">
-        <div class="modal-content">
-            <div class="modal-header" id="modalHeader">Feedback</div>
-            <div class="modal-body" id="modalBody"></div>
-            <button class="modal-close" onclick="closeModal()">Close</button>
-        </div>
+      </main>
     </div>
 
-    <script>
-        // Utility Functions
-        function normalizeAnswer(str) {
-            return str.toString().toLowerCase().trim()
-                .replace(/[.,!?;:]/g, '')
-                .replace(/\s+/g, ' ')
-                .replace(/^(the|a|an)\s+/i, '');
-        }
+    <script type="module">
+      import "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.21.0/dist/tf.min.js";
+      import { setupInteractiveDeck } from "../../js/interactivemodule.js";
 
-        function checkAnswer(userAnswer, correctAnswers) {
-            const normalized = normalizeAnswer(userAnswer);
-            return correctAnswers.some(answer => normalizeAnswer(answer) === normalized);
-        }
+      const pairColors = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d"];
+      const pairKey = document.getElementById("pair-key");
+      pairColors.forEach((color, idx) => {
+        const chip = document.createElement("span");
+        chip.innerHTML = `<span class="color-chip" style="background:${color}"></span> Pair ${idx + 1}`;
+        pairKey.appendChild(chip);
+      });
 
-        function setFeedback(element, isCorrect) {
-            if (isCorrect) {
-                element.style.backgroundColor = '#d4edda';
-                element.style.border = '2px solid #28a745';
+      let activeStart = null;
+      const matches = {};
+      const startButtons = Array.from(document.querySelectorAll(".match-start"));
+      const endButtons = Array.from(document.querySelectorAll(".match-end"));
+
+      const pairTargets = {
+        s1: "e4",
+        s2: "e2",
+        s3: "e3",
+        s4: "e1",
+      };
+
+      function resetMatches() {
+        activeStart = null;
+        Object.keys(matches).forEach((key) => delete matches[key]);
+        [...startButtons, ...endButtons].forEach((btn) => {
+          btn.style.background = "";
+          btn.style.color = "";
+          btn.dataset.paired = "false";
+        });
+        document.getElementById("match-feedback").textContent = "";
+      }
+
+      function lockPair(startId, endId, color) {
+        const startBtn = startButtons.find((btn) => btn.dataset.id === startId);
+        const endBtn = endButtons.find((btn) => btn.dataset.id === endId);
+        if (!startBtn || !endBtn) return;
+        startBtn.style.background = color;
+        startBtn.style.color = "#fff";
+        endBtn.style.background = color;
+        endBtn.style.color = "#fff";
+        startBtn.dataset.paired = "true";
+        endBtn.dataset.paired = "true";
+        matches[startId] = endId;
+        document.getElementById("match-feedback").textContent = "Linked!";
+      }
+
+      startButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeStart = btn.dataset.id;
+          startButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      endButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (!activeStart) {
+            document.getElementById("match-feedback").textContent = "Select a beginning first.";
+            return;
+          }
+          const colorIdx = Object.keys(matches).length % pairColors.length;
+          lockPair(activeStart, btn.dataset.id, pairColors[colorIdx]);
+          activeStart = null;
+          startButtons.forEach((b) => b.classList.remove("active"));
+        });
+      });
+
+      document.getElementById("reset-matches").addEventListener("click", resetMatches);
+
+      const markInputs = (selector, feedbackId) => {
+        const inputs = Array.from(document.querySelectorAll(selector));
+        let correct = 0;
+        inputs.forEach((input) => {
+          const expected = (input.dataset.answer || "").trim().toLowerCase();
+          const value = (input.value || "").trim().toLowerCase();
+          if (expected && value === expected) {
+            input.classList.add("success");
+            input.classList.remove("error");
+            correct += 1;
+          } else {
+            input.classList.add("error");
+            input.classList.remove("success");
+          }
+        });
+        const feedback = document.getElementById(feedbackId);
+        if (feedback) {
+          feedback.textContent = `${correct}/${inputs.length} correct`;
+        }
+      };
+
+      document.getElementById("table-check").addEventListener("click", () => {
+        markInputs('#slide-4 input[data-answer]', "table-feedback");
+      });
+
+      document.getElementById("gap-check").addEventListener("click", () => {
+        markInputs('#slide-7 input[data-answer]', "gap-feedback");
+      });
+
+      document.getElementById("scramble-check").addEventListener("click", () => {
+        markInputs('#slide-8 input[data-answer]', "scramble-feedback");
+      });
+
+      document.getElementById("dropdown-check").addEventListener("click", () => {
+        const selects = Array.from(document.querySelectorAll('#slide-10 select[data-answer]'));
+        let correct = 0;
+        selects.forEach((sel) => {
+          if ((sel.value || "").trim() === (sel.dataset.answer || "")) {
+            sel.classList.add("success");
+            sel.classList.remove("error");
+            correct += 1;
+          } else {
+            sel.classList.add("error");
+            sel.classList.remove("success");
+          }
+        });
+        document.getElementById("dropdown-feedback").textContent = `${correct}/${selects.length} correct`;
+      });
+
+      document.getElementById("rank-check").addEventListener("click", () => {
+        markInputs('#slide-11 input[data-answer]', "rank-feedback");
+      });
+
+      document.getElementById("mc-check").addEventListener("click", () => {
+        const answers = { past: "b", present: "b", "last-week": "a", "have-read": "a" };
+        let correct = 0;
+        Object.entries(answers).forEach(([name, value]) => {
+          const checked = document.querySelector(`input[name="${name}"]:checked`);
+          if (checked && checked.value === value) {
+            correct += 1;
+          }
+        });
+        document.getElementById("mc-feedback").textContent = `${correct}/4 correct`;
+      });
+
+      const strip = document.getElementById("tense-strip");
+      const tokens = () => Array.from(strip.querySelectorAll("[data-tense]"));
+      document.getElementById("highlight-past").addEventListener("click", () => {
+        tokens().forEach((el) => {
+          if (el.dataset.tense === "past") {
+            el.style.background = "#f9e27d";
+          }
+        });
+      });
+      document.getElementById("highlight-present").addEventListener("click", () => {
+        tokens().forEach((el) => {
+          if (el.dataset.tense === "present") {
+            el.style.background = "#a5d6a7";
+          }
+        });
+      });
+      document.getElementById("clear-tense").addEventListener("click", () => {
+        tokens().forEach((el) => (el.style.background = ""));
+      });
+
+      const cosineSimilarity = (a, b) => {
+        const dot = a.reduce((sum, val, idx) => sum + val * b[idx], 0);
+        const normA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+        const normB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+        return normA && normB ? dot / (normA * normB) : 0;
+      };
+
+      let useModelPromise = null;
+      const loadUseModel = () => {
+        if (!useModelPromise) {
+          useModelPromise = import("https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.4/dist/universal-sentence-encoder.min.js").then(
+            (module) => module.load(),
+          );
+        }
+        return useModelPromise;
+      };
+
+      const vectorise = async (sentences) => {
+        const model = await loadUseModel();
+        const embeddings = await model.embed(sentences);
+        const array = await embeddings.array();
+        embeddings.dispose();
+        return array;
+      };
+
+      document.getElementById("short-answer-check").addEventListener("click", async () => {
+        const inputs = Array.from(document.querySelectorAll('#slide-3 input[data-reference]'));
+        const references = inputs.map((input) => input.dataset.reference || "");
+        const responses = inputs.map((input) => input.value || "");
+        document.getElementById("short-answer-feedback").textContent = "Loading AI...";
+        try {
+          const [refVectors, resVectors] = await Promise.all([
+            vectorise(references),
+            vectorise(responses.map((resp, idx) => (resp.trim() ? resp : references[idx]))),
+          ]);
+          let correct = 0;
+          inputs.forEach((input, idx) => {
+            const similarity = cosineSimilarity(resVectors[idx], refVectors[idx]);
+            if (similarity >= 0.45) {
+              input.classList.add("success");
+              input.classList.remove("error");
+              correct += 1;
             } else {
-                element.style.backgroundColor = '#f8d7da';
-                element.style.border = '2px solid #dc3545';
+              input.classList.add("error");
+              input.classList.remove("success");
             }
+          });
+          document.getElementById("short-answer-feedback").textContent = `${correct}/${inputs.length} responses match closely (AI scored).`;
+        } catch (error) {
+          document.getElementById("short-answer-feedback").textContent = "AI model could not load. Please try again.";
+          console.error(error);
         }
+      });
 
-        function clearFeedback(element) {
-            element.style.backgroundColor = '';
-            element.style.border = '';
-        }
-
-        function showModal(title, message) {
-            document.getElementById('modalHeader').textContent = title;
-            document.getElementById('modalBody').innerHTML = message;
-            document.getElementById('customModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('customModal').style.display = 'none';
-        }
-
-        function showInlineFeedback(feedbackId, isCorrect, message) {
-            const feedback = document.getElementById(feedbackId);
-            feedback.className = 'inline-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedback.textContent = message;
-        }
-
-        // Activity 1: Getting Started
-        function checkActivity1() {
-            const q1 = document.getElementById('q1').value.trim();
-            const q2 = document.getElementById('q2').value.trim();
-            const q3 = document.getElementById('q3').value.trim();
-
-            let answered = 0;
-            if (q1.length > 10) answered++;
-            if (q2.length > 10) answered++;
-            if (q3.length > 10) answered++;
-
-            if (answered === 3) {
-                showInlineFeedback('activity1-feedback', true, '✓ Great! You have answered all three questions. These are personal reflection questions, so all thoughtful answers are accepted.');
-            } else {
-                showInlineFeedback('activity1-feedback', false, '✗ Please provide thoughtful answers to all three questions (at least a sentence each).');
-            }
-        }
-
-        // Activity 3: Checking Understanding
-        function checkActivity3() {
-            const answers = {
-                comp1: ['to give an update on the project', 'to update him on the project', 'to give him an update', 'she is writing to give an update'],
-                comp2: ['Sama Khalil', 'they chose Sama Khalil', 'Sama Khalil was chosen'],
-                comp3: ['the script', 'the final draft of the script', 'she attached the script', 'the document'],
-                comp4: ['Montmartre and the Latin Quarter', 'the Latin Quarter and Montmartre', 'Montmartre and Latin Quarter'],
-                comp5: ['to read the script and send feedback', 'read the script', 'to send feedback', 'she asks him to read the script']
-            };
-
-            let correct = 0;
-            let total = 5;
-
-            for (let key in answers) {
-                const input = document.getElementById(key);
-                const isCorrect = checkAnswer(input.value, answers[key]);
-                setFeedback(input, isCorrect);
-                if (isCorrect) correct++;
-            }
-
-            const percentage = Math.round((correct / total) * 100);
-            if (correct === total) {
-                showInlineFeedback('activity3-feedback', true, `✓ Perfect! You got all ${total} answers correct (${percentage}%).`);
-            } else {
-                showInlineFeedback('activity3-feedback', false, `You got ${correct} out of ${total} correct (${percentage}%). Red boxes show incorrect answers. Try again!`);
-            }
-        }
-
-        // Activity 4: Noticing Grammar
-        let selectedVerb = null;
-        let selectedCell = null;
-        let verbPlacements = { 'pp-cell': [], 'ps-cell': [] };
-
-        function selectVerb(element) {
-            if (element.classList.contains('placed')) return;
-
-            document.querySelectorAll('.verb-option').forEach(v => v.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedVerb = element;
-        }
-
-        function addVerbToCell(cellId) {
-            if (!selectedVerb) {
-                showModal('Select a Verb', 'Please click on a verb first, then click on the column where you want to place it.');
-                return;
-            }
-
-            const verb = selectedVerb.dataset.verb;
-            const cell = document.getElementById(cellId);
-
-            // Add to cell
-            if (!verbPlacements[cellId].includes(verb)) {
-                verbPlacements[cellId].push(verb);
-                updateCellDisplay(cellId);
-            }
-
-            // Mark verb as placed
-            selectedVerb.classList.add('placed');
-            selectedVerb.classList.remove('selected');
-            selectedVerb = null;
-        }
-
-        function updateCellDisplay(cellId) {
-            const cell = document.getElementById(cellId);
-            if (verbPlacements[cellId].length > 0) {
-                cell.innerHTML = verbPlacements[cellId].map(v => `<div style="padding: 0.25rem; margin: 0.25rem 0; background: var(--tertiary-sage); border-radius: 5px;">${v}</div>`).join('');
-                cell.classList.add('has-content');
-            } else {
-                cell.innerHTML = 'Click verbs to add here';
-                cell.classList.remove('has-content');
-            }
-        }
-
-        function checkActivity4() {
-            const correctPP = ['have made', 'have found', 'has accepted', 'have finished', 'have worked', 'has returned', 'has taken', "haven't booked"];
-            const correctPS = ['interviewed', 'completed', 'visited', 'found'];
-
-            const ppCorrect = verbPlacements['pp-cell'].filter(v => correctPP.includes(v)).length;
-            const psCorrect = verbPlacements['ps-cell'].filter(v => correctPS.includes(v)).length;
-            const ppWrong = verbPlacements['pp-cell'].filter(v => !correctPP.includes(v)).length;
-            const psWrong = verbPlacements['ps-cell'].filter(v => !correctPS.includes(v)).length;
-
-            const totalCorrect = ppCorrect + psCorrect;
-            const total = 12;
-
-            if (totalCorrect === total && ppWrong === 0 && psWrong === 0) {
-                showInlineFeedback('activity4-feedback', true, `✓ Perfect! You correctly categorized all ${total} verbs!`);
-            } else {
-                showInlineFeedback('activity4-feedback', false, `You got ${totalCorrect} out of ${total} correct. Present Perfect: ${ppCorrect}/${correctPP.length} correct. Past Simple: ${psCorrect}/${correctPS.length} correct. Try again!`);
-            }
-        }
-
-        // Activity 5: Understanding the Grammar
-        function checkActivity5() {
-            const answers = {
-                grammar1: 'yes',
-                grammar2: 'no',
-                grammar3: 'yes',
-                grammar4: 'yes',
-                grammar5: 'yes',
-                grammar6: 'a'
-            };
-
-            let correct = 0;
-            let total = 6;
-
-            for (let key in answers) {
-                const select = document.getElementById(key);
-                const isCorrect = select.value === answers[key];
-                setFeedback(select, isCorrect);
-                if (isCorrect) correct++;
-            }
-
-            const percentage = Math.round((correct / total) * 100);
-            if (correct === total) {
-                showInlineFeedback('activity5-feedback', true, `✓ Excellent! You got all ${total} grammar questions correct (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity5-feedback', false, `You got ${correct} out of ${total} correct (${percentage}%). Review the incorrect answers (shown in red).`);
-            }
-        }
-
-        // Activity 6: Grammar Practice 1 (Gap-fill)
-        function checkActivity6() {
-            const answers = {
-                gap1: ['arrived'],
-                gap2: ['have not received', "haven't received", 'have not got', "haven't got"],
-                gap3: ['spoke'],
-                gap4: ['has lived', 'lived'],
-                gap5: ['shot'],
-                gap6: ['have read']
-            };
-
-            let correct = 0;
-            let total = 6;
-
-            for (let key in answers) {
-                const input = document.getElementById(key);
-                const isCorrect = checkAnswer(input.value, answers[key]);
-                setFeedback(input, isCorrect);
-                if (isCorrect) correct++;
-            }
-
-            const percentage = Math.round((correct / total) * 100);
-            if (correct === total) {
-                showInlineFeedback('activity6-feedback', true, `✓ Perfect! You got all ${total} gap-fill answers correct (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity6-feedback', false, `You got ${correct} out of ${total} correct (${percentage}%). Red boxes show incorrect answers.`);
-            }
-        }
-
-        // Activity 7: Unscramble
-        function checkActivity7() {
-            const answers = {
-                unscramble1: ['Have you seen the latest film?', 'Have you seen the latest film'],
-                unscramble2: ['I finished the script yesterday', 'I finished the script yesterday.'],
-                unscramble3: ['He has already learned his lines', 'He has already learned his lines.', 'He has already learnt his lines'],
-                unscramble4: ['We have not chosen the music yet', 'We have not chosen the music yet.', "We haven't chosen the music yet"],
-                unscramble5: ['When did they sign the contract?', 'When did they sign the contract']
-            };
-
-            let correct = 0;
-            let total = 5;
-
-            for (let key in answers) {
-                const input = document.getElementById(key);
-                const isCorrect = checkAnswer(input.value, answers[key]);
-                setFeedback(input, isCorrect);
-                if (isCorrect) correct++;
-            }
-
-            const percentage = Math.round((correct / total) * 100);
-            if (correct === total) {
-                showInlineFeedback('activity7-feedback', true, `✓ Excellent! You unscrambled all ${total} sentences correctly (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity7-feedback', false, `You got ${correct} out of ${total} correct (${percentage}%). Check the red boxes.`);
-            }
-        }
-
-        // Activity 8: Email Dropdown
-        function checkActivity8() {
-            const answers = {
-                email1: 'have just read',
-                email2: 'have done',
-                email3: 'laughed',
-                email4: 'saw',
-                email5: 'have never worked',
-                email6: 'has chosen',
-                email7: 'spoke',
-                email8: 'has been'
-            };
-
-            let correct = 0;
-            let total = 8;
-
-            for (let key in answers) {
-                const select = document.getElementById(key);
-                const isCorrect = select.value === answers[key];
-                setFeedback(select, isCorrect);
-                if (isCorrect) correct++;
-            }
-
-            const percentage = Math.round((correct / total) * 100);
-            if (correct === total) {
-                showInlineFeedback('activity8-feedback', true, `✓ Perfect! You completed the email with all ${total} correct verb forms (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity8-feedback', false, `You got ${correct} out of ${total} correct (${percentage}%). Red boxes show incorrect choices.`);
-            }
-        }
-
-        // Activity 9: Linking Ideas (Matching)
-        let selectedMatchItem = null;
-        let linkingMatches = 0;
-
-        function selectMatch(element, activity) {
-            if (element.classList.contains('matched')) return;
-
-            if (!selectedMatchItem) {
-                document.querySelectorAll('.matching-item').forEach(item => item.classList.remove('selected'));
-                element.classList.add('selected');
-                selectedMatchItem = element;
-            } else {
-                const id1 = selectedMatchItem.dataset.id;
-                const id2 = element.dataset.id;
-
-                if (id1 === id2 && selectedMatchItem !== element) {
-                    selectedMatchItem.classList.add('matched');
-                    element.classList.add('matched');
-                    selectedMatchItem.style.pointerEvents = 'none';
-                    element.style.pointerEvents = 'none';
-                    linkingMatches++;
-                }
-
-                selectedMatchItem.classList.remove('selected');
-                selectedMatchItem = null;
-            }
-        }
-
-        function checkActivity9() {
-            const total = 5;
-            const percentage = Math.round((linkingMatches / total) * 100);
-
-            if (linkingMatches === total) {
-                showInlineFeedback('activity9-feedback', true, `✓ Perfect! You matched all ${total} sentence pairs correctly (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity9-feedback', false, `You matched ${linkingMatches} out of ${total} pairs correctly (${percentage}%). Keep trying!`);
-            }
-        }
-
-        // Activity 10: Ranking
-        function checkActivity10() {
-            const rank1 = document.getElementById('rank1').value;
-            const rank2 = document.getElementById('rank2').value;
-            const rank3 = document.getElementById('rank3').value;
-            const rank4 = document.getElementById('rank4').value;
-            const choice = document.getElementById('rank-choice').value.trim();
-            const reason = document.getElementById('rank-reason').value.trim();
-
-            const ranks = [rank1, rank2, rank3, rank4];
-            const allFilled = ranks.every(r => r !== '');
-            const allUnique = new Set(ranks).size === 4;
-            const hasChoice = choice.length > 0;
-            const hasReason = reason.length > 20;
-
-            if (allFilled && allUnique && hasChoice && hasReason) {
-                showInlineFeedback('activity10-feedback', true, '✓ Great! You have ranked all titles and explained your choice. This is a subjective activity, so all complete rankings are accepted.');
-            } else {
-                let message = '✗ Please complete the following: ';
-                const issues = [];
-                if (!allFilled) issues.push('Rank all 4 titles');
-                if (!allUnique) issues.push('Use each rank (1-4) only once');
-                if (!hasChoice) issues.push('Write your #1 choice');
-                if (!hasReason) issues.push('Explain your choice (at least one sentence)');
-                showInlineFeedback('activity10-feedback', false, message + issues.join(', ') + '.');
-            }
-        }
-
-        // Activity 11: Vocabulary Grouping (Drag and Drop)
-        let draggedWord = null;
-
-        function dragStart(event) {
-            draggedWord = event.target;
-            event.dataTransfer.effectAllowed = 'move';
-        }
-
-        function allowDrop(event) {
-            event.preventDefault();
-            event.currentTarget.classList.add('drag-over');
-        }
-
-        function dragLeave(event) {
-            event.currentTarget.classList.remove('drag-over');
-        }
-
-        function drop(event) {
-            event.preventDefault();
-            event.currentTarget.classList.remove('drag-over');
-
-            if (draggedWord) {
-                const word = draggedWord.dataset.word;
-                const category = draggedWord.dataset.category;
-                const dropzone = event.currentTarget;
-
-                // Create a new element in the dropzone
-                const wordElement = document.createElement('span');
-                wordElement.className = 'vocab-word';
-                wordElement.textContent = word;
-                wordElement.dataset.word = word;
-                wordElement.dataset.category = category;
-                wordElement.style.cursor = 'default';
-
-                dropzone.appendChild(wordElement);
-
-                // Mark original as placed
-                draggedWord.classList.add('placed');
-                draggedWord = null;
-            }
-        }
-
-        function checkActivity11() {
-            const peopleZone = document.querySelector('[data-category="people"].vocab-dropzone');
-            const partsZone = document.querySelector('[data-category="parts"].vocab-dropzone');
-            const productionZone = document.querySelector('[data-category="production"].vocab-dropzone');
-
-            const peopleWords = Array.from(peopleZone.querySelectorAll('.vocab-word')).map(w => w.dataset.category);
-            const partsWords = Array.from(partsZone.querySelectorAll('.vocab-word')).map(w => w.dataset.category);
-            const productionWords = Array.from(productionZone.querySelectorAll('.vocab-word')).map(w => w.dataset.category);
-
-            const peopleCorrect = peopleWords.filter(c => c === 'people').length;
-            const partsCorrect = partsWords.filter(c => c === 'parts').length;
-            const productionCorrect = productionWords.filter(c => c === 'production').length;
-
-            const totalCorrect = peopleCorrect + partsCorrect + productionCorrect;
-            const total = 8;
-
-            const percentage = Math.round((totalCorrect / total) * 100);
-
-            if (totalCorrect === total) {
-                showInlineFeedback('activity11-feedback', true, `✓ Perfect! You categorized all ${total} vocabulary words correctly (${percentage}%)!`);
-            } else {
-                showInlineFeedback('activity11-feedback', false, `You got ${totalCorrect} out of ${total} correct (${percentage}%). People: ${peopleCorrect}/3, Parts: ${partsCorrect}/1, Production: ${productionCorrect}/4.`);
-            }
-        }
-
-        // Reset Functions
-        function resetActivity(activity) {
-            if (activity === 'activity1') {
-                document.getElementById('q1').value = '';
-                document.getElementById('q2').value = '';
-                document.getElementById('q3').value = '';
-                document.getElementById('activity1-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity3') {
-                ['comp1', 'comp2', 'comp3', 'comp4', 'comp5'].forEach(id => {
-                    const elem = document.getElementById(id);
-                    elem.value = '';
-                    clearFeedback(elem);
-                });
-                document.getElementById('activity3-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity4') {
-                document.querySelectorAll('.verb-option').forEach(v => {
-                    v.classList.remove('selected', 'placed');
-                });
-                verbPlacements = { 'pp-cell': [], 'ps-cell': [] };
-                updateCellDisplay('pp-cell');
-                updateCellDisplay('ps-cell');
-                selectedVerb = null;
-                document.getElementById('activity4-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity5') {
-                ['grammar1', 'grammar2', 'grammar3', 'grammar4', 'grammar5', 'grammar6'].forEach(id => {
-                    const elem = document.getElementById(id);
-                    elem.value = '';
-                    clearFeedback(elem);
-                });
-                document.getElementById('activity5-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity6') {
-                ['gap1', 'gap2', 'gap3', 'gap4', 'gap5', 'gap6'].forEach(id => {
-                    const elem = document.getElementById(id);
-                    elem.value = '';
-                    clearFeedback(elem);
-                });
-                document.getElementById('activity6-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity7') {
-                ['unscramble1', 'unscramble2', 'unscramble3', 'unscramble4', 'unscramble5'].forEach(id => {
-                    const elem = document.getElementById(id);
-                    elem.value = '';
-                    clearFeedback(elem);
-                });
-                document.getElementById('activity7-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity8') {
-                ['email1', 'email2', 'email3', 'email4', 'email5', 'email6', 'email7', 'email8'].forEach(id => {
-                    const elem = document.getElementById(id);
-                    elem.value = '';
-                    clearFeedback(elem);
-                });
-                document.getElementById('activity8-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity9') {
-                document.querySelectorAll('.matching-item').forEach(item => {
-                    item.classList.remove('selected', 'matched');
-                    item.style.pointerEvents = '';
-                });
-                selectedMatchItem = null;
-                linkingMatches = 0;
-                document.getElementById('activity9-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity10') {
-                ['rank1', 'rank2', 'rank3', 'rank4'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                document.getElementById('rank-choice').value = '';
-                document.getElementById('rank-reason').value = '';
-                document.getElementById('activity10-feedback').className = 'inline-feedback';
-            } else if (activity === 'activity11') {
-                // Reset dropzones
-                document.querySelectorAll('.vocab-dropzone').forEach(zone => {
-                    zone.innerHTML = 'Drop words here';
-                });
-                // Reset word box
-                document.querySelectorAll('.vocab-word').forEach(word => {
-                    word.classList.remove('placed');
-                });
-                document.getElementById('activity11-feedback').className = 'inline-feedback';
-            }
-        }
-
-        // Final Submission
-        function submitWorksheet() {
-            const feedback = document.getElementById('submission-feedback');
-            feedback.style.display = 'block';
-            feedback.classList.add('success');
-            feedback.innerHTML = '<h2><i class="fas fa-check-circle"></i> Worksheet Complete!</h2><p>Excellent work on <strong>The Hebron-Paris Connection</strong>! You have practiced reading comprehension, Present Perfect vs. Past Simple grammar, and film production vocabulary. Keep up the great work!</p>';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
+      setupInteractiveDeck();
     </script>
-</body>
+  </body>
 </html>
