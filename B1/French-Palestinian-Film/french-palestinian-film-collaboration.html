@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Community | B1 French-Palestinian Film Collaboration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../CSS-slides.css" />
+    <style>
+      .hero-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(120deg, rgba(58, 68, 60, 0.85), rgba(122, 132, 113, 0.75));
+        color: #fff;
+        border-radius: var(--radius-lg);
+      }
+      .hero-card .bg-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
+      .hero-card .card-content {
+        position: relative;
+        z-index: 1;
+      }
+      .two-column {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-6);
+        align-items: start;
+      }
+      .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--space-4);
+      }
+      .match-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: var(--space-4);
+      }
+      .match-column button {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .short-answer-card input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-sage);
+        background: #fff;
+      }
+      .feedback {
+        font-weight: 700;
+        color: var(--forest-shadow);
+      }
+      .token {
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--secondary-sage) 30%, #fff 70%);
+      }
+      .sentence-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .dropdown-row {
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: var(--space-3);
+        align-items: center;
+      }
+      .rank-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .rank-table th,
+      .rank-table td {
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--border-sage);
+      }
+      .color-key {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .color-key span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: var(--soft-white);
+        border: 1px solid var(--border-sage);
+      }
+      .color-chip {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck-app">
+      <header class="deck-toolbar">
+        <div class="toolbar-brand">
+          <i class="fa-solid fa-clapperboard" style="color: var(--primary-sage)"></i>
+          <span>Noor Community · B1 Lesson</span>
+        </div>
+        <div id="slide-counter" class="slide-counter"></div>
+        <div class="toolbar-actions">
+          <button id="save-state-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Deck
+          </button>
+          <button id="load-state-btn" class="toolbar-btn secondary" type="button">
+            <i class="fa-solid fa-file-import"></i>
+            Load Deck
+          </button>
+          <input
+            id="load-state-input"
+            class="sr-only"
+            type="file"
+            accept="application/json"
+          />
+          <div class="highlight-controls" role="group" aria-label="Highlight text">
+            <i class="fa-solid fa-highlighter" aria-hidden="true"></i>
+            <label class="sr-only" for="highlight-color">Highlight colour</label>
+            <select id="highlight-color" class="toolbar-select">
+              <option value="#F9E27D">Sunbeam</option>
+              <option value="#A5D6A7">Meadow</option>
+              <option value="#FFCCBC">Coral</option>
+            </select>
+            <button id="highlight-btn" class="toolbar-btn ghost" type="button">
+              Apply
+            </button>
+            <button id="remove-highlight-btn" class="toolbar-btn ghost" type="button">
+              Clear
+            </button>
+          </div>
+          <button id="add-slide-btn" class="toolbar-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Blank Slide
+          </button>
+        </div>
+      </header>
+      <main class="deck-workspace">
+        <div class="stage-viewport">
+          <div class="slide-stage" id="slide-1">
+            <div class="slide-inner">
+              <div class="card hero-card">
+                <div class="bg-media">
+                  <img
+                    data-remote-src="https://images.pexels.com/photos/955395/pexels-photo-955395.jpeg"
+                    alt="Film camera and lights"
+                  />
+                </div>
+                <div class="card-content">
+                  <span class="pill"><i class="fa-solid fa-film"></i> B1 · 60 minutes</span>
+                  <h1>French-Palestinian Film Collaboration: A Slice of Life</h1>
+                  <p class="deck-subtitle">Reading, grammar, and collaboration tasks with self-marking support.</p>
+                  <ul class="instruction-list">
+                    <li>AI-assisted short answers (TensorFlow.js, generous marking)</li>
+                    <li>Click-and-drop matching with distinct colours</li>
+                    <li>Vocabulary and grammar focus on Present Perfect vs. Past Simple</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-2">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <span class="pill">Part 1 · Reading &amp; Context</span>
+                <h2>Activity 1: Read the email</h2>
+                <p class="muted">French-Palestinian Film Collaboration: "Jasmine in Paris"</p>
+                <div class="context-block">
+                  <div class="two-column">
+                    <div>
+                      <div class="callout warning">
+                        <p><strong>From:</strong> Tariq Abbas (t.abbas@hebronharmonyfilms.ps)</p>
+                        <p><strong>To:</strong> Isabelle Dubois (i.dubois@parisianproductions.fr)</p>
+                        <p><strong>Subject:</strong> Update on our project: "Jasmine in Paris"</p>
+                      </div>
+                      <p>Dear Isabelle,</p>
+                      <p>I hope this email finds you well.</p>
+                      <p>
+                        I am writing to give you an update on our joint project, "Jasmine in Paris". We have made some good progress since our last conversation.
+                      </p>
+                      <p>
+                        Our lead writer, <mark class="token" data-tense="past">Fatima finished</mark> the first draft of the script last week. I <mark class="token" data-tense="present">have read</mark> it, and I think it is a beautiful story that really captures the experience of the diaspora. We have sent you the draft in a separate email. Please let us know your thoughts when you have a chance to read it.
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        We have also started to think about casting. We <mark class="token" data-tense="past">spoke</mark> to a few talented actors here in Hebron yesterday. We have not made any decisions yet, of course. We want to discuss the main roles with you first.
+                      </p>
+                      <p>
+                        Could we schedule a video call for next week to discuss the script and our casting ideas? We are available on <mark class="token" data-tense="past">Tuesday</mark> or <mark class="token" data-tense="past">Wednesday</mark> afternoon.
+                      </p>
+                      <p>Best regards,</p>
+                      <p><strong>Tariq Abbas</strong><br />Hebron Harmony Films</p>
+                    </div>
+                  </div>
+                  <div class="callout success" style="margin-top: var(--space-4)">
+                    <p><strong>Tip:</strong> Use the highlight tool in the toolbar to colour verbs. Yellow for Past Simple, Green for Present Perfect.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-3">
+            <div class="slide-inner">
+              <div class="card short-answer-card">
+                <span class="pill">Part 1 · Comprehension</span>
+                <h2>Activity 2: Short Answer Questions</h2>
+                <p class="muted">Answer with one to three words. AI marking uses sentence similarity (TensorFlow.js USE) with generous thresholds.</p>
+                <div class="prompt-grid">
+                  <div>
+                    <label class="input-label" for="sa-project">What is the name of the project?</label>
+                    <input id="sa-project" data-reference="Jasmine in Paris" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-writer">Who finished the first draft?</label>
+                    <input id="sa-writer" data-reference="Fatima" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-when">When was the script finished?</label>
+                    <input id="sa-when" data-reference="last week" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-sent">What was sent separately?</label>
+                    <input id="sa-sent" data-reference="the draft" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-actors">What did the team do yesterday?</label>
+                    <input id="sa-actors" data-reference="spoke to actors" placeholder="Your answer" />
+                  </div>
+                  <div>
+                    <label class="input-label" for="sa-days">Which days are suggested for the call?</label>
+                    <input id="sa-days" data-reference="Tuesday or Wednesday" placeholder="Your answer" />
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-4)">
+                  <button id="short-answer-check" class="activity-btn" type="button">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Check with AI
+                  </button>
+                  <span id="short-answer-feedback" class="feedback" aria-live="polite"></span>
+                </div>
+                <p class="muted" style="margin-top: var(--space-3)">
+                  Model: TensorFlow.js Universal Sentence Encoder · generous acceptance for paraphrases.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-4">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 1 · Table Completion</span>
+                <h2>Activity 3: Complete the table</h2>
+                <p>Fill in the missing notes from Tariq's email.</p>
+                <div class="table like">
+                  <div class="table-row table-header">
+                    <div>Category</div>
+                    <div>Information</div>
+                  </div>
+                  <div class="table-row">
+                    <div>Project Title</div>
+                    <div><input class="full" data-answer="Jasmine in Paris" placeholder="Add title" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Genre</div>
+                    <div><input class="full" data-answer="French/Palestinian Drama" placeholder="Add genre" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Current Script Status</div>
+                    <div><input class="full" data-answer="First draft finished" placeholder="Add status" /></div>
+                  </div>
+                  <div class="table-row">
+                    <div>Key Discussion Points</div>
+                    <div><input class="full" data-answer="The script; Casting ideas" placeholder="Add points" /></div>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="table-check" class="activity-btn" type="button"><i class="fa-solid fa-check"></i> Check</button>
+                  <span id="table-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-5">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Grammar Focus</span>
+                <h2>Activity 4: Notice the grammar</h2>
+                <p>Highlight Past Simple in <strong>yellow</strong> and Present Perfect in <strong>green</strong>. Use the toolbar highlighter or tap the quick buttons.</p>
+                <div class="btn-row">
+                  <button id="highlight-past" class="toolbar-btn" type="button">
+                    <i class="fa-solid fa-pen"></i> Mark Past Simple
+                  </button>
+                  <button id="highlight-present" class="toolbar-btn" type="button">
+                    <i class="fa-solid fa-pen-fancy"></i> Mark Present Perfect
+                  </button>
+                  <button id="clear-tense" class="toolbar-btn ghost" type="button">Clear</button>
+                </div>
+                <div class="context-block" style="margin-top: var(--space-4)">
+                  <p class="sentence-strip" id="tense-strip">
+                    <span class="token" data-tense="present">have made</span>
+                    <span class="token" data-tense="past">finished</span>
+                    <span class="token" data-tense="present">have read</span>
+                    <span class="token" data-tense="present">have sent</span>
+                    <span class="token" data-tense="present">have started</span>
+                    <span class="token" data-tense="past">spoke</span>
+                    <span class="token" data-tense="present">have not made</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-6">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Grammar Rules</span>
+                <h2>Activity 5: Understanding the rules</h2>
+                <div class="mc-question">
+                  <p>We use the Past Simple for...</p>
+                  <div class="option-grid" role="group" aria-label="Past Simple uses">
+                    <label><input type="radio" name="past" value="a" /> an action that happened at an unspecified time.</label>
+                    <label><input type="radio" name="past" value="b" /> an action that happened at a specific, finished time.</label>
+                    <label><input type="radio" name="past" value="c" /> an action that started in the past and continues now.</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>We use the Present Perfect for...</p>
+                  <div class="option-grid" role="group" aria-label="Present Perfect uses">
+                    <label><input type="radio" name="present" value="a" /> a specific, finished time in the past.</label>
+                    <label><input type="radio" name="present" value="b" /> a past action with a result or connection now.</label>
+                    <label><input type="radio" name="present" value="c" /> a finished action with no connection to the present.</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>"Fatima finished the first draft of the script last week." Is "last week" a specific, finished time?</p>
+                  <div class="option-grid" role="group" aria-label="Last week question">
+                    <label><input type="radio" name="last-week" value="a" /> Yes</label>
+                    <label><input type="radio" name="last-week" value="b" /> No</label>
+                  </div>
+                </div>
+                <div class="mc-question">
+                  <p>"I have read it." Does this have a result now (Tariq can comment)?</p>
+                  <div class="option-grid" role="group" aria-label="Result now question">
+                    <label><input type="radio" name="have-read" value="a" /> Yes</label>
+                    <label><input type="radio" name="have-read" value="b" /> No</label>
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button id="mc-check" class="activity-btn" type="button"><i class="fa-solid fa-circle-check"></i> Check</button>
+                  <span id="mc-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-7">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Practice</span>
+                <h2>Activity 6: Gap-fill</h2>
+                <p>Choose Past Simple or Present Perfect.</p>
+                <ul class="instruction-list">
+                  <li>I <input class="inline" data-answer="have seen" placeholder="verb" /> three films so far this month.</li>
+                  <li>She <input class="inline" data-answer="visited" placeholder="verb" /> her family in Lyon last summer.</li>
+                  <li>We <input class="inline" data-answer="have not received" placeholder="verb" /> your email yet.</li>
+                  <li>He <input class="inline" data-answer="has worked" placeholder="verb" /> in the film industry for ten years.</li>
+                  <li>They <input class="inline" data-answer="discussed" placeholder="verb" /> the budget yesterday morning.</li>
+                  <li>The director <input class="inline" data-answer="has just shouted" placeholder="verb" /> "Cut!"</li>
+                </ul>
+                <div class="btn-row">
+                  <button id="gap-check" class="activity-btn" type="button"><i class="fa-solid fa-clipboard-check"></i> Check</button>
+                  <span id="gap-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-8">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 2 · Word Order</span>
+                <h2>Activity 7: Unscramble</h2>
+                <div class="prompt-grid">
+                  <div class="card muted">
+                    <p class="muted">you / the / Have / new / seen / ? / film</p>
+                    <input class="full" data-answer="Have you seen the new film?" placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">last / night / I / a / documentary / watched / interesting / .</p>
+                    <input class="full" data-answer="I watched an interesting documentary last night." placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">already / He / has / the / tickets / booked / .</p>
+                    <input class="full" data-answer="He has already booked the tickets." placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">did / When / ? / arrive / they</p>
+                    <input class="full" data-answer="When did they arrive?" placeholder="Reorder the sentence" />
+                  </div>
+                  <div class="card muted">
+                    <p class="muted">not / We / have / lunch / had / yet / .</p>
+                    <input class="full" data-answer="We have not had lunch yet." placeholder="Reorder the sentence" />
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-4)">
+                  <button id="scramble-check" class="activity-btn" type="button"><i class="fa-solid fa-list-check"></i> Check</button>
+                  <span id="scramble-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-9">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Application</span>
+                <h2>Activity 8: Linking (click &amp; drop)</h2>
+                <p class="muted">Select a beginning, then click a matching ending. Each pair locks with a unique colour so you can see your matches.</p>
+                <div class="color-key" id="pair-key"></div>
+                <div class="match-grid" style="margin-top: var(--space-3)">
+                  <div class="match-column">
+                    <h3>Beginnings</h3>
+                    <button class="toolbar-btn ghost match-start" data-id="s1">I have just finished reading it,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s2">Our team in Paris discussed your email this morning,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s3">We have already listened to some composers,</button>
+                    <button class="toolbar-btn ghost match-start" data-id="s4">We have put the meeting in our calendar</button>
+                  </div>
+                  <div class="match-column">
+                    <h3>Endings</h3>
+                    <button class="toolbar-btn ghost match-end" data-id="e1">and I am very impressed.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e2">and we think the music will be very important for this film.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e3">and Wednesday afternoon works perfectly for us.</button>
+                    <button class="toolbar-btn ghost match-end" data-id="e4">and we are very excited about the story.</button>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="reset-matches" class="toolbar-btn" type="button">Reset pairs</button>
+                  <span id="match-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-10">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Integrate</span>
+                <h2>Activity 9: Complete the email</h2>
+                <p>Choose the best option in each drop-down.</p>
+                <div class="stack">
+                  <div class="dropdown-row">
+                    <span>We are so glad you</span>
+                    <select data-answer="liked">
+                      <option value="">— choose —</option>
+                      <option>liked</option>
+                      <option>have liked</option>
+                      <option>like</option>
+                    </select>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We</span>
+                    <select data-answer="agree">
+                      <option value="">— choose —</option>
+                      <option>agreed</option>
+                      <option>have agreed</option>
+                      <option>agree</option>
+                    </select>
+                    <span>that the music is a key element.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We</span>
+                    <select data-answer="have booked">
+                      <option value="">— choose —</option>
+                      <option>booked</option>
+                      <option>have booked</option>
+                      <option>book</option>
+                    </select>
+                    <span>the video call for Wednesday at 3:00 PM.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We have also</span>
+                    <select data-answer="prepared">
+                      <option value="">— choose —</option>
+                      <option>prepared</option>
+                      <option>have prepared</option>
+                      <option>prepare</option>
+                    </select>
+                    <span>a short presentation on casting ideas.</span>
+                  </div>
+                  <div class="dropdown-row">
+                    <span>We look forward to</span>
+                    <select data-answer="speaking">
+                      <option value="">— choose —</option>
+                      <option>speaking</option>
+                      <option>spoke</option>
+                      <option>spoken</option>
+                    </select>
+                    <span>to you on Wednesday.</span>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="dropdown-check" class="activity-btn" type="button"><i class="fa-solid fa-square-check"></i> Check</button>
+                  <span id="dropdown-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-11">
+            <div class="slide-inner">
+              <div class="card">
+                <span class="pill">Part 3 · Prioritise</span>
+                <h2>Activity 10: Rank the next steps</h2>
+                <p>Rank 1 (most important) to 3 (least important). Click Check to see a suggested order.</p>
+                <table class="rank-table">
+                  <thead>
+                    <tr><th>Action</th><th>Rank</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Discuss casting ideas for the main roles.</td>
+                      <td><input class="short" data-answer="2" placeholder="1-3" /></td>
+                    </tr>
+                    <tr>
+                      <td>Choose a composer for the film's music.</td>
+                      <td><input class="short" data-answer="3" placeholder="1-3" /></td>
+                    </tr>
+                    <tr>
+                      <td>Finalise the first draft of the script.</td>
+                      <td><input class="short" data-answer="1" placeholder="1-3" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="btn-row" style="margin-top: var(--space-3)">
+                  <button id="rank-check" class="activity-btn" type="button"><i class="fa-solid fa-ranking-star"></i> Check</button>
+                  <span id="rank-feedback" class="feedback"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-stage hidden" id="slide-12">
+            <div class="slide-inner">
+              <div class="card transparent">
+                <h1>Great work!</h1>
+                <p class="deck-subtitle">You have explored reading, grammar, and collaborative planning for "Jasmine in Paris".</p>
+                <p>Save your deck or add your own reflection slide.</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="slide-nav slide-nav-prev" type="button" onclick="navigateSlides(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slide-nav slide-nav-next" type="button" onclick="navigateSlides(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.21.0/dist/tf.min.js";
+      import { setupInteractiveDeck } from "../../js/interactivemodule.js";
+
+      const pairColors = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d"];
+      const pairKey = document.getElementById("pair-key");
+      pairColors.forEach((color, idx) => {
+        const chip = document.createElement("span");
+        chip.innerHTML = `<span class="color-chip" style="background:${color}"></span> Pair ${idx + 1}`;
+        pairKey.appendChild(chip);
+      });
+
+      let activeStart = null;
+      const matches = {};
+      const startButtons = Array.from(document.querySelectorAll(".match-start"));
+      const endButtons = Array.from(document.querySelectorAll(".match-end"));
+
+      const pairTargets = {
+        s1: "e4",
+        s2: "e2",
+        s3: "e3",
+        s4: "e1",
+      };
+
+      function resetMatches() {
+        activeStart = null;
+        Object.keys(matches).forEach((key) => delete matches[key]);
+        [...startButtons, ...endButtons].forEach((btn) => {
+          btn.style.background = "";
+          btn.style.color = "";
+          btn.dataset.paired = "false";
+        });
+        document.getElementById("match-feedback").textContent = "";
+      }
+
+      function lockPair(startId, endId, color) {
+        const startBtn = startButtons.find((btn) => btn.dataset.id === startId);
+        const endBtn = endButtons.find((btn) => btn.dataset.id === endId);
+        if (!startBtn || !endBtn) return;
+        startBtn.style.background = color;
+        startBtn.style.color = "#fff";
+        endBtn.style.background = color;
+        endBtn.style.color = "#fff";
+        startBtn.dataset.paired = "true";
+        endBtn.dataset.paired = "true";
+        matches[startId] = endId;
+        document.getElementById("match-feedback").textContent = "Linked!";
+      }
+
+      startButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeStart = btn.dataset.id;
+          startButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      endButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (!activeStart) {
+            document.getElementById("match-feedback").textContent = "Select a beginning first.";
+            return;
+          }
+          const colorIdx = Object.keys(matches).length % pairColors.length;
+          lockPair(activeStart, btn.dataset.id, pairColors[colorIdx]);
+          activeStart = null;
+          startButtons.forEach((b) => b.classList.remove("active"));
+        });
+      });
+
+      document.getElementById("reset-matches").addEventListener("click", resetMatches);
+
+      const markInputs = (selector, feedbackId) => {
+        const inputs = Array.from(document.querySelectorAll(selector));
+        let correct = 0;
+        inputs.forEach((input) => {
+          const expected = (input.dataset.answer || "").trim().toLowerCase();
+          const value = (input.value || "").trim().toLowerCase();
+          if (expected && value === expected) {
+            input.classList.add("success");
+            input.classList.remove("error");
+            correct += 1;
+          } else {
+            input.classList.add("error");
+            input.classList.remove("success");
+          }
+        });
+        const feedback = document.getElementById(feedbackId);
+        if (feedback) {
+          feedback.textContent = `${correct}/${inputs.length} correct`;
+        }
+      };
+
+      document.getElementById("table-check").addEventListener("click", () => {
+        markInputs('#slide-4 input[data-answer]', "table-feedback");
+      });
+
+      document.getElementById("gap-check").addEventListener("click", () => {
+        markInputs('#slide-7 input[data-answer]', "gap-feedback");
+      });
+
+      document.getElementById("scramble-check").addEventListener("click", () => {
+        markInputs('#slide-8 input[data-answer]', "scramble-feedback");
+      });
+
+      document.getElementById("dropdown-check").addEventListener("click", () => {
+        const selects = Array.from(document.querySelectorAll('#slide-10 select[data-answer]'));
+        let correct = 0;
+        selects.forEach((sel) => {
+          if ((sel.value || "").trim() === (sel.dataset.answer || "")) {
+            sel.classList.add("success");
+            sel.classList.remove("error");
+            correct += 1;
+          } else {
+            sel.classList.add("error");
+            sel.classList.remove("success");
+          }
+        });
+        document.getElementById("dropdown-feedback").textContent = `${correct}/${selects.length} correct`;
+      });
+
+      document.getElementById("rank-check").addEventListener("click", () => {
+        markInputs('#slide-11 input[data-answer]', "rank-feedback");
+      });
+
+      document.getElementById("mc-check").addEventListener("click", () => {
+        const answers = { past: "b", present: "b", "last-week": "a", "have-read": "a" };
+        let correct = 0;
+        Object.entries(answers).forEach(([name, value]) => {
+          const checked = document.querySelector(`input[name="${name}"]:checked`);
+          if (checked && checked.value === value) {
+            correct += 1;
+          }
+        });
+        document.getElementById("mc-feedback").textContent = `${correct}/4 correct`;
+      });
+
+      const strip = document.getElementById("tense-strip");
+      const tokens = () => Array.from(strip.querySelectorAll("[data-tense]"));
+      document.getElementById("highlight-past").addEventListener("click", () => {
+        tokens().forEach((el) => {
+          if (el.dataset.tense === "past") {
+            el.style.background = "#f9e27d";
+          }
+        });
+      });
+      document.getElementById("highlight-present").addEventListener("click", () => {
+        tokens().forEach((el) => {
+          if (el.dataset.tense === "present") {
+            el.style.background = "#a5d6a7";
+          }
+        });
+      });
+      document.getElementById("clear-tense").addEventListener("click", () => {
+        tokens().forEach((el) => (el.style.background = ""));
+      });
+
+      const cosineSimilarity = (a, b) => {
+        const dot = a.reduce((sum, val, idx) => sum + val * b[idx], 0);
+        const normA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+        const normB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+        return normA && normB ? dot / (normA * normB) : 0;
+      };
+
+      let useModelPromise = null;
+      const loadUseModel = () => {
+        if (!useModelPromise) {
+          useModelPromise = import("https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.4/dist/universal-sentence-encoder.min.js").then(
+            (module) => module.load(),
+          );
+        }
+        return useModelPromise;
+      };
+
+      const vectorise = async (sentences) => {
+        const model = await loadUseModel();
+        const embeddings = await model.embed(sentences);
+        const array = await embeddings.array();
+        embeddings.dispose();
+        return array;
+      };
+
+      document.getElementById("short-answer-check").addEventListener("click", async () => {
+        const inputs = Array.from(document.querySelectorAll('#slide-3 input[data-reference]'));
+        const references = inputs.map((input) => input.dataset.reference || "");
+        const responses = inputs.map((input) => input.value || "");
+        document.getElementById("short-answer-feedback").textContent = "Loading AI...";
+        try {
+          const [refVectors, resVectors] = await Promise.all([
+            vectorise(references),
+            vectorise(responses.map((resp, idx) => (resp.trim() ? resp : references[idx]))),
+          ]);
+          let correct = 0;
+          inputs.forEach((input, idx) => {
+            const similarity = cosineSimilarity(resVectors[idx], refVectors[idx]);
+            if (similarity >= 0.45) {
+              input.classList.add("success");
+              input.classList.remove("error");
+              correct += 1;
+            } else {
+              input.classList.add("error");
+              input.classList.remove("success");
+            }
+          });
+          document.getElementById("short-answer-feedback").textContent = `${correct}/${inputs.length} responses match closely (AI scored).`;
+        } catch (error) {
+          document.getElementById("short-answer-feedback").textContent = "AI model could not load. Please try again.";
+          console.error(error);
+        }
+      });
+
+      setupInteractiveDeck();
+    </script>
+  </body>
+</html>
