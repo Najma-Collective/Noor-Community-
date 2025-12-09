@@ -1498,16 +1498,20 @@ Script: "Excellent work today. You navigated a difficult financial negotiation u
                 };
             }
 
-            // Note: Gemini doesn't support function calling in the same way as OpenAI
-            // We'll handle tools through text-based instructions for now
-            if (tools) {
-                const toolInstructions = tools.map(t =>
-                    `${t.function.name}: ${t.function.description}`
-                ).join('\n');
+            // Convert OpenAI-style tools to Gemini's functionDeclarations format
+            if (tools && tools.length > 0) {
+                const functionDeclarations = tools.map(tool => {
+                    const func = tool.function;
+                    return {
+                        name: func.name,
+                        description: func.description,
+                        parameters: func.parameters
+                    };
+                });
 
-                if (requestBody.systemInstruction) {
-                    requestBody.systemInstruction.parts[0].text += '\n\nAvailable tools:\n' + toolInstructions;
-                }
+                requestBody.tools = [{
+                    functionDeclarations: functionDeclarations
+                }];
             }
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.apiKey}`;
@@ -1532,12 +1536,30 @@ Script: "Excellent work today. You navigated a difficult financial negotiation u
                 throw new Error('Invalid response from Gemini API');
             }
 
+            const candidate = data.candidates[0];
+            const parts = candidate.content.parts || [];
+
+            // Extract text content
+            const textParts = parts.filter(p => p.text);
+            const textContent = textParts.map(p => p.text).join('');
+
+            // Extract function calls
+            const functionCalls = parts.filter(p => p.functionCall);
+            const tool_calls = functionCalls.length > 0 ? functionCalls.map((fc, index) => ({
+                id: `call_${index}`,
+                type: 'function',
+                function: {
+                    name: fc.functionCall.name,
+                    arguments: JSON.stringify(fc.functionCall.args || {})
+                }
+            })) : null;
+
             return {
                 choices: [{
                     message: {
                         role: 'assistant',
-                        content: data.candidates[0].content.parts[0].text,
-                        tool_calls: null
+                        content: textContent || '',
+                        tool_calls: tool_calls
                     }
                 }]
             };
@@ -1588,6 +1610,88 @@ Script: "Excellent work today. You navigated a difficult financial negotiation u
             return cleanText.trim();
         }
 
+        // ===== TOOL DEFINITIONS FOR AI =====
+        const slideControlTools = [
+            {
+                function: {
+                    name: "add_highlight",
+                    description: "Highlight a specific element on the current slide using CSS selector (e.g., 'h1', '.goal-item', '#scenario')",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            selector: {
+                                type: "string",
+                                description: "CSS selector for the element to highlight"
+                            }
+                        },
+                        required: ["selector"]
+                    }
+                }
+            },
+            {
+                function: {
+                    name: "add_callout",
+                    description: "Add a text annotation callout at specific coordinates on the slide",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            x: {
+                                type: "number",
+                                description: "X coordinate in pixels (0-800)"
+                            },
+                            y: {
+                                type: "number",
+                                description: "Y coordinate in pixels (0-600)"
+                            },
+                            text: {
+                                type: "string",
+                                description: "Text to display in the callout"
+                            }
+                        },
+                        required: ["x", "y", "text"]
+                    }
+                }
+            },
+            {
+                function: {
+                    name: "add_arrow",
+                    description: "Draw an arrow between two points on the slide",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            fromX: {
+                                type: "number",
+                                description: "Starting X coordinate in pixels"
+                            },
+                            fromY: {
+                                type: "number",
+                                description: "Starting Y coordinate in pixels"
+                            },
+                            toX: {
+                                type: "number",
+                                description: "Ending X coordinate in pixels"
+                            },
+                            toY: {
+                                type: "number",
+                                description: "Ending Y coordinate in pixels"
+                            }
+                        },
+                        required: ["fromX", "fromY", "toX", "toY"]
+                    }
+                }
+            },
+            {
+                function: {
+                    name: "advance_slide",
+                    description: "Move to the next slide. Only use this when the current activity is complete and you're ready to move forward.",
+                    parameters: {
+                        type: "object",
+                        properties: {}
+                    }
+                }
+            }
+        ];
+
         // ===== IMPROVED AI INTEGRATION =====
         async function getSarahResponse(context) {
             const slideInfo = slideMetadata[state.currentSlide];
@@ -1609,35 +1713,37 @@ YOUR TEACHING APPROACH:
 
 **When a new slide appears:**
 1. Greet briefly and introduce the slide topic (1-2 sentences)
-2. Add visual annotations using the commands below to highlight key points
+2. Use the available functions to add visual annotations and highlight key points
 3. Ask a specific question or give a clear instruction
 4. Wait for student response
 
 **When student responds:**
 1. Acknowledge their answer specifically
 2. Provide brief feedback or correction if needed
-3. Either ask a follow-up question OR tell them the lesson is advancing to the next slide
-4. If advancing, use [ADVANCE_SLIDE] command
+3. Either ask a follow-up question OR advance to the next slide
+4. If advancing, use the advance_slide function
 
-**Visual Annotation Commands (use these to make slides engaging):**
-- [HIGHLIGHT:selector] - Highlights an element (e.g., [HIGHLIGHT:h1] or [HIGHLIGHT:.activity])
-- [CALLOUT:x,y,text] - Adds a text callout (e.g., [CALLOUT:200,150,Look here!])
-- [ARROW:x1,y1,x2,y2] - Draws an arrow between points
-- [ADVANCE_SLIDE] - Moves to the next slide (use when activity is complete)
+**Available Functions:**
+- add_highlight(selector) - Highlight elements using CSS selectors like "h1", ".goal-item", etc.
+- add_callout(x, y, text) - Add text callouts at specific coordinates
+- add_arrow(fromX, fromY, toX, toY) - Draw arrows between points
+- advance_slide() - Move to the next slide when activity is complete
 
 **Important Rules:**
 - Keep responses SHORT (1-3 sentences max)
-- Use at least ONE annotation command when introducing each new slide
+- Use at least ONE visual annotation when introducing each new slide
 - Don't advance slides too quickly - ensure student engagement first
 - During accuracy activities (slides 4-6): correct errors immediately
 - During fluency activities (slides 3, 7-10): don't interrupt, note errors for later
 - Be warm and encouraging!
 
-**Example Response for New Slide:**
-"Welcome to our goals for today! [HIGHLIGHT:h2] Let's focus on these four key objectives. Which one do you think will be most challenging?"
+**Example for New Slide:**
+Say: "Welcome to our goals for today! Let's focus on these four key objectives. Which one do you think will be most challenging?"
+Then call: add_highlight("h2")
 
-**Example Response After Student Answer:**
-"Excellent point about managing projects! You're right that it requires careful planning. [ADVANCE_SLIDE] Now let's move to our warm-up discussion."`;
+**Example After Student Answer:**
+Say: "Excellent point about managing projects! You're right that it requires careful planning. Now let's move to our warm-up discussion."
+Then call: advance_slide()`;
 
             const messages = [
                 { role: "system", content: systemPrompt }
@@ -1656,7 +1762,7 @@ YOUR TEACHING APPROACH:
             if (context.event === 'slideChange') {
                 messages.push({
                     role: 'user',
-                    content: `[NEW SLIDE ${state.currentSlide + 1}] You've just moved to a new slide. Introduce it according to the lesson plan, use annotation commands to highlight important elements, and ask the student a question or give them an instruction.`
+                    content: `[NEW SLIDE ${state.currentSlide + 1}] You've just moved to a new slide. Introduce it according to the lesson plan, use the available functions to highlight important elements, and ask the student a question or give them an instruction.`
                 });
             } else if (context.event === 'userMessage') {
                 // User's message
@@ -1667,14 +1773,43 @@ YOUR TEACHING APPROACH:
             }
 
             try {
-                const response = await callGemini(messages);
+                // Call Gemini with function calling tools
+                const response = await callGemini(messages, slideControlTools);
                 const message = response.choices[0].message;
-                const rawContent = message.content || "Let's continue with our lesson.";
+                const textContent = message.content || '';
 
-                // Parse and execute commands, return clean text
-                const cleanContent = parseAndExecuteCommands(rawContent);
+                // Execute any tool calls
+                if (message.tool_calls && message.tool_calls.length > 0) {
+                    for (const toolCall of message.tool_calls) {
+                        const functionName = toolCall.function.name;
+                        const args = JSON.parse(toolCall.function.arguments);
 
-                return cleanContent;
+                        console.log(`Executing function: ${functionName}`, args);
+
+                        // Execute the appropriate function
+                        switch (functionName) {
+                            case 'add_highlight':
+                                annotations.highlightElement(args.selector);
+                                break;
+                            case 'add_callout':
+                                annotations.addCallout(args.x, args.y, args.text);
+                                break;
+                            case 'add_arrow':
+                                annotations.addArrow(args.fromX, args.fromY, args.toX, args.toY);
+                                break;
+                            case 'advance_slide':
+                                // Advance slide after a short delay for better UX
+                                setTimeout(() => {
+                                    navigateSlide(1);
+                                }, 2000);
+                                break;
+                            default:
+                                console.warn(`Unknown function: ${functionName}`);
+                        }
+                    }
+                }
+
+                return textContent || "Let's continue with our lesson.";
 
             } catch (error) {
                 console.error('Gemini API Error:', error);
