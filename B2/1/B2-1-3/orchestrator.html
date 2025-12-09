@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noor Community · AI Lesson Orchestrator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Questrial&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        :root {
+            --primary-sage: #7a8471;
+            --secondary-sage: #9caf88;
+            --tertiary-sage: #b8c5a6;
+            --warm-cream: #f8f6f0;
+            --soft-white: #fefcf7;
+            --forest-shadow: #5a6b52;
+            --primary-forest: #3f4d39;
+            --ink: #2f3a2b;
+            --ink-muted: #5a6b52;
+            --border-sage: rgba(122, 132, 113, 0.2);
+            --hover-sage: rgba(156, 175, 136, 0.15);
+            --deep-forest: #3e4a3a;
+            --font-display: "Questrial", system-ui, sans-serif;
+            --font-body: "Nunito", system-ui, sans-serif;
+            --shadow-1: 0 1px 2px rgba(34, 41, 32, 0.05), 0 2px 8px rgba(34, 41, 32, 0.06);
+            --shadow-2: 0 6px 24px rgba(34, 41, 32, 0.08), 0 16px 36px rgba(34, 41, 32, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f8f6f0 0%, #f5f3ed 100%);
+            color: var(--forest-shadow);
+            line-height: 1.6;
+        }
+
+        /* ===== ENTRY / LOBBY STYLES ===== */
+        .entry-screen, .lobby-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .entry-card, .lobby-card {
+            background: var(--soft-white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            color: var(--primary-sage);
+            margin-bottom: 1rem;
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--deep-forest);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+        }
+
+        .lesson-title {
+            font-size: 1.1rem;
+            color: var(--ink-muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--deep-forest);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-sage);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-sage);
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+        }
+
+        .btn-primary {
+            background: var(--primary-sage);
+            color: white;
+            box-shadow: var(--shadow-1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .waiting-message {
+            background: var(--warm-cream);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            border: 1px solid var(--border-sage);
+        }
+
+        .participant-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .ready-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary-sage);
+        }
+
+        .ready-indicator.not-ready {
+            background: #ccc;
+        }
+
+        /* ===== LESSON SCREEN STYLES ===== */
+        .lesson-screen {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            display: none;
+        }
+
+        .lesson-screen.active {
+            display: grid;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: rgba(254, 252, 247, 0.95);
+            border-bottom: 1px solid var(--border-sage);
+            box-shadow: 0 2px 8px rgba(34, 41, 32, 0.05);
+            backdrop-filter: blur(8px);
+        }
+
+        .toolbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            color: var(--forest-shadow);
+        }
+
+        .toolbar-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .slide-counter {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--ink-muted);
+            letter-spacing: 0.06em;
+        }
+
+        .phase-label {
+            font-size: 0.85rem;
+            color: var(--primary-sage);
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            background: var(--warm-cream);
+            border-radius: 999px;
+        }
+
+        .timer-display {
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            font-family: monospace;
+        }
+
+        .toolbar-end {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Main lesson layout */
+        .lesson-main {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        /* Slide viewport */
+        .slide-viewport {
+            padding: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide-iframe-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow:
+                0 0 45px 10px color-mix(in srgb, var(--secondary-sage) 15%, transparent),
+                0 24px 60px rgba(34, 41, 32, 0.1);
+        }
+
+        .slide-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .slide-controls {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .slide-nav-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-sage);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: all 0.2s;
+        }
+
+        .slide-nav-btn:hover {
+            transform: scale(1.1);
+            background: var(--forest-shadow);
+        }
+
+        .slide-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Interaction panel */
+        .interaction-panel {
+            background: var(--soft-white);
+            border-left: 1px solid var(--border-sage);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-sage);
+            background: var(--warm-cream);
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--deep-forest);
+            margin-bottom: 0.5rem;
+        }
+
+        .participants-row {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .participant-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-sage);
+        }
+
+        .role-tag {
+            font-size: 0.75rem;
+            color: var(--primary-sage);
+            font-weight: 600;
+        }
+
+        /* Chat area */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-width: 90%;
+        }
+
+        .message.sarah {
+            align-self: flex-start;
+        }
+
+        .message.learner {
+            align-self: flex-end;
+        }
+
+        .message-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--ink-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-recipient {
+            font-size: 0.75rem;
+            color: var(--primary-sage);
+            font-style: italic;
+        }
+
+        .message-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.sarah .message-bubble {
+            background: var(--warm-cream);
+            border: 1px solid var(--border-sage);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.learner .message-bubble {
+            background: var(--secondary-sage);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            opacity: 0.7;
+        }
+
+        .sarah-typing {
+            padding: 0.75rem 1rem;
+            background: var(--warm-cream);
+            border-radius: 12px;
+            border: 1px solid var(--border-sage);
+            font-style: italic;
+            color: var(--ink-muted);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Input area */
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border-sage);
+            background: white;
+        }
+
+        .recipient-selector {
+            margin-bottom: 0.75rem;
+        }
+
+        .recipient-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--deep-forest);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .recipient-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-sage);
+            border-radius: 8px;
+            font-family: var(--font-body);
+            background: white;
+        }
+
+        .message-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border-sage);
+            border-radius: 12px;
+            font-family: var(--font-body);
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-sage);
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--primary-sage);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            background: var(--forest-shadow);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Pairwork banner */
+        .pairwork-banner {
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--secondary-sage), var(--primary-sage));
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .pairwork-banner.active {
+            display: block;
+        }
+
+        /* Hidden utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Status indicators */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--secondary-sage);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .lesson-main {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+
+            .interaction-panel {
+                border-left: none;
+                border-top: 1px solid var(--border-sage);
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENTRY SCREEN -->
+    <div id="entryScreen" class="entry-screen">
+        <div class="entry-card">
+            <i class="fa-solid fa-seedling logo"></i>
+            <h1 class="brand-title">Noor Community</h1>
+            <p class="lesson-title">AI Lesson Orchestrator</p>
+            <p style="margin-bottom: 2rem; color: var(--ink-muted);">NGO Strategy: Consolidation & Planning</p>
+
+            <form id="joinForm">
+                <div class="form-group">
+                    <label class="form-label" for="learnerName">Your Name</label>
+                    <input type="text" id="learnerName" class="form-input" placeholder="Enter your name" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="joinCode">Join Code</label>
+                    <input type="text" id="joinCode" class="form-input" placeholder="Enter join code or leave blank to create session" />
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Join Lesson
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobbyScreen" class="lobby-screen hidden">
+        <div class="lobby-card">
+            <i class="fa-solid fa-users logo"></i>
+            <h2 class="brand-title">Lesson Lobby</h2>
+            <p class="lesson-title">NGO Strategy: Consolidation & Planning</p>
+
+            <div class="waiting-message">
+                <p><strong>Share this code:</strong></p>
+                <p style="font-size: 2rem; font-weight: 700; color: var(--primary-sage); letter-spacing: 0.1em; margin: 0.5rem 0;" id="displayJoinCode"></p>
+                <p style="font-size: 0.9rem; color: var(--ink-muted);">A partner can join using this code.</p>
+            </div>
+
+            <ul class="participant-list" id="participantList"></ul>
+
+            <button id="readyBtn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                I'm Ready
+            </button>
+
+            <p id="waitingStatus" style="margin-top: 1rem; color: var(--ink-muted); font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <!-- LESSON SCREEN -->
+    <div id="lessonScreen" class="lesson-screen">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-brand">
+                <i class="fa-solid fa-seedling" style="color: var(--primary-sage)"></i>
+                <span>Noor Community · AI Orchestrator</span>
+            </div>
+
+            <div class="toolbar-center">
+                <div class="slide-counter" id="slideCounter">1 / 12</div>
+                <div class="phase-label" id="phaseLabel">Orientation</div>
+                <div class="timer-display" id="timerDisplay"></div>
+            </div>
+
+            <div class="toolbar-end">
+                <div id="sessionCode" style="font-size: 0.9rem; color: var(--ink-muted);">
+                    Code: <strong id="sessionCodeValue"></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="lesson-main">
+            <!-- Slide viewport -->
+            <div class="slide-viewport">
+                <div class="slide-iframe-container">
+                    <iframe id="slideIframe" class="slide-iframe" src="B2-1-3-b.html"></iframe>
+                </div>
+
+                <div class="slide-controls">
+                    <button class="slide-nav-btn" id="prevSlideBtn" aria-label="Previous slide">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="slide-nav-btn" id="nextSlideBtn" aria-label="Next slide">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interaction panel -->
+            <div class="interaction-panel">
+                <div class="pairwork-banner" id="pairworkBanner">
+                    <i class="fa-solid fa-users"></i> Pairwork in progress – Sarah is listening
+                </div>
+
+                <div class="panel-header">
+                    <h3 class="panel-title">Live Session</h3>
+                    <div class="participants-row" id="participantsRow"></div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be added here -->
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div class="recipient-selector">
+                            <label class="recipient-label">Send to:</label>
+                            <select class="recipient-select" id="recipientSelect">
+                                <option value="everyone">Everyone</option>
+                            </select>
+                        </div>
+
+                        <div class="message-input-container">
+                            <textarea
+                                id="messageInput"
+                                class="message-input"
+                                placeholder="Type your message..."
+                                rows="2"></textarea>
+                            <button id="sendBtn" class="send-btn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== STATE MANAGEMENT =====
+        const state = {
+            sessionId: null,
+            joinCode: null,
+            learnerName: null,
+            learnerId: null,
+            participants: [],
+            currentSlide: 0,
+            totalSlides: 12,
+            isReady: false,
+            sessionStarted: false,
+            roles: {},
+            errors: [],
+            currentPhase: 'Orientation',
+            phaseStartTime: null,
+            isPairwork: false,
+            apiKey: null // Users will need to set this
+        };
+
+        // Slide metadata
+        const slideMetadata = [
+            { phase: 'Orientation', type: 'title', focus: '' },
+            { phase: 'Orientation', type: 'goals', focus: '' },
+            { phase: 'Warmer', type: 'lead-in', focus: 'Discussion' },
+            { phase: 'Controlled Practice', type: 'vocabulary', focus: 'Vocabulary connections' },
+            { phase: 'Controlled Practice', type: 'grammar', focus: 'Second conditional' },
+            { phase: 'Controlled Practice', type: 'grammar', focus: 'Purpose clauses' },
+            { phase: 'Semi-controlled Practice', type: 'scenario', focus: 'Problem-solving' },
+            { phase: 'Main Task', type: 'intro', focus: '' },
+            { phase: 'Main Task', type: 'roleplay', focus: 'Strategic planning' },
+            { phase: 'Main Task', type: 'followup', focus: 'Presentation & justification' },
+            { phase: 'Reflection', type: 'reflection', focus: 'Metacognition' },
+            { phase: 'Closing', type: 'end', focus: '' }
+        ];
+
+        // ===== UTILITY FUNCTIONS =====
+        function generateCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return code;
+        }
+
+        function generateId() {
+            return 'user_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // ===== SESSION MANAGEMENT (Simple localStorage approach) =====
+        function createSession() {
+            const sessionId = 'session_' + Date.now();
+            const joinCode = generateCode();
+            const session = {
+                id: sessionId,
+                joinCode: joinCode,
+                participants: [],
+                currentSlide: 0,
+                started: false,
+                createdAt: Date.now()
+            };
+            localStorage.setItem(`session_${joinCode}`, JSON.stringify(session));
+            return { sessionId, joinCode };
+        }
+
+        function getSession(joinCode) {
+            const data = localStorage.getItem(`session_${joinCode}`);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function updateSession(joinCode, updates) {
+            const session = getSession(joinCode);
+            if (session) {
+                const updated = { ...session, ...updates };
+                localStorage.setItem(`session_${joinCode}`, JSON.stringify(updated));
+                return updated;
+            }
+            return null;
+        }
+
+        function addParticipant(joinCode, participant) {
+            const session = getSession(joinCode);
+            if (session && session.participants.length < 2) {
+                session.participants.push(participant);
+                updateSession(joinCode, { participants: session.participants });
+                return true;
+            }
+            return false;
+        }
+
+        // ===== UI UPDATES =====
+        function showScreen(screenName) {
+            document.getElementById('entryScreen').classList.add('hidden');
+            document.getElementById('lobbyScreen').classList.add('hidden');
+            document.getElementById('lessonScreen').classList.remove('active');
+
+            if (screenName === 'entry') {
+                document.getElementById('entryScreen').classList.remove('hidden');
+            } else if (screenName === 'lobby') {
+                document.getElementById('lobbyScreen').classList.remove('hidden');
+            } else if (screenName === 'lesson') {
+                document.getElementById('lessonScreen').classList.add('active');
+            }
+        }
+
+        function updateParticipantList() {
+            const list = document.getElementById('participantList');
+            list.innerHTML = '';
+
+            state.participants.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'participant-item';
+                li.innerHTML = `
+                    <div class="ready-indicator ${p.ready ? '' : 'not-ready'}"></div>
+                    <span><strong>${p.name}</strong> ${p.ready ? '(Ready)' : ''}</span>
+                `;
+                list.appendChild(li);
+            });
+
+            // Update waiting status
+            const readyCount = state.participants.filter(p => p.ready).length;
+            const waitingStatus = document.getElementById('waitingStatus');
+
+            if (readyCount > 0 && readyCount === state.participants.length) {
+                waitingStatus.textContent = 'All ready! Starting lesson...';
+                setTimeout(startLesson, 2000);
+            } else if (readyCount > 0) {
+                waitingStatus.textContent = `${readyCount} of ${state.participants.length} ready`;
+            } else {
+                waitingStatus.textContent = 'Waiting for everyone to be ready...';
+            }
+        }
+
+        function updateParticipantsBadges() {
+            const container = document.getElementById('participantsRow');
+            container.innerHTML = '';
+
+            state.participants.forEach(p => {
+                const badge = document.createElement('div');
+                badge.className = 'participant-badge';
+                const roleText = state.roles[p.id] ? `<div class="role-tag">${state.roles[p.id]}</div>` : '';
+                badge.innerHTML = `
+                    <div class="status-dot"></div>
+                    <div>
+                        <div style="font-weight: 600;">${p.name}</div>
+                        ${roleText}
+                    </div>
+                `;
+                container.appendChild(badge);
+            });
+
+            // Update recipient selector
+            updateRecipientSelector();
+        }
+
+        function updateRecipientSelector() {
+            const select = document.getElementById('recipientSelect');
+            select.innerHTML = '<option value="everyone">Everyone</option>';
+
+            state.participants.forEach(p => {
+                if (p.id !== state.learnerId) {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.name;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function updateSlideCounter() {
+            document.getElementById('slideCounter').textContent = `${state.currentSlide + 1} / ${state.totalSlides}`;
+
+            // Update phase
+            const metadata = slideMetadata[state.currentSlide];
+            state.currentPhase = metadata.phase;
+            document.getElementById('phaseLabel').textContent = metadata.phase;
+
+            // Reset phase timer
+            state.phaseStartTime = Date.now();
+
+            // Check if pairwork slide
+            state.isPairwork = [6, 7, 8, 9].includes(state.currentSlide);
+            document.getElementById('pairworkBanner').classList.toggle('active', state.isPairwork);
+
+            // Update button states
+            document.getElementById('prevSlideBtn').disabled = state.currentSlide === 0;
+            document.getElementById('nextSlideBtn').disabled = state.currentSlide === state.totalSlides - 1;
+
+            // Notify Sarah of slide change
+            onSlideChange();
+        }
+
+        function addMessage(sender, text, recipient = 'everyone', time = new Date()) {
+            const container = document.getElementById('chatMessages');
+            const isSarah = sender === 'Sarah';
+            const isCurrentUser = sender === state.learnerName;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSarah ? 'sarah' : 'learner'}`;
+
+            const recipientText = recipient !== 'everyone' ?
+                `<span class="message-recipient">to ${recipient === state.learnerId ? 'you' : getParticipantName(recipient)}</span>` : '';
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    ${isSarah ? '<i class="fa-solid fa-robot"></i>' : '<i class="fa-solid fa-user"></i>'}
+                    ${sender}
+                    ${recipientText}
+                </div>
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function getParticipantName(id) {
+            const p = state.participants.find(p => p.id === id);
+            return p ? p.name : 'Unknown';
+        }
+
+        function showSarahTyping() {
+            const container = document.getElementById('chatMessages');
+            const typing = document.createElement('div');
+            typing.className = 'sarah-typing';
+            typing.id = 'sarahTyping';
+            typing.innerHTML = '<i class="fa-solid fa-robot"></i> Sarah is thinking...';
+            container.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideSarahTyping() {
+            const typing = document.getElementById('sarahTyping');
+            if (typing) typing.remove();
+        }
+
+        // ===== SLIDE NAVIGATION =====
+        function navigateSlide(direction) {
+            const newSlide = state.currentSlide + direction;
+            if (newSlide >= 0 && newSlide < state.totalSlides) {
+                state.currentSlide = newSlide;
+
+                // Send message to iframe to change slide
+                const iframe = document.getElementById('slideIframe');
+                iframe.contentWindow.postMessage({ type: 'navigateSlide', index: newSlide }, '*');
+
+                updateSlideCounter();
+            }
+        }
+
+        // ===== AI INTEGRATION (GEMINI) =====
+        async function callSarah(userMessage, context) {
+            if (!state.apiKey) {
+                console.warn('API key not set. Using simulated response.');
+                return getSimulatedSarahResponse(context);
+            }
+
+            const slideInfo = slideMetadata[state.currentSlide];
+            const participantNames = state.participants.map(p => p.name).join(' and ');
+
+            const systemPrompt = `You are Sarah, a warm and encouraging English teacher with a constructivist teaching style.
+
+CONTEXT:
+- Lesson: NGO Strategy - Consolidation & Planning (B2 level)
+- Current slide: ${state.currentSlide + 1}/12 - ${slideInfo.phase}
+- Activity type: ${slideInfo.type}
+- Focus: ${slideInfo.focus}
+- Students: ${participantNames}
+- Roles: ${JSON.stringify(state.roles)}
+
+TEACHING PRINCIPLES:
+1. Elicit prior knowledge through questions
+2. Provide scaffolding (stems, examples) before asking students to produce language
+3. Wait for responses - don't rush to fill silence
+4. For fluency activities (slides 3, 7, 9, 10): Listen and collect errors silently for later
+5. For accuracy activities (slides 4, 5, 6): Give immediate gentle feedback, invite self-correction first
+6. Keep responses brief and conversational (2-3 sentences max)
+7. Reference specific slide elements when helpful
+8. Encourage both learners to participate equally
+
+CURRENT ACTIVITY:
+${getActivityGuidance(state.currentSlide)}
+
+Respond naturally to the student's message while following the lesson plan.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: systemPrompt + '\n\nStudent: ' + userMessage }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 200
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                return getSimulatedSarahResponse(context);
+            }
+        }
+
+        function getActivityGuidance(slideIndex) {
+            const guidance = {
+                0: 'Greet students warmly. Check if they can see and hear everything.',
+                1: 'Walk through the four goals briefly. Ask if they have questions.',
+                2: 'Ask the three discussion questions one by one. Ensure both students contribute. This is a fluency activity - collect errors for later.',
+                3: 'Instruct students to create sentences connecting vocabulary from both lists. Check each sentence and offer immediate corrections.',
+                4: 'Review second conditional structure. Ask each student to answer the scenario questions. Provide immediate gentle feedback.',
+                5: 'Assign roles (Manager/Donor). Prompt a short dialogue emphasizing purpose clauses. Highlight good usage.',
+                6: 'Present the problem. Enter pairwork mode - let them discuss together. Monitor and collect examples.',
+                7: 'Brief transition. Explain the main task format.',
+                8: 'Assign roles (Finance Manager/Project Manager). Encourage rich interaction. Monitor for errors to address later.',
+                9: 'Act as Director. Ask students to summarize and justify their decisions using target language.',
+                10: 'Present the three reflection questions one by one. Surface delayed error correction examples.',
+                11: 'Close with specific praise for each learner. Suggest optional homework.'
+            };
+            return guidance[slideIndex] || 'Guide students through this activity.';
+        }
+
+        function getSimulatedSarahResponse(context) {
+            // Fallback responses when API is not available
+            const responses = {
+                0: "Welcome! I'm Sarah, your teacher for today. Can everyone see the slides and hear me clearly?",
+                1: "Let's look at our goals for today. We'll work on connecting ideas, discussing hypotheticals, explaining reasons, and solving problems together.",
+                2: "Great question! Let me hear your thoughts first. What do you think is the biggest challenge for a new community project?",
+                3: "Excellent! Now try creating a sentence that uses one word from each list. For example: 'In our grant proposal, we must define the project's objective.'",
+                4: "Good thinking! Remember the structure: 'If + past simple, would + infinitive'. Try answering: What would you change if you had double the budget?",
+                5: "Well done! Now let's practice our purpose clauses. Manager, convince the donor using 'in order to' or 'so that'.",
+                6: "Interesting problem, right? Discuss together: if the donor needs results in 3 months instead of 12, what would you do?",
+                7: "Time for our main task! We'll simulate a real strategic planning meeting using all the language we've practiced.",
+                8: "Finance Manager, ask some 'what if' questions. Project Manager, present your idea with clear objectives and rationale.",
+                9: "Excellent work! Now let's summarize what you decided and explain why, using the language we learned today.",
+                10: "Let's reflect on today's lesson. What was more challenging - the vocabulary or the grammar?",
+                11: "Outstanding work today! You've made great progress with hypothetical language and purpose clauses."
+            };
+            return responses[state.currentSlide] || "That's interesting. Tell me more about your thinking.";
+        }
+
+        async function onSlideChange() {
+            // Sarah provides guidance when slide changes
+            const slideInfo = slideMetadata[state.currentSlide];
+
+            showSarahTyping();
+
+            setTimeout(async () => {
+                hideSarahTyping();
+                const guidance = await callSarah('Slide changed', {
+                    event: 'slideChange',
+                    slide: state.currentSlide,
+                    phase: slideInfo.phase
+                });
+                addMessage('Sarah', guidance);
+            }, 1500);
+        }
+
+        async function onUserMessage(text, recipient) {
+            addMessage(state.learnerName, text, recipient);
+
+            // Clear input
+            document.getElementById('messageInput').value = '';
+
+            // Sarah responds
+            showSarahTyping();
+
+            setTimeout(async () => {
+                hideSarahTyping();
+                const response = await callSarah(text, {
+                    event: 'userMessage',
+                    message: text,
+                    recipient: recipient
+                });
+                addMessage('Sarah', response, recipient === 'everyone' ? 'everyone' : state.learnerId);
+            }, 2000);
+        }
+
+        // ===== LESSON START =====
+        function startLesson() {
+            state.sessionStarted = true;
+            updateSession(state.joinCode, { started: true });
+
+            showScreen('lesson');
+
+            // Update UI
+            updateSlideCounter();
+            updateParticipantsBadges();
+            document.getElementById('sessionCodeValue').textContent = state.joinCode;
+
+            // Sarah's welcome message
+            setTimeout(() => {
+                const greeting = state.participants.length === 1
+                    ? `Hello ${state.participants[0].name}! Welcome to today's lesson on NGO Strategy. I'm Sarah, and I'll be guiding you through our session today. Can you see the slides clearly?`
+                    : `Hello ${state.participants[0].name} and ${state.participants[1].name}! Welcome to today's lesson on NGO Strategy. I'm Sarah, and I'll be guiding both of you through our session today. Can everyone see the slides clearly?`;
+
+                addMessage('Sarah', greeting);
+            }, 1000);
+
+            // Start timer updates
+            startPhaseTimer();
+        }
+
+        function startPhaseTimer() {
+            setInterval(() => {
+                if (state.phaseStartTime) {
+                    const elapsed = Math.floor((Date.now() - state.phaseStartTime) / 1000);
+                    document.getElementById('timerDisplay').textContent = formatTime(elapsed);
+                }
+            }, 1000);
+        }
+
+        // ===== EVENT HANDLERS =====
+        document.getElementById('joinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('learnerName').value.trim();
+            const code = document.getElementById('joinCode').value.trim().toUpperCase();
+
+            if (!name) return;
+
+            state.learnerName = name;
+            state.learnerId = generateId();
+
+            let session;
+            if (code) {
+                // Join existing session
+                session = getSession(code);
+                if (!session) {
+                    alert('Session not found. Please check the code.');
+                    return;
+                }
+                if (session.participants.length >= 2) {
+                    alert('Session is full (maximum 2 learners).');
+                    return;
+                }
+                state.joinCode = code;
+                state.sessionId = session.id;
+            } else {
+                // Create new session
+                const { sessionId, joinCode } = createSession();
+                state.sessionId = sessionId;
+                state.joinCode = joinCode;
+                session = getSession(joinCode);
+            }
+
+            // Add participant
+            const participant = { id: state.learnerId, name: name, ready: false };
+            addParticipant(state.joinCode, participant);
+
+            // Update local state
+            session = getSession(state.joinCode);
+            state.participants = session.participants;
+
+            // Show lobby
+            showScreen('lobby');
+            document.getElementById('displayJoinCode').textContent = state.joinCode;
+            updateParticipantList();
+
+            // Poll for updates (simple approach)
+            setInterval(() => {
+                const updated = getSession(state.joinCode);
+                if (updated && JSON.stringify(updated.participants) !== JSON.stringify(state.participants)) {
+                    state.participants = updated.participants;
+                    updateParticipantList();
+
+                    if (updated.started && !state.sessionStarted) {
+                        startLesson();
+                    }
+                }
+            }, 2000);
+        });
+
+        document.getElementById('readyBtn').addEventListener('click', () => {
+            state.isReady = true;
+            const session = getSession(state.joinCode);
+            const participant = session.participants.find(p => p.id === state.learnerId);
+            if (participant) {
+                participant.ready = true;
+                updateSession(state.joinCode, { participants: session.participants });
+                state.participants = session.participants;
+                updateParticipantList();
+            }
+            document.getElementById('readyBtn').disabled = true;
+        });
+
+        document.getElementById('prevSlideBtn').addEventListener('click', () => navigateSlide(-1));
+        document.getElementById('nextSlideBtn').addEventListener('click', () => navigateSlide(1));
+
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const text = document.getElementById('messageInput').value.trim();
+            const recipient = document.getElementById('recipientSelect').value;
+            if (text) {
+                onUserMessage(text, recipient);
+            }
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('sendBtn').click();
+            }
+        });
+
+        // Listen for messages from iframe
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'slideReady') {
+                console.log('Slide deck ready');
+            }
+        });
+
+        // ===== API KEY PROMPT =====
+        window.addEventListener('load', () => {
+            // Prompt for API key (optional - can be hardcoded or configured)
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                state.apiKey = savedKey;
+            } else {
+                setTimeout(() => {
+                    const key = prompt('Optional: Enter your Gemini API key for AI teacher functionality.\n\n(Leave blank to use simulated responses)\n\nGet your key at: https://makersuite.google.com/app/apikey');
+                    if (key) {
+                        state.apiKey = key.trim();
+                        localStorage.setItem('gemini_api_key', state.apiKey);
+                    }
+                }, 500);
+            }
+        });
+
+        // ===== IFRAME SLIDE CONTROL =====
+        // Inject script into iframe to control slides
+        window.addEventListener('load', () => {
+            const iframe = document.getElementById('slideIframe');
+            iframe.addEventListener('load', () => {
+                // Script to control slides in the iframe
+                const script = iframe.contentDocument.createElement('script');
+                script.textContent = `
+                    (function() {
+                        const slides = document.querySelectorAll('.slide-stage');
+                        let currentSlide = 0;
+
+                        function showSlide(index) {
+                            slides.forEach((slide, i) => {
+                                if (i === index) {
+                                    slide.classList.remove('hidden');
+                                } else {
+                                    slide.classList.add('hidden');
+                                }
+                            });
+                            currentSlide = index;
+                        }
+
+                        window.addEventListener('message', (event) => {
+                            if (event.data.type === 'navigateSlide') {
+                                showSlide(event.data.index);
+                            }
+                        });
+
+                        // Initialize
+                        showSlide(0);
+                        window.parent.postMessage({ type: 'slideReady' }, '*');
+                    })();
+                `;
+                iframe.contentDocument.body.appendChild(script);
+            });
+        });
+
+    </script>
+</body>
+</html>
