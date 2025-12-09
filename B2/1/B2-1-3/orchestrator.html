@@ -131,6 +131,16 @@
             transform: none;
         }
 
+        .btn-secondary {
+            background: var(--warm-cream);
+            color: var(--deep-forest);
+            border: 1px solid var(--border-sage);
+        }
+
+        .btn-secondary:hover {
+            background: color-mix(in srgb, var(--warm-cream) 70%, white 30%);
+        }
+
         .waiting-message {
             background: var(--warm-cream);
             padding: 1.5rem;
@@ -197,6 +207,95 @@
             font-family: var(--font-display);
             font-size: 1.05rem;
             color: var(--forest-shadow);
+        }
+
+        .api-menu {
+            position: relative;
+        }
+
+        .api-menu-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-sage);
+            background: white;
+            color: var(--deep-forest);
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-1);
+            transition: all 0.2s ease;
+        }
+
+        .api-menu-trigger:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-2);
+            color: var(--primary-sage);
+        }
+
+        .api-menu-panel {
+            position: absolute;
+            right: 0;
+            top: 120%;
+            width: 280px;
+            background: white;
+            border: 1px solid var(--border-sage);
+            border-radius: 16px;
+            box-shadow: var(--shadow-2);
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .api-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .api-menu-title {
+            font-weight: 700;
+            color: var(--deep-forest);
+        }
+
+        .api-menu-status {
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+        }
+
+        .api-menu-close {
+            background: transparent;
+            border: none;
+            color: var(--ink-muted);
+            cursor: pointer;
+        }
+
+        .api-menu-note {
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .api-menu-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .api-key-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #d9d9d9;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .api-key-status-dot.active {
+            background: var(--secondary-sage);
+            box-shadow: 0 0 0 4px rgba(156, 175, 136, 0.25);
         }
 
         .toolbar-center {
@@ -684,6 +783,35 @@
                 <div id="sessionCode" style="font-size: 0.9rem; color: var(--ink-muted);">
                     Code: <strong id="sessionCodeValue"></strong>
                 </div>
+
+                <div class="api-menu" id="apiMenu">
+                    <button class="api-menu-trigger" id="apiMenuButton" aria-expanded="false" aria-controls="apiMenuPanel">
+                        <i class="fa-solid fa-key"></i>
+                        <span>API Key</span>
+                        <span class="api-key-status-dot" id="apiKeyStatusDot" aria-hidden="true"></span>
+                    </button>
+
+                    <div class="api-menu-panel hidden" id="apiMenuPanel" role="dialog" aria-label="API Key Settings">
+                        <div class="api-menu-header">
+                            <div>
+                                <div class="api-menu-title">API Key</div>
+                                <div class="api-menu-status" id="apiKeyStatusText">Not set</div>
+                            </div>
+                            <button class="api-menu-close" id="apiMenuClose" aria-label="Close API menu">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <label class="form-label" for="apiKeyInput">Pexels API Key</label>
+                        <input type="password" id="apiKeyInput" class="form-input" placeholder="Enter your key" autocomplete="off" />
+                        <p class="api-menu-note">Stored locally in this browser only.</p>
+
+                        <div class="api-menu-actions">
+                            <button class="btn btn-secondary" id="clearApiKeyBtn" type="button">Clear</button>
+                            <button class="btn btn-primary" id="saveApiKeyBtn" type="button">Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -874,6 +1002,61 @@
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // ===== API KEY MANAGEMENT =====
+        const API_KEY_STORAGE_KEY = 'orchestrator_api_key';
+
+        function updateApiKeyUI() {
+            const hasKey = Boolean(state.apiKey);
+            const statusText = document.getElementById('apiKeyStatusText');
+            const statusDot = document.getElementById('apiKeyStatusDot');
+            const input = document.getElementById('apiKeyInput');
+
+            if (statusText) {
+                statusText.textContent = hasKey ? 'Saved locally' : 'Not set';
+            }
+            if (statusDot) {
+                statusDot.classList.toggle('active', hasKey);
+            }
+            if (input && input !== document.activeElement) {
+                input.value = state.apiKey || '';
+            }
+        }
+
+        function toggleApiMenu(forceState = null) {
+            const panel = document.getElementById('apiMenuPanel');
+            const trigger = document.getElementById('apiMenuButton');
+            if (!panel || !trigger) return;
+            const shouldShow = forceState !== null ? forceState : panel.classList.contains('hidden');
+
+            panel.classList.toggle('hidden', !shouldShow);
+            trigger.setAttribute('aria-expanded', String(shouldShow));
+
+            if (shouldShow) {
+                document.getElementById('apiKeyInput').focus();
+            }
+        }
+
+        function loadSavedApiKey() {
+            const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+            if (savedKey) {
+                state.apiKey = savedKey;
+            }
+            updateApiKeyUI();
+        }
+
+        function saveApiKey(value) {
+            state.apiKey = value;
+            localStorage.setItem(API_KEY_STORAGE_KEY, value);
+            updateApiKeyUI();
+            toggleApiMenu(false);
+        }
+
+        function clearApiKey() {
+            state.apiKey = null;
+            localStorage.removeItem(API_KEY_STORAGE_KEY);
+            updateApiKeyUI();
         }
 
         // ===== SESSION MANAGEMENT =====
@@ -1307,6 +1490,34 @@
         }
 
         // ===== EVENT HANDLERS =====
+        loadSavedApiKey();
+
+        document.getElementById('apiMenuButton').addEventListener('click', () => toggleApiMenu());
+        document.getElementById('apiMenuClose').addEventListener('click', () => toggleApiMenu(false));
+        document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
+            const value = document.getElementById('apiKeyInput').value.trim();
+            if (!value) {
+                alert('Please enter an API key to save.');
+                return;
+            }
+            saveApiKey(value);
+        });
+        document.getElementById('clearApiKeyBtn').addEventListener('click', clearApiKey);
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('apiMenu');
+            const panel = document.getElementById('apiMenuPanel');
+            if (panel && !panel.classList.contains('hidden') && !menu.contains(event.target)) {
+                toggleApiMenu(false);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                toggleApiMenu(false);
+            }
+        });
+
         document.getElementById('joinForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
