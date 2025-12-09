@@ -1543,80 +1543,57 @@ Script: "Excellent work today. You navigated a difficult financial negotiation u
             };
         }
 
-        // ===== AI TEACHER TOOLS =====
-        const AI_TOOLS = [
-            {
-                type: "function",
-                function: {
-                    name: "add_callout",
-                    description: "Add a text callout annotation on the slide to highlight or explain something",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            x: { type: "number", description: "X position in pixels (100-800)" },
-                            y: { type: "number", description: "Y position in pixels (100-500)" },
-                            text: { type: "string", description: "The callout text to display" }
-                        },
-                        required: ["x", "y", "text"]
-                    }
-                }
-            },
-            {
-                type: "function",
-                function: {
-                    name: "add_highlight",
-                    description: "Highlight a specific element on the current slide",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            selector: { type: "string", description: "CSS selector of element to highlight (e.g., 'h1', '.goal-item')" }
-                        },
-                        required: ["selector"]
-                    }
-                }
-            },
-            {
-                type: "function",
-                function: {
-                    name: "draw_arrow",
-                    description: "Draw an arrow to connect or point to elements on the slide",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            fromX: { type: "number", description: "Start X position" },
-                            fromY: { type: "number", description: "Start Y position" },
-                            toX: { type: "number", description: "End X position" },
-                            toY: { type: "number", description: "End Y position" }
-                        },
-                        required: ["fromX", "fromY", "toX", "toY"]
-                    }
-                }
-            },
-            {
-                type: "function",
-                function: {
-                    name: "insert_blank_slide",
-                    description: "Insert a new blank slide after current slide for additional content or notes",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            title: { type: "string", description: "Title for the new slide" },
-                            content: { type: "string", description: "Content for the new slide (supports markdown)" }
-                        },
-                        required: ["title"]
-                    }
-                }
+        // ===== COMMAND PARSING =====
+        function parseAndExecuteCommands(text) {
+            let cleanText = text;
+
+            // Parse ADVANCE_SLIDE command
+            if (text.includes('[ADVANCE_SLIDE]')) {
+                cleanText = cleanText.replace(/\[ADVANCE_SLIDE\]/g, '');
+                setTimeout(() => {
+                    navigateSlide(1);
+                }, 2000);
             }
-        ];
+
+            // Parse HIGHLIGHT commands: [HIGHLIGHT:h1] or [HIGHLIGHT:.goal-item]
+            const highlightRegex = /\[HIGHLIGHT:([^\]]+)\]/g;
+            let match;
+            while ((match = highlightRegex.exec(text)) !== null) {
+                const selector = match[1];
+                annotations.highlightElement(selector);
+                cleanText = cleanText.replace(match[0], '');
+            }
+
+            // Parse CALLOUT commands: [CALLOUT:100,150,Check this out!]
+            const calloutRegex = /\[CALLOUT:(\d+),(\d+),([^\]]+)\]/g;
+            while ((match = calloutRegex.exec(text)) !== null) {
+                const x = parseInt(match[1]);
+                const y = parseInt(match[2]);
+                const calloutText = match[3];
+                annotations.addCallout(x, y, calloutText);
+                cleanText = cleanText.replace(match[0], '');
+            }
+
+            // Parse ARROW commands: [ARROW:100,100,200,200]
+            const arrowRegex = /\[ARROW:(\d+),(\d+),(\d+),(\d+)\]/g;
+            while ((match = arrowRegex.exec(text)) !== null) {
+                const fromX = parseInt(match[1]);
+                const fromY = parseInt(match[2]);
+                const toX = parseInt(match[3]);
+                const toY = parseInt(match[4]);
+                annotations.addArrow(fromX, fromY, toX, toY);
+                cleanText = cleanText.replace(match[0], '');
+            }
+
+            return cleanText.trim();
+        }
 
         // ===== IMPROVED AI INTEGRATION =====
         async function getSarahResponse(context) {
             const slideInfo = slideMetadata[state.currentSlide];
 
-            // Build conversation context for OpenAI
-            const systemPrompt = `You are Sarah, an AI English teacher conducting a B2-level lesson on NGO Strategy.
-
-Your role: Professional, encouraging, articulate, and structured. You actively lead the lesson.
+            // Build conversation context
+            const systemPrompt = `You are Sarah, an enthusiastic AI English teacher conducting a B2-level lesson on NGO Strategy.
 
 LESSON PLAN:
 ${LESSON_PLAN}
@@ -1625,24 +1602,42 @@ CURRENT CONTEXT:
 - Current Slide: ${state.currentSlide + 1} of ${state.totalSlides}
 - Slide Type: ${slideInfo.type}
 - Phase: ${slideInfo.phase}
-- Focus: ${slideInfo.focus}
+- Focus: ${slideInfo.focus || 'General'}
 - Student Name: ${state.learnerName}
 
-IMPORTANT INSTRUCTIONS:
-1. Follow the lesson plan script for the current slide
-2. Use annotations, callouts, and highlights ACTIVELY to make the lesson visual and engaging
-3. When introducing a new slide, use 1-2 visual annotations to draw attention to key elements
-4. Correct errors gently during accuracy activities (slides 3-6)
-5. Note errors but don't interrupt during fluency activities (slides 2, 7-10)
-6. Be encouraging and provide specific feedback
-7. If the student gives a substantive answer, acknowledge it specifically before moving forward
-8. Keep responses concise (2-3 sentences max)
+YOUR TEACHING APPROACH:
 
-USE YOUR TOOLS:
-- add_callout: Add text annotations to highlight important points
-- add_highlight: Highlight specific text or elements on slides
-- draw_arrow: Connect related concepts visually
-- insert_blank_slide: Create additional slides for student work or notes`;
+**When a new slide appears:**
+1. Greet briefly and introduce the slide topic (1-2 sentences)
+2. Add visual annotations using the commands below to highlight key points
+3. Ask a specific question or give a clear instruction
+4. Wait for student response
+
+**When student responds:**
+1. Acknowledge their answer specifically
+2. Provide brief feedback or correction if needed
+3. Either ask a follow-up question OR tell them the lesson is advancing to the next slide
+4. If advancing, use [ADVANCE_SLIDE] command
+
+**Visual Annotation Commands (use these to make slides engaging):**
+- [HIGHLIGHT:selector] - Highlights an element (e.g., [HIGHLIGHT:h1] or [HIGHLIGHT:.activity])
+- [CALLOUT:x,y,text] - Adds a text callout (e.g., [CALLOUT:200,150,Look here!])
+- [ARROW:x1,y1,x2,y2] - Draws an arrow between points
+- [ADVANCE_SLIDE] - Moves to the next slide (use when activity is complete)
+
+**Important Rules:**
+- Keep responses SHORT (1-3 sentences max)
+- Use at least ONE annotation command when introducing each new slide
+- Don't advance slides too quickly - ensure student engagement first
+- During accuracy activities (slides 4-6): correct errors immediately
+- During fluency activities (slides 3, 7-10): don't interrupt, note errors for later
+- Be warm and encouraging!
+
+**Example Response for New Slide:**
+"Welcome to our goals for today! [HIGHLIGHT:h2] Let's focus on these four key objectives. Which one do you think will be most challenging?"
+
+**Example Response After Student Answer:**
+"Excellent point about managing projects! You're right that it requires careful planning. [ADVANCE_SLIDE] Now let's move to our warm-up discussion."`;
 
             const messages = [
                 { role: "system", content: systemPrompt }
@@ -1661,10 +1656,10 @@ USE YOUR TOOLS:
             if (context.event === 'slideChange') {
                 messages.push({
                     role: 'user',
-                    content: `[SYSTEM: Teacher has moved to slide ${state.currentSlide + 1}. Please introduce this slide according to the lesson plan and add visual annotations to engage students.]`
+                    content: `[NEW SLIDE ${state.currentSlide + 1}] You've just moved to a new slide. Introduce it according to the lesson plan, use annotation commands to highlight important elements, and ask the student a question or give them an instruction.`
                 });
             } else if (context.event === 'userMessage') {
-                // Message already added from history
+                // User's message
                 messages.push({
                     role: 'user',
                     content: context.message
@@ -1672,36 +1667,21 @@ USE YOUR TOOLS:
             }
 
             try {
-                const response = await callGemini(messages, AI_TOOLS);
+                const response = await callGemini(messages);
                 const message = response.choices[0].message;
+                const rawContent = message.content || "Let's continue with our lesson.";
 
-                // Handle tool calls
-                if (message.tool_calls && message.tool_calls.length > 0) {
-                    for (const toolCall of message.tool_calls) {
-                        const functionName = toolCall.function.name;
-                        const args = JSON.parse(toolCall.function.arguments);
+                // Parse and execute commands, return clean text
+                const cleanContent = parseAndExecuteCommands(rawContent);
 
-                        // Execute the tool
-                        if (functionName === 'add_callout') {
-                            annotations.addCallout(args.x, args.y, args.text);
-                        } else if (functionName === 'add_highlight') {
-                            annotations.highlightElement(args.selector);
-                        } else if (functionName === 'draw_arrow') {
-                            annotations.addArrow(args.fromX, args.fromY, args.toX, args.toY);
-                        } else if (functionName === 'insert_blank_slide') {
-                            insertBlankSlide(args.title, args.content || '');
-                        }
-                    }
-                }
-
-                return message.content || "Let's continue with our lesson.";
+                return cleanContent;
 
             } catch (error) {
-                console.error('OpenAI API Error:', error);
+                console.error('Gemini API Error:', error);
 
                 // Fallback response
                 if (context.event === 'slideChange') {
-                    return `Let's look at slide ${state.currentSlide + 1}. ${slideInfo.focus ? 'Today we\'re focusing on: ' + slideInfo.focus : ''}`;
+                    return `Let's look at slide ${state.currentSlide + 1}. ${slideInfo.focus ? 'We\'re focusing on: ' + slideInfo.focus : 'Let\'s begin!'}`;
                 }
                 return "I'm having trouble connecting. Could you repeat that?";
             }
@@ -1739,6 +1719,10 @@ USE YOUR TOOLS:
 
         async function onSlideChange() {
             if (state.slideIntroduced) return;
+            state.slideIntroduced = true; // Mark as introduced
+
+            // Clear previous annotations
+            annotations.clear();
 
             showSarahTyping();
 
@@ -1756,7 +1740,7 @@ USE YOUR TOOLS:
                         console.error('AI Error:', error);
                     }
                 }
-            }, 1000);
+            }, 800);
         }
 
         async function onUserMessage(text, recipient) {
