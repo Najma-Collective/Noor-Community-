@@ -693,7 +693,11 @@
             currentPhase: 'Orientation',
             phaseStartTime: null,
             isPairwork: false,
-            apiKey: null // Users will need to set this
+            apiKey: null, // Users will need to set this
+            conversationHistory: [], // Track full conversation history
+            lastAIResponse: null, // Track last AI response to prevent loops
+            waitingForResponse: false, // Prevent multiple simultaneous AI calls
+            hasIntroduced: false // Track if Sarah has introduced the current slide
         };
 
         // Slide metadata
@@ -898,6 +902,19 @@
 
             container.appendChild(messageDiv);
             container.scrollTop = container.scrollHeight;
+
+            // Add to conversation history
+            state.conversationHistory.push({
+                sender: sender,
+                text: text,
+                recipient: recipient,
+                timestamp: time
+            });
+
+            // Track last AI response
+            if (isSarah) {
+                state.lastAIResponse = text;
+            }
         }
 
         function getParticipantName(id) {
@@ -926,6 +943,9 @@
             if (newSlide >= 0 && newSlide < state.totalSlides) {
                 state.currentSlide = newSlide;
 
+                // Reset introduction flag for new slide
+                state.hasIntroduced = false;
+
                 // Send message to iframe to change slide
                 const iframe = document.getElementById('slideIframe');
                 iframe.contentWindow.postMessage({ type: 'navigateSlide', index: newSlide }, '*');
@@ -936,10 +956,18 @@
 
         // ===== AI INTEGRATION (GEMINI) =====
         async function callSarah(userMessage, context) {
+            // Prevent multiple simultaneous calls
+            if (state.waitingForResponse) {
+                console.log('Already waiting for AI response, skipping...');
+                return null;
+            }
+
             if (!state.apiKey) {
                 console.warn('API key not set. Using simulated response.');
                 return getSimulatedSarahResponse(context);
             }
+
+            state.waitingForResponse = true;
 
             const slideInfo = slideMetadata[state.currentSlide];
             const participantNames = state.participants.map(p => p.name).join(' and ');
@@ -957,26 +985,65 @@ CONTEXT:
 TEACHING PRINCIPLES:
 1. Elicit prior knowledge through questions
 2. Provide scaffolding (stems, examples) before asking students to produce language
-3. Wait for responses - don't rush to fill silence
-4. For fluency activities (slides 3, 7, 9, 10): Listen and collect errors silently for later
-5. For accuracy activities (slides 4, 5, 6): Give immediate gentle feedback, invite self-correction first
-6. Keep responses brief and conversational (2-3 sentences max)
-7. Reference specific slide elements when helpful
-8. Encourage both learners to participate equally
+3. IMPORTANT: If a student just gave a simple acknowledgment (like "yes", "ok", "yep", "sure"), acknowledge it briefly and MOVE ON to the next activity step. Don't repeat your previous question.
+4. Track what you've already asked and said - don't repeat yourself
+5. For fluency activities (slides 3, 7, 9, 10): Listen and collect errors silently for later
+6. For accuracy activities (slides 4, 5, 6): Give immediate gentle feedback, invite self-correction first
+7. Keep responses brief and conversational (2-3 sentences max)
+8. Reference specific slide elements when helpful
+9. Encourage both learners to participate equally
 
 CURRENT ACTIVITY:
 ${getActivityGuidance(state.currentSlide)}
 
-Respond naturally to the student's message while following the lesson plan.`;
+Remember: You are having a conversation. Read the history below and respond naturally without repeating yourself.`;
 
             try {
+                // Build conversation history in Gemini format
+                const contents = [];
+
+                // Add system prompt as first user message
+                if (state.conversationHistory.length === 0) {
+                    contents.push({
+                        role: 'user',
+                        parts: [{ text: systemPrompt }]
+                    });
+                    contents.push({
+                        role: 'model',
+                        parts: [{ text: 'I understand. I will be Sarah, a warm and encouraging English teacher. I will follow the lesson plan and respond naturally to students without repeating myself.' }]
+                    });
+                }
+
+                // Add conversation history
+                state.conversationHistory.forEach(msg => {
+                    if (msg.sender === 'Sarah') {
+                        contents.push({
+                            role: 'model',
+                            parts: [{ text: msg.text }]
+                        });
+                    } else {
+                        contents.push({
+                            role: 'user',
+                            parts: [{ text: `${msg.sender}: ${msg.text}` }]
+                        });
+                    }
+                });
+
+                // Add current message
+                const messageText = context.event === 'slideChange'
+                    ? `[System: Slide changed to ${state.currentSlide + 1}. Introduce this slide's activity.]`
+                    : `${state.learnerName}: ${userMessage}`;
+
+                contents.push({
+                    role: 'user',
+                    parts: [{ text: messageText }]
+                });
+
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: systemPrompt + '\n\nStudent: ' + userMessage }]
-                        }],
+                        contents: contents,
                         generationConfig: {
                             temperature: 0.7,
                             maxOutputTokens: 200
@@ -985,9 +1052,13 @@ Respond naturally to the student's message while following the lesson plan.`;
                 });
 
                 const data = await response.json();
-                return data.candidates[0].content.parts[0].text;
+                const aiResponse = data.candidates[0].content.parts[0].text;
+
+                state.waitingForResponse = false;
+                return aiResponse;
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
+                state.waitingForResponse = false;
                 return getSimulatedSarahResponse(context);
             }
         }
@@ -1012,10 +1083,31 @@ Respond naturally to the student's message while following the lesson plan.`;
 
         function getSimulatedSarahResponse(context) {
             // Fallback responses when API is not available
+            state.waitingForResponse = false; // Reset waiting state for simulated responses
+
+            // Check if we're responding to a simple acknowledgment
+            if (context.event === 'userMessage') {
+                const simpleAcks = ['yes', 'yep', 'yeah', 'ok', 'okay', 'sure'];
+                const userMsg = (context.message || '').toLowerCase().trim();
+
+                if (simpleAcks.includes(userMsg)) {
+                    // Check what slide we're on and move forward
+                    const followUps = {
+                        0: "Great! Let's look at our goals for today's lesson.",
+                        1: "Perfect. Let's dive into our warmer activity. What do you think is the biggest challenge for a new community project?",
+                        2: "Good! Now try creating a sentence that uses one word from each vocabulary list.",
+                        3: "Excellent! Let's practice the second conditional. What would you change if you had double the budget?",
+                        4: "Well done! Now let's work on purpose clauses. Try explaining why you'd make that choice using 'in order to' or 'so that'.",
+                        5: "Perfect! Let's move on to our scenario-based problem-solving activity."
+                    };
+                    return followUps[state.currentSlide] || "Great! Let's continue.";
+                }
+            }
+
             const responses = {
                 0: "Welcome! I'm Sarah, your teacher for today. Can everyone see the slides and hear me clearly?",
                 1: "Let's look at our goals for today. We'll work on connecting ideas, discussing hypotheticals, explaining reasons, and solving problems together.",
-                2: "Great question! Let me hear your thoughts first. What do you think is the biggest challenge for a new community project?",
+                2: "Great! Let me hear your thoughts. What do you think is the biggest challenge for a new community project?",
                 3: "Excellent! Now try creating a sentence that uses one word from each list. For example: 'In our grant proposal, we must define the project's objective.'",
                 4: "Good thinking! Remember the structure: 'If + past simple, would + infinitive'. Try answering: What would you change if you had double the budget?",
                 5: "Well done! Now let's practice our purpose clauses. Manager, convince the donor using 'in order to' or 'so that'.",
@@ -1029,9 +1121,16 @@ Respond naturally to the student's message while following the lesson plan.`;
             return responses[state.currentSlide] || "That's interesting. Tell me more about your thinking.";
         }
 
-        async function onSlideChange() {
-            // Sarah provides guidance when slide changes
+        async function onSlideChange(userInitiated = false) {
+            // Only introduce slide if it's a new slide and not already introduced
+            if (state.hasIntroduced && !userInitiated) {
+                return; // Don't re-introduce if we've already done it
+            }
+
             const slideInfo = slideMetadata[state.currentSlide];
+
+            // Mark as introduced
+            state.hasIntroduced = true;
 
             showSarahTyping();
 
@@ -1042,7 +1141,10 @@ Respond naturally to the student's message while following the lesson plan.`;
                     slide: state.currentSlide,
                     phase: slideInfo.phase
                 });
-                addMessage('Sarah', guidance);
+
+                if (guidance) {
+                    addMessage('Sarah', guidance);
+                }
             }, 1500);
         }
 
@@ -1051,6 +1153,16 @@ Respond naturally to the student's message while following the lesson plan.`;
 
             // Clear input
             document.getElementById('messageInput').value = '';
+
+            // Check if this is a simple acknowledgment and Sarah didn't just ask a question
+            const simpleAcknowledgments = ['yes', 'yep', 'yeah', 'ok', 'okay', 'sure', 'no', 'nope'];
+            const isSimpleAck = simpleAcknowledgments.includes(text.toLowerCase().trim());
+
+            // If waiting for response, don't trigger another one
+            if (state.waitingForResponse) {
+                console.log('Already processing AI response, skipping user message');
+                return;
+            }
 
             // Sarah responds
             showSarahTyping();
@@ -1062,7 +1174,10 @@ Respond naturally to the student's message while following the lesson plan.`;
                     message: text,
                     recipient: recipient
                 });
-                addMessage('Sarah', response, recipient === 'everyone' ? 'everyone' : state.learnerId);
+
+                if (response) {
+                    addMessage('Sarah', response, recipient === 'everyone' ? 'everyone' : state.learnerId);
+                }
             }, 2000);
         }
 
@@ -1073,10 +1188,22 @@ Respond naturally to the student's message while following the lesson plan.`;
 
             showScreen('lesson');
 
-            // Update UI
-            updateSlideCounter();
+            // Update UI (but don't trigger slide introduction yet)
+            document.getElementById('slideCounter').textContent = `${state.currentSlide + 1} / ${state.totalSlides}`;
+            const metadata = slideMetadata[state.currentSlide];
+            state.currentPhase = metadata.phase;
+            document.getElementById('phaseLabel').textContent = metadata.phase;
+            state.phaseStartTime = Date.now();
+            state.isPairwork = [6, 7, 8, 9].includes(state.currentSlide);
+            document.getElementById('pairworkBanner').classList.toggle('active', state.isPairwork);
+            document.getElementById('prevSlideBtn').disabled = state.currentSlide === 0;
+            document.getElementById('nextSlideBtn').disabled = state.currentSlide === state.totalSlides - 1;
+
             updateParticipantsBadges();
             document.getElementById('sessionCodeValue').textContent = state.joinCode;
+
+            // Mark as already introduced to prevent duplicate welcome
+            state.hasIntroduced = true;
 
             // Sarah's welcome message
             setTimeout(() => {
