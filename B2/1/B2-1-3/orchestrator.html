@@ -1270,16 +1270,6 @@
         }
 
         // ===== IMPROVED AI INTEGRATION =====
-        function normalizeResponse(response) {
-            if (typeof response === 'string') {
-                return { text: response, advanceSlide: false };
-            }
-            return {
-                text: response.text,
-                advanceSlide: Boolean(response.advanceSlide)
-            };
-        }
-
         function getSarahResponse(context) {
             const slideInfo = slideMetadata[state.currentSlide];
             const step = state.conversationStep;
@@ -1380,46 +1370,32 @@
                 const simpleAcks = ['yes', 'yep', 'yeah', 'ok', 'okay', 'sure', 'good', 'sounds good'];
                 if (simpleAcks.includes(userMsg)) {
                     state.conversationStep++;
-                    const shouldAdvance = state.conversationStep >= slideResponses.length;
-                    return {
-                        text: slideResponses[Math.min(step + 1, slideResponses.length - 1)],
-                        advanceSlide: shouldAdvance
-                    };
+                    return slideResponses[Math.min(step + 1, slideResponses.length - 1)];
                 }
 
                 // Substantive responses - provide feedback and move forward
                 if (userMsg.length > 5) {
                     state.conversationStep++;
-                    const shouldAdvance = state.conversationStep >= slideResponses.length;
 
                     // Check if they used target language
                     if (state.currentSlide === 4 && (userMsg.includes('if') || userMsg.includes('would'))) {
-                        return {
-                            text: "Great use of the second conditional! " + slideResponses[Math.min(step + 1, slideResponses.length - 1)],
-                            advanceSlide: shouldAdvance
-                        };
+                        return "Great use of the second conditional! " + slideResponses[Math.min(step + 1, slideResponses.length - 1)];
                     }
                     if (state.currentSlide === 5 && (userMsg.includes('in order to') || userMsg.includes('so that'))) {
-                        return {
-                            text: "Excellent purpose clause! " + slideResponses[Math.min(step + 1, slideResponses.length - 1)],
-                            advanceSlide: shouldAdvance
-                        };
+                        return "Excellent purpose clause! " + slideResponses[Math.min(step + 1, slideResponses.length - 1)];
                     }
 
-                    return {
-                        text: slideResponses[Math.min(step + 1, slideResponses.length - 1)],
-                        advanceSlide: shouldAdvance
-                    };
+                    return slideResponses[Math.min(step + 1, slideResponses.length - 1)];
                 }
             }
 
             // Slide change - introduce slide
             if (context.event === 'slideChange') {
                 state.slideIntroduced = true;
-                return { text: slideResponses[0], advanceSlide: false };
+                return slideResponses[0];
             }
 
-            return { text: slideResponses[Math.min(step, slideResponses.length - 1)], advanceSlide: false };
+            return slideResponses[Math.min(step, slideResponses.length - 1)];
         }
 
         async function onSlideChange() {
@@ -1429,11 +1405,8 @@
 
             setTimeout(() => {
                 hideSarahTyping();
-                const { text, advanceSlide } = normalizeResponse(getSarahResponse({ event: 'slideChange' }));
-                addMessage('Sarah', text);
-                if (advanceSlide) {
-                    navigateSlide(1);
-                }
+                const response = getSarahResponse({ event: 'slideChange' });
+                addMessage('Sarah', response);
 
                 // Add visual annotations for certain slides
                 setTimeout(() => {
@@ -1468,16 +1441,13 @@
 
             setTimeout(() => {
                 hideSarahTyping();
-                const { text, advanceSlide } = normalizeResponse(getSarahResponse({
+                const response = getSarahResponse({
                     event: 'userMessage',
                     message: text,
                     recipient: recipient
-                }));
+                });
 
-                addMessage('Sarah', text, recipient === 'everyone' ? 'everyone' : state.learnerId);
-                if (advanceSlide) {
-                    setTimeout(() => navigateSlide(1), 1200);
-                }
+                addMessage('Sarah', response, recipient === 'everyone' ? 'everyone' : state.learnerId);
                 state.waitingForResponse = false;
             }, 1500);
         }
